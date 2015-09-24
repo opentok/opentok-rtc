@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<button onclick="next();">Run tests</button>
+<p>Warning! Running these tests will destroy all your data!</p>
+
+<script src="../js/helpers/action_log_db.js"></script>
+<script>
+
+function assert(assertion, msg) {
+  if (assertion) {
+    console.info("TEST-PASS", msg);
+  } else {
+    throw "TEST-UNEXPECTED_FAIL " + msg;
+  }
+}
+
+var calls = [{
+  date: Date.now(),
+  identities: "name1@domain.org",
+  type: 'incoming',
+  connected: true,
+  duration: 1000
+}, {
+  date: Date.now() + 1000,
+  identities: "name2@domain.org",
+  type: 'outgoing',
+  connected: false,
+  duration: 2000
+}];
+
+var urls = [{
+  date: Date.now(),
+  identities: "name3@domain.org",
+  url: "url1",
+  urlToken: "token1",
+  expirationDate: Date.now() + 3600,
+  revoked: false
+}, {
+  date: Date.now() + 1000,
+  identities: "name4@domain.org",
+  url: "url2",
+  urlToken: "token2",
+  expirationDate: Date.now() + 3600,
+  revoked: false
+}];
+
+var index = 0;
+var steps = [
+  function() {
+    console.log("Deleting database");
+    var request = window.mozIndexedDB.deleteDatabase("actionLog");
+    request.onsuccess = function(event) {
+      console.log("Deleted the database");
+      next();
+    };
+    request.onerror = function(event) {
+      console.log("Oh crap!");
+    };
+  },
+  function() {
+    console.log("Adding a call");
+    ActionLogDB.addCall(function(error, result) {
+      if (error) {
+        console.error(error.message);
+        return;
+      }
+      var length = 0;
+      ActionLogDB.getCalls(function(error, cursor) {
+        if (cursor) {
+          console.log("Call " + JSON.stringify(cursor));
+          assert(cursor.value.identities == calls[length].identities,
+                 "identity ok");
+          assert(cursor.value.date == calls[length].date, "date ok");
+          assert(cursor.value.type == calls[length].type, "type ok");
+          assert(cursor.value.duration == calls[length].duration,
+                 "duration ok");
+          length++;
+          cursor.continue();
+        } else {
+          assert(length == 1, "calls length 1");
+          next();
+        }
+      });
+    }, calls[0]);
+  },
+  function() {
+    console.log("Adding another call");
+    ActionLogDB.addCall(function(error, result) {
+      if (error) {
+        console.error(error.message);
+        return;
+      }
+      var length = 0;
+      ActionLogDB.getCalls(function(error, cursor) {
+        if (cursor) {
+          console.log("Call " + JSON.stringify(cursor.value));
+          assert(cursor.value.identities == calls[length].identities,
+                 "identity ok");
+          assert(cursor.value.date == calls[length].date, "date ok");
+          assert(cursor.value.type == calls[length].type, "type ok");
+          assert(cursor.value.duration == calls[length].duration,
+                 "duration ok");
+          length++;
+          if (cursor.continue) cursor.continue();
+        } else {
+          assert(length == 2, "calls length 2");
+          next();
+        }
+      });
+    }, calls[1]);
+  },
+  function() {
+    console.log("Get calls in reverse order");
+    var length = 2;
+    ActionLogDB.getCalls(function(error, cursor) {
+      if (cursor) {
+        length--;
+        console.log("Call " + JSON.stringify(cursor.value));
+        assert(cursor.value.identities == calls[length].identities,
+               "identity ok");
+        assert(cursor.value.date == calls[length].date, "date ok");
+        assert(cursor.value.type == calls[length].type, "type ok");
+        assert(cursor.value.duration == calls[length].duration,
+               "duration ok");
+        if (cursor.continue) cursor.continue();
+      } else {
+        assert(length == 0, "calls length 2");
+        next();
+      }
+    }, { prev: true });
+  },
+  function() {
+    console.log("Delete call");
+    ActionLogDB.deleteCalls(function(error) {
+      var length = 1;
+      ActionLogDB.getCalls(function(error, cursor) {
+        if (cursor) {
+          console.log("Call " + JSON.stringify(cursor.value));
+          assert(cursor.value.identities == calls[length].identities,
+                 "identity ok");
+          assert(cursor.value.date == calls[length].date, "date ok");
+          assert(cursor.value.type == calls[length].type, "type ok");
+          assert(cursor.value.duration == calls[length].duration,
+                 "duration ok");
+          length--;
+          if (cursor.continue) cursor.continue();
+        } else {
+          assert(length == 0, "calls length 1");
+          next();
+        }
+      });
+    }, calls[0].date)
+  },
+  function() {
+    console.log("Adding a url");
+    ActionLogDB.addUrl(function(error, result) {
+      if (error) {
+        console.error(error.message);
+        return;
+      }
+      var length = 0;
+      ActionLogDB.getUrls(function(error, cursor) {
+        if (cursor) {
+          console.log("Url " + JSON.stringify(cursor.value));
+          assert(cursor.value.identities == urls[length].identities,
+                 "identity ok");
+          assert(cursor.value.date == urls[length].date, "date ok");
+          assert(cursor.value.url == urls[length].url, "url ok");
+          assert(cursor.value.urlToken == urls[length].urlToken,
+                 "token ok");
+          assert(cursor.value.revoked == urls[length].revoked, "revoked ok");
+          length++;
+          cursor.continue();
+        } else {
+          assert(length == 1, "urls length 1");
+          next();
+        }
+      });
+    }, urls[0]);
+  },
+  function() {
+    console.log("Get url by token");
+    ActionLogDB.getUrlByToken(function(error, result) {
+      if (error) {
+        console.error(error.message);
+        return;
+      }
+      assert(result, urls[0].urlToken);
+      next();
+    }, urls[0].urlToken);
+  },
+
+  function() {
+    console.log("Revoke url");
+    ActionLogDB.revokeUrl(function() {
+      var length = 0;
+      ActionLogDB.getUrls(function(error, cursor) {
+        if (cursor) {
+          console.log("Url " + JSON.stringify(cursor.value));
+          assert(cursor.value.identities == urls[length].identities,
+                 "identity ok");
+          assert(cursor.value.date == urls[length].date, "date ok");
+          assert(cursor.value.url == urls[length].url, "url ok");
+          assert(cursor.value.urlToken == urls[length].urlToken,
+                 "token ok");
+          assert(cursor.value.revoked == true, "revoked ok");
+          length++;
+          cursor.continue();
+        } else {
+          assert(length == 1, "urls length 1");
+          next();
+        }
+      });
+    }, urls[0].date)
+  },
+  function() {
+    console.log("All done");
+  }
+];
+
+function next() {
+  if (index >= steps.length) {
+    console.log("Shouldn't get here!", Error().stack);
+    return;
+  }
+  try {
+    steps[index]();
+  } catch(ex) {
+    console.log("Caught exception", ex);
+  }
+  index += 1;
+}
+</script>
+</body>
+</html>
+

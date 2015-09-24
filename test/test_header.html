@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Mocha tests</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="bower_components//mocha.css">
+
+    <!-- include mocha + chai + sinon -->
+    <script src="bower_components/mocha/mocha.js" type="text/javascript"></script>
+    <script src="bower_components/chai/chai.js" type="text/javascript"></script>
+    <script src="bower_components/sinon/lib/sinon.js" type="text/javascript"></script>
+
+    <script src="unit/utils/html_helper.js" type="text/javascript"></script>
+</head>
+
+<body>
+    <!-- required for browser reporter -->
+    <div id="mocha"></div>
+
+    <script type="text/javascript">
+        mocha.setup('tdd');
+        mocha.globals([ // acceptable globals
+        ]);
+    </script>
+
+    <!-- run mocha -->
+    <script type="text/javascript">
+      window.addEventListener('load', function() {
+        // Ok, this kinda sucks, but without the kinda part. There's also no
+        // but there's no other way around it that I can think.
+        // The mocha-slimer module injects some code after the page is loaded.
+        // If we run run() before that's loaded, then the tests don't count, so
+        // the only real way is to use run: true on the mocha-slimer options. But
+        // then we have to avoid running it here or we end running the tests twice.
+        // Concurrently (or interleaved) with themselves. Which usually isn't good.
+        if (navigator.userAgent.search('SlimerJS') < 0) {
+           mocha.run(); // run mocha
+        }
+      });
+    </script>
+

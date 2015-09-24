@@ -1,0 +1,40 @@
+{
+  "name": "OpenTokRTCV2",
+  "version": "0.0.1",
+  "description": "OpenTok RTC sample application to show off the OpenTok API and platform capabilities ",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AntonioMA/openTokRTCV2.git"
+  },
+  "author": "Tokbox's PSE Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AntonioMA/openTokRTCV2/issues"
+  },
+  "homepage": "https://github.com/AntonioMA/openTokRTCV2/",
+  "dependencies": {
+    "cors": "^2.7.1",
+    "ejs": "^1.0.0",
+    "express": "^4.0.0",
+    "ioredis": "^1.7.6",
+    "opentok": "^2.3.0"
+  },
+  "devDependencies": {
+    "chai": "^3.3.0",
+    "grunt": "^0.4.5",
+    "grunt-bower-task": "^0.4.0",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-compress": "^0.13.0",
+    "grunt-contrib-connect": "~0.8.0",
+    "grunt-contrib-copy": "^0.8.1",
+    "grunt-gitinfo": "^0.1.7",
+    "grunt-html-build": "^0.5.1",
+    "grunt-karma": "^0.12.1",
+    "grunt-mocha-test": "^0.12.7",
+    "karma": "^0.13.10",
+    "mocha": "^2.3.3",
+    "sinon": "^1.17.0",
+    "supertest": "^1.1.0"
+  }
+}
