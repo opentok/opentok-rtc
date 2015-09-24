@@ -5,6 +5,9 @@ logs
 # emacs bck
 *~
 
+# test libraries that should be fetched by bower
+test/lib
+
 # Runtime data
 pids
 *.pid

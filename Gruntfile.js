@@ -13,7 +13,7 @@ module.exports = function(grunt) {
     'grunt-contrib-connect',
 //    'grunt-contrib-copy',
     'grunt-mocha-test', // Server side test runner
-//    'grunt-bower-task',
+    'grunt-bower-task',
     'grunt-gitinfo',
     'grunt-karma' // Client side test runner. TO-DO: Change this for Karma?
   ].forEach(grunt.loadNpmTasks);
@@ -47,6 +47,20 @@ module.exports = function(grunt) {
           clearRequireCache: false
         },
         src: ['test/api/**/*.js']
+      }
+    },
+
+    bower: {// grunt.file.setBase('test');
+      install: {
+        options: {
+          targetDir: './lib',
+          layout: 'byType',
+          install: true,
+          verbose: false,
+          cleanTargetDir: false,
+          cleanBowerDir: true,
+          bowerOptions: {}
+        }
       }
     },
 
@@ -134,6 +148,12 @@ module.exports = function(grunt) {
     'serverUnitTest',
     'RESTApiTest',
     'clientTest'
+  ]);
+
+  grunt.registerTask('configTests', [
+    'preBowerInstall',
+    'bower:install',
+    'postBowerInstall'
   ]);
 
   grunt.registerTask('default', ['test']);
