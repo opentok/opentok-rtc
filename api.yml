@@ -99,7 +99,7 @@ paths:
           type: string
         - name: operation
           in: query
-          description: Operation (start/stop).
+          description: Operation (startComposite/startIndividual/stop).
           required: true
           type: string
       responses:
@@ -175,6 +175,8 @@ definitions:
     type: object
     properties:
       archiveId:
+        type: string
+      archiveType:
         type: string
   ArchiveURL:
     type: object
