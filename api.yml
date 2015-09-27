@@ -1,0 +1,193 @@
+swagger: '2.0'
+info:
+  title: OpenTokRTC_v2 API
+  description: >-
+    OpenTok Demo App, v2.0 path and API description.
+    TO-DO: Add here a general description of the page navigation.
+  version: 1.0.0
+host: opentokrtc.com
+schemes:
+  - https
+basePath: /
+produces:
+  - application/json
+paths:
+  /room/{roomName}:
+    get:
+      summary: Connects to a new or existing room.
+      description: >-
+        Returns an HTML document that shows the defined UI for a chat
+        'room' where the user may or may not have specified an
+        identity. The document returned will NOT have any of the
+        information needed to connect to the Tokbox servers already
+        factored in.
+        TO-DO: ¿Queremos que esto sea así o que
+        devolvamos ya todo configurado?
+      parameters:
+        - name: roomName
+          in: path
+          type: string
+          description: Name of the room.
+          required: true
+        - name: userName
+          description: Name/Id of the user that is connecting.
+          in: query
+          required: false
+          type: string
+      tags:
+        - Rooms
+      responses:
+        '200':
+          description: The HTML for the room
+          schema:
+            $ref: '#/definitions/RoomHTML'
+  /room/{roomName}/info:
+    get:
+      summary: Information needed to connect to the TB servers.
+      description: >-
+        Returns the information (sessionId, token, apiKey) that's
+        required to connect to an opentok session. The sessionId
+        returned is specific for the room, and the token MAY include
+        information about the user that's connecting (identified as
+        anonymous if the user didn't specify a name). Note that
+        every time this URL is fetched a new token is created.
+        TO-DO: Explain what we're going to do with Firebase.
+      parameters:
+        - name: roomName
+          in: path
+          description: Name of the room.
+          required: true
+          type: string
+        - name: userName
+          in: query
+          description: Name of the user.
+          required: false
+          type: string
+      tags:
+        - Rooms
+      responses:
+        '200':
+          description: Information to connect to the room
+          schema:
+            $ref: '#/definitions/RoomInfo'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /room/{roomName}/archive:
+    post:
+      summary: Starts/stop an archiving operation.
+      description: >-
+        Starts or stops an archiving operation. Returns the
+        information about the new recording, and inserts that
+        information on the firebase record associated to the
+        room. Once a recording is in process, succesives call with
+        operation=start are ignored and the existing record of the
+        current archive is returned.
+      tags:
+        - Archives
+      parameters:
+        - name: roomName
+          in: path
+          description: Name of the room.
+          required: true
+          type: string
+        - name: userName
+          in: query
+          description: Name of the user.
+          required: false
+          type: string
+        - name: operation
+          in: query
+          description: Operation (start/stop).
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Information to connect to the room
+          schema:
+            $ref: '#/definitions/ArchiveInfo'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /archive/{archiveId}:
+    get:
+      summary: Gets and returns a temporary archive URL.
+      description: >-
+        Creates a new temporary archive URL to allow the visualization
+        or download of an existing archive. The URL created is valid
+        for 10 minutes only!
+      tags:
+        - Archives
+      parameters:
+        - name: archiveId
+          in: path
+          description: Id of the archive.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Information to download or view the archive file.
+          schema:
+            $ref: '#/definitions/ArchiveURL'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Erases an archive.
+      description: >-
+        Erases an stored archive.
+      tags:
+        - Archives
+      parameters:
+        - name: archiveId
+          in: path
+          description: Id of the archive.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Archive erases.
+          schema:
+            $ref: '#/definitions/ArchiveInfo'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  RoomHTML:
+    type: string
+    description: HTML document of the room
+  RoomInfo:
+    type: object
+    properties:
+      sessionId:
+        type: string
+      apiKey:
+        type: string
+      token:
+        type: string
+      firebasePw:
+        type: string
+  ArchiveInfo:
+    type: object
+    properties:
+      archiveId:
+        type: string
+  ArchiveURL:
+    type: object
+    properties:
+      archiveId:
+        type: string
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      fields:
+        type: string
