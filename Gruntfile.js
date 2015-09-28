@@ -8,10 +8,13 @@ module.exports = function(grunt) {
 
   // To-Do check what we need and add/remove as needed...
   [
+    'grunt-autoprefixer',
     'grunt-contrib-clean',
 //    'grunt-contrib-compress',
     'grunt-contrib-connect',
 //    'grunt-contrib-copy',
+    'grunt-contrib-less',
+    'grunt-contrib-watch',
     'grunt-mocha-test', // Server side test runner
     'grunt-bower-task',
     'grunt-gitinfo',
@@ -126,7 +129,46 @@ module.exports = function(grunt) {
       }
     },
 
+    less: {
+      default: {
+        files: {
+          'web/css/landing.opentok.css': 'web/less/landing.less',
+          'web/css/room.opentok.css': 'web/less/room.less'
+        }
+      }
+    },
+
+    autoprefixer: {
+      options: {
+        browsers: ['last 5 versions']
+      },
+      dist: {
+        src: 'web/css/*.css'
+      },
+    },
+
+    watch: {
+      styles: {
+        files: ['../../**/*.less'],
+        tasks: ['less', 'autoprefixer'],
+        options: {
+          nospawn: true,
+          livereload: true
+        }
+      }
+    }
+
   });
+
+  grunt.registerTask('clientBuild', 'Build css files', [
+    'less',
+    'autoprefixer'
+  ]);
+
+  grunt.registerTask('clientDev', 'Watch for changes on less files', [
+    'clientBuild',
+    'watch'
+  ]);
 
   grunt.registerTask('clientTest', 'Launch client unit tests in shell with Karma + PhantomJS', [
     'connect:test',

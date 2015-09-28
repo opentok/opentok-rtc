@@ -1,0 +1,80 @@
+// Components
+@import '../bower_components/utils/reset.less';
+@import '../bower_components/utils/mixins.less';
+@import '../bower_components/buttons/buttons.less';
+@import '../bower_components/inputs/inputs.less';
+@import '../bower_components/modals/modals.less';
+
+@import 'base.less';
+
+body {
+  background-color: @backgroundColor;
+  background-image: radial-gradient(circle at 50% 50%, @backgroundColor, #5598b0);
+}
+
+.main {
+
+  display: flex;
+  .flex-direction(column);
+  height: 100%;
+
+  h1, h5 {
+    margin: 10px 0;
+    padding: 0;
+  }
+
+  h1 {
+    font-size: 38px;
+    line-height: 46px;
+  }
+
+  h5 {
+    font-size: 20px;
+    font-weight: 300;
+    line-height: 26px;
+  }
+
+  h1 > span {
+    font-weight: @boldFontWeight;
+  }
+
+  button {
+    margin: 70px 0;
+  }
+
+  p {
+    font-size: 14px;
+    margin: 0 0 10px 0;
+    padding: 0;
+    font-weight: 300;
+  }
+
+  section {
+    display: flex;
+    .align-items(center);
+    .flex-direction(column);
+    .justify-content(center);
+    .flex(1);
+  }
+
+  footer {
+    height: 50px;
+  }
+}
+
+.tc-modal {
+
+  .tc-row label{
+    text-align: left;
+  }
+
+  .tc-input.block + .tc-message {
+    display: none;
+  }
+
+  .tc-error {
+    .tc-input.block + .tc-message {
+      display: block;
+    }
+  }
+}

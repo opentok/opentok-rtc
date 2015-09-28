@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>OpenTok</title>
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="css/landing.opentok.css">
+
+    <script defer type="text/javascript" src="js/vendor/es6-promise.min.js"></script>
+    <script defer type="text/javascript" src="js/components/modal.js"></script>
+    <script defer type="text/javascript" src="js/landingView.js"></script>
+    <script defer type="text/javascript" src="js/landingController.js"></script>
+  </head>
+
+  <body>
+    <section class="main">
+      <section>
+        <h1>Welcome to <span>OpenTokRTC v2</span></h1>
+        <h5>A multiparty WebRTC experience.</h5>
+
+        <button id="join" class="tc-button large">Join</button>
+
+        <p>WebRTC is an open source project aiming to enable the web with Real Time Communication (RTC) capabilities.</p>
+        <p>This Demo is Open Sourced on Github by
+          <a class="tc-link" href="http://tokbox.com" target="_blank">TokBox</a>, a <a class="tc-link" href="http://telefonica.com" target="_blank">Telefonica Digital</a> company.
+        </p>
+      </section>
+      <footer>
+        <a href="http://tokbox.com" target="_blank">
+          <img src="images/opentok-logo.png" alt="opentok transparent logo">
+        </a>
+      </footer>
+    </section>
+
+    <section class="tc-modal join-modal">
+      <form class="tc-dialog">
+        <header>OpenTok</header>
+        <p>Please, fill the form to start using this service.</p>
+        <div class="tc-row">
+          <label>Room name (*required)</label>
+          <input class="tc-input block" id="room">
+        </div>
+        <div class="tc-row">
+          <label>User name</label>
+          <input class="tc-input block" id="user">
+        </div>
+        <footer>
+          <button id="enter" class="tc-button" disabled>Enter</button>
+          <p>First time users please <a class="tc-link" target="_blank" href="https://tokbox.com/support/tos">read.</a></p>
+        </footer>
+      </section>
+    </form>
+  </body>
+</html>
