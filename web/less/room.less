@@ -1,1 +1,130 @@
+// Components
+@import '../bower_components/utils/reset.less';
+@import '../bower_components/utils/mixins.less';
+@import '../bower_components/buttons/buttons.less';
+@import '../bower_components/inputs/inputs.less';
+@import '../bower_components/modals/modals.less';
+@import '../bower_components/icons/icons.less';
+@import '../bower_components/sidebars/sidebars.less';
+@import '../bower_components/lists/lists.less';
 
+@import 'base.less';
+
+@import 'icons.less';
+
+body {
+  margin: 0;
+  display: flex;
+  .flex-direction(row);
+}
+
+#dock {
+  width: 22.5%;
+  min-width: 270px;
+  height: 100%;
+
+  display: flex;
+  .flex-direction(column);
+  .justify-content(center);
+  .align-items(center);
+
+  .info {
+    width: calc(~"100% - 60px");
+    background-color: #1a99ce;
+    border-radius: 24px;
+    border-top-left-radius: 0;
+    margin: 15px 20px;
+    padding: 15px 15px 5px 15px;
+
+    h1 {
+      font-size: 16px;
+      line-height: 24px;
+      font-weight: @baseFontWeight;
+      border-bottom: 2px solid @text;
+      margin: 0;
+      padding: 12px 0 12px 0;
+      opacity: .7;
+    }
+
+    h2 {
+      padding-top: 5px;
+      font-size: 12px;
+      font-weight: @boldFontWeight;
+    }
+
+    [data-icon]:before {
+      padding-right: 5px;
+    }
+  }
+
+  .menu {
+    width: 100%;
+    flex: 1;
+    background-color: transparent;
+
+    .tc-list ul {
+      padding-left: 30px;
+    }
+
+    .tc-list li {
+      background-color: transparent;
+      border-bottom: 0;
+      padding-left: 0;
+    }
+
+    .tc-list a {
+      color: #9b9c9b;
+      display: inline-block;
+      width: calc(~"100% - 20px");
+      padding-left: 20px;
+
+      [data-icon]:before {
+        padding-right: 15px;
+      }
+
+      &:hover,
+      &:focus,
+      &:active,
+      &.active {
+        color: #1a99ce;
+        background-color: #f3f2ef;
+      }
+
+      .tc-list a:hover,
+      .tc-list a:focus,
+      .tc-list a:active,
+      .tc-list a.active {
+        color: #1a99ce;
+        background-color: #f3f2ef;
+      }
+    }
+
+    .tc-list a.danger:hover,
+    .tc-list a.danger:focus,
+    .tc-list a.danger:active,
+    .tc-list a.danger.active {
+      color: #c61f4c;
+    }
+  }
+}
+
+#screen {
+  flex: 1;
+  height: 100%;
+  background-color: #f3f2ef;
+
+  #publisher {
+    width: calc(~"100% - 40px");
+    height: calc(~"100% - 30px");
+    border-radius: 40px;
+    margin: 15px 20px 0 20px;
+  }
+
+  footer {
+    color: #9b9c9b;
+    font-size: 8px;
+    line-height: 15px;
+    text-align: right;
+    padding-right: 45px;
+  }
+}

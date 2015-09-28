@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>OpenTok</title>
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="/css/room.opentok.css">
+    <link rel="stylesheet" href="http://fortawesome.github.io/Font-Awesome/assets/font-awesome/css/font-awesome.css">
+  </head>
+
+  <body>
+    <section id="dock">
+      <header class="info">
+        <i data-icon="bars"></i>
+        <h1>
+          <span id="userName"></span> OpenTok <br> Meeting Room
+        </h1>
+        <h2>
+          <i data-icon="users"></i><span id="participants">1</span> participants
+        </h2>
+      </header>
+      <nav class="menu tc-sidebar">
+        <div class="tc-list">
+          <ul>
+            <li>
+              <a href="#"><i data-icon="user-plus"></i>Add to call</a>
+            </li>
+            <li>
+              <a href="#"><i data-icon="video-camera"></i>Start recording</a>
+            </li>
+            <li>
+              <a href="#"><i data-icon="download"></i>View archived recordings (<span id="recordings">0</span>)</a>
+            </li>
+            <li>
+              <a href="#"><i data-icon="desktop"></i>Share your screen</a>
+            </li>
+            <li>
+              <a href="#"><i data-icon="layout"></i>Manage layout</a>
+            </li>
+            <li>
+              <a href="#"><i data-icon="chat"></i>Start text chat</a>
+            </li>
+            <li>
+              <a href="#" class="danger"><i data-icon="end-call"></i>End video call</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </section>
+
+    <section id="screen">
+      <div id="publisher">
+      </div>
+      <footer>
+        Powered by TokBox
+      </footer>
+    </section>
+  </body>
+</html>
