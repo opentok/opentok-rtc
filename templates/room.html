@@ -7,42 +7,46 @@
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="/css/room.opentok.css">
     <link rel="stylesheet" href="http://fortawesome.github.io/Font-Awesome/assets/font-awesome/css/font-awesome.css">
+
+    <script defer type="text/javascript" src="/js/roomView.js"></script>
+    <script defer type="text/javascript" src="/js/roomController.js"></script>
   </head>
 
   <body>
     <section id="dock">
       <header class="info">
-        <i data-icon="bars"></i>
+        <i id="handler" data-icon="bars"></i>
         <h1>
-          <span id="userName"></span> OpenTok <br> Meeting Room
+          <span id="userName"></span><span>OpenTok</span><br><span>Meeting Room</span>
         </h1>
-        <h2>
-          <i data-icon="users"></i><span id="participants">1</span> participants
-        </h2>
+        <h2><span class="participants">1</span></h2>
+        <h3>
+          <i data-icon="users"></i><span class="participants">1</span><span>participants</span>
+        </h3>
       </header>
       <nav class="menu tc-sidebar">
         <div class="tc-list">
           <ul>
             <li>
-              <a href="#"><i data-icon="user-plus"></i>Add to call</a>
+              <a href="#"><i data-icon="user-plus"></i><span>Add to call</span></a>
             </li>
             <li>
-              <a href="#"><i data-icon="video-camera"></i>Start recording</a>
+              <a href="#"><i data-icon="video-camera"></i><span>Start recording</span></a>
             </li>
             <li>
-              <a href="#"><i data-icon="download"></i>View archived recordings (<span id="recordings">0</span>)</a>
+              <a href="#"><i data-icon="download"></i><span>View archived recordings (<span id="recordings">0</span>)</span></a>
             </li>
             <li>
-              <a href="#"><i data-icon="desktop"></i>Share your screen</a>
+              <a href="#"><i data-icon="desktop"></i><span>Share your screen</span></a>
             </li>
             <li>
-              <a href="#"><i data-icon="layout"></i>Manage layout</a>
+              <a href="#"><i data-icon="layout"></i><span>Manage layout</span></a>
             </li>
             <li>
-              <a href="#"><i data-icon="chat"></i>Start text chat</a>
+              <a href="#"><i data-icon="chat"></i><span>Start text chat</span></a>
             </li>
             <li>
-              <a href="#" class="danger"><i data-icon="end-call"></i>End video call</a>
+              <a href="#" class="danger"><i data-icon="end-call"></i><span>End video call</span></a>
             </li>
           </ul>
         </div>
