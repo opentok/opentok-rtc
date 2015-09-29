@@ -18,42 +18,106 @@ body {
   .flex-direction(row);
 }
 
+#dock.collapsed {
+  width: 75px;
+  min-width: auto;
+
+  .info {
+    h1, h3 {
+      span {
+        opacity: 0;
+      }
+    }
+
+    h2 {
+      span {
+        opacity: 1;
+      }
+    }
+
+    h2, h3 {
+      transform: translateY(5px);
+    }
+  }
+
+  .menu {
+    .tc-list a {
+      span {
+        opacity: 0;
+      }
+    }
+  }
+}
+
 #dock {
-  width: 22.5%;
-  min-width: 270px;
+  width: 270px;
   height: 100%;
+
+  transition: width @transitionTime;
 
   display: flex;
   .flex-direction(column);
   .justify-content(center);
   .align-items(center);
 
+  span {
+    transition: opacity @transitionTime;
+  }
+
   .info {
     width: calc(~"100% - 60px");
     background-color: #1a99ce;
-    border-radius: 24px;
+    border-radius: 16px;
     border-top-left-radius: 0;
     margin: 15px 20px;
     padding: 15px 15px 5px 15px;
 
     h1 {
+      height: 48px;
+      overflow: hidden;
+      .truncate();
+      text-overflow: clip;
       font-size: 16px;
       line-height: 24px;
       font-weight: @baseFontWeight;
+      margin: 12px 0 4px 0;
+      padding-bottom: 12px;
+      opacity: 0.8;
       border-bottom: 2px solid @text;
-      margin: 0;
-      padding: 12px 0 12px 0;
-      opacity: .7;
     }
 
     h2 {
-      padding-top: 5px;
-      font-size: 12px;
-      font-weight: @boldFontWeight;
+      margin: 0;
+      width: 100%;
+      font-size: 10px;
+      text-align: center;
+
+      span {
+        opacity: 0;
+      }
     }
 
-    [data-icon]:before {
+    h3 {
+      overflow: hidden;
+      font-size: 12px;
+      font-weight: @boldFontWeight;
+      .truncate();
+      text-overflow: clip;
+      margin-top: 0;
+
+      span {
+        opacity: 1;
+        padding-left: 4px;
+      }
+    }
+
+    h2, h3 {
+      transition: transform @transitionTime;
+    }
+
+    [data-icon="users"] {
       padding-right: 5px;
+      font-size: 14px;
     }
   }
 
@@ -62,24 +126,29 @@ body {
     flex: 1;
     background-color: transparent;
 
-    .tc-list ul {
-      padding-left: 30px;
-    }
-
     .tc-list li {
+      .truncate();
       background-color: transparent;
       border-bottom: 0;
-      padding-left: 0;
+      padding-left: 30px;
     }
 
     .tc-list a {
       color: #9b9c9b;
-      display: inline-block;
-      width: calc(~"100% - 20px");
-      padding-left: 20px;
+      width: calc(~"100% - 16px");
+      padding-left: 16px;
+
+      span {
+        width: 100%;
+      }
+
+      [data-icon] {
+        width: 30px;
+        display: inline-block;
+      }
 
       [data-icon]:before {
-        padding-right: 15px;
+        padding-right: 20px;
       }
 
       &:hover,
@@ -118,6 +187,7 @@ body {
     height: calc(~"100% - 30px");
     border-radius: 40px;
     margin: 15px 20px 0 20px;
+    background-color: #000;
   }
 
   footer {
