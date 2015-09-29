@@ -75,11 +75,10 @@ function ServerMethods() {
   }
 
   function waitForTB(aReq, aRes, aNext) {
-    tbConfigPromise.then( tbConfig => {
+    tbConfigPromise.then(tbConfig => {
       aReq.tbConfig = tbConfig;
       aNext();
-    }
-  );
+    });
   }
 
   // Return the personalized HTML for a room.
