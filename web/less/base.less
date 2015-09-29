@@ -1,0 +1,49 @@
+@import 'flexbox.less';
+
+@import 'fonts.less';
+
+@import 'variables.less';
+
+html {
+  width: 100%;
+  height: 100%;
+  color: @text;
+}
+
+* {
+  font-family: @baseFontFamily;
+  font-weight: @baseFontWeight;
+}
+
+label {
+  font-size: 13px;
+  line-height: 28px;
+  font-weight: 700;
+  padding-right: 7px;
+}
+
+.tc-modal {
+  z-index: -1;
+  display: block;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity @transitionTime;
+
+  &.show {
+    z-index: 100;
+    opacity: 1;
+
+    .tc-dialog {
+      transform: translateY(0);
+    }
+  }
+
+  .tc-dialog {
+    transform: translateY(100%);
+    transition: transform @transitionTime;
+  }
+}
+
+.visible {
+  visibility: visible;
+}
