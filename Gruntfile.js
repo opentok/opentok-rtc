@@ -1,9 +1,5 @@
 'use strict';
 
-var mountFolder = function (connect, dir) {
-  return connect.static(require('path').resolve(dir));
-};
-
 module.exports = function(grunt) {
 
   // To-Do check what we need and add/remove as needed...
@@ -11,24 +7,20 @@ module.exports = function(grunt) {
     'grunt-autoprefixer',
     'grunt-contrib-clean',
 //    'grunt-contrib-compress',
-    'grunt-contrib-connect',
+//    'grunt-contrib-connect',
 //    'grunt-contrib-copy',
     'grunt-contrib-less',
     'grunt-contrib-watch',
     'grunt-mocha-test', // Server side test runner
     'grunt-bower-task',
     'grunt-gitinfo',
-    'grunt-karma' // Client side test runner. TO-DO: Change this for Karma?
+    'grunt-karma' // Client side test runner.
   ].forEach(grunt.loadNpmTasks);
 
   grunt.loadTasks('tasks');
 
   // To create HTML test files from a template. To-Do: Dunno if this is even needed or not
   var TEST_BASE_DIR = 'test/';
-  var TEST_HEADER = grunt.file.read(TEST_BASE_DIR + 'test_header.html');
-  var TEST_FOOTER = grunt.file.read(TEST_BASE_DIR + 'test_footer.html');
-  var TEST_DIR = TEST_BASE_DIR + 'unit/';
-  var TEST_DIR_LENGTH = TEST_DIR.length;
 
   grunt.initConfig({
 
@@ -67,49 +59,10 @@ module.exports = function(grunt) {
       }
     },
 
-    connect: {
-      test: {
-        options: {
-          port: 9002,
-          middleware: function (connect) {
-            return [
-              mountFolder(connect, '.tmp'),
-              mountFolder(connect, 'test'),
-              mountFolder(connect, 'app')
-            ];
-          }
-        }
-      }
-    },
-
     karma: {
-      // To-Do: Read https://github.com/karma-runner/grunt-karma and write this!
-      // Also since this is what used to be needed for grunt-mocha it's probably not
-      // needed at all...
-      options: {
-//        configFile: 'karma.conf.js',
-        port: 9999,
-        singleRun: true,
-        browsers: ['PhantomJS'],
-        logLevel: 'ERROR'
-      },
       unit: {
-        files: {
-          src: grunt.file.
-            expand({},
-                   [TEST_DIR + ('test_' + (grunt.option('testFile') || '*') + '.js')]).map(
-                     function(path) {
-                       var testContent =
-                         '<script src="' + path.replace(TEST_BASE_DIR, '') + '"></script>';
-
-                       var outputFile =
-                         ('gtest_' + path.substring(TEST_DIR_LENGTH)).replace('.js', '.html');
-
-                          grunt.file.write(TEST_BASE_DIR + outputFile, TEST_HEADER + testContent +
-                                           TEST_FOOTER);
-                          return 'http://0.0.0.0:9002/' + outputFile;
-                        }),
-          reporter: grunt.option('testReporter') || 'Spec'
+        options: {
+          configFile: 'karma.conf.js'
         }
       }
     },
@@ -173,7 +126,6 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('clientTest', 'Launch client unit tests in shell with Karma + PhantomJS', [
-    'connect:test',
     'karma',
     'clean:postTest'
   ]);

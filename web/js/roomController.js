@@ -120,13 +120,66 @@
     }
   };
 
-  var init = function(aParams, aRoomName) {
+  function getRoomParams() {
+    if (!exports.RoomController) {
+      throw new Error("Room Controller is not defined. Missing script tag?");
+    }
+    debug = Utils.debug;
+
+    // pathName should be /whatever/roomName or /whatever/roomName?username=usrId
+    debug.log(document.location.pathname);
+    debug.log(document.location.search);
+    var pathName = document.location.pathname.split('/');
+
+    if (!pathName || pathName.length < 2) {
+      debug.log('This should not be happen, it\'s not possible to do a ' +
+		'request without /room/<roomName>[?username=<usr>]');
+      throw new Error('Invalid path');
+    }
+
+    var roomName = '';
+    var length = pathName.length;
+    if (length > 0) {
+      roomName = pathName[length - 1];
+    }
+
+    // Recover user identifier
+    var search = document.location.search;
+    var usrId = '';
+    if (search && search.length > 0) {
+      search = search.substring(1);
+      usrId = search.split('=')[1];
+    }
+    return {
+      username: usrId,
+      roomName: roomName
+    };
+  }
+  
+  function getRoomInfo(aRoomParams) {
+    return Request.
+      getRoomInfo(aRoomParams).
+	then(function(aRoomInfo) {
+	if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId
+	    && aRoomInfo.apiKey && aRoomInfo.username)) {
+	  debug.error('Error getRoomParams [' + aRoomInfo +
+	  ' without correct response');
+	  throw new Error('Error getting room parameters');
+	}
+	return aRoomInfo;
+      });
+  }
+
+  var init = function(aRoomName, aUsername) {
     LazyLoader.dependencyLoad([
       '/js/components/htmlElems.js',
       '/js/helpers/OTHelper.js',
       '/js/roomView.js',
       '/js/chatController.js'
-    ]).then(function() {
+    ]).
+    then(getRoomParams).
+    then(getRoomInfo).
+    then(function(aParams) {
       RoomView.init();
       var usr = aParams.username ?
                   (aParams.username.length > 1000 ?

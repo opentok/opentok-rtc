@@ -2,9 +2,19 @@
   'use strict';
 
   var init = function() {
-    LandingView.init();
+    LazyLoader.dependencyLoad([
+      '/js/components/htmlElems.js',
+      '/js/helpers/OTHelper.js',
+      '/js/roomView.js',
+      '/js/chatController.js'
+    ]).then(function () {
+      LandingView.init();
+    });
   };
 
-  init();
+
+  global.LandingController = {
+    init: init
+  };
 
 }(this);
