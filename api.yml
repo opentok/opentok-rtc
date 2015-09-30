@@ -11,10 +11,13 @@ schemes:
 basePath: /
 produces:
   - application/json
+x-implementation-module: serverMethods.js
+x-implementation-middleware: configReady,
 paths:
   /room/{roomName}:
     get:
       summary: Connects to a new or existing room.
+      x-implemented-in: getRoom
       description: >-
         Returns an HTML document that shows the defined UI for a chat
         'room' where the user may or may not have specified an
@@ -44,6 +47,7 @@ paths:
   /room/{roomName}/info:
     get:
       summary: Information needed to connect to the TB servers.
+      x-implemented-in: getRoomInfo
       description: >-
         Returns the information (sessionId, token, apiKey) that's
         required to connect to an opentok session. The sessionId
@@ -77,6 +81,7 @@ paths:
   /room/{roomName}/archive:
     post:
       summary: Starts/stop an archiving operation.
+      x-implemented-in: postRoomArchive
       description: >-
         Starts or stops an archiving operation. Returns the
         information about the new recording, and inserts that
@@ -114,6 +119,7 @@ paths:
   /archive/{archiveId}:
     get:
       summary: Gets and returns a temporary archive URL.
+      x-implemented-in: getArchive
       description: >-
         Creates a new temporary archive URL to allow the visualization
         or download of an existing archive. The URL created is valid
@@ -137,6 +143,7 @@ paths:
             $ref: '#/definitions/Error'
     delete:
       summary: Erases an archive.
+      x-implemented-in: deleteArchive
       description: >-
         Erases an stored archive.
       tags:
@@ -168,6 +175,8 @@ definitions:
       apiKey:
         type: string
       token:
+        type: string
+      username:
         type: string
       firebasePw:
         type: string
