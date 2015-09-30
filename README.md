@@ -11,7 +11,7 @@ installation at https://opentokrtc.com (TO-DO TO-DO: Fix this!)
 
 ## Installation
 
-### Prerequisites
+#### Prerequisites:
 You'll need:
 
 - NodeJS: https://nodejs.org/en/. You can install it with nvm. You'll
@@ -22,7 +22,7 @@ You'll need:
   need the API Key and secret, which you can get from
   https://dashboard.tokbox.com/ once you've created the account.
 
-### Installation
+#### Installation:
 Execute
 
 ```
