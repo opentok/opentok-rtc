@@ -33,6 +33,7 @@ redis-cli set tb_api_key yourkeyhere
 redis-cli set tb_api_secret yoursecrethere
 npm install
 bower install
+grunt clientBuild
 ```
 
 (replace yourkeyhere and yoursecret here with the API key and API
