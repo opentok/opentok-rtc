@@ -1,4 +1,5 @@
-# opentokRTCV2: Showcase application for the OpenTok API.
+# opentokRTCV2: 
+#### Showcase application for the OpenTok API.
 ## Introduction
 
 This repository holds a complete demo application for the OpenTok API. 
