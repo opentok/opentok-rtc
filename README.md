@@ -22,6 +22,8 @@ You'll need:
 - An active OpenTok account on https://tokbox.com/developer/. You'll
   need the API Key and secret, which you can get from
   https://dashboard.tokbox.com/ once you've created the account.
+- Bower: http://bower.io
+- Grunt: http://gruntjs.com (only if you intend to develop or run the tests)
 
 #### Installation:
 Execute
@@ -30,6 +32,7 @@ Execute
 redis-cli set tb_api_key yourkeyhere
 redis-cli set tb_api_secret yoursecrethere
 npm install
+bower install
 ```
 
 (replace yourkeyhere and yoursecret here with the API key and API
