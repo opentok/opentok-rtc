@@ -11,8 +11,9 @@
     <script defer src="/js/vendor/es6-promise.min.js"></script>
     <script defer src='/js/vendor/ZeroClipboard.min.js'></script>
     <script defer src="/js/components/bubble.js"></script>
-    <script defer src="/js/roomView.js"></script>
-    <script defer src="/js/roomController.js"></script>
+    <script defer src='/js/vendor/lazy_loader.js'></script>
+    <script defer src='/js/rtcApp.js'></script>
+
   </head>
 
   <body>
@@ -20,12 +21,12 @@
       <header class="info">
         <i id="handler" data-icon="bars"></i>
         <h1>
-          <span id="userName"><%= userName %>'s</span><span>OpenTok</span><br>
-          <span id="roomName"><%= roomName %></span><span>Meeting Room</span>
+          <span id="userName"><%= userName %></span> <span>OpenTok</span><br>
+          <span id="roomName"><%= roomName %></span> <span>Meeting Room</span>
         </h1>
-        <h2><span class="participants">1</span></h2>
+        <h2><span class="participants"></span></h2>
         <h3>
-          <i data-icon="users"></i><span class="participants">1</span><span>participants</span>
+          <i data-icon="users"></i><span class="participants"></span><span>participants</span>
         </h3>
       </header>
       <nav class="menu tc-sidebar">
@@ -47,10 +48,10 @@
               <a><i data-icon="layout"></i><span>Manage layout</span></a>
             </li>
             <li>
-              <a><i data-icon="chat"></i><span>Start text chat</span></a>
+              <a id="startChat"><i data-icon="chat"></i><span>Start text chat</span></a>
             </li>
             <li>
-              <a class="danger"><i data-icon="end-call"></i><span>End video call</span></a>
+              <a id="endCall" class="danger"><i data-icon="end-call"></i><span>End video call</span></a>
             </li>
           </ul>
         </div>
@@ -58,8 +59,8 @@
     </section>
 
     <section id="screen">
-      <div id="publisher">
-      </div>
+      <div id="subscriber" class="subscriber"></div>
+      <div id="publisher" class="publisher"></div>
       <footer>
         Powered by TokBox
       </footer>
@@ -73,6 +74,20 @@
           <input class="tc-input block" onclick="this.select();">
         </div>
       </section>
+    </section>
+
+    <section id="chat">
+      <form class="dialog-chat" id="chatForm">
+        <header>
+          <i data-icon="chat-view"></i> Chat: <span id="chatName"></span><button id="closeChat"><i data-icon="close-chat"></i></button>
+        </header>
+        <div id="chatMsgs">
+        </div>
+        <footer>
+          <input class ="tc-input block" placeholder="New message here" id="msgText">
+          <button id="sendTxt" type="submit">Send</button>
+        </footer>
+      </form>
     </section>
   </body>
 </html>

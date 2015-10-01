@@ -186,14 +186,6 @@ body {
   height: 100%;
   background-color: #f3f2ef;
 
-  #publisher {
-    width: calc(~"100% - 40px");
-    height: calc(~"100% - 30px");
-    border-radius: 40px;
-    margin: 15px 20px 0 20px;
-    background-color: #000;
-  }
-
   footer {
     color: #9b9c9b;
     font-size: 8px;
@@ -201,4 +193,103 @@ body {
     text-align: right;
     padding-right: 45px;
   }
+
+  .subscriber {
+    left: 0;
+    top: 0;
+    width: calc(~"100% - 40px");
+    height: calc(~"100% - 30px");
+    background-color: grey;
+    margin: 15px 20px 0 20px;
+    border-radius: 8px;
+    border: 8px solid white;
+    margin: 1px 20px 0 1px;
+  }
+
+  .publisher {
+    z-index: 10;
+    position: absolute;
+    width: calc(~"20% - 40px");
+    height: calc(~"20% - 30px");
+    border-radius: 8px;
+    margin: 30px 20px 0px 20px;
+    left: 78%;
+    top: 0;
+    border: 5px solid white;
+    background-color: #C0C0C0;
+  }
+}
+
+
+#chat {
+  position: fixed;//absolute;
+  width: 30%;
+  height: 35%;
+  margin: 1px 1px 1px 1px;
+  right: 4%;
+  bottom: 2%;
+  background: rgba(0, 0, 0, 0.7);
+  border: 3px solid white;
+  background-color: white;
+}
+
+.dialog-chat header {
+  font-size: 12px;
+  //line-height: 28px;
+  text-align: left;
+  margin-top: 1px;
+  margin-bottom: 10px;
+  white-space: nowrap;
+  background-color: #d3d3d3;
+  padding:3px;
+}
+
+.dialog-chat img {
+  float: left;
+}
+
+.dialog-chat button {
+  float:right;
+}
+
+.dialog-chat {
+  position: relative;
+  background: white;
+  color: #31313d;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 25px;
+  padding: 4px 4px 4px 4px;
+  border-radius: 4px;
+}
+
+.dialog-chat div {
+  height: 80%;
+}
+
+.dialog-chat footer {
+  font-size: 12px;
+  line-height: 28px;
+  text-align: left;
+  background-color: #d3d3d3;
+  padding:3px 3px 20px 3px;
+}
+
+.chat-show {
+  visibility: block;
+  display: block;
+}
+
+.chat-hidden {
+  visibility: hidden;
+  display: none;
+}
+
+.alert {
+  color: #c61f4c;
+}
+
+#chatMsgs {
+  overflow-y: scroll;
+  height: 70%;
 }
