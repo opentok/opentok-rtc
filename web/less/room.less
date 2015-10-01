@@ -9,8 +9,8 @@
 @import '../bower_components/lists/lists.less';
 
 @import 'base.less';
-
 @import 'icons.less';
+@import 'bubble.less';
 
 body {
   margin: 0;
@@ -156,26 +156,26 @@ body {
       }
 
       &:hover,
-      &:focus,
-      &:active,
-      &.active {
-        color: #1a99ce;
-        background-color: #f3f2ef;
-      }
-
-      .tc-list a:hover,
-      .tc-list a:focus,
-      .tc-list a:active,
-      .tc-list a.active {
+      &:active {
         color: #1a99ce;
         background-color: #f3f2ef;
       }
     }
 
-    .tc-list a.danger:hover,
-    .tc-list a.danger:focus,
-    .tc-list a.danger:active,
-    .tc-list a.danger.active {
+    .tc-list a.zeroclipboard-is-hover {
+      color: #1a99ce;
+      background-color: #f3f2ef;
+    }
+
+    .tc-list a.zeroclipboard-is-active {
+      background-color: none;
+    }
+
+    .tc-list a * {
+      pointer-events: none;
+    }
+
+    .tc-list a.danger:hover {
       color: #c61f4c;
     }
   }
