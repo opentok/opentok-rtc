@@ -8,8 +8,11 @@
     <link rel="stylesheet" href="/css/room.opentok.css">
     <link rel="stylesheet" href="http://fortawesome.github.io/Font-Awesome/assets/font-awesome/css/font-awesome.css">
 
-    <script defer type="text/javascript" src="/js/roomView.js"></script>
-    <script defer type="text/javascript" src="/js/roomController.js"></script>
+    <script defer src="/js/vendor/es6-promise.min.js"></script>
+    <script defer src='/js/vendor/ZeroClipboard.min.js'></script>
+    <script defer src="/js/components/bubble.js"></script>
+    <script defer src="/js/roomView.js"></script>
+    <script defer src="/js/roomController.js"></script>
   </head>
 
   <body>
@@ -29,25 +32,25 @@
         <div class="tc-list">
           <ul>
             <li>
-              <a href="#"><i data-icon="user-plus"></i><span>Add to call</span></a>
+              <a id="addToCall"><i data-icon="user-plus"></i><span>Add to call</span></a>
             </li>
             <li>
-              <a href="#"><i data-icon="video-camera"></i><span>Start recording</span></a>
+              <a><i data-icon="video-camera"></i><span>Start recording</span></a>
             </li>
             <li>
-              <a href="#"><i data-icon="download"></i><span>View archived recordings (<span id="recordings">0</span>)</span></a>
+              <a><i data-icon="download"></i><span>View archived recordings (<span id="recordings">0</span>)</span></a>
             </li>
             <li>
-              <a href="#"><i data-icon="desktop"></i><span>Share your screen</span></a>
+              <a><i data-icon="desktop"></i><span>Share your screen</span></a>
             </li>
             <li>
-              <a href="#"><i data-icon="layout"></i><span>Manage layout</span></a>
+              <a><i data-icon="layout"></i><span>Manage layout</span></a>
             </li>
             <li>
-              <a href="#"><i data-icon="chat"></i><span>Start text chat</span></a>
+              <a><i data-icon="chat"></i><span>Start text chat</span></a>
             </li>
             <li>
-              <a href="#" class="danger"><i data-icon="end-call"></i><span>End video call</span></a>
+              <a class="danger"><i data-icon="end-call"></i><span>End video call</span></a>
             </li>
           </ul>
         </div>
@@ -60,6 +63,16 @@
       <footer>
         Powered by TokBox
       </footer>
+    </section>
+
+    <section class="bubbles">
+      <section for="addToCall" class="bubble">
+        <div class="bubble-content">
+          <p>Room link has been copied.</p>
+          <p>Share link to add others to the call.</p>
+          <input class="tc-input block" onclick="this.select();">
+        </div>
+      </section>
     </section>
   </body>
 </html>

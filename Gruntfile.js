@@ -153,7 +153,9 @@ module.exports = function(grunt) {
         tasks: ['less', 'autoprefixer'],
         options: {
           nospawn: true,
-          livereload: true
+          livereload: {
+            port: 35730
+          }
         }
       }
     }
