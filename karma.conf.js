@@ -17,13 +17,14 @@ module.exports = function(config) {
     files: [
       {pattern: 'test/lib/chai/chai.js', include: true},
       'test/lib/**/*.js',
-      'web/js/vendor/es6-promise.min.js',
+      'web/js/vendor/**/*.js',
+      'web/js/libs/utils.js',
       'web/js/components/modal.js',
-      'web/js/landingView.js',
-      'web/js/roomView.js',
-      'web/js/roomController.js',
-      'web/js/landingController.js',
-      'web/**/*.js',
+      'web/js/landingView.js', // Don't load the views yet
+//      'web/js/landingController.js',
+//      'web/js/roomView.js',
+//      'web/js/roomController.js', // TO-DO...
+//      'web/**/*.js',
       'test/unit/**/*.html',
       'test/unit/**/*.js'
     ],
@@ -68,11 +69,11 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['PhantomJS', 'Firefox'],
+    browsers: ['Firefox', 'Chrome'],
 
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
     singleRun: false
-  })
+  });
 }
