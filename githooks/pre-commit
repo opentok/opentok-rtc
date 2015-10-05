@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# We should run the linter here also
+
+grunt precommit
