@@ -91,7 +91,8 @@
 
     var info = HTMLElems.createElementAt(item, 'p');
 
-    HTMLElems.createElementAt(info, 'span', null, 'Guest: ' + data.sender);
+    var sender = (data.sender === _usrId ? '' : 'Guest: ') + data.sender;
+    HTMLElems.createElementAt(info, 'span', null, sender);
     var time = HTMLElems.createElementAt(info, 'span', null, data.time);
     time.classList.add('time');
 

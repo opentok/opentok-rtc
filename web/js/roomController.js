@@ -155,22 +155,23 @@
       roomName: roomName
     };
   }
-  
+
   function getRoomInfo(aRoomParams) {
     return Request.
       getRoomInfo(aRoomParams).
-	then(function(aRoomInfo) {
-	if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId
-	    && aRoomInfo.apiKey && aRoomInfo.username)) {
-	  debug.error('Error getRoomParams [' + aRoomInfo +
-	  ' without correct response');
-	  throw new Error('Error getting room parameters');
-	}
-	return aRoomInfo;
+	     then(function(aRoomInfo) {
+	     if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId
+	         && aRoomInfo.apiKey && aRoomInfo.username)) {
+	       debug.error('Error getRoomParams [' + aRoomInfo +
+	                   ' without correct response');
+	       throw new Error('Error getting room parameters');
+	     }
+       aRoomInfo.roomName = aRoomParams.roomName;
+	     return aRoomInfo;
       });
   }
 
-  var init = function(aRoomName, aUsername) {
+  var init = function() {
     LazyLoader.dependencyLoad([
       '/js/components/htmlElems.js',
       '/js/helpers/OTHelper.js',
@@ -201,7 +202,7 @@
       var publish = OTHelper.publish.bind(OTHelper, RoomView.publisherId,
                                           publisherOptions);
       ChatController.
-        init(aRoomName, usr, _allHandlers).
+        init(aParams.roomName, usr, _allHandlers).
         then(connect).
         then(publish).
         then(function() {
