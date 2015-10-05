@@ -53,7 +53,7 @@
       '/js/components/chat.js',
       '/js/chatView.js'
     ]).then(function() {
-      ChatView.init(aRoomName, aUsrId);
+      ChatView.init(aUsrId, aRoomName);
       _usrId = aUsrId;
       return addHandlers(aGlobalHandlers);
     });
