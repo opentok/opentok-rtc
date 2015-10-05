@@ -20,7 +20,7 @@
     var min = now.getMinutes().toString();
     var hours = now.getHours().toString();
     var ampm = now.getHours() >= 12 ? 'PM' : 'AM';
-    return hours + ':' + min + ampm;
+    return hours + ':' + min + ' ' + ampm;
   };
 
   var inspectObject = function(obj){
