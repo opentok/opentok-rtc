@@ -126,7 +126,7 @@
     }
     debug = Utils.debug;
 
-    // pathName should be /whatever/roomName or /whatever/roomName?username=usrId
+    // pathName should be /room/<roomName>[?username=<userName>]
     debug.log(document.location.pathname);
     debug.log(document.location.search);
     var pathName = document.location.pathname.split('/');
@@ -159,15 +159,15 @@
   function getRoomInfo(aRoomParams) {
     return Request.
       getRoomInfo(aRoomParams).
-	     then(function(aRoomInfo) {
-	     if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId
-	         && aRoomInfo.apiKey && aRoomInfo.username)) {
-	       debug.error('Error getRoomParams [' + aRoomInfo +
-	                   ' without correct response');
-	       throw new Error('Error getting room parameters');
-	     }
-       aRoomInfo.roomName = aRoomParams.roomName;
-	     return aRoomInfo;
+	    then(function(aRoomInfo) {
+	      if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId
+	          && aRoomInfo.apiKey && aRoomInfo.username)) {
+	        debug.error('Error getRoomParams [' + aRoomInfo +
+                      ' without correct response');
+	        throw new Error('Error getting room parameters');
+	      }
+        aRoomInfo.roomName = aRoomParams.roomName;
+	      return aRoomInfo;
       });
   }
 
