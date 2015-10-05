@@ -3,49 +3,45 @@
 
   var debug;
 
-  var usrId;
-  var roomName;
-  var room;
+  var _views = {
+    '/room/': {
+      mainView: 'RoomController',
+      dependencies: [
+	'RoomController'
+      ]
+    },
+    '/': {
+      mainView: 'LandingController',
+      dependencies: [
+	'LandingController'
+      ]
+    }
+  };
+
+  function getView() {
+    var pathViews = Object.keys(_views);
+    var numViews = pathViews.length;
+    var path = exports.document.location.pathname;
+    for(var i = 0; i < numViews; i++) {
+      if (path.startsWith(pathViews[i]) &&
+          _views[pathViews[i]].
+            dependencies.
+            every(function(dependency) {
+              return !!exports[dependency];
+            })) {
+        return exports[_views[pathViews[i]].mainView];
+      }
+    }
+    return null;
+  }
 
   function init() {
-    debug = Utils.debug;
-
-    // pathName should be /whatever/roomName or /whatever/roomName?username=usrId
-    debug.log( document.location.pathname);
-    debug.log(document.location.search);
-    var pathName = document.location.pathname.split('/');
-
-    if (!pathName || pathName.length < 2) {
-      debug.log('This should not be happen, it\'s not possible to do a ' +
-                'request without /room/<roomName>[?username=<usr>]');
+    var view = getView();
+    if (view) {
+      view.init();
+    } else {
+      console.log('Couldn\'t find a view for ' + exports.document.location.pathname);
     }
-
-    var roomName = '';
-    var length = pathName.length;
-    if (length > 0) {
-      roomName = pathName[length - 1];
-    }
-
-    // Recover user identifier
-    var search = document.location.search;
-    var usrId = '';
-    if (search && search.length > 0) {
-      search = search.substring(1);
-      usrId = search.split('=')[1];
-    }
-
-    //this will change when server api will be defined
-    Request.getRoomParams(roomName, usrId).then(function(roomParams) {
-      if (!(roomParams && roomParams.token && roomParams.sessionId
-            && roomParams.apiKey && roomParams.username)) {
-        debug.error('Error getRoomParams [' + roomParams +
-                    ' without correct response');
-        return;
-      }
-      room = RoomController.init(roomParams, roomName);
-    }).catch(function(evt) {
-      debug.error('Error getting room parameters' + evt);
-    });
   };
 
   exports.RTCApp = {
@@ -54,12 +50,16 @@
 
 }(this);
 
-window.addEventListener('load', function showBody() {
+
+this.addEventListener('load', function startApp() {
+  // Check that everything was loaded correctly, or just use LazyLoader here...
   LazyLoader.dependencyLoad([
     '/js/libs/utils.js',
     '/js/helpers/requests.js',
-    '/js/roomController.js'
+    '/js/roomController.js',
+    '/js/landingController.js'
   ]).then(function() {
     RTCApp.init();
   });
+
 });

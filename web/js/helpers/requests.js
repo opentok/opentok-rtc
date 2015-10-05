@@ -33,10 +33,11 @@
     });
   }
 
-  function getRoomParams(roomName, usrId) {
-    var userName = usrId ? '?userName=' + usrId : '';
+  function getRoomInfo(aRoomParams) {
+    
+    var userName = aRoomParams.username ? '?userName=' + aRoomParams.username : '';
 
-    return sendXHR('GET', server + '/room/' + roomName + '/info' + userName).
+    return sendXHR('GET', server + '/room/' + aRoomParams.roomName + '/info' + userName).
       then(function(roomInfo) {
         if (!(roomInfo && roomInfo.sessionId)) {
           throw new Error('Room\'s data could not be recovered');
@@ -56,7 +57,7 @@
   }
 
   var Request = {
-    getRoomParams: getRoomParams
+    getRoomInfo: getRoomInfo
   };
 
   exports.Request = Request;

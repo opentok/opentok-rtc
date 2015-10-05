@@ -2,9 +2,16 @@
   'use strict';
 
   var init = function() {
-    LandingView.init();
+    LazyLoader.dependencyLoad([
+      '/js/landingView.js'
+    ]).then(function () {
+      LandingView.init();
+    });
   };
 
-  init();
+
+  global.LandingController = {
+    init: init
+  };
 
 }(this);

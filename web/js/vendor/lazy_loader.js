@@ -151,7 +151,7 @@ var LazyLoader = (function() {
             this['_' + method](file, perFileCallback.bind(null, idx));
           }
         }
-      }.bind(self));  //Bind lo he puesto yo
+      }.bind(self));
     }
   };
 

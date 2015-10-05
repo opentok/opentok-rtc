@@ -3,7 +3,7 @@
 
   var transEndEventName =
     ('WebkitTransition' in document.documentElement.style) ?
-     'webkitTransitionEnd' : 'transitionend'
+    'webkitTransitionEnd' : 'transitionend';
 
   function show(selector) {
     return new Promise(function(resolve, reject) {
