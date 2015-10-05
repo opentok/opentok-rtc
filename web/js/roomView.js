@@ -20,7 +20,7 @@
     dock = document.getElementById('dock');
     screen = document.getElementById('screen');
     handler = dock.querySelector('#handler');
-    
+
     startChatBtn = dock.querySelector('#startChat');
     roomNameElem = dock.querySelector('#roomName');
     roomUserElem = dock.querySelector('#userName');
@@ -82,10 +82,14 @@
     });
   };
 
+  var getURLtoShare = function() {
+    return window.location.origin + window.location.pathname;
+  };
+
   var addClipboardFeature = function() {
     var input = document.querySelector('.bubble[for="addToCall"] input');
     var linkToShare = document.querySelector('#addToCall');
-    input.value = linkToShare.dataset.clipboardText = window.location.href;
+    input.value = linkToShare.dataset.clipboardText = getURLtoShare();
     var zc = new ZeroClipboard(linkToShare);
   };
 
