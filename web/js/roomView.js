@@ -5,16 +5,29 @@
 
   var PUBLISHER_DIV_ID = 'publisher';
 
-  var dock = document.getElementById('dock');
-  var screen = document.getElementById('screen');
-  var handler = dock.querySelector('#handler');
+  // HTML elements for the view
+  var dock,
+      screen,
+      handler,
+      startChatBtn,
+      roomNameElem,
+      roomUserElem,
+      participantsNumberElem,
+      subscribersElem;
 
-  var startChatBtn = dock.querySelector('#startChat');
-  var roomNameElem = dock.querySelector('#roomName');
-  var roomUserElem = dock.querySelector('#userName');
-  var participantsNumberElem = dock.querySelectorAll('.participants');
 
-  var subscribersElem = screen.querySelector('#subscriber');
+  function initHTMLElements() {
+    dock = document.getElementById('dock');
+    screen = document.getElementById('screen');
+    handler = dock.querySelector('#handler');
+    
+    startChatBtn = dock.querySelector('#startChat');
+    roomNameElem = dock.querySelector('#roomName');
+    roomUserElem = dock.querySelector('#userName');
+    participantsNumberElem = dock.querySelectorAll('.participants');
+
+    subscribersElem = screen.querySelector('#subscriber');
+  }
 
   var roomNameSuffix = 'Meeting Room';
   var USER_NAME_SUFFIX = '\'s';
@@ -77,6 +90,7 @@
   };
 
   var init = function() {
+    initHTMLElements();
     addHandlers();
     // Due to security issues, flash cannot access the clipboard unless the
     // action originates from a click with a flash object.

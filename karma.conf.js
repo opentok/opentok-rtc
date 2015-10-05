@@ -21,10 +21,12 @@ module.exports = function(config) {
       'web/js/libs/utils.js',
       'web/js/components/modal.js',
       'web/js/landingView.js', // Don't load the views yet
-//      'web/js/landingController.js',
-//      'web/js/roomView.js',
-//      'web/js/roomController.js', // TO-DO...
-//      'web/**/*.js',
+      'web/js/landingController.js',
+      'web/js/roomView.js',
+      'web/js/roomController.js', // TO-DO...
+      'web/js/chatView.js',
+      'web/js/chatController.js',
+      'web/**/*.js',
       'test/unit/**/*.html',
       'test/unit/**/*.js'
     ],

@@ -6,17 +6,29 @@
   var _roomName;
   var _isVisible;
 
-  var chatWndElem = document.getElementById('chat');
-  //var closeChatBtn = chatWndElem.querySelector('
-  var closeChatBtn = chatWndElem.querySelector('#closeChat');
-  var sendMsgBtn = chatWndElem.querySelector('#sendTxt');
-  var chatMsgInput = chatWndElem.querySelector('#msgText');
-  var chatNameElem = chatWndElem.querySelector('#chatName');
-  var chatContentDiv = chatWndElem.querySelector('#chatMsgs');
-  var chatForm = chatWndElem.querySelector('#chatForm');
+  var chatWndElem,
+    // closeChatBtn,
+      closeChatBtn,
+      sendMsgBtn,
+      chatMsgInput,
+      chatNameElem,
+      chatContentDiv,
+      chatForm;
 
   var debug = Utils.debug;
 
+
+  function initHTMLElements() {
+    chatWndElem = document.getElementById('chat');
+    //var closeChatBtn = chatWndElem.querySelector('
+    closeChatBtn = chatWndElem.querySelector('#closeChat');
+    sendMsgBtn = chatWndElem.querySelector('#sendTxt');
+    chatMsgInput = chatWndElem.querySelector('#msgText');
+    chatNameElem = chatWndElem.querySelector('#chatName');
+    chatContentDiv = chatWndElem.querySelector('#chatMsgs');
+    chatForm = chatWndElem.querySelector('#chatForm');
+  }
+  
   // The ChatController should have the handlers and call the view for
   // doing visual work
   function addHandlers() {
@@ -85,6 +97,7 @@
   }
 
   function init(aUsrId, aRoomName) {
+    initHTMLElements();
     ChatView.visible = false;
     _usrId = aUsrId;
     setRoomName(aRoomName);
