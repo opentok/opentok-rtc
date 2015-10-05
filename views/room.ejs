@@ -79,9 +79,11 @@
     <section id="chat">
       <form class="dialog-chat" id="chatForm">
         <header>
-          <i data-icon="chat-view"></i> Chat: <span id="chatName"></span><button id="closeChat"><i data-icon="close-chat"></i></button>
+          <i data-icon="chat-view"></i><span>Chat:</span><span id="chatName"></span><a id="closeChat"><i data-icon="close-chat"></i></a>
         </header>
-        <div id="chatMsgs">
+        <div id="chatMsgs" class="tc-list">
+          <ul>
+          </ul>
         </div>
         <footer>
           <input class ="tc-input block" placeholder="New message here" id="msgText">

@@ -45,9 +45,9 @@
 
   function toggleChatNotification() {
     if (!ChatView.visible) {
-      startChatBtn.classList.add('alert');
+      startChatBtn.classList.add('highlight');
     } else {
-      startChatBtn.classList.remove('alert');
+      startChatBtn.classList.remove('highlight');
     }
   }
 
@@ -74,7 +74,6 @@
           toggleChatNotification();
           break;
         case 'endCall':
-          ChatView.visible = false;
           RoomView.participantsNumber = 0;
           OTHelper.disconnectFromSession();
           break;

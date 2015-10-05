@@ -4,7 +4,6 @@
   var UNKNOWN = 'Unknown';
   var _usrId;
   var _roomName;
-  var _isVisible;
 
   var chatWndElem,
     // closeChatBtn,
@@ -12,7 +11,8 @@
       sendMsgBtn,
       chatMsgInput,
       chatNameElem,
-      chatContentDiv,
+      chatContainer,
+      chatContent,
       chatForm;
 
   var debug = Utils.debug;
@@ -25,10 +25,11 @@
     sendMsgBtn = chatWndElem.querySelector('#sendTxt');
     chatMsgInput = chatWndElem.querySelector('#msgText');
     chatNameElem = chatWndElem.querySelector('#chatName');
-    chatContentDiv = chatWndElem.querySelector('#chatMsgs');
+    chatContainer = chatWndElem.querySelector('#chatMsgs');
+    chatContent = chatContainer.querySelector('ul');
     chatForm = chatWndElem.querySelector('#chatForm');
   }
-  
+
   // The ChatController should have the handlers and call the view for
   // doing visual work
   function addHandlers() {
@@ -86,9 +87,20 @@
   }
 
   function insertChatLine(data) {
-    HTMLElems.createElementAt(chatContentDiv, 'p', null,
-                              'Guest:' + data.sender + ':' + data.time, false);
-    HTMLElems.createElementAt(chatContentDiv, 'p', null, data.text, false);
+    var item = HTMLElems.createElementAt(chatContent, 'li');
+
+    var info = HTMLElems.createElementAt(item, 'p');
+
+    HTMLElems.createElementAt(info, 'span', null, 'Guest: ' + data.sender);
+    var time = HTMLElems.createElementAt(info, 'span', null, data.time);
+    time.classList.add('time');
+
+    HTMLElems.createElementAt(info, 'p', null, data.text);
+    scrollTo(item);
+  }
+
+  function scrollTo(item) {
+    chatContainer.scrollTop = chatContent.offsetHeight + item.clientHeight;
   }
 
   function setRoomName(name) {
@@ -103,23 +115,20 @@
     setRoomName(aRoomName);
 
     addHandlers();
+    Chat.init();
   }
 
   var ChatView = {
     init: init,
+
     set visible(value) {
-      _isVisible = value;
-      if (value) {
-        chatWndElem.classList.remove('chat-hidden');
-        chatWndElem.classList.add('chat-show');
-      } else {
-        chatWndElem.classList.remove('chat-show');
-        chatWndElem.classList.add('chat-hidden');
-      }
+      value ? Chat.show() : Chat.hide();
     },
+
     get visible() {
-      return _isVisible;
+      return Chat.visible;
     },
+
     insertChatLine: insertChatLine
   };
 
