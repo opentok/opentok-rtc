@@ -60,10 +60,13 @@ module.exports = function(grunt) {
     },
 
     karma: {
-      unit: {
-        options: {
-          configFile: 'karma.conf.js'
-        }
+      options: {
+	configFile: 'karma.conf.js'
+      },
+      integration: {
+	singleRun: true
+      },
+      dev: {
       }
     },
 
@@ -97,7 +100,7 @@ module.exports = function(grunt) {
       },
       dist: {
         src: 'web/css/*.css'
-      },
+      }
     },
 
     watch: {
@@ -126,10 +129,13 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('clientTest', 'Launch client unit tests in shell with Karma + PhantomJS', [
-    'karma',
-    'clean:postTest'
+    'karma:dev'
   ]);
 
+  grunt.registerTask('precommit', 'Run precommit tests', [
+    'karma:integration'
+  ]);
+  
   grunt.registerTask('serverUnitTest', 'Launch server unit tests', [
     'clean:server',
     'mochaTest:unit'
