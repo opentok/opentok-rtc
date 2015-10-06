@@ -7,13 +7,13 @@
     '/room/': {
       mainView: 'RoomController',
       dependencies: [
-	'RoomController'
+        'RoomController'
       ]
     },
     '/': {
       mainView: 'LandingController',
       dependencies: [
-	'LandingController'
+        'LandingController'
       ]
     }
   };
@@ -24,11 +24,11 @@
     var path = exports.document.location.pathname;
     for(var i = 0; i < numViews; i++) {
       if (path.startsWith(pathViews[i]) &&
-          _views[pathViews[i]].
-            dependencies.
-            every(function(dependency) {
-              return !!exports[dependency];
-            })) {
+        _views[pathViews[i]].
+          dependencies.
+          every(function(dependency) {
+            return !!exports[dependency];
+          })) {
         return exports[_views[pathViews[i]].mainView];
       }
     }

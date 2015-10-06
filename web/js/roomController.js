@@ -44,6 +44,7 @@
       // A client, other than your own, has disconnected from the session
       numUsrsInRoom--;
       RoomView.participantsNumber = numUsrsInRoom;
+      RoomView.deleteSubscriberView(evt.connection.connectionId);
     },
     'sessionDisconnected': function(evt) {
       // The client has disconnected from the session.
@@ -67,7 +68,8 @@
       // dispatches a streamCreated event. For a code example and more details,
       // see StreamEvent.
       numUsrsInRoom++;
-      var subsDiv = RoomView.createSubscriberView(numUsrsInRoom);
+      var subsDiv =
+        RoomView.createSubscriberView(evt.stream.connection.connectionId);
 
       this.subscribe(evt.stream, subsDiv, subscriberOptions, function(error) {
         if (error) {
@@ -175,6 +177,7 @@
     LazyLoader.dependencyLoad([
       '/js/components/htmlElems.js',
       '/js/helpers/OTHelper.js',
+      '/js/layout.js',
       '/js/roomView.js',
       '/js/chatController.js'
     ]).
