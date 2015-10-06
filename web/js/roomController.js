@@ -5,6 +5,8 @@
 
   var numUsrsInRoom = 0;
 
+  var MAIN_PAGE = '/index.html';
+
   var subscriberOptions = {
     height: '100%',
     width: '100%',
@@ -158,18 +160,26 @@
     };
   }
 
+  function addCustomEventsHandlers() {
+    exports.addEventListener('roomView:endCall', function endCall() {
+      var url = window.location.protocol + '//' + window.location.host +
+                MAIN_PAGE;
+      window.location = url;
+    });
+  }
+
   function getRoomInfo(aRoomParams) {
     return Request.
       getRoomInfo(aRoomParams).
-	    then(function(aRoomInfo) {
-	      if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId
-	          && aRoomInfo.apiKey && aRoomInfo.username)) {
-	        debug.error('Error getRoomParams [' + aRoomInfo +
+        then(function(aRoomInfo) {
+               if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId
+                   && aRoomInfo.apiKey && aRoomInfo.username)) {
+                 debug.error('Error getRoomParams [' + aRoomInfo +
                       ' without correct response');
-	        throw new Error('Error getting room parameters');
-	      }
+                 throw new Error('Error getting room parameters');
+        }
         aRoomInfo.roomName = aRoomParams.roomName;
-	      return aRoomInfo;
+        return aRoomInfo;
       });
   }
 
@@ -184,6 +194,7 @@
     then(getRoomParams).
     then(getRoomInfo).
     then(function(aParams) {
+      addCustomEventsHandlers();
       RoomView.init();
       var usr = aParams.username ?
                   (aParams.username.length > 1000 ?
