@@ -86,6 +86,13 @@
     sendMsgBtn.addEventListener('click', onClickSend);
   }
 
+  function insertChatEvent(data) {
+    var item = HTMLElems.createElementAt(chatContent, 'li');
+    var info = HTMLElems.createElementAt(item, 'p');
+    HTMLElems.createElementAt(info, 'p', null, data);
+    scrollTo(item);
+  }
+
   function insertChatLine(data) {
     var item = HTMLElems.createElementAt(chatContent, 'li');
 
@@ -129,7 +136,8 @@
       return Chat.visible;
     },
 
-    insertChatLine: insertChatLine
+    insertChatLine: insertChatLine,
+    insertChatEvent: insertChatEvent
   };
 
   exports.ChatView = ChatView;
