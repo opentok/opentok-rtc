@@ -13,6 +13,9 @@
   var _creationTime;
   var _myCreationTime;
 
+  var CONN_SUFIX = ' has connected';
+  var DISCONN_SUFIX = ' has disconnected';
+
   function loadChat(data) {
     if (data) {
       for (var i = 0, l = data.length; i < l; i++) {
@@ -113,6 +116,10 @@
       // Session object also dispatches a sessionConnected evt when your local
       // client connects
         evt.connection.data && proccessNewConnection(evt);
+        var newUsrName = JSON.parse(evt.connection.data).userName;
+        if (newUsrName !== _usrId) {
+          ChatView.insertChatEvent( newUsrName + CONN_SUFIX);
+        }
     },
     'sessionConnected': function(evt) {
       _myCreationTime = evt.target.connection.creationTime;
@@ -126,6 +133,7 @@
         _connectedEarlierThanMe--;
       }
       cancelPendingSendHistory(evt.connection.connectionId);
+      ChatView.insertChatEvent(JSON.parse(evt.connection.data).userName + DISCONN_SUFIX);
     }
   };
 
