@@ -110,7 +110,6 @@
     init: init,
     set roomName(value) {
       HTMLElems.addText(roomNameElem, value);
-      debug.log("roomNameEleme:"+roomNameElem);
       HTMLElems.createElementAt(roomNameElem, 'p', null, roomNameSuffix,false);
     },
     set userName(value) {

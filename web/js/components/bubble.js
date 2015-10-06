@@ -78,7 +78,7 @@
   };
 
   Bubble.prototype = {
-    show() {
+    show: function() {
       var bubble = this;
 
       this.bubbleShown =
@@ -102,7 +102,7 @@
       return this.bubbleShown;
     },
 
-    hide() {
+    hide: function() {
       var bubble = this;
 
       this.bubbleHidden =
@@ -125,11 +125,11 @@
       return this.bubbleHidden;
     },
 
-    _onShown(e) {
+    _onShown: function(e) {
       addGlobalHandlers();
     },
 
-    _onHidden(e) {
+    _onHidden: function(e) {
       e.target.removeEventListener(transEndEventName, this._onHidden);
       this._visible = false;
     },
@@ -139,7 +139,7 @@
       value ? classList.add('visible') : classList.remove('visible');
     },
 
-    _takePlace() {
+    _takePlace: function() {
       var rectObject = this.associatedWith.getBoundingClientRect();
       var x = rectObject.right + HORIZONTAL_OFFSET;
       var y = rectObject.top - (rectObject.height / 2);
@@ -156,7 +156,7 @@
      *
      * @param {String} Id of the element which is associated with the bubble
      */
-    get(id) {
+    get: function(id) {
       var instance = bubbles[id];
 
       if (!instance) {

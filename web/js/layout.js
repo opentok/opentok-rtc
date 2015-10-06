@@ -6,20 +6,20 @@ var Layout = function(selector) {
 };
 
 Layout.prototype = {
-  append(id) {
+  append: function(id) {
     var item = HTMLElems.createElementAt(this.container, this.itemType);
     item.dataset.id = id;
     this.rearrange();
     return item;
   },
 
-  remove(id) {
+  remove: function(id) {
     this.container.
       removeChild(this.container.querySelector('[data-id="' + id + '"]'));
     this.rearrange();
   },
 
-  rearrange() {
+  rearrange: function() {
     var features = this.features();
     Array.prototype.map.call(this.container.children, function(item) {
       var style = item.style;
@@ -29,7 +29,7 @@ Layout.prototype = {
     });
   },
 
-  features() {
+  features: function() {
     return {};
   }
 };
@@ -46,14 +46,14 @@ var Grid = function(selector) {
 Grid.prototype = {
   __proto__: Layout.prototype,
 
-  append(id) {
+  append: function(id) {
     var item = Layout.prototype.append.apply(this, arguments);
     // Streams go inside <span> because of OpenTok overrides <li> styles if this
     // one would be the container.
     return HTMLElems.createElementAt(item, 'span');
   },
 
-  features() {
+  features: function() {
     var total = this.container.children.length;
     var columns = Math.ceil(Math.sqrt(total));
 
