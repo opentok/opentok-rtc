@@ -15,6 +15,7 @@
       participantsNumberElem,
       subscribersElem;
 
+  var currentLayout = null;
 
   function initHTMLElements() {
     dock = document.getElementById('dock');
@@ -36,11 +37,12 @@
     ('WebkitTransition' in document.documentElement.style) ?
      'webkitTransitionEnd' : 'transitionend';
 
-  function createSubscriberView(order) {
-    var subsDiv = HTMLElems.createElementAt(subscribersElem, 'div',
-                    {id: 'subscriber_' + order},
-                       null, false);
-    return subsDiv;
+  function createSubscriberView(id) {
+    return currentLayout.append(id);
+  }
+
+  function deleteSubscriberView(id) {
+    currentLayout.remove(id);
   }
 
   function toggleChatNotification() {
@@ -101,13 +103,14 @@
     // will be copied once users click on link to share the URL.
     // Programmatically, setText() wouldn't work.
     addClipboardFeature();
+    currentLayout = new Grid('.subscribers');
   };
 
   exports.RoomView = {
     init: init,
     set roomName(value) {
       HTMLElems.addText(roomNameElem, value);
-debug.log("roomNameEleme:"+roomNameElem);
+      debug.log("roomNameEleme:"+roomNameElem);
       HTMLElems.createElementAt(roomNameElem, 'p', null, roomNameSuffix,false);
     },
     set userName(value) {
@@ -121,6 +124,7 @@ debug.log("roomNameEleme:"+roomNameElem);
     },
 
     createSubscriberView: createSubscriberView,
+    deleteSubscriberView: deleteSubscriberView,
     publisherId: PUBLISHER_DIV_ID,
     toggleChatNotification: toggleChatNotification
   };
