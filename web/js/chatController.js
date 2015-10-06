@@ -5,7 +5,7 @@
 
   var TIME_RESEND_CHAT = 60000;
 
-  var _connectedEarlyThanMe = [];
+  var _connectedEarlierThanMe = 0;
   var _connectedAfterMe = {};
   var _historyChat = [];
 
@@ -38,32 +38,38 @@
   }
 
   function IMustSend() {
-    return _connectedEarlyThanMe.length <= 0;
+    return _connectedEarlierThanMe <= 0;
   }
 
-  function sendHistory(evt) {
-    var newUsr = JSON.parse(evt.connection.data).userName;
-    var connectionNewUsr = evt.connection;
-    var creationTime = evt.connection.creationTime;
-    var connectionId = evt.connection.connectionId;
+  function cancelPendingSendHistory(aConnectionId) {
+    var conn = _connectedAfterMe[aConnectionId];
+    if (conn !== undefined) {
+      delete _connectedAfterMe[aConnectionId];
+      window.clearInterval(conn);
+    }
+  }
+
+  function proccessNewConnection(evt) {
+    var newUsrConnection = evt.connection;
+    var newUsr = JSON.parse(newUsrConnection.data).userName;
+    var creationTime = newUsrConnection.creationTime;
+    var connectionId = newUsrConnection.connectionId;
 
     if (creationTime < _myCreationTime) {
-      _connectedEarlyThanMe.push(connectionId);
-    }
-
-    if (newUsr != _usrId && creationTime > _myCreationTime) {
-      var send = function(aConnectionNewUsr) {
+      _connectedEarlierThanMe++;
+    } else if (newUsr !== _usrId) {
+      var send = function(aNewUsrConnection) {
         if (IMustSend()) {
-          sendChat(aConnectionNewUsr);
+          sendChat(aNewUsrConnection);
         }
       };
 
-      send(connectionNewUsr);
+      send(newUsrConnection);
 
       var intervalResendChat =
-        window.setInterval(send.bind(undefined, connectionNewUsr),
+        window.setInterval(send.bind(undefined, newUsrConnection),
                            TIME_RESEND_CHAT);
-      _connectedAfterMe[connectionId] = { intervalId: intervalResendChat };
+      _connectedAfterMe[connectionId] = intervalResendChat;
     }
   };
 
@@ -99,19 +105,14 @@
       OTHelper.removeListener(this, 'signal:chatHistory');
     },
     'signal:chatHistoryACK': function(evt) {
-      var conn = _connectedAfterMe[evt.from.connectionId];
-      if (conn) {
-        window.clearInterval(conn.intervalId);
-      }
+      cancelPendingSendHistory(evt.from.connectionId);
     },
     'connectionCreated': function(evt) {
       // Dispatched when an new client (including your own) has connected to the
       // session, and for every client in the session when you first connect
       // Session object also dispatches a sessionConnected evt when your local
       // client connects
-      if (evt.connection.data) {
-        sendHistory(evt);
-      }
+        evt.connection.data && proccessNewConnection(evt);
     },
     'sessionConnected': function(evt) {
       _myCreationTime = evt.target.connection.creationTime;
@@ -122,8 +123,9 @@
       // no matters who, it only care the length of this array,
       // when it's zero it's my turn to send history chat
       if (evt.connection.creationTime < _myCreationTime) {
-        _connectedEarlyThanMe.pop();
+        _connectedEarlierThanMe--;
       }
+      cancelPendingSendHistory(evt.connection.connectionId);
     }
   };
 
