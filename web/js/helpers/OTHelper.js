@@ -175,6 +175,10 @@
     });
   };
 
+  function removeListener(evtName) {
+    _session.off(evtName);
+  }
+
   function disconnectFromSession() {
     _session.disconnect();
   }
@@ -201,7 +205,8 @@
     connectToSession: connectToSession,
     publish: publish,
     sendSignal: sendSignal,
-    disconnectFromSession: disconnectFromSession
+    disconnectFromSession: disconnectFromSession,
+    removeListener: removeListener
   };
 
   exports.OTHelper = OTHelper;
