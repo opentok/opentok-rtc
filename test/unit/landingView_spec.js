@@ -12,14 +12,11 @@ describe('LandingView', function(){
   });
 
   beforeEach(function(){
-    console.log('invoke before each method');
   });
 
   afterEach(function(){
-    console.log('invoke after each method');
   });
   after(function(){
-    console.log('this called in after all');
   });
 
 
