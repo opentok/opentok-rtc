@@ -27,6 +27,13 @@
     showControls: true
   };
 
+  var viewEventHandlers = {
+    'endCall' : function(evt) {
+      var url = window.location.origin + MAIN_PAGE;
+      window.location = url;
+    }
+  };
+
   var _allHandlers =  {
     'sessionConnected': function(evt) {
       // The page has connected to an OpenTok session.
@@ -160,11 +167,9 @@
     };
   }
 
-  function addCustomEventsHandlers() {
-    exports.addEventListener('roomView:endCall', function endCall() {
-      var url = window.location.protocol + '//' + window.location.host +
-                MAIN_PAGE;
-      window.location = url;
+  function addViewEventHandlers() {
+    Object.keys(viewEventHandlers).forEach(function(eventName) {
+      exports.addEventListener('roomView:' + eventName, viewEventHandlers[eventName]);
     });
   }
 
@@ -194,7 +199,7 @@
     then(getRoomParams).
     then(getRoomInfo).
     then(function(aParams) {
-      addCustomEventsHandlers();
+      addViewEventHandlers();
       RoomView.init();
       var usr = aParams.username ?
                   (aParams.username.length > 1000 ?

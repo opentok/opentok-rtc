@@ -59,7 +59,7 @@
 
   function dispatchEndCallEvent() {
     var event = new CustomEvent('roomView:endCall', {});
-    window.dispatchEvent(event);
+    exports.dispatchEvent(event);
   }
 
   var addHandlers = function() {
