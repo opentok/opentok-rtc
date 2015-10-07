@@ -30,16 +30,16 @@ module.exports = function(grunt) {
           reporter: 'spec',
           captureFile: 'resultsUnit.txt',
           quiet: false,
-          clearRequireCache: false
+          clearRequireCache: true
         },
-        src: ['test/unit/server/**/*.js']
+        src: ['test/server/**/*.js']
       },
       rest: {
         options: {
           reporter: 'spec',
           captureFile: 'resultsRest.txt',
           quiet: false,
-          clearRequireCache: false
+          clearRequireCache: true
         },
         src: ['test/api/**/*.js']
       }
@@ -61,22 +61,16 @@ module.exports = function(grunt) {
 
     karma: {
       options: {
-	configFile: 'karma.conf.js'
+        configFile: 'karma.conf.js'
       },
       integration: {
-	singleRun: true
+        singleRun: true
       },
       dev: {
       }
     },
 
-    clean: { // To-Do: Configure this!
-      server: [
-        '.tmp'
-      ],
-      postTest: [
-        'test/gtest_*.html'
-      ]
+    clean: { // To-Do: Configure or remove this!
     },
 
     'gitinfo': {
@@ -105,18 +99,39 @@ module.exports = function(grunt) {
 
     watch: {
       styles: {
-        files: ['../../**/*.less'],
+        files: [
+          './web/**/*.less'
+        ],
         tasks: ['less', 'autoprefixer'],
         options: {
-          nospawn: true,
-          livereload: {
-            port: 35730
-          }
+          nospawn: false
         }
+      },
+      server: {
+        options: {
+          nospawn: false
+        },
+        files: [
+          './server.js',
+          'server/**/*.js',
+          'test/server/**/*.js'
+        ],
+        tasks: ['serverTest']
       }
     }
 
   });
+
+  // On watch events, if the changed file is a test file then configure mochaTest to only
+  // run the tests from that file. Otherwise run all the tests
+  var defaultTestSrc = grunt.config('mochaTest.unit.src');
+  grunt.event.on('watch', function(action, filepath) {
+    grunt.config('mochaTest.unit.src', defaultTestSrc);
+    if (filepath.match('test/')) {
+      grunt.config('mochaTest.unit.src', filepath);
+    }
+  });
+
 
   grunt.registerTask('clientBuild', 'Build css files', [
     'less',
@@ -133,16 +148,16 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('precommit', 'Run precommit tests', [
-    'karma:integration'
-  ]);
-
-  grunt.registerTask('serverUnitTest', 'Launch server unit tests', [
-    'clean:server',
+    'karma:integration',
     'mochaTest:unit'
   ]);
 
+  grunt.registerTask('serverTest', 'Launch server unit tests', [
+    'mochaTest:unit',
+    'watch'
+  ]);
+
   grunt.registerTask('RESTApiTest', 'Launch server unit tests', [
-    'clean:server',
     'mochaTest:rest'
   ]);
 
