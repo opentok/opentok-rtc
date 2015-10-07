@@ -227,7 +227,8 @@
       '/js/helpers/OTHelper.js',
       '/js/layout.js',
       '/js/roomView.js',
-      '/js/chatController.js'
+      '/js/chatController.js',
+      '/js/publisher.js'
     ]).
     then(getRoomParams).
     then(getRoomInfo).
@@ -259,6 +260,7 @@
         then(publish).
         then(function() {
               RoomView.participantsNumber = ++numUsrsInRoom;
+              Publisher.init();
             }).
         catch(function(error) {
           debug.error('Error Connecting to room. ' + error.message);

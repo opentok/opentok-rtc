@@ -192,7 +192,7 @@ body {
   .publisher {
     position: absolute;
 
-    z-index: 10;
+    z-index: 1001;
     width: 20%;
     height: 20%;
 
@@ -201,6 +201,10 @@ body {
 
     overflow: hidden;
     border-radius: 12px;
+  }
+
+  .publisher.dragging {
+    box-shadow: 0px 0px 5px 3px rgba(77,70,77,1);
   }
 
   .subscribers {
@@ -266,7 +270,7 @@ body {
   transition: transform @transitionTime;
 
   &.show {
-    transform: translateY(-35px);
+    transform: translateY(-36px);
   }
 
   &.visible {
