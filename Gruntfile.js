@@ -135,7 +135,7 @@ module.exports = function(grunt) {
   grunt.registerTask('precommit', 'Run precommit tests', [
     'karma:integration'
   ]);
-  
+
   grunt.registerTask('serverUnitTest', 'Launch server unit tests', [
     'clean:server',
     'mochaTest:unit'
@@ -158,5 +158,10 @@ module.exports = function(grunt) {
     'postBowerInstall'
   ]);
 
-  grunt.registerTask('default', ['test']);
+  grunt.registerTask('initialConfig', [
+    'clientBuild',
+    'configTests'
+  ]);
+
+  grunt.registerTask('default', ['initialConfig']);
 };
