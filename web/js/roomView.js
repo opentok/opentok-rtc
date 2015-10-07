@@ -57,6 +57,11 @@
     return PUBLISHER_DIV_ID;
   }
 
+  function dispatchEndCallEvent() {
+    var event = new CustomEvent('roomView:endCall', {});
+    exports.dispatchEvent(event);
+  }
+
   var addHandlers = function() {
     handler.addEventListener('click', function(e) {
       dock.classList.toggle('collapsed');
@@ -78,6 +83,7 @@
         case 'endCall':
           RoomView.participantsNumber = 0;
           OTHelper.disconnectFromSession();
+          dispatchEndCallEvent();
           break;
       }
     });
