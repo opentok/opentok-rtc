@@ -176,12 +176,12 @@
   function getRoomInfo(aRoomParams) {
     return Request.
       getRoomInfo(aRoomParams).
-        then(function(aRoomInfo) {
-               if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId
-                   && aRoomInfo.apiKey && aRoomInfo.username)) {
-                 debug.error('Error getRoomParams [' + aRoomInfo +
+      then(function(aRoomInfo) {
+        if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId
+            && aRoomInfo.apiKey && aRoomInfo.username)) {
+          debug.error('Error getRoomParams [' + aRoomInfo +
                       ' without correct response');
-                 throw new Error('Error getting room parameters');
+          throw new Error('Error getting room parameters');
         }
         aRoomInfo.roomName = aRoomParams.roomName;
         return aRoomInfo;
