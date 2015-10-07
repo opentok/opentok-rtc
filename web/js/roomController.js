@@ -122,6 +122,28 @@
     }
   };
 
+  function showUserNamePrompt(roomName) {
+    return LazyLoader.dependencyLoad([
+      '/js/components/modal.js'
+    ]).then(function() {
+      var selector = '.user-name-modal';
+      document.querySelector(selector + ' header').textContent = roomName;
+      return Modal.show(selector).then(function() {
+        var enterButton = document.querySelector(selector + ' button');
+        return new Promise(function(resolve, reject) {
+          enterButton.addEventListener('click', function onClicked(event) {
+            event.preventDefault();
+            enterButton.removeEventListener('click', onClicked);
+            return Modal.hide(selector).
+              then(function() {
+                resolve(document.querySelector(selector + ' input').value.trim());
+            });
+          });
+        });
+      });
+    });
+  }
+
   function getRoomParams() {
     if (!exports.RoomController) {
       throw new Error("Room Controller is not defined. Missing script tag?");
@@ -135,7 +157,7 @@
 
     if (!pathName || pathName.length < 2) {
       debug.log('This should not be happen, it\'s not possible to do a ' +
-		'request without /room/<roomName>[?username=<usr>]');
+                'request without /room/<roomName>[?username=<usr>]');
       throw new Error('Invalid path');
     }
 
@@ -152,13 +174,24 @@
       search = search.substring(1);
       usrId = search.split('=')[1];
     }
-    return {
+
+    var info = {
       username: usrId,
       roomName: roomName
     };
+
+    if (usrId || (window.location.origin === new URL(document.referrer).origin)) {
+      return Promise.resolve(info);
+    } else {
+      return showUserNamePrompt(roomName).then(function(userName) {
+        info.username = userName;
+        return info;
+      });
+    }
   }
 
   function getRoomInfo(aRoomParams) {
+    console.log('getRoomInfo')
     return Request.
       getRoomInfo(aRoomParams).
 	    then(function(aRoomInfo) {

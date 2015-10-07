@@ -23,6 +23,23 @@ label {
 }
 
 .tc-modal {
+
+  .tc-row label{
+    text-align: left;
+  }
+
+  .tc-input.block + .tc-message {
+    display: none;
+  }
+
+  .tc-error {
+    .tc-input.block + .tc-message {
+      display: block;
+    }
+  }
+}
+
+.tc-modal {
   z-index: -1;
   display: block;
   visibility: hidden;
