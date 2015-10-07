@@ -138,8 +138,8 @@
       var selector = '.user-name-modal';
       document.querySelector(selector + ' header').textContent = roomName;
       return Modal.show(selector).then(function() {
-        var enterButton = document.querySelector(selector + ' button');
         return new Promise(function(resolve, reject) {
+          var enterButton = document.querySelector(selector + ' button');
           enterButton.addEventListener('click', function onClicked(event) {
             event.preventDefault();
             enterButton.removeEventListener('click', onClicked);
