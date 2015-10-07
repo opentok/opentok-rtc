@@ -153,6 +153,18 @@
     });
   }
 
+  function getReferrerURL() {
+    var referrerURL = '';
+
+    try {
+      referrerURL = new URL(document.referrer);
+    } catch(ex) {
+
+    }
+
+    return referrerURL;
+  }
+
   function getRoomParams() {
     if (!exports.RoomController) {
       throw new Error("Room Controller is not defined. Missing script tag?");
@@ -189,7 +201,7 @@
       roomName: roomName
     };
 
-    if (usrId || (window.location.origin === new URL(document.referrer).origin)) {
+    if (usrId || (window.location.origin === getReferrerURL().origin)) {
       return Promise.resolve(info);
     } else {
       return showUserNamePrompt(roomName).then(function(userName) {
