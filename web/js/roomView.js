@@ -37,8 +37,8 @@
     ('WebkitTransition' in document.documentElement.style) ?
      'webkitTransitionEnd' : 'transitionend';
 
-  function createSubscriberView(id) {
-    return currentLayout.append(id);
+  function createSubscriberView(stream, controlBtns) {
+    return currentLayout.append(stream, controlBtns);
   }
 
   function deleteSubscriberView(id) {
@@ -116,7 +116,7 @@
     init: init,
     set roomName(value) {
       HTMLElems.addText(roomNameElem, value);
-      HTMLElems.createElementAt(roomNameElem, 'p', null, roomNameSuffix,false);
+      HTMLElems.createElementAt(roomNameElem, 'p', null, roomNameSuffix, false);
     },
     set userName(value) {
       roomUserElem.textContent = value + USER_NAME_SUFFIX;

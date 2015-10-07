@@ -21,7 +21,12 @@
     // Add all the requested attributes
     if (aAttrs){
       for (var i in aAttrs) {
-        elem.setAttribute(i, aAttrs[i]);
+        if (i.startsWith('data-')) {
+          var dataElem = i.replace('data-', '');
+          elem.dataset[dataElem] = aAttrs[i];
+        } else {
+          elem.setAttribute(i, aAttrs[i]);
+        }
       }
     }
 

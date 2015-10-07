@@ -6,11 +6,49 @@ var Layout = function(selector) {
 };
 
 Layout.prototype = {
-  append: function(id) {
-    var item = HTMLElems.createElementAt(this.container, this.itemType);
-    item.dataset.id = id;
+  append: function(streamId, controlElems) {
+    var item =
+      HTMLElems.createElementAt(this.container, this.itemType,
+                                { 'data-id': streamId });
+    if (controlElems) {
+      this._appendControlElems(streamId, item, controlElems, this.itemControlType);
+    }
+
+    item.addEventListener('click'/*controlElems[controlName].eventName*/, function(evt) {
+      var elemClicked = evt.target;
+      var dataset = elemClicked.dataset;
+      if (!dataset.eventName) {
+        return;
+      }
+      elemClicked.classList.toggle('enabled');
+      var newEvt =
+        new CustomEvent(dataset.eventName,
+                        {
+                          detail: {
+                            streamId: dataset.streamId,
+                            name: dataset.controlName
+                          }
+                        });
+      window.dispatchEvent(newEvt);
+    });
     this.rearrange();
     return item;
+  },
+
+  _appendControlElems: function(streamId, main, controlElems, itemControlType) {
+    var self = this;
+    Object.keys(controlElems).forEach(function(controlName) {
+      var item =
+        HTMLElems.createElementAt(main, 'i',
+                                  {
+                                    'data-icon': controlElems[controlName].dataIcon,
+                                    'data-eventName': controlElems[controlName].eventFiredName,
+                                    'data-controlName': controlName,
+                                    'data-streamId': streamId
+                                  });
+
+      item.classList.add('enabled');
+    });
   },
 
   remove: function(id) {
@@ -41,6 +79,7 @@ var Grid = function(selector) {
   tcList.classList.add('tc-list', 'grid');
   this.container = HTMLElems.createElementAt(tcList, 'ul');
   this.itemType = 'li';
+  this.itemControlType = 'button';
 };
 
 Grid.prototype = {
@@ -50,7 +89,7 @@ Grid.prototype = {
 
   _HORIZONTAL_PADDING: 0.6,
 
-  append: function(id) {
+  append: function(stream, controlElems) {
     var item = Layout.prototype.append.apply(this, arguments);
     // Streams go inside <span> because of OpenTok overrides <li> styles if this
     // one would be the container.
