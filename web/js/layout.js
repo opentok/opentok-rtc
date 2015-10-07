@@ -46,6 +46,10 @@ var Grid = function(selector) {
 Grid.prototype = {
   __proto__: Layout.prototype,
 
+  _VERTICAL_PADDING: 0.2,
+
+  _HORIZONTAL_PADDING: 0.6,
+
   append: function(id) {
     var item = Layout.prototype.append.apply(this, arguments);
     // Streams go inside <span> because of OpenTok overrides <li> styles if this
@@ -58,8 +62,8 @@ Grid.prototype = {
     var columns = Math.ceil(Math.sqrt(total));
 
     return {
-      width: (100 / columns) + '%',
-      height: (100 / Math.ceil(total / columns)) + '%'
+      width: ((100 / columns) - this._HORIZONTAL_PADDING)+ '%',
+      height: ((100 / Math.ceil(total / columns)) - this._VERTICAL_PADDING) + '%'
     };
   }
 };
