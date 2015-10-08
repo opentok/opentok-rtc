@@ -7,7 +7,7 @@
 // redis-cli set tb_api_key yourkeyhere
 // redis-cli set tb_api_secret yoursecrethere
 // Once before trying to run this.
-function ServerMethods() {
+function ServerMethods(aLogLevel) {
   'use strict';
 
   const DEFAULT_USER_NAME = 'Anonymous User';
@@ -33,7 +33,7 @@ function ServerMethods() {
 
   var Opentok = require('opentok');
 
-  var logger = new Logger("ServerMethods", Logger.DEFAULT_LEVELS.all);
+  var logger = new Logger("ServerMethods", aLogLevel);
 
   // We'll use redis to add persistence
   var Redis = require('ioredis');
@@ -165,15 +165,19 @@ function ServerMethods() {
   }
 
   function postRoomArchive(aReq, aRes) {
+    aRes.sendStatus(405);
   }
 
   function getArchive(aReq, aRes) {
+    aRes.sendStatus(405);
   }
 
   function deleteArchive(aReq, aRes) {
+    aRes.sendStatus(405);
   }
 
   return {
+    logger: logger,
     configReady: waitForTB,
     getRoom: getRoom,
     getRoomInfo: getRoomInfo,
@@ -184,4 +188,4 @@ function ServerMethods() {
 
 };
 
-module.exports = new ServerMethods();
+module.exports = ServerMethods;
