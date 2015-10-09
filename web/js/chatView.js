@@ -129,7 +129,11 @@
     init: init,
 
     set visible(value) {
-      value ? Chat.show() : Chat.hide();
+      if (value) {
+        Chat.show().then(scrollTo.bind(undefined, chatContent.lastChild));
+      } else {
+        Chat.hide();
+      }
     },
 
     get visible() {
