@@ -1,13 +1,9 @@
 !function(exports) {
   'use strict';
 
-  var UNKNOWN = 'Unknown';
-  var _usrId;
-  var _roomName;
+  var usrId;
 
-  var chatWndElem,
-    // closeChatBtn,
-      closeChatBtn,
+  var closeChatBtn,
       sendMsgBtn,
       chatMsgInput,
       chatNameElem,
@@ -17,10 +13,8 @@
 
   var debug = Utils.debug;
 
-
   function initHTMLElements() {
-    chatWndElem = document.getElementById('chat');
-    //var closeChatBtn = chatWndElem.querySelector('
+    var chatWndElem = document.getElementById('chat');
     closeChatBtn = chatWndElem.querySelector('#closeChat');
     sendMsgBtn = chatWndElem.querySelector('#sendTxt');
     chatMsgInput = chatWndElem.querySelector('#msgText');
@@ -30,60 +24,65 @@
     chatForm = chatWndElem.querySelector('#chatForm');
   }
 
+  var onKeyPress = function(myfield, evt) {
+    var keycode;
+    if (window.vent) {
+      keycode = window.event.keyCode;
+    } else if (evt) {
+      keycode = evt.which;
+    } else {
+      return true;
+    }
+    if (keycode === 13) {
+      onSendClicked(evt);
+      return false;
+    } else {
+      return true;
+    }
+  }.bind(undefined, chatMsgInput);
+
+  var onSendClicked = function(evt) {
+    evt.preventDefault();
+    if (chatMsgInput.value === '') {
+      return;
+    }
+
+    ChatController.sendMsg({
+      sender: usrId,
+      time: Utils.getCurrentTime(),
+      text: chatMsgInput.value.trim()
+    }).then(function() {
+      chatMsgInput.value = '';
+    }).catch(function(error) {
+      debug.error('Error sending [' + chatMsgInput.value + '] to the group. ' +
+                   error.message);
+    });
+  };
+
+  var onSubmit = function(evt) {
+    evt.preventDefault();
+    return false;
+  };
+
+  var onClose = function(evt) {
+    evt.preventDefault();
+    ChatView.visible = false;
+  };
+
   // The ChatController should have the handlers and call the view for
   // doing visual work
   function addHandlers() {
+    chatForm.addEventListener('keypress', onKeyPress);
+    chatForm.addEventListener('submit', onSubmit);
+    closeChatBtn.addEventListener('click', onClose);
+    sendMsgBtn.addEventListener('click', onSendClicked);
+  }
 
-    function submitenter(myfield, evt) {
-      var keycode;
-      if (window.vent) {
-        keycode = window.event.keyCode;
-      } else if (evt) {
-        keycode = evt.which;
-      } else {
-        return true;
-      }
-      if (keycode === 13) {
-        onClickSend(evt);
-        return false;
-      } else {
-        return true;
-      }
-    }
-
-    var onClickSend = function(evt) {
-      evt.preventDefault();
-      if (chatMsgInput.value === '') {
-        return;
-      }
-
-      ChatController.sendMsg({
-        sender: _usrId,
-        time: Utils.getCurrentTime(),
-        text: chatMsgInput.value
-      }).then(function() {
-        chatMsgInput.value = '';
-      }).catch(function(error) {
-        //TODO Perphas some visual element, I don't sure
-        debug.error('Error sending [' + chatMsgInput.value +
-                    '] to the group. ' + error.message);
-      });
-    };
-
-    chatForm.addEventListener('keypress',
-                              submitenter.bind(undefined, chatMsgInput));
-
-    chatForm.addEventListener('submit', function(evt) {
-      evt.preventDefault();
-      return false;
-    });
-
-    closeChatBtn.addEventListener('click', function(evt) {
-      evt.preventDefault();
-      ChatView.visible = false;
-    });
-
-    sendMsgBtn.addEventListener('click', onClickSend);
+  function removeHandlers() {
+    chatForm.removeEventListener('keypress', onKeyPress);
+    chatForm.removeEventListener('submit', onSubmit);
+    closeChatBtn.removeEventListener('click', onClose);
+    sendMsgBtn.removeEventListener('click', onSendClicked);
   }
 
   function insertChatEvent(data) {
@@ -107,22 +106,20 @@
   }
 
   function scrollTo(item) {
+    item = item || chatContent.lastChild;
     chatContainer.scrollTop = chatContent.offsetHeight + item.clientHeight;
   }
 
   function setRoomName(name) {
-    _roomName = name;
     HTMLElems.addText(chatNameElem, name);
   }
 
   function init(aUsrId, aRoomName) {
     initHTMLElements();
-    ChatView.visible = false;
-    _usrId = aUsrId;
+    usrId = aUsrId;
     setRoomName(aRoomName);
-
-    addHandlers();
     Chat.init();
+    ChatView.visible = false;
   }
 
   var ChatView = {
@@ -130,9 +127,12 @@
 
     set visible(value) {
       if (value) {
-        Chat.show().then(scrollTo.bind(undefined, chatContent.lastChild));
+        Chat.show().then(function() {
+          scrollTo();
+          addHandlers();
+        });
       } else {
-        Chat.hide();
+        Chat.hide().then(removeHandlers);
       }
     },
 
@@ -141,6 +141,7 @@
     },
 
     insertChatLine: insertChatLine,
+
     insertChatEvent: insertChatEvent
   };
 
