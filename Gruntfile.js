@@ -149,7 +149,8 @@ module.exports = function(grunt) {
 
   grunt.registerTask('precommit', 'Run precommit tests', [
     'karma:integration',
-    'mochaTest:unit'
+    'mochaTest:unit',
+    'apiTest'
   ]);
 
   grunt.registerTask('serverTest', 'Launch server unit tests', [
@@ -157,7 +158,7 @@ module.exports = function(grunt) {
     'watch'
   ]);
 
-  grunt.registerTask('RESTApiTest', 'Launch server unit tests', [
+  grunt.registerTask('apiTest', 'Launch server unit tests', [
     'mochaTest:rest'
   ]);
 
