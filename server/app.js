@@ -29,7 +29,7 @@ module.exports = function App(staticPath, apiDef, logLevel) {
   var express = require('express');
   var app = express();
 
-  app.use(express.static(staticPath, {index: false}));
+  app.use(express.static(staticPath));
 
   // TO-DO: Do we want this to be CORS friendly? Probably not...
 
