@@ -6,7 +6,7 @@ var Layout = function(selector) {
   this.container.addEventListener('click', function(evt) {
       var elemClicked = evt.target;
       var dataset = elemClicked.dataset;
-      if (!'eventName' in dataset) {
+      if (!('eventName' in dataset)) {
         return;
       }
       elemClicked.classList.toggle('enabled');
