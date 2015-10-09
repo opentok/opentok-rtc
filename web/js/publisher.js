@@ -5,6 +5,7 @@
   var touchstart = isTouch ? 'touchstart' : 'mousedown';
   var touchmove = isTouch ? 'touchmove' : 'mousemove';
   var touchend = isTouch ? 'touchend' : 'mouseup';
+  var videoCtrlBtn;
 
   var getTouch = (function getTouchWrapper() {
     return isTouch ? function(e) { return e.touches[0] } :
@@ -14,7 +15,7 @@
   var setTransform = function(transform) {
     publisherStyle.MozTransform = publisherStyle.webkitTransform =
       publisherStyle.msTransform = publisherStyle.transform = transform;
-  }
+  };
 
   function handleEvent(evt) {
     switch (evt.type) {
@@ -42,6 +43,15 @@
         publisher.classList.remove('dragging');
 
         break;
+      case 'click':
+        videoCtrlBtn.classList.toggle('enabled');
+        var newEvt = new CustomEvent('roomView:pubButtonClick', {
+          detail: {
+            name: 'video'
+          }
+        });
+        global.dispatchEvent(newEvt);
+        break;
     }
   }
 
@@ -49,15 +59,21 @@
 
   var centerX, centerY;
 
+  function addControlBtns() {
+    videoCtrlBtn = HTMLElems.createElementAt(publisher, 'i', {'data-icon': 'camera'});
+    videoCtrlBtn.classList.add('enabled');
+  }
+
   function init() {
     publisher = document.getElementById('publisher');
     publisherStyle = publisher.style;
-
+    addControlBtns();
     var rectObject = publisher.getBoundingClientRect();
     centerX = rectObject.left + (rectObject.width / 2);
     centerY = rectObject.top + (rectObject.height / 2);
 
     publisher.addEventListener(touchstart, handleEvent, true);
+    publisher.addEventListener('click', handleEvent);
   }
 
   global.Publisher = {

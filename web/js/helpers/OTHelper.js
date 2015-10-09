@@ -201,12 +201,26 @@
     });
   }
 
+  function togglePublisherVideo(value) {
+    _publisher.publishVideo(value);
+  }
+
+  function toggleSubscribersVideo(aStream, value) {
+    var arrSubscribers = _session.getSubscribersForStream(aStream);
+    // TODO Currently we expect only one element in arrSubscriber
+    Array.isArray(arrSubscribers) && arrSubscribers.forEach(function(subscriber) {
+      subscriber.subscribeToVideo(value);
+    });
+  }
+
   var OTHelper = {
     connectToSession: connectToSession,
     publish: publish,
     sendSignal: sendSignal,
     disconnectFromSession: disconnectFromSession,
-    removeListener: removeListener
+    removeListener: removeListener,
+    toggleSubscribersVideo: toggleSubscribersVideo,
+    togglePublisherVideo: togglePublisherVideo
   };
 
   exports.OTHelper = OTHelper;

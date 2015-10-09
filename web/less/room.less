@@ -211,6 +211,10 @@ body {
     width: 100%;
     height: calc(~"100% - 15px");
 
+    i[data-icon="camera"] {
+      margin-bottom: 8px;
+    }
+
     .grid {
       width: 100%;
       height: 100%;
@@ -242,6 +246,21 @@ body {
         }
       }
     }
+  }
+
+  i[data-icon="camera"] {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 1010;
+    font-size: 24px;
+    width: 37px;
+    color: #1a99ce;
+    padding: 0 0 4px 4px;
+  }
+
+  i[data-icon="camera"].enabled {
+    color: #fff;
   }
 
   footer {

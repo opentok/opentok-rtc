@@ -24,13 +24,63 @@
     insertMode: 'append',
     width:'100%',
     height: '100%',
-    showControls: true
+    showControls: true,
+    style: {
+      audioLevelDisplayMode: 'off',
+      buttonDisplayMode: 'on',
+      nameDisplayMode: 'on',
+      videoDisabledDisplayMode: 'on'
+    }
+  };
+
+  function SubscriberButtons() {
+    return {
+      video: {
+        eventFiredName: 'roomView:buttonClick',
+        dataIcon: 'camera',
+        eventName: 'click',
+        enabled: true
+      }
+    };
+  }
+
+  var subscriberStreams = {
+  };
+
+  var publisherButtons = {
+    video: {
+      enabled: true
+    }
   };
 
   var viewEventHandlers = {
-    'endCall' : function(evt) {
+    'endCall': function(evt) {
       var url = window.location.origin + MAIN_PAGE;
       window.location = url;
+    },
+    'buttonClick': function(evt) {
+        // evt.detail is {name: Name of the button clicked, stream: associated stream}
+        var subscriberStream = subscriberStreams[evt.detail.streamId];
+        var buttonInfo = subscriberStream.buttons[evt.detail.name];
+        if (!buttonInfo) {
+          debug.error('Got an event from an unknown button!');
+          return;
+        }
+        var stream = subscriberStream.stream;
+        if (!stream) {
+          debug.error('Got an event from an unexisten stream');
+        }
+        buttonInfo.enabled = !buttonInfo.enabled;
+        OTHelper.toggleSubscribersVideo(stream, buttonInfo.enabled);
+    },
+    'pubButtonClick': function(evt) {
+      var btnInfo = publisherButtons[evt.detail.name];
+      if (!btnInfo) {
+        debug.error('Got an event from an unknown button of publisher!');
+        return;
+      }
+      btnInfo.enabled = !btnInfo.enabled;
+      OTHelper.togglePublisherVideo(btnInfo.enabled);
     }
   };
 
@@ -42,7 +92,6 @@
       debug.log('!!! room TODO - sessionConnected');
     },
     'connectionCreated': function(evt) {
-      // A TODOS CONECTADOS EN SESSION
       // Dispatched when an new client (including your own) has connected to the
       // session, and for every client in the session when you first connect
       // Session object also dispatches a sessionConnected evt when your local
@@ -51,9 +100,6 @@
     },
     'connectionDestroyed': function(evt) {
       // A client, other than your own, has disconnected from the session
-      numUsrsInRoom--;
-      RoomView.participantsNumber = numUsrsInRoom;
-      RoomView.deleteSubscriberView(evt.connection.connectionId);
     },
     'sessionDisconnected': function(evt) {
       // The client has disconnected from the session.
@@ -77,8 +123,13 @@
       // dispatches a streamCreated event. For a code example and more details,
       // see StreamEvent.
       numUsrsInRoom++;
+      var streamId = evt.stream.streamId;
+      subscriberStreams[streamId] = {
+        stream: evt.stream,
+        buttons: new SubscriberButtons()
+      };
       var subsDiv =
-        RoomView.createSubscriberView(evt.stream.connection.connectionId);
+        RoomView.createSubscriberView(streamId, subscriberStreams[streamId].buttons);
 
       this.subscribe(evt.stream, subsDiv, subscriberOptions, function(error) {
         if (error) {
@@ -102,6 +153,10 @@
       // dispatches a streamDestroyed event.
       // For a code example and more details, see StreamEvent.
       debug.log('!!! room TODO - streamDestroyed');
+      numUsrsInRoom--;
+      RoomView.participantsNumber = numUsrsInRoom;
+      RoomView.deleteSubscriberView(evt.stream.streamId);
+      subscriberStreams[evt.stream.streamId] = null;
     },
     'streamPropertyChanged': function(evt) {
       // Defines an event dispatched when property of a stream has changed.
@@ -218,7 +273,6 @@
   }
 
   function getRoomInfo(aRoomParams) {
-    console.log('getRoomInfo')
     return Request.
       getRoomInfo(aRoomParams).
       then(function(aRoomInfo) {
