@@ -9,8 +9,7 @@
 module.exports = function App(staticPath, apiDef, logLevel) {
   'use strict';
 
-  var Utils;
-  Utils = require('./utils');
+  var Utils = require('./utils');
 
   var Logger = Utils.MultiLevelLogger;
 
@@ -43,7 +42,7 @@ module.exports = function App(staticPath, apiDef, logLevel) {
 
   // Add the middleware, if needed
   var middleware = api['x-implementation-middleware'];
-  middleware && serverImpl[middleware] && app.use(serverImpl[middleware]);
+  serverImpl[middleware] && app.use(serverImpl[middleware]);
 
   // And add the implementation functions for each paths
   Object.keys(paths).forEach(path => {

@@ -6,7 +6,7 @@ var sinon = require('sinon');
 
 var request = require('supertest');
 
-describe('OpenTokRTC_V2 server', function() {
+describe('OpenTokRTC server', function() {
   var app;
 
   // Note that since everything is in api.json, we could just parse
@@ -24,19 +24,15 @@ describe('OpenTokRTC_V2 server', function() {
 
       done();
     });
-
   });
-
-
 
   // Note that everything needed to test this is actually in api.json, but it's not
   // really worth it at this point to try to do this generic. So for now we'll just do
   // it manually.
   function checkForAttributes(aAttributes, aRes) {
     var aObject = aRes.body;
-    for(var i = 0, l = aAttributes.length; i < l ; i++) {
+    for (var i = 0, l = aAttributes.length; i < l ; i++) {
       if (!aObject[aAttributes[i]]) {
-        console.log('returning early!');
         throw new Error('Missing required attribute: ' + aAttributes[i] +
                         ' in ' + JSON.stringify(aObject));
       }
