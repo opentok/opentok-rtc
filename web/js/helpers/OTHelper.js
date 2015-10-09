@@ -208,11 +208,9 @@
   function toggleSubscribersVideo(aStream, value) {
     var arrSubscribers = _session.getSubscribersForStream(aStream);
     // TODO Currently we expect only one element in arrSubscriber
-    if (arrSubscribers) {
-      for (var i = 0, l = arrSubscribers.length; i < l; i++) {
-        arrSubscribers[i].subscribeToVideo(value);
-      }
-    }
+    Array.isArray(arrSubscribers) && arrSubscribers.forEach(function(subscriber) {
+      subscriber.subscribeToVideo(value);
+    });
   }
 
   var OTHelper = {

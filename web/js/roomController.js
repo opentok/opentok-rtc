@@ -13,7 +13,7 @@
     inserMode: 'append',
     showControls: true,
     style: {
-      audioLevelDisplayMode: 'off',
+      audioLevelDisplayMode: 'on',
       buttonDisplayMode: 'on',
       nameDisplayMode: 'on',
       videoDisabledDisplayMode: 'on'
@@ -66,11 +66,11 @@
           debug.error('Got an event from an unknown button!');
           return;
         }
-        buttonInfo.enabled = !buttonInfo.enabled;
         var stream = subscriberStream.stream;
         if (!stream) {
           debug.error('Got an event from an unexisten stream');
         }
+        buttonInfo.enabled = !buttonInfo.enabled;
         OTHelper.toggleSubscribersVideo(stream, buttonInfo.enabled);
     },
     'pubButtonClick': function(evt) {

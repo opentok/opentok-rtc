@@ -59,16 +59,15 @@
 
   var centerX, centerY;
 
-  function setControlBtns() {
-    videoCtrlBtn = HTMLElems.createElementAt(publisher, 'i');
-    videoCtrlBtn.dataset.icon = 'camera';
+  function addControlBtns() {
+    videoCtrlBtn = HTMLElems.createElementAt(publisher, 'i', {'data-icon': 'camera'});
     videoCtrlBtn.classList.add('enabled');
   }
 
   function init() {
     publisher = document.getElementById('publisher');
     publisherStyle = publisher.style;
-    setControlBtns();
+    addControlBtns();
     var rectObject = publisher.getBoundingClientRect();
     centerX = rectObject.left + (rectObject.width / 2);
     centerY = rectObject.top + (rectObject.height / 2);
