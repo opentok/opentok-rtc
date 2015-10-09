@@ -3,7 +3,7 @@
 
   var OPENTOK_API = 'https://static.opentok.com/webrtc/v2/js/opentok.min.js';
   var MSG_MULTIPART = 'signal';
-  var SIZE_MAX = 8192;
+  var SIZE_MAX = 7800;
 
   var HEAD_SIZE =
     JSON.stringify({ _head: { id: 99, seq: 99, tot: 99}, data: "" }).length;
