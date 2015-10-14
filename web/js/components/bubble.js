@@ -46,19 +46,15 @@
   /*
    * Closes all bubbles clicking outside them
    */
-  var onBodyClicked = function() {
-    removeGlobalHandlers();
+  var onBodyClicked = function(evt) {
     Object.keys(bubbles).forEach(function(id) {
-      bubbles[id].hide();
+      var bubble = bubbles[id];
+      (bubble.associatedWith !== evt.target) && bubble.hide();
     });
   };
 
   var addGlobalHandlers = function() {
     document.body.addEventListener('click', onBodyClicked);
-  };
-
-  var removeGlobalHandlers = function() {
-    document.body.removeEventListener('click', onBodyClicked);
   };
 
   /**
@@ -123,6 +119,11 @@
       });
 
       return this.bubbleHidden;
+    },
+
+    toggle: function() {
+      var bubble = this;
+      return (bubble.bubbleShown) ? bubble.hide() : bubble.show();
     },
 
     _onShown: function(e) {

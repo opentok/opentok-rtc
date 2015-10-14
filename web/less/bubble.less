@@ -17,6 +17,8 @@
     color: #9b9c9b;
     font-size: 12px;
 
+    max-width: 265px;
+
     p {
       margin: 0;
       padding: 0 0 4px 0;
@@ -63,3 +65,31 @@
     margin-top: 4px;
   }
 }
+
+[for="viewRecordings"] {
+  .tc-list {
+    background-color: transparent;
+    margin-top: 8px;
+    border-top: 1px solid #e5eaec;
+
+    li {
+      background-color: transparent;
+      border-bottom: 0;
+      padding: 10px 0 0 0;
+    }
+
+    a {
+      color: #1a99ce;
+      .truncate();
+      width: 100%;
+      display: inline-block;
+
+      &:hover,
+      &:focus,
+      &:active {
+        background-color: transparent;
+      }
+    }
+  }
+}
+

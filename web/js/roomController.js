@@ -294,6 +294,7 @@
       '/js/layout.js',
       '/js/roomView.js',
       '/js/chatController.js',
+      '/js/recordingsController.js',
       '/js/publisher.js'
     ]).
     then(getRoomParams).
@@ -327,6 +328,7 @@
         then(function() {
               RoomView.participantsNumber = ++numUsrsInRoom;
               Publisher.init();
+              RecordingsController.init(aParams.roomName);
             }).
         catch(function(error) {
           debug.error('Error Connecting to room. ' + error.message);
