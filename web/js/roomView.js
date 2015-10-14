@@ -13,6 +13,7 @@
       roomNameElem,
       roomUserElem,
       participantsNumberElem,
+      recordingsNumberElem,
       subscribersElem;
 
   var currentLayout = null;
@@ -26,6 +27,7 @@
     roomNameElem = dock.querySelector('#roomName');
     roomUserElem = dock.querySelector('#userName');
     participantsNumberElem = dock.querySelectorAll('.participants');
+    recordingsNumberElem = dock.querySelector('#recordings');
 
     subscribersElem = screen.querySelector('#subscriber');
   }
@@ -74,7 +76,10 @@
       elem.blur();
       switch (elem.id) {
         case 'addToCall':
-          BubbleFactory.get('addToCall').show();
+          BubbleFactory.get('addToCall').toggle();
+          break;
+        case 'viewRecordings':
+          BubbleFactory.get('viewRecordings').toggle();
           break;
         case 'startChat':
           ChatView.visible = true;
@@ -126,6 +131,10 @@
       for (var i = 0, l = participantsNumberElem.length; i < l; i++) {
         HTMLElems.replaceText(participantsNumberElem[i], value);
       }
+    },
+
+    set recordingsNumber(value) {
+      recordingsNumberElem.textContent = value;
     },
 
     createSubscriberView: createSubscriberView,

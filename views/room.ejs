@@ -39,7 +39,7 @@
               <a><i data-icon="video-camera"></i><span>Start recording</span></a>
             </li>
             <li>
-              <a><i data-icon="download"></i><span>View archived recordings (<span id="recordings">0</span>)</span></a>
+              <a id="viewRecordings"><i data-icon="download"></i><span>View archived recordings (<span id="recordings">loading</span>)</span></a>
             </li>
             <li>
               <a><i data-icon="desktop"></i><span>Share your screen</span></a>
@@ -73,6 +73,16 @@
           <p>Room link has been copied.</p>
           <p>Share link to add others to the call.</p>
           <input class="tc-input block" onclick="this.select();">
+        </div>
+      </section>
+
+      <section for="viewRecordings" class="bubble">
+        <div class="bubble-content">
+          <p class="bold">Your archived recordings:</p>
+          <p>(This archive will only stick around 3 days.<br> If you want to keep it you should download it)</p>
+          <div class="tc-list videos">
+            <ul></ul>
+          </div>
         </div>
       </section>
     </section>
