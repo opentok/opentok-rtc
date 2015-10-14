@@ -44,13 +44,13 @@
         break;
       case 'click':
         var elem = evt.target;
-        if (!('action' in elem.dataset)) {
+        if (!(HTMLElems.isAction(elem))) {
           return;
         }
         elem.classList.toggle('enabled');
         var newEvt = new CustomEvent('roomView:pubButtonClick', {
           detail: {
-            name: 'video'
+            name: elem.dataset.action
           }
         });
         global.dispatchEvent(newEvt);

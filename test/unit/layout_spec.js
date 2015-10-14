@@ -6,6 +6,14 @@ describe('Grid', function() {
 
   var instance;
 
+  var controls = {
+    video: {
+      eventFiredName: 'roomView:buttonClick',
+      dataIcon: 'camera',
+      eventName: 'click'
+    }
+  };
+
   function getContainer() {
     return document.querySelector('ul');
   }
@@ -36,6 +44,7 @@ describe('Grid', function() {
       var container = getContainer();
       expect(instance.container).to.be.container;
       expect(instance.itemType).to.equal('li');
+      expect(instance.itemControlType).to.equal('i');
       expect(container.parentNode.classList.contains('tc-list')).to.be.true;
       expect(container.parentNode.classList.contains('grid')).to.be.true;
     });
@@ -68,6 +77,40 @@ describe('Grid', function() {
 
       addItems(instance, 1);
       checkSizes(50, 50);
+    });
+
+    it('should add items with controls', function() {
+      var container = getContainer();
+
+      var id = 'myItem';
+      instance.append(id, controls);
+
+      var item = container.querySelector('li');
+      expect(item.dataset.id).to.equal(id);
+
+      var control = container.querySelector('li i');
+      expect(control.dataset.icon).to.equal(controls.video.dataIcon);
+      expect(control.dataset.eventName).to.equal(controls.video.eventFiredName);
+      expect(control.dataset.action).to.equal('video');
+      expect(control.dataset.streamId).to.equal(id);
+      expect(control.classList.contains('enabled')).to.be.true;
+    });
+
+    it('should add controls working properly', function(done) {
+      var id = 'myItem';
+      instance.append(id, controls);
+      var control = getContainer().querySelector('li i');
+
+      sinon.stub(window, 'CustomEvent', function(name, data) {
+        expect(name).to.equal(controls.video.eventFiredName);
+        expect(data.detail.streamId).to.equal(id);
+        expect(data.detail.name).to.equal('video');
+        CustomEvent.restore();
+        done();
+      });
+
+      control.click();
+      expect(control.classList.contains('enabled')).to.be.false;
     });
   });
 
