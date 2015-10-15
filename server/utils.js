@@ -72,7 +72,7 @@ Utils.promisify = function (fn) {
       logger.log('promisify: Executing promisified function!');
 
       args.push((err, res) => {
-        logger.log('promisify: Resolving!');
+        logger.log('promisify: Resolving!', 'Err: ', err, 'Res: ', res);
         if (err) {
           reject(err);
         } else {

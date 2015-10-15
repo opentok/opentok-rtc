@@ -1,41 +1,37 @@
 // This app serves some static content from a static path and serves a REST API that's
 // defined on the api.json file (derived from a swagger 2.0 yml file)
-// Usage:
-// node server [[serverPort] [staticPath]]
-//   serverPort: port where the server should listen to petitions.
-//   staticPath: path where the static files reside
-// Default values for serverPort and staticPath are:
-
-module.exports = function App(staticPath, apiDef, logLevel) {
+// The last parameter is only actually needed (and used) for the unit tests
+module.exports = function App(aStaticPath, aApiDef, aLogLevel, aOpentok) {
   'use strict';
 
   var Utils = require('./utils');
 
   var Logger = Utils.MultiLevelLogger;
 
-  var logger = new Logger('HTTP Server App', logLevel);
+  var logger = new Logger('HTTP Server App', aLogLevel);
 
-  var api = JSON.parse(apiDef);
+  var api = JSON.parse(aApiDef);
   var paths = api.paths;
 
   // This holds the module that implements the methods...
   var implModule = api['x-implementation-module'];
   logger.log('Loading implementation module (' + implModule);
 
-  var serverImpl = new (require('./' + implModule))(logLevel);
+  var serverImpl = new (require('./' + implModule))(aLogLevel, aOpentok);
 
   logger.log('Implementation module (' + implModule + ' read!');
 
   var express = require('express');
   var app = express();
 
-  app.use(express.static(staticPath));
+  app.use(express.static(aStaticPath));
 
   // TO-DO: Do we want this to be CORS friendly? Probably not...
 
   // Use body-parse to fetch the parameters
   var bodyParser = require('body-parser');
-  app.use(bodyParser.json());
+//  app.use(bodyParser.json());
+  var urlencodedParser = bodyParser.urlencoded({extended: false});
 
   // And use EJS as a view engine
   app.set('view engine', 'ejs');
@@ -50,7 +46,11 @@ module.exports = function App(staticPath, apiDef, logLevel) {
       var expressifiedPath = path.replace('{', ':').replace('}','');
       var implementation = paths[path][verb]['x-implemented-in'];
       logger.log('Adding ' + verb + ': ' + expressifiedPath + ' => ' + implementation);
-      app[verb](expressifiedPath, serverImpl[implementation]);
+      if (verb === 'post' || verb === 'delete') {
+        app[verb](expressifiedPath, urlencodedParser, serverImpl[implementation]);
+      } else {
+        app[verb](expressifiedPath, serverImpl[implementation]);
+      }
     });
   });
 

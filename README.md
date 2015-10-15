@@ -1,8 +1,8 @@
-# opentokRTCV2: 
+# opentokRTCV2:
 #### Showcase application for the OpenTok API.
 ## Introduction
 
-This repository holds a complete demo application for the OpenTok API. 
+This repository holds a complete demo application for the OpenTok API.
 
 (TO-DO TO-DO: Add OpenTok reference URLS)
 
@@ -31,6 +31,8 @@ Execute
 ```
 redis-cli set tb_api_key yourkeyhere
 redis-cli set tb_api_secret yoursecrethere
+redis-cli set fb_data_url yourfirebaseappurlhere
+redis-cli set fb_auth_secret yourfirebasesecrethere
 npm install
 bower install
 grunt
