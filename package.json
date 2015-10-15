@@ -18,6 +18,8 @@
     "cors": "^2.7.1",
     "ejs": "^1.0.0",
     "express": "^4.0.0",
+    "firebase": "^2.3.1",
+    "firebase-token-generator": "^2.0.0",
     "ioredis": "^1.7.6",
     "opentok": "^2.3.0"
   },

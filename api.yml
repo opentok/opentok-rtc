@@ -74,10 +74,10 @@ paths:
           description: Information to connect to the room
           schema:
             $ref: '#/definitions/RoomInfo'
-        default:
+        '400'
           description: Unexpected error
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/ErrorInfo'
   /room/{roomName}/archive:
     post:
       summary: Starts/stop an archiving operation.
@@ -100,7 +100,7 @@ paths:
         - name: userName
           in: query
           description: Name of the user.
-          required: false
+          required: true
           type: string
         - name: operation
           in: query
@@ -109,13 +109,13 @@ paths:
           type: string
       responses:
         '200':
-          description: Information to connect to the room
+          description: Information about the archive being recorded
           schema:
             $ref: '#/definitions/ArchiveInfo'
-        default:
+        '400'
           description: Unexpected error
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/ErrorInfo'
   /archive/{archiveId}:
     get:
       summary: Gets and returns a temporary archive URL.
@@ -137,10 +137,10 @@ paths:
           description: Information to download or view the archive file.
           schema:
             $ref: '#/definitions/ArchiveURL'
-        default:
+        '400'
           description: Unexpected error
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/ErrorInfo'
     delete:
       summary: Erases an archive.
       x-implemented-in: deleteArchive
@@ -159,10 +159,10 @@ paths:
           description: Archive erases.
           schema:
             $ref: '#/definitions/ArchiveInfo'
-        default:
+        '400'
           description: Unexpected error
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/ErrorInfo'
 definitions:
   RoomHTML:
     type: string
@@ -192,7 +192,7 @@ definitions:
     properties:
       archiveId:
         type: string
-  Error:
+  ErrorInfo:
     type: object
     properties:
       code:

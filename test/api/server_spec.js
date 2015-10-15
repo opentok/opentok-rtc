@@ -6,8 +6,34 @@ var sinon = require('sinon');
 
 var request = require('supertest');
 
+
 describe('OpenTokRTC server', function() {
-  var app;
+  'use strict';
+
+  var _archives = {};
+  function FakeArchive(aSessionId, aOptions, aStatus) {
+    var newArchive =  {
+      createdAt: Date.now(),
+      duration: '100000',
+      id: Math.random() + '',
+      name: aOptions.name || 'unnamed',
+      parnerId: '0xdeadcafe',
+      reason: 'unknown',
+      sessionId: aSessionId,
+      size: 1000,
+      status: aStatus,
+      hasAudio: true,
+      hasVideo: true,
+      outputMode: aOptions.outputMode || 'composite',
+      url: 'http://nothing.to.see/here'
+    };
+    _archives[newArchive.id] = newArchive;
+
+    return newArchive;
+  }
+
+
+  var app, opentok;
 
   // Note that since everything is in api.json, we could just parse
   // that and generate the test cases automatically. At the moment
@@ -15,14 +41,51 @@ describe('OpenTokRTC server', function() {
 
   before(function(done) {
     var fs = require('fs');
+    var Opentok = require('opentok');
+
+    var FakeOpentok = function(aApiKey, aApiSecret) {
+      opentok = new Opentok(aApiKey, aApiSecret);
+      // We must mock/stub some of the Opentok methods before the app is created
+      // because they might be renamed/rebinded...
+      sinon.stub(opentok, 'startArchive', function(aSessionId, aArchiveOptions, aCallback) {
+        setTimeout(() =>
+          aCallback(null, new FakeArchive(aSessionId, aArchiveOptions, 'started')));
+      });
+
+      sinon.stub(opentok, 'stopArchive', function(aArchiveId, aCallback) {
+        setTimeout(() => {
+          if (_archives[aArchiveId]) {
+            _archives[aArchiveId].status = 'stopped';
+          }
+          aCallback(!_archives[aArchiveId], _archives[aArchiveId]);
+        });
+      });
+
+      sinon.stub(opentok, 'getArchive', function(aArchiveId, aCallback) {
+        setTimeout(aCallback.bind(undefined, !_archives[aArchiveId], _archives[aArchiveId]));
+      });
+
+      sinon.stub(opentok, 'listArchives', function(aOptions, aCallback) {
+        var list = Object.keys(_archives).map(key => _archives[key]);
+        setTimeout(aCallback.bind(undefined, list));
+      });
+      return opentok;
+    };
+
     // Note that this actually executes on the level where the Grunt file is
     // So that's what '.' is. OTOH, the requires are relative to *this* file.
     fs.readFile('./api.json', function(err, data) {
       // Create the app with the json we've just read. The third parameter is
       // the app loglevel. Disable logs for the tests.
-      app = require('../../server/app')('../../web', data, 0);
+      app = require('../../server/app')('../../web', data, 0, FakeOpentok);
 
       done();
+    });
+  });
+
+  after(function() {
+    ['startArchive', 'stopArchive', 'getArchive', 'listArchives'].forEach(method => {
+      opentok[method].restore();
     });
   });
 
@@ -48,7 +111,7 @@ describe('OpenTokRTC server', function() {
 
   it('GET /room/:roomName/info', function(done) {
     request(app).
-      get('/room/test/info').
+      get('/room/unitTestRoom/info').
       set('Accept', 'application/json').
       expect('Content-Type', new RegExp('application/json')).
       expect(checkForAttributes.bind(undefined, RoomInfo)).
@@ -57,7 +120,7 @@ describe('OpenTokRTC server', function() {
 
   it('GET /room/:roomName/info?userName=xxxYYY', function(done) {
     request(app).
-      get('/room/test/info?userName=xxxYYY').
+      get('/room/unitTestRoom/info?userName=xxxYYY').
       set('Accept', 'application/json').
       expect('Content-Type', new RegExp('application/json')).
       expect(checkForAttributes.bind(undefined, RoomInfo)).
@@ -81,23 +144,26 @@ describe('OpenTokRTC server', function() {
 
   it('POST /room/:roomName/archive should allow composite archiving', function(done) {
     request(app).
-      post('/room/roomname/archive').
-      send({username: 'xxxYYY', operation: 'startComposite'}).
-      expect(405, done);
+      post('/room/unitTestRoom/archive').
+      send('userName=xxxYYY&operation=startComposite').
+      expect(checkForAttributes.bind(undefined, ArchiveInfo)).
+      expect(200, done);
   });
 
-  it('POST /room/:roomName/archive should allow composite archiving', function(done) {
+  it('POST /room/:roomName/archive should allow stopping the archive', function(done) {
     request(app).
-      post('/room/roomname/archive').
-      send({username: 'xxxYYY', operation: 'startIndividual'}).
-      expect(405, done);
+      post('/room/unitTestRoom/archive').
+      send('userName=xxxYYY&operation=stop').
+      expect(checkForAttributes.bind(undefined, ArchiveInfo)).
+      expect(200, done);
   });
 
-  it('POST /room/:roomName/archive should allow stopping', function(done) {
+  it('POST /room/:roomName/archive should allow individual archiving', function(done) {
     request(app).
-      post('/room/roomname/archive').
-      send({username: 'xxxYYY', operation: 'startIndividual'}).
-      expect(405, done);
+      post('/room/unitTestRoom/archive').
+      send('userName=xxxYYY&operation=startIndividual').
+      expect(checkForAttributes.bind(undefined, ArchiveInfo)).
+      expect(200, done);
   });
 
   it('GET /archive/:archiveId', function(done) {

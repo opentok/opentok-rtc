@@ -3,12 +3,12 @@
 // Usage:
 // node server [[serverPort] [staticPath]]
 //   serverPort: port where the server should listen to petitions.
-//   staticPath: path where the static files reside
+//   staticPath: path where the static files reside.
 // Default values for serverPort and staticPath are:
-
 const DEFAULT_SERVER_PORT = 8123;
 const DEFAULT_STATIC_PATH = './web';
 const SERVER_LIBS = './server/';
+'use strict';
 
 var staticPath = process.argv[3] || DEFAULT_STATIC_PATH;
 var serverPort = process.argv[2] || DEFAULT_SERVER_PORT;
