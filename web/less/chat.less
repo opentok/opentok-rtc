@@ -1,0 +1,119 @@
+#chat {
+  position: absolute;
+  min-width: 300px;
+  width: 25%;
+  height: 60%;
+  right: 50px;
+  bottom: 0;
+  background-color: white;
+  color: #9b9c9b;
+  z-index: 1000;
+
+  display: none;
+
+  transform: translateY(100%);
+  transition: transform @transitionTime;
+
+  &.show {
+    transform: translateY(-36px);
+  }
+
+  &.visible {
+    display: block;
+  }
+
+  .dialog-chat {
+    height: 100%;
+    width: 100%;
+
+    header {
+      height: 40px;
+      width: 100%;
+      font-size: 12px;
+      text-align: left;
+      font-weight: 100;
+      background-color: #d3d3d3;
+
+      i {
+        font-size: 30px;
+        float: left;
+      }
+
+      #closeChat {
+        float: right;
+      }
+
+      span {
+        display: inline-block;
+        padding-left: 4px;
+        font-weight: 100;
+        line-height: 40px;
+      }
+
+      i[data-icon="close-chat"] {
+        padding-right: 6px;
+      }
+
+      i[data-icon="chat-view"] {
+        padding-left: 6px;
+        padding-right: 2px;
+      }
+    }
+
+    #chatMsgs {
+      overflow-y: scroll;
+      display: block;
+      height: calc(~"100% - 100px");
+
+      li {
+        background-color: transparent;
+        border-bottom: 1px solid #e5eaec;
+
+        .time {
+          float: right;
+        }
+
+        a {
+          background: none;
+          display: inline;
+          text-decoration: underline;
+          margin: -12px -15px;
+          padding: 12px 15px;
+
+          &:link {
+            color: #1a99c3;
+          }
+
+          &:hover,
+          &:active {
+            color: #0d4c62;
+          }
+
+          &:visited {
+            color: #76c2db;
+          }
+        }
+      }
+    }
+
+    footer {
+      height: 60px;
+      font-size: 12px;
+      line-height: 28px;
+      text-align: left;
+      background-color: #d3d3d3;
+      padding: 10px;
+
+      button {
+        background: transparent;
+        border: 0;
+        float: right;
+        color: #9b9c9b;
+      }
+
+      .tc-input {
+        font-size: 12px;
+      }
+    }
+  }
+}
