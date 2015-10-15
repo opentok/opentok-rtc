@@ -17,9 +17,7 @@ function ServerMethods(aLogLevel, aOpentok) {
   }
 
   ErrorInfo.prototype = {
-    toString: function() {
-      return JSON.stringify(this);
-    }
+    toString: () => JSON.stringify(this)
   };
 
 
@@ -46,7 +44,7 @@ function ServerMethods(aLogLevel, aOpentok) {
   const RED_TB_MAX_SESSION_AGE = 'tb_max_session_age';
 
   const REDIS_KEYS = [
-    {key: RED_TB_API_KEY, default: null},
+    {key: RED_TB_API_KEY, defaultValue: null},
     {key: RED_TB_API_SECRET, defaultValue: null},
     {key: RED_FB_DATA_URL, defaultValue: null},
     {key: RED_FB_AUTH_SECRET, defaultValue: null},
@@ -91,7 +89,7 @@ var token = tokenGenerator.createToken({uid: "1", some: "arbitrary", data: "here
 
   function _initialTBConfig() {
     function getArray (aPipeline, aKeyArray) {
-      for(var i = 0, l = aKeyArray.length; i < l ; i++) {
+      for (var i = 0, l = aKeyArray.length; i < l ; i++) {
         aPipeline = aPipeline.get(aKeyArray[i].key);
       }
       return aPipeline;
@@ -105,7 +103,7 @@ var token = tokenGenerator.createToken({uid: "1", some: "arbitrary", data: "here
         // Results should be a three row array of two row arrays...
         var config = {};
         // Just so we don't have to C&P a bunch of validations...
-        for(var i = 0, l = REDIS_KEYS.length; i < l; i++) {
+        for (var i = 0, l = REDIS_KEYS.length; i < l; i++) {
           var keyValue = results[i][1] || REDIS_KEYS[i].defaultValue;
           if (!keyValue) {
             throw new Error('Missing required redis key: ' + REDIS_KEYS[i] +
@@ -255,7 +253,7 @@ var token = tokenGenerator.createToken({uid: "1", some: "arbitrary", data: "here
     if (aOperation.startsWith('start') && aSessionInfo.inProgressArchiveId) {
       // Hmm.. this might be an error or that somehow we lost the stop event... doesn't hurt to
       // be sure
-      logger.log('_getUpdatedArchiveInfo: Getting update info for archive: ' +
+      logger.log('_getUpdatedArchiveInfo: Getting update info for archive: ',
                  aSessionInfo.inProgressArchiveId);
       return aTbConfig.otInstance.
         getArchive_P(aSessionInfo.inProgressArchiveId).
@@ -267,6 +265,9 @@ var token = tokenGenerator.createToken({uid: "1", some: "arbitrary", data: "here
           }
           return aSessionInfo;
         }).catch(e => {
+          if (e.code === 102) {
+            throw e;
+          }
           // This should mean that the archive doesn't exist. Just go with the flow...
           aSessionInfo.inProgressArchiveId = undefined;
           return aSessionInfo;
@@ -291,14 +292,15 @@ var token = tokenGenerator.createToken({uid: "1", some: "arbitrary", data: "here
   // Returns ArchiveInfo:
   // { archiveId: string, archiveType: string }
   function postRoomArchive(aReq, aRes) {
-    if (!aReq.body || !aReq.body.userName || !aReq.body.operation) {
+    var body = aReq.body;
+    if (!body || !body.userName || !body.operation) {
       logger.log('postRoomArchive => missing body parameter: ', aReq.body);
       aRes.status(400).send(new ErrorInfo(100, 'Missing required parameter'));
       return;
     }
     var roomName = aReq.params.roomName;
-    var userName = aReq.body.userName;
-    var operation = aReq.body.operation;
+    var userName = body.userName;
+    var operation = body.operation;
     var otInstance = aReq.tbConfig.otInstance;
 
     logger.log('postRoomArchive serving ' + aReq.path, 'roomName:', roomName,
@@ -315,7 +317,7 @@ var token = tokenGenerator.createToken({uid: "1", some: "arbitrary", data: "here
           name: userName // We'll use the archive name to indicate who started the recording.
         };
         var archiveOp;
-        switch(operation) {
+        switch (operation) {
           case 'startIndividual':
             archiveOptions.outputMode = 'individual';
           case 'startComposite':

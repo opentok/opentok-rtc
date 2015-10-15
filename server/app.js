@@ -30,7 +30,6 @@ module.exports = function App(aStaticPath, aApiDef, aLogLevel, aOpentok) {
 
   // Use body-parse to fetch the parameters
   var bodyParser = require('body-parser');
-//  app.use(bodyParser.json());
   var urlencodedParser = bodyParser.urlencoded({extended: false});
 
   // And use EJS as a view engine

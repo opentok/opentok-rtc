@@ -33,7 +33,7 @@ describe('OpenTokRTC server', function() {
   }
 
 
-  var app;
+  var app, opentok;
 
   // Note that since everything is in api.json, we could just parse
   // that and generate the test cases automatically. At the moment
@@ -44,12 +44,12 @@ describe('OpenTokRTC server', function() {
     var Opentok = require('opentok');
 
     var FakeOpentok = function(aApiKey, aApiSecret) {
-      var opentok = new Opentok(aApiKey, aApiSecret);
+      opentok = new Opentok(aApiKey, aApiSecret);
       // We must mock/stub some of the Opentok methods before the app is created
       // because they might be renamed/rebinded...
       sinon.stub(opentok, 'startArchive', function(aSessionId, aArchiveOptions, aCallback) {
         setTimeout(() =>
-          aCallback(null, new FakeArchive(aSessionId, aArchiveOptions, 'started')), 0);
+          aCallback(null, new FakeArchive(aSessionId, aArchiveOptions, 'started')));
       });
 
       sinon.stub(opentok, 'stopArchive', function(aArchiveId, aCallback) {
@@ -62,15 +62,12 @@ describe('OpenTokRTC server', function() {
       });
 
       sinon.stub(opentok, 'getArchive', function(aArchiveId, aCallback) {
-        setTimeout(aCallback.bind(undefined, !_archives[aArchiveId], _archives[aArchiveId]), 0);
+        setTimeout(aCallback.bind(undefined, !_archives[aArchiveId], _archives[aArchiveId]));
       });
 
       sinon.stub(opentok, 'listArchives', function(aOptions, aCallback) {
-        var list = [];
-        Object.keys(_archives).forEach(key => {
-          list.push(_archives[key]);
-        });
-        setTimeout(aCallback.bind(undefined, list), 0);
+        var list = Object.keys(_archives).map(key => _archives[key]);
+        setTimeout(aCallback.bind(undefined, list));
       });
       return opentok;
     };
@@ -83,6 +80,12 @@ describe('OpenTokRTC server', function() {
       app = require('../../server/app')('../../web', data, 0, FakeOpentok);
 
       done();
+    });
+  });
+
+  after(function() {
+    ['startArchive', 'stopArchive', 'getArchive', 'listArchives'].forEach(method => {
+      opentok[method].restore();
     });
   });
 
