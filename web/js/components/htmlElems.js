@@ -53,7 +53,10 @@
     addText: addText,
     replaceText: replaceText,
     createElement: createElement,
-    createElementAt: createElementAt
+    createElementAt: createElementAt,
+    isAction: function(aElem) {
+      return ('action' in aElem.dataset);
+    }
   };
 
 }(this);

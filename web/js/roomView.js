@@ -134,7 +134,7 @@
     },
 
     set recordingsNumber(value) {
-      recordingsNumberElem.textContent = value;
+      recordingsNumberElem && (recordingsNumberElem.textContent = value);
     },
 
     createSubscriberView: createSubscriberView,
