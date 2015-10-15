@@ -24,6 +24,7 @@ module.exports = function(config) {
       'web/js/landingController.js',
       'web/js/roomView.js',
       'web/js/roomController.js', // TO-DO...
+      'web/js/helpers/textProcessor.js',
       'web/js/chatView.js',
       'web/js/chatController.js',
       'web/**/*.js',

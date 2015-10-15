@@ -92,6 +92,21 @@
     scrollTo(item);
   }
 
+  function insertText(elemRoot, text) {
+    var txtElems = TextProcessor.parse(text);
+    var targetElem = HTMLElems.createElementAt(elemRoot, 'p');
+    txtElems.forEach(function(node) {
+      switch (node.type) {
+        case TextProcessor.TYPE.URL:
+          HTMLElems.createElementAt(targetElem, 'a',
+            { href: node.value, target: '_blank' }, node.value);
+          break;
+        default:
+          HTMLElems.addText(targetElem, node.value);
+      }
+    });
+  }
+
   function insertChatLine(data) {
     var item = HTMLElems.createElementAt(chatContent, 'li');
 
@@ -101,7 +116,8 @@
     var time = HTMLElems.createElementAt(info, 'span', null, data.time);
     time.classList.add('time');
 
-    HTMLElems.createElementAt(info, 'p', null, data.text);
+    insertText(info, data.text);
+
     scrollTo(item);
   }
 
@@ -115,11 +131,15 @@
   }
 
   function init(aUsrId, aRoomName) {
-    initHTMLElements();
-    usrId = aUsrId;
-    setRoomName(aRoomName);
-    Chat.init();
-    ChatView.visible = false;
+    return LazyLoader.dependencyLoad([
+      '/js/helpers/textProcessor.js',
+      '/js/components/chat.js'
+    ]).then(function() {
+      initHTMLElements();
+      usrId = aUsrId;
+      setRoomName(aRoomName);
+      Chat.init();
+    });
   }
 
   var ChatView = {

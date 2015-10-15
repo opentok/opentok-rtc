@@ -154,12 +154,13 @@
 
   function init(aRoomName, aUsrId, aGlobalHandlers) {
     return LazyLoader.dependencyLoad([
-      '/js/components/chat.js',
       '/js/chatView.js'
     ]).then(function() {
-      ChatView.init(aUsrId, aRoomName);
-      _usrId = aUsrId;
-      return addHandlers(aGlobalHandlers);
+      return ChatView.init(aUsrId, aRoomName).
+      then(function() {
+        _usrId = aUsrId;
+        return addHandlers(aGlobalHandlers);
+      });
     });
   }
 
