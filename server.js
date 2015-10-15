@@ -32,5 +32,7 @@ readFile('./api.json').then(apiDef => {
 
   app.listen(serverPort);
 
+}).catch(error => {
+  logger.error('Error starting server: ', error);
 });
 

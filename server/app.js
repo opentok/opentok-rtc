@@ -5,10 +5,10 @@ module.exports = function App(aStaticPath, aApiDef, aLogLevel, aOpentok) {
   'use strict';
 
   var Utils = require('./utils');
-
   var Logger = Utils.MultiLevelLogger;
-
   var logger = new Logger('HTTP Server App', aLogLevel);
+
+  logger.log('Starting process');
 
   var api = JSON.parse(aApiDef);
   var paths = api.paths;
