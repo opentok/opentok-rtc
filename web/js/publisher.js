@@ -48,12 +48,7 @@
           return;
         }
         elem.classList.toggle('enabled');
-        var newEvt = new CustomEvent('roomView:pubButtonClick', {
-          detail: {
-            name: elem.dataset.action
-          }
-        });
-        global.dispatchEvent(newEvt);
+        Utils.sendEvent('roomView:pubButtonClick', { name: elem.dataset.action });
 
         break;
     }
