@@ -31,6 +31,11 @@
     return str;
   };
 
+  var sendEvent = function(eventName, data, target) {
+    data = data ? { detail: data } : {};
+    var newEvt = new CustomEvent(eventName, data);
+    (target || exports).dispatchEvent(newEvt);
+  };
 
   var Utils = {
     debug: {
@@ -39,7 +44,8 @@
       error: fcDebug.bind(undefined, logLevels.error)
     },
     getCurrentTime: getCurrentTime,
-    inspectObject: inspectObject
+    inspectObject: inspectObject,
+    sendEvent: sendEvent
   };
 
   exports.Utils = Utils;

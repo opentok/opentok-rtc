@@ -59,9 +59,19 @@
     return PUBLISHER_DIV_ID;
   }
 
-  function dispatchEndCallEvent() {
-    var event = new CustomEvent('roomView:endCall', {});
-    exports.dispatchEvent(event);
+  var countdown = null;
+
+  function getCountdown() {
+    if (countdown) {
+      return Promise.resolve(countdown);
+    } else {
+      return LazyLoader.dependencyLoad([
+        '/js/components/countdown.js'
+      ]).then(function() {
+        countdown = Countdown;
+        return countdown;
+      });
+    }
   }
 
   var addHandlers = function() {
@@ -81,6 +91,10 @@
         case 'viewRecordings':
           BubbleFactory.get('viewRecordings').toggle();
           break;
+        case 'startArchiving':
+        case 'stopArchiving':
+          Utils.sendEvent('roomView:' + elem.id);
+          break;
         case 'startChat':
           ChatView.visible = true;
           toggleChatNotification();
@@ -88,9 +102,28 @@
         case 'endCall':
           RoomView.participantsNumber = 0;
           OTHelper.disconnectFromSession();
-          dispatchEndCallEvent();
+          Utils.sendEvent('roomView:endCall');
           break;
       }
+    });
+
+    exports.addEventListener('archiving', function(e) {
+      var status = e.detail.status;
+
+      switch (status) {
+        case 'started':
+          getCountdown().then(function(counter) {
+            counter.init().start();
+          });
+          break;
+        case 'stopped':
+          getCountdown().then(function(counter) {
+            counter.reset();
+          });
+          break;
+      }
+
+      menu.dataset.archiveStatus = e.detail.status;
     });
   };
 

@@ -7,6 +7,9 @@
 
   var MAIN_PAGE = '/index.html';
 
+  var userName = null,
+      roomName = null;
+
   var subscriberOptions = {
     height: '100%',
     width: '100%',
@@ -53,10 +56,29 @@
     }
   };
 
+  var sendArchivingOperation = function(operation) {
+    var data = {
+      userName: userName,
+      roomName: roomName,
+      operation: operation
+    };
+
+    Request.sendArchivingOperation(data).
+      then(function(response) {
+        console.log(response);
+      });
+  };
+
   var viewEventHandlers = {
     'endCall': function(evt) {
       var url = window.location.origin + MAIN_PAGE;
       window.location = url;
+    },
+    'startArchiving': function(evt) {
+      sendArchivingOperation((evt.detail && evt.detail.operation) || 'startComposite');
+    },
+    'stopArchiving': function(evt) {
+      sendArchivingOperation('stop');
     },
     'buttonClick': function(evt) {
         // evt.detail is {name: Name of the button clicked, stream: associated stream}
@@ -175,11 +197,11 @@
     },
     'archiveStarted': function(evt) {
       // Dispatched when an archive recording of the session starts
-      debug.log('!!! room TODO - archiveStarted');
+      Utils.sendEvent('archiving', { status: 'started' });
     },
     'archiveStopped': function(evt) {
       // Dispatched when an archive recording of the session stops
-      debug.log('!!! room TODO - archiveStopped');
+      Utils.sendEvent('archiving', { status: 'stopped' });
     },
     'signal:chat': function(evt) {
       RoomView.toggleChatNotification();
@@ -302,7 +324,8 @@
     then(function(aParams) {
       addViewEventHandlers();
       RoomView.init();
-      var usr = aParams.username ?
+      roomName = aParams.roomName;
+      userName = aParams.username ?
                   (aParams.username.length > 1000 ?
                    aParams.username.substring(0, 1000) :
                    aParams.username) :
@@ -312,17 +335,17 @@
         OTHelper.connectToSession.bind(OTHelper, aParams.apiKey,
                                        aParams.sessionId, aParams.token);
 
-      RoomView.userName = usr;
+      RoomView.userName = userName;
       // Room's name is set by server, we don't need to do this, but
       // perphaps it would be convenient
-      // RoomView.roomName = aRoomName;
+      // RoomView.roomName = aParams.roomName;
       RoomView.participantsNumber = 0;
 
-      publisherOptions.name = usr;
+      publisherOptions.name = userName;
       var publish = OTHelper.publish.bind(OTHelper, RoomView.publisherId,
                                           publisherOptions);
       ChatController.
-        init(aParams.roomName, usr, _allHandlers).
+        init(aParams.roomName, userName, _allHandlers).
         then(connect).
         then(publish).
         then(function() {

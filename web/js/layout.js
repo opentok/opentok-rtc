@@ -16,15 +16,10 @@ Layout.prototype = {
         }
         elemClicked.classList.toggle('enabled');
         var dataset = elemClicked.dataset;
-        var customEventInit = {
-          detail: {
-            streamId: dataset.streamId,
-            name: dataset.action
-          }
-        };
-        var newEvt = new CustomEvent(dataset.eventName, customEventInit);
-        window.dispatchEvent(newEvt);
-
+        Utils.sendEvent(dataset.eventName, {
+          streamId: dataset.streamId,
+          name: dataset.action
+        });
         break;
     }
   },

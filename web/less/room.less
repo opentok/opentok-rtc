@@ -143,10 +143,6 @@ body {
       width: calc(~"100% - 16px");
       padding-left: 16px;
 
-      span {
-        width: 100%;
-      }
-
       [data-icon] {
         width: 30px;
         display: inline-block;
@@ -179,6 +175,33 @@ body {
     .tc-list a.danger:hover,
     .tc-list a.highlight {
       color: #c61f4c;
+    }
+
+    .tc-list [data-archive-status="started"] {
+      #startArchiving {
+        display: none;
+      }
+
+      #stopArchiving {
+        display: inline-block;
+      }
+    }
+
+    #stopArchiving {
+      display: none;
+
+      span:not(.duration) {
+        position: absolute;
+        right: 30px;
+      }
+
+      .duration {
+        font-feature-settings: 'tnum';
+      }
+
+      .duration, i {
+        color: #c61f4c;
+      }
     }
   }
 }

@@ -34,7 +34,7 @@
   }
 
   function getRoomInfo(aRoomParams) {
-    
+
     var userName = aRoomParams.username ? '?userName=' + aRoomParams.username : '';
 
     return sendXHR('GET', server + '/room/' + aRoomParams.roomName + '/info' + userName).
@@ -48,8 +48,24 @@
       });
   }
 
-  function startRecording(sessionId) {
-    return sendXHR('GET', server + '/start/ ' + sessionId).
+  function composeDate(data) {
+    var composed = [];
+
+    Object.keys(data).forEach(function(key) {
+      composed.push(key);
+      composed.push('=');
+      composed.push(data[key]);
+      composed.push('&');
+    });
+
+    composed.length && composed.pop();
+
+    return composed.join('');
+  }
+
+  function sendArchivingOperation(data) {
+    return sendXHR('POST', server + '/room/' + data.roomName + '/archive',
+                    composeDate(data), 'application/x-www-form-urlencoded').
       catch(function(error) {
         debug.error('Error starting archived.' + error.message);
       }
@@ -57,7 +73,8 @@
   }
 
   var Request = {
-    getRoomInfo: getRoomInfo
+    getRoomInfo: getRoomInfo,
+    sendArchivingOperation: sendArchivingOperation
   };
 
   exports.Request = Request;
