@@ -32,7 +32,7 @@ module.exports = function(grunt) {
           quiet: false,
           clearRequireCache: true
         },
-        src: ['test/server/**/*.js']
+        src: ['test/server/**/*_spec.js']
       },
       rest: {
         options: {
@@ -41,7 +41,7 @@ module.exports = function(grunt) {
           quiet: false,
           clearRequireCache: true
         },
-        src: ['test/api/**/*.js']
+        src: ['test/api/**/*_spec.js']
       }
     },
 

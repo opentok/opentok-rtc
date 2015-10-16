@@ -127,13 +127,18 @@ paths:
       tags:
         - Archives
       parameters:
+        - name: roomName
+          in: path
+          description: Name of the room.
+          required: true
+          type: string
         - name: archiveId
           in: path
           description: Id of the archive.
           required: true
           type: string
       responses:
-        '200':
+        '302':
           description: Information to download or view the archive file.
           schema:
             $ref: '#/definitions/ArchiveURL'
@@ -190,10 +195,7 @@ definitions:
       archiveType:
         type: string
   ArchiveURL:
-    type: object
-    properties:
-      archiveId:
-        type: string
+    type: string
   ErrorInfo:
     type: object
     properties:

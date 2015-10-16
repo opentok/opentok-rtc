@@ -33,6 +33,9 @@
  });
 */
 
+// We'll use Firebase to store the recorded archive information
+var Firebase = require('firebase');
+
 function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
   'use strict';
 
@@ -47,9 +50,8 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
   var _timers = { };
 
   var logger = new Logger('FirebaseArchives', aLogLevel);
+  var Firebase = FirebaseArchives.Firebase;
 
-  // We'll use Firebase to store the recorded archive information
-  var Firebase = require('firebase');
   var FirebaseTokenGenerator = require('firebase-token-generator');
 
   // Connect and authenticate the firebase session
@@ -79,7 +81,7 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
       createUserToken: function(aSessionId, aUsername) {
         return fbTokenGenerator.createToken({
           uid: aUsername + Math.random(),
-          sessionId: aSessionId.sessionId,
+          sessionId: aSessionId,
           role: 'user',
           name: aUsername
         });
@@ -128,5 +130,13 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
   }
 
 }
-
+// So we can override the Firebase implementation (i.e. for tests)
+Object.defineProperty(FirebaseArchives, 'Firebase', {
+  set: function(aFirebaseImpl) {
+    Firebase = aFirebaseImpl;
+  },
+  get: function() {
+    return Firebase;
+  }
+});
 module.exports = FirebaseArchives;
