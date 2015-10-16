@@ -46,12 +46,12 @@ function ServerMethods(aLogLevel, aOpentok) {
   const RED_EMPTY_ROOM_MAX_LIFETIME = 'tb_max_history_lifetime';
 
   const REDIS_KEYS = [
-    {key: RED_TB_API_KEY, defaultValue: null},
-    {key: RED_TB_API_SECRET, defaultValue: null},
-    {key: RED_FB_DATA_URL, defaultValue: null},
-    {key: RED_FB_AUTH_SECRET, defaultValue: null},
-    {key: RED_TB_MAX_SESSION_AGE, defaultValue: 2},
-    {key: RED_EMPTY_ROOM_MAX_LIFETIME, defaultValue: 3}
+    { key: RED_TB_API_KEY, defaultValue: null },
+    { key: RED_TB_API_SECRET, defaultValue: null },
+    { key: RED_FB_DATA_URL, defaultValue: null },
+    { key: RED_FB_AUTH_SECRET, defaultValue: null },
+    { key: RED_TB_MAX_SESSION_AGE, defaultValue: 2 },
+    { key: RED_EMPTY_ROOM_MAX_LIFETIME, defaultValue: 3 }
   ];
 
   // This will hold the configuration read from Redis
@@ -172,7 +172,7 @@ function ServerMethods(aLogLevel, aOpentok) {
       if (!aSessionInfo || aSessionInfo.lastUsage <= minLastUsage) {
         // We need to create a new session...
         this.
-          createSession({mediaMode: 'routed'}, (error, session) => {
+          createSession({ mediaMode: 'routed' }, (error, session) => {
             resolve({
               sessionId: session.sessionId,
               lastUsage: Date.now(),
@@ -229,7 +229,7 @@ function ServerMethods(aLogLevel, aOpentok) {
           token: tbConfig.otInstance.
                   generateToken(usableSessionInfo.sessionId, {
                     role: 'publisher',
-                    data: JSON.stringify({userName: userName})
+                    data: JSON.stringify({ userName: userName })
                   }),
           username: userName,
           firebaseURL: fbArchives.baseURL + '/' + usableSessionInfo.sessionId,
@@ -276,7 +276,7 @@ function ServerMethods(aLogLevel, aOpentok) {
           return aSessionInfo;
         });
     } else if (aOperation.startsWith('stop') && !aSessionInfo.inProgressArchiveId) {
-      return aTbConfig.otInstance.listArchives_P({offset: 0, count: 1}).
+      return aTbConfig.otInstance.listArchives_P({ offset: 0, count: 1 }).
         then(aArchives => {
           var recordingInProgress = aArchives[0] && aArchives[0].status === 'started';
           if (recordingInProgress) {

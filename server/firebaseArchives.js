@@ -43,7 +43,32 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
   var Logger = Utils.MultiLevelLogger;
   var promisify = Utils.promisify;
 
-  var logger = new Logger("FirebaseArchives", aLogLevel);
+  // This will hold the current timers on empty rooms...
+  var _timers = { };
+
+  var logger = new Logger('FirebaseArchives', aLogLevel);
+
+  // We'll use Firebase to store the recorded archive information
+  var Firebase = require('firebase');
+  var FirebaseTokenGenerator = require('firebase-token-generator');
+
+  // Connect and authenticate the firebase session
+  var fbRootRef = new Firebase(aRootURL);
+  var fbTokenGenerator = new FirebaseTokenGenerator(aSecret);
+
+  fbRootRef.authWithCustomToken_P = promisify(fbRootRef.authWithCustomToken);
+
+  var serverToken = fbTokenGenerator.
+    createToken({ uid: 'SERVER', role: 'server', name: 'OpenTok RTC Server' },
+                { admin: true });
+  return fbRootRef.
+    authWithCustomToken_P(serverToken).
+    then(fbRootRef.on.bind(fbRootRef, 'child_added', _processSession)).
+    then(_getFbObject).
+    catch(err => {
+      logger.error('Error authenticating to Firebase: ', err);
+      throw new Error(err);
+    });
 
   function _getFbObject() {
     // All done, just return an usable object... this will resolve te promise.
@@ -68,9 +93,6 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
     };
   }
 
-  // This will hold the current timers on empty rooms...
-  var _timers = {};
-
   // We could get the session here by binding this function when setting the handler or from the
   // snapshot. Going with the second option because it should be slightly slower but more memory
   // efficient.
@@ -80,7 +102,8 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
     logger.log('_checkConnectionsNumber: Found a change on', sessionId);
     if (!aConnectionSnapshot.exists() || !aConnectionSnapshot.hasChildren()) {
       // Nobody connected... start the destruction timer!
-      logger.log('_checkConnectionsNumber: setting the cleanup timer for: ', sessionId, 'to', aCleanupTime, 'ms');
+      logger.log('_checkConnectionsNumber: setting the cleanup timer for: ', sessionId, 'to',
+                 aCleanupTime, 'ms');
       _timers[sessionId] =
         setTimeout(() => {
           logger.log('_checkConnectionsNumber: cleaning up: ', sessionId);
@@ -104,26 +127,6 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
     aDataSnapshot.ref().child('connections').on('value', _checkConnectionsNumber);
   }
 
-  // We'll use Firebase to store the recorded archive information
-  var Firebase = require('firebase');
-  var FirebaseTokenGenerator = require('firebase-token-generator');
-
-  // Connect and authenticate the firebase session
-  var fbRootRef = new Firebase(aRootURL);
-  fbRootRef.authWithCustomToken_P = promisify(fbRootRef.authWithCustomToken);
-
-  var fbTokenGenerator = new FirebaseTokenGenerator(aSecret);
-  var serverToken = fbTokenGenerator.
-    createToken({uid: 'SERVER', role: 'server', name: 'OpenTok RTC Server'},
-                {admin: true});
-  return fbRootRef.
-    authWithCustomToken_P(serverToken).
-    then(fbRootRef.on.bind(fbRootRef, 'child_added',_processSession)).
-    then(_getFbObject).
-    catch(err => {
-      logger.error('Error authenticating to Firebase: ', err);
-      throw new Error(err);
-    });
 }
 
 module.exports = FirebaseArchives;
