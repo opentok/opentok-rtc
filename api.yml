@@ -178,6 +178,8 @@ definitions:
         type: string
       username:
         type: string
+      firebaseURL:
+        type: string
       firebasePw:
         type: string
   ArchiveInfo:

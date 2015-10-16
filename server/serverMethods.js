@@ -21,7 +21,6 @@ function ServerMethods(aLogLevel, aOpentok) {
   };
 
 
-
   const DEFAULT_USER_NAME = 'Anonymous User';
 
   // Some Redis keys...
@@ -43,14 +42,20 @@ function ServerMethods(aLogLevel, aOpentok) {
   // where that value (in days) should be stored. By default, sessions live two days.
   const RED_TB_MAX_SESSION_AGE = 'tb_max_session_age';
 
+  // Maximum time an empty room will keep it's history alive, in minutes.
+  const RED_EMPTY_ROOM_MAX_LIFETIME = 'tb_max_history_lifetime';
+
   const REDIS_KEYS = [
-    {key: RED_TB_API_KEY, defaultValue: null},
-    {key: RED_TB_API_SECRET, defaultValue: null},
-    {key: RED_FB_DATA_URL, defaultValue: null},
-    {key: RED_FB_AUTH_SECRET, defaultValue: null},
-    {key: RED_TB_MAX_SESSION_AGE, defaultValue: 2}
+    { key: RED_TB_API_KEY, defaultValue: null },
+    { key: RED_TB_API_SECRET, defaultValue: null },
+    { key: RED_FB_DATA_URL, defaultValue: null },
+    { key: RED_FB_AUTH_SECRET, defaultValue: null },
+    { key: RED_TB_MAX_SESSION_AGE, defaultValue: 2 },
+    { key: RED_EMPTY_ROOM_MAX_LIFETIME, defaultValue: 3 }
   ];
 
+  // This will hold the configuration read from Redis
+  var redisConfig = {};
 
   // A prefix for the room sessionInfo (sessionId + timestamp + inProgressArchiveId).
   // inProgressArchiveId will be present (and not undefined) only if there's an archive
@@ -72,17 +77,6 @@ function ServerMethods(aLogLevel, aOpentok) {
   var Redis = require('ioredis');
   var redis = new Redis();
 
-  // We'll use Firebase to store the recorded archive information
-  var Firebase = require('firebase');
-  var FirebaseTokenGenerator = require("firebase-token-generator");
-
-
-/*
-var tokenGenerator = new FirebaseTokenGenerator("<YOUR_FIREBASE_SECRET>");
-var token = tokenGenerator.createToken({uid: "1", some: "arbitrary", data: "here"});
-*/
-
-
   // Opentok API instance, which will be configured only after tbConfigPromise
   // is resolved
   var tbConfigPromise = _initialTBConfig();
@@ -100,21 +94,22 @@ var token = tokenGenerator.createToken({uid: "1", some: "arbitrary", data: "here
     return pipeline.
       exec().
       then(results => {
-        // Results should be a three row array of two row arrays...
-        var config = {};
+        // Results should be a n row array of two row arrays...
         // Just so we don't have to C&P a bunch of validations...
         for (var i = 0, l = REDIS_KEYS.length; i < l; i++) {
           var keyValue = results[i][1] || REDIS_KEYS[i].defaultValue;
           if (!keyValue) {
-            throw new Error('Missing required redis key: ' + REDIS_KEYS[i] +
-                           '. Please check the installation instructions');
+            var message = 'Missing required redis key: ' + REDIS_KEYS[i] +
+              '. Please check the installation instructions';
+            logger.error(message);
+            throw new Error(message);
           }
-          config[REDIS_KEYS[i].key] = keyValue;
+          redisConfig[REDIS_KEYS[i].key] = keyValue;
         }
 
-        var apiKey = config[RED_TB_API_KEY];
-        var apiSecret = config[RED_TB_API_SECRET];
-        var maxSessionAge = config[RED_TB_MAX_SESSION_AGE];
+        var apiKey = redisConfig[RED_TB_API_KEY];
+        var apiSecret = redisConfig[RED_TB_API_SECRET];
+        var maxSessionAge = redisConfig[RED_TB_MAX_SESSION_AGE];
         var otInstance = new Opentok(apiKey, apiSecret);
 
         // This isn't strictly necessary... but since we're using promises all over the place, it
@@ -122,24 +117,25 @@ var token = tokenGenerator.createToken({uid: "1", some: "arbitrary", data: "here
         // overwritten the original methods but this way we make it explicit. That's also why we're
         // breaking camelCase here, to make it patent to the reader that those aren't standard
         // methods of the API.
-        otInstance.startArchive_P = promisify(otInstance.startArchive);
-        otInstance.stopArchive_P = promisify(otInstance.stopArchive);
-        otInstance.getArchive_P = promisify(otInstance.getArchive);
-        otInstance.listArchives_P = promisify(otInstance.listArchives);
+        ['startArchive', 'stopArchive', 'getArchive', 'listArchives'].
+          forEach(method => otInstance[method + '_P'] = promisify(otInstance[method]));
 
-        return {
-          otInstance: otInstance,
-          apiKey: apiKey,
-          apiSecret: apiSecret,
-          maxSessionAgeMs: maxSessionAge * 24 * 60 * 60 * 1000,
-          fbArchivesRef: new Firebase(config[RED_FB_DATA_URL]),
-          fbTokenGenerator: new FirebaseTokenGenerator(config[RED_FB_AUTH_SECRET])
-        };
-      }).catch(error => {
-        logger.error('Cannot get the API key or API secret from redis');
-        throw error;
-      }
-    );
+        var firebaseArchivesPromise =
+          require('./firebaseArchives')(redisConfig[RED_FB_DATA_URL],
+                                        redisConfig[RED_FB_AUTH_SECRET],
+                                        redisConfig[RED_EMPTY_ROOM_MAX_LIFETIME],
+                                        aLogLevel);
+        return firebaseArchivesPromise.
+          then(firebaseArchives => {
+            return {
+              otInstance: otInstance,
+              apiKey: apiKey,
+              apiSecret: apiSecret,
+              maxSessionAgeMs: maxSessionAge * 24 * 60 * 60 * 1000,
+              fbArchives: firebaseArchives
+            };
+          });
+      });
   }
 
   function waitForTB(aReq, aRes, aNext) {
@@ -176,7 +172,7 @@ var token = tokenGenerator.createToken({uid: "1", some: "arbitrary", data: "here
       if (!aSessionInfo || aSessionInfo.lastUsage <= minLastUsage) {
         // We need to create a new session...
         this.
-          createSession({mediaMode: 'routed'}, (error, session) => {
+          createSession({ mediaMode: 'routed' }, (error, session) => {
             resolve({
               sessionId: session.sessionId,
               lastUsage: Date.now(),
@@ -202,10 +198,13 @@ var token = tokenGenerator.createToken({uid: "1", some: "arbitrary", data: "here
   //   apiKey: string
   //   token:	string
   //   username: string
-  //   firebasePw: string // TBD!
+  //   firebaseURL: string
+  //   firebasePw: string
   // }
   var _numAnonymousUsers = 1;
   function getRoomInfo(aReq, aRes) {
+    var tbConfig = aReq.tbConfig;
+    var fbArchives = aReq.tbConfig.fbArchives;
     var roomName = aReq.params.roomName;
     var userName =
       (aReq.query && aReq.query.userName) || DEFAULT_USER_NAME + _numAnonymousUsers++;
@@ -215,22 +214,26 @@ var token = tokenGenerator.createToken({uid: "1", some: "arbitrary", data: "here
     // Note that we do not store tokens on the Redis database.
     redis.
       get(RED_ROOM_PREFIX + roomName).
-      then(_getUsableSessionInfo.bind(aReq.tbConfig.otInstance, aReq.tbConfig.maxSessionAgeMs)).
+      then(_getUsableSessionInfo.bind(tbConfig.otInstance, tbConfig.maxSessionAgeMs)).
       then(usableSessionInfo => {
         // Update the database. We could do this on getUsable...
         redis.set(RED_ROOM_PREFIX + roomName, JSON.stringify(usableSessionInfo));
 
+        // We have to create an authentication token for the new user...
+        var fbUserToken = fbArchives.createUserToken(usableSessionInfo.sessionId, userName);
+
         // and finally, answer...
         aRes.send({
           sessionId: usableSessionInfo.sessionId,
-          apiKey: aReq.tbConfig.apiKey,
-          token: aReq.tbConfig.otInstance.
+          apiKey: tbConfig.apiKey,
+          token: tbConfig.otInstance.
                   generateToken(usableSessionInfo.sessionId, {
                     role: 'publisher',
-                    data: JSON.stringify({userName: userName})
+                    data: JSON.stringify({ userName: userName })
                   }),
           username: userName,
-          firebasePw: "NOT IMPLEMENTED YET"
+          firebaseURL: fbArchives.baseURL + '/' + usableSessionInfo.sessionId,
+          firebasePw: fbUserToken
         });
       });
   }
@@ -273,7 +276,7 @@ var token = tokenGenerator.createToken({uid: "1", some: "arbitrary", data: "here
           return aSessionInfo;
         });
     } else if (aOperation.startsWith('stop') && !aSessionInfo.inProgressArchiveId) {
-      return aTbConfig.otInstance.listArchives_P({offset: 0, count: 1}).
+      return aTbConfig.otInstance.listArchives_P({ offset: 0, count: 1 }).
         then(aArchives => {
           var recordingInProgress = aArchives[0] && aArchives[0].status === 'started';
           if (recordingInProgress) {
@@ -292,6 +295,7 @@ var token = tokenGenerator.createToken({uid: "1", some: "arbitrary", data: "here
   // Returns ArchiveInfo:
   // { archiveId: string, archiveType: string }
   function postRoomArchive(aReq, aRes) {
+    var tbConfig = aReq.tbConfig;
     var body = aReq.body;
     if (!body || !body.userName || !body.operation) {
       logger.log('postRoomArchive => missing body parameter: ', aReq.body);
@@ -301,7 +305,7 @@ var token = tokenGenerator.createToken({uid: "1", some: "arbitrary", data: "here
     var roomName = aReq.params.roomName;
     var userName = body.userName;
     var operation = body.operation;
-    var otInstance = aReq.tbConfig.otInstance;
+    var otInstance = tbConfig.otInstance;
 
     logger.log('postRoomArchive serving ' + aReq.path, 'roomName:', roomName,
                'userName:', userName);
@@ -310,7 +314,7 @@ var token = tokenGenerator.createToken({uid: "1", some: "arbitrary", data: "here
     // in-progress recording. So we can just get the sessionInfo from redis.
     redis.
       get(RED_ROOM_PREFIX + roomName).
-      then(_getUpdatedArchiveInfo.bind(undefined, aReq.tbConfig, operation)).
+      then(_getUpdatedArchiveInfo.bind(undefined, tbConfig, operation)).
       then(sessionInfo => {
 
         var archiveOptions = {
@@ -332,8 +336,10 @@ var token = tokenGenerator.createToken({uid: "1", some: "arbitrary", data: "here
         logger.log('postRoomArchive: Invoking archiveOp. SessionInfo', sessionInfo);
         return archiveOp().then(aArchive => {
           sessionInfo.inProgressArchiveId = aArchive.status === 'started' ? aArchive.id : undefined;
-          // Update the database.
+          // Update the internal database
           redis.set(RED_ROOM_PREFIX + roomName, JSON.stringify(sessionInfo));
+          // And update the external database also!
+          tbConfig.fbArchives.updateArchive(sessionInfo.sessionId, aArchive);
           logger.log('postRoomArchive => Returning archive info: ', aArchive.id);
           aRes.send({
             archiveId: aArchive.id,
@@ -342,8 +348,8 @@ var token = tokenGenerator.createToken({uid: "1", some: "arbitrary", data: "here
         });
       }).
       catch(error => {
-        aRes.status(400).send(error.toString());
         logger.log("postRoomArchive. Sending error:", error);
+        aRes.status(400).send(error);
       });
   }
 
