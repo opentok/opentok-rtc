@@ -6,34 +6,10 @@ var sinon = require('sinon');
 
 var request = require('supertest');
 
-
 describe('OpenTokRTC server', function() {
   'use strict';
 
-  var _archives = {};
-  function FakeArchive(aSessionId, aOptions, aStatus) {
-    var newArchive =  {
-      createdAt: Date.now(),
-      duration: '100000',
-      id: Math.random() + '',
-      name: aOptions.name || 'unnamed',
-      parnerId: '0xdeadcafe',
-      reason: 'unknown',
-      sessionId: aSessionId,
-      size: 1000,
-      status: aStatus,
-      hasAudio: true,
-      hasVideo: true,
-      outputMode: aOptions.outputMode || 'composite',
-      url: 'http://nothing.to.see/here'
-    };
-    _archives[newArchive.id] = newArchive;
-
-    return newArchive;
-  }
-
-
-  var app, opentok;
+  var app, MockOpentok;
 
   // Note that since everything is in api.json, we could just parse
   // that and generate the test cases automatically. At the moment
@@ -41,52 +17,32 @@ describe('OpenTokRTC server', function() {
 
   before(function(done) {
     var fs = require('fs');
-    var Opentok = require('opentok');
 
-    var FakeOpentok = function(aApiKey, aApiSecret) {
-      opentok = new Opentok(aApiKey, aApiSecret);
-      // We must mock/stub some of the Opentok methods before the app is created
-      // because they might be renamed/rebinded...
-      sinon.stub(opentok, 'startArchive', function(aSessionId, aArchiveOptions, aCallback) {
-        setTimeout(() =>
-          aCallback(null, new FakeArchive(aSessionId, aArchiveOptions, 'started')));
-      });
+    MockOpentok = require('../mocks/mock_opentok.js');
 
-      sinon.stub(opentok, 'stopArchive', function(aArchiveId, aCallback) {
-        setTimeout(() => {
-          if (_archives[aArchiveId]) {
-            _archives[aArchiveId].status = 'stopped';
-          }
-          aCallback(!_archives[aArchiveId], _archives[aArchiveId]);
-        });
-      });
-
-      sinon.stub(opentok, 'getArchive', function(aArchiveId, aCallback) {
-        setTimeout(aCallback.bind(undefined, !_archives[aArchiveId], _archives[aArchiveId]));
-      });
-
-      sinon.stub(opentok, 'listArchives', function(aOptions, aCallback) {
-        var list = Object.keys(_archives).map(key => _archives[key]);
-        setTimeout(aCallback.bind(undefined, list));
-      });
-      return opentok;
+    // Note that we're not actually testing anything that uses Firebase here. They'll
+    // have their own unit tests. We're only avoiding using it at all.
+    var mocks = {
+      Opentok: MockOpentok,
+      Firebase: require('../mocks/mock_firebase')
     };
+
+    var mockFirebase;
 
     // Note that this actually executes on the level where the Grunt file is
     // So that's what '.' is. OTOH, the requires are relative to *this* file.
+    // Yep, I don't like that either. Nope, I can't do anything about that.
     fs.readFile('./api.json', function(err, data) {
       // Create the app with the json we've just read. The third parameter is
       // the app loglevel. Disable logs for the tests.
-      app = require('../../server/app')('../../web', data, 0, FakeOpentok);
+      app = require('../../server/app')('../../web', data, 0, mocks);
 
       done();
     });
   });
 
   after(function() {
-    ['startArchive', 'stopArchive', 'getArchive', 'listArchives'].forEach(method => {
-      opentok[method].restore();
-    });
+    MockOpentok.restoreInstances();
   });
 
   // Note that everything needed to test this is actually in api.json, but it's not
@@ -166,6 +122,7 @@ describe('OpenTokRTC server', function() {
       expect(200, done);
   });
 
+  // Temporary test, TBD later
   it('GET /archive/:archiveId', function(done) {
     request(app).
       get('/archive/12345').

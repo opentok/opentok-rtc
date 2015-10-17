@@ -1,7 +1,7 @@
 // This app serves some static content from a static path and serves a REST API that's
 // defined on the api.json file (derived from a swagger 2.0 yml file)
 // The last parameter is only actually needed (and used) for the unit tests
-module.exports = function App(aStaticPath, aApiDef, aLogLevel, aOpentok) {
+module.exports = function App(aStaticPath, aApiDef, aLogLevel, aModules) {
   'use strict';
 
   var Utils = require('./utils');
@@ -17,7 +17,7 @@ module.exports = function App(aStaticPath, aApiDef, aLogLevel, aOpentok) {
   var implModule = api['x-implementation-module'];
   logger.log('Loading implementation module (' + implModule);
 
-  var serverImpl = new (require('./' + implModule))(aLogLevel, aOpentok);
+  var serverImpl = new (require('./' + implModule))(aLogLevel, aModules);
 
   logger.log('Implementation module (' + implModule + ' read!');
 
@@ -42,7 +42,7 @@ module.exports = function App(aStaticPath, aApiDef, aLogLevel, aOpentok) {
   // And add the implementation functions for each paths
   Object.keys(paths).forEach(path => {
     Object.keys(paths[path]).forEach(verb => {
-      var expressifiedPath = path.replace('{', ':').replace('}','');
+      var expressifiedPath = path.replace(/{/g, ':').replace(/}/g,'');
       var implementation = paths[path][verb]['x-implemented-in'];
       logger.log('Adding ' + verb + ': ' + expressifiedPath + ' => ' + implementation);
       if (verb === 'post' || verb === 'delete') {

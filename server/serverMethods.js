@@ -8,8 +8,9 @@
 // redis-cli set tb_api_secret yoursecrethere
 // Once before trying to run this.
 // The second argument is only really needed for the unit tests.
-function ServerMethods(aLogLevel, aOpentok) {
+function ServerMethods(aLogLevel, aModules) {
   'use strict';
+  aModules = aModules || {};
 
   function ErrorInfo(aCode, aMessage) {
     this.code = aCode;
@@ -69,9 +70,15 @@ function ServerMethods(aLogLevel, aOpentok) {
   var Logger = Utils.MultiLevelLogger;
   var promisify = Utils.promisify;
 
-  var Opentok = aOpentok || require('opentok');
+  var Opentok = aModules.Opentok || require('opentok');
 
-  var logger = new Logger("ServerMethods", aLogLevel);
+  var FirebaseArchives = require('./firebaseArchives');
+
+  if (aModules.Firebase) {
+    FirebaseArchives.Firebase = aModules.Firebase;
+  }
+
+  var logger = new Logger('ServerMethods', aLogLevel);
 
   // We'll use redis to add persistence
   var Redis = require('ioredis');
@@ -121,10 +128,10 @@ function ServerMethods(aLogLevel, aOpentok) {
           forEach(method => otInstance[method + '_P'] = promisify(otInstance[method]));
 
         var firebaseArchivesPromise =
-          require('./firebaseArchives')(redisConfig[RED_FB_DATA_URL],
-                                        redisConfig[RED_FB_AUTH_SECRET],
-                                        redisConfig[RED_EMPTY_ROOM_MAX_LIFETIME],
-                                        aLogLevel);
+          FirebaseArchives(redisConfig[RED_FB_DATA_URL],
+                           redisConfig[RED_FB_AUTH_SECRET],
+                           redisConfig[RED_EMPTY_ROOM_MAX_LIFETIME],
+                           aLogLevel);
         return firebaseArchivesPromise.
           then(firebaseArchives => {
             return {
@@ -339,6 +346,7 @@ function ServerMethods(aLogLevel, aOpentok) {
           // Update the internal database
           redis.set(RED_ROOM_PREFIX + roomName, JSON.stringify(sessionInfo));
           // And update the external database also!
+          aArchive.localDownloadURL = '/archive/' + aArchive.id;
           tbConfig.fbArchives.updateArchive(sessionInfo.sessionId, aArchive);
           logger.log('postRoomArchive => Returning archive info: ', aArchive.id);
           aRes.send({
@@ -348,13 +356,22 @@ function ServerMethods(aLogLevel, aOpentok) {
         });
       }).
       catch(error => {
-        logger.log("postRoomArchive. Sending error:", error);
+        logger.log('postRoomArchive. Sending error:', error);
         aRes.status(400).send(error);
       });
   }
 
   function getArchive(aReq, aRes) {
-    aRes.sendStatus(405);
+    var archiveId = aReq.params.archiveId;
+    logger.log('getAchive:', archiveId);
+    aReq.tbConfig.otInstance.
+      getArchive_P(archiveId).
+      then(aArchive => {
+        aRes.redirect(301, aArchive.url);
+      }).catch(e => {
+        logger.error('getArchive error: ', e);
+        aRes.status(405).send(e);
+      });
   }
 
   function deleteArchive(aReq, aRes) {

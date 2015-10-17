@@ -141,7 +141,7 @@
             "get": {
                 "summary": "Gets and returns a temporary archive URL.",
                 "x-implemented-in": "getArchive",
-                "description": "Creates a new temporary archive URL to allow the visualization or download of an existing archive. The URL created is valid for 10 minutes only!",
+                "description": "Creates a new temporary archive URL to allow the visualization or download of an existing archive. The URL created is valid for 10 minutes only! What this API actually does is just returning a 301 with the actual download URL",
                 "tags": [
                     "Archives"
                 ],
@@ -155,7 +155,7 @@
                     }
                 ],
                 "responses": {
-                    "200": {
+                    "301": {
                         "description": "Information to download or view the archive file.",
                         "schema": {
                             "$ref": "#/definitions/ArchiveURL"
@@ -242,12 +242,7 @@
             }
         },
         "ArchiveURL": {
-            "type": "object",
-            "properties": {
-                "archiveId": {
-                    "type": "string"
-                }
-            }
+            "type": "string"
         },
         "ErrorInfo": {
             "type": "object",
