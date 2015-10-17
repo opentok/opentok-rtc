@@ -1,6 +1,6 @@
+'use strict';
 var sinon = require('sinon');
 var RealOpentok = require('opentok');
-'use strict';
 
 function Opentok(aApiKey, aApiSecret) {
   var _archives = {};

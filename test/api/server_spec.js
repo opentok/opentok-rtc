@@ -52,7 +52,6 @@ describe('OpenTokRTC server', function() {
     var aObject = aRes.body;
     for (var i = 0, l = aAttributes.length; i < l ; i++) {
       if (!aObject[aAttributes[i]]) {
-        console.log("aRes.body", aRes.body);
         throw new Error('Missing required attribute: ' + aAttributes[i] +
                         ' in ' + JSON.stringify(aObject));
       }

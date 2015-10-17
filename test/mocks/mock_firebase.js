@@ -1,33 +1,32 @@
+'use strict';
 
 var _MockFirebase = require('mockfirebase').MockFirebase;
 
 function MockFirebase(aURL) {
-  var _mock = MockFirebase.references[aURL];
-  if (!_mock) {
-    _mock = new _MockFirebase(aURL);
-    _mock._authWithCustomTokenOrig = _mock.authWithCustomToken;
-    _mock.authWithCustomToken = function(aToken, aCallback) {
-      _mock._authWithCustomTokenOrig(aToken, aCallback);
+  var mock = MockFirebase.references[aURL];
+  if (!mock) {
+    mock = new _MockFirebase(aURL);
+    mock._authWithCustomTokenOrig = mock.authWithCustomToken;
+    mock.authWithCustomToken = function(aToken, aCallback) {
+      mock._authWithCustomTokenOrig(aToken, aCallback);
       // We're not even using this... :/
-      _mock.changeAuthState({
+      mock.changeAuthState({
         uid: 'theUid',
         provider: 'github',
         token: 'theToken',
         expires: Math.floor(new Date() / 1000) + 24 * 60 * 60, // expire in 24 hours
         auth: {
-        myAuthProperty: true
+          myAuthProperty: true
         }
       });
     };
-    _mock = _mock.autoFlush(true);
-    MockFirebase.references[aURL] = _mock;
+    mock = mock.autoFlush(true);
+    MockFirebase.references[aURL] = mock;
   };
-  return _mock;
+  return mock;
 };
 
 // This will come handy for tests...
 MockFirebase.references = {};
 
 module.exports = MockFirebase;
-
-

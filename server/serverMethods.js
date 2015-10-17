@@ -78,7 +78,7 @@ function ServerMethods(aLogLevel, aModules) {
     FirebaseArchives.Firebase = aModules.Firebase;
   }
 
-  var logger = new Logger("ServerMethods", aLogLevel);
+  var logger = new Logger('ServerMethods', aLogLevel);
 
   // We'll use redis to add persistence
   var Redis = require('ioredis');
@@ -356,7 +356,7 @@ function ServerMethods(aLogLevel, aModules) {
         });
       }).
       catch(error => {
-        logger.log("postRoomArchive. Sending error:", error);
+        logger.log('postRoomArchive. Sending error:', error);
         aRes.status(400).send(error);
       });
   }

@@ -1,3 +1,5 @@
+'use strict';
+
 var chai = require('chai');
 var assert = chai.assert;
 var expect = chai.expect;
@@ -106,7 +108,7 @@ describe('FirebaseArchives', function() {
           var data = newArchiveRef.getData();
           expect(data[testArchive.id]).to.deep.equal(testArchive);
         } catch(e) {
-          console.log("Error", e);
+          console.log('Error', e);
           throw e;
         }
         done();
@@ -130,7 +132,7 @@ describe('FirebaseArchives', function() {
           data = archiveRef.getData();
           expect(data).to.exist;
         } catch(e) {
-          console.log("Error", e);
+          console.log('Error', e);
           throw e;
         }
         done();
@@ -155,7 +157,7 @@ describe('FirebaseArchives', function() {
           data = archiveRef.getData();
           expect(data).to.not.exist;
         } catch(e) {
-          console.log("Error", e);
+          console.log('Error', e);
           throw e;
         }
         done();
@@ -163,6 +165,5 @@ describe('FirebaseArchives', function() {
     });
 
   });
-
 
 });
