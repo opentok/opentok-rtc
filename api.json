@@ -225,7 +225,7 @@
                 "firebaseURL": {
                     "type": "string"
                 },
-                "firebasePw": {
+                "firebaseToken": {
                     "type": "string"
                 }
             }

@@ -79,16 +79,23 @@
     }
 
     a {
-      color: #1a99ce;
+      color: #9b9c9b;
       .truncate();
       width: 100%;
       display: inline-block;
+      pointer-events: none;
 
       &:hover,
       &:focus,
       &:active {
         background-color: transparent;
       }
+    }
+
+    a[data-status="available"],
+    a[data-status="stopped"] {
+      color: #1a99ce;
+      pointer-events: all;
     }
   }
 }

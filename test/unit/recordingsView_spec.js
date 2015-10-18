@@ -5,48 +5,86 @@ var should = chai.should();
 describe('RecordingsView', function() {
 
   var model = {
+    _listeners: {},
+    _archives: {},
+    _fire: function(data) {
+      this._archives = data;
+      this._listeners.value[0].method(data);
+    },
+    addEventListener: function(type, fc) {
+      if (!(type in this._listeners)) {
+        this._listeners[type] = [];
+      }
+      this._listeners[type].push({
+        method: fc,
+        context: undefined
+      });
+    },
     init: function() {
       return Promise.resolve();
+    },
+    get archives() {
+      return this._archives;
     }
   };
 
   before(function() {
+    model._listeners = {};
     window.document.body.innerHTML =
       window.__html__['test/unit/recordingsView_spec.html'];
   });
 
   describe('#init', function() {
-    it('should be initialized properly', function(done) {
-      model.onValue = done.bind(this, null);
-
-      RecordingsView.init(model);
+    it('should exist', function() {
+      expect(RecordingsView.init).to.exist;
+      expect(RecordingsView.init).to.be.a('function');
     });
 
-    it('should renders videos', function(done) {
+    it('should be initialized properly with only a listener for onvalue event', function() {
+      RecordingsView.init(model);
+      var keys = Object.keys(model._listeners);
+      expect(keys.length).to.equal(1);
+      expect(keys[0]).to.equal('value');
+      expect(model._listeners.value.length).to.equal(1);
+    });
+
+    it('should render archives', function() {
       var container = document.querySelector('.videos.tc-list ul');
       expect(container.children.length).to.equal(0);
 
-      var videos = {
+      var archives = {
         one: {
-          url: 'http://xxx.com'
+          localDownloadURL: 'http://xxx.com/',
+          name: 'aUser1 aDate1',
+          status: 'stopped'
         },
         two: {
-          url: 'http://yyy.net'
+          localDownloadURL: 'http://yyy.com/',
+          name: 'aUser2 aDate2',
+          status: 'started'
         },
-      };
-
-      model.onValue = function(callback) {
-        callback(videos);
-
-        expect(container.children.length).to.equal(2);
-        var item = container.querySelectorAll('li > a');
-        expect(item[0].textContent).to.equal(videos.one.url);
-        expect(item[1].textContent).to.equal(videos.two.url);
-        done();
+        three: {
+          localDownloadURL: 'http://zzz.com/',
+          name: 'aUser3 aDate3',
+          status: 'available'
+        }
       };
 
       RecordingsView.init(model);
+
+      model._fire(archives);
+
+      expect(container.children.length).to.equal(3);
+
+      var items = container.querySelectorAll('li > a');
+      var keysArchives = Object.keys(archives);
+      for (var i = 0, l = items.length; i < l; i++) {
+        var item = items[i];
+        var values = archives[keysArchives[i]];
+        expect(item.textContent).to.equal(values.name);
+        expect(item.href).to.equal(values.localDownloadURL);
+        expect(item.dataset.status).to.equal(values.status);
+      }
     });
   });
-
 });

@@ -24,7 +24,7 @@
  // firebaseURL + '/archives' => will hold the archive history for this room
  // firebaseURL + '/connections' => Will hold the list of connected users.
  firebaseRef = new Firebase(firebaseURL);
- firebaseRef.auth(firebasePW, function() {
+ firebaseRef.auth(firebaseToken, function() {
    firebaseArchives = firebaseRef.child('archives');
    firebaseArchives.on('value', function updateArchiveHistory(aSnapshot) {
    // Do whatever here...
