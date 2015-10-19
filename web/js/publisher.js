@@ -42,6 +42,7 @@
         publisher.classList.remove('dragging');
 
         break;
+
       case 'click':
         var elem = evt.target;
         if (!(HTMLElems.isAction(elem))) {
@@ -62,6 +63,7 @@
     var videoCtrlBtn = HTMLElems.createElementAt(publisher, 'i',
                      {'data-icon': 'camera', 'data-action': 'video'});
     videoCtrlBtn.classList.add('enabled');
+    HTMLElems.createElementAt(publisher, 'i', {'data-icon': 'record'});
   }
 
   function init() {
