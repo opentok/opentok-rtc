@@ -9,7 +9,8 @@
     JSON.stringify({ _head: { id: 99, seq: 99, tot: 99}, data: "" }).length;
   var USER_DATA_SIZE = SIZE_MAX - HEAD_SIZE;
   var otLoaded = LazyLoader.load(OPENTOK_API);
-  var debug = Utils.debug;
+  var debug =
+    new Utils.MultiLevelLogger('OTHelper.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
   var messageOrder = 0;
 
   var _msgPieces = {};

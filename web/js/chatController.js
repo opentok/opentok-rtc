@@ -1,7 +1,8 @@
 !function(exports) {
   'use strict';
 
-  var debug = Utils.debug;
+  var debug =
+    new Utils.MultiLevelLogger('chatController.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
 
   var TIME_RESEND_CHAT = 60000;
 

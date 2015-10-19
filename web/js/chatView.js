@@ -11,7 +11,9 @@
       chatContent,
       chatForm;
 
-  var debug = Utils.debug;
+  var debug =
+    new Utils.MultiLevelLogger('chatView.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
+
 
   function initHTMLElements() {
     var chatWndElem = document.getElementById('chat');

@@ -19,6 +19,7 @@ module.exports = function(config) {
       'test/lib/**/*.js',
       'web/js/vendor/**/*.js',
       'web/js/libs/utils.js',
+      'server/shared/**/*.js',
       'web/js/components/modal.js',
       'web/js/landingView.js', // Don't load the views yet
       'web/js/landingController.js',

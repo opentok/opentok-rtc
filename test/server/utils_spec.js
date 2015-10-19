@@ -4,7 +4,7 @@ var expect = chai.expect;
 var should = chai.should();
 var sinon = require('sinon');
 
-var Utils  = require('../../server/utils.js');
+var Utils  = require('../../server/shared/utils.js');
 
 describe('Utils', function(){
 

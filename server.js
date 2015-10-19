@@ -13,7 +13,7 @@ const SERVER_LIBS = './server/';
 var staticPath = process.argv[3] || DEFAULT_STATIC_PATH;
 var serverPort = process.argv[2] || DEFAULT_SERVER_PORT;
 var fs = require('fs');
-var Utils = require(SERVER_LIBS + 'utils');
+var Utils = require(SERVER_LIBS + '/shared/utils');
 var Logger = Utils.MultiLevelLogger;
 var logLevel =  Logger.DEFAULT_LEVELS.all;
 

@@ -4,7 +4,7 @@
 module.exports = function App(aStaticPath, aApiDef, aLogLevel, aModules) {
   'use strict';
 
-  var Utils = require('./utils');
+  var Utils = require('./shared/utils');
   var Logger = Utils.MultiLevelLogger;
   var logger = new Logger('HTTP Server App', aLogLevel);
 
@@ -24,6 +24,8 @@ module.exports = function App(aStaticPath, aApiDef, aLogLevel, aModules) {
   var express = require('express');
   var app = express();
 
+  logger.log('Setting shared directory /shared/js handler to', __dirname + '/shared');
+  app.use('/shared/js', express.static(__dirname + '/shared'));
   app.use(express.static(aStaticPath));
 
   // TO-DO: Do we want this to be CORS friendly? Probably not...
@@ -34,6 +36,7 @@ module.exports = function App(aStaticPath, aApiDef, aLogLevel, aModules) {
 
   // And use EJS as a view engine
   app.set('view engine', 'ejs');
+
 
   // Add the middleware, if needed
   var middleware = api['x-implementation-middleware'];
