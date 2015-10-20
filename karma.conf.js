@@ -21,6 +21,7 @@ module.exports = function(config) {
       {pattern: 'test/mocks/mock_firebase.js', include: true},
       'web/js/vendor/**/*.js',
       'web/js/libs/utils.js',
+      'server/shared/**/*.js',
       'web/js/components/modal.js',
       'web/js/landingView.js', // Don't load the views yet
       'web/js/landingController.js',

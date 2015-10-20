@@ -1,19 +1,6 @@
 !function(exports) {
 
   'use strict';
-  // TODO - Move to a configuration file or someplace like that
-  var DEBUG_LEVEL = 7;
-
-  // TODO - to change debug function for instanciable one
-  var fcDebug = function(level, msg) {
-    (level & DEBUG_LEVEL) && console.log(msg);
-  };
-
-  var logLevels = {
-    error: 1,
-    warning: 2,
-    log: 4
-  };
 
   var getCurrentTime = function() {
     var now = new Date();
@@ -38,11 +25,6 @@
   };
 
   var Utils = {
-    debug: {
-      log: fcDebug.bind(undefined, logLevels.log),
-      warning: fcDebug.bind(undefined, logLevels.warning),
-      error: fcDebug.bind(undefined, logLevels.error)
-    },
     getCurrentTime: getCurrentTime,
     inspectObject: inspectObject,
     sendEvent: sendEvent

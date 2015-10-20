@@ -1,8 +1,6 @@
 !function(exports) {
   'use strict';
 
-  var debug = Utils.debug;
-
   var TIME_RESEND_CHAT = 60000;
 
   var _connectedEarlierThanMe = 0;

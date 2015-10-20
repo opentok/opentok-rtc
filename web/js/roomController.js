@@ -1,7 +1,8 @@
 !function(exports) {
   'use strict';
 
-  var debug = Utils.debug;
+  var debug =
+    new Utils.MultiLevelLogger('roomController.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
 
   var numUsrsInRoom = 0;
 
@@ -66,7 +67,7 @@
 
     Request.sendArchivingOperation(data).
       then(function(response) {
-        console.log(response);
+        debug.log(response);
       });
   };
 
@@ -247,7 +248,6 @@
     if (!exports.RoomController) {
       throw new Error("Room Controller is not defined. Missing script tag?");
     }
-    debug = Utils.debug;
 
     // pathName should be /room/<roomName>[?username=<userName>]
     debug.log(document.location.pathname);

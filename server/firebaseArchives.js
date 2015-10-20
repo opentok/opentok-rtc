@@ -42,7 +42,7 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
   // Time is in minutes but we need it in ms.
   aCleanupTime = aCleanupTime * 60 * 1000;
 
-  var Utils = require('./utils');
+  var Utils = require('./shared/utils');
   var Logger = Utils.MultiLevelLogger;
   var promisify = Utils.promisify;
 

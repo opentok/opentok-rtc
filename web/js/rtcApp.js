@@ -36,11 +36,13 @@
   }
 
   function init() {
+    debug = new Utils.MultiLevelLogger('rtcApp.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
+    debug.log('Initializing app');
     var view = getView();
     if (view) {
       view.init();
     } else {
-      console.log('Couldn\'t find a view for ' + exports.document.location.pathname);
+      debug.error('Couldn\'t find a view for ' + exports.document.location.pathname);
     }
   };
 
@@ -54,7 +56,8 @@
 this.addEventListener('load', function startApp() {
   // Check that everything was loaded correctly, or just use LazyLoader here...
   LazyLoader.dependencyLoad([
-    '/js/libs/utils.js',
+    '/js/libs/browser_utils.js',
+    '/shared/js/utils.js',
     '/js/helpers/requests.js',
     '/js/roomController.js',
     '/js/landingController.js'

@@ -66,7 +66,7 @@ function ServerMethods(aLogLevel, aModules) {
   // to get that, it's more efficient if we cache it locally.
   const RED_ROOM_PREFIX = 'otrtc_room__';
 
-  var Utils = require('./utils');
+  var Utils = require('./shared/utils');
   var Logger = Utils.MultiLevelLogger;
   var promisify = Utils.promisify;
 

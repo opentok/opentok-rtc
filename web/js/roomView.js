@@ -1,8 +1,6 @@
 !function(exports) {
   'use strict';
 
-  var debug = Utils.debug;
-
   var PUBLISHER_DIV_ID = 'publisher';
 
   // HTML elements for the view

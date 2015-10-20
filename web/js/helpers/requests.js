@@ -3,7 +3,8 @@
 
   var server = window.location.origin;
 
-  var debug = Utils.debug;
+  var debug =
+    new Utils.MultiLevelLogger('requests.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
 
   function sendXHR(aType, aURL, aData, aDataType) {
     return new Promise(function(resolve, reject) {
