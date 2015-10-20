@@ -1,7 +1,7 @@
 !function(exports) {
   'use strict';
 
-  var countdownElement;
+  var cronographElement;
   var counter = 0;
   var counterTimer = null;
 
@@ -11,20 +11,20 @@
 
   function reset() {
     counter = 0;
-    paint(0, 0);
+    cronographElement && paint(0, 0);
   }
 
   function paint(minutes, seconds) {
-    countdownElement.textContent = beautify(minutes) + ':' + beautify(seconds);
+    cronographElement.textContent = beautify(minutes) + ':' + beautify(seconds);
   }
 
-  var Countdown = {
+  var Cronograph = {
     init: function () {
-      countdownElement = document.querySelector('.duration');
+      cronographElement = document.querySelector('.duration');
       reset();
       return this;
     },
-    start: function(element) {
+    start: function() {
       if (counterTimer !== null) {
         return;
       }
@@ -34,15 +34,16 @@
         var seconds = Math.floor(counter % 60);
         paint(minutes, seconds);
       }, 1000);
+      return this;
     },
     stop: function() {
       exports.clearInterval(counterTimer);
       counterTimer = null;
-      return counter;
+      return this;
     },
     reset: reset
   };
 
-  exports.Countdown = Countdown;
+  exports.Cronograph = Cronograph;
 
 }(this);

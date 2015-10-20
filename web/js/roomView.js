@@ -59,17 +59,17 @@
     return PUBLISHER_DIV_ID;
   }
 
-  var countdown = null;
+  var cronograph = null;
 
-  function getCountdown() {
-    if (countdown) {
-      return Promise.resolve(countdown);
+  function getCronograph() {
+    if (cronograph) {
+      return Promise.resolve(cronograph);
     } else {
       return LazyLoader.dependencyLoad([
-        '/js/components/countdown.js'
+        '/js/components/cronograph.js'
       ]).then(function() {
-        countdown = Countdown;
-        return countdown;
+        cronograph = Cronograph;
+        return cronograph;
       });
     }
   }
@@ -112,12 +112,12 @@
 
       switch (status) {
         case 'started':
-          getCountdown().then(function(counter) {
+          getCronograph().then(function(counter) {
             counter.init().start();
           });
           break;
         case 'stopped':
-          getCountdown().then(function(counter) {
+          getCronograph().then(function(counter) {
             counter.reset();
           });
           break;
