@@ -35,7 +35,7 @@ describe('Cronograph', function() {
   });
 
   describe('#start', function() {
-    it('initializes the countdown', sinon.test(function() {
+    it('initializes the cronograph', sinon.test(function() {
       var clock = sinon.useFakeTimers();
 
       Cronograph.start();
@@ -53,10 +53,23 @@ describe('Cronograph', function() {
 
       clock.restore();
     }));
+
+    it('initializes the cronograph from 33 seconds', sinon.test(function() {
+      var clock = sinon.useFakeTimers();
+
+      Cronograph.init();
+      checkCounterUI('00:00');
+
+      Cronograph.start(33);
+      clock.tick(20000);
+      checkCounterUI('00:53');
+
+      clock.restore();
+    }));
   });
 
   describe('#stop', function() {
-    it('freezes the countdown', sinon.test(function() {
+    it('freezes the cronograph', sinon.test(function() {
       var exptectedTime = '00:20'
       var clock = sinon.useFakeTimers();
 
