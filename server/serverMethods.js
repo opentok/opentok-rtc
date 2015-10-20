@@ -206,7 +206,7 @@ function ServerMethods(aLogLevel, aModules) {
   //   token:	string
   //   username: string
   //   firebaseURL: string
-  //   firebasePw: string
+  //   firebaseToken: string
   // }
   var _numAnonymousUsers = 1;
   function getRoomInfo(aReq, aRes) {
@@ -240,7 +240,7 @@ function ServerMethods(aLogLevel, aModules) {
                   }),
           username: userName,
           firebaseURL: fbArchives.baseURL + '/' + usableSessionInfo.sessionId,
-          firebasePw: fbUserToken
+          firebaseToken: fbUserToken
         });
       });
   }
@@ -323,9 +323,9 @@ function ServerMethods(aLogLevel, aModules) {
       get(RED_ROOM_PREFIX + roomName).
       then(_getUpdatedArchiveInfo.bind(undefined, tbConfig, operation)).
       then(sessionInfo => {
-
+        var now = new Date();
         var archiveOptions = {
-          name: userName // We'll use the archive name to indicate who started the recording.
+          name: userName + ' ' +  now.toLocaleDateString() + ' ' + now.toLocaleTimeString()
         };
         var archiveOp;
         switch (operation) {
@@ -347,6 +347,8 @@ function ServerMethods(aLogLevel, aModules) {
           redis.set(RED_ROOM_PREFIX + roomName, JSON.stringify(sessionInfo));
           // And update the external database also!
           aArchive.localDownloadURL = '/archive/' + aArchive.id;
+          aArchive.recordingUser = userName;
+
           tbConfig.fbArchives.updateArchive(sessionInfo.sessionId, aArchive);
           logger.log('postRoomArchive => Returning archive info: ', aArchive.id);
           aRes.send({

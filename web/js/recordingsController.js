@@ -1,13 +1,14 @@
 !function(exports) {
   'use strict';
 
-  function init(aRoomName) {
+  function init(firebaseUrl, firebaseToken) {
     return LazyLoader.dependencyLoad([
       '/js/models/firebase.js',
       '/js/recordingsView.js'
     ]).then(function() {
-      var model = new FirebaseModel(aRoomName);
-      return RecordingsView.init(model);
+      FirebaseModel.
+        init(firebaseUrl, firebaseToken).
+        then(RecordingsView.init);
     });
   }
 

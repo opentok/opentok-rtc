@@ -1,29 +1,33 @@
 !function(exports) {
   'use strict';
 
-  function render(videos) {
+  function render(archives) {
     var list = document.querySelector('.videos.tc-list ul');
 
     list.innerHTML = '';
 
     var total = 0;
-    Object.keys(videos).forEach(function(id) {
+    Object.keys(archives).forEach(function(archiveId) {
+      var archive = archives[archiveId];
+
       ++total;
-      var url = videos[id].url;
+      var url = archive.localDownloadURL;
+      var name = archive.name;
       var item = HTMLElems.createElementAt(list, 'li');
+
       HTMLElems.createElementAt(item, 'a', {
-        target: '_blank',
-        href: url
-      }, url);
+        'target': '_blank',
+        'href': url,
+        'data-status': archive.status
+      }, name);
     });
 
     RoomView.recordingsNumber = total;
   }
 
   var init = function(model) {
-    return model.init().then(function() {
-      return model.onValue(render);
-    });
+    model.addEventListener('value', render);
+    render(model.archives);
   };
 
   exports.RecordingsView = {

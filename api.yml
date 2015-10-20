@@ -181,7 +181,7 @@ definitions:
         type: string
       firebaseURL:
         type: string
-      firebasePw:
+      firebaseToken:
         type: string
   ArchiveInfo:
     type: object

@@ -300,7 +300,8 @@
       getRoomInfo(aRoomParams).
       then(function(aRoomInfo) {
         if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId
-            && aRoomInfo.apiKey && aRoomInfo.username)) {
+            && aRoomInfo.apiKey && aRoomInfo.username
+            && aRoomInfo.firebaseToken && aRoomInfo.firebaseURL)) {
           debug.error('Error getRoomParams [' + aRoomInfo +
                       ' without correct response');
           throw new Error('Error getting room parameters');
@@ -350,10 +351,10 @@
         then(connect).
         then(publish).
         then(function() {
-              RoomView.participantsNumber = ++numUsrsInRoom;
-              Publisher.init();
-              RecordingsController.init(aParams.roomName);
-            }).
+          RoomView.participantsNumber = ++numUsrsInRoom;
+          Publisher.init();
+          RecordingsController.init(aParams.firebaseURL, aParams.firebaseToken);
+        }).
         catch(function(error) {
           debug.error('Error Connecting to room. ' + error.message);
         });

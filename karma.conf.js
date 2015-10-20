@@ -16,7 +16,9 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       {pattern: 'test/lib/chai/chai.js', include: true},
+      {pattern: 'web/js/rtcApp.js', include: false},
       'test/lib/**/*.js',
+      {pattern: 'test/mocks/mock_firebase.js', include: true},
       'web/js/vendor/**/*.js',
       'web/js/libs/utils.js',
       'web/js/components/modal.js',
