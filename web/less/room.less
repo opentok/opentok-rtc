@@ -177,16 +177,6 @@ body {
       color: #c61f4c;
     }
 
-    .tc-list [data-archive-status="started"] {
-      #startArchiving {
-        display: none;
-      }
-
-      #stopArchiving {
-        display: inline-block;
-      }
-    }
-
     #stopArchiving {
       display: none;
 
@@ -206,6 +196,20 @@ body {
   }
 }
 
+[data-archive-status="started"] #dock .menu {
+  #startArchiving {
+    display: none;
+  }
+
+  #stopArchiving {
+    display: inline-block;
+  }
+}
+
+[data-archive-status="started"] #screen .publisher i[data-icon="record"] {
+  display: inline-block;
+}
+
 #screen {
   flex: 1;
   height: 100%;
@@ -220,11 +224,23 @@ body {
     width: 20%;
     height: 20%;
 
-    right: 50px;
-    top: 40px;
+    left: 15px;
+    bottom: 15px;
 
     overflow: hidden;
     border-radius: 12px;
+
+    i[data-icon="record"] {
+      display: none;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      z-index: 1010;
+      font-size: 14px;
+      width: 17px;
+      color: #c61f4c;
+      padding: 0 4px 4px 0;
+    }
   }
 
   .publisher.dragging {

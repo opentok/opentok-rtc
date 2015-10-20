@@ -123,7 +123,7 @@
           break;
       }
 
-      menu.dataset.archiveStatus = e.detail.status;
+      document.body.dataset.archiveStatus = e.detail.status;
     });
   };
 
