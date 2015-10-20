@@ -32,7 +32,8 @@
       audioLevelDisplayMode: 'off',
       buttonDisplayMode: 'on',
       nameDisplayMode: 'on',
-      videoDisabledDisplayMode: 'on'
+      videoDisabledDisplayMode: 'on',
+      showArchiveStatus: false
     }
   };
 
