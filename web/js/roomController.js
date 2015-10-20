@@ -198,7 +198,10 @@
     },
     'archiveStarted': function(evt) {
       // Dispatched when an archive recording of the session starts
-      Utils.sendEvent('archiving', { status: 'started' });
+      Utils.sendEvent('archiving', {
+        status: 'started',
+        id: evt.id
+      });
     },
     'archiveStopped': function(evt) {
       // Dispatched when an archive recording of the session stops

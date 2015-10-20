@@ -1,7 +1,7 @@
 !function(exports) {
   'use strict';
 
-  var archives = {};
+  var archives = null;
   var listeners = {};
 
   function init(aUrl, aToken) {

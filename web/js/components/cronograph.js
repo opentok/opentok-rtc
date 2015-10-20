@@ -9,38 +9,57 @@
     return (value < 10) ? ('0' + value) : value;
   }
 
-  function reset() {
+  function reset(text) {
     counter = 0;
-    cronographElement && paint(0, 0);
+    cronographElement && paint(text);
   }
 
-  function paint(minutes, seconds) {
-    cronographElement.textContent = beautify(minutes) + ':' + beautify(seconds);
+  function paint(text) {
+    if (!text) {
+      var minutes = Math.floor(counter / 60);
+      var seconds = Math.floor(counter % 60);
+      text = beautify(minutes) + ':' + beautify(seconds);
+    }
+
+    cronographElement.textContent = text;
   }
 
   var Cronograph = {
-    init: function () {
+    /**
+     * It initializes the cronograph.
+     *
+     * {initialText} Optional text which will be displayed before starting.
+     */
+    init: function(initialText) {
       cronographElement = document.querySelector('.duration');
-      reset();
+      reset(initialText);
       return this;
     },
-    start: function() {
+
+    /**
+     * It starts the cronograph from 0 by default.
+     *
+     * {from} This param sets the seconds from where the cronograph will start
+     *        counting.
+     */
+    start: function(from) {
       if (counterTimer !== null) {
         return;
       }
+      counter = from || 0;
       counterTimer = setInterval(function() {
         ++counter;
-        var minutes = Math.floor(counter / 60);
-        var seconds = Math.floor(counter % 60);
-        paint(minutes, seconds);
+        paint();
       }, 1000);
       return this;
     },
+
     stop: function() {
       exports.clearInterval(counterTimer);
       counterTimer = null;
       return this;
     },
+
     reset: reset
   };
 

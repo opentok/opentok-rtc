@@ -2,12 +2,25 @@
   'use strict';
 
   function render(archives) {
+    if (!archives) {
+      return;
+    }
+
     var list = document.querySelector('.videos.tc-list ul');
 
     list.innerHTML = '';
 
+    var sortingDescending = function(a, b) {
+      var tA = archives[a].createdAt;
+      var tB = archives[b].createdAt;
+
+      return tB - tA;
+    };
+
     var total = 0;
-    Object.keys(archives).forEach(function(archiveId) {
+    Object.keys(archives).
+           sort(sortingDescending).
+           forEach(function(archiveId) {
       var archive = archives[archiveId];
 
       ++total;

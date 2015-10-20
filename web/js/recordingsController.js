@@ -1,6 +1,8 @@
 !function(exports) {
   'use strict';
 
+  var model = null;
+
   function init(firebaseUrl, firebaseToken) {
     return LazyLoader.dependencyLoad([
       '/js/models/firebase.js',
@@ -8,12 +10,19 @@
     ]).then(function() {
       FirebaseModel.
         init(firebaseUrl, firebaseToken).
-        then(RecordingsView.init);
+        then(function(aModel) {
+          model = aModel;
+          Utils.sendEvent('recordings-model-ready', null, exports);
+          RecordingsView.init(model);
+        });
     });
   }
 
   exports.RecordingsController = {
-    init: init
+    init: init,
+    get model() {
+      return model;
+    }
   };
 
 }(this);
