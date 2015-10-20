@@ -1,9 +1,6 @@
 !function(exports) {
   'use strict';
 
-  var debug =
-    new Utils.MultiLevelLogger('roomView.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
-
   var PUBLISHER_DIV_ID = 'publisher';
 
   // HTML elements for the view

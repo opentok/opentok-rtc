@@ -37,7 +37,6 @@ module.exports = function App(aStaticPath, aApiDef, aLogLevel, aModules) {
   // And use EJS as a view engine
   app.set('view engine', 'ejs');
 
-
   // Add the middleware, if needed
   var middleware = api['x-implementation-middleware'];
   serverImpl[middleware] && app.use(serverImpl[middleware]);

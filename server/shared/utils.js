@@ -25,7 +25,7 @@
       var args = Array.prototype.slice.call(arguments);
       var traceLevel = args.shift();
       if (traceLevel.level & enabledLevels) {
-        args.unshift('[' + traceLevel.name + '] ' + new Date().toString() + ' - ' + aName + ":");
+        args.unshift('[' + traceLevel.name + '] ' + new Date().toISOString() + ' - ' + aName + ":");
         console.log.apply(console, args);
       }
     }
@@ -48,11 +48,11 @@
     var defLevels = Utils.MultiLevelLogger.DEFAULT_LEVELS;
     Object.keys(defLevels).forEach(function(aLevelName) {
       returnedLogger[aLevelName] =
-        trace.bind(undefined, {level: defLevels[aLevelName], name: aLevelName.toUpperCase()});
+        trace.bind(undefined, { level: defLevels[aLevelName], name: aLevelName.toUpperCase() });
     });
 
     return returnedLogger;
-  }
+  };
 
   // Some preconfigured levels...
   Utils.MultiLevelLogger.DEFAULT_LEVELS = {
@@ -84,10 +84,8 @@
         });
 
         var res = fn.apply(this, args);
-        if (res && (
-          typeof res === 'object' ||
-            typeof res === 'function'
-        ) && typeof res.then === 'function') {
+        if (res && (typeof res === 'object' || typeof res === 'function') &&
+            typeof res.then === 'function') {
           resolve(res);
         }
       }.bind(this));
