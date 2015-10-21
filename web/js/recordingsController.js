@@ -19,8 +19,13 @@
     });
   }
 
-  function onDeleteArchive(id) {
-
+  function onDeleteArchive(data) {
+    var previousStatus = data.status;
+    data.status = 'deleting';
+    Request.deleteArchive(data.id).catch(function(error) {
+      // Archived couldn't be deleted from server...
+      data.status = previousStatus;
+    });
   }
 
   var handlers = {
@@ -37,7 +42,7 @@
               evt.stopImmediatePropagation();
               evt.preventDefault();
 
-              (classList.contains('delete-archive')) && onDeleteArchive(data.id);
+              (classList.contains('delete-archive')) && onDeleteArchive(data);
 
               if (classList.contains('tc-button')) {
                 ui.removeEventListener('click', onClicked);

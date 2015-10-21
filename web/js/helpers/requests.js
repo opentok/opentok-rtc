@@ -19,9 +19,8 @@
       }
 
       xhr.onload = function (aEvt) {
-        debug.log('sendXHR. XHR success');
         // Error control is for other people... :P
-        resolve(xhr.response);
+        resolve(xhr);
       };
 
       xhr.onerror = function (aEvt) {
@@ -39,7 +38,8 @@
     var userName = aRoomParams.username ? '?userName=' + aRoomParams.username : '';
 
     return sendXHR('GET', server + '/room/' + aRoomParams.roomName + '/info' + userName).
-      then(function(roomInfo) {
+      then(function(data) {
+        var roomInfo = data.response;
         if (!(roomInfo && roomInfo.sessionId)) {
           throw new Error('Room\'s data could not be recovered');
         }
@@ -73,9 +73,20 @@
     );
   }
 
+  function deleteArchive(id) {
+    return sendXHR('DELETE', server + '/archive/' + id).
+      then(function(data) {
+        if (data.status !== 200) {
+          throw new Error('Archived not deleted');
+        }
+        return data;
+      });
+  }
+
   var Request = {
     getRoomInfo: getRoomInfo,
-    sendArchivingOperation: sendArchivingOperation
+    sendArchivingOperation: sendArchivingOperation,
+    deleteArchive: deleteArchive
   };
 
   exports.Request = Request;

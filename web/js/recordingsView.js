@@ -30,10 +30,11 @@
       var name = archive.name;
       var item = HTMLElems.createElementAt(list, 'li');
 
+      item.dataset.status = archive.status;
+
       HTMLElems.createElementAt(item, 'a', {
         'target': '_blank',
-        'href': url,
-        'data-status': archive.status
+        'href': url
       }, name);
 
       HTMLElems.createElementAt(item, 'i', {
@@ -61,7 +62,13 @@
           Utils.sendEvent('archive', {
             id: dataset.id,
             action: dataset.action,
-            name: dataset.name
+            name: dataset.name,
+            set status(value) {
+              elemClicked.parentNode.dataset.status = value;
+            },
+            get status() {
+              return elemClicked.parentNode.dataset.status;
+            }
           });
           break;
       }

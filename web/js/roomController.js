@@ -66,8 +66,8 @@
     };
 
     Request.sendArchivingOperation(data).
-      then(function(response) {
-        debug.log(response);
+      then(function(data) {
+        debug.log(data.response);
       });
   };
 
