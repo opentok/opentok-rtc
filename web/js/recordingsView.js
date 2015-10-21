@@ -1,12 +1,14 @@
 !function(exports) {
   'use strict';
 
+  var listSelector = '.videos.tc-list ul';
+
   function render(archives) {
     if (!archives) {
       return;
     }
 
-    var list = document.querySelector('.videos.tc-list ul');
+    var list = document.querySelector(listSelector);
 
     list.innerHTML = '';
 
@@ -33,14 +35,43 @@
         'href': url,
         'data-status': archive.status
       }, name);
+
+      HTMLElems.createElementAt(item, 'i', {
+        'data-id': archive.id,
+        'data-icon': 'delete',
+        'data-action': 'delete',
+        'data-name': name
+      });
     });
 
     RoomView.recordingsNumber = total;
   }
 
+  var addHandlers = function() {
+    var list = document.querySelector(listSelector);
+
+    list.addEventListener('click', function(evt) {
+      switch (evt.type) {
+        case 'click':
+          var elemClicked = evt.target;
+          if (!(HTMLElems.isAction(elemClicked))) {
+            return;
+          }
+          var dataset = elemClicked.dataset;
+          Utils.sendEvent('archive', {
+            id: dataset.id,
+            action: dataset.action,
+            name: dataset.name
+          });
+          break;
+      }
+    });
+  };
+
   var init = function(model) {
     model.addEventListener('value', render);
     render(model.archives);
+    addHandlers();
   };
 
   exports.RecordingsView = {

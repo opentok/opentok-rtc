@@ -46,7 +46,7 @@
       if (counterTimer !== null) {
         return;
       }
-      counter = from || 0;
+      counter = Math.max(from || 0, 0);
       counterTimer = setInterval(function() {
         ++counter;
         paint();
