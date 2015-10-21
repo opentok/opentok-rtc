@@ -86,7 +86,7 @@ function ServerMethods(aLogLevel, aModules) {
 
   // Opentok API instance, which will be configured only after tbConfigPromise
   // is resolved
-  var tbConfigPromise = _initialTBConfig();
+  var tbConfigPromise;
 
   function _initialTBConfig() {
     function getArray (aPipeline, aKeyArray) {
@@ -94,7 +94,7 @@ function ServerMethods(aLogLevel, aModules) {
         aPipeline = aPipeline.get(aKeyArray[i].key);
       }
       return aPipeline;
-    };
+    }
 
     var pipeline = redis.pipeline();
     pipeline = getArray(pipeline, REDIS_KEYS);
@@ -128,7 +128,7 @@ function ServerMethods(aLogLevel, aModules) {
           forEach(method => otInstance[method + '_P'] = promisify(otInstance[method]));
 
         var firebaseArchivesPromise =
-          FirebaseArchives(redisConfig[RED_FB_DATA_URL],
+          new FirebaseArchives(redisConfig[RED_FB_DATA_URL],
                            redisConfig[RED_FB_AUTH_SECRET],
                            redisConfig[RED_EMPTY_ROOM_MAX_LIFETIME],
                            aLogLevel);
@@ -144,6 +144,8 @@ function ServerMethods(aLogLevel, aModules) {
           });
       });
   }
+
+  tbConfigPromise = _initialTBConfig();
 
   function waitForTB(aReq, aRes, aNext) {
     tbConfigPromise.then(tbConfig => {
@@ -170,7 +172,7 @@ function ServerMethods(aLogLevel, aModules) {
   // to be bound so 'this' is a valid Opentok instance!
   function _getUsableSessionInfo(aMaxSessionAge, aSessionInfo) {
     aSessionInfo = aSessionInfo && JSON.parse(aSessionInfo);
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       var minLastUsage = Date.now() - aMaxSessionAge;
 
       logger.log('getUsableSessionInfo. aSessionInfo:', JSON.stringify(aSessionInfo),
@@ -296,7 +298,7 @@ function ServerMethods(aLogLevel, aModules) {
       // We might still need to update the archive information but for now consider it's valid.
       return aSessionInfo;
     }
-  };
+  }
 
   // /room/:roomName/archive?userName=username&operation=startComposite|startIndividual|stop
   // Returns ArchiveInfo:
@@ -408,6 +410,6 @@ function ServerMethods(aLogLevel, aModules) {
     deleteArchive: deleteArchive
   };
 
-};
+}
 
 module.exports = ServerMethods;

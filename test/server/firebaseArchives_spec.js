@@ -193,11 +193,11 @@ describe('FirebaseArchives', function() {
               // Prerequisites set. Now...
               fArchive.removeArchive(testSession, testArchive2.id).then(() => {
                 try {
-                    newArchiveRef = _fbReferences[BASE_URL].child(testSession + '/archives');
-                    data = newArchiveRef.getData();
-                    expect(data[testArchive.id]).to.deep.equal(testArchive);
-                    expect(data[testArchive2.id]).to.not.exist;
-                    done();
+                  newArchiveRef = _fbReferences[BASE_URL].child(testSession + '/archives');
+                  data = newArchiveRef.getData();
+                  expect(data[testArchive.id]).to.deep.equal(testArchive);
+                  expect(data[testArchive2.id]).to.not.exist;
+                  done();
                 } catch (e) {
                   console.log('Error: ', e);
                   throw e;

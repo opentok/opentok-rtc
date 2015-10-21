@@ -58,20 +58,6 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
   var fbRootRef = new Firebase(aRootURL);
   var fbTokenGenerator = new FirebaseTokenGenerator(aSecret);
 
-  fbRootRef.authWithCustomToken_P = promisify(fbRootRef.authWithCustomToken);
-
-  var serverToken = fbTokenGenerator.
-    createToken({ uid: 'SERVER', role: 'server', name: 'OpenTok RTC Server' },
-                { admin: true });
-  return fbRootRef.
-    authWithCustomToken_P(serverToken).
-    then(fbRootRef.on.bind(fbRootRef, 'child_added', _processSession)).
-    then(_getFbObject).
-    catch(err => {
-      logger.error('Error authenticating to Firebase: ', err);
-      throw new Error(err);
-    });
-
   function _getFbObject() {
     // All done, just return an usable object... this will resolve te promise.
     return {
@@ -89,13 +75,13 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
       updateArchive: function(aSessionId, aArchive) {
         // We will do this in the background... it shouldn't be needed to stop answering till this
         // is done.
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
           var rawArchive = JSON.parse(JSON.stringify(aArchive));
           fbRootRef.child(aSessionId + '/archives/' + aArchive.id).update(rawArchive, resolve);
         });
       },
       removeArchive: function(aSessionId, aArchiveId) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
           fbRootRef.child(aSessionId + '/archives/' + aArchiveId).remove(resolve);
         });
       }
@@ -135,6 +121,21 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
     // Funnily enough this works even if the connections key doesn't exist.
     aDataSnapshot.ref().child('connections').on('value', _checkConnectionsNumber);
   }
+
+  fbRootRef.authWithCustomToken_P = promisify(fbRootRef.authWithCustomToken);
+
+  var serverToken = fbTokenGenerator.
+    createToken({ uid: 'SERVER', role: 'server', name: 'OpenTok RTC Server' },
+                { admin: true });
+  return fbRootRef.
+    authWithCustomToken_P(serverToken).
+    then(fbRootRef.on.bind(fbRootRef, 'child_added', _processSession)).
+    then(_getFbObject).
+    catch(err => {
+      logger.error('Error authenticating to Firebase: ', err);
+      throw new Error(err);
+    });
+
 
 }
 // So we can override the Firebase implementation (i.e. for tests)
