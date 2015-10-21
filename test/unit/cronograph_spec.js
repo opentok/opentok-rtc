@@ -66,6 +66,19 @@ describe('Cronograph', function() {
 
       clock.restore();
     }));
+
+    it('initializes the cronograph with negative seconds', sinon.test(function() {
+      var clock = sinon.useFakeTimers();
+
+      Cronograph.init();
+      checkCounterUI('00:00');
+
+      Cronograph.start(-3);
+      clock.tick(20000);
+      checkCounterUI('00:20');
+
+      clock.restore();
+    }));
   });
 
   describe('#stop', function() {

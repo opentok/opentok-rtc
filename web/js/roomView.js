@@ -77,7 +77,6 @@
       var start = function(archive) {
         var duration = 0;
         archive && (duration = Math.round((Date.now() - archive.createdAt) / 1000));
-        duration < 0 && (duration = 0);
         cronograph.start(duration);
       };
 

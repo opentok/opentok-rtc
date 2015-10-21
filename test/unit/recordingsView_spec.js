@@ -110,11 +110,11 @@ describe('RecordingsView', function() {
       model._fire(archives);
       var id = archives.one.id;
 
-      this.stub(Utils, 'sendEvent', function(name, data) {
-        expect(name).to.equal('archive');
-        expect(data.id).to.equal(id);
-        expect(data.action).to.equal('delete');
-        expect(data.name).to.equal(archives.one.name);
+      this.stub(window, 'dispatchEvent', function(event) {
+        expect(event.type).to.equal('archive');
+        expect(event.detail.id).to.equal(id);
+        expect(event.detail.action).to.equal('delete');
+        expect(event.detail.name).to.equal(archives.one.name);
         done();
       });
 
