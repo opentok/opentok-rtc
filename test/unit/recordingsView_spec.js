@@ -28,10 +28,38 @@ describe('RecordingsView', function() {
     }
   };
 
+  var archives = {
+    one: {
+      id: '1',
+      localDownloadURL: 'http://xxx.com/',
+      name: 'aUser1 aDate1',
+      status: 'stopped'
+    },
+    two: {
+      id: '2',
+      localDownloadURL: 'http://yyy.com/',
+      name: 'aUser2 aDate2',
+      status: 'started'
+    },
+    three: {
+      id: '3',
+      localDownloadURL: 'http://zzz.com/',
+      name: 'aUser3 aDate3',
+      status: 'available'
+    }
+  };
+
+  var container = null;
+
   before(function() {
     model._listeners = {};
     window.document.body.innerHTML =
       window.__html__['test/unit/recordingsView_spec.html'];
+    container = document.querySelector('.videos.tc-list ul');
+  });
+
+  afterEach(function() {
+    container.innerHTML = '';
   });
 
   describe('#init', function() {
@@ -49,26 +77,7 @@ describe('RecordingsView', function() {
     });
 
     it('should render archives', function() {
-      var container = document.querySelector('.videos.tc-list ul');
       expect(container.children.length).to.equal(0);
-
-      var archives = {
-        one: {
-          localDownloadURL: 'http://xxx.com/',
-          name: 'aUser1 aDate1',
-          status: 'stopped'
-        },
-        two: {
-          localDownloadURL: 'http://yyy.com/',
-          name: 'aUser2 aDate2',
-          status: 'started'
-        },
-        three: {
-          localDownloadURL: 'http://zzz.com/',
-          name: 'aUser3 aDate3',
-          status: 'available'
-        }
-      };
 
       RecordingsView.init(model);
 
@@ -85,6 +94,32 @@ describe('RecordingsView', function() {
         expect(item.href).to.equal(values.localDownloadURL);
         expect(item.dataset.status).to.equal(values.status);
       }
+
+      var items = container.querySelectorAll('li > i');
+      var keysArchives = Object.keys(archives);
+      for (var i = 0, l = items.length; i < l; i++) {
+        var item = items[i];
+        var values = archives[keysArchives[i]];
+        expect(item.dataset.id).to.equal(values.id);
+        expect(item.dataset.action).to.equal('delete');
+      }
     });
+
+    it('should delete archives', sinon.test(function(done) {
+      RecordingsView.init(model);
+      model._fire(archives);
+      var id = archives.one.id;
+
+      this.stub(Utils, 'sendEvent', function(name, data) {
+        expect(name).to.equal('archive');
+        expect(data.id).to.equal(id);
+        expect(data.action).to.equal('delete');
+        expect(data.name).to.equal(archives.one.name);
+        done();
+      });
+
+      var item = container.querySelector('li > i[data-id="' + id + '"]');
+      item.click();
+    }));
   });
 });

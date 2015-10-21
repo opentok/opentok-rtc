@@ -67,21 +67,41 @@
 }
 
 [for="viewRecordings"] {
+  .bubble-content {
+    padding-bottom: 10px;
+  }
+
   .tc-list {
     background-color: transparent;
     margin-top: 8px;
     border-top: 1px solid #e5eaec;
+    max-height: 200px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+
+    ul {
+      height: 100%;
+      padding: 10px 0;
+    }
 
     li {
       background-color: transparent;
       border-bottom: 0;
-      padding: 10px 0 0 0;
+      padding: 5px 0;
+    }
+
+    li:first-child {
+      padding-top: 0;
+    }
+
+    li:last-child {
+      padding-bottom: 0;
     }
 
     a {
       color: #9b9c9b;
       .truncate();
-      width: 100%;
+      width: calc(~"100% - 30px");
       display: inline-block;
       pointer-events: none;
 
@@ -96,6 +116,11 @@
     a[data-status="stopped"] {
       color: #1a99ce;
       pointer-events: all;
+    }
+
+    i[data-icon="delete"] {
+      color: #c61f4c;
+      float: right;
     }
   }
 }
