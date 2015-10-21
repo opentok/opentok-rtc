@@ -4,9 +4,6 @@
 
   'use strict';
 
-  // Not used ATM, but doesn't hurt to be prepared either
-  var hasRequire = typeof require !== 'undefined';
-
   // Simple logger that allow multiple level logs. The configured level
   // must be a bitmask of the desired enabled levels.
   // Usage:
@@ -25,7 +22,7 @@
       var args = Array.prototype.slice.call(arguments);
       var traceLevel = args.shift();
       if (traceLevel.level & enabledLevels) {
-        args.unshift('[' + traceLevel.name + '] ' + new Date().toISOString() + ' - ' + aName + ":");
+        args.unshift('[' + traceLevel.name + '] ' + new Date().toISOString() + ' - ' + aName + ':');
         console.log.apply(console, args);
       }
     }

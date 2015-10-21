@@ -122,7 +122,7 @@ describe('OpenTokRTC server', function() {
       expect(200, done);
   });
 
-  // Temporary test, TBD later
+  // Temporary tests, TBD later
   it('GET /archive/:archiveId', function(done) {
     request(app).
       get('/archive/12345').
