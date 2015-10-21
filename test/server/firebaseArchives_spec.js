@@ -52,7 +52,7 @@ describe('FirebaseArchives', function() {
     // The following tests are encapsulated on a try catch because otherwise Mocha eats
     // the actual exception and the only error we get is a timeout, which isn't very
     // helpful to debug any potential problems.
-    it('should fulfill', function(done) {
+    it('the promise should fulfill', function(done) {
       _utInstance.then(fArchive => {
         try {
           expect(fArchive).to.be.an('object');
@@ -67,28 +67,32 @@ describe('FirebaseArchives', function() {
       });
     });
 
-    it('should have a baseURL equal to the constructor parameter', function(done) {
-      _utInstance.then(fArchive => {
-        try {
-          expect(fArchive.baseURL).to.equal(BASE_URL);
-        } catch(e) {
-          console.log('Error', e);
-          throw e;
-        }
-        done();
+    describe('# baseURL', function() {
+      it('should be equal to the constructor parameter', function(done) {
+        _utInstance.then(fArchive => {
+          try {
+            expect(fArchive.baseURL).to.equal(BASE_URL);
+          } catch(e) {
+            console.log('Error', e);
+            throw e;
+          }
+          done();
+        });
       });
     });
 
-    it('should be able to create tokens', function(done) {
-      _utInstance.then(fArchive => {
-        try {
-          var newToken = fArchive.createUserToken('aSession', 'aUsername');
-          expect(newToken).to.be.a('string');
-        } catch(e) {
-          console.log('Error', e);
-          throw e;
-        }
-        done();
+    describe('# createUsertoken', function() {
+      it('should be able to create tokens', function(done) {
+        _utInstance.then(fArchive => {
+          try {
+            var newToken = fArchive.createUserToken('aSession', 'aUsername');
+            expect(newToken).to.be.a('string');
+          } catch(e) {
+            console.log('Error', e);
+            throw e;
+          }
+          done();
+        });
       });
     });
 
@@ -97,21 +101,31 @@ describe('FirebaseArchives', function() {
       att1: 'value1',
       att2: 'value2'
     };
+
+    var testArchive2 = {
+      id: 'aSecondId',
+      att1: 'value21',
+      att2: 'value22'
+    };
     var testSession = 'sessionId';
 
     // Note than these tests actually depend on the previous ones
-    it('should be able to add elements', function(done) {
-      _utInstance.then(fArchive => {
-        try {
-          fArchive.updateArchive(testSession, testArchive);
-          var newArchiveRef = _fbReferences[BASE_URL].child(testSession + '/archives');
-          var data = newArchiveRef.getData();
-          expect(data[testArchive.id]).to.deep.equal(testArchive);
-        } catch(e) {
-          console.log('Error', e);
-          throw e;
-        }
-        done();
+
+    describe('# updateArchive', function() {
+      it('should be able to add elements', function(done) {
+        _utInstance.then(fArchive => {
+          try {
+            fArchive.updateArchive(testSession, testArchive).then(() => {
+              var newArchiveRef = _fbReferences[BASE_URL].child(testSession + '/archives');
+              var data = newArchiveRef.getData();
+              expect(data[testArchive.id]).to.deep.equal(testArchive);
+              done();
+            });
+          } catch(e) {
+            console.log('Error', e);
+            throw e;
+          }
+        });
       });
     });
 
@@ -161,6 +175,40 @@ describe('FirebaseArchives', function() {
           throw e;
         }
         done();
+      });
+    });
+
+    describe('# removeArchive', function() {
+      it('should be able to remove elements', function(done) {
+        _utInstance.then(fArchive => {
+          try {
+            var upd1 = fArchive.updateArchive(testSession, testArchive);
+            var upd2 = fArchive.updateArchive(testSession, testArchive2);
+            Promise.all([upd1, upd2]).then(() => {
+              var newArchiveRef = _fbReferences[BASE_URL].child(testSession + '/archives');
+              var data = newArchiveRef.getData();
+              expect(data[testArchive.id]).to.deep.equal(testArchive);
+              expect(data[testArchive2.id]).to.deep.equal(testArchive2);
+
+              // Prerequisites set. Now...
+              fArchive.removeArchive(testSession, testArchive2.id).then(() => {
+                try {
+                    newArchiveRef = _fbReferences[BASE_URL].child(testSession + '/archives');
+                    data = newArchiveRef.getData();
+                    expect(data[testArchive.id]).to.deep.equal(testArchive);
+                    expect(data[testArchive2.id]).to.not.exist;
+                    done();
+                } catch (e) {
+                  console.log('Error: ', e);
+                  throw e;
+                }
+              });
+            });
+          } catch(e) {
+            console.log('Error', e);
+            throw e;
+          }
+        });
       });
     });
 

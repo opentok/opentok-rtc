@@ -87,10 +87,17 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
         });
       },
       updateArchive: function(aSessionId, aArchive) {
-        // We could do this in the background... it shouldn't be needed to stop answering till this
+        // We will do this in the background... it shouldn't be needed to stop answering till this
         // is done.
-        var rawArchive = JSON.parse(JSON.stringify(aArchive));
-        fbRootRef.child(aSessionId + '/archives/' + aArchive.id).update(rawArchive);
+        return new Promise((resolve, reject) => {
+          var rawArchive = JSON.parse(JSON.stringify(aArchive));
+          fbRootRef.child(aSessionId + '/archives/' + aArchive.id).update(rawArchive, resolve);
+        });
+      },
+      removeArchive: function(aSessionId, aArchiveId) {
+        return new Promise((resolve, reject) => {
+          fbRootRef.child(aSessionId + '/archives/' + aArchiveId).remove(resolve);
+        });
       }
     };
   }

@@ -124,7 +124,7 @@ function ServerMethods(aLogLevel, aModules) {
         // overwritten the original methods but this way we make it explicit. That's also why we're
         // breaking camelCase here, to make it patent to the reader that those aren't standard
         // methods of the API.
-        ['startArchive', 'stopArchive', 'getArchive', 'listArchives'].
+        ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'deleteArchive'].
           forEach(method => otInstance[method + '_P'] = promisify(otInstance[method]));
 
         var firebaseArchivesPromise =
@@ -371,13 +371,31 @@ function ServerMethods(aLogLevel, aModules) {
       then(aArchive => {
         aRes.redirect(301, aArchive.url);
       }).catch(e => {
-        logger.error('getArchive error: ', e);
+        logger.error('getArchive error:', e);
         aRes.status(405).send(e);
       });
   }
 
   function deleteArchive(aReq, aRes) {
-    aRes.sendStatus(405);
+    var archiveId = aReq.params.archiveId;
+    logger.log('deleteArchive:', archiveId);
+    var tbConfig = aReq.tbConfig;
+    var otInstance = tbConfig.otInstance;
+    var sessionId, type;
+    otInstance.
+      getArchive_P(archiveId). // This is only needed so we can get the sesionId
+      then(aArchive => {
+        sessionId = aArchive.sessionId;
+        type = aArchive.outputMode;
+        return archiveId;
+      }).
+      then(otInstance.deleteArchive_P).
+      then(() => tbConfig.fbArchives.removeArchive(sessionId, archiveId)).
+      then(() => aRes.send({ id: archiveId, type: type })).
+      catch(e => {
+        logger.error('deleteArchive error:', e);
+        aRes.status(405).send(e);
+      });
   }
 
   return {
