@@ -48,8 +48,8 @@ describe('Request', function() {
         id: 'asdadnajfbq47fu4fgw7q8g4f'
       };
 
-      Request.sendArchivingOperation(data).then(function(xhr) {
-        expect(xhr.response).to.deep.equal(response);
+      Request.sendArchivingOperation(data).then(function(aResponse) {
+        expect(aResponse).to.deep.equal(response);
         done();
       });
 
@@ -61,8 +61,7 @@ describe('Request', function() {
     });
 
     it('does not receive response when request fails', function(done) {
-      Request.sendArchivingOperation(data).then(function(data) {
-        expect(data.response).to.be.null;
+      Request.sendArchivingOperation(data).catch(function(error) {
         done();
       });
 
@@ -84,8 +83,8 @@ describe('Request', function() {
         id: id
       };
 
-      Request.deleteArchive(id).then(function(xhr) {
-        expect(xhr.response).to.deep.equal(response);
+      Request.deleteArchive(id).then(function(aResponse) {
+        expect(aResponse).to.deep.equal(response);
         done();
       });
 
@@ -95,8 +94,8 @@ describe('Request', function() {
     });
 
     it('does not receive response when request fails', function(done) {
-      Request.deleteArchive(id).catch(function(ex) {
-        expect(ex).to.be.object;
+      Request.deleteArchive(id).catch(function(error) {
+        expect(error).to.be.object;
         done();
       });
 

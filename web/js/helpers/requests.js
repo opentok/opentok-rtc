@@ -19,8 +19,11 @@
       }
 
       xhr.onload = function (aEvt) {
-        // Error control is for other people... :P
-        resolve(xhr);
+        if (xhr.status === 200) {
+          resolve(xhr.response);
+        } else {
+          reject({ status: xhr.status, reason: xhr.response });
+        }
       };
 
       xhr.onerror = function (aEvt) {
@@ -38,8 +41,7 @@
     var userName = aRoomParams.username ? '?userName=' + aRoomParams.username : '';
 
     return sendXHR('GET', server + '/room/' + aRoomParams.roomName + '/info' + userName).
-      then(function(data) {
-        var roomInfo = data.response;
+      then(function(roomInfo) {
         if (!(roomInfo && roomInfo.sessionId)) {
           throw new Error('Room\'s data could not be recovered');
         }
@@ -66,21 +68,11 @@
 
   function sendArchivingOperation(data) {
     return sendXHR('POST', server + '/room/' + data.roomName + '/archive',
-                    composeDate(data), 'application/x-www-form-urlencoded').
-      catch(function(error) {
-        debug.error('Error starting archived.' + error.message);
-      }
-    );
+                    composeDate(data), 'application/x-www-form-urlencoded');
   }
 
   function deleteArchive(id) {
-    return sendXHR('DELETE', server + '/archive/' + id).
-      then(function(data) {
-        if (data.status !== 200) {
-          throw new Error('Archived not deleted');
-        }
-        return data;
-      });
+    return sendXHR('DELETE', server + '/archive/' + id);
   }
 
   var Request = {
