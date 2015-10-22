@@ -254,6 +254,16 @@
     var zc = new ZeroClipboard(linkToShare);
   };
 
+  var addDraggableFeature = function() {
+    if (Utils.draggableUI) {
+      LazyLoader.dependencyLoad([
+        '/js/components/draggable.js'
+      ]).then(function() {
+        Draggable.init();
+      });
+    }
+  };
+
   var init = function() {
     initHTMLElements();
     addHandlers();
@@ -264,6 +274,7 @@
     // Programmatically, setText() wouldn't work.
     addClipboardFeature();
     currentLayout = new Grid('.subscribers');
+    addDraggableFeature();
   };
 
   exports.RoomView = {
