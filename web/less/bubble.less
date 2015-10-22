@@ -98,6 +98,22 @@
       padding-bottom: 0;
     }
 
+    li[data-status="deleting"] {
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    li[data-status="available"] a,
+    li[data-status="stopped"] a {
+      color: #1a99ce;
+      pointer-events: all;
+    }
+
+    li[data-status="available"] i[data-icon="delete"],
+    li[data-status="stopped"] i[data-icon="delete"] {
+      display: inline;
+    }
+
     a {
       color: #9b9c9b;
       .truncate();
@@ -112,15 +128,10 @@
       }
     }
 
-    a[data-status="available"],
-    a[data-status="stopped"] {
-      color: #1a99ce;
-      pointer-events: all;
-    }
-
     i[data-icon="delete"] {
       color: #c61f4c;
       float: right;
+      display: none;
     }
   }
 }

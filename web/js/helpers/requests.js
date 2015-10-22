@@ -19,9 +19,11 @@
       }
 
       xhr.onload = function (aEvt) {
-        debug.log('sendXHR. XHR success');
-        // Error control is for other people... :P
-        resolve(xhr.response);
+        if (xhr.status === 200) {
+          resolve(xhr.response);
+        } else {
+          reject({ status: xhr.status, reason: xhr.response });
+        }
       };
 
       xhr.onerror = function (aEvt) {
@@ -66,16 +68,17 @@
 
   function sendArchivingOperation(data) {
     return sendXHR('POST', server + '/room/' + data.roomName + '/archive',
-                    composeDate(data), 'application/x-www-form-urlencoded').
-      catch(function(error) {
-        debug.error('Error starting archived.' + error.message);
-      }
-    );
+                    composeDate(data), 'application/x-www-form-urlencoded');
+  }
+
+  function deleteArchive(id) {
+    return sendXHR('DELETE', server + '/archive/' + id);
   }
 
   var Request = {
     getRoomInfo: getRoomInfo,
-    sendArchivingOperation: sendArchivingOperation
+    sendArchivingOperation: sendArchivingOperation,
+    deleteArchive: deleteArchive
   };
 
   exports.Request = Request;

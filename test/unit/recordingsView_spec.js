@@ -92,7 +92,7 @@ describe('RecordingsView', function() {
         var values = archives[keysArchives[i]];
         expect(item.textContent).to.equal(values.name);
         expect(item.href).to.equal(values.localDownloadURL);
-        expect(item.dataset.status).to.equal(values.status);
+        expect(item.parentNode.dataset.status).to.equal(values.status);
       }
 
       var items = container.querySelectorAll('li > i');

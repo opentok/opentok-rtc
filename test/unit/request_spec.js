@@ -61,13 +61,46 @@ describe('Request', function() {
     });
 
     it('does not receive response when request fails', function(done) {
-      Request.sendArchivingOperation(data).then(function(aResponse) {
-        expect(aResponse).to.be.null;
+      Request.sendArchivingOperation(data).catch(function(error) {
         done();
       });
 
       var req = this.requests[0];
       req.respond(500);
+    });
+  });
+
+  describe('#deleteArchive', function() {
+    var id = 'myId';
+
+    it('should exist and be a function', function() {
+      expect(Request.deleteArchive).to.exist;
+      expect(Request.deleteArchive).to.be.a('function');
+    });
+
+    it('implements the client API for DELETE /archive/:id', function(done) {
+      var response = {
+        id: id
+      };
+
+      Request.deleteArchive(id).then(function(aResponse) {
+        expect(aResponse).to.deep.equal(response);
+        done();
+      });
+
+      var req = this.requests[0];
+      expect(req.url).to.contains(id);
+      req.respond(200, { 'Content-Type': 'text/json' }, JSON.stringify(response));
+    });
+
+    it('does not receive response when request fails', function(done) {
+      Request.deleteArchive(id).catch(function(error) {
+        expect(error).to.be.object;
+        done();
+      });
+
+      var req = this.requests[0];
+      req.respond(405);
     });
   });
 
