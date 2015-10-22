@@ -83,7 +83,7 @@ describe('Grid', function() {
       var container = getContainer();
 
       var id = 'myItem';
-      instance.append(id, controls);
+      instance.append(id, 'camera', controls);
 
       var item = container.querySelector('li');
       expect(item.dataset.id).to.equal(id);
@@ -98,7 +98,7 @@ describe('Grid', function() {
 
     it('should add controls working properly', function(done) {
       var id = 'myItem';
-      instance.append(id, controls);
+      instance.append(id, 'camera', controls);
       var control = getContainer().querySelector('li i');
 
       sinon.stub(window, 'CustomEvent', function(name, data) {

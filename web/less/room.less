@@ -193,6 +193,10 @@ body {
         color: #c61f4c;
       }
     }
+
+    #stopSharingDesktop {
+      display: none;
+    }
   }
 }
 
@@ -210,12 +214,36 @@ body {
   display: inline-block;
 }
 
+[data-desktop-status="sharing"] #dock .menu {
+  #startSharingDesktop {
+    display: none;
+  }
+
+  #stopSharingDesktop {
+    display: inline-block;
+  }
+}
+
 #screen {
   flex: 1;
   height: 100%;
   height: calc(~"100% - 15px");
   background-color: #f3f2ef;
   padding: 15px 20px 0 20px;
+
+  .desktop {
+    position: absolute;
+
+    z-index: 1001;
+    width: 20%;
+    height: 20%;
+
+    left: 78%;
+    bottom: 15px;
+
+    overflow: hidden;
+    border-radius: 12px;
+  }
 
   .publisher {
     position: absolute;
@@ -311,3 +339,18 @@ body {
     padding-right: 45px;
   }
 }
+
+#screenSharingErrorMsg {
+  display: none;
+  &.visible {
+    display: inline-block;
+  }
+}
+
+#screenSharingErrorInstall {
+  display: none;
+  &.visible {
+    display: inline-block;
+  }
+}
+

@@ -12,14 +12,28 @@
       roomUserElem,
       participantsNumberElem,
       recordingsNumberElem,
-      subscribersElem;
+      subscribersElem,
+      sharingErrors,
+      ssInstallSectionError,
+      ssTxtSectionError;
+
+  var START_SHARING = 'Share your screen';
+  var STOP_SHARING = 'Stop sharing your screen';
 
   var currentLayout = null;
+
+  var viewEventHandlers = {
+    'changeScreenSharingStatus': setScreenSharingStatus
+  };
 
   function initHTMLElements() {
     dock = document.getElementById('dock');
     screen = document.getElementById('screen');
     handler = dock.querySelector('#handler');
+    sharingErrors = document.querySelector('.screen-modal');
+
+    ssInstallSectionError = sharingErrors.querySelector('#screenSharingErrorInstall');
+    ssTxtSectionError = sharingErrors.querySelector('#screenSharingErrorMsg');
 
     startChatBtn = dock.querySelector('#startChat');
     roomNameElem = dock.querySelector('#roomName');
@@ -37,8 +51,8 @@
     ('WebkitTransition' in document.documentElement.style) ?
      'webkitTransitionEnd' : 'transitionend';
 
-  function createSubscriberView(streamId, controlBtns) {
-    return currentLayout.append(streamId, controlBtns);
+  function createSubscriberView(streamId, type, controlBtns) {
+    return currentLayout.append(streamId, type, controlBtns);
   }
 
   function deleteSubscriberView(id) {
@@ -51,6 +65,10 @@
     } else {
       startChatBtn.classList.remove('highlight');
     }
+  }
+
+  function changeShareScreenTitle(isSharing) {
+    document.body.dataset.desktopStatus = isSharing ? 'sharing' : 'notSharing';
   }
 
   function getPublisherId() {
@@ -145,6 +163,9 @@
           OTHelper.disconnectFromSession();
           Utils.sendEvent('roomView:endCall');
           break;
+        case 'startSharingDesktop':
+        case 'stopSharingDesktop':
+          Utils.sendEvent('screenSharingView:sharingScreen');
       }
     });
 
@@ -164,7 +185,63 @@
 
       document.body.dataset.archiveStatus = e.detail.status;
     });
+
+    var screenSharingLink = sharingErrors.querySelector('a');
+    screenSharingLink.addEventListener('click', function(evt) {
+      Utils.sendEvent('screenSharingView:installExtension');
+    });
+
+    Utils.addEventsHandlers('roomController:', viewEventHandlers, exports);
   };
+
+  function setScreenSharingStatus(evt) {
+    var status = evt.detail;
+
+    if (status.hasError) {
+      var errCodes = OTHelper.screenSharingErrorCodes;
+      // Only if we really want to differentiate type of errors
+      // or show differents section or something like that
+      if (status.code === errCodes.accessDenied) {
+        showError(status.message);
+      } else if (status.code === errCodes.extNotInstalled) {
+        showInstallExtension();
+      } else {
+        showError('Error sharing screen. ' + status.message);
+      }
+    } else {
+      changeShareScreenTitle(status.isSharing);
+    }
+  }
+
+  function showInstallExtension() {
+    ssInstallSectionError.classList.add('visible');
+    ssTxtSectionError.classList.remove('visible');
+    showSharingScreenError();
+  }
+
+  function showError(message) {
+    var span = sharingErrors.querySelector('.errTxt');
+    ssTxtSectionError.classList.add('visible');
+    ssInstallSectionError.classList.remove('visible');
+    span.textContent = message;
+    showSharingScreenError();
+  }
+
+  function showSharingScreenError() {
+    return LazyLoader.dependencyLoad([
+      '/js/components/modal.js'
+    ]).then(function() {
+      Modal.show('.screen-modal').then(function(e) {
+        sharingErrors.addEventListener('click', function onClose() {
+          sharingErrors.removeEventListener('click', onClose);
+          Modal.hide('.screen-modal').then(function() {
+            ssInstallSectionError.classList.remove('visible');
+            ssTxtSectionError.classList.remove('visible');
+          });
+        });
+      });
+    });
+  }
 
   var getURLtoShare = function() {
     return window.location.origin + window.location.pathname;
@@ -212,7 +289,8 @@
     createSubscriberView: createSubscriberView,
     deleteSubscriberView: deleteSubscriberView,
     publisherId: PUBLISHER_DIV_ID,
-    toggleChatNotification: toggleChatNotification
+    toggleChatNotification: toggleChatNotification,
+    setScreenSharingStatus: setScreenSharingStatus
   };
 
 }(this);

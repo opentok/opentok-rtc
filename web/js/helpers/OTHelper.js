@@ -17,6 +17,19 @@
 
   var _session;
   var _publisher;
+  var _screenSharing;
+
+  var _screenSharingCapability = null;
+
+  // Done intentionally (to use string codes for our error codes)
+  // so as to not overwrite existing OT library codes
+  var PUB_SCREEN_ERROR_CODES = {
+    accessDenied: 1500,
+    extNotInstalled: 'OT0001',
+    extNotRegistered: 'OT0002',
+    notSupported: 'OT0003',
+    errPublishingScreen: 'OT0004'
+  };
 
   //
   // Multipart message sending proccess
@@ -214,6 +227,71 @@
     });
   }
 
+  function registerScreenSharingExtension(aParams) {
+    Object.keys(aParams).forEach(function(aKey) {
+      OT.registerScreenSharingExtension(aKey, aParams[aKey]);
+    });
+  }
+
+  function stopSharingScreen() {
+    // Should I return something like true/false or deleted element?
+    _screenSharing && _session.unpublish(_screenSharing);
+    _screenSharing = null;
+  }
+
+  function getScreenSharingCapability() {
+    if (!_screenSharingCapability) {
+      _screenSharingCapability = new Promise(function(resolve, reject) {
+        OT.checkScreenSharingCapability(function(response) {
+          if (!response.supported) {
+            reject({
+              code: PUB_SCREEN_ERROR_CODES.notSupport,
+              message: 'This browser does not support screen sharing.'
+            });
+          } else if (response.extensionRegistered === false) {
+            reject({
+              code: PUB_SCREEN_ERROR_CODES.extNotRegistered,
+              message: 'This browser does not support screen sharing.'
+            });
+          } else if (response.extensionInstalled === false) {
+            reject({
+              code: PUB_SCREEN_ERROR_CODES.extNotInstalled,
+              message: 'Please install the screen sharing extension and load your app over https.'
+            });
+          } else {
+            resolve();
+          }
+        });
+      });
+    }
+    return _screenSharingCapability;
+  }
+
+  function shareScreen(aDOMElement, aProperties) {
+    var screenSharingCapability = getScreenSharingCapability();
+
+    return screenSharingCapability.then(function() {
+      return new Promise(function(resolve, reject) {
+        _screenSharing =  OT.initPublisher(aDOMElement, aProperties, function(error) {
+          if (error) {
+            reject(error);
+          } else {
+            _session.publish(_screenSharing, function(error) {
+              if (error) {
+                reject({
+                  code: PUB_SCREEN_ERROR_CODES.errPublishingScreen,
+                  message: error.message
+                });
+              } else {
+                resolve();
+              }
+            });
+          }
+        });
+      });
+    });
+  };
+
   var OTHelper = {
     connectToSession: connectToSession,
     publish: publish,
@@ -221,7 +299,11 @@
     disconnectFromSession: disconnectFromSession,
     removeListener: removeListener,
     toggleSubscribersVideo: toggleSubscribersVideo,
-    togglePublisherVideo: togglePublisherVideo
+    togglePublisherVideo: togglePublisherVideo,
+    registerScreenSharingExtension: registerScreenSharingExtension,
+    shareScreen: shareScreen,
+    stopSharingScreen: stopSharingScreen,
+    screenSharingErrorCodes: PUB_SCREEN_ERROR_CODES
   };
 
   exports.OTHelper = OTHelper;

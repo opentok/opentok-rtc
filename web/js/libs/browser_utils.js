@@ -24,10 +24,17 @@
     (target || exports).dispatchEvent(newEvt);
   };
 
+  var addEventsHandlers = function(eventPreffixName, handlers, target) {
+    Object.keys(handlers).forEach(function(eventName) {
+      (target || exports).addEventListener(eventPreffixName + eventName, handlers[eventName]);
+    });
+  };
+
   var Utils = {
     getCurrentTime: getCurrentTime,
     inspectObject: inspectObject,
-    sendEvent: sendEvent
+    sendEvent: sendEvent,
+    addEventsHandlers: addEventsHandlers
   };
 
   exports.Utils = Utils;
