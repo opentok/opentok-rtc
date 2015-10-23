@@ -46,13 +46,17 @@ function ServerMethods(aLogLevel, aModules) {
   // Maximum time an empty room will keep it's history alive, in minutes.
   const RED_EMPTY_ROOM_MAX_LIFETIME = 'tb_max_history_lifetime';
 
+  // Chrome AddOn extension Id for sharing screen
+  const RED_CHROME_EXTENSION_ID = 'chrome_extension_id';
+
   const REDIS_KEYS = [
     { key: RED_TB_API_KEY, defaultValue: null },
     { key: RED_TB_API_SECRET, defaultValue: null },
     { key: RED_FB_DATA_URL, defaultValue: null },
     { key: RED_FB_AUTH_SECRET, defaultValue: null },
     { key: RED_TB_MAX_SESSION_AGE, defaultValue: 2 },
-    { key: RED_EMPTY_ROOM_MAX_LIFETIME, defaultValue: 3 }
+    { key: RED_EMPTY_ROOM_MAX_LIFETIME, defaultValue: 3 },
+    { key: RED_CHROME_EXTENSION_ID, defaultValue: 'undefined' }
   ];
 
   // This will hold the configuration read from Redis
@@ -118,6 +122,7 @@ function ServerMethods(aLogLevel, aModules) {
         var apiSecret = redisConfig[RED_TB_API_SECRET];
         var maxSessionAge = redisConfig[RED_TB_MAX_SESSION_AGE];
         var otInstance = new Opentok(apiKey, apiSecret);
+        var chromeExtId = redisConfig[RED_CHROME_EXTENSION_ID];
 
         // This isn't strictly necessary... but since we're using promises all over the place, it
         // makes sense. The _P are just a promisified version of the methods. We could have
@@ -139,7 +144,8 @@ function ServerMethods(aLogLevel, aModules) {
               apiKey: apiKey,
               apiSecret: apiSecret,
               maxSessionAgeMs: maxSessionAge * 24 * 60 * 60 * 1000,
-              fbArchives: firebaseArchives
+              fbArchives: firebaseArchives,
+              chromeExtId: chromeExtId
             };
           });
       });
@@ -163,7 +169,8 @@ function ServerMethods(aLogLevel, aModules) {
       render('room.ejs',
              {
                userName: userName || DEFAULT_USER_NAME,
-               roomName: aReq.params.roomName
+               roomName: aReq.params.roomName,
+               chromeExtensionId: aReq.tbConfig.chromeExtId
              });
   }
 
@@ -203,17 +210,18 @@ function ServerMethods(aLogLevel, aModules) {
   // (creates it also if it isn't created already).
   // Returns:
   // RoomInfo {
-  //   sessionId:	string
+  //   sessionId: string
   //   apiKey: string
-  //   token:	string
+  //   token: string
   //   username: string
   //   firebaseURL: string
   //   firebaseToken: string
+  //   chromeExtId: string value || 'undefined'
   // }
   var _numAnonymousUsers = 1;
   function getRoomInfo(aReq, aRes) {
     var tbConfig = aReq.tbConfig;
-    var fbArchives = aReq.tbConfig.fbArchives;
+    var fbArchives = tbConfig.fbArchives;
     var roomName = aReq.params.roomName;
     var userName =
       (aReq.query && aReq.query.userName) || DEFAULT_USER_NAME + _numAnonymousUsers++;
@@ -242,7 +250,8 @@ function ServerMethods(aLogLevel, aModules) {
                   }),
           username: userName,
           firebaseURL: fbArchives.baseURL + '/' + usableSessionInfo.sessionId,
-          firebaseToken: fbUserToken
+          firebaseToken: fbUserToken,
+          chromeExtId: tbConfig.chromeExtId
         });
       });
   }

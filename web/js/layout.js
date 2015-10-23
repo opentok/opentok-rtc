@@ -24,22 +24,23 @@ Layout.prototype = {
     }
   },
 
-  append: function(id, controlElems) {
+  append: function(id, type, controlElems) {
     var item =
       HTMLElems.createElementAt(this.container, this.itemType, { 'data-id': id });
-    this._appendControlElems(id, item, controlElems, this.itemControlType);
+    this._appendControlElems(id, type, item, controlElems, this.itemControlType);
     this.rearrange();
     return item;
   },
 
-  _appendControlElems: function(id, main, controlElems, itemControlType) {
+  _appendControlElems: function(id, type, main, controlElems, itemControlType) {
     controlElems && Object.keys(controlElems).forEach(function(controlName) {
       var control = controlElems[controlName];
       var options = {
         'data-icon': control.dataIcon,
         'data-eventName': control.eventFiredName,
         'data-action': controlName,
-        'data-streamId': id
+        'data-streamId': id,
+        'data-streamType': type
       };
       var item = HTMLElems.createElementAt(main, 'i', options);
       item.classList.add('enabled');

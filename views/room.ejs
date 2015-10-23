@@ -6,7 +6,8 @@
     <title>OpenTok</title>
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="/css/room.opentok.css">
-    <link rel="stylesheet" href="http://fortawesome.github.io/Font-Awesome/assets/font-awesome/css/font-awesome.css">
+    <link rel="stylesheet" href="https://fortawesome.github.io/Font-Awesome/assets/font-awesome/css/font-awesome.css">
+    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/<%=chromeExtensionId%>">
 
     <script defer src="/js/vendor/es6-promise.min.js"></script>
     <script defer src='/js/vendor/ZeroClipboard.min.js'></script>
@@ -43,7 +44,8 @@
               <a id="viewRecordings"><i data-icon="download"></i><span>View archived recordings (<span id="recordings">0</span>)</span></a>
             </li>
             <li>
-              <a><i data-icon="desktop"></i><span>Share your screen</span></a>
+              <a id="startSharingDesktop"><i data-icon="desktop"></i><span>Share your screen</span></a>
+              <a id="stopSharingDesktop"><i data-icon="desktop"></i><span>Stop sharing your screen</span></a>
             </li>
             <li>
               <a><i data-icon="layout"></i><span>Manage layout</span></a>
@@ -63,9 +65,25 @@
       <div class="subscribers">
       </div>
       <div id="publisher" class="publisher"></div>
+      <div id="desktop" class="desktop" draggable></div>
       <footer>
         Powered by TokBox
       </footer>
+    </section>
+
+    <section id="screenSharingErrors" class="screen-modal tc-modal">
+      <section id="screenSharingErrorMsg">
+        <div class="tc-dialog">
+          <span class="errTxt"></span>
+        </div>
+      </section>
+      <section id="screenSharingErrorInstall">
+        <div class="tc-dialog">
+          <p>You need a Chrome extension to share your screen. <a href="#">Install Screensharing Extension</a>.
+             Once you have installed refresh your browser and click the share screen button again.</p>
+          <span class="errTxt"></span>
+        </div>
+      </section>
     </section>
 
     <section class="bubbles">

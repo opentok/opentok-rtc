@@ -11,19 +11,6 @@
   var userName = null,
       roomName = null;
 
-  var subscriberOptions = {
-    height: '100%',
-    width: '100%',
-    inserMode: 'append',
-    showControls: true,
-    style: {
-      audioLevelDisplayMode: 'on',
-      buttonDisplayMode: 'on',
-      nameDisplayMode: 'on',
-      videoDisabledDisplayMode: 'on'
-    }
-  };
-
   var publisherOptions = {
     insertMode: 'append',
     width:'100%',
@@ -38,16 +25,51 @@
     }
   };
 
-  function SubscriberButtons() {
-    return {
+  var subscriberOptions = {
+    'camera': {
+      height: '100%',
+      width: '100%',
+      inserMode: 'append',
+      showControls: true,
+      style: {
+        audioLevelDisplayMode: 'on',
+        buttonDisplayMode: 'on',
+        nameDisplayMode: 'on',
+        videoDisabledDisplayMode: 'on'
+      }
+    },
+    'screen': {
+      height: '100%',
+      width: '100%',
+      inserMode: 'append',
+      showControls: true,
+      style: {
+        audioLevelDisplayMode: 'off',
+        buttonDisplayMode: 'off',
+        nameDisplayMode: 'on',
+        videoDisabledDisplayMode: 'off'
+      }
+    }
+  };
+
+  var screenSharingBtns = {
+    'camera': {
       video: {
         eventFiredName: 'roomView:buttonClick',
         dataIcon: 'camera',
         eventName: 'click',
         enabled: true
       }
-    };
-  }
+    },
+    'screen': {
+      video: {
+        eventFiredName: 'roomView:buttonClick',
+        dataIcon: 'desktop',
+        eventName: 'click',
+        enabled: true
+      }
+    }
+  };
 
   var subscriberStreams = {
   };
@@ -124,6 +146,7 @@
     },
     'connectionDestroyed': function(evt) {
       // A client, other than your own, has disconnected from the session
+      debug.log('!!! room TODO - connectionDestroyed');
     },
     'sessionDisconnected': function(evt) {
       // The client has disconnected from the session.
@@ -146,16 +169,30 @@
       // session. For streams published by your own client, the Publisher object
       // dispatches a streamCreated event. For a code example and more details,
       // see StreamEvent.
-      numUsrsInRoom++;
-      var streamId = evt.stream.streamId;
+      var stream = evt.stream;
+      var streamVideoType = stream.videoType;
+      if (!(streamVideoType === 'camera' || streamVideoType === 'screen')) {
+        debug.error('Stream not contemplated: ' + stream.videoType);
+        return;
+      }
+
+      if (streamVideoType === 'camera') {
+        numUsrsInRoom++;
+      }
+
+      var streamId = stream.streamId;
       subscriberStreams[streamId] = {
         stream: evt.stream,
-        buttons: new SubscriberButtons()
+        buttons: screenSharingBtns[streamVideoType]
       };
-      var subsDiv =
-        RoomView.createSubscriberView(streamId, subscriberStreams[streamId].buttons);
 
-      this.subscribe(evt.stream, subsDiv, subscriberOptions, function(error) {
+      var subOptions = subscriberOptions[streamVideoType];
+
+      var subsDiv =
+        RoomView.createSubscriberView(streamId, stream.videoType,
+                                      subscriberStreams[streamId].buttons);
+
+      this.subscribe(evt.stream, subsDiv, subOptions, function(error) {
         if (error) {
           debug.error('Error susbscribing new participant. ' + error.message);
         } else {
@@ -292,10 +329,8 @@
     }
   }
 
-  function addViewEventHandlers() {
-    Object.keys(viewEventHandlers).forEach(function(eventName) {
-      exports.addEventListener('roomView:' + eventName, viewEventHandlers[eventName]);
-    });
+  function setScreenSharingStatus(status) {
+    Utils.sendEvent('roomController:changeScreenSharingStatus', status);
   }
 
   function getRoomInfo(aRoomParams) {
@@ -322,12 +357,13 @@
       '/js/roomView.js',
       '/js/chatController.js',
       '/js/recordingsController.js',
+      '/js/screenSharingController.js',
       '/js/publisher.js'
     ]).
     then(getRoomParams).
     then(getRoomInfo).
     then(function(aParams) {
-      addViewEventHandlers();
+      Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
       RoomView.init();
       roomName = aParams.roomName;
       userName = aParams.username ?
@@ -357,6 +393,7 @@
           RoomView.participantsNumber = ++numUsrsInRoom;
           Publisher.init();
           RecordingsController.init(aParams.firebaseURL, aParams.firebaseToken);
+          ScreenSharingController.init(userName, aParams.chromeExtId);
         }).
         catch(function(error) {
           debug.error('Error Connecting to room. ' + error.message);
@@ -365,7 +402,8 @@
   };
 
   var RoomController = {
-    init: init
+    init: init,
+    setScreenSharingStatus: setScreenSharingStatus
   };
 
   exports.RoomController = RoomController;
