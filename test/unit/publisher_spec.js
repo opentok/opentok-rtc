@@ -33,9 +33,6 @@ describe('Publisher', function() {
 
       var record = container.querySelector('[data-icon="record"]');
       expect(record).to.exist;
-
-      expect(container.addEventListener.calledOnce).to.be.true;
-      expect(container.addEventListener.firstCall.calledWith('click')).to.be.true;
     }));
 
     it('should send an event clicking on camera action', sinon.test(function(done) {
