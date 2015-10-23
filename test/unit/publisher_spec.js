@@ -33,10 +33,6 @@ describe('Publisher', function() {
 
       var record = container.querySelector('[data-icon="record"]');
       expect(record).to.exist;
-
-      expect(container.addEventListener.calledTwice).to.be.true;
-      expect(container.addEventListener.firstCall.calledWith('mousedown')).to.be.true;
-      expect(container.addEventListener.secondCall.calledWith('click')).to.be.true;
     }));
 
     it('should send an event clicking on camera action', sinon.test(function(done) {

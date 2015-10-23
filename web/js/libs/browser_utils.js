@@ -34,7 +34,10 @@
     getCurrentTime: getCurrentTime,
     inspectObject: inspectObject,
     sendEvent: sendEvent,
-    addEventsHandlers: addEventsHandlers
+    addEventsHandlers: addEventsHandlers,
+    get draggableUI() {
+      return document.querySelectorAll('[draggable]').length;
+    }
   };
 
   exports.Utils = Utils;
