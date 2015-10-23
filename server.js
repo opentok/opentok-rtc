@@ -60,13 +60,12 @@ function setupProcess(aLogger, aDaemonize) {
   }
 
   var signals = [
-    'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT',
-    'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGPIPE', 'SIGALRM',
-    'SIGTERM'
+    'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT', 'SIGBUS',
+    'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGPIPE', 'SIGALRM', 'SIGTERM'
   ];
 
   process.on('uncaughtException', function(err) {
-      aLogger.error('Exiting because of an uncaught exception:', err, err.stack);
+    aLogger.error('Exiting because of an uncaught exception:', err, err.stack);
   });
 
   process.on('SIGHUP', function() {
@@ -75,13 +74,13 @@ function setupProcess(aLogger, aDaemonize) {
   });
 
   process.on('exit', function() {
-    aLogger.log("Node process exiting!");
+    aLogger.log('Node process exiting!');
   });
 
   signals.forEach(aSignalName => {
-    logger.log("Setting handler " + aSignalName);
+    logger.log('Setting handler', aSignalName);
     process.on(aSignalName, function(aSignal) {
-      aLogger.log(aSignal + " captured! Exiting now");
+      aLogger.log(aSignal, 'captured! Exiting now.');
       process.exit(1);
     }.bind(undefined, aSignalName));
   });
@@ -94,9 +93,7 @@ function getServerConfig(aCertDir) {
   var certFileRead = readFile(aCertDir + '/serverCert.pem');
   var keyFileRead = readFile(aCertDir + '/serverKey.pem');
   return Promise.all([certFileRead, keyFileRead]).
-    then(files => {
-      return [{cert: files[0], key: files[1]}];
-    });
+    then(files => [{ cert: files[0], key: files[1] }]);
 }
 
 var options = parseCommandLine();
@@ -111,11 +108,10 @@ var logger = new Logger('OpenTokRTC Main', logLevel);
 
 var staticPath = options.staticPath;
 var serverPort = options.serverPort;
+var serverType;
+var loadServerConfig;
 
-setupProcess(logger, options.user, options.daemon);
-
-var serverType,
-    loadServerConfig;
+setupProcess(logger, options.daemon);
 
 if (options.secure) {
   serverType = require('https');
@@ -126,15 +122,14 @@ if (options.secure) {
 }
 
 // The API definition is on the api.json file...
-Promise.all([loadServerConfig, readFile('./api.json')]).
-  then(requisites => {
+Promise.all([loadServerConfig, readFile('./api.json')]).then(requisites => {
   var serverParams = requisites[0];
   var apiDef = requisites[1];
   logger.log('api.json file read');
 
   var app = require('./server/app')(staticPath, apiDef, logLevel);
 
-  logger.log('Starting', options.secure?'secure':'', 'server at', serverPort, ', static path: ',
+  logger.log('Starting', options.secure ? 'secure' : '', 'server at', serverPort, ', static path: ',
              staticPath);
 
   serverParams.push(app);

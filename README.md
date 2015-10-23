@@ -44,7 +44,20 @@ secret).
 ## Running
 
 ```
-node server [[listening port] [static files directory]]
+Usage: node server
+
+  -h, --help            Displays this help
+  -d, --daemon          Starts as a daemon
+  -u, --user=ARG        UID (name or number) to fork to after binding the port
+  -p, --serverPort=ARG  Server listening port
+  -s, --staticPath=ARG  Directory that holds the static files
+  -C, --certDir=ARG     Directory that holds the cert.pem and key.pem files
+  -S, --secure          Starts as a secure server (HTTPS)
+```
+For example:
+
+```
+node server -p 8080 -s ./web
 ```
 
 where:
