@@ -17,6 +17,9 @@ body {
   margin: 0;
   display: flex;
   .flex-direction(row);
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 #dock.collapsed {
@@ -197,6 +200,7 @@ body {
 
     #stopSharingDesktop {
       display: none;
+      color: #c61f4c;
     }
   }
 }
@@ -215,13 +219,20 @@ body {
   display: inline-block;
 }
 
-[data-desktop-status="sharing"] #dock .menu {
-  #startSharingDesktop {
-    display: none;
+[data-desktop-status="sharing"] {
+  #dock .menu {
+    #startSharingDesktop {
+      display: none;
+    }
+
+    #stopSharingDesktop {
+      display: inline-block;
+    }
   }
 
-  #stopSharingDesktop {
-    display: inline-block;
+  #screen .desktop {
+    visibility: visible;
+    pointer-events: auto;
   }
 }
 
@@ -233,31 +244,16 @@ body {
   padding: 15px 20px 0 20px;
 
   .desktop {
-    position: absolute;
+    visibility: hidden;
+    pointer-events: none;
 
-    z-index: 1001;
-    width: 20%;
-    height: 20%;
-
-    left: 78%;
-    bottom: 15px;
-
-    overflow: hidden;
-    border-radius: 12px;
+    right: 23px;
   }
 
   .publisher {
-    position: absolute;
-
-    z-index: 1001;
+    left: 15px;
     width: 20%;
     height: 20%;
-
-    left: 15px;
-    bottom: 15px;
-
-    overflow: hidden;
-    border-radius: 12px;
 
     i[data-icon="record"] {
       display: none;
@@ -272,11 +268,25 @@ body {
     }
   }
 
+  .desktop, .publisher {
+    position: absolute;
+
+    z-index: 1001;
+
+    min-width: 240px;
+    min-height: 140px;
+
+    bottom: 15px;
+
+    overflow: hidden;
+    border-radius: 12px;
+  }
+
   .subscribers {
     width: 100%;
     height: calc(~"100% - 15px");
 
-    i[data-icon="camera"] {
+    i[data-icon="camera"], i[data-icon="desktop"] {
       margin-bottom: 8px;
     }
 
@@ -313,7 +323,7 @@ body {
     }
   }
 
-  i[data-icon="camera"] {
+  i[data-icon="camera"], i[data-icon="desktop"] {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -324,7 +334,7 @@ body {
     padding: 0 0 4px 4px;
   }
 
-  i[data-icon="camera"].enabled {
+  i[data-icon="camera"].enabled, i[data-icon="desktop"].enabled {
     color: #fff;
   }
 
