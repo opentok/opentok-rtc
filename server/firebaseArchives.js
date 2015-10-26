@@ -84,6 +84,12 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
         return new Promise((resolve) => {
           fbRootRef.child(aSessionId + '/archives/' + aArchiveId).remove(resolve);
         });
+      },
+      shutdown: function() {
+        fbRootRef.unauth();
+        Object.keys(_timers).forEach(sessionId => {
+          clearTimeout(_timers[sessionId]);
+        });
       }
     };
   }

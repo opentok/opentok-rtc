@@ -15,6 +15,7 @@
     ],
     "x-implementation-module": "serverMethods.js",
     "x-implementation-middleware": "configReady",
+    "x-implementation-configuration": "loadConfig",
     "paths": {
         "/room/{roomName}": {
             "get": {

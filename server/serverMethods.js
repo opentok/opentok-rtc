@@ -59,9 +59,6 @@ function ServerMethods(aLogLevel, aModules) {
     { key: RED_CHROME_EXTENSION_ID, defaultValue: 'undefined' }
   ];
 
-  // This will hold the configuration read from Redis
-  var redisConfig = {};
-
   // A prefix for the room sessionInfo (sessionId + timestamp + inProgressArchiveId).
   // inProgressArchiveId will be present (and not undefined) only if there's an archive
   // operation running on that session.
@@ -93,6 +90,9 @@ function ServerMethods(aLogLevel, aModules) {
   var tbConfigPromise;
 
   function _initialTBConfig() {
+    // This will hold the configuration read from Redis
+    var redisConfig = {};
+
     function getArray (aPipeline, aKeyArray) {
       for (var i = 0, l = aKeyArray.length; i < l ; i++) {
         aPipeline = aPipeline.get(aKeyArray[i].key);
@@ -120,9 +120,7 @@ function ServerMethods(aLogLevel, aModules) {
 
         var apiKey = redisConfig[RED_TB_API_KEY];
         var apiSecret = redisConfig[RED_TB_API_SECRET];
-        var maxSessionAge = redisConfig[RED_TB_MAX_SESSION_AGE];
-        var otInstance = new Opentok(apiKey, apiSecret);
-        var chromeExtId = redisConfig[RED_CHROME_EXTENSION_ID];
+        var otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret);
 
         // This isn't strictly necessary... but since we're using promises all over the place, it
         // makes sense. The _P are just a promisified version of the methods. We could have
@@ -132,14 +130,25 @@ function ServerMethods(aLogLevel, aModules) {
         ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'deleteArchive'].
           forEach(method => otInstance[method + '_P'] = promisify(otInstance[method]));
 
+        var maxSessionAge = redisConfig[RED_TB_MAX_SESSION_AGE];
+        var chromeExtId = redisConfig[RED_CHROME_EXTENSION_ID];
+
+        // For this object we need to know if/when we're reconnecting so we can shutdown the
+        // old instance.
+        var oldFirebaseArchivesPromise = Utils.CachifiedObject.getCached(FirebaseArchives);
+
         var firebaseArchivesPromise =
-          new FirebaseArchives(redisConfig[RED_FB_DATA_URL],
-                           redisConfig[RED_FB_AUTH_SECRET],
-                           redisConfig[RED_EMPTY_ROOM_MAX_LIFETIME],
-                           aLogLevel);
+          Utils.CachifiedObject(FirebaseArchives, redisConfig[RED_FB_DATA_URL],
+                                redisConfig[RED_FB_AUTH_SECRET],
+                                redisConfig[RED_EMPTY_ROOM_MAX_LIFETIME], aLogLevel);
+
+        oldFirebaseArchivesPromise && (firebaseArchivesPromise !== oldFirebaseArchivesPromise) &&
+          oldFirebaseArchivesPromise.then(aFirebaseArchive => aFirebaseArchive.shutdown());
+
         return firebaseArchivesPromise.
           then(firebaseArchives => {
             return {
+              firebaseArchivesPromise: firebaseArchivesPromise,
               otInstance: otInstance,
               apiKey: apiKey,
               apiSecret: apiSecret,
@@ -150,8 +159,6 @@ function ServerMethods(aLogLevel, aModules) {
           });
       });
   }
-
-  tbConfigPromise = _initialTBConfig();
 
   function waitForTB(aReq, aRes, aNext) {
     tbConfigPromise.then(tbConfig => {
@@ -409,9 +416,15 @@ function ServerMethods(aLogLevel, aModules) {
       });
   }
 
+  function loadConfig() {
+    tbConfigPromise = _initialTBConfig();
+    return tbConfigPromise;
+  }
+
   return {
     logger: logger,
     configReady: waitForTB,
+    loadConfig: loadConfig,
     getRoom: getRoom,
     getRoomInfo: getRoomInfo,
     postRoomArchive: postRoomArchive,

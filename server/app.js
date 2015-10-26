@@ -41,6 +41,9 @@ module.exports = function App(aStaticPath, aApiDef, aLogLevel, aModules) {
   var middleware = api['x-implementation-middleware'];
   serverImpl[middleware] && app.use(serverImpl[middleware]);
 
+  // Do the implementation require configuration?
+  var configureApp = serverImpl[api['x-implementation-configuration']];
+
   // And add the implementation functions for each paths
   Object.keys(paths).forEach(path => {
     Object.keys(paths[path]).forEach(verb => {
@@ -57,5 +60,9 @@ module.exports = function App(aStaticPath, aApiDef, aLogLevel, aModules) {
 
   // I don't need this anymore.
   api = null;
+  if (configureApp) {
+    configureApp();
+    app.reloadConfig = configureApp;
+  }
   return app;
 };

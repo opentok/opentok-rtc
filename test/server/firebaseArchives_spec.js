@@ -212,6 +212,32 @@ describe('FirebaseArchives', function() {
       });
     });
 
+    describe('# shutdown', function() {
+      it('should stop processing events', function(done) {
+        _utInstance.then(fArchive => {
+          try {
+            var upd1 = fArchive.updateArchive(testSession, testArchive);
+            var archiveRef = _fbReferences[BASE_URL].child(testSession);
+            var data = archiveRef.getData();
+            expect(data).to.exist;
+
+            fArchive.shutdown();
+
+            // Advance the time
+            _sinonClock.tick(CLEANUP_TIME * 60 * 1001);
+
+            // And since we have stopped processing events, the data should be still alive
+            data = archiveRef.getData();
+            expect(data).to.exist;
+            done();
+          } catch(e) {
+            console.log('Error', e);
+            throw e;
+          }
+        });
+      });
+    });
+
   });
 
 });

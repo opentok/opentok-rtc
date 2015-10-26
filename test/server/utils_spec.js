@@ -91,8 +91,8 @@ describe('Utils', function(){
     }));
   });
 
-  describe('#promisify', function(){
-    it('returns a function', function(){
+  describe('#promisify', function() {
+    it('returns a function', function() {
       expect(Utils.promisify(function() {})).to.be.a('function');
     });
 
@@ -122,5 +122,81 @@ describe('Utils', function(){
       clock.tick(101);
     }));
   });
+
+  describe('CachifiedObject', function() {
+    it('exists and is a function', function() {
+      expect(Utils.CachifiedObject).to.exist;
+      expect(Utils.CachifiedObject).to.be.a('function');
+    });
+
+    it('takes a constructor as first argument and returns an instance of that object', function() {
+      var date = Utils.CachifiedObject(Date);
+      expect(date instanceof Date).to.be.true;
+      function SomeObject() {
+      };
+      var obj = Utils.CachifiedObject(SomeObject);
+      expect(obj instanceof SomeObject).to.be.true;
+    });
+
+    it('can construct an object with any number of arguments', function() {
+      var date = Utils.CachifiedObject(Date);
+      expect(date instanceof Date).to.be.true;
+      date = Utils.CachifiedObject(Date, 2012);
+      expect(date instanceof Date).to.be.true;
+      date = Utils.CachifiedObject(Date, 2012, 2);
+      expect(date instanceof Date).to.be.true;
+      function SomeObject(att1, att2, att3) {
+        this.att1 = att1;
+        this.att2 = att2;
+        this.att3 = att3;
+      }
+
+      var obj = Utils.CachifiedObject(SomeObject);
+      expect(obj).to.deep.equal({ att1: undefined, att2: undefined, att3: undefined });
+
+      obj = Utils.CachifiedObject(SomeObject, 1);
+      expect(obj).to.deep.equal({ att1: 1, att2: undefined, att3: undefined });
+
+      obj = Utils.CachifiedObject(SomeObject, 1, 2);
+      expect(obj).to.deep.equal({ att1: 1, att2: 2, att3: undefined });
+
+      obj = Utils.CachifiedObject(SomeObject, 1, 2, 3);
+      expect(obj).to.deep.equal({ att1: 1, att2: 2, att3: 3 });
+
+      obj = Utils.CachifiedObject(SomeObject, 1, 2, 3, 4);
+      expect(obj).to.deep.equal({ att1: 1, att2: 2, att3: 3 });
+    });
+
+    it('actually caches the result', function() {
+      var date = Utils.CachifiedObject(Date);
+      var date2 = Utils.CachifiedObject(Date);
+      expect(date === date2).to.be.true;
+    });
+
+    describe('#getCached', function() {
+      it('exists and is a function', function() {
+        expect(Utils.CachifiedObject.getCached).to.exist;
+        expect(Utils.CachifiedObject.getCached).to.be.a('function');
+      });
+
+      it('returns undefined for a non existing entry', function() {
+        function NewObject() {
+        }
+        var cached = Utils.CachifiedObject.getCached(NewObject);
+        expect(cached).to.be.undefined;
+      });
+
+      it('returns the cached object if the object has been cached', function() {
+        function NewObject() {
+        }
+        var toBeCached = Utils.CachifiedObject(NewObject);
+        var cached = Utils.CachifiedObject.getCached(NewObject);
+        expect(cached).to.be.equals(toBeCached);
+      });
+
+    });
+  });
+
+
 
 });
