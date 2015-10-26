@@ -323,6 +323,25 @@ body {
     }
   }
 
+  .audioLevel {
+    position: absolute;
+    top: 50px;
+    left: 30px;
+    height: 25%;
+    width: 10px;
+    border-radius: 5px;
+    z-index: 1010;
+    background-color: #9b9c9b;
+    overflow: hidden;
+
+    div {
+      background-color: #1a99ce;
+      width: 100%;
+      height: 100%;
+      transform: translateY(100%);
+    }
+  }
+
   i[data-icon="camera"], i[data-icon="desktop"] {
     position: absolute;
     bottom: 0;

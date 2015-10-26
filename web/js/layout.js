@@ -4,6 +4,10 @@
 var Layout = function(selector) {
   this.container = document.querySelector(selector);
   this.container.addEventListener('click', this);
+  var events = ['audioLevelUpdated'];
+  events.forEach(function(name) {
+    window.addEventListener(name, this);
+  }, this);
 };
 
 Layout.prototype = {
@@ -21,6 +25,14 @@ Layout.prototype = {
           name: dataset.action
         });
         break;
+
+      case 'audioLevelUpdated':
+        var elem = this.getItem(evt.detail.id).querySelector('.audioLevel div');
+        var level = Math.round(evt.detail.level * 10) / 10;
+        // Audio level UI element starts from 100% (0 -> 100%, 1 -> 0%)
+        var transform = 'translateY(' + (100 - (level * 100)) + '%)';
+        Utils.setTransform(elem.style, transform);
+        break;
     }
   },
 
@@ -28,8 +40,16 @@ Layout.prototype = {
     var item =
       HTMLElems.createElementAt(this.container, this.itemType, { 'data-id': id });
     this._appendControlElems(id, type, item, controlElems, this.itemControlType);
+    this._appendUIElems(item);
     this.rearrange();
     return item;
+  },
+
+  _appendUIElems: function(item) {
+    // Audio level meter
+    var audioLevel = HTMLElems.createElementAt(item, 'div');
+    audioLevel.classList.add('audioLevel');
+    HTMLElems.createElementAt(audioLevel, 'div');
   },
 
   _appendControlElems: function(id, type, main, controlElems, itemControlType) {
@@ -48,8 +68,7 @@ Layout.prototype = {
   },
 
   remove: function(id) {
-    this.container.
-      removeChild(this.container.querySelector('[data-id="' + id + '"]'));
+    this.container.removeChild(this.getItem(id));
     this.rearrange();
   },
 
@@ -65,6 +84,10 @@ Layout.prototype = {
 
   features: function() {
     return {};
+  },
+
+  getItem: function(id) {
+    return document.querySelector('[data-id="' + id + '"]');
   }
 };
 

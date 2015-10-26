@@ -32,7 +32,7 @@
       inserMode: 'append',
       showControls: true,
       style: {
-        audioLevelDisplayMode: 'on',
+        audioLevelDisplayMode: 'off',
         buttonDisplayMode: 'on',
         nameDisplayMode: 'on',
         videoDisabledDisplayMode: 'on'
@@ -130,7 +130,16 @@
     }
   };
 
-  var _allHandlers =  {
+  var _subscriberHandlers = {
+    'audioLevelUpdated': function(evt) {
+      Utils.sendEvent('audioLevelUpdated', {
+        id: evt.target.stream.streamId,
+        level: evt.audioLevel
+      });
+    }
+  };
+
+  var _allHandlers = {
     'sessionConnected': function(evt) {
       // The page has connected to an OpenTok session.
       // This event is dispatched asynchronously in response to a successful
@@ -182,7 +191,7 @@
 
       var streamId = stream.streamId;
       subscriberStreams[streamId] = {
-        stream: evt.stream,
+        stream: stream,
         buttons: screenSharingBtns[streamVideoType]
       };
 
@@ -198,8 +207,12 @@
         } else {
           debug.log('New subscriber, there are ' + numUsrsInRoom);
           RoomView.participantsNumber = numUsrsInRoom;
+          var subscribers = this.getSubscribersForStream(stream);
+          if (subscribers.length) {
+            Utils.addEventsHandlers('', _subscriberHandlers, subscribers[0]);
+          }
         }
-      });
+      }.bind(this));
     },
     'streamDestroyed': function(evt) {
       // A stream from another client has stopped publishing to the session.
