@@ -117,22 +117,19 @@ describe('Grid', function() {
     });
 
     it('should show audio level', function() {
-      var container = getContainer();
-      addItems(instance, 1);
-
-      var dispathAudioLevelUpdate = function(level) {
-        window.dispatchEvent(new CustomEvent('audioLevelUpdated', {
+      var item = instance.append('myItem', 'camera');
+      var dispatchAudioLevelUpdate = function(level) {
+        instance.handleEvent(new CustomEvent('roomController:audioLevelUpdated', {
           detail: {
-            id: 'myItem0',
+            id: 'myItem',
             level: level
           }
         }));
       };
 
-      var audioLevel = container.querySelector('li .audioLevel div');
-
+      var audioLevel = getContainer().querySelector('li .audioLevel div');
       for (var i = 0; i <= 1; i = +(i + 0.1).toFixed(1)) {
-        dispathAudioLevelUpdate(i);
+        dispatchAudioLevelUpdate(i);
         expect(audioLevel.style.transform).to.equal('translateY(' + (100 - (i * 100)) + '%)');
       }
     });

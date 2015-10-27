@@ -132,8 +132,13 @@
 
   var _subscriberHandlers = {
     'audioLevelUpdated': function(evt) {
-      Utils.sendEvent('audioLevelUpdated', {
-        id: evt.target.stream.streamId,
+      var stream = evt.target.stream;
+      if (!stream) {
+        return;
+      }
+
+      Utils.sendEvent('roomController:audioLevelUpdated', {
+        id: stream.streamId,
         level: evt.audioLevel
       });
     }
@@ -185,10 +190,6 @@
         return;
       }
 
-      if (streamVideoType === 'camera') {
-        numUsrsInRoom++;
-      }
-
       var streamId = stream.streamId;
       subscriberStreams[streamId] = {
         stream: stream,
@@ -201,18 +202,21 @@
         RoomView.createSubscriberView(streamId, stream.videoType,
                                       subscriberStreams[streamId].buttons);
 
-      this.subscribe(evt.stream, subsDiv, subOptions, function(error) {
-        if (error) {
-          debug.error('Error susbscribing new participant. ' + error.message);
-        } else {
-          debug.log('New subscriber, there are ' + numUsrsInRoom);
-          RoomView.participantsNumber = numUsrsInRoom;
-          var subscribers = this.getSubscribersForStream(stream);
-          if (subscribers.length) {
-            Utils.addEventsHandlers('', _subscriberHandlers, subscribers[0]);
-          }
+      OTHelper.subscribe(evt.stream, subsDiv, subOptions).
+      then(function(subscriber) {
+        if (streamVideoType === 'screen') {
+          return;
         }
-      }.bind(this));
+
+        numUsrsInRoom++;
+        debug.log('New subscriber, total:', numUsrsInRoom);
+        RoomView.participantsNumber = numUsrsInRoom;
+        Object.keys(_subscriberHandlers).forEach(function(name) {
+          subscriber.on(name, _subscriberHandlers[name]);
+        });
+      }, function(error) {
+        debug.error('Error susbscribing new participant. ' + error.message);
+      });
     },
     'streamDestroyed': function(evt) {
       // A stream from another client has stopped publishing to the session.
@@ -229,8 +233,16 @@
       debug.log('!!! room TODO - streamDestroyed');
       numUsrsInRoom--;
       RoomView.participantsNumber = numUsrsInRoom;
-      RoomView.deleteSubscriberView(evt.stream.streamId);
-      subscriberStreams[evt.stream.streamId] = null;
+
+      var stream = evt.stream;
+      RoomView.deleteSubscriberView(stream.streamId);
+      subscriberStreams[stream.streamId] = null;
+      var subscribers = this.getSubscribersForStream(stream);
+      subscribers.forEach(function(subscriber) {
+        Object.keys(_subscriberHandlers).forEach(function(name) {
+          subscriber.off(name, _subscriberHandlers[name]);
+        });
+      });
     },
     'streamPropertyChanged': function(evt) {
       // Defines an event dispatched when property of a stream has changed.

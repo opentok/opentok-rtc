@@ -2,9 +2,10 @@
 'use strict';
 
 var Layout = function(selector) {
+  this.items = {};
   this.container = document.querySelector(selector);
   this.container.addEventListener('click', this);
-  var events = ['audioLevelUpdated'];
+  var events = ['roomController:audioLevelUpdated'];
   events.forEach(function(name) {
     window.addEventListener(name, this);
   }, this);
@@ -26,8 +27,8 @@ Layout.prototype = {
         });
         break;
 
-      case 'audioLevelUpdated':
-        var elem = this.getItem(evt.detail.id).querySelector('.audioLevel div');
+      case 'roomController:audioLevelUpdated':
+        var elem = this.items[evt.detail.id].querySelector('.audioLevel div');
         var level = Math.round(evt.detail.level * 10) / 10;
         // Audio level UI element starts from 100% (0 -> 100%, 1 -> 0%)
         var transform = 'translateY(' + (100 - (level * 100)) + '%)';
@@ -41,6 +42,7 @@ Layout.prototype = {
       HTMLElems.createElementAt(this.container, this.itemType, { 'data-id': id });
     this._appendControlElems(id, type, item, controlElems, this.itemControlType);
     this._appendUIElems(item);
+    this.items[id] = item;
     this.rearrange();
     return item;
   },
@@ -68,7 +70,8 @@ Layout.prototype = {
   },
 
   remove: function(id) {
-    this.container.removeChild(this.getItem(id));
+    this.container.removeChild(this.items[id]);
+    this.items[id] = null;
     this.rearrange();
   },
 
@@ -84,10 +87,6 @@ Layout.prototype = {
 
   features: function() {
     return {};
-  },
-
-  getItem: function(id) {
-    return document.querySelector('[data-id="' + id + '"]');
   }
 };
 
@@ -108,7 +107,7 @@ Grid.prototype = {
 
   _HORIZONTAL_PADDING: 0.6,
 
-  append: function(id, controlElems) {
+  append: function(id, type, controlElems) {
     var item = Layout.prototype.append.apply(this, arguments);
     // Streams go inside <span> because of OpenTok overrides <li> styles if this
     // one would be the container.
