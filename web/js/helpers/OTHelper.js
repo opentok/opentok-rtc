@@ -300,6 +300,16 @@
     });
   }
 
+  function subscribeToAudio(aStreams, value) {
+    aStreams = Array.isArray(aStreams) ? aStreams : [aStreams];
+    aStreams.forEach(function(stream) {
+      var subscribers = _session.getSubscribersForStream(stream);
+      Array.isArray(subscribers) && subscribers.forEach(function(subscriber) {
+        subscriber.subscribeToAudio(value);
+      });
+    });
+  }
+
   var OTHelper = {
     connectToSession: connectToSession,
     publish: publish,
@@ -312,7 +322,8 @@
     shareScreen: shareScreen,
     stopSharingScreen: stopSharingScreen,
     subscribe: subscribe,
-    screenSharingErrorCodes: PUB_SCREEN_ERROR_CODES
+    screenSharingErrorCodes: PUB_SCREEN_ERROR_CODES,
+    subscribeToAudio: subscribeToAudio
   };
 
   exports.OTHelper = OTHelper;

@@ -154,6 +154,13 @@
         case 'stopArchiving':
           Utils.sendEvent('roomView:' + elem.id);
           break;
+        case 'muteAll':
+          elem.parentNode.classList.add('muting');
+          setTimeout(function() {
+            elem.parentNode.classList.remove('muting');
+          }, 1000);
+          Utils.sendEvent('roomView:muteAll');
+          break;
         case 'startChat':
           ChatView.visible = true;
           toggleChatNotification();

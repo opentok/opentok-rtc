@@ -127,6 +127,12 @@
       }
       btnInfo.enabled = !btnInfo.enabled;
       OTHelper.togglePublisherVideo(btnInfo.enabled);
+    },
+    'muteAll': function(evt) {
+      var streams = Object.keys(subscriberStreams).map(function(id) {
+        return subscriberStreams[id].stream;
+      });
+      OTHelper.subscribeToAudio(streams, false);
     }
   };
 
