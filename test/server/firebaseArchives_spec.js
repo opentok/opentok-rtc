@@ -60,7 +60,7 @@ describe('FirebaseArchives', function() {
             expect(fArchive[att]).to.exist;
           });
         } catch(e) {
-          console.log('Error', e);
+          console.log('Error:', e);
           throw e;
         }
         done();
@@ -73,7 +73,7 @@ describe('FirebaseArchives', function() {
           try {
             expect(fArchive.baseURL).to.equal(BASE_URL);
           } catch(e) {
-            console.log('Error', e);
+            console.log('Error:', e);
             throw e;
           }
           done();
@@ -88,7 +88,7 @@ describe('FirebaseArchives', function() {
             var newToken = fArchive.createUserToken('aSession', 'aUsername');
             expect(newToken).to.be.a('string');
           } catch(e) {
-            console.log('Error', e);
+            console.log('Error:', e);
             throw e;
           }
           done();
@@ -122,7 +122,7 @@ describe('FirebaseArchives', function() {
               done();
             });
           } catch(e) {
-            console.log('Error', e);
+            console.log('Error:', e);
             throw e;
           }
         });
@@ -146,7 +146,7 @@ describe('FirebaseArchives', function() {
           data = archiveRef.getData();
           expect(data).to.exist;
         } catch(e) {
-          console.log('Error', e);
+          console.log('Error:', e);
           throw e;
         }
         done();
@@ -171,7 +171,7 @@ describe('FirebaseArchives', function() {
           data = archiveRef.getData();
           expect(data).to.not.exist;
         } catch(e) {
-          console.log('Error', e);
+          console.log('Error:', e);
           throw e;
         }
         done();
@@ -205,7 +205,7 @@ describe('FirebaseArchives', function() {
               });
             });
           } catch(e) {
-            console.log('Error', e);
+            console.log('Error:', e);
             throw e;
           }
         });
@@ -231,7 +231,7 @@ describe('FirebaseArchives', function() {
             expect(data).to.exist;
             done();
           } catch(e) {
-            console.log('Error', e);
+            console.log('Error:', e);
             throw e;
           }
         });

@@ -115,7 +115,7 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
     } else {
       logger.log('_checkConnectionsNumber: cleaning timer timer for: ', sessionId);
       // Clear the doomsday timer
-      _timers[sessionId] !== undefined && clearTimeout(_timers[sessionId]);
+      clearTimeout(_timers[sessionId]);
       _timers[sessionId] = undefined;
     }
   }

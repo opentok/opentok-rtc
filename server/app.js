@@ -41,7 +41,7 @@ module.exports = function App(aStaticPath, aApiDef, aLogLevel, aModules) {
   var middleware = api['x-implementation-middleware'];
   serverImpl[middleware] && app.use(serverImpl[middleware]);
 
-  // Do the implementation require configuration?
+  // Does the implementation require configuration?
   var configureApp = serverImpl[api['x-implementation-configuration']];
 
   // And add the implementation functions for each paths

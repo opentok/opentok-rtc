@@ -193,10 +193,7 @@ describe('Utils', function(){
         var cached = Utils.CachifiedObject.getCached(NewObject);
         expect(cached).to.be.equals(toBeCached);
       });
-
     });
   });
-
-
 
 });

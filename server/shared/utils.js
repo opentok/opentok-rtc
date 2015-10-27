@@ -116,7 +116,7 @@
       cachedObject.args = args;
       _objectCache.set(aCachedObject, cachedObject);
     }
-    return  cachedObject.instance;
+    return cachedObject.instance;
   };
 
   // Returns the existing cached object
