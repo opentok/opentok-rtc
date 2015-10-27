@@ -60,7 +60,7 @@ describe('FirebaseArchives', function() {
             expect(fArchive[att]).to.exist;
           });
         } catch(e) {
-          console.log('Error', e);
+          console.log('Error:', e);
           throw e;
         }
         done();
@@ -73,7 +73,7 @@ describe('FirebaseArchives', function() {
           try {
             expect(fArchive.baseURL).to.equal(BASE_URL);
           } catch(e) {
-            console.log('Error', e);
+            console.log('Error:', e);
             throw e;
           }
           done();
@@ -88,7 +88,7 @@ describe('FirebaseArchives', function() {
             var newToken = fArchive.createUserToken('aSession', 'aUsername');
             expect(newToken).to.be.a('string');
           } catch(e) {
-            console.log('Error', e);
+            console.log('Error:', e);
             throw e;
           }
           done();
@@ -122,7 +122,7 @@ describe('FirebaseArchives', function() {
               done();
             });
           } catch(e) {
-            console.log('Error', e);
+            console.log('Error:', e);
             throw e;
           }
         });
@@ -146,7 +146,7 @@ describe('FirebaseArchives', function() {
           data = archiveRef.getData();
           expect(data).to.exist;
         } catch(e) {
-          console.log('Error', e);
+          console.log('Error:', e);
           throw e;
         }
         done();
@@ -171,7 +171,7 @@ describe('FirebaseArchives', function() {
           data = archiveRef.getData();
           expect(data).to.not.exist;
         } catch(e) {
-          console.log('Error', e);
+          console.log('Error:', e);
           throw e;
         }
         done();
@@ -205,7 +205,33 @@ describe('FirebaseArchives', function() {
               });
             });
           } catch(e) {
-            console.log('Error', e);
+            console.log('Error:', e);
+            throw e;
+          }
+        });
+      });
+    });
+
+    describe('# shutdown', function() {
+      it('should stop processing events', function(done) {
+        _utInstance.then(fArchive => {
+          try {
+            var upd1 = fArchive.updateArchive(testSession, testArchive);
+            var archiveRef = _fbReferences[BASE_URL].child(testSession);
+            var data = archiveRef.getData();
+            expect(data).to.exist;
+
+            fArchive.shutdown();
+
+            // Advance the time
+            _sinonClock.tick(CLEANUP_TIME * 60 * 1001);
+
+            // And since we have stopped processing events, the data should be still alive
+            data = archiveRef.getData();
+            expect(data).to.exist;
+            done();
+          } catch(e) {
+            console.log('Error:', e);
             throw e;
           }
         });

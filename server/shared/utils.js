@@ -89,6 +89,42 @@
     };
   };
 
+  // Returns a new object (of the first argument class) if the same object
+  // hasn't been constructed already, or a cached object if it's been cached already
+  // Note that this implementation *requires* WeapMap, so it won't work on IE9.
+  // If at some point this is needed on IE it will have to be implemented using x-linked arrays.
+  var _objectCache = typeof WeakMap !== undefined && new WeakMap();
+  Utils.CachifiedObject = function(aCachedObject) {
+    // The actual argument list includes not only the cached object but also the parameters...
+    var args = Array.prototype.slice.call(arguments);
+    args.shift();
+
+    var cachedObject = _objectCache.get(aCachedObject) || {};
+    var oldArgs = cachedObject.args || [];
+
+    // We need to get a new instance if
+    //  - There wasn't an old instance already OR
+    //  - The number of arguments has changed OR
+    //  - The arguments have changed
+    var getNewInstance =
+      (!cachedObject.instance) ||
+      (args.length !== oldArgs.length) ||
+      !args.every((value, index) => value === oldArgs[index]);
+
+    if (getNewInstance) {
+      cachedObject.instance = new (Function.prototype.bind.apply(aCachedObject, arguments));
+      cachedObject.args = args;
+      _objectCache.set(aCachedObject, cachedObject);
+    }
+    return cachedObject.instance;
+  };
+
+  // Returns the existing cached object
+  Utils.CachifiedObject.getCached = function(aCachedObject) {
+    var cachedObject = _objectCache.get(aCachedObject);
+    return cachedObject && cachedObject.instance;
+  };
+
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = Utils;
   } else {

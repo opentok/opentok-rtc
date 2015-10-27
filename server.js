@@ -9,6 +9,7 @@ var currentUid = process.getuid();
 function parseCommandLine() {
   const DEFAULTS = {
     daemon: false,
+    logFile: undefined,
     user: currentUid,
     serverPort: 8123,
     staticPath: './web',
@@ -20,13 +21,14 @@ function parseCommandLine() {
   // node-getopt oneline example.
   var commandOpts =
     require('node-getopt').create([
-      ['h', 'help', 'Displays this help'],
-      ['d', 'daemon', 'Starts as a daemon'],
-      ['u', 'user=ARG', 'UID (name or number) to fork to after binding the port'],
-      ['p', 'serverPort=ARG', 'Server listening port'],
-      ['s', 'staticPath=ARG', 'Directory that holds the static files'],
-      ['C', 'certDir=ARG', 'Directory that holds the cert.pem and key.pem files'],
-      ['S', 'secure', 'Starts as a secure server (HTTPS)']
+      ['h', 'help', 'Displays this help.'],
+      ['d', 'daemon', 'Starts as a daemon.'],
+      ['l', 'logFile=ARG', 'Logs output to this file, only if started as a daemon.'],
+      ['u', 'user=ARG', 'UID (name or number) to fork to after binding the port.'],
+      ['p', 'serverPort=ARG', 'Server listening port.'],
+      ['s', 'staticPath=ARG', 'Directory that holds the static files.'],
+      ['C', 'certDir=ARG', 'Directory that holds the cert.pem and key.pem files.'],
+      ['S', 'secure', 'Starts as a secure server (HTTPS).']
     ]).
     bindHelp().
     parseSystem();
@@ -45,44 +47,64 @@ function parseCommandLine() {
   return options;
 }
 
+var sighupHandler;
+
 // Capture signals and optionally daemonize and change username
-function setupProcess(aLogger, aDaemonize) {
+function setupProcess(aLogger, aDaemonize, aLogFile) {
   logger.log('Setting up process. Run as a daemon:', aDaemonize);
 
-  // No need to continue, let's make ourselves a daemon.
-  // Note that we should ensure that we're not going to use stdout and stderr here...
-  if (aDaemonize) {
-    var daemonOpts = {
-      stdout: process.stdout,
-      stderr: process.stderr
-    };
-    require('daemon')(daemonOpts);
-  }
+  // Since we might need to open some files, and that's an asynchronous operation,
+  // we will return a promise here that will never resolve on the parent (process will die instead)
+  // and will resolve on the child
+  return new Promise((resolve, reject) => {
+    if (!aDaemonize) {
+      return resolve();
+    }
 
-  var signals = [
-    'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT', 'SIGBUS',
-    'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGPIPE', 'SIGALRM', 'SIGTERM'
-  ];
+    if (!aLogFile) {
+      return resolve({ stdout: process.stdout, stderr: process.stderr });
+    }
 
-  process.on('uncaughtException', function(err) {
-    aLogger.error('Exiting because of an uncaught exception:', err, err.stack);
-  });
+    var outputStream = fs.createWriteStream(aLogFile);
+    outputStream.on('open', function() {
+      resolve({ stdout: outputStream, stderr: outputStream });
+    });
+  }).then(daemonOpts => {
+    // No need to continue, let's make ourselves a daemon.
+    if (daemonOpts) {
+      require('daemon')(daemonOpts);
+    }
 
-  process.on('SIGHUP', function() {
-    // To-do: probably should reload the configuration here
-    aLogger.log('Got SIGHUP. Ignoring!');
-  });
+    var signals = [
+      'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT', 'SIGBUS',
+      'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGPIPE', 'SIGALRM', 'SIGTERM'
+    ];
 
-  process.on('exit', function() {
-    aLogger.log('Node process exiting!');
-  });
+    process.on('uncaughtException', function(err) {
+      aLogger.error('Got an uncaught exception:', err, err.stack);
+    });
 
-  signals.forEach(aSignalName => {
-    logger.log('Setting handler', aSignalName);
-    process.on(aSignalName, function(aSignal) {
-      aLogger.log(aSignal, 'captured! Exiting now.');
-      process.exit(1);
-    }.bind(undefined, aSignalName));
+    process.on('SIGHUP', function() {
+      // To-do: probably should reload the configuration here
+      if (sighupHandler && sighupHandler instanceof Function) {
+        aLogger.log('Got SIGHUP. Reloading config!');
+        sighupHandler();
+      } else {
+        aLogger.log('Got SIGHUP. Ignoring!');
+      }
+    });
+
+    process.on('exit', function() {
+      aLogger.log('Node process exiting!');
+    });
+
+    signals.forEach(aSignalName => {
+      logger.log('Setting handler', aSignalName);
+      process.on(aSignalName, function(aSignal) {
+        aLogger.log(aSignal, 'captured! Exiting now.');
+        process.exit(1);
+      }.bind(undefined, aSignalName));
+    });
   });
 
 }
@@ -111,7 +133,7 @@ var serverPort = options.serverPort;
 var serverType;
 var loadServerConfig;
 
-setupProcess(logger, options.daemon);
+setupProcess(logger, options.daemon, options.logFile);
 
 if (options.secure) {
   serverType = require('https');
@@ -132,9 +154,21 @@ Promise.all([loadServerConfig, readFile('./api.json')]).then(requisites => {
   logger.log('Starting', options.secure ? 'secure' : '', 'server at', serverPort, ', static path: ',
              staticPath);
 
+  if (app.reloadConfig) {
+    sighupHandler = app.reloadConfig;
+    logger.log('Configuration handler set! To reload the configuration just do a kill -SIGHUP');
+  }
+
   serverParams.push(app);
   serverType.createServer.apply(serverType, serverParams).
     listen(serverPort);
+
+  // We're going to write the process PID at ./otrtc_{port}.pid. We could do that after
+  // changing the user but it seems better just doing it here.
+  var pidStream = fs.createWriteStream('./otrtc_' + serverPort + '.pid');
+  pidStream.on('open', function() {
+    pidStream.end(process.pid + '\n');
+  });
 
   // We will only try to change the uid if it's different from the current one.
   if (options.user !== currentUid) {
@@ -144,5 +178,6 @@ Promise.all([loadServerConfig, readFile('./api.json')]).then(requisites => {
 
 }).catch(error => {
   logger.error('Error starting server: ', error, error.stack);
+  process.exit(1);
 });
 
