@@ -58,6 +58,9 @@ describe('Grid', function() {
       var item = container.querySelector('li');
       expect(item.dataset.id).to.equal('myItem0');
       expect(container.children.length).to.equal(1);
+
+      var audioLevel = container.querySelector('li .audioLevel');
+      expect(audioLevel).to.exist;
     });
 
     it('should fit one item to the whole container', function() {
@@ -111,6 +114,24 @@ describe('Grid', function() {
 
       control.click();
       expect(control.classList.contains('enabled')).to.be.false;
+    });
+
+    it('should show audio level', function() {
+      var item = instance.append('myItem', 'camera');
+      var dispatchAudioLevelUpdate = function(level) {
+        instance.handleEvent(new CustomEvent('roomController:audioLevelUpdated', {
+          detail: {
+            id: 'myItem',
+            level: level
+          }
+        }));
+      };
+
+      var audioLevel = getContainer().querySelector('li .audioLevel div');
+      for (var i = 0; i <= 1; i = +(i + 0.1).toFixed(1)) {
+        dispatchAudioLevelUpdate(i);
+        expect(audioLevel.style.transform).to.equal('translateY(' + (100 - (i * 100)) + '%)');
+      }
     });
   });
 

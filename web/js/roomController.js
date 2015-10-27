@@ -32,7 +32,7 @@
       inserMode: 'append',
       showControls: true,
       style: {
-        audioLevelDisplayMode: 'on',
+        audioLevelDisplayMode: 'off',
         buttonDisplayMode: 'on',
         nameDisplayMode: 'on',
         videoDisabledDisplayMode: 'on'
@@ -130,7 +130,21 @@
     }
   };
 
-  var _allHandlers =  {
+  var _subscriberHandlers = {
+    'audioLevelUpdated': function(evt) {
+      var stream = evt.target.stream;
+      if (!stream) {
+        return;
+      }
+
+      Utils.sendEvent('roomController:audioLevelUpdated', {
+        id: stream.streamId,
+        level: evt.audioLevel
+      });
+    }
+  };
+
+  var _allHandlers = {
     'sessionConnected': function(evt) {
       // The page has connected to an OpenTok session.
       // This event is dispatched asynchronously in response to a successful
@@ -176,13 +190,9 @@
         return;
       }
 
-      if (streamVideoType === 'camera') {
-        numUsrsInRoom++;
-      }
-
       var streamId = stream.streamId;
       subscriberStreams[streamId] = {
-        stream: evt.stream,
+        stream: stream,
         buttons: screenSharingBtns[streamVideoType]
       };
 
@@ -192,13 +202,20 @@
         RoomView.createSubscriberView(streamId, stream.videoType,
                                       subscriberStreams[streamId].buttons);
 
-      this.subscribe(evt.stream, subsDiv, subOptions, function(error) {
-        if (error) {
-          debug.error('Error susbscribing new participant. ' + error.message);
-        } else {
-          debug.log('New subscriber, there are ' + numUsrsInRoom);
-          RoomView.participantsNumber = numUsrsInRoom;
+      OTHelper.subscribe(evt.stream, subsDiv, subOptions).
+      then(function(subscriber) {
+        if (streamVideoType === 'screen') {
+          return;
         }
+
+        numUsrsInRoom++;
+        debug.log('New subscriber, total:', numUsrsInRoom);
+        RoomView.participantsNumber = numUsrsInRoom;
+        Object.keys(_subscriberHandlers).forEach(function(name) {
+          subscriber.on(name, _subscriberHandlers[name]);
+        });
+      }, function(error) {
+        debug.error('Error susbscribing new participant. ' + error.message);
       });
     },
     'streamDestroyed': function(evt) {
@@ -216,8 +233,16 @@
       debug.log('!!! room TODO - streamDestroyed');
       numUsrsInRoom--;
       RoomView.participantsNumber = numUsrsInRoom;
-      RoomView.deleteSubscriberView(evt.stream.streamId);
-      subscriberStreams[evt.stream.streamId] = null;
+
+      var stream = evt.stream;
+      RoomView.deleteSubscriberView(stream.streamId);
+      subscriberStreams[stream.streamId] = null;
+      var subscribers = this.getSubscribersForStream(stream);
+      subscribers.forEach(function(subscriber) {
+        Object.keys(_subscriberHandlers).forEach(function(name) {
+          subscriber.off(name, _subscriberHandlers[name]);
+        });
+      });
     },
     'streamPropertyChanged': function(evt) {
       // Defines an event dispatched when property of a stream has changed.

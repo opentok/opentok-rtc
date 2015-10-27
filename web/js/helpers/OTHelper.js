@@ -290,7 +290,15 @@
         });
       });
     });
-  };
+  }
+
+  function subscribe(stream, targetElement, properties) {
+    return new Promise(function(resolve, reject) {
+      var subscriber = _session.subscribe(stream, targetElement, properties, function(error) {
+        error ? reject(error) : resolve(subscriber);
+      });
+    });
+  }
 
   var OTHelper = {
     connectToSession: connectToSession,
@@ -303,6 +311,7 @@
     registerScreenSharingExtension: registerScreenSharingExtension,
     shareScreen: shareScreen,
     stopSharingScreen: stopSharingScreen,
+    subscribe: subscribe,
     screenSharingErrorCodes: PUB_SCREEN_ERROR_CODES
   };
 

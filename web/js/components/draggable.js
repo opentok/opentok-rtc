@@ -53,8 +53,7 @@
     },
 
     setTransform: function(transform) {
-      var style = this.elementStyle;
-      style.MozTransform = style.webkitTransform = style.msTransform = style.transform = transform;
+      Utils.setTransform(this.elementStyle, transform);
     }
   };
 

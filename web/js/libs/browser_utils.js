@@ -30,6 +30,10 @@
     });
   };
 
+  var setTransform = function(style, transform) {
+    style.MozTransform = style.webkitTransform = style.msTransform = style.transform = transform;
+  }
+
   var Utils = {
     getCurrentTime: getCurrentTime,
     inspectObject: inspectObject,
@@ -37,7 +41,8 @@
     addEventsHandlers: addEventsHandlers,
     get draggableUI() {
       return document.querySelectorAll('[draggable]').length;
-    }
+    },
+    setTransform: setTransform
   };
 
   exports.Utils = Utils;
