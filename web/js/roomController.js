@@ -15,7 +15,7 @@
     insertMode: 'append',
     width:'100%',
     height: '100%',
-    showControls: true,
+    showControls: false,
     style: {
       audioLevelDisplayMode: 'off',
       buttonDisplayMode: 'on',
@@ -30,7 +30,7 @@
       height: '100%',
       width: '100%',
       inserMode: 'append',
-      showControls: true,
+      showControls: false,
       style: {
         audioLevelDisplayMode: 'off',
         buttonDisplayMode: 'on',
@@ -42,7 +42,7 @@
       height: '100%',
       width: '100%',
       inserMode: 'append',
-      showControls: true,
+      showControls: false,
       style: {
         audioLevelDisplayMode: 'off',
         buttonDisplayMode: 'off',
@@ -52,32 +52,48 @@
     }
   };
 
-  var screenSharingBtns = {
-    'camera': {
+  var SubscriberButtons = function(streamVideType) {
+    var isScreenSharing = streamVideType === 'screen';
+
+    var buttons = {
       video: {
         eventFiredName: 'roomView:buttonClick',
-        dataIcon: 'camera',
+        dataIcon: isScreenSharing ? 'desktop' : 'camera',
         eventName: 'click',
+        context: 'OTHelper',
+        action: 'toggleSubscribersVideo',
         enabled: true
       }
-    },
-    'screen': {
-      video: {
+    };
+
+    if (!isScreenSharing) {
+      buttons.audio = {
         eventFiredName: 'roomView:buttonClick',
-        dataIcon: 'desktop',
+        dataIcon: 'audio',
         eventName: 'click',
+        context: 'OTHelper',
+        action: 'toggleSubscribersAudio',
         enabled: true
       }
     }
-  };
 
-  var subscriberStreams = {
+    return buttons;
   };
 
   var publisherButtons = {
     video: {
+      context: 'OTHelper',
+      action: 'togglePublisherVideo',
+      enabled: true
+    },
+    audio: {
+      context: 'OTHelper',
+      action: 'togglePublisherAudio',
       enabled: true
     }
+  };
+
+  var subscriberStreams = {
   };
 
   var sendArchivingOperation = function(operation) {
@@ -105,29 +121,57 @@
       sendArchivingOperation('stop');
     },
     'buttonClick': function(evt) {
-        // evt.detail is {name: Name of the button clicked, stream: associated stream}
-        var subscriberStream = subscriberStreams[evt.detail.streamId];
-        var buttonInfo = subscriberStream.buttons[evt.detail.name];
-        if (!buttonInfo) {
-          debug.error('Got an event from an unknown button!');
+      var streamId = evt.detail.streamId,
+          name = evt.detail.name,
+          buttonInfo = null,
+          args = null;
+
+      if (streamId) {
+        var stream = subscriberStreams[streamId];
+        if (!stream) {
+          debug.error('Got an event from an nonexistent stream');
           return;
         }
-        var stream = subscriberStream.stream;
-        if (!stream) {
-          debug.error('Got an event from an unexisten stream');
+        buttonInfo = stream.buttons[name];
+        args = [stream.stream, !buttonInfo.enabled];
+        // BUG xxxx - We don't receive videoDisabled/videoEnabled events when
+        // stopping/starting the screen sharing video
+        // BUG yyyy - We don't receive any event when mute/unmute the audio in local streams
+        if (evt.detail.streamType === 'screen' || name === 'audio') {
+          // so we assume the operation was performed properly and change the UI status
+          sendStatus({ stream: stream.stream }, name, !buttonInfo.enabled);
         }
-        buttonInfo.enabled = !buttonInfo.enabled;
-        OTHelper.toggleSubscribersVideo(stream, buttonInfo.enabled);
-    },
-    'pubButtonClick': function(evt) {
-      var btnInfo = publisherButtons[evt.detail.name];
-      if (!btnInfo) {
-        debug.error('Got an event from an unknown button of publisher!');
+      } else {
+        buttonInfo = publisherButtons[name];
+        args = [!buttonInfo.enabled];
+      }
+
+      if (!buttonInfo) {
+        debug.error('Got an event from an unknown button!');
         return;
       }
-      btnInfo.enabled = !btnInfo.enabled;
-      OTHelper.togglePublisherVideo(btnInfo.enabled);
+
+      var obj = exports[buttonInfo.context];
+      obj[buttonInfo.action].apply(obj, args);
     }
+  };
+
+  var sendStatus = function(evt, control, enabled) {
+    var stream = evt.stream || evt.target.stream;
+    if (!stream) {
+      return;
+    }
+
+    var id = stream.streamId;
+    stream = subscriberStreams[id];
+    var buttonInfo = !stream ? publisherButtons[control] : stream.buttons[control];
+    buttonInfo.enabled = !!enabled;
+
+    Utils.sendEvent('roomController:' + control, {
+      id: id,
+      reason: evt.reason,
+      enabled: buttonInfo.enabled
+    });
   };
 
   var _subscriberHandlers = {
@@ -141,6 +185,12 @@
         id: stream.streamId,
         level: evt.audioLevel
       });
+    },
+    'videoDisabled': function(evt) {
+      evt.reason === 'subscribeToVideo' && sendStatus(evt, 'video');
+    },
+    'videoEnabled': function(evt) {
+      evt.reason === 'subscribeToVideo' && sendStatus(evt, 'video', true);
     }
   };
 
@@ -193,7 +243,7 @@
       var streamId = stream.streamId;
       subscriberStreams[streamId] = {
         stream: stream,
-        buttons: screenSharingBtns[streamVideoType]
+        buttons: new SubscriberButtons(streamVideoType)
       };
 
       var subOptions = subscriberOptions[streamVideoType];
@@ -245,19 +295,17 @@
       });
     },
     'streamPropertyChanged': function(evt) {
-      // Defines an event dispatched when property of a stream has changed.
-      // This can happen in the following conditions:
-      // A stream has started or stopped publishing audio or video (see
-      // Publisher.publishAudio() and Publisher.publishVideo()). Note that a
-      // subscriber's video can be disabled or enabled for reasons other than
-      // the publisher disabling or enabling it. A Subscriber object dispatches
-      // videoDisabled and videoEnabled events in all conditions that cause the
-      // subscriber's stream to be disabled or enabled.
-      // The videoDimensions property of the Stream object has changed (see
-      // Stream.videoDimensions).
-      // The videoType property of the Stream object has changed. This can
-      // happen in a stream published by a mobile device. (See Stream.videoType.)
-      debug.log('!!!! room TODO - streamPropertyChanged');
+      if (OTHelper.myStreamId !== evt.stream.id) {
+        return;
+      }
+
+      if (evt.changedProperty === 'hasVideo') {
+        evt.reason = 'publishVideo';
+        sendStatus(evt, 'video', evt.newValue);
+      } else if (evt.changedProperty === 'hasAudio') {
+        evt.reason = 'publishAudio';
+        sendStatus(evt, 'audio', evt.newValue);
+      }
     },
     'archiveStarted': function(evt) {
       // Dispatched when an archive recording of the session starts

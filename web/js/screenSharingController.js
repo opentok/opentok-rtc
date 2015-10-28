@@ -10,6 +10,7 @@
 
   var screenPublisherOptions = {
     name: 'screen',
+    showControls: false,
     style: {
       nameDisplayMode: 'off'
     },

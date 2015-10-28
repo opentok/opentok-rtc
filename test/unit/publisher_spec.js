@@ -39,7 +39,7 @@ describe('Publisher', function() {
       var camera = getContainer().querySelector('[data-icon="camera"]');
 
       this.stub(window, 'CustomEvent', function(name, data) {
-        expect(name).to.equal('roomView:pubButtonClick');
+        expect(name).to.equal('roomView:buttonClick');
         expect(data.detail.name).to.equal('video');
         CustomEvent.restore();
         done();
@@ -47,7 +47,20 @@ describe('Publisher', function() {
 
       expect(camera.classList.contains('enabled')).to.be.true;
       camera.click();
-      expect(camera.classList.contains('enabled')).to.be.false;
+    }));
+
+    it('should send an event clicking on micro action', sinon.test(function(done) {
+      var micro = getContainer().querySelector('[data-icon="micro"]');
+
+      this.stub(window, 'CustomEvent', function(name, data) {
+        expect(name).to.equal('roomView:buttonClick');
+        expect(data.detail.name).to.equal('audio');
+        CustomEvent.restore();
+        done();
+      });
+
+      expect(micro.classList.contains('enabled')).to.be.true;
+      micro.click();
     }));
 
   });
