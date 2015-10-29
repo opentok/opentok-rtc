@@ -15,9 +15,9 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      {pattern: 'web/js/rtcApp.js', include: false},
       'test/lib/**/*.js',
       {pattern: 'test/mocks/mock_firebase.js', include: true},
+      {pattern: 'test/mocks/mock_othelper.js', include: true},
       'web/js/vendor/**/*.js',
       'web/js/libs/**/*.js',
       'server/shared/**/*.js',
@@ -40,7 +40,8 @@ module.exports = function(config) {
       '**/html_helper.js',
       'web/bower_components/**/*.js',
       'web/js/vendor/lazy_loader.js',
-      'web/js/helpers/OTHelper.js'
+      'web/js/helpers/OTHelper.js',
+      'web/js/rtcApp.js'
     ],
 
 

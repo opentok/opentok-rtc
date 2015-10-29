@@ -17,9 +17,9 @@
 
   var _session;
   var _publisher;
-  var _screenSharing;
+  var _screenShare;
 
-  var _screenSharingCapability = null;
+  var _screenShareCapability = null;
 
   // Done intentionally (to use string codes for our error codes)
   // so as to not overwrite existing OT library codes
@@ -239,21 +239,21 @@
     subscribeTo(aStream, 'Audio', value);
   }
 
-  function registerScreenSharingExtension(aParams) {
+  function registerScreenShareExtension(aParams) {
     Object.keys(aParams).forEach(function(aKey) {
       OT.registerScreenSharingExtension(aKey, aParams[aKey]);
     });
   }
 
-  function stopSharingScreen() {
+  function stopShareScreen() {
     // Should I return something like true/false or deleted element?
-    _screenSharing && _session.unpublish(_screenSharing);
-    _screenSharing = null;
+    _screenShare && _session.unpublish(_screenShare);
+    _screenShare = null;
   }
 
-  function getScreenSharingCapability() {
-    if (!_screenSharingCapability) {
-      _screenSharingCapability = new Promise(function(resolve, reject) {
+  function getScreenShareCapability() {
+    if (!_screenShareCapability) {
+      _screenShareCapability = new Promise(function(resolve, reject) {
         OT.checkScreenSharingCapability(function(response) {
           if (!response.supported) {
             reject({
@@ -276,22 +276,26 @@
         });
       });
     }
-    return _screenSharingCapability;
+    return _screenShareCapability;
   }
 
-  function shareScreen(aDOMElement, aProperties) {
-    var screenSharingCapability = getScreenSharingCapability();
+  function shareScreen(aDOMElement, aProperties, aHandlers) {
+    var screenShareCapability = getScreenShareCapability();
 
-    return screenSharingCapability.then(function() {
+    if (!Array.isArray(aHandlers)) {
+      aHandlers = [aHandlers];
+    }
+
+    return screenShareCapability.then(function() {
       return new Promise(function(resolve, reject) {
-        _screenSharing =  OT.initPublisher(aDOMElement, aProperties, function(error) {
+        _screenShare =  OT.initPublisher(aDOMElement, aProperties, function(error) {
           if (error) {
             reject(error);
           } else {
-            _session.publish(_screenSharing, function(error) {
+            _session.publish(_screenShare, function(error) {
               if (error) {
                 reject({
-                  code: PUB_SCREEN_ERROR_CODES.errPublishingScreen,
+                  code: PUB_SCREEN_ERROR_CODES.errPublisheScreen,
                   message: error.message
                 });
               } else {
@@ -300,6 +304,7 @@
             });
           }
         });
+        aHandlers && _setHandlers(_screenShare, aHandlers);
       });
     });
   }
@@ -322,11 +327,11 @@
     togglePublisherVideo: togglePublisherVideo,
     toggleSubscribersAudio: toggleSubscribersAudio,
     togglePublisherAudio: togglePublisherAudio,
-    registerScreenSharingExtension: registerScreenSharingExtension,
+    registerScreenShareExtension: registerScreenShareExtension,
     shareScreen: shareScreen,
-    stopSharingScreen: stopSharingScreen,
+    stopShareScreen: stopShareScreen,
     subscribe: subscribe,
-    screenSharingErrorCodes: PUB_SCREEN_ERROR_CODES,
+    screenShareErrorCodes: PUB_SCREEN_ERROR_CODES,
     get publisherId() {
       return _publisher.stream.id;
     }
