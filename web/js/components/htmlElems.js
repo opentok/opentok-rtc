@@ -49,6 +49,11 @@
     return elem;
   }
 
+  function setEnabled(element, enabled) {
+    var classList = element.classList;
+    enabled ? classList.add('enabled') : classList.remove('enabled');
+  }
+
   exports.HTMLElems = {
     addText: addText,
     replaceText: replaceText,
@@ -56,7 +61,8 @@
     createElementAt: createElementAt,
     isAction: function(aElem) {
       return ('action' in aElem.dataset);
-    }
+    },
+    setEnabled: setEnabled
   };
 
 }(this);

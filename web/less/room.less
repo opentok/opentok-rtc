@@ -266,6 +266,20 @@ body {
       color: #c61f4c;
       padding: 0 4px 4px 0;
     }
+
+    .controls {
+      top: 10px;
+      left: 10px;
+
+      .buttons {
+        border-radius: 25px;
+        padding: 8px;
+
+        i[data-icon] {
+          padding: 0 8px
+        }
+      }
+    }
   }
 
   .desktop, .publisher {
@@ -285,10 +299,6 @@ body {
   .subscribers {
     width: 100%;
     height: calc(~"100% - 15px");
-
-    i[data-icon="camera"], i[data-icon="desktop"] {
-      margin-bottom: 8px;
-    }
 
     .grid {
       width: 100%;
@@ -323,38 +333,45 @@ body {
     }
   }
 
-  .audioLevel {
-    position: absolute;
-    top: 50px;
-    left: 30px;
-    height: 25%;
-    width: 10px;
-    border-radius: 5px;
+  .controls {
     z-index: 1010;
-    background-color: #9b9c9b;
-    overflow: hidden;
+    position: absolute;
+    top: 20px;
+    left: 20px;
 
-    div {
-      background-color: #1a99ce;
-      width: 100%;
-      height: 100%;
-      transform: translateY(100%);
+    .buttons {
+      background-color: rgba(155, 156, 155, .7);
+      border-radius: 25px;
+      padding: 15px;
+      display: inline-block;
+
+      i[data-icon] {
+        font-size: 16px;
+        color: #1a99ce;
+        padding: 0 18px
+      }
+
+      i[data-icon].enabled {
+        color: #fff;
+      }
     }
-  }
 
-  i[data-icon="camera"], i[data-icon="desktop"] {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    z-index: 1010;
-    font-size: 24px;
-    width: 37px;
-    color: #1a99ce;
-    padding: 0 0 4px 4px;
-  }
+    .audioLevel {
+      height: 50px;
+      width: 5px;
+      border-radius: 2.5px;
+      background-color: rgba(155, 156, 155, .9);
+      overflow: hidden;
+      display: inline-block;
+      margin: 0 0 -20px 15px;
 
-  i[data-icon="camera"].enabled, i[data-icon="desktop"].enabled {
-    color: #fff;
+      div {
+        background-color: #1a99ce;
+        width: 100%;
+        height: 100%;
+        transform: translateY(100%);
+      }
+    }
   }
 
   footer {

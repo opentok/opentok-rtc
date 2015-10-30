@@ -215,16 +215,28 @@
     });
   }
 
+  function subscribeTo(aStream, name, value) {
+    var arrSubscribers = _session.getSubscribersForStream(aStream);
+    // TODO Currently we expect only one element in arrSubscriber
+    Array.isArray(arrSubscribers) && arrSubscribers.forEach(function(subscriber) {
+      subscriber['subscribeTo' + name](value);
+    });
+  }
+
   function togglePublisherVideo(value) {
     _publisher.publishVideo(value);
   }
 
   function toggleSubscribersVideo(aStream, value) {
-    var arrSubscribers = _session.getSubscribersForStream(aStream);
-    // TODO Currently we expect only one element in arrSubscriber
-    Array.isArray(arrSubscribers) && arrSubscribers.forEach(function(subscriber) {
-      subscriber.subscribeToVideo(value);
-    });
+    subscribeTo(aStream, 'Video', value);
+  }
+
+  function togglePublisherAudio(value) {
+    _publisher.publishAudio(value);
+  }
+
+  function toggleSubscribersAudio(aStream, value) {
+    subscribeTo(aStream, 'Audio', value);
   }
 
   function registerScreenSharingExtension(aParams) {
@@ -308,11 +320,16 @@
     removeListener: removeListener,
     toggleSubscribersVideo: toggleSubscribersVideo,
     togglePublisherVideo: togglePublisherVideo,
+    toggleSubscribersAudio: toggleSubscribersAudio,
+    togglePublisherAudio: togglePublisherAudio,
     registerScreenSharingExtension: registerScreenSharingExtension,
     shareScreen: shareScreen,
     stopSharingScreen: stopSharingScreen,
     subscribe: subscribe,
-    screenSharingErrorCodes: PUB_SCREEN_ERROR_CODES
+    screenSharingErrorCodes: PUB_SCREEN_ERROR_CODES,
+    get publisherId() {
+      return _publisher.stream.id;
+    }
   };
 
   exports.OTHelper = OTHelper;
