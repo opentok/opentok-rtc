@@ -9,47 +9,35 @@
 
     <script defer type="text/javascript" src="/js/vendor/es6-promise.min.js"></script>
     <script defer type="text/javascript" src="/js/vendor/lazy_loader.js"></script>
-    <script defer type="text/javascript" src="/js/components/modal.js"></script>
     <script defer type="text/javascript" src="/js/rtcApp.js"></script>
   </head>
 
   <body>
     <section class="main">
       <section>
-        <h1>Welcome to <span>OpenTokRTC v2</span></h1>
-        <h5>A multiparty WebRTC experience.</h5>
+        <header>
+          <img src="images/opentok-logo.png" alt="opentok transparent logo">
+        </header>
+        <h1>Welcome to OpenTokRTC</h1>
+        <h3>A multi-party WebRTC experience built on top of the OpenTok platform.</h3>
 
-        <button id="join" class="tc-button large">Join</button>
+        <form>
+          <p>
+            <input id="room" placeholder="Enter a room name">
+            <input id="user" placeholder="Enter your name">
+          </p>
 
-        <p>WebRTC is an open source project aiming to enable the web with Real Time Communication (RTC) capabilities.</p>
-        <p>This Demo is Open Sourced on Github by
-          <a class="tc-link" href="http://tokbox.com" target="_blank">TokBox</a>, a <a class="tc-link" href="http://telefonica.com" target="_blank">Telefonica Digital</a> company.
+          <button id="enter" class="btn btn-blue btn-padding ctaarrow-white">Join Room</button>
+        </form>
+
+        <p>WebRTC is an open source project aiming to enable the web with Real Time Communications (RTC) capabilities.</p>
+        <p>This Demo is open sourced on Github by
+          <a href="http://tokbox.com" target="_blank">TokBox</a>, a Telefonica company and creators of the OpenTok platform.
+        </p>
+        <p>
+          <a href="https://github.com/opentok" target="_blank">Feel free to contribute.</a>
         </p>
       </section>
-      <footer>
-        <a href="http://tokbox.com" target="_blank">
-          <img src="images/opentok-logo.png" alt="opentok transparent logo">
-        </a>
-      </footer>
-    </section>
-
-    <section class="tc-modal join-modal">
-      <form class="tc-dialog">
-        <header>OpenTok</header>
-        <p>Please, fill the form to start using this service.</p>
-        <div class="tc-row">
-          <label>Room name (*required)</label>
-          <input class="tc-input block" id="room">
-        </div>
-        <div class="tc-row">
-          <label>User name</label>
-          <input class="tc-input block" id="user">
-        </div>
-        <footer>
-          <button id="enter" class="tc-button" disabled>Enter</button>
-          <p>First time users please <a class="tc-link" target="_blank" href="https://tokbox.com/support/tos">read.</a></p>
-        </footer>
-      </form>
     </section>
   </body>
 </html>

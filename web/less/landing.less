@@ -1,15 +1,14 @@
 // Components
 @import '../bower_components/utils/reset.less';
 @import '../bower_components/utils/mixins.less';
-@import '../bower_components/buttons/buttons.less';
-@import '../bower_components/inputs/inputs.less';
-@import '../bower_components/modals/modals.less';
+
+@import 'buttons.less';
 
 @import 'base.less';
 
 body {
-  background-color: @backgroundColor;
-  background-image: radial-gradient(circle at 50% 50%, @backgroundColor, #5598b0);
+  background-color: #FFF;
+  color: @text;
 }
 
 .main {
@@ -18,35 +17,63 @@ body {
   .flex-direction(column);
   height: 100%;
 
-  h1, h5 {
+  header {
+    padding-bottom: 25px;
+  }
+
+  h1, h3 {
     margin: 10px 0;
     padding: 0;
   }
 
   h1 {
-    font-size: 38px;
-    line-height: 46px;
+    font-family: "AvantGardeGothicITCW01X", arial;
+    font-size: 48px;
+    font-weight: 200;
+    line-height: 60px;
+    color: @blueText;
   }
 
-  h5 {
+  h3 {
+    font-family: "AvantGardeGothicITCW01M 731087", arial;
     font-size: 20px;
-    font-weight: 300;
     line-height: 26px;
+    color: #5f6062;
   }
 
-  h1 > span {
-    font-weight: @boldFontWeight;
-  }
+  form {
+    width: 100%;
+    margin: 20px 0 40px 0;
+    text-align: center;
 
-  button {
-    margin: 70px 0;
+    p {
+      margin: 0;
+      padding: 0;
+    }
+
+    input, textarea {
+      display: inline-block;
+
+      border: 1px solid #ccc;
+      resize: none;
+      margin: 5px;
+      padding: 12px 10px;
+      width: 270px;
+      font-size: 15px;
+    }
+
+    .btn {
+      margin-top: 25px;
+      display: inline-block;
+    }
   }
 
   p {
-    font-size: 14px;
-    margin: 0 0 10px 0;
+    font-size: 16px;
+    line-height: 24px;
+    margin: 0;
     padding: 0;
-    font-weight: 300;
+
   }
 
   section {
@@ -57,7 +84,16 @@ body {
     .flex(1);
   }
 
-  footer {
-    height: 50px;
+  a {
+    text-decoration: none;
+    color: @blueText;
+  }
+
+  a:hover {
+    cursor: pointer;
+  }
+
+  a:visited {
+    color: @blueText;
   }
 }
