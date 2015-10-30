@@ -136,7 +136,7 @@
         args = [stream.stream, !buttonInfo.enabled];
         // BUG xxxx - We don't receive videoDisabled/videoEnabled events when
         // stopping/starting the screen sharing video
-        // BUG yyyy - We don't receive any event when mute/unmute the audio in local streams
+        // OPENTOK-26021 - We don't receive any event when mute/unmute the audio in local streams
         if (evt.detail.streamType === 'screen' || name === 'audio') {
           // so we assume the operation was performed properly and change the UI status
           sendStatus({ stream: stream.stream }, name, !buttonInfo.enabled);
@@ -295,7 +295,7 @@
       });
     },
     'streamPropertyChanged': function(evt) {
-      if (OTHelper.myStreamId !== evt.stream.id) {
+      if (OTHelper.publisherId !== evt.stream.id) {
         return;
       }
 

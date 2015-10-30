@@ -41,7 +41,6 @@ describe('Publisher', function() {
       this.stub(window, 'CustomEvent', function(name, data) {
         expect(name).to.equal('roomView:buttonClick');
         expect(data.detail.name).to.equal('video');
-        CustomEvent.restore();
         done();
       });
 
@@ -55,7 +54,6 @@ describe('Publisher', function() {
       this.stub(window, 'CustomEvent', function(name, data) {
         expect(name).to.equal('roomView:buttonClick');
         expect(data.detail.name).to.equal('audio');
-        CustomEvent.restore();
         done();
       });
 

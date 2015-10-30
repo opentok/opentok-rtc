@@ -1,11 +1,6 @@
 !function(global) {
   'use strict';
 
-  function setEnabled(element, enabled) {
-    var classList = element.classList;
-    enabled ? classList.add('enabled') : classList.remove('enabled');
-  }
-
   function handleEvent(evt) {
     switch (evt.type) {
       case 'click':
@@ -21,7 +16,7 @@
       case 'roomController:audio':
         if (evt.detail.reason === 'publishVideo' || evt.detail.reason === 'publishAudio') {
           var button = (evt.type === 'roomController:video') ? videoCtrlBtn : audioCtrlBtn;
-          setEnabled(button, evt.detail.enabled);
+          HTMLElems.setEnabled(button, evt.detail.enabled);
         }
         break;
     }

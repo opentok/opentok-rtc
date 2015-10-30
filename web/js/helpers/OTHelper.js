@@ -327,7 +327,7 @@
     stopSharingScreen: stopSharingScreen,
     subscribe: subscribe,
     screenSharingErrorCodes: PUB_SCREEN_ERROR_CODES,
-    get myStreamId() {
+    get publisherId() {
       return _publisher.stream.id;
     }
   };

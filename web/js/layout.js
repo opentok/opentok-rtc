@@ -44,14 +44,10 @@ Layout.prototype = {
         }
 
         var action = evt.type.replace('roomController:', '');
-        this._setEnabled(item.querySelector('[data-action="' + action + '"]'), evt.detail.enabled);
+        HTMLElems.setEnabled(item.querySelector('[data-action="' + action + '"]'),
+                             evt.detail.enabled);
         break;
     }
-  },
-
-  _setEnabled: function(element, enabled) {
-    var classList = element.classList;
-    enabled ? classList.add('enabled') : classList.remove('enabled');
   },
 
   append: function(id, type, controlElems) {
