@@ -402,10 +402,6 @@
     }
   }
 
-  function setScreenSharingStatus(status) {
-    Utils.sendEvent('roomController:changeScreenSharingStatus', status);
-  }
-
   function getRoomInfo(aRoomParams) {
     return Request.
       getRoomInfo(aRoomParams).
@@ -430,7 +426,7 @@
       '/js/roomView.js',
       '/js/chatController.js',
       '/js/recordingsController.js',
-      '/js/screenSharingController.js',
+      '/js/screenShareController.js',
       '/js/publisher.js'
     ]).
     then(getRoomParams).
@@ -466,7 +462,7 @@
           RoomView.participantsNumber = ++numUsrsInRoom;
           Publisher.init();
           RecordingsController.init(aParams.firebaseURL, aParams.firebaseToken);
-          ScreenSharingController.init(userName, aParams.chromeExtId);
+          ScreenShareController.init(userName, aParams.chromeExtId);
         }).
         catch(function(error) {
           debug.error('Error Connecting to room. ' + error.message);
@@ -475,8 +471,7 @@
   };
 
   var RoomController = {
-    init: init,
-    setScreenSharingStatus: setScreenSharingStatus
+    init: init
   };
 
   exports.RoomController = RoomController;
