@@ -12,6 +12,7 @@ describe('FirebaseModel', function() {
   before(function() {
     window._Firebase = window.Firebase;
     window.Firebase = window.MockCachedFirebase;
+    window.LazyLoader = window.LazyLoader || {dependencyLoad: function() {}};
     sinon.stub(LazyLoader, 'dependencyLoad', function(resources) {
       return Promise.resolve();
     });
