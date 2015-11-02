@@ -15,12 +15,11 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      {pattern: 'test/lib/chai/chai.js', include: true},
       {pattern: 'web/js/rtcApp.js', include: false},
       'test/lib/**/*.js',
       {pattern: 'test/mocks/mock_firebase.js', include: true},
       'web/js/vendor/**/*.js',
-      'web/js/libs/utils.js',
+      'web/js/libs/**/*.js',
       'server/shared/**/*.js',
       'web/js/components/modal.js',
       'web/js/landingView.js', // Don't load the views yet
@@ -39,7 +38,9 @@ module.exports = function(config) {
     // list of files to exclude
     exclude: [
       '**/html_helper.js',
-      'web/bower_components/**/*.js'
+      'web/bower_components/**/*.js',
+      'web/js/vendor/lazy_loader.js',
+      'web/js/helpers/OTHelper.js'
     ],
 
 

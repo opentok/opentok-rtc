@@ -32,7 +32,7 @@
 
   var setTransform = function(style, transform) {
     style.MozTransform = style.webkitTransform = style.msTransform = style.transform = transform;
-  }
+  };
 
   var Utils = {
     getCurrentTime: getCurrentTime,
@@ -45,6 +45,10 @@
     setTransform: setTransform
   };
 
-  exports.Utils = Utils;
+  // Just replacing global.utils might not be safe... let's just expand it...
+  exports.Utils = exports.Utils || {};
+  Object.keys(Utils).forEach(function (utilComponent) {
+    exports.Utils[utilComponent] = Utils[utilComponent];
+  });
 
 }(this);
