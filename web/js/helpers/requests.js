@@ -20,7 +20,11 @@
 
       xhr.onload = function (aEvt) {
         if (xhr.status === 200) {
-          resolve(xhr.response);
+          var response = xhr.response;
+          if (typeof xhr.response === 'string') {
+            response = JSON.parse(response);
+          }
+          resolve(response);
         } else {
           reject({ status: xhr.status, reason: xhr.response });
         }

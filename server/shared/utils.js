@@ -109,7 +109,7 @@
     var getNewInstance =
       (!cachedObject.instance) ||
       (args.length !== oldArgs.length) ||
-      !args.every((value, index) => value === oldArgs[index]);
+      !args.every(function(value, index) { return value === oldArgs[index]});
 
     if (getNewInstance) {
       cachedObject.instance = new (Function.prototype.bind.apply(aCachedObject, arguments));
