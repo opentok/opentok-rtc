@@ -9,7 +9,6 @@
     });
   };
 
-
   global.LandingController = {
     init: init
   };
