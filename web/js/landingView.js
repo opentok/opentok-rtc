@@ -28,6 +28,7 @@
 
     enterButton.addEventListener('click', function onEnterClicked(event) {
       event.preventDefault();
+      event.stopImmediatePropagation();
       enterButton.removeEventListener('click', onEnterClicked);
       form.removeEventListener('input', onInput);
       var base = window.location.href.replace('index.html', '');
@@ -37,7 +38,7 @@
         url = url.concat('?userName=', userName);
       }
       resetForm();
-      window.location = url;
+      window.location.href = url;
     });
   };
 
