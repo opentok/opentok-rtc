@@ -1,20 +1,9 @@
-[data-icon="users"]:before { content:"\f0c0"; }
-
-[data-icon="bars"]:before { content:"\f0c9"; }
-
-[data-icon="user-plus"]:before { content:"\f234"; }
-
-[data-icon="video-camera"]:before { content:"\f03d"; }
-
-[data-icon="download"]:before { content:"\f0ed"; }
-
-[data-icon="desktop"]:before { content:"\f108"; }
-
-[data-icon="layout"]:before { content:"\f10a"; }
-
-[data-icon="chat"]:before { content:"\f075"; }
-
-[data-icon="end-call"]:before { content:"\f095"; }
+[data-icon] {
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: auto 100%;
+}
 
 [data-icon="close-chat"]:before { content:"\f00d"; }
 
@@ -29,3 +18,89 @@
 [data-icon="audio"]:before { content:"\f028"; }
 
 [data-icon="micro"]:before { content:"\f130"; }
+
+/* Info */
+
+.info [data-icon] {
+  width: 20px;
+  height: 16px;
+}
+
+[data-icon="navigation"] {
+  background-image: url("/images/icons/navigation.svg");
+}
+
+[data-icon="navigation"]:hover {
+  background-image: url("/images/icons/navigation_hover.svg");
+}
+
+[data-icon="participants"] {
+  background-image: url("/images/icons/participants.svg");
+}
+
+/* Menu */
+
+.menu [data-icon] {
+  width: 20px;
+  height: 16px;
+}
+
+[data-icon="add"] {
+  background-image: url("/images/icons/add.svg");
+}
+
+[data-icon="archive"] {
+  background-image: url("/images/icons/archive.svg");
+}
+
+:hover > [data-icon="archive"] {
+  background-image: url("/images/icons/archive_hover.svg");
+}
+
+[data-icon="archive_saving"] {
+  background-image: url("/images/icons/archive_saving.svg");
+}
+
+[data-icon="recordings"] {
+  background-image: url("/images/icons/recordings.svg");
+}
+
+:hover > [data-icon="recordings"] {
+  background-image: url("/images/icons/recordings_hover.svg");
+}
+
+[data-icon="screen"] {
+  background-image: url("/images/icons/screen.svg");
+}
+
+:hover > [data-icon="screen"] {
+  background-image: url("/images/icons/screen_hover.svg");
+}
+
+[data-icon="screen_sharing"] {
+  background-image: url("/images/icons/screen_sharing.svg");
+}
+
+[data-icon="layouts"] {
+  background-image: url("/images/icons/layouts.svg");
+}
+
+:hover > [data-icon="layouts"] {
+  background-image: url("/images/icons/layouts_hover.svg");
+}
+
+[data-icon="chat"] {
+  background-image: url("/images/icons/chat.svg");
+}
+
+:hover > [data-icon="chat"] {
+  background-image: url("/images/icons/chat_hover.svg");
+}
+
+[data-icon="end"] {
+  background-image: url("/images/icons/end.svg");
+}
+
+:hover > [data-icon="end"] {
+  background-image: url("/images/icons/end_hover.svg");
+}

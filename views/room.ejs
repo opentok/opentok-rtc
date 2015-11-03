@@ -20,41 +20,41 @@
   <body>
     <section id="dock">
       <header class="info">
-        <i id="handler" data-icon="bars"></i>
+        <i id="handler" data-icon="navigation"></i>
         <h1>
           <span id="userName"><%= userName %></span> <span>OpenTok</span><br>
           <span id="roomName"><%= roomName %></span> <span>Meeting Room</span>
         </h1>
         <h2><span class="participants"></span></h2>
         <h3>
-          <i data-icon="users"></i><span class="participants"></span><span>participants</span>
+          <i data-icon="participants"></i><span class="participants"></span><span>participants</span>
         </h3>
       </header>
       <nav class="menu tc-sidebar">
         <div class="tc-list">
           <ul>
             <li>
-              <a id="addToCall"><i data-icon="user-plus"></i><span>Add to call</span></a>
+              <a id="addToCall"><i data-icon="add"></i><span>Add to call</span></a>
             </li>
             <li>
-              <a id="startArchiving"><i data-icon="video-camera"></i><span>Start recording</span></a>
-              <a id="stopArchiving"><i data-icon="video-camera"></i><span class="duration"></span><span>Stop recording</span></a>
+              <a id="startArchiving"><i data-icon="archive"></i><span>Start recording</span></a>
+              <a id="stopArchiving"><i data-icon="archive_saving"></i><span class="duration"></span><span>Stop recording</span></a>
             </li>
             <li>
-              <a id="viewRecordings"><i data-icon="download"></i><span>View archived recordings (<span id="recordings">0</span>)</span></a>
+              <a id="viewRecordings"><i data-icon="recordings"></i><span>View archived recordings (<span id="recordings">0</span>)</span></a>
             </li>
             <li>
-              <a id="startSharingDesktop"><i data-icon="desktop"></i><span>Share your screen</span></a>
-              <a id="stopSharingDesktop"><i data-icon="desktop"></i><span>Stop sharing your screen</span></a>
+              <a id="startSharingDesktop"><i data-icon="screen"></i><span>Share your screen</span></a>
+              <a id="stopSharingDesktop"><i data-icon="screen_sharing"></i><span>Stop sharing your screen</span></a>
             </li>
             <li>
-              <a><i data-icon="layout"></i><span>Manage layout</span></a>
+              <a><i data-icon="layouts"></i><span>Manage layout</span></a>
             </li>
             <li>
               <a id="startChat"><i data-icon="chat"></i><span>Start text chat</span></a>
             </li>
             <li>
-              <a id="endCall" class="danger"><i data-icon="end-call"></i><span>End video call</span></a>
+              <a id="endCall" class="danger"><i data-icon="end"></i><span>End video call</span></a>
             </li>
           </ul>
         </div>
