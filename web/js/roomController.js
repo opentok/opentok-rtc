@@ -328,7 +328,7 @@
       '/js/components/modal.js'
     ]).then(function() {
       var selector = '.user-name-modal';
-      document.querySelector(selector + ' header').textContent = roomName;
+      document.querySelector(selector + ' header .room-name').textContent = roomName;
       return Modal.show(selector).then(function() {
         return new Promise(function(resolve, reject) {
           var enterButton = document.querySelector(selector + ' button');

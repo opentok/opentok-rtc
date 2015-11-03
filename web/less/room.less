@@ -10,6 +10,7 @@
 
 @import 'chat.less';
 @import 'base.less';
+@import 'buttons.less';
 @import 'icons.less';
 @import 'bubble.less';
 
@@ -411,5 +412,42 @@ body {
   display: none;
   &.visible {
     display: inline-block;
+  }
+}
+
+.user-name-modal .tc-dialog {
+  padding: 65px 100px;
+  max-width: calc(~"100% - 220px");
+  margin: 0;
+
+  header, footer, p {
+    margin: 0;
+    padding: 0;
+  }
+
+  header {
+    font-family: "AvantGardeGothicITCW01X", arial;
+    font-size: 48px;
+    font-weight: 200;
+    line-height: 60px;
+    color: @blueText;
+    margin-bottom: 23px;
+    overflow: hidden;
+    .truncate();
+    text-overflow: ellipsis;
+
+    .room-name {
+      padding-left: 12px;
+    }
+  }
+
+  p {
+    font-family: "AvantGardeGothicITCW01M 731087", arial;
+    font-size: 16px;
+    color: #5f6062;
+  }
+
+  .username {
+    margin: 40px 0;
   }
 }
