@@ -1,18 +1,38 @@
 !function(exports) {
   'use strict';
 
-  var OPENTOK_API = 'https://static.opentok.com/webrtc/v2/js/opentok.min.js';
+  var dynamicOTLoad = false;
+  var otPromise;
+
+  // in IE dynamic loading the library doesn't work. For the time being, as a stopgap measure,
+  // loading it statically.
+  if (dynamicOTLoad) {
+    var OPENTOK_API = 'https://static.opentok.com/webrtc/v2/js/opentok.min.js';
+    otPromise = LazyLoader.load(OPENTOK_API);
+  } else {
+    otPromise = Promise.resolve();
+  }
+
   var MSG_MULTIPART = 'signal';
   var SIZE_MAX = 7800;
 
   var HEAD_SIZE =
     JSON.stringify({ _head: { id: 99, seq: 99, tot: 99}, data: "" }).length;
   var USER_DATA_SIZE = SIZE_MAX - HEAD_SIZE;
-  var otLoaded = LazyLoader.load(OPENTOK_API);
   var debug =
     new Utils.MultiLevelLogger('OTHelper.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
-  var messageOrder = 0;
 
+  var otLoaded = otPromise.then(function() {
+    var hasRequirements = OT.checkSystemRequirements();
+    debug.log('checkSystemRequirements:', hasRequirements);
+    if (!hasRequirements) {
+      OT.upgradeSystemRequirements();
+      throw new Error('Unsupported browser, probably needs upgrade');
+    }
+    return;
+  });
+
+  var messageOrder = 0;
   var _msgPieces = {};
 
   var _session;
