@@ -29,6 +29,14 @@ body {
   min-width: auto;
 
   .info {
+    [data-icon="collapse"] {
+      display: none;
+    }
+
+    [data-icon="expand"] {
+      display: inline-block;
+    }
+
     h1, h3 {
       text-overflow: clip;
 
@@ -80,8 +88,12 @@ body {
     margin: 15px 20px;
     padding: 15px 15px 5px 15px;
 
-    [data-icon="navigation"] {
+    [data-icon="collapse"], [data-icon="expand"] {
       margin: 0 0 0 -3px;
+    }
+
+    [data-icon="expand"] {
+      display: none;
     }
 
     h1 {
