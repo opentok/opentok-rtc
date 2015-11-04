@@ -29,14 +29,6 @@ body {
   min-width: auto;
 
   .info {
-    [data-icon="collapse"] {
-      display: none;
-    }
-
-    [data-icon="expand"] {
-      display: inline-block;
-    }
-
     h1, h3 {
       text-overflow: clip;
 
@@ -88,12 +80,8 @@ body {
     margin: 15px 20px;
     padding: 15px 15px 5px 15px;
 
-    [data-icon="collapse"], [data-icon="expand"] {
+    [data-icon="navigation"] {
       margin: 0 0 0 -3px;
-    }
-
-    [data-icon="expand"] {
-      display: none;
     }
 
     h1 {
@@ -156,7 +144,7 @@ body {
       .truncate();
       background-color: transparent;
       border-bottom: 0;
-      padding: 18px 15px 18px 30px;
+      padding: 18px 0 18px 30px;
       text-overflow: clip;
       font-size: 12px;
     }
@@ -173,7 +161,7 @@ body {
       &:hover,
       &:active {
         color: @blueText;
-        background-color: #f3f2ef;
+        background-color: #f9f9f9;
       }
     }
 
@@ -183,7 +171,7 @@ body {
 
     .tc-list a.zeroclipboard-is-hover {
       color: @blueText;
-      background-color: #f3f2ef;
+      background-color: #f9f9f9;
     }
 
     .tc-list a.zeroclipboard-is-active {
@@ -258,7 +246,7 @@ body {
   flex: 1;
   height: 100%;
   height: calc(~"100% - 15px");
-  background-color: #f3f2ef;
+  background-color: #f9f9f9;
   padding: 15px 20px 0 20px;
 
   .desktop {
@@ -287,15 +275,20 @@ body {
     }
 
     .controls {
-      top: 10px;
-      left: 10px;
+      margin-left: auto;
+      margin-right: auto;
+      left: 0;
+      right: 0;
+      bottom: 10px;
+      text-align: center;
 
       .buttons {
         border-radius: 25px;
         padding: 8px;
+        background-color: transparent;
 
-        i[data-icon] {
-          padding: 0 8px
+        div {
+          display: inline-block;
         }
       }
     }
@@ -348,6 +341,11 @@ body {
           padding: 0;
           margin: 0;
         }
+
+        .controls {
+          top: 40px;
+          left: 40px;
+        }
       }
     }
   }
@@ -355,23 +353,16 @@ body {
   .controls {
     z-index: 1010;
     position: absolute;
-    top: 20px;
-    left: 20px;
 
     .buttons {
-      background-color: rgba(155, 156, 155, .7);
+      background-color: rgba(0, 0, 0, .4);
       border-radius: 25px;
       padding: 15px;
       display: inline-block;
 
-      i[data-icon] {
-        font-size: 16px;
-        color: #1a99ce;
-        padding: 0 18px
-      }
-
-      i[data-icon].enabled {
-        color: #fff;
+      div {
+        display: inline-block;
+        padding: 2px 14px 0 14px;
       }
     }
 
@@ -379,7 +370,7 @@ body {
       height: 50px;
       width: 5px;
       border-radius: 2.5px;
-      background-color: rgba(155, 156, 155, .9);
+      background-color: rgba(0, 0, 0, .4);
       overflow: hidden;
       display: inline-block;
       margin: 0 0 -20px 15px;

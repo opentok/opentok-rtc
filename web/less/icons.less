@@ -14,15 +14,76 @@
 
 [data-icon="chat-view"]:before { content:"\f0e6"; }
 
-[data-icon="camera"]:before { content:"\f03d"; }
-
 [data-icon="record"]:before { content:"\f111"; }
 
 [data-icon="delete"]:before { content:"\f014"; }
 
-[data-icon="audio"]:before { content:"\f028"; }
+/* Actions */
 
-[data-icon="micro"]:before { content:"\f130"; }
+.buttons [data-icon] {
+  width: 20px;
+  height: 16px;
+}
+
+.video-action {
+  [data-icon="video"], [data-icon="desktop"] {
+    background-image: url("/images/icons/no_video.svg");
+  }
+
+  [data-icon="video"]:hover, [data-icon="desktop"]:hover, [data-icon="video"]:after {
+    background-image: url("/images/icons/no_video_hover.svg");
+  }
+}
+
+.video-action.enabled {
+  [data-icon="video"], [data-icon="desktop"] {
+    background-image: url("/images/icons/video.svg");
+  }
+
+  [data-icon="video"]:hover, [data-icon="desktop"]:hover, [data-icon="video"]:after {
+    background-image: url("/images/icons/video_hover.svg");
+  }
+}
+
+.audio-action {
+  [data-icon="audio"] {
+    background-image: url("/images/icons/no_audio.svg");
+  }
+
+  [data-icon="audio"]:hover, [data-icon="audio"]:after {
+    background-image: url("/images/icons/no_audio_hover.svg");
+  }
+}
+
+.audio-action.enabled {
+  [data-icon="audio"] {
+    background-image: url("/images/icons/audio.svg");
+  }
+
+  [data-icon="audio"]:hover, [data-icon="audio"]:after {
+    background-image: url("/images/icons/audio_hover.svg");
+  }
+}
+
+.publisher .audio-action {
+  [data-icon="mic"] {
+    background-image: url("/images/icons/no_mic.svg");
+  }
+
+  [data-icon="mic"]:hover, [data-icon="mic"]:after {
+    background-image: url("/images/icons/no_mic_hover.svg");
+  }
+}
+
+.publisher .audio-action.enabled {
+  [data-icon="mic"] {
+    background-image: url("/images/icons/mic.svg");
+  }
+
+  [data-icon="mic"]:hover, [data-icon="mic"]:after {
+    background-image: url("/images/icons/mic_hover.svg");
+  }
+}
 
 /* Info */
 
@@ -31,12 +92,12 @@
   height: 16px;
 }
 
-[data-icon="collapse"] {
-  background-image: url("/images/icons/collapse.svg");
+[data-icon="navigation"] {
+  background-image: url("/images/icons/navigation.svg");
 }
 
-[data-icon="expand"] {
-  background-image: url("/images/icons/expand.svg");
+[data-icon="navigation"]:hover, [data-icon="navigation"]:after {
+  background-image: url("/images/icons/navigation_hover.svg");
 }
 
 [data-icon="participants"] {
