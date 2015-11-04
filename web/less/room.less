@@ -10,6 +10,7 @@
 
 @import 'chat.less';
 @import 'base.less';
+@import 'buttons.less';
 @import 'icons.less';
 @import 'bubble.less';
 
@@ -28,6 +29,14 @@ body {
   min-width: auto;
 
   .info {
+    [data-icon="collapse"] {
+      display: none;
+    }
+
+    [data-icon="expand"] {
+      display: inline-block;
+    }
+
     h1, h3 {
       text-overflow: clip;
 
@@ -79,8 +88,12 @@ body {
     margin: 15px 20px;
     padding: 15px 15px 5px 15px;
 
-    [data-icon="navigation"] {
+    [data-icon="collapse"], [data-icon="expand"] {
       margin: 0 0 0 -3px;
+    }
+
+    [data-icon="expand"] {
+      display: none;
     }
 
     h1 {
@@ -96,10 +109,6 @@ body {
       padding-bottom: 15px;
       opacity: 0.8;
       border-bottom: 2px solid #fff;
-
-      span {
-        padding-right: 4px;
-      }
     }
 
     h2 {
@@ -163,17 +172,17 @@ body {
 
       &:hover,
       &:active {
-        color: #000;
+        color: @blueText;
         background-color: #f3f2ef;
       }
     }
 
-    .tc-list a.zeroclipboard-is-hover [data-icon="add"] {
+    .tc-list a.zeroclipboard-is-hover [data-icon="add"], [data-icon="add"]:after {
       background-image: url("/images/icons/add_hover.svg");
     }
 
     .tc-list a.zeroclipboard-is-hover {
-      color: #000;
+      color: @blueText;
       background-color: #f3f2ef;
     }
 
@@ -297,8 +306,8 @@ body {
 
     z-index: 1001;
 
-    min-width: 240px;
-    min-height: 140px;
+    min-width: 200px;
+    min-height: 150px;
 
     right: 40px;
 
@@ -411,5 +420,38 @@ body {
   display: none;
   &.visible {
     display: inline-block;
+  }
+}
+
+.user-name-modal .tc-dialog {
+  padding: 65px 100px;
+  max-width: calc(~"100% - 220px");
+  margin: 0;
+
+  header, footer, p {
+    margin: 0;
+    padding: 0;
+  }
+
+  header {
+    font-family: "AvantGardeGothicITCW01X", arial;
+    font-size: 48px;
+    font-weight: 200;
+    line-height: 60px;
+    color: @blueText;
+    margin-bottom: 23px;
+    overflow: hidden;
+    .truncate();
+    text-overflow: ellipsis;
+  }
+
+  p {
+    font-family: "AvantGardeGothicITCW01M 731087", arial;
+    font-size: 16px;
+    color: #5f6062;
+  }
+
+  .username {
+    margin: 40px 0;
   }
 }

@@ -328,7 +328,7 @@
       '/js/components/modal.js'
     ]).then(function() {
       var selector = '.user-name-modal';
-      document.querySelector(selector + ' header').textContent = roomName;
+      document.querySelector(selector + ' header .room-name').textContent = roomName;
       return Modal.show(selector).then(function() {
         return new Promise(function(resolve, reject) {
           var enterButton = document.querySelector(selector + ' button');
@@ -445,7 +445,6 @@
         OTHelper.connectToSession.bind(OTHelper, aParams.apiKey,
                                        aParams.sessionId, aParams.token);
 
-      RoomView.userName = userName;
       // Room's name is set by server, we don't need to do this, but
       // perphaps it would be convenient
       // RoomView.roomName = aParams.roomName;

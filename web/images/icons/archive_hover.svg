@@ -6,13 +6,13 @@
 	.st0{fill:#000000;}
 	.st1{fill:#FFFFFF;}
 	.st2{fill:#C31F4A;}
-	.st3{fill:#1A1A1A;}
+	.st3{fill:#00ADEE;}
 	.st4{fill:#C4BAB3;}
 	.st5{fill:#54B850;}
 </style>
 <g>
 	<g>
-		<circle class="st0" cx="12.5" cy="10" r="9.5"/>
+		<circle class="st3" cx="12.5" cy="10" r="9.5"/>
 	</g>
 	<g>
 		<circle class="st1" cx="12.3" cy="9.8" r="4.6"/>

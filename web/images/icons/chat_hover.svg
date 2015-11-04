@@ -6,9 +6,11 @@
 	.st0{fill:#99999A;}
 	.st1{fill:#FFFFFF;}
 	.st2{fill:#C31F4A;}
-	.st3{fill:#1A1A1A;}
+	.st3{fill:#00ADEE;}
 	.st4{fill:#C4BAB3;}
-	.st5{fill:#54B850;}
+	.st5{fill:#5F6062;}
+	.st6{fill:#C31F4B;}
+	.st7{fill:none;}
 </style>
 <g>
 	<path class="st3" d="M19.7,8.9c0.2-0.2,0.4-0.2,0.6,0l0.2,0.2c0.2-0.5,0.2-0.8,0.2-0.8c0.3-1.8-0.3-3.7-1.6-5.2
