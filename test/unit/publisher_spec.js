@@ -27,16 +27,16 @@ describe('Publisher', function() {
 
       expect(container.childNodes.length).to.equal(2);
 
-      var camera = container.querySelector('[data-icon="camera"]');
-      expect(camera).to.exist;
-      expect(camera.dataset.action).to.equal('video');
+      var video = container.querySelector('[data-icon="video"]');
+      expect(video).to.exist;
+      expect(video.dataset.action).to.equal('video');
 
       var record = container.querySelector('[data-icon="record"]');
       expect(record).to.exist;
     }));
 
-    it('should send an event clicking on camera action', sinon.test(function(done) {
-      var camera = getContainer().querySelector('[data-icon="camera"]');
+    it('should send an event clicking on video action', sinon.test(function(done) {
+      var video = getContainer().querySelector('[data-icon="video"]');
 
       this.stub(window, 'CustomEvent', function(name, data) {
         expect(name).to.equal('roomView:buttonClick');
@@ -44,12 +44,12 @@ describe('Publisher', function() {
         done();
       });
 
-      expect(camera.classList.contains('enabled')).to.be.true;
-      camera.click();
+      expect(video.parentNode.classList.contains('enabled')).to.be.true;
+      video.click();
     }));
 
     it('should send an event clicking on micro action', sinon.test(function(done) {
-      var micro = getContainer().querySelector('[data-icon="micro"]');
+      var micro = getContainer().querySelector('[data-icon="mic"]');
 
       this.stub(window, 'CustomEvent', function(name, data) {
         expect(name).to.equal('roomView:buttonClick');
@@ -57,7 +57,7 @@ describe('Publisher', function() {
         done();
       });
 
-      expect(micro.classList.contains('enabled')).to.be.true;
+      expect(micro.parentNode.classList.contains('enabled')).to.be.true;
       micro.click();
     }));
 

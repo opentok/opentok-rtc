@@ -58,7 +58,7 @@
     var buttons = {
       video: {
         eventFiredName: 'roomView:buttonClick',
-        dataIcon: isScreenSharing ? 'desktop' : 'camera',
+        dataIcon: isScreenSharing ? 'desktop' : 'video',
         eventName: 'click',
         context: 'OTHelper',
         action: 'toggleSubscribersVideo',

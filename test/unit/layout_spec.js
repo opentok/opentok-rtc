@@ -9,7 +9,7 @@ describe('Grid', function() {
   var controls = {
     video: {
       eventFiredName: 'roomView:buttonClick',
-      dataIcon: 'camera',
+      dataIcon: 'video',
       eventName: 'click'
     },
     audio: {
@@ -96,25 +96,25 @@ describe('Grid', function() {
       var item = container.querySelector('li');
       expect(item.dataset.id).to.equal(id);
 
-      var camera = container.querySelector('li i[data-icon="camera"]');
-      expect(camera.dataset.icon).to.equal(controls.video.dataIcon);
-      expect(camera.dataset.eventName).to.equal(controls.video.eventFiredName);
-      expect(camera.dataset.action).to.equal('video');
-      expect(camera.dataset.streamId).to.equal(id);
-      expect(camera.classList.contains('enabled')).to.be.true;
+      var video = container.querySelector('li i[data-icon="video"]');
+      expect(video.dataset.icon).to.equal(controls.video.dataIcon);
+      expect(video.dataset.eventName).to.equal(controls.video.eventFiredName);
+      expect(video.dataset.action).to.equal('video');
+      expect(video.dataset.streamId).to.equal(id);
+      expect(video.parentNode.classList.contains('enabled')).to.be.true;
 
       var audio = container.querySelector('li i[data-icon="audio"]');
       expect(audio.dataset.icon).to.equal(controls.audio.dataIcon);
       expect(audio.dataset.eventName).to.equal(controls.audio.eventFiredName);
       expect(audio.dataset.action).to.equal('audio');
       expect(audio.dataset.streamId).to.equal(id);
-      expect(audio.classList.contains('enabled')).to.be.true;
+      expect(audio.parentNode.classList.contains('enabled')).to.be.true;
     });
 
     it('should add video control working properly', sinon.test(function(done) {
       var id = 'myItem';
       instance.append(id, 'camera', controls);
-      var control = getContainer().querySelector('li i[data-icon="camera"]');
+      var control = getContainer().querySelector('li i[data-icon="video"]');
 
       this.stub(window, 'CustomEvent', function(name, data) {
         expect(name).to.equal(controls.video.eventFiredName);

@@ -15,16 +15,16 @@
       case 'roomController:video':
       case 'roomController:audio':
         if (evt.detail.reason === 'publishVideo' || evt.detail.reason === 'publishAudio') {
-          var button = (evt.type === 'roomController:video') ? videoCtrlBtn : audioCtrlBtn;
-          HTMLElems.setEnabled(button, evt.detail.enabled);
+          var control = (evt.type === 'roomController:video') ? videoCtrl : audioCtrl;
+          HTMLElems.setEnabled(control, evt.detail.enabled);
         }
         break;
     }
   }
 
   var publisher,
-      videoCtrlBtn,
-      audioCtrlBtn;
+      videoCtrl,
+      audioCtrl;
 
   function addControlBtns() {
     var controls = HTMLElems.createElementAt(publisher, 'div');
@@ -33,12 +33,13 @@
     var buttons = HTMLElems.createElementAt(controls, 'div');
     buttons.classList.add('buttons');
 
-    videoCtrlBtn = HTMLElems.createElementAt(buttons, 'i',
-                     {'data-icon': 'camera', 'data-action': 'video'});
-    videoCtrlBtn.classList.add('enabled');
-    audioCtrlBtn = HTMLElems.createElementAt(buttons, 'i',
-                     {'data-icon': 'micro', 'data-action': 'audio'});
-    audioCtrlBtn.classList.add('enabled');
+    videoCtrl = HTMLElems.createElementAt(buttons, 'div');
+    videoCtrl.classList.add('video-action', 'enabled');
+    HTMLElems.createElementAt(videoCtrl, 'i', {'data-icon': 'video', 'data-action': 'video'});
+
+    audioCtrl = HTMLElems.createElementAt(buttons, 'div');
+    audioCtrl.classList.add('audio-action', 'enabled');
+    HTMLElems.createElementAt(audioCtrl, 'i', {'data-icon': 'mic', 'data-action': 'audio'});
 
     HTMLElems.createElementAt(publisher, 'i', {'data-icon': 'record'});
   }

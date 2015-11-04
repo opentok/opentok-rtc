@@ -44,7 +44,7 @@ Layout.prototype = {
         }
 
         var action = evt.type.replace('roomController:', '');
-        HTMLElems.setEnabled(item.querySelector('[data-action="' + action + '"]'),
+        HTMLElems.setEnabled(item.querySelector('.' + action + '-action'),
                              evt.detail.enabled);
         break;
     }
@@ -86,8 +86,9 @@ Layout.prototype = {
         'data-streamId': id,
         'data-streamType': type
       };
-      var item = HTMLElems.createElementAt(controls, 'i', options);
-      item.classList.add('enabled');
+      var wrapper = HTMLElems.createElementAt(controls, 'div');
+      wrapper.classList.add(controlName + '-action', 'enabled');
+      HTMLElems.createElementAt(wrapper, 'i', options);
     });
   },
 
