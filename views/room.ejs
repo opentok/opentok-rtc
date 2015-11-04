@@ -24,8 +24,7 @@
       <header class="info">
         <i id="handler" data-icon="navigation"></i>
         <h1>
-          <span id="userName"><%= userName %></span> <span>OpenTok</span><br>
-          <span id="roomName"><%= roomName %></span> <span>Meeting Room</span>
+          <span id="roomName"><%= roomName %></span>
         </h1>
         <h2><span class="participants"></span></h2>
         <h3>
@@ -36,27 +35,27 @@
         <div class="tc-list">
           <ul>
             <li>
-              <a id="addToCall"><i data-icon="add"></i><span>Add to call</span></a>
+              <a id="addToCall"><i data-icon="add"></i><span>Add participants</span></a>
             </li>
             <li>
               <a id="startArchiving"><i data-icon="archive"></i><span>Start recording</span></a>
               <a id="stopArchiving"><i data-icon="archive_saving"></i><span class="duration"></span><span>Stop recording</span></a>
             </li>
             <li>
-              <a id="viewRecordings"><i data-icon="recordings"></i><span>View archived recordings (<span id="recordings">0</span>)</span></a>
+              <a id="viewRecordings"><i data-icon="recordings"></i><span>Manage recordings (<span id="recordings">0</span>)</span></a>
             </li>
             <li>
               <a id="startSharingDesktop"><i data-icon="screen"></i><span>Share your screen</span></a>
               <a id="stopSharingDesktop"><i data-icon="screen_sharing"></i><span>Stop sharing your screen</span></a>
             </li>
             <li>
-              <a><i data-icon="layouts"></i><span>Manage layout</span></a>
+              <a><i data-icon="layouts"></i><span>Change view</span></a>
             </li>
             <li>
-              <a id="startChat"><i data-icon="chat"></i><span>Start text chat</span></a>
+              <a id="startChat"><i data-icon="chat"></i><span>Open text chat</span></a>
             </li>
             <li>
-              <a id="endCall" class="danger"><i data-icon="end"></i><span>End video call</span></a>
+              <a id="endCall" class="danger"><i data-icon="end"></i><span>End meeting</span></a>
             </li>
           </ul>
         </div>
@@ -96,9 +95,9 @@
     <section class="bubbles">
       <section for="addToCall" class="bubble">
         <div class="bubble-content">
-          <p>Room link has been copied.</p>
-          <p>Share link to add others to the call.</p>
-          <input class="tc-input block" onclick="this.select();">
+          <p>Meeting link has been copied.</p>
+          <p>Share link to add others to the meeting.</p>
+          <input class="block" onclick="this.select();">
         </div>
       </section>
 
@@ -132,7 +131,7 @@
     <section class="tc-modal user-name-modal">
       <form class="tc-dialog">
         <header>
-          <span>Welcome to</span><span class="room-name"></span>
+          <span>Welcome to</span> <span class="room-name"></span>
         </header>
         <p>Please enter your name to join this conversation.</p>
         <input class="block username" placeholder="Enter your name">

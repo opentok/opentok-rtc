@@ -97,10 +97,6 @@ body {
       padding-bottom: 15px;
       opacity: 0.8;
       border-bottom: 2px solid #fff;
-
-      span {
-        padding-right: 4px;
-      }
     }
 
     h2 {
@@ -169,7 +165,7 @@ body {
       }
     }
 
-    .tc-list a.zeroclipboard-is-hover [data-icon="add"] {
+    .tc-list a.zeroclipboard-is-hover [data-icon="add"], [data-icon="add"]:after {
       background-image: url("/images/icons/add_hover.svg");
     }
 
@@ -298,8 +294,8 @@ body {
 
     z-index: 1001;
 
-    min-width: 240px;
-    min-height: 140px;
+    min-width: 200px;
+    min-height: 150px;
 
     right: 40px;
 
@@ -435,10 +431,6 @@ body {
     overflow: hidden;
     .truncate();
     text-overflow: ellipsis;
-
-    .room-name {
-      padding-left: 12px;
-    }
   }
 
   p {

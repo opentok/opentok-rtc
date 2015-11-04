@@ -9,7 +9,7 @@
       handler,
       startChatBtn,
       roomNameElem,
-      roomUserElem,
+      userName,
       participantsNumberElem,
       recordingsNumberElem,
       subscribersElem;
@@ -37,15 +37,11 @@
 
     startChatBtn = dock.querySelector('#startChat');
     roomNameElem = dock.querySelector('#roomName');
-    roomUserElem = dock.querySelector('#userName');
     participantsNumberElem = dock.querySelectorAll('.participants');
     recordingsNumberElem = dock.querySelector('#recordings');
 
     subscribersElem = screen.querySelector('#subscriber');
   }
-
-  var roomNameSuffix = 'Meeting Room';
-  var USER_NAME_SUFFIX = '\'s';
 
   var transEndEventName =
     ('WebkitTransition' in document.documentElement.style) ?
@@ -228,10 +224,9 @@
     init: init,
     set roomName(value) {
       HTMLElems.addText(roomNameElem, value);
-      HTMLElems.createElementAt(roomNameElem, 'p', null, roomNameSuffix);
     },
     set userName(value) {
-      roomUserElem.textContent = value + USER_NAME_SUFFIX;
+      userName = value;
     },
 
     set participantsNumber(value) {

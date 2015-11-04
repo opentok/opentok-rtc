@@ -5,6 +5,11 @@
   background-size: auto 100%;
 }
 
+[data-icon]:after {
+  content: '';
+  display: none;
+}
+
 [data-icon="close-chat"]:before { content:"\f00d"; }
 
 [data-icon="chat-view"]:before { content:"\f0e6"; }
@@ -30,7 +35,7 @@
   background-image: url("/images/icons/navigation.svg");
 }
 
-[data-icon="navigation"]:hover {
+[data-icon="navigation"]:hover, [data-icon="navigation"]:after {
   background-image: url("/images/icons/navigation_hover.svg");
 }
 
@@ -53,11 +58,11 @@
   background-image: url("/images/icons/archive.svg");
 }
 
-:hover > [data-icon="archive"] {
+:hover > [data-icon="archive"], [data-icon="archive"]:after {
   background-image: url("/images/icons/archive_hover.svg");
 }
 
-[data-icon="archive_saving"] {
+[data-icon="archive_saving"], [data-icon="archive_saving"]:after {
   background-image: url("/images/icons/archive_saving.svg");
 }
 
@@ -65,7 +70,7 @@
   background-image: url("/images/icons/recordings.svg");
 }
 
-:hover > [data-icon="recordings"] {
+:hover > [data-icon="recordings"], [data-icon="recordings"]:after {
   background-image: url("/images/icons/recordings_hover.svg");
 }
 
@@ -73,11 +78,11 @@
   background-image: url("/images/icons/screen.svg");
 }
 
-:hover > [data-icon="screen"] {
+:hover > [data-icon="screen"], [data-icon="screen"]:after {
   background-image: url("/images/icons/screen_hover.svg");
 }
 
-[data-icon="screen_sharing"] {
+[data-icon="screen_sharing"], [data-icon="screen_sharing"]:after {
   background-image: url("/images/icons/screen_sharing.svg");
 }
 
@@ -85,7 +90,7 @@
   background-image: url("/images/icons/layouts.svg");
 }
 
-:hover > [data-icon="layouts"] {
+:hover > [data-icon="layouts"], [data-icon="layouts"]:after {
   background-image: url("/images/icons/layouts_hover.svg");
 }
 
@@ -93,7 +98,7 @@
   background-image: url("/images/icons/chat.svg");
 }
 
-:hover > [data-icon="chat"] {
+:hover > [data-icon="chat"], [data-icon="chat"]:after {
   background-image: url("/images/icons/chat_hover.svg");
 }
 
@@ -101,6 +106,6 @@
   background-image: url("/images/icons/end.svg");
 }
 
-:hover > [data-icon="end"] {
+:hover > [data-icon="end"], [data-icon="end"]:after {
   background-image: url("/images/icons/end_hover.svg");
 }
