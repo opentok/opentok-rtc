@@ -83,7 +83,17 @@ function ServerMethods(aLogLevel, aModules) {
 
   // We'll use redis to add persistence
   var Redis = require('ioredis');
-  var redis = new Redis();
+
+  const REDIS_CONNECT_TIMEOUT = 5000;
+  var redis = new Redis({ connectTimeout: REDIS_CONNECT_TIMEOUT });
+  var redisWatchdog = setInterval(function() {
+    logger.warn('Timeout while connecting to the Redis Server! Is Redis running?');
+  }, REDIS_CONNECT_TIMEOUT);
+
+  redis.on('ready', function() {
+    logger.log('Successfully connected to Redis and DB is ready.');
+    clearInterval(redisWatchdog);
+  });
 
   // Opentok API instance, which will be configured only after tbConfigPromise
   // is resolved
@@ -110,7 +120,7 @@ function ServerMethods(aLogLevel, aModules) {
         for (var i = 0, l = REDIS_KEYS.length; i < l; i++) {
           var keyValue = results[i][1] || REDIS_KEYS[i].defaultValue;
           if (!keyValue) {
-            var message = 'Missing required redis key: ' + REDIS_KEYS[i] +
+            var message = 'Missing required redis key: ' + REDIS_KEYS[i].key +
               '. Please check the installation instructions';
             logger.error(message);
             throw new Error(message);

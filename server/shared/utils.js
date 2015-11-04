@@ -62,7 +62,7 @@
 
 
   var logger =
-        new Utils.MultiLevelLogger('Utils', Utils.MultiLevelLogger.DEFAULT_LEVELS.never);
+    new Utils.MultiLevelLogger('Utils', Utils.MultiLevelLogger.DEFAULT_LEVELS.never);
 
   Utils.promisify = function (fn) {
     return function() {

@@ -61,7 +61,10 @@ module.exports = function App(aStaticPath, aApiDef, aLogLevel, aModules) {
   // I don't need this anymore.
   api = null;
   if (configureApp) {
-    configureApp();
+    configureApp().catch(e => {
+      // If there's an error while (re)configuring, we should just exit.
+      throw new Error('FATAL: Error configuring app!');
+    });
     app.reloadConfig = configureApp;
   }
   return app;
