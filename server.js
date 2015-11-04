@@ -69,6 +69,7 @@ function setupProcess(aLogger, aDaemonize, aLogFile) {
     outputStream.on('open', function() {
       resolve({ stdout: outputStream, stderr: outputStream });
     });
+    return null;
   }).then(daemonOpts => {
     // No need to continue, let's make ourselves a daemon.
     if (daemonOpts) {
@@ -77,21 +78,33 @@ function setupProcess(aLogger, aDaemonize, aLogFile) {
 
     var signals = [
       'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT', 'SIGBUS',
-      'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGPIPE', 'SIGALRM', 'SIGTERM'
+      'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGALRM', 'SIGTERM'
     ];
 
     process.on('uncaughtException', function(err) {
       aLogger.error('Got an uncaught exception:', err, err.stack);
     });
 
+    process.on('unhandledRejection', function(aReason, aPromise) {
+      aLogger.log('Unhandled Rejection:', aReason);
+      if (aReason.message && aReason.message.startsWith('FATAL:')) {
+        aLogger.error('Got a fatal error! Exiting!');
+        process.exit(1);
+      }
+    });
+
     process.on('SIGHUP', function() {
-      // To-do: probably should reload the configuration here
       if (sighupHandler && sighupHandler instanceof Function) {
         aLogger.log('Got SIGHUP. Reloading config!');
         sighupHandler();
       } else {
         aLogger.log('Got SIGHUP. Ignoring!');
       }
+    });
+
+    // Sometime we get a SIGPIPE for some unknown reason. Just log and ignore it.
+    process.on('SIGPIPE', function() {
+      aLogger.log('Got SIGPIPE. Ignoring');
     });
 
     process.on('exit', function() {
