@@ -103,7 +103,7 @@
       sendHistoryAck();
       // FOLLOW-UP This event must have been an once event and don't need
       // to remove it
-      OTHelper.removeListener(this, 'signal:chatHistory');
+      OTHelper.removeListener('signal:chatHistory');
     },
     'signal:chatHistoryACK': function(evt) {
       cancelPendingSendHistory(evt.from.connectionId);
