@@ -87,7 +87,7 @@ function ServerMethods(aLogLevel, aModules) {
   const REDIS_CONNECT_TIMEOUT = 5000;
   var redis = new Redis({ connectTimeout: REDIS_CONNECT_TIMEOUT });
   var redisWatchdog = setInterval(function() {
-    logger.warn("Timeout while connecting to the Redis Server! Is Redis running?");
+    logger.warn('Timeout while connecting to the Redis Server! Is Redis running?');
   }, REDIS_CONNECT_TIMEOUT);
 
   redis.on('ready', function() {
