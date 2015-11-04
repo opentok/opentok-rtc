@@ -445,7 +445,6 @@
         OTHelper.connectToSession.bind(OTHelper, aParams.apiKey,
                                        aParams.sessionId, aParams.token);
 
-      RoomView.userName = userName;
       // Room's name is set by server, we don't need to do this, but
       // perphaps it would be convenient
       // RoomView.roomName = aParams.roomName;

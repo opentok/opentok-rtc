@@ -9,7 +9,6 @@
       handler,
       startChatBtn,
       roomNameElem,
-      userName,
       participantsNumberElem,
       recordingsNumberElem,
       subscribersElem;
@@ -222,11 +221,9 @@
 
   exports.RoomView = {
     init: init,
+
     set roomName(value) {
       HTMLElems.addText(roomNameElem, value);
-    },
-    set userName(value) {
-      userName = value;
     },
 
     set participantsNumber(value) {
