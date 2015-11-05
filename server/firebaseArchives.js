@@ -130,11 +130,19 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
 
   fbRootRef.authWithCustomToken_P = promisify(fbRootRef.authWithCustomToken);
 
-  var serverToken = fbTokenGenerator.
-    createToken({ uid: 'SERVER', role: 'server', name: 'OpenTok RTC Server' },
-                { admin: true });
-  return fbRootRef.
-    authWithCustomToken_P(serverToken).
+  var authWithAdminToken = function() {
+    logger.log('(Re)issuing admin token and (re)authenticating session.');
+    var serverToken = fbTokenGenerator.
+      createToken({ uid: 'SERVER', role: 'server', name: 'OpenTok RTC Server' },
+                  { admin: true });
+      return fbRootRef.
+        authWithCustomToken_P(serverToken);
+  };
+
+  // Refresh the authentication every 23 hours (tokens expire by default at 24 hours)
+  setInterval(authWithAdminToken, 23 * 2600);
+
+  return authWithAdminToken().
     then(fbRootRef.on.bind(fbRootRef, 'child_added', _processSession)).
     then(_getFbObject).
     catch(err => {
