@@ -31,7 +31,9 @@
       extNotRegistered: 'OT0002',
       notSupported: 'OT0003',
       errPublishingScreen: 'OT0004'
-    }
+    },
+    sendSignal: function() {},
+    removeListener: function(evtName) {}
   };
 
   exports.MockOTHelper = MockOTHelper;
