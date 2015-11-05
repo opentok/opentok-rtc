@@ -140,7 +140,7 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
   };
 
   // Refresh the authentication every 23 hours (tokens expire by default at 24 hours)
-  setInterval(authWithAdminToken, 23 * 2600);
+  setInterval(authWithAdminToken, 23 * 3600000);
 
   return authWithAdminToken().
     then(fbRootRef.on.bind(fbRootRef, 'child_added', _processSession)).
