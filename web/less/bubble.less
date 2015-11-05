@@ -35,7 +35,7 @@
 
   .bubble-content:before {
     left: -10px;
-    top: 26px;
+    top: 28px;
     border-top: 10px solid transparent;
     border-bottom: 10px solid transparent;
     border-right: 10px solid @bubbleBorderColor;
@@ -43,7 +43,7 @@
 
   .bubble-content:after {
     left: -9px;
-    top: 26.5px;
+    top: 28.5px;
     border-top: 9px solid transparent;
     border-bottom: 9px solid transparent;
     border-right: 9px solid #fff;
@@ -69,27 +69,47 @@
 
 [for="viewRecordings"] {
   .bubble-content {
-    padding-bottom: 10px;
+    max-width: none;
+    padding: 40px;
+    text-align: center;
+  }
+
+  .title {
+    font-size: 16px;
+    color: #4f4f4f;
+  }
+
+  p, a {
+    font-size: 10px;
+    color: #9b9b9b;
+  }
+
+  hr {
+    border: 0;
+    background: @blueText;
+    height: 1px;
+    max-width: 180px;
+    margin-top: 14px;
+    margin-bottom: 18px;
   }
 
   .tc-list {
     background-color: transparent;
-    margin-top: 8px;
-    border-top: 1px solid #e5eaec;
     max-height: 200px;
     overflow-x: hidden;
     overflow-y: scroll;
 
     ul {
       height: 100%;
-      padding: 10px 0;
+      min-width: 320px;
+      text-align: left
     }
 
     li {
       background-color: transparent;
       border-bottom: 0;
       padding: 5px 0;
-      width: calc(~"100% - 18px");
+      width: calc(~"100% - 10px");
     }
 
     li:first-child {
@@ -111,18 +131,27 @@
       pointer-events: all;
     }
 
-    li[data-status="available"] i[data-icon="delete"],
-    li[data-status="stopped"] i[data-icon="delete"] {
+    li[data-status="available"] [data-icon],
+    li[data-status="stopped"] [data-icon] {
       display: inline;
     }
 
-    a {
-      color: #9b9c9b;
+    a.file {
       .truncate();
-      width: calc(~"100% - 30px");
+      width: calc(~"100% - 50px");
       display: inline-block;
       pointer-events: none;
+      padding: 12px 0;
+      margin: -12px 0;
+    }
 
+    a.download {
+      margin: -2px 0 0 0;
+      padding: 0;
+      border: 0;
+    }
+
+    a {
       &:hover,
       &:focus,
       &:active {
@@ -130,8 +159,9 @@
       }
     }
 
-    i[data-icon="delete"] {
-      color: #c61f4c;
+    [data-icon] {
+      margin-top: -2px;
+      display: inline-block;
       float: right;
       display: none;
     }

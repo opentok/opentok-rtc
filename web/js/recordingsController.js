@@ -34,6 +34,7 @@
         '/js/components/modal.js'
       ]).then(function() {
         var selector = '.archive-delete-modal';
+        document.querySelector(selector + ' .username').textContent = data.username;
         return Modal.show(selector).then(function() {
           return new Promise(function(resolve, reject) {
             var ui = document.querySelector(selector);
@@ -44,7 +45,7 @@
 
               (classList.contains('delete-archive')) && onDeleteArchive(data);
 
-              if (classList.contains('tc-button')) {
+              if (classList.contains('btn')) {
                 ui.removeEventListener('click', onClicked);
                 return Modal.hide(selector);
               }

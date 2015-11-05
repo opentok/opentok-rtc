@@ -38,6 +38,19 @@
   box-shadow: 0 0 0 2px #0099cb;
 }
 
+.btn-white {
+  background-color: #fff;
+  box-shadow: 0 0 0 1px #0099cb;
+  color: #0099cb;
+  border-radius: 1px;
+}
+
+.btn-white:hover {
+  color: #0099cb;
+  background-color: #fff;
+  box-shadow: 0 0 0 2px #0099cb;
+}
+
 .ctaarrow-white:after {
   display: inline-block;
   content: "";
@@ -51,6 +64,23 @@
 }
 
 .ctaarrow-white:hover:after {
+  background-size: 9px 16px;
+  transform: translate(3px, 0px);
+}
+
+.ctaarrow-blue:after {
+  display: inline-block;
+  content: "";
+  background-image: url("/images/icons/ctaarrow-blue@2x.png");
+  background-size: 9px 16px;
+  width: 9px;
+  height: 16px;
+  vertical-align: middle;
+  margin-left: 15px;
+  transition: all 0.5s ease-out;
+}
+
+.ctaarrow-blue:hover:after {
   background-size: 9px 16px;
   transform: translate(3px, 0px);
 }

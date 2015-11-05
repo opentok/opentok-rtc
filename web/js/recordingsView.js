@@ -3,6 +3,30 @@
 
   var listSelector = '.videos.tc-list ul';
 
+  var video_extension = 'mp4';
+
+  var formatter  = new Intl.DateTimeFormat('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  });
+
+  function getLabelText(archive) {
+    var date = new Date(archive.createdAt);
+
+    var time = formatter.format(date).toLowerCase();
+
+    var prefix = '';
+    time.indexOf(':') === 1 && (prefix = '0');
+
+    var duration = (new Date(archive.duration * 1000)).toUTCString().match(/(\d\d:\d\d:\d\d)/)[0];
+
+    var label = [prefix, time, ' - ', archive.recordingUser, '\'s Archive (',
+                 duration, 's)'];
+
+    return label.join('');
+  }
+
   function render(archives) {
     if (!archives) {
       return;
@@ -24,10 +48,8 @@
            sort(sortingDescending).
            forEach(function(archiveId) {
       var archive = archives[archiveId];
-
       ++total;
       var url = archive.localDownloadURL;
-      var name = archive.name;
       var item = HTMLElems.createElementAt(list, 'li');
 
       item.dataset.status = archive.status;
@@ -35,14 +57,20 @@
       HTMLElems.createElementAt(item, 'a', {
         'target': '_blank',
         'href': url
-      }, name);
+      }, getLabelText(archive)).classList.add('file');
 
       HTMLElems.createElementAt(item, 'i', {
         'data-id': archive.id,
         'data-icon': 'delete',
         'data-action': 'delete',
-        'data-name': name
+        'data-username': archive.recordingUser
       });
+
+      HTMLElems.createElementAt(item, 'a', {
+        'data-icon': 'download',
+        'href': url,
+        'download': archive.name + '.' + video_extension
+      }).classList.add('download');
     });
 
     RoomView.recordingsNumber = total;
@@ -62,7 +90,7 @@
           Utils.sendEvent('archive', {
             id: dataset.id,
             action: dataset.action,
-            name: dataset.name,
+            username: dataset.username,
             set status(value) {
               elemClicked.parentNode.dataset.status = value;
             },
