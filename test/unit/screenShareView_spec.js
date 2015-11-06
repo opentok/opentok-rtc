@@ -17,7 +17,7 @@ describe('ScreenShareView', function() {
     return document.querySelector('.screen-modal');
   }
 
-  function testMsgError(event, msgError, expectedResults) {
+  function testMsgError(event, msgError, expectedResult) {
     ScreenShareView.init();
 
     // DispatchEvent is synchronous by definition
@@ -26,12 +26,10 @@ describe('ScreenShareView', function() {
     // pretty, isn't it?
     window.dispatchEvent(event);
 
-    expectedResults.forEach(function(result) {
-      expect(result.elem.classList.contains('visible')).to.be.equal(result.value);
-    });
+    expect(shareErrors.dataset.screenSharingType).to.be.equal(expectedResult);
 
     expect(container.children.length).to.equal(0);
-    var span = shareErrors.querySelector('.errTxt');
+    var span = shareErrors.querySelector('.errorDescription');
     expect(span.textContent).to.be.equal(msgError);
   }
 
@@ -76,7 +74,7 @@ describe('ScreenShareView', function() {
       ScreenShareView.init();
 
       [installSectionError, txtSectionError, extInstallationSuccessful].forEach(function(elem) {
-        expect(elem.classList.contains('visible')).to.be.false;
+        expect(elem).to.exist;
       });
     });
   });
@@ -89,11 +87,7 @@ describe('ScreenShareView', function() {
 
     var event = new CustomEvent('screenShareController:shareScreenError', { detail: err });
 
-    testMsgError(event, err.message, [
-      { elem: installSectionError, value: false },
-      { elem: txtSectionError, value: true },
-      { elem: extInstallationSuccessful, value: false }
-    ]);
+    testMsgError(event, err.message, 'error-sharing');
   });
 
   it('should show a message when has error and is not userDenied or extensionNotInstalled',
@@ -105,11 +99,7 @@ describe('ScreenShareView', function() {
 
      var event = new CustomEvent('screenShareController:shareScreenError', { detail: err });
 
-     testMsgError(event, 'Error sharing screen. ' + err.message, [
-      { elem: installSectionError, value: false },
-      { elem: txtSectionError, value: true },
-      { elem: extInstallationSuccessful, value: false }
-     ]);
+     testMsgError(event, err.message, 'error-sharing');
   });
 
   it('should show install message when error is extNotInstalled', function() {
@@ -120,11 +110,7 @@ describe('ScreenShareView', function() {
 
     var event = new CustomEvent('screenShareController:shareScreenError', { detail: err });
 
-    testMsgError(event, '', [
-      { elem: installSectionError, value: true },
-      { elem: txtSectionError, value: false },
-      { elem: extInstallationSuccessful, value: false }
-    ]);
+    testMsgError(event, '', 'error-installing');
   });
 
   it('should show installation success', function() {
@@ -134,11 +120,7 @@ describe('ScreenShareView', function() {
 
     var event = new CustomEvent('screenShareController:extInstallationResult', { detail: err });
 
-    testMsgError(event, '', [
-      { elem: installSectionError, value: false },
-      { elem: txtSectionError, value: false },
-      { elem: extInstallationSuccessful, value: true }
-    ]);
+    testMsgError(event, '', 'successful-installation');
   });
 
   it('should show installation success', function() {
@@ -149,11 +131,7 @@ describe('ScreenShareView', function() {
 
     var event = new CustomEvent('screenShareController:extInstallationResult', { detail: err });
 
-    testMsgError(event, 'Error installation extension. ' + err.message, [
-      { elem: installSectionError, value: false },
-      { elem: txtSectionError, value: true },
-      { elem: extInstallationSuccessful, value: false }
-    ]);
+    testMsgError(event, err.message, 'error-sharing');
   });
 
 });

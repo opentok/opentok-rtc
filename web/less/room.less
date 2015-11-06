@@ -397,25 +397,18 @@ body {
   }
 }
 
-#screenShareErrorMsg {
-  display: none;
-  &.visible {
-    display: inline-block;
-  }
+#screenShareErrors .tc-dialog {
+  max-width: 380px;
 }
 
-#screenShareErrorInstall {
+#screenShareErrorInstall, #extInstallationSuccessful, #screenShareErrorMsg {
   display: none;
-  &.visible {
-    display: inline-block;
-  }
 }
 
-#extInstallationSuccessful {
-  display: none;
-  &.visible {
-    display: inline-block;
-  }
+[data-screen-sharing-type=error-sharing] #screenShareErrorMsg,
+[data-screen-sharing-type=error-installing] #screenShareErrorInstall,
+[data-screen-sharing-type=successful-installation] #extInstallationSuccessful {
+  display: inline-block;
 }
 
 .user-name-modal .tc-dialog {
