@@ -19,7 +19,7 @@
     style: {
       audioLevelDisplayMode: 'on',
       buttonDisplayMode: 'off',
-      nameDisplayMode: 'on',
+      nameDisplayMode: 'off',
       videoDisabledDisplayMode: 'on',
       showArchiveStatus: false
     }
@@ -34,7 +34,7 @@
       style: {
         audioLevelDisplayMode: 'on',
         buttonDisplayMode: 'off',
-        nameDisplayMode: 'on',
+        nameDisplayMode: 'off',
         videoDisabledDisplayMode: 'auto'
       }
     },
@@ -239,7 +239,7 @@
 
       var subsDiv =
         RoomView.createSubscriberView(streamId, stream.videoType,
-                                      subscriberStreams[streamId].buttons);
+                                      subscriberStreams[streamId].buttons, stream.name);
 
       OTHelper.subscribe(evt.stream, subsDiv, subOptions).
       then(function(subscriber) {
@@ -448,7 +448,7 @@
         then(publish).
         then(function() {
           RoomView.participantsNumber = ++numUsrsInRoom;
-          Publisher.init();
+          Publisher.init(userName);
           RecordingsController.init(aParams.firebaseURL, aParams.firebaseToken);
           ScreenShareController.init(userName, aParams.chromeExtId);
         }).

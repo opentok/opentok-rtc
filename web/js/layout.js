@@ -41,15 +41,25 @@ Layout.prototype = {
     }
   },
 
-  append: function(id, type, controlElems) {
+  append: function(id, type, controlElems, name) {
     var item =
       HTMLElems.createElementAt(this.container, this.itemType, { 'data-id': id });
     var controls = HTMLElems.createElementAt(item, 'div');
     controls.classList.add('controls');
     this._appendControlElems(id, type, controls, controlElems, this.itemControlType);
+    this._appendAdditionalUI(item, name);
     this.items[id] = item;
     this.rearrange();
     return item;
+  },
+
+  _appendAdditionalUI: function(item, name) {
+    var userInfoElem = HTMLElems.createElementAt(item, 'div');
+    userInfoElem.classList.add('user-info');
+
+    var nameElem = HTMLElems.createElementAt(userInfoElem, 'div');
+    nameElem.classList.add('name');
+    nameElem.textContent = name;
   },
 
   _appendControlElems: function(id, type, main, controlElems, itemControlType) {

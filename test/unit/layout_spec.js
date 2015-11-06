@@ -63,6 +63,9 @@ describe('Grid', function() {
       var item = container.querySelector('li');
       expect(item.dataset.id).to.equal('myItem0');
       expect(container.children.length).to.equal(1);
+
+      var name = container.querySelector('li .name');
+      expect(name).to.exist;
     });
 
     it('should fit one item to the whole container', function() {
@@ -107,6 +110,14 @@ describe('Grid', function() {
       expect(audio.dataset.streamId).to.equal(id);
       expect(audio.parentNode.classList.contains('enabled')).to.be.true;
     });
+
+    it('should show user name', function() {
+      var username = 'Pepito';
+      var item = instance.append('myItem', 'camera', controls, username);
+      var nameElement = getContainer().querySelector('li .name');
+      expect(nameElement.textContent).to.equal(username);
+    });
+
 
     it('should add video control working properly', sinon.test(function(done) {
       var id = 'myItem';

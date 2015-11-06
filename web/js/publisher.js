@@ -44,9 +44,19 @@
     HTMLElems.createElementAt(publisher, 'i', {'data-icon': 'record'});
   }
 
-  function init() {
+  function addAdditionalUI(name) {
+    var userInfoElem = HTMLElems.createElementAt(publisher, 'div');
+    userInfoElem.classList.add('user-info');
+
+    var nameElem = HTMLElems.createElementAt(userInfoElem, 'div');
+    nameElem.classList.add('name');
+    nameElem.textContent = name;
+  }
+
+  function init(name) {
     publisher = document.getElementById('publisher');
     addControlBtns();
+    addAdditionalUI(name);
     publisher.addEventListener('click', handleEvent);
     var events = ['roomController:video', 'roomController:audio'];
     events.forEach(function(name) {

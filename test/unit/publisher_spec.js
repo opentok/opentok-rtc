@@ -23,9 +23,10 @@ describe('Publisher', function() {
       var container = getContainer();
       this.spy(container, 'addEventListener');
 
-      Publisher.init();
+      var username = 'Thomas';
+      Publisher.init(username);
 
-      expect(container.childNodes.length).to.equal(2);
+      expect(container.childNodes.length).to.equal(3);
 
       var video = container.querySelector('[data-icon="video"]');
       expect(video).to.exist;
@@ -33,6 +34,10 @@ describe('Publisher', function() {
 
       var record = container.querySelector('[data-icon="record"]');
       expect(record).to.exist;
+
+      var name = container.querySelector('.name');
+      expect(name).to.exist;
+      expect(name.textContent).to.equal(username);
     }));
 
     it('should send an event clicking on video action', sinon.test(function(done) {
