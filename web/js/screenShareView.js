@@ -94,10 +94,10 @@
   }
 
   function showShareScreenError(type) {
+    shareError.dataset.screenSharingType = type;
     return LazyLoader.dependencyLoad([
       '/js/components/modal.js'
     ]).then(function() {
-      shareError.dataset.screenSharingType = type;
       Modal.show('.screen-modal').then(function(e) {
         shareError.addEventListener('click', onClick);
       });
