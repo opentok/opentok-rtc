@@ -5,8 +5,7 @@ var Layout = function(selector) {
   this.items = {};
   this.container = document.querySelector(selector);
   this.container.addEventListener('click', this);
-  var events = ['roomController:audioLevelUpdated', 'roomController:video',
-                'roomController:audio'];
+  var events = ['roomController:video', 'roomController:audio'];
   events.forEach(function(name) {
     window.addEventListener(name, this);
   }, this);
@@ -26,14 +25,6 @@ Layout.prototype = {
           name: dataset.action,
           streamType: dataset.streamType
         });
-        break;
-
-      case 'roomController:audioLevelUpdated':
-        var elem = this.items[evt.detail.id].querySelector('.audioLevel div');
-        var level = Math.round(evt.detail.level * 10) / 10;
-        // Audio level UI element starts from 100% (0 -> 100%, 1 -> 0%)
-        var transform = 'translateY(' + (100 - (level * 100)) + '%)';
-        Utils.setTransform(elem.style, transform);
         break;
 
       case 'roomController:video':
@@ -56,17 +47,9 @@ Layout.prototype = {
     var controls = HTMLElems.createElementAt(item, 'div');
     controls.classList.add('controls');
     this._appendControlElems(id, type, controls, controlElems, this.itemControlType);
-    (type === 'camera') && this._appendUIElems(controls);
     this.items[id] = item;
     this.rearrange();
     return item;
-  },
-
-  _appendUIElems: function(item) {
-    // Audio level meter
-    var audioLevel = HTMLElems.createElementAt(item, 'div');
-    audioLevel.classList.add('audioLevel');
-    HTMLElems.createElementAt(audioLevel, 'div');
   },
 
   _appendControlElems: function(id, type, main, controlElems, itemControlType) {
