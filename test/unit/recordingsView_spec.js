@@ -32,20 +32,26 @@ describe('RecordingsView', function() {
     one: {
       id: '1',
       localDownloadURL: 'http://xxx.com/',
-      name: 'aUser1 aDate1',
-      status: 'stopped'
+      recordingUser: 'aUser1',
+      status: 'stopped',
+      duration: 1,
+      createdAt: Date.now()
     },
     two: {
       id: '2',
       localDownloadURL: 'http://yyy.com/',
-      name: 'aUser2 aDate2',
-      status: 'started'
+      recordingUser: 'aUser2',
+      status: 'started',
+      duration: 50,
+      createdAt: Date.now()
     },
     three: {
       id: '3',
       localDownloadURL: 'http://zzz.com/',
-      name: 'aUser3 aDate3',
-      status: 'available'
+      recordingUser: 'aUser3',
+      status: 'available',
+      duration: 459,
+      createdAt: Date.now()
     }
   };
 
@@ -85,12 +91,12 @@ describe('RecordingsView', function() {
 
       expect(container.children.length).to.equal(3);
 
-      var items = container.querySelectorAll('li > a');
+      var items = container.querySelectorAll('li > a.file');
       var keysArchives = Object.keys(archives);
       for (var i = 0, l = items.length; i < l; i++) {
         var item = items[i];
         var values = archives[keysArchives[i]];
-        expect(item.textContent).to.equal(values.name);
+        expect(item.textContent).to.contain(values.recordingUser);
         expect(item.href).to.equal(values.localDownloadURL);
         expect(item.parentNode.dataset.status).to.equal(values.status);
       }

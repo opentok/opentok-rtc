@@ -24,23 +24,6 @@ label {
 }
 
 .tc-modal {
-
-  .tc-row label{
-    text-align: left;
-  }
-
-  .tc-input.block + .tc-message {
-    display: none;
-  }
-
-  .tc-error {
-    .tc-input.block + .tc-message {
-      display: block;
-    }
-  }
-}
-
-.tc-modal {
   z-index: -1;
   display: block;
   visibility: hidden;
@@ -48,7 +31,7 @@ label {
   transition: opacity @transitionTime;
 
   &.show {
-    z-index: 100;
+    display: block;
     opacity: 1;
 
     .tc-dialog {
@@ -59,11 +42,55 @@ label {
   .tc-dialog {
     transform: translateY(100%);
     transition: transform @transitionTime;
+    padding: 40px;
+    text-align: center;
+
+    .close {
+      width: 20px;
+      height: 20px;
+      position: absolute;
+      top: 5px;
+      right: 5px;
+    }
+
+    header {
+      font-size: 16px;
+      color: #4f4f4f;
+    }
+
+    header, p {
+      margin: 0;
+      padding: 0;
+    }
+
+    hr {
+      border: 0;
+      background: @blueText;
+      height: 1px;
+      width: 60%;
+      margin-top: 15px;
+      margin-bottom: 15px;
+    }
+
+    p, .btn {
+      font-size: 10px;
+    }
+
+    p {
+      color: #9b9b9b;
+    }
+
+    .btn {
+      height: 35px;
+      line-height: 35px;
+      margin: 0 10px;
+    }
   }
 }
 
 .visible {
   visibility: visible;
+  z-index: 100;
 }
 
 .bold {
