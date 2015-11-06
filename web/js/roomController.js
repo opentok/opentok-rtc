@@ -15,10 +15,10 @@
     insertMode: 'append',
     width:'100%',
     height: '100%',
-    showControls: false,
+    showControls: true,
     style: {
-      audioLevelDisplayMode: 'off',
-      buttonDisplayMode: 'on',
+      audioLevelDisplayMode: 'on',
+      buttonDisplayMode: 'off',
       nameDisplayMode: 'on',
       videoDisabledDisplayMode: 'on',
       showArchiveStatus: false
@@ -30,10 +30,10 @@
       height: '100%',
       width: '100%',
       inserMode: 'append',
-      showControls: false,
+      showControls: true,
       style: {
-        audioLevelDisplayMode: 'off',
-        buttonDisplayMode: 'on',
+        audioLevelDisplayMode: 'on',
+        buttonDisplayMode: 'off',
         nameDisplayMode: 'on',
         videoDisabledDisplayMode: 'auto'
       }
@@ -175,17 +175,6 @@
   };
 
   var _subscriberHandlers = {
-    'audioLevelUpdated': function(evt) {
-      var stream = evt.target.stream;
-      if (!stream) {
-        return;
-      }
-
-      Utils.sendEvent('roomController:audioLevelUpdated', {
-        id: stream.streamId,
-        level: evt.audioLevel
-      });
-    },
     'videoDisabled': function(evt) {
       evt.reason === 'subscribeToVideo' && sendStatus(evt, 'video');
     },
