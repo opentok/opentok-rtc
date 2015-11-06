@@ -46,8 +46,8 @@
     ('WebkitTransition' in document.documentElement.style) ?
      'webkitTransitionEnd' : 'transitionend';
 
-  function createSubscriberView(streamId, type, controlBtns) {
-    return currentLayout.append(streamId, type, controlBtns);
+  function createSubscriberView(streamId, type, controlBtns, name) {
+    return currentLayout.append(streamId, type, controlBtns, name);
   }
 
   function deleteSubscriberView(id) {
