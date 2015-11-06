@@ -5,9 +5,6 @@
   var container = null;
 
   var shareError;
-  var installSectionError;
-  var txtSectionError;
-  var extInstallationSuccessful;
 
   var screenShareCtrlEvents = {
     'shareScreenError': launchShareError,
@@ -17,12 +14,10 @@
   function init() {
     container = document.querySelector('.' + DESKTOP_DIV_ID);
     shareError = document.querySelector('.screen-modal');
-    installSectionError = shareError.querySelector('#screenShareErrorInstall');
-    txtSectionError = shareError.querySelector('#screenShareErrorMsg');
-    extInstallationSuccessful = shareError.querySelector('#extInstallationSuccessful');
 
-    var installLink = shareError.querySelector('a');
+    var installLink = shareError.querySelector('#screenShareErrorInstall button');
     installLink.addEventListener('click', function(evt) {
+      hideShareScreenError();
       Utils.sendEvent('screenShareView:installExtension');
     });
     Utils.addEventsHandlers('screenShareController:', screenShareCtrlEvents, exports);
@@ -39,34 +34,28 @@
     // Only if we really want to differentiate type of errors
     // or show differents section or something like that
     if (status.code === errCodes.accessDenied) {
-      showError(status.message);
+      showError('Error', status.message);
     } else if (status.code === errCodes.extNotInstalled) {
       showInstallExtension();
     } else {
-      showError('Error sharing screen. ' + status.message);
+      showError('Sharing screen failed.', status.message);
     }
   }
 
   function showInstallExtension() {
-    installSectionError.classList.add('visible');
-    txtSectionError.classList.remove('visible');
-    extInstallationSuccessful.classList.remove('visible');
-    showShareScreenError();
+    showShareScreenError('error-installing');
   }
 
-  function showError(message) {
-    var span = shareError.querySelector('.errTxt');
-    txtSectionError.classList.add('visible');
-    installSectionError.classList.remove('visible');
-    extInstallationSuccessful.classList.remove('visible');
-    span.textContent = message;
-    showShareScreenError();
+  function showError(title, description) {
+    shareError.querySelector('.errorTitle').textContent = title;
+    shareError.querySelector('.errorDescription').textContent = description;
+    showShareScreenError('error-sharing');
   }
 
   function extInstallationResult(evt) {
     var status = evt.detail;
     if (status.error) {
-      showError("Error installation extension. " + status.message);
+      showError('Installation failed.', status.message);
     } else {
       showInstallationSuccess();
     }
@@ -86,28 +75,31 @@
       document.location.reload(true);
     });
 
-    installSectionError.classList.remove('visible');
-    txtSectionError.classList.remove('visible');
-    extInstallationSuccessful.classList.add('visible');
-
-    showShareScreenError();
+    showShareScreenError('successful-installation');
   }
 
-  function hideShareScreenError() {
-    shareError.removeEventListener('click', hideShareScreenError);
+  function onClick(e) {
+    if (e.target.id !== 'screenShareErrors') {
+      return;
+    }
+
+    hideShareScreenError();
+  }
+
+  function hideShareScreenError(e) {
+    shareError.removeEventListener('click', onClick);
     Modal.hide('.screen-modal').then(function() {
-      installSectionError.classList.remove('visible');
-      txtSectionError.classList.remove('visible');
-      extInstallationSuccessful.classList.remove('visible');
+      delete shareError.dataset.screenSharingType;
     });
   }
 
-  function showShareScreenError() {
+  function showShareScreenError(type) {
     return LazyLoader.dependencyLoad([
       '/js/components/modal.js'
     ]).then(function() {
+      shareError.dataset.screenSharingType = type;
       Modal.show('.screen-modal').then(function(e) {
-        shareError.addEventListener('click', hideShareScreenError);
+        shareError.addEventListener('click', onClick);
       });
     });
   }

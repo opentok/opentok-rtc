@@ -2,22 +2,29 @@
 </div>
 
 <section id="screenShareErrors" class="screen-modal tc-modal">
-  <section id="screenShareErrorMsg">
-    <div class="tc-dialog">
-      <span class="errTxt"></span>
-    </div>
-  </section>
-  <section id="screenShareErrorInstall">
-    <div class="tc-dialog">
-      <p>You need a Chrome extension to share your screen. <a href="#">Install Screensharing Extension</a>.
-         Once you have installed refresh your browser and click the share screen button again.</p>
-    </div>
-  </section>
-  <section id="extInstallationSuccessful">
-    <div class="tc-dialog">
-      <p>Chrome extension was installed successfully. You need to refresh your browser in order to use it.</p>
-      <button id="scrShrReload" class="tc-button large">Reload</button>
-      <button id="scrShrLater" class="tc-button large">Later</button>
-    </div>
-  </section>
+  <div class="tc-dialog">
+    <i data-icon="close_gray" class="close"></i>
+    <section id="screenShareErrorMsg">
+      <header class="errorTitle"></header>
+      <hr>
+      <p class="errorDescription"></p>
+    </section>
+    <section id="screenShareErrorInstall">
+      <header>You need a Chrome extension to share your screen.</header>
+        <hr>
+        <p>Once you have installed refresh your browser and click the share screen button again.</p>
+        <footer>
+          <button class="btn btn-blue btn-padding ctaarrow-white delete-archive">Install Screensharing Extension</button>
+        </footer>
+    </section>
+    <section id="extInstallationSuccessful">
+      <header>Chrome extension was installed successfully.</header>
+      <hr>
+      <p>You need to refresh your browser in order to use it.</p>
+      <footer>
+        <button id="scrShrLater" class="btn btn-white btn-padding ctaarrow-blue">Later</button>
+        <button id="scrShrReload" class="btn btn-blue btn-padding ctaarrow-white">Reload</button>
+      </footer>
+    </section>
+  </div>
 </section>
