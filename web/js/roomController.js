@@ -121,10 +121,13 @@
       sendArchivingOperation('stop');
     },
     'buttonClick': function(evt) {
-      var streamId = evt.detail.streamId,
-          name = evt.detail.name,
-          buttonInfo = null,
-          args = null;
+      var streamId = evt.detail.streamId;
+      var name = evt.detail.name;
+      var disableAll = !!evt.detail.disableAll;
+      var status = evt.detail.status;
+      var buttonInfo = null;
+      var args = [];
+      var newStatus;
 
       if (streamId) {
         var stream = subscriberStreams[streamId];
@@ -133,17 +136,18 @@
           return;
         }
         buttonInfo = stream.buttons[name];
-        args = [stream.stream, !buttonInfo.enabled];
+        args.push(stream.stream);
+        newStatus = !buttonInfo.enabled;
         // BUG xxxx - We don't receive videoDisabled/videoEnabled events when
         // stopping/starting the screen sharing video
         // OPENTOK-26021 - We don't receive any event when mute/unmute the audio in local streams
         if (evt.detail.streamType === 'screen' || name === 'audio') {
           // so we assume the operation was performed properly and change the UI status
-          sendStatus({ stream: stream.stream }, name, !buttonInfo.enabled);
+          sendStatus({ stream: stream.stream }, name, newStatus);
         }
       } else {
         buttonInfo = publisherButtons[name];
-        args = [!buttonInfo.enabled];
+        newStatus = !buttonInfo.enabled;
       }
 
       if (!buttonInfo) {
@@ -151,8 +155,30 @@
         return;
       }
 
-      var obj = exports[buttonInfo.context];
-      obj[buttonInfo.action].apply(obj, args);
+      args.push(newStatus);
+
+      if (!disableAll || disableAll && status !== newStatus) {
+        var obj = exports[buttonInfo.context];
+        obj[buttonInfo.action].apply(obj, args);
+        !disableAll && Utils.sendEvent('roomController:userChangeStatus',
+          { status: newStatus, name: name });
+      }
+    },
+    'videoSwitch': function(evt) {
+      var videosDisabled = evt.detail.status;
+      var name = 'video';
+      Object.keys(subscriberStreams).forEach(function(aStreamId) {
+        if (subscriberStreams[aStreamId].stream.videoType === 'camera') {
+          viewEventHandlers.buttonClick({
+            detail: {
+              streamId: aStreamId,
+              name: 'video',
+              disableAll: true,
+              status: videosDisabled
+            }
+          });
+        }
+      });
     }
   };
 
