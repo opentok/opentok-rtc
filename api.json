@@ -51,6 +51,93 @@
                 }
             }
         },
+        "/updateArchiveInfo": {
+            "post": {
+                "summary": "Callback for the OpenTok Archive API.",
+                "x-implemented-in": "postUpdateArchiveInfo",
+                "description": "Gets the updated information for a recording archive.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "body",
+                        "description": "Id of the updated archive",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "createdAt",
+                        "in": "body",
+                        "description": "The timestamp for when the archive started recording, expressed in milliseconds since the Unix epoch (January 1, 1970, 00:00:00 UTC).",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "duration",
+                        "in": "body",
+                        "description": "The duration of the archive in seconds. For archives that have are being recorded (with the status property set \"started\"), this value is set to 0.",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "name",
+                        "in": "body",
+                        "description": "The name of the archive you supplied (this is optional)",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "partnerId",
+                        "in": "body",
+                        "description": "Your OpenTok API key.",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "reason",
+                        "in": "body",
+                        "description": "For archives with the status \"stopped\", this can be set to \"90 mins exceeded\", \"failure\", \"session ended\", \"user initiated\". For archives with the status \"failed\", this can be set to \"system failure\".",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "sessionId",
+                        "in": "body",
+                        "description": "The session ID of the OpenTok session that was archived.",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "size",
+                        "in": "body",
+                        "description": "The size of the archive file. For archives that have not been generated, this value is set to 0.",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "status",
+                        "in": "body",
+                        "description": "The status of the archive. Only 'available' and 'uploaded' statuses are actually processed.",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "url",
+                        "in": "body",
+                        "description": "The download URL of the available archive file. This is only set for an archive with the status set to \"available\"; for other archives, (including archives with the status \"uploaded\") this property is set to null. The download URL is obfuscated, and the file is only available from the URL for 10 minutes. To generate a new URL, use the REST API for retrieving archive information or listing archives.",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Archives"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/room/{roomName}/info": {
             "get": {
                 "summary": "Information needed to connect to the TB servers.",
@@ -109,14 +196,14 @@
                     },
                     {
                         "name": "userName",
-                        "in": "query",
+                        "in": "formData",
                         "description": "Name of the user.",
                         "required": true,
                         "type": "string"
                     },
                     {
                         "name": "operation",
-                        "in": "query",
+                        "in": "formData",
                         "description": "Operation (startComposite/startIndividual/stop).",
                         "required": true,
                         "type": "string"
