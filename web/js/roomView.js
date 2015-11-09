@@ -11,10 +11,12 @@
       roomNameElem,
       participantsNumberElem,
       recordingsNumberElem,
-      subscribersElem;
+      videoSwitch;
 
   var START_SHARING = 'Share your screen';
   var STOP_SHARING = 'Stop sharing your screen';
+
+  var _videosDisabled = false;
 
   var NOT_SHARING = {
     detail: {
@@ -29,6 +31,14 @@
     'destroyed': toggleScreenSharing.bind(undefined, NOT_SHARING)
   };
 
+  var roomControllerEvents = {
+    'userChangeStatus': function(evt) {
+      if (evt.detail.name === 'video') {
+        toggleVideoSwitch(false, false);
+      }
+    }
+  };
+
   function initHTMLElements() {
     dock = document.getElementById('dock');
     screen = document.getElementById('screen');
@@ -38,8 +48,7 @@
     roomNameElem = dock.querySelector('#roomName');
     participantsNumberElem = dock.querySelectorAll('.participants');
     recordingsNumberElem = dock.querySelector('#recordings');
-
-    subscribersElem = screen.querySelector('#subscriber');
+    videoSwitch = dock.querySelector('#videoSwitch');
   }
 
   var transEndEventName =
@@ -52,6 +61,22 @@
 
   function deleteSubscriberView(id) {
     currentLayout.remove(id);
+  }
+
+  function toggleVideoSwitch(bubbleUp, status) {
+    if (status === undefined) {
+      _videosDisabled = !_videosDisabled;
+    } else {
+      _videosDisabled = status;
+    }
+
+    if (_videosDisabled) {
+      videoSwitch.classList.add('actived');
+    } else {
+      videoSwitch.classList.remove('actived');
+    }
+
+    bubbleUp && Utils.sendEvent('roomView:videoSwitch', { status: _videosDisabled });
   }
 
   function toggleChatNotification() {
@@ -157,6 +182,9 @@
         case 'startSharingDesktop':
         case 'stopSharingDesktop':
           Utils.sendEvent('roomView:shareScreen');
+          break;
+        case 'videoSwitch':
+          toggleVideoSwitch(true);
       }
     });
 
@@ -178,6 +206,7 @@
     });
 
     Utils.addEventsHandlers('screenShareController:', screenShareCtrEvents, exports);
+    Utils.addEventsHandlers('roomController:', roomControllerEvents, exports);
   };
 
   function toggleScreenSharing(evt) {
