@@ -134,4 +134,16 @@ describe('ScreenShareView', function() {
     testMsgError(event, err.message, 'error-sharing');
   });
 
+  it('should close the stream window once it has been destroyed', sinon.test(function(done) {
+    ScreenShareView.init();
+
+    this.stub(RoomView, 'deleteStreamView', function(id) {
+      expect(id).to.be.equal('desktop');
+      done();
+    });
+
+    var event = new CustomEvent('screenShareController:destroyed');
+    window.dispatchEvent(event);
+  }));
+
 });

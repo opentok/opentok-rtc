@@ -42,6 +42,13 @@
     get draggableUI() {
       return document.querySelectorAll('[draggable]').length;
     },
+    getDraggable() {
+      return LazyLoader.dependencyLoad([
+        '/js/components/draggable.js'
+      ]).then(function() {
+        return Draggable;
+      });
+    },
     setTransform: setTransform
   };
 

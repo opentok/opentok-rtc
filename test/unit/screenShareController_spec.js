@@ -62,6 +62,10 @@ describe('ScreenShareController', function() {
     OTHelper.isGoingToWork = true;
     this.spy(OTHelper, 'shareScreen');
 
+    this.stub(RoomView, 'createStreamView', function(id, options) {
+      return document.createElement('div');
+    });
+
     window.addEventListener('screenShareController:changeScreenShareStatus',
                             function handlerTest(evt) {
       window.removeEventListener('screenShareController:changeScreenShareStatus', handlerTest);
@@ -93,6 +97,10 @@ describe('ScreenShareController', function() {
    var event = new CustomEvent('roomView:shareScreen');
    OTHelper.isGoingToWork = false;
    this.spy(OTHelper, 'shareScreen');
+
+   this.stub(RoomView, 'createStreamView', function(id, options) {
+     return document.createElement('div');
+   });
 
    window.addEventListener('screenShareController:shareScreenError', function handlerTest(evt) {
       window.removeEventListener('screenShareController:shareScreenError', handlerTest);
