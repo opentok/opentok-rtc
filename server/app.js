@@ -15,11 +15,11 @@ module.exports = function App(aStaticPath, aApiDef, aLogLevel, aModules) {
 
   // This holds the module that implements the methods...
   var implModule = api['x-implementation-module'];
-  logger.log('Loading implementation module (' + implModule);
+  logger.log('Loading implementation module:', implModule);
 
   var serverImpl = new (require('./' + implModule))(aLogLevel, aModules);
 
-  logger.log('Implementation module (' + implModule + ' read!');
+  logger.log('Implementation module (', implModule, ') read!');
 
   var express = require('express');
   var app = express();
@@ -33,6 +33,9 @@ module.exports = function App(aStaticPath, aApiDef, aLogLevel, aModules) {
   // Use body-parse to fetch the parameters
   var bodyParser = require('body-parser');
   var urlencodedParser = bodyParser.urlencoded({extended: false});
+  // create application/json parser
+  var jsonParser = bodyParser.json();
+
 
   // And use EJS as a view engine
   app.set('view engine', 'ejs');
@@ -48,10 +51,16 @@ module.exports = function App(aStaticPath, aApiDef, aLogLevel, aModules) {
   Object.keys(paths).forEach(path => {
     Object.keys(paths[path]).forEach(verb => {
       var expressifiedPath = path.replace(/{/g, ':').replace(/}/g,'');
-      var implementation = paths[path][verb]['x-implemented-in'];
+      var apiInfo = paths[path][verb];
+      var implementation = apiInfo['x-implemented-in'];
       logger.log('Adding ' + verb + ': ' + expressifiedPath + ' => ' + implementation);
       if (verb === 'post' || verb === 'delete') {
-        app[verb](expressifiedPath, urlencodedParser, serverImpl[implementation]);
+        var parameters = apiInfo['parameters'];
+        // If there is any parameter that is in form format use the urlencoded parser, otherwise
+        // use the json parser. Note that according to the spec body and formData are exclusive!
+        var parser =
+          (parameters.some(spec => spec.in === 'formData') && urlencodedParser) || jsonParser;
+        app[verb](expressifiedPath, parser, serverImpl[implementation]);
       } else {
         app[verb](expressifiedPath, serverImpl[implementation]);
       }

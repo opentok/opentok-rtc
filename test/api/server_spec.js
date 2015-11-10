@@ -135,5 +135,12 @@ describe('OpenTokRTC server', function() {
       expect(405, done);
   });
 
+  // This test looks stupid but... updateArchiveInfo should return 200 always.
+  it('POST /updateArchiveInfo', function(done) {
+    request(app).
+      post('/updateArchiveInfo').
+      expect(200, done);
+  });
+
 
 });

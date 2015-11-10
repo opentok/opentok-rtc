@@ -28,6 +28,13 @@ function ServerMethods(aLogLevel, aModules) {
   // OpenTok API key:
   const RED_TB_API_KEY = 'tb_api_key';
 
+  // Timeout (in milliseconds) for polling for archive status change updates. Set this to zero
+  // to disable polling. This is the initial timeout (timeout for the first poll).
+  const RED_TB_ARCHIVE_POLLING_INITIAL_TIMEOUT = 'tb_archive_polling_initial_timeout';
+  // Timeout multiplier. After the first poll (if it fails) the next one will apply this multiplier
+  // successively. Set to a lower number to poll often.
+  const RED_TB_ARCHIVE_POLLING_TIMEOUT_MULTIPLIER = 'tb_archive_polling_multiplier';
+
   // OpenTok API Secret
   const RED_TB_API_SECRET ='tb_api_secret';
 
@@ -52,6 +59,8 @@ function ServerMethods(aLogLevel, aModules) {
   const REDIS_KEYS = [
     { key: RED_TB_API_KEY, defaultValue: null },
     { key: RED_TB_API_SECRET, defaultValue: null },
+    { key: RED_TB_ARCHIVE_POLLING_INITIAL_TIMEOUT, defaultValue: 5000 },
+    { key: RED_TB_ARCHIVE_POLLING_TIMEOUT_MULTIPLIER, defaultValue: 1.5 },
     { key: RED_FB_DATA_URL, defaultValue: null },
     { key: RED_FB_AUTH_SECRET, defaultValue: null },
     { key: RED_TB_MAX_SESSION_AGE, defaultValue: 2 },
@@ -99,6 +108,33 @@ function ServerMethods(aLogLevel, aModules) {
   // is resolved
   var tbConfigPromise;
 
+  // Initiates polling from the Opentok servers for changes on the status of an archive.
+  // This is a *very* specific polling since we expect the archive will have already been stopped
+  // by the time this launches and we're just waiting for it to be available or uploaded.
+  // To try to balance not polling to often with trying to get a result fast, the polling time
+  // increases exponentially (on the theory that if the archive is small it'll be copied fast
+  // and if it's big we don't want to look too impatient).
+  function _launchArchivePolling(aOtInstance, aArchiveId, aTimeout, aTimeoutMultiplier) {
+    return new Promise((resolve, reject) => {
+      var timeout = aTimeout;
+      var pollArchive = function _pollArchive() {
+        logger.log('Poll [', aArchiveId, ']: polling...');
+        aOtInstance.getArchive_P(aArchiveId).then(aArchive => {
+          if (aArchive.status === 'available' || aArchive.status !== 'uploaded') {
+            logger.log('Poll [', aArchiveId, ']: Resolving with', aArchive.status);
+            resolve(aArchive);
+          } else {
+            timeout = timeout * aTimeoutMultiplier;
+            logger.log('Poll [', aArchiveId, ']: Retrying in', timeout);
+            seTimeout(_pollArchive, timeout);
+          }
+        });
+      };
+      logger.log('Poll [', aArchiveId, ']: Setting first try for', timeout);
+      setTimeout(pollArchive, timeout);
+    });
+  }
+
   function _initialTBConfig() {
     // This will hold the configuration read from Redis
     var redisConfig = {};
@@ -119,17 +155,21 @@ function ServerMethods(aLogLevel, aModules) {
         // Just so we don't have to C&P a bunch of validations...
         for (var i = 0, l = REDIS_KEYS.length; i < l; i++) {
           var keyValue = results[i][1] || REDIS_KEYS[i].defaultValue;
-          if (!keyValue) {
+          // Since we set null as default for mandatory items...
+          if (keyValue === null) {
             var message = 'Missing required redis key: ' + REDIS_KEYS[i].key +
               '. Please check the installation instructions';
             logger.error(message);
             throw new Error(message);
           }
           redisConfig[REDIS_KEYS[i].key] = keyValue;
+          logger.log('RedisConfig[', REDIS_KEYS[i].key, '] =', keyValue);
         }
 
         var apiKey = redisConfig[RED_TB_API_KEY];
         var apiSecret = redisConfig[RED_TB_API_SECRET];
+        var archivePollingTO = redisConfig[RED_TB_ARCHIVE_POLLING_INITIAL_TIMEOUT];
+        var archivePollingTOMultiplier = redisConfig[RED_TB_ARCHIVE_POLLING_TIMEOUT_MULTIPLIER];
         var otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret);
 
         // This isn't strictly necessary... but since we're using promises all over the place, it
@@ -162,6 +202,8 @@ function ServerMethods(aLogLevel, aModules) {
               otInstance: otInstance,
               apiKey: apiKey,
               apiSecret: apiSecret,
+              archivePollingTO: archivePollingTO,
+              archivePollingTOMultiplier: archivePollingTOMultiplier,
               maxSessionAgeMs: maxSessionAge * 24 * 60 * 60 * 1000,
               fbArchives: firebaseArchives,
               chromeExtId: chromeExtId
@@ -175,6 +217,23 @@ function ServerMethods(aLogLevel, aModules) {
       aReq.tbConfig = tbConfig;
       aNext();
     });
+  }
+
+  // Update archive callback. TO-DO: Is there any way of restricting calls to this?
+  function postUpdateArchiveInfo(aReq, aRes) {
+    var archive = aReq.body;
+    var tbConfig = aReq.tbConfig;
+    var fbArchives = tbConfig.fbArchives;
+    if (!archive.sessionId || !archive.id) {
+      logger.log('postUpdateArchiveInfo: Got an invalid call! Ignoring.', archive);
+    } else if (archive.status === 'available' || archive.status === 'updated') {
+      logger.log('postUpdateArchiveInfo: Updating information for archive:', archive.id);
+      tbConfig.fbArchives.updateArchive(archive.sessionId, archive);
+    } else {
+      logger.log('postUpdateArchiveInfo: Ignoring updated status for', archive.id, ':',
+                 archive.status);
+    }
+    aRes.send({});
   }
 
   // Return the personalized HTML for a room.
@@ -373,16 +432,32 @@ function ServerMethods(aLogLevel, aModules) {
           sessionInfo.inProgressArchiveId = aArchive.status === 'started' ? aArchive.id : undefined;
           // Update the internal database
           redis.set(RED_ROOM_PREFIX + roomName, JSON.stringify(sessionInfo));
-          // And update the external database also!
-          aArchive.localDownloadURL = '/archive/' + aArchive.id;
-          aArchive.recordingUser = userName;
 
-          tbConfig.fbArchives.updateArchive(sessionInfo.sessionId, aArchive);
+          // We need to update the external database also. We have a conundrum here, though.
+          // At this point, if the operation requested was stopping an active recording, the
+          // archive information will not be updated yet. We can wait to be notified (by a callback)
+          // or poll for the information. Since polling is less efficient, we do so only when
+          // required by the configuration.
+          var readyToUpdateExternalDb =
+            (operation === 'stop' && tbConfig.archivePollingTO &&
+             _launchArchivePolling(otInstance, aArchive.id,
+                                   tbConfig.archivePollingTO,
+                                   tbConfig.archivePollingTOMultiplier)) ||
+            Promise.resolve(aArchive);
+
+          readyToUpdateExternalDb.
+            then(aUpdatedArchive => {
+              aUpdatedArchive.localDownloadURL = '/archive/' + aArchive.id;
+              aUpdatedArchive.recordingUser = userName;
+              tbConfig.fbArchives.updateArchive(sessionInfo.sessionId, aUpdatedArchive);
+            });
+
           logger.log('postRoomArchive => Returning archive info: ', aArchive.id);
           aRes.send({
             archiveId: aArchive.id,
             archiveType: aArchive.outputMode
           });
+
         });
       }).
       catch(error => {
@@ -438,6 +513,7 @@ function ServerMethods(aLogLevel, aModules) {
     getRoom: getRoom,
     getRoomInfo: getRoomInfo,
     postRoomArchive: postRoomArchive,
+    postUpdateArchiveInfo: postUpdateArchiveInfo,
     getArchive: getArchive,
     deleteArchive: deleteArchive
   };

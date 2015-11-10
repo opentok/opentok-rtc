@@ -41,6 +41,33 @@ grunt
 (replace yourkeyhere and yoursecret here with the API key and API
 secret).
 
+
+#### Configuration parameters:
+
+You can customize the behavior of the server in part by using persistent parameters (stored in
+redis). The supported parameters and their default values are:
+
+- tb_api_key (*Mandatory*): Your OpenTok API key.
+- tb_api_secret (*Mandatory*): Your OpenTok API Secret.
+- tb_archive_polling_initial_timeout (Optional, default value: 5000): Timeout (in milliseconds) for
+   polling for archive status change updates. Set this to zero to disable polling. This is the
+   initial timeout (timeout for the first poll).
+- tb_archive_polling_multiplier (Optional, default value: 1.5) : Timeout multiplier. After the first
+   poll (if it fails) the next ones will apply this multiplier successively. Set to a lower number
+   to poll more often.
+- fb_data_url (*Mandatory*): Firebase data URL. This should be the root of the archives section of
+   your Firebase app URL, which isn't necessarily the root of the app.
+- fb_auth_secret (*Mandatory*): Firebase secret to generate auth tokens.
+- tb_max_session_age (Optional, default value 2):  Sessions should not live forever. So we'll store
+   the last time a session was used and if when we fetch it from Redis we determine it's older than
+   this max age (in days). This is the key where that value (in days) should be stored.
+   By default, sessions live two days.
+- tb_max_history_lifetime (Optional, default value 3): Maximum time, in minutes,  an empty room
+  will keep it's history (of recordings) alive.
+- chrome_extension_id (Optional, default value: 'undefined'): Chrome AddOn extension Id for sharing
+   screen. Note that while the default value allows the server to run it doesn't actually allow
+   screen sharing in chrome.
+
 ## Running
 
 ```
