@@ -143,7 +143,7 @@
     _takePlace: function() {
       var rectObject = this.associatedWith.getBoundingClientRect();
       var x = rectObject.right + HORIZONTAL_OFFSET;
-      var y = rectObject.top - (rectObject.height / 2);
+      var y = rectObject.top - rectObject.height;
 
       var container = this.container;
       container.style.left = x + 'px';
