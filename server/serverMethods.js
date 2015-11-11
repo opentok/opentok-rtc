@@ -120,7 +120,7 @@ function ServerMethods(aLogLevel, aModules) {
       var pollArchive = function _pollArchive() {
         logger.log('Poll [', aArchiveId, ']: polling...');
         aOtInstance.getArchive_P(aArchiveId).then(aArchive => {
-          if (aArchive.status === 'available' || aArchive.status !== 'uploaded') {
+          if (aArchive.status === 'available' || aArchive.status === 'uploaded') {
             logger.log('Poll [', aArchiveId, ']: Resolving with', aArchive.status);
             resolve(aArchive);
           } else {
