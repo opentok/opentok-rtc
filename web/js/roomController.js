@@ -492,7 +492,6 @@
           RoomView.participantsNumber = ++numUsrsInRoom;
           RecordingsController.init(aParams.firebaseURL, aParams.firebaseToken);
           ScreenShareController.init(userName, aParams.chromeExtId);
-          LayoutMenuController.init();
         }).
         catch(function(error) {
           debug.error('Error Connecting to room. ' + error.message);

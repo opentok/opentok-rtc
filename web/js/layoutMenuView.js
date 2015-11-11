@@ -1,10 +1,11 @@
 !function(exports) {
   'use strict';
 
-  var menuSelector = '[for="chooseLayout"] ul';
+  var menu = null;
+  var items = null;
 
   var addHandlers = function() {
-    document.querySelector(menuSelector).addEventListener('click', function(evt) {
+    menu.addEventListener('click', function(evt) {
       var type = evt.target.dataset.layoutType;
       if (type) {
         BubbleFactory.get('chooseLayout').toggle();
@@ -13,9 +14,25 @@
         });
       }
     });
+
+    window.addEventListener('layoutManager:availableLayouts', function(evt) {
+      var availableLayouts = evt.detail.layouts;
+
+      Array.prototype.map.call(items, function(elem) {
+        var layoutType = elem.dataset.layoutType;
+        var isAvailable = !!availableLayouts.find(function(availableLayout) {
+          return availableLayout === layoutType;
+        });
+
+        elem.disabled = !isAvailable;
+        isAvailable ? elem.removeAttribute('disabled') : elem.setAttribute('disabled', 'disabled');
+      });
+    });
   };
 
   var init = function() {
+    menu = document.querySelector('[for="chooseLayout"] ul');
+    items = menu.querySelectorAll('a');
     addHandlers();
   };
 

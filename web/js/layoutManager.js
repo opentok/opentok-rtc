@@ -63,6 +63,23 @@
     return candidateLayout;
   }
 
+  function updateAvailableLayouts() {
+    var availableLayouts = [];
+    var total = getTotal();
+
+    if (total <= 1) {
+      availableLayouts.push('float');
+    } else if (total === 2) {
+      availableLayouts.push('float', 'f2f_horizontal', 'f2f_vertical');
+    } else {
+      availableLayouts.push('grid');
+    }
+
+    Utils.sendEvent('layoutManager:availableLayouts', {
+      layouts: availableLayouts
+    });
+  }
+
   function rearrange() {
     var candidateLayout = calculateCandidateLayout();
 
@@ -72,6 +89,7 @@
     }
 
     currentLayout.rearrange();
+    updateAvailableLayouts();
   }
 
   global.LayoutManager = {
