@@ -2,13 +2,13 @@ var assert = chai.assert;
 var expect = chai.expect;
 var should = chai.should();
 
-describe('LayoutMenuView', function(){
+describe('LayoutMenuView', function() {
 
-  before(function(){
+  before(function() {
     window.document.body.innerHTML = window.__html__['test/unit/layoutMenuView_spec.html'];
   });
 
-  it('should exist', function(){
+  it('should exist', function() {
     expect(LayoutMenuView).to.exist;
   });
 
