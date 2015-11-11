@@ -53,24 +53,33 @@ describe('ItemsHandler', function() {
     it('should be initialized', function() {
       ItemsHandler.init(getContainer(), items);
     });
+  });
 
-    it('should listen click events on video button for the publisher', sinon.test(function(done) {
+  describe('#event handlers: click', function() {
+    it('should send the correct event when video is selected in publisher',
+      sinon.test(function(done) {
       clickButton(this, '#publisher i[data-icon="video"]', 'publisher', 'video', done);
     }));
 
-    it('should listen click events on mic button for the publisher', sinon.test(function(done) {
+    it('should send the correct event when audio is selected in publisher',
+      sinon.test(function(done) {
       clickButton(this, '#publisher i[data-icon="mic"]', 'publisher', 'audio', done);
     }));
 
-    it('should listen click events on video button for subscribers', sinon.test(function(done) {
+    it('should send the correct event when video is selected in subscribers',
+      sinon.test(function(done) {
       clickButton(this, '#subscriber i[data-icon="video"]', 'subscriber', 'video', done);
     }));
 
-    it('should listen click events on audio button for subscribers', sinon.test(function(done) {
+    it('should send the correct event when audio is selected in subscribers',
+      sinon.test(function(done) {
       clickButton(this, '#subscriber i[data-icon="audio"]', 'subscriber', 'audio', done);
     }));
+  });
 
-    it('should listen roomController events', function() {
+  describe('#event handlers: roomController', function() {
+
+    it('should set the correct status in UI when controller changes', function() {
 
       var check = function(id) {
         var reasonPrefix = (id === 'publisher') ? 'publish' : 'subscribe';

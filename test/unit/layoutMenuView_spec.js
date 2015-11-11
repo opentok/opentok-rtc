@@ -21,8 +21,10 @@ describe('LayoutMenuView', function(){
     it('should be initialized', function() {
       LayoutMenuView.init();
     });
+  });
 
-    it('should listen for click events', sinon.test(function() {
+  describe('#event handlers: click', function() {
+    it('should set the correct layout when grid is selected', sinon.test(function() {
       var myLayoutGrid = {};
 
       this.stub(BubbleFactory, 'get', function() {
