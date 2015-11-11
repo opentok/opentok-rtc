@@ -1,79 +1,30 @@
 !function(exports) {
   'use strict';
 
-  var TIME_RESEND_CHAT = 60000;
-
-  var _connectedEarlierThanMe = 0;
-  var _connectedAfterMe = {};
   var _historyChat = [];
 
   var _usrId;
-  var _creationTime;
-  var _myCreationTime;
 
   var CONN_SUFIX = ' has connected';
   var DISCONN_SUFIX = ' has disconnected';
+  var STATUS_KEY = 'chat';
 
-  function loadChat(data) {
+  function loadHistoricChat() {
+    var data = RoomStatus.get(STATUS_KEY);
     if (data) {
-      for (var i = 0, l = data.length; i < l; i++) {
-        _historyChat.push(data[i]);
-        ChatView.insertChatLine(data[i]);
+      _historyChat = data;
+      for (var i = 0, l = _historyChat.length; i < l; i++) {
+        ChatView.insertChatLine(_historyChat[i]);
       }
+    } else {
+      _historyChat = [];
+      RoomStatus.set(STATUS_KEY, _historyChat);
     }
   }
 
-  function sendHistoryAck() {
-    OTHelper.sendSignal({
-      type: 'chatHistoryACK',
-      data: _usrId
-    });
-  }
-
-  function sendChat(aUser) {
-    return OTHelper.sendSignal({
-      type: 'chatHistory',
-      to: aUser,
-      data: JSON.stringify(_historyChat)
-    });
-  }
-
-  function IMustSend() {
-    return _connectedEarlierThanMe <= 0;
-  }
-
-  function cancelPendingSendHistory(aConnectionId) {
-    var conn = _connectedAfterMe[aConnectionId];
-    if (conn !== undefined) {
-      delete _connectedAfterMe[aConnectionId];
-      window.clearInterval(conn);
-    }
-  }
-
-  function proccessNewConnection(evt) {
-    var newUsrConnection = evt.connection;
-    var newUsr = JSON.parse(newUsrConnection.data).userName;
-    var creationTime = newUsrConnection.creationTime;
-    var connectionId = newUsrConnection.connectionId;
-
-    if (creationTime < _myCreationTime) {
-      _connectedEarlierThanMe++;
-    } else if (newUsr !== _usrId) {
-      var send = function(aNewUsrConnection) {
-        if (IMustSend()) {
-          sendChat(aNewUsrConnection);
-        }
-      };
-
-      send(newUsrConnection);
-
-      var intervalResendChat =
-        window.setInterval(send.bind(undefined, newUsrConnection),
-                           TIME_RESEND_CHAT);
-      _connectedAfterMe[connectionId] = intervalResendChat;
-    }
+  var _roomStatusEvts = {
+    'updatedRemotely': loadHistoricChat
   };
-
 
   var _chatHandlers = {
     'signal:chat': function(evt) {
@@ -98,39 +49,17 @@
       _historyChat.push(data);
       ChatView.insertChatLine(data);
     },
-    'signal:chatHistory': function(evt) {
-      loadChat(JSON.parse(evt.data));
-      sendHistoryAck();
-      // FOLLOW-UP This event must have been an once event and don't need
-      // to remove it
-      OTHelper.removeListener('signal:chatHistory');
-    },
-    'signal:chatHistoryACK': function(evt) {
-      cancelPendingSendHistory(evt.from.connectionId);
-    },
     'connectionCreated': function(evt) {
       // Dispatched when an new client (including your own) has connected to the
       // session, and for every client in the session when you first connect
       // Session object also dispatches a sessionConnected evt when your local
       // client connects
-        evt.connection.data && proccessNewConnection(evt);
         var newUsrName = JSON.parse(evt.connection.data).userName;
         if (newUsrName !== _usrId) {
           ChatView.insertChatEvent( newUsrName + CONN_SUFIX);
         }
     },
-    'sessionConnected': function(evt) {
-      _myCreationTime = evt.target.connection.creationTime;
-    },
     'connectionDestroyed': function(evt) {
-      // If connection destroyed belongs to someone older than me,
-      // remove one element from connected early than me array
-      // no matters who, it only care the length of this array,
-      // when it's zero it's my turn to send history chat
-      if (evt.connection.creationTime < _myCreationTime) {
-        _connectedEarlierThanMe--;
-      }
-      cancelPendingSendHistory(evt.connection.connectionId);
       ChatView.insertChatEvent(JSON.parse(evt.connection.data).userName + DISCONN_SUFIX);
     }
   };
@@ -155,10 +84,12 @@
       '/js/chatView.js'
     ]).then(function() {
       return ChatView.init(aUsrId, aRoomName).
-      then(function() {
-        _usrId = aUsrId;
-        return addHandlers(aGlobalHandlers);
-      });
+        then(function() {
+          _usrId = aUsrId;
+          RoomStatus.set(STATUS_KEY, _historyChat);
+          Utils.addEventsHandlers('roomStatus:', _roomStatusEvts);
+          return addHandlers(aGlobalHandlers);
+        });
     });
   }
 
