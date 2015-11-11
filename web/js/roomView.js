@@ -1,8 +1,6 @@
 !function(exports) {
   'use strict';
 
-  var PUBLISHER_DIV_ID = 'publisher';
-
   // HTML elements for the view
   var dock,
       screen,
@@ -23,8 +21,6 @@
       isSharing: false
     }
   };
-
-  var currentLayout = null;
 
   var screenShareCtrEvents = {
     'changeScreenShareStatus': toggleScreenSharing,
@@ -55,12 +51,12 @@
     ('WebkitTransition' in document.documentElement.style) ?
      'webkitTransitionEnd' : 'transitionend';
 
-  function createSubscriberView(streamId, type, controlBtns, name) {
-    return currentLayout.append(streamId, type, controlBtns, name);
+  function createStreamView(streamId, type, controlBtns, name) {
+    return LayoutManager.append(streamId, type, controlBtns, name);
   }
 
-  function deleteSubscriberView(id) {
-    currentLayout.remove(id);
+  function deleteStreamView(id) {
+    LayoutManager.remove(id);
   }
 
   function toggleVideoSwitch(bubbleUp, status) {
@@ -85,10 +81,6 @@
     } else {
       startChatBtn.classList.remove('highlight');
     }
-  }
-
-  function getPublisherId() {
-    return PUBLISHER_DIV_ID;
   }
 
   var cronograph = null;
@@ -228,16 +220,6 @@
     var zc = new ZeroClipboard(linkToShare);
   };
 
-  var addDraggableFeature = function() {
-    if (Utils.draggableUI) {
-      LazyLoader.dependencyLoad([
-        '/js/components/draggable.js'
-      ]).then(function() {
-        Draggable.init();
-      });
-    }
-  };
-
   var init = function() {
     initHTMLElements();
     addHandlers();
@@ -247,8 +229,7 @@
     // will be copied once users click on link to share the URL.
     // Programmatically, setText() wouldn't work.
     addClipboardFeature();
-    currentLayout = new Grid('.subscribers');
-    addDraggableFeature();
+    LayoutManager.init('.streams');
   };
 
   exports.RoomView = {
@@ -268,9 +249,8 @@
       recordingsNumberElem && (recordingsNumberElem.textContent = value);
     },
 
-    createSubscriberView: createSubscriberView,
-    deleteSubscriberView: deleteSubscriberView,
-    publisherId: PUBLISHER_DIV_ID,
+    createStreamView: createStreamView,
+    deleteStreamView: deleteStreamView,
     toggleChatNotification: toggleChatNotification
   };
 

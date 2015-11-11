@@ -54,16 +54,26 @@
 
     setTransform: function(transform) {
       Utils.setTransform(this.elementStyle, transform);
+    },
+
+    destroy: function() {
+      this.element.removeEventListener(touchstart, this, true);
+      Utils.setTransform(this.elementStyle, '');
+      this.element = null;
+      this.elementStyle = null;
     }
   };
 
+  var elements = {};
+
   var Draggable = {
-    init: function() {
-      var elements = document.querySelectorAll('[draggable]');
-      for (var i = 0, len = elements.length; i < len; i++) {
-        var element = elements[i];
-        (new DraggableElement(element));
-      }
+    on: function(element) {
+      elements[element] = new DraggableElement(element);
+    },
+
+    off: function(element) {
+      var draggableElement = elements[element];
+      draggableElement && draggableElement.destroy();
     }
   };
 

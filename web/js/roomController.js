@@ -82,11 +82,17 @@
 
   var publisherButtons = {
     video: {
+      eventFiredName: 'roomView:buttonClick',
+      dataIcon: 'video',
+      eventName: 'click',
       context: 'OTHelper',
       action: 'togglePublisherVideo',
       enabled: true
     },
     audio: {
+      eventFiredName: 'roomView:buttonClick',
+      dataIcon: 'mic',
+      eventName: 'click',
       context: 'OTHelper',
       action: 'togglePublisherAudio',
       enabled: true
@@ -129,7 +135,7 @@
       var args = [];
       var newStatus;
 
-      if (streamId) {
+      if (streamId !== 'publisher') {
         var stream = subscriberStreams[streamId];
         if (!stream) {
           debug.error('Got an event from an nonexistent stream');
@@ -263,9 +269,11 @@
 
       var subOptions = subscriberOptions[streamVideoType];
 
-      var subsDiv =
-        RoomView.createSubscriberView(streamId, stream.videoType,
-                                      subscriberStreams[streamId].buttons, stream.name);
+      var subsDiv = RoomView.createStreamView(streamId, {
+        name: stream.name,
+        type: stream.videoType,
+        controlElems: subscriberStreams[streamId].buttons
+      });
 
       OTHelper.subscribe(evt.stream, subsDiv, subOptions).
       then(function(subscriber) {
@@ -300,7 +308,7 @@
       RoomView.participantsNumber = numUsrsInRoom;
 
       var stream = evt.stream;
-      RoomView.deleteSubscriberView(stream.streamId);
+      RoomView.deleteStreamView(stream.streamId);
       subscriberStreams[stream.streamId] = null;
       var subscribers = this.getSubscribersForStream(stream);
       subscribers.forEach(function(subscriber) {
@@ -434,15 +442,18 @@
   }
 
   var init = function() {
-    LazyLoader.dependencyLoad([
+    LazyLoader.load([
       '/js/components/htmlElems.js',
       '/js/helpers/OTHelper.js',
-      '/js/layout.js',
+      '/js/itemsHandler.js',
+      '/js/layoutView.js',
+      '/js/layouts.js',
+      '/js/layoutManager.js',
       '/js/roomView.js',
       '/js/chatController.js',
       '/js/recordingsController.js',
-      '/js/screenShareController.js',
-      '/js/publisher.js'
+      '/js/layoutMenuController.js',
+      '/js/screenShareController.js'
     ]).
     then(getRoomParams).
     then(getRoomInfo).
@@ -465,18 +476,23 @@
       // RoomView.roomName = aParams.roomName;
       RoomView.participantsNumber = 0;
 
-      publisherOptions.name = userName;
-      var publish = OTHelper.publish.bind(OTHelper, RoomView.publisherId,
-                                          publisherOptions);
       ChatController.
         init(aParams.roomName, userName, _allHandlers).
         then(connect).
-        then(publish).
+        then(function() {
+          var publisherElement = RoomView.createStreamView('publisher', {
+            name: userName,
+            type: 'publisher',
+            controlElems: publisherButtons
+          });
+          publisherOptions.name = userName;
+          return OTHelper.publish(publisherElement, publisherOptions);
+        }).
         then(function() {
           RoomView.participantsNumber = ++numUsrsInRoom;
-          Publisher.init(userName);
           RecordingsController.init(aParams.firebaseURL, aParams.firebaseToken);
           ScreenShareController.init(userName, aParams.chromeExtId);
+          LayoutMenuController.init();
         }).
         catch(function(error) {
           debug.error('Error Connecting to room. ' + error.message);

@@ -1,18 +1,19 @@
 !function(exports) {
   'use strict';
 
-  var DESKTOP_DIV_ID = 'desktop';
-  var container = null;
-
   var shareError;
 
   var screenShareCtrlEvents = {
     'shareScreenError': launchShareError,
-    'extInstallationResult': extInstallationResult
+    'extInstallationResult': extInstallationResult,
+    'destroyed': destroyView
   };
 
+  function destroyView() {
+    RoomView.deleteStreamView('desktop');
+  }
+
   function init() {
-    container = document.querySelector('.' + DESKTOP_DIV_ID);
     shareError = document.querySelector('.screen-modal');
 
     var installLink = shareError.querySelector('#screenShareErrorInstall button');
@@ -24,10 +25,7 @@
   };
 
   function launchShareError(evt) {
-    // Remove stream
-    while (container.firstChild) {
-      container.removeChild(container.firstChild);
-    }
+    destroyView();
 
     var status = evt.detail;
     var errCodes = OTHelper.screenShareErrorCodes;
@@ -105,7 +103,6 @@
   }
 
   exports.ScreenShareView = {
-    desktopId: DESKTOP_DIV_ID,
     init: init
   };
 

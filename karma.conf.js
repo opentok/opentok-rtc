@@ -29,6 +29,7 @@ module.exports = function(config) {
       'web/js/helpers/textProcessor.js',
       'web/js/chatView.js',
       'web/js/chatController.js',
+      'web/js/layouts.js',
       'web/**/*.js',
       'test/unit/**/*.html',
       'test/unit/**/*.js'

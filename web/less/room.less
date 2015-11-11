@@ -11,6 +11,7 @@
 @import 'buttons.less';
 @import 'icons.less';
 @import 'bubble.less';
+@import 'layout.less';
 
 body {
   margin: 0;
@@ -283,10 +284,6 @@ body {
   }
 }
 
-[data-archive-status="started"] #screen .publisher i[data-icon="record"] {
-  display: inline-block;
-}
-
 [data-desktop-status="sharing"] {
   #dock .menu {
     #startSharingDesktop {
@@ -297,191 +294,9 @@ body {
       display: inline-block;
     }
   }
-
-  #screen .desktop {
-    visibility: visible;
-    pointer-events: auto;
-  }
 }
 
 #screen {
-  flex: 1;
-  height: 100%;
-  height: calc(~"100% - 15px");
-  background-color: #f9f9f9;
-  padding: 15px 20px 0 20px;
-
-  .desktop {
-    visibility: hidden;
-    pointer-events: none;
-
-    bottom: 30px;
-  }
-
-  .publisher {
-    top: 30px;
-
-    width: 20%;
-    height: 20%;
-
-    i[data-icon="record"] {
-      display: none;
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      z-index: 1010;
-      font-size: 14px;
-      width: 17px;
-      color: #c61f4c;
-      padding: 0 4px 4px 0;
-    }
-
-    .controls {
-      margin-left: auto;
-      margin-right: auto;
-      left: 0;
-      right: 0;
-      bottom: 10px;
-      text-align: center;
-
-      .buttons {
-        border-radius: 25px;
-        padding: 8px;
-        background-color: transparent;
-
-        div {
-          display: inline-block;
-        }
-      }
-    }
-
-    .user-info {
-      left: 2px;
-      right: 2px;
-      top: 20px;
-
-      .name {
-        font-size: 11px;
-      }
-    }
-  }
-
-  .desktop, .publisher {
-    position: absolute;
-
-    z-index: 1001;
-
-    min-width: 200px;
-    min-height: 150px;
-
-    right: 40px;
-
-    overflow: hidden;
-    border-radius: 12px;
-  }
-
-  .subscribers {
-    width: 100%;
-    height: calc(~"100% - 15px");
-
-    .grid {
-      width: 100%;
-      height: 100%;
-
-      ul {
-        width: 100%;
-        height: 100%;
-        text-align: center;
-        margin: 0;
-        padding: 0;
-      }
-
-      li {
-        display: inline-block;
-        border: 0;
-        overflow: hidden;
-        border-radius: 12px;
-        z-index: 1;
-        margin: 0.1% 0.3%;
-
-        span {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          padding: 0;
-          margin: 0;
-        }
-
-        .controls {
-          top: 40px;
-          left: 40px;
-        }
-
-        .user-info {
-          bottom: 20px;
-
-          opacity: 0;
-          transform: translateY(100%);
-          transition: all 1s;
-
-          .name {
-            font-size: 16px;
-
-            background-color: rgba(0, 0, 0, .4);
-            border-radius: 50px;
-            padding: 25px 50px;
-
-            max-width: calc(~"100% - 100px");
-          }
-        }
-      }
-
-      li:hover {
-        .user-info {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-    }
-  }
-
-  .controls {
-    z-index: 1010;
-    position: absolute;
-
-    .buttons {
-      background-color: rgba(0, 0, 0, .4);
-      border-radius: 25px;
-      padding: 15px;
-      display: inline-block;
-
-      div {
-        display: inline-block;
-        padding: 2px 14px 0 14px;
-      }
-    }
-  }
-
-  .user-info {
-    z-index: 1010;
-
-    position: absolute;
-    left: 0;
-    right: 0;
-
-    text-align: center;
-
-    .name {
-      display: inline-block;
-
-      overflow: hidden;
-      .truncate();
-      text-overflow: ellipsis;
-    }
-  }
-
   footer {
     color: #9b9c9b;
     font-size: 8px;

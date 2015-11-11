@@ -9,6 +9,9 @@
   var DEFAULT_NAME = 'Unknown';
 
   var screenPublisherOptions = {
+    insertMode: 'append',
+    width:'100%',
+    height: '100%',
     name: 'screen',
     showControls: false,
     style: {
@@ -33,7 +36,12 @@
         _isSharing = false;
         // We don't need to send this because desktop stream is sending a destroyed event.
       } else {
-        OTHelper.shareScreen(ScreenShareView.desktopId, screenPublisherOptions, streamHandlers).
+        var desktopElement = RoomView.createStreamView('desktop', {
+          name: screenPublisherOptions.name,
+          type: 'desktop',
+          controlElems: {}
+        });
+        OTHelper.shareScreen(desktopElement, screenPublisherOptions, streamHandlers).
           then(function() {
             _isSharing = true;
             Utils.sendEvent('screenShareController:changeScreenShareStatus',
