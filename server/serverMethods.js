@@ -168,8 +168,9 @@ function ServerMethods(aLogLevel, aModules) {
 
         var apiKey = redisConfig[RED_TB_API_KEY];
         var apiSecret = redisConfig[RED_TB_API_SECRET];
-        var archivePollingTO = redisConfig[RED_TB_ARCHIVE_POLLING_INITIAL_TIMEOUT];
-        var archivePollingTOMultiplier = redisConfig[RED_TB_ARCHIVE_POLLING_TIMEOUT_MULTIPLIER];
+        var archivePollingTO = parseInt(redisConfig[RED_TB_ARCHIVE_POLLING_INITIAL_TIMEOUT]);
+        var archivePollingTOMultiplier =
+          parseFloat(redisConfig[RED_TB_ARCHIVE_POLLING_TIMEOUT_MULTIPLIER]);
         var otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret);
 
         // This isn't strictly necessary... but since we're using promises all over the place, it
@@ -180,7 +181,7 @@ function ServerMethods(aLogLevel, aModules) {
         ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'deleteArchive'].
           forEach(method => otInstance[method + '_P'] = promisify(otInstance[method]));
 
-        var maxSessionAge = redisConfig[RED_TB_MAX_SESSION_AGE];
+        var maxSessionAge = parseInt(redisConfig[RED_TB_MAX_SESSION_AGE]);
         var chromeExtId = redisConfig[RED_CHROME_EXTENSION_ID];
 
         // For this object we need to know if/when we're reconnecting so we can shutdown the
