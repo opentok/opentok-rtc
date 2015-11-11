@@ -55,7 +55,7 @@
 
 this.addEventListener('load', function startApp() {
   // Check that everything was loaded correctly, or just use LazyLoader here...
-  LazyLoader.dependencyLoad([
+  LazyLoader.load([
     '/js/libs/browser_utils.js',
     '/shared/js/utils.js',
     '/js/helpers/requests.js',

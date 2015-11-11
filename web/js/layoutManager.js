@@ -15,10 +15,17 @@
     'f2f_vertical': F2FVertical
   };
 
+  var handlers = {
+    'layout': function(evt) {
+      LayoutManager.userLayout = layouts[evt.detail.type];
+    }
+  };
+
   function init(selector) {
     container = document.querySelector(selector);
     LayoutView.init(container);
     ItemsHandler.init(container, items);
+    Utils.addEventsHandlers('layoutMenuView:', handlers, global);
   }
 
   function append(id, options) {
@@ -44,24 +51,24 @@
   }
 
   function calculateCandidateLayout() {
-    var candiateLayout = Float;
+    var candidateLayout = Float;
     var total = getTotal();
 
     if (total > 2) {
-      candiateLayout = Grid;
+      candidateLayout = Grid;
     } else if ((total === 2) && (userLayout && userLayout !== Grid)) {
-      candiateLayout = userLayout;
+      candidateLayout = userLayout;
     }
 
-    return candiateLayout;
+    return candidateLayout;
   }
 
   function rearrange() {
-    var candiateLayout = calculateCandidateLayout();
+    var candidateLayout = calculateCandidateLayout();
 
-    if (!currentLayout || layouts[currentLayout.type] !== candiateLayout) {
+    if (!currentLayout || Object.getPrototypeOf(currentLayout) !== candidateLayout.prototype) {
       currentLayout && currentLayout.destroy();
-      currentLayout = new candiateLayout(container, items);
+      currentLayout = new candidateLayout(container, items);
     }
 
     currentLayout.rearrange();

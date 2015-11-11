@@ -1,7 +1,6 @@
 'use strict';
 
 var LayoutBase = function(container, items, type) {
-  this.type = type;
   this.items = items;
   this.publisher = container.querySelector('[data-stream-type=publisher]');
   container.dataset.currentLayoutType = type;

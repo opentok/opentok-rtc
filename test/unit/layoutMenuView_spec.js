@@ -24,21 +24,20 @@ describe('LayoutMenuView', function(){
   });
 
   describe('#event handlers: click', function() {
-    it('should set the correct layout when grid is selected', sinon.test(function() {
+    it('should set the correct layout when grid is selected', sinon.test(function(done) {
       var myLayoutGrid = {};
 
       this.stub(BubbleFactory, 'get', function() {
         return { toggle: function() {} }
       });
 
-      this.stub(window, 'LayoutManager', {
-        layouts : {
-          'grid': myLayoutGrid
-        }
+      this.stub(window, 'CustomEvent', function(name, data) {
+        expect(name).to.be.equal('layoutMenuView:layout');
+        expect(data.detail.type).to.be.equal('grid');
+        done();
       });
 
       document.querySelector('[data-layout-type="grid"').click();
-      expect(LayoutManager.userLayout).to.be.equal(myLayoutGrid);
     }));
   });
 

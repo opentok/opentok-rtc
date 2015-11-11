@@ -442,7 +442,7 @@
   }
 
   var init = function() {
-    LazyLoader.dependencyLoad([
+    LazyLoader.load([
       '/js/components/htmlElems.js',
       '/js/helpers/OTHelper.js',
       '/js/itemsHandler.js',

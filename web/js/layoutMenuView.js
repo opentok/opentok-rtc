@@ -8,7 +8,9 @@
       var type = evt.target.dataset.layoutType;
       if (type) {
         BubbleFactory.get('chooseLayout').toggle();
-        LayoutManager.userLayout = LayoutManager.layouts[type];
+        Utils.sendEvent('layoutMenuView:layout', {
+          type: type
+        });
       }
     });
   };
