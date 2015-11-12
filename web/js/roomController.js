@@ -464,6 +464,7 @@
       ChatController.
         init(aParams.roomName, userName, _allHandlers).
         then(connect).
+        then(LayoutMenuController.init).
         then(function() {
           var publisherElement = RoomView.createStreamView('publisher', {
             name: userName,
@@ -477,7 +478,6 @@
           RoomView.participantsNumber = ++numUsrsInRoom;
           RecordingsController.init(aParams.firebaseURL, aParams.firebaseToken);
           ScreenShareController.init(userName, aParams.chromeExtId);
-          LayoutMenuController.init();
         }).
         catch(function(error) {
           debug.error('Error Connecting to room. ' + error.message);

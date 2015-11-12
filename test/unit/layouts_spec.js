@@ -188,6 +188,11 @@ describe('Layouts', function() {
     });
 
     describe('#features', function() {
+      it('should fit one item to the total container height', function() {
+        instance = new F2FHorizontal(getContainer(), getItems(1));
+        checkSizes(100, 100);
+      });
+
       it('should fit items to the half of the container height', function() {
         instance = new F2FHorizontal(getContainer(), getItems(2));
         checkSizes(100, 50);
@@ -214,6 +219,11 @@ describe('Layouts', function() {
     });
 
     describe('#features', function() {
+      it('should fit one item to the total container width', function() {
+        instance = new F2FHorizontal(getContainer(), getItems(1));
+        checkSizes(100, 100);
+      });
+
       it('should fit items to the half of the container width', function() {
         instance = new F2FVertical(getContainer(), getItems(2));
         checkSizes(50, 100);
