@@ -74,7 +74,7 @@
         context: 'OTHelper',
         action: 'toggleSubscribersAudio',
         enabled: true
-      }
+      };
     }
 
     return buttons;
@@ -216,23 +216,6 @@
   };
 
   var _allHandlers = {
-    'sessionConnected': function(evt) {
-      // The page has connected to an OpenTok session.
-      // This event is dispatched asynchronously in response to a successful
-      // call to the connect() method of a Session object.
-      debug.log('!!! room TODO - sessionConnected');
-    },
-    'connectionCreated': function(evt) {
-      // Dispatched when an new client (including your own) has connected to the
-      // session, and for every client in the session when you first connect
-      // Session object also dispatches a sessionConnected evt when your local
-      // client connects
-      debug.log('!!! room TODO - connectionCreated');
-    },
-    'connectionDestroyed': function(evt) {
-      // A client, other than your own, has disconnected from the session
-      debug.log('!!! room TODO - connectionDestroyed');
-    },
     'sessionDisconnected': function(evt) {
       // The client has disconnected from the session.
       // This event may be dispatched asynchronously in response to a successful
@@ -303,7 +286,6 @@
       // For streams published by your own client, the Publisher object
       // dispatches a streamDestroyed event.
       // For a code example and more details, see StreamEvent.
-      debug.log('!!! room TODO - streamDestroyed');
       numUsrsInRoom--;
       RoomView.participantsNumber = numUsrsInRoom;
 
@@ -450,6 +432,7 @@
       '/js/layouts.js',
       '/js/layoutManager.js',
       '/js/roomView.js',
+      '/js/roomStatus.js',
       '/js/chatController.js',
       '/js/recordingsController.js',
       '/js/layoutMenuController.js',
@@ -475,6 +458,8 @@
       // perphaps it would be convenient
       // RoomView.roomName = aParams.roomName;
       RoomView.participantsNumber = 0;
+
+      _allHandlers = RoomStatus.init(userName, _allHandlers);
 
       ChatController.
         init(aParams.roomName, userName, _allHandlers).

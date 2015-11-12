@@ -2,8 +2,8 @@ var expect = chai.expect;
 
 describe('ChatController', function() {
 
-  var expectedHandlers = ['signal:chat', 'signal:chatHistory', 'signal:chatHistoryACK',
-                          'connectionCreated', 'sessionConnected', 'connectionDestroyed'];
+  var expectedHandlers = ['signal:chat', 'connectionCreated', 'connectionDestroyed'];
+  var STATUS_KEY = 'chat';
 
   var data = {
     sender: 'aSender',
@@ -11,11 +11,10 @@ describe('ChatController', function() {
     text: 'a text'
   };
 
-  function getSignalEvent(date, user) {
+  function getSignalEvent(user) {
     return {
       connection: {
         data: JSON.stringify({ userName: user }),
-        creationTime: date,
         connectionId: 'querty'
       }
     };
@@ -29,6 +28,7 @@ describe('ChatController', function() {
     sinon.stub(ChatView, 'init', function() {
       return Promise.resolve();
     });
+
     window.MockOTHelper._install();
   });
 
@@ -49,16 +49,21 @@ describe('ChatController', function() {
     });
 
     it('should initialize properly the object and return the handlers set',
-       function(done) {
+       sinon.test(function(done) {
       var handlers = [];
+      this.stub(RoomStatus, 'set');
+
       ChatController.init('testRoomName', 'testUserName', handlers).then(function(aHandlers) {
         expect(aHandlers.length).to.be.equals(1);
+        var chatHandlers = aHandlers[0];
         expect(expectedHandlers.every(function(elem) {
-          return aHandlers[elem] !== 'undefined';
+          return chatHandlers[elem] !== undefined;
         })).to.be.true;
+
+        expect(RoomStatus.set.calledWith(STATUS_KEY, [])).to.be.true;
         done();
       });
-    });
+    }));
   });
 
   describe('#sendMsg', function() {
@@ -99,125 +104,40 @@ describe('ChatController', function() {
       }));
     });
 
-    describe('#signal:chatHistory', function() {
-      it('should populate the chat with the history and remove the listener',
-         sinon.test(function(done) {
-        var historyChat = [{
-          sender: 'aSender1',
-          time: Utils.getCurrentTime(),
-          text: 'a text 1'
-        }, {
-          sender: 'aSender2',
-          time: Utils.getCurrentTime(),
-          text: 'a text 2'
-        }];
-
-        var signalEvt = {
-          data: JSON.stringify(historyChat),
-          from: 'from',
-          type: 'chatHistory'
-        };
-
-        this.spy(OTHelper, 'removeListener');
-        this.spy(OTHelper, 'sendSignal');
-        this.stub(ChatView, 'insertChatLine');
-
-        var handlers = [];
-        ChatController.init('testRoomName', 'testUserName', handlers).then(function(aHandlers) {
-          var chatHndls = aHandlers[0];
-
-          chatHndls['signal:chatHistory'](signalEvt);
-          expect(ChatView.insertChatLine.callCount).to.be.equal(historyChat.length);
-          expect(ChatView.insertChatLine.firstCall.calledWith(historyChat[0])).to.be.true;
-          expect(ChatView.insertChatLine.secondCall.calledWith(historyChat[1])).to.be.true;
-
-          var spyCall;
-          for(var i = 0, l = historyChat.length; i < l; i++) {
-            spyCall = ChatView.insertChatLine.getCall(i);
-            expect(spyCall.args[0]).to.be.deep.equal(historyChat[i]);
-          }
-
-          expect(OTHelper.sendSignal.calledWith({
-            type: 'chatHistoryACK',
-            data: 'testUserName'
-          })).to.be.true;
-
-          expect(OTHelper.removeListener.calledWith('signal:chatHistory')).to.be.true;
-          done();
-        });
-      }));
-    });
-
     describe('#connectionCreated', function() {
 
       var usr = 'mySelf';
       var room = 'room';
       var handlers = [];
       var chatHndls;
-      var myCreationTime = (new Date(1975, 06, 06, 15, 0, 0)).getTime();
 
       before(function(done) {
         ChatController.init(room, usr, handlers).then(function(aHandlers) {
           handlers  = aHandlers;
           chatHndls = aHandlers[0];
-          chatHndls['sessionConnected']({
-            target: {
-              connection: {
-                creationTime: myCreationTime
-              }
-            }
-          });
-
           done();
         });
       });
 
-      it('should send history when a different user connects and I was the oldest connected one',
+      it('should insert new user connected event when a different user connects',
          sinon.test(function() {
 
         this.stub(ChatView, 'insertChatEvent');
-        this.spy(OTHelper, 'sendSignal');
 
-        var otherCreationTime = myCreationTime + 1;
-
-        chatHndls['connectionCreated'](getSignalEvent(otherCreationTime, 'otherUser'));
+        chatHndls['connectionCreated'](getSignalEvent('otherUser'));
 
         expect(ChatView.insertChatEvent.calledOnce).to.be.true;
         expect(ChatView.insertChatEvent.calledWith('otherUser has connected')).to.be.true;
-        expect(OTHelper.sendSignal.calledOnce).to.be.true;
       }));
 
-      it('should not send the history when a different user connects and I was not the oldest ' +
-         'connected one', sinon.test(function() {
-
-        this.stub(ChatView, 'insertChatEvent');
-        this.spy(OTHelper, 'sendSignal');
-
-        var otherConnectedCreationTime = myCreationTime - 1;
-        var newConnectedCreationTime = myCreationTime + 1;
-
-        chatHndls['connectionCreated'](getSignalEvent(otherConnectedCreationTime, 'firstUser'));
-        chatHndls['connectionCreated'](getSignalEvent(newConnectedCreationTime, 'newUser'));
-
-        expect(ChatView.insertChatEvent.calledTwice).to.be.true;
-        expect(ChatView.insertChatEvent.firstCall.calledWith('firstUser has connected')).
-               to.be.true;
-        expect(ChatView.insertChatEvent.secondCall.calledWith('newUser has connected')).
-               to.be.true;
-
-        expect(OTHelper.sendSignal.callCount).to.be.equal(0);
-      }));
-
-      it('should not send the history when I receive a connect event for myself',
+      it('should not do anything when I receive a connect event for myself',
          sinon.test(function() {
 
         this.stub(ChatView, 'insertChatEvent');
-        this.spy(OTHelper, 'sendSignal');
 
-        chatHndls['connectionCreated'](getSignalEvent(myCreationTime, usr));
+        chatHndls['connectionCreated'](getSignalEvent(usr));
 
         expect(ChatView.insertChatEvent.callCount).to.be.equal(0);
-        expect(OTHelper.sendSignal.callCount).to.be.equal(0);
       }));
     });
 
@@ -229,16 +149,8 @@ describe('ChatController', function() {
 
         ChatController.init('testRoomName', 'mySelf', handlers).then(function(aHandlers) {
           var chatHndls = aHandlers[0];
-          var myCreationTime = (new Date(1975, 06, 06, 15, 0, 2)).getTime();
 
-          chatHndls['sessionConnected']({
-            target: {
-              connection: {
-                creationTime: myCreationTime
-              }
-            }
-          });
-          chatHndls['connectionDestroyed'](getSignalEvent(myCreationTime, 'mySelf'));
+          chatHndls['connectionDestroyed'](getSignalEvent('mySelf'));
 
           expect(ChatView.insertChatEvent.calledOnce).to.be.true;
           expect(ChatView.insertChatEvent.calledWith('mySelf has disconnected')).
@@ -248,4 +160,40 @@ describe('ChatController', function() {
       }));
     });
   });
+
+  describe('#updatedRemotly event', function() {
+    it('should load chat history', sinon.test(function(done) {
+      var sharedHistory = [{
+          sender: 'aSender1',
+          time: Utils.getCurrentTime(),
+          text: 'a text 1'
+        }, {
+          sender: 'aSender2',
+          time: Utils.getCurrentTime(),
+          text: 'a text 2'
+        }
+      ];
+
+      this.stub(RoomStatus, 'get', function(key) {
+        return sharedHistory;
+      });
+
+      this.stub(ChatView, 'insertChatLine');
+
+      var handlers = [];
+
+      ChatController.init('testRoomName', 'testUserName', handlers).then(function(aHandlers) {
+        window.dispatchEvent(new CustomEvent('roomStatus:updatedRemotely'));
+
+        expect(RoomStatus.get.calledWith(STATUS_KEY)).to.be.true;
+        var spyCall;
+        for(var i = 0, l = sharedHistory.length; i < l; i++) {
+          spyCall = ChatView.insertChatLine.getCall(i);
+          expect(spyCall.args[0]).to.be.deep.equal(sharedHistory[i]);
+        }
+        done();
+      });
+    }));
+  });
+
 });
