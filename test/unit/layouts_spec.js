@@ -122,54 +122,65 @@ describe('Layouts', function() {
     }
 
     describe('#constructor', function() {
-      it('should be initialized properly', sinon.test(function(done) {
+      it('should be initialized properly', function() {
         var container = getContainer();
+        instance = new Float(container, {});
+        expect(container.dataset.currentLayoutType).to.equal('float');
+      });
+
+      it('should set the publisher as draggable', sinon.test(function(done) {
+        var container = getContainer();
+        var publisher = document.createElement('myPublisher');
+
         stubDraggable(this, function() {
           return Promise.resolve({
             on: function(element) {
-              expect(element).to.equal(container.querySelector('[data-stream-type=publisher]'));
+              expect(element).to.equal(publisher);
               done();
             }
           })
         });
 
-        instance = new Float(container, {});
+        instance = new Float(container, {
+          publisher: publisher
+        });
         expect(container.dataset.currentLayoutType).to.equal('float');
       }));
     });
 
     describe('#features', function() {
-      it('should fit items to the whole container', sinon.test(function() {
+      it('should fit items to the whole container', function() {
         var items = getItems(1);
-        stubDraggable(this);
         instance = new Float(getContainer(), items);
         checkSizes(100, 100);
 
         items[1] = document.createElement('div');
         checkSizes(100, 100);
-      }));
+      });
     });
 
     describe('#rearrange', sinon.test(function() {
-      it('should visit all items and set dimensions', sinon.test(function() {
-        stubDraggable(this);
+      it('should visit all items and set dimensions', function() {
         visitItems(Float);
-      }));
+      });
     }));
 
     describe('#destroy', function() {
       it('should disable drag feature for the publisher', sinon.test(function() {
+        var publisher = document.createElement('div');
         stubDraggable(this, function() {
           return Promise.resolve({
             on: function() {},
             off: function(element) {
-              expect(element).to.equal(container.querySelector('[data-stream-type=publisher]'));
+              expect(element).to.equal(publisher);
               done();
             }
           })
         });
 
-        instance = new Float(getContainer(), {});
+        instance = new Float(getContainer(), {
+          'publisher': publisher
+        });
         instance.destroy();
       }));
     });

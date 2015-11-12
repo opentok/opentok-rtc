@@ -2,7 +2,7 @@
 
 var LayoutBase = function(container, items, type) {
   this.items = items;
-  this.publisher = container.querySelector('[data-stream-type=publisher]');
+  this.container = container;
   container.dataset.currentLayoutType = type;
 };
 
@@ -30,8 +30,7 @@ LayoutBase.prototype = {
   },
 
   destroy: function() {
-    this.type = null;
-    this.publisher = null;
+    this.container = null;
   }
 };
 
@@ -55,9 +54,7 @@ Grid.prototype = {
 
 var Float = function(container, items) {
   LayoutBase.call(this, container, items, 'float');
-  Utils.getDraggable().then(function(draggable) {
-    draggable.on(this.publisher);
-  }.bind(this));
+  this.addDraggableFeature();
 };
 
 Float.prototype = {
@@ -68,6 +65,26 @@ Float.prototype = {
       width: '100%',
       height: '100%'
     };
+  },
+
+  get publisher() {
+    return this.items['publisher'];
+  },
+
+  addDraggableFeature: function() {
+    if (this.addedDraggableFeature || !this.publisher) {
+      return;
+    }
+
+    this.addedDraggableFeature = true;
+    Utils.getDraggable().then(function(draggable) {
+      draggable.on(this.publisher);
+    }.bind(this));
+  },
+
+  rearrange: function() {
+    LayoutBase.prototype.rearrange.apply(this, arguments);
+    this.addDraggableFeature();
   },
 
   destroy: function() {
