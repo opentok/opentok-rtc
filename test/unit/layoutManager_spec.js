@@ -14,13 +14,12 @@ describe('LayoutManager', function() {
 
   before(function() {
     window.document.body.innerHTML = window.__html__['test/unit/layoutManager_spec.html'];
-    var nop = function() {};
-    sinon.stub(LayoutView, 'init', nop);
+    sinon.stub(LayoutView, 'init');
     sinon.stub(LayoutView, 'append', function() {
       return document.createElement('li');
     });
-    sinon.stub(LayoutView, 'remove', nop);
-    sinon.stub(ItemsHandler, 'init', nop);
+    sinon.stub(LayoutView, 'remove');
+    sinon.stub(ItemsHandler, 'init');
     sinon.stub(LazyLoader, 'dependencyLoad', function() { return Promise.resolve(); });
   });
 
@@ -40,9 +39,6 @@ describe('LayoutManager', function() {
     it('should export a init function', function() {
       expect(LayoutManager.init).to.exist;
       expect(LayoutManager.init).to.be.a('function');
-    });
-
-    it('should be initialized', function() {
       LayoutManager.init('#example');
     });
   });

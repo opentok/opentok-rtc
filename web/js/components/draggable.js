@@ -68,7 +68,7 @@
 
   var Draggable = {
     on: function(element) {
-      elements[element] = new DraggableElement(element);
+      element && (elements[element] = new DraggableElement(element));
     },
 
     off: function(element) {
