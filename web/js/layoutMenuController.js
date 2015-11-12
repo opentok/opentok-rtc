@@ -2,10 +2,10 @@
   'use strict';
 
   var init = function() {
-    LazyLoader.dependencyLoad([
+    return LazyLoader.dependencyLoad([
       '/js/layoutMenuView.js'
     ]).then(function () {
-      LayoutMenuView.init();
+      return LayoutMenuView.init();
     });
   };
 

@@ -479,6 +479,7 @@
       ChatController.
         init(aParams.roomName, userName, _allHandlers).
         then(connect).
+        then(LayoutMenuController.init).
         then(function() {
           var publisherElement = RoomView.createStreamView('publisher', {
             name: userName,

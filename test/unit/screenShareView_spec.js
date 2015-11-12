@@ -2,16 +2,11 @@ var expect = chai.expect;
 
 describe('ScreenShareView', function() {
 
-  var container;
   var shareErrors;
   var screenShareLink;
   var installSectionError;
   var txtSectionError;
   var extInstallationSuccessful;
-
-  function getContainer() {
-    return document.querySelector('.desktop');
-  }
 
   function getShareErrors() {
     return document.querySelector('.screen-modal');
@@ -28,7 +23,6 @@ describe('ScreenShareView', function() {
 
     expect(shareErrors.dataset.screenSharingType).to.be.equal(expectedResult);
 
-    expect(container.children.length).to.equal(0);
     var span = shareErrors.querySelector('.errorDescription');
     expect(span.textContent).to.be.equal(msgError);
   }
@@ -46,7 +40,6 @@ describe('ScreenShareView', function() {
 
   beforeEach(function() {
     window.document.body.innerHTML = window.__html__['test/unit/screenShareView_spec.html'];
-    container = getContainer();
     shareErrors = getShareErrors();
     screenShareLink = shareErrors.querySelector('a');
     installSectionError = shareErrors.querySelector('#screenShareErrorInstall');

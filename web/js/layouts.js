@@ -88,7 +88,7 @@ F2FHorizontal.prototype = {
   get features() {
     return {
       width: (100 - this._HORIZONTAL_PADDING) + '%',
-      height: (50 - this._VERTICAL_PADDING) + '%',
+      height: ((100 / this.total) - this._VERTICAL_PADDING) + '%'
     };
   }
 };
@@ -102,7 +102,7 @@ F2FVertical.prototype = {
 
   get features() {
     return {
-      width: (50 - this._HORIZONTAL_PADDING) + '%',
+      width: ((100 / this.total) - this._HORIZONTAL_PADDING) + '%',
       height: (100 - this._VERTICAL_PADDING) + '%',
     };
   }

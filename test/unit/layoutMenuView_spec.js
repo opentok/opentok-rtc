@@ -41,4 +41,34 @@ describe('LayoutMenuView', function() {
     }));
   });
 
+  describe('#event handlers: layoutManager:availableLayouts', function() {
+    var checkOptions = function (layouts) {
+      window.dispatchEvent(new CustomEvent('layoutManager:availableLayouts', {
+        detail: {
+          layouts: layouts
+        }
+      }));
+
+      Array.prototype.map.call(document.querySelectorAll('ul a'), function(elem) {
+        var layoutType = elem.dataset.layoutType;
+        var isAvailable = !!layouts[layoutType];
+        expect(elem.disabled).to.be.equal(!isAvailable);
+      });
+    }
+
+    it('should disable all layouts for groups', function() {
+      checkOptions({
+        float: true,
+        f2f_horizontal: true,
+        f2f_vertical: true
+      });
+    });
+
+    it('should enable grid layout', function() {
+      checkOptions({
+        grid: true
+      });
+    });
+  });
+
 });

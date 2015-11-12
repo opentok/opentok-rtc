@@ -230,7 +230,6 @@
     // Programmatically, setText() wouldn't work.
     addClipboardFeature();
     LayoutManager.init('.streams');
-    LayoutMenuController.init();
   };
 
   exports.RoomView = {

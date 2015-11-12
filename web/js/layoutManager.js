@@ -17,7 +17,8 @@
 
   var handlers = {
     'layout': function(evt) {
-      LayoutManager.userLayout = layouts[evt.detail.type];
+      userLayout = layouts[evt.detail.type];
+      rearrange();
     }
   };
 
@@ -56,27 +57,30 @@
 
     if (total > 2) {
       candidateLayout = Grid;
-    } else if ((total === 2) && (userLayout && userLayout !== Grid)) {
+    } else if (userLayout && userLayout !== Grid) {
       candidateLayout = userLayout;
     }
 
     return candidateLayout;
   }
 
+  var F2F_LAYOUTS = {
+    float: true,
+    f2f_horizontal: true,
+    f2f_vertical: true
+  };
+
+  var GRP_LAYOUTS = {
+    grid: true
+  };
+
+  function isGroup() {
+    return getTotal() > 2;
+  }
+
   function updateAvailableLayouts() {
-    var availableLayouts = [];
-    var total = getTotal();
-
-    if (total <= 1) {
-      availableLayouts.push('float');
-    } else if (total === 2) {
-      availableLayouts.push('float', 'f2f_horizontal', 'f2f_vertical');
-    } else {
-      availableLayouts.push('grid');
-    }
-
     Utils.sendEvent('layoutManager:availableLayouts', {
-      layouts: availableLayouts
+      layouts: isGroup() ? GRP_LAYOUTS : F2F_LAYOUTS
     });
   }
 
@@ -95,12 +99,7 @@
   global.LayoutManager = {
     init: init,
     append: append,
-    remove: remove,
-    layouts: layouts,
-    set userLayout(value) {
-      userLayout = value;
-      rearrange();
-    }
+    remove: remove
   };
 
 }(this);

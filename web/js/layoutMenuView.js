@@ -20,10 +20,7 @@
 
       Array.prototype.map.call(items, function(elem) {
         var layoutType = elem.dataset.layoutType;
-        var isAvailable = !!availableLayouts.find(function(availableLayout) {
-          return availableLayout === layoutType;
-        });
-
+        var isAvailable = !!availableLayouts[layoutType];
         elem.disabled = !isAvailable;
         isAvailable ? elem.removeAttribute('disabled') : elem.setAttribute('disabled', 'disabled');
       });
