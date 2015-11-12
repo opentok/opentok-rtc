@@ -2,19 +2,21 @@
   'use strict';
 
   // HTML elements for the view
-  var dock,
-      screen,
-      handler,
-      startChatBtn,
-      roomNameElem,
-      participantsNumberElem,
-      recordingsNumberElem,
-      videoSwitch;
+  var dock;
+  var screen;
+  var handler;
+  var startChatBtn;
+  var roomNameElem;
+  var participantsNumberElem;
+  var recordingsNumberElem;
+  var videoSwitch;
+  var audioSwitch;
 
   var START_SHARING = 'Share your screen';
   var STOP_SHARING = 'Stop sharing your screen';
 
   var _videosDisabled = false;
+  var _audiosDisabled = false;
 
   var NOT_SHARING = {
     detail: {
@@ -45,6 +47,7 @@
     participantsNumberElem = dock.querySelectorAll('.participants');
     recordingsNumberElem = dock.querySelector('#recordings');
     videoSwitch = dock.querySelector('#videoSwitch');
+    audioSwitch = dock.querySelector('#audioSwitch');
   }
 
   var transEndEventName =
@@ -57,6 +60,16 @@
 
   function deleteStreamView(id) {
     LayoutManager.remove(id);
+  }
+
+  function toggleAllAudioSwitch() {
+    _audiosDisabled = !_audiosDisabled;
+
+    if (_audiosDisabled) {
+      audioSwitch.classList.add('actived');
+    } else {
+      audioSwitch.classList.remove('actived');
+    }
   }
 
   function toggleVideoSwitch(bubbleUp, status) {
@@ -180,6 +193,9 @@
           break;
         case 'videoSwitch':
           toggleVideoSwitch(true);
+          break;
+        case 'audioSwitch':
+          toggleAllAudioSwitch();
       }
     });
 

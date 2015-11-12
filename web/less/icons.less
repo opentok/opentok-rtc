@@ -259,14 +259,15 @@
   background-image: url("/images/icons/end_hover.svg");
 }
 
-#videoSwitch {
-  [data-icon="videoSwitch"] {
+#videoSwitch, #audioSwitch {
+  [data-icon="videoSwitch"], [data-icon="audioSwitch"] {
     background-image: url("/images/icons/switch_off.svg");
   }
 }
 
-#videoSwitch.actived, [data-icon="videoSwitch"]:after  {
-  [data-icon="videoSwitch"] {
+#videoSwitch.actived, [data-icon="videoSwitch"]:after,
+#audioSwitch.actived, [data-icon="audioSwitch"]:after  {
+  [data-icon="videoSwitch"], [data-icon="audioSwitch"] {
     background-image: url("/images/icons/switch_on.svg");
   }
 }
