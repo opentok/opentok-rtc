@@ -22,8 +22,8 @@ describe('Layouts', function() {
 
   var checkSizes = function(width, height) {
     var features = instance.features;
-    expect(features.width).to.equal((width - instance._HORIZONTAL_PADDING) + '%');
-    expect(features.height).to.equal((height - instance._VERTICAL_PADDING) + '%');
+    expect(features.width).to.equal((width - instance._PADDING) + '%');
+    expect(features.height).to.equal((height - instance._PADDING) + '%');
   }
 
   var visitItems = function(clazz) {
@@ -244,6 +244,62 @@ describe('Layouts', function() {
     describe('#rearrange', sinon.test(function() {
       it('should visit all items and set dimensions', function() {
         visitItems(F2FVertical);
+      });
+    }));
+
+  });
+
+  describe('HangoutHorizontal', function() {
+
+    describe('#constructor', function() {
+      it('should be initialized properly', function() {
+        var container = getContainer();
+        instance = new HangoutHorizontal(container, {});
+
+        expect(container.dataset.currentLayoutType).to.equal('hangout_horizontal');
+      });
+    });
+
+    describe('#features', function() {
+      it('should fit items to container width divided by total minus one on stage', function() {
+        instance = new HangoutHorizontal(getContainer(), getItems(5));
+        var features = instance.features;
+        expect(features.width).to.equal((25 - (instance._PADDING / 2)) + '%');
+        expect(features.height).to.equal('100%');
+      });
+    });
+
+    describe('#rearrange', sinon.test(function() {
+      it('should visit all items and set dimensions', function() {
+        visitItems(HangoutHorizontal);
+      });
+    }));
+
+  });
+
+  describe('HangoutVertical', function() {
+
+    describe('#constructor', function() {
+      it('should be initialized properly', function() {
+        var container = getContainer();
+        instance = new HangoutVertical(container, {});
+
+        expect(container.dataset.currentLayoutType).to.equal('hangout_vertical');
+      });
+    });
+
+    describe('#features', function() {
+      it('should fit items to container height divided by total minus one on stage', function() {
+        instance = new HangoutVertical(getContainer(), getItems(5));
+        var features = instance.features;
+        expect(features.width).to.equal('100%');
+        expect(features.height).to.equal((25 - (instance._PADDING / 2)) + '%');
+      });
+    });
+
+    describe('#rearrange', sinon.test(function() {
+      it('should visit all items and set dimensions', function() {
+        visitItems(HangoutVertical);
       });
     }));
 

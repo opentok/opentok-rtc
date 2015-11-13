@@ -12,12 +12,14 @@
     'grid': Grid,
     'float': Float,
     'f2f_horizontal': F2FHorizontal,
-    'f2f_vertical': F2FVertical
+    'f2f_vertical': F2FVertical,
+    'hangout_horizontal': HangoutHorizontal,
+    'hangout_vertical': HangoutVertical
   };
 
   var handlers = {
     'layout': function(evt) {
-      userLayout = layouts[evt.detail.type];
+      userLayout = evt.detail.type;
       rearrange();
     }
   };
@@ -52,13 +54,12 @@
   }
 
   function calculateCandidateLayout() {
-    var candidateLayout = Float;
-    var total = getTotal();
+    var candidateLayout = null;
 
-    if (total > 2) {
-      candidateLayout = Grid;
-    } else if (userLayout && userLayout !== Grid) {
-      candidateLayout = userLayout;
+    if (getTotal() > 2) {
+      candidateLayout = GRP_LAYOUTS[userLayout] ? layouts[userLayout] : Grid;
+    } else {
+      candidateLayout = F2F_LAYOUTS[userLayout] ? layouts[userLayout] : Float;
     }
 
     return candidateLayout;
@@ -71,7 +72,9 @@
   };
 
   var GRP_LAYOUTS = {
-    grid: true
+    grid: true,
+    hangout_horizontal: true,
+    hangout_vertical: true
   };
 
   function isGroup() {

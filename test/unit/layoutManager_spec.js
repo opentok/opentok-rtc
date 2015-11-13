@@ -117,6 +117,16 @@ describe('LayoutManager', function() {
       sendUserLayoutEvent('f2f_vertical');
       checkLayout('grid');
     });
+
+    it('should set any kind of hangouts with three streams', function() {
+      checkLayout('grid');
+
+      sendUserLayoutEvent('hangout_horizontal');
+      checkLayout('hangout_horizontal');
+
+      sendUserLayoutEvent('hangout_vertical');
+      checkLayout('hangout_vertical');
+    });
   });
 
 });

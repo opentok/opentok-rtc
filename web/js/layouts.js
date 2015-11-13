@@ -7,9 +7,7 @@ var LayoutBase = function(container, items, type) {
 };
 
 LayoutBase.prototype = {
-  _VERTICAL_PADDING: 0.2,
-
-  _HORIZONTAL_PADDING: 0.6,
+  _PADDING: 0.5,
 
   rearrange: function() {
     var features = this.features;
@@ -46,8 +44,8 @@ Grid.prototype = {
     var columns = Math.ceil(Math.sqrt(total));
 
     return {
-      width: ((100 / columns) - this._HORIZONTAL_PADDING) + '%',
-      height: ((100 / Math.ceil(total / columns)) - this._VERTICAL_PADDING) + '%'
+      width: ((100 / columns) - this._PADDING) + '%',
+      height: ((100 / Math.ceil(total / columns)) - this._PADDING) + '%'
     };
   }
 };
@@ -104,8 +102,8 @@ F2FHorizontal.prototype = {
 
   get features() {
     return {
-      width: (100 - this._HORIZONTAL_PADDING) + '%',
-      height: ((100 / this.total) - this._VERTICAL_PADDING) + '%'
+      width: (100 - this._PADDING) + '%',
+      height: ((100 / this.total) - this._PADDING) + '%'
     };
   }
 };
@@ -119,8 +117,38 @@ F2FVertical.prototype = {
 
   get features() {
     return {
-      width: ((100 / this.total) - this._HORIZONTAL_PADDING) + '%',
-      height: (100 - this._VERTICAL_PADDING) + '%',
+      width: ((100 / this.total) - this._PADDING) + '%',
+      height: (100 - this._PADDING) + '%',
+    };
+  }
+};
+
+var HangoutHorizontal = function(container, items) {
+  LayoutBase.call(this, container, items, 'hangout_horizontal');
+};
+
+HangoutHorizontal.prototype = {
+  __proto__: LayoutBase.prototype,
+
+  get features() {
+    return {
+      width: ((100 / (this.total - 1)) - this._PADDING / 2) + '%',
+      height: '100%'
+    };
+  }
+};
+
+var HangoutVertical = function(container, items) {
+  LayoutBase.call(this, container, items, 'hangout_vertical');
+};
+
+HangoutVertical.prototype = {
+  __proto__: LayoutBase.prototype,
+
+  get features() {
+    return {
+      width: '100%',
+      height: ((100 / (this.total - 1)) - this._PADDING / 2) + '%'
     };
   }
 };
