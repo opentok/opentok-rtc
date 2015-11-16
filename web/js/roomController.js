@@ -525,6 +525,7 @@
             }, 'audio', false);
             // Don't publish audio
             publisherOptions.publishAudio = false;
+            Utils.sendEvent('roomController:joinRoomMuted');
           }
           publisherOptions.name = userName;
           publisherReady = OTHelper.publish(publisherElement, publisherOptions);

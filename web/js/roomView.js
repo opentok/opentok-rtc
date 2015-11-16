@@ -15,6 +15,21 @@
   var START_SHARING = 'Share your screen';
   var STOP_SHARING = 'Stop sharing your screen';
 
+  var MODAL_TXTS = {
+    mute: {
+      head: 'All participants microphones are going to be disabled in the call',
+      detail: 'If someone with to keep talking, ' +
+              'they must enable manually it own microphone',
+      button: 'Mute All'
+    },
+    join: {
+      head: 'You are joining a call with all participants muted',
+      detail: 'If you want to unmute yourself, ' +
+              'just press the mic icon in the bottom of your video.',
+      button: 'I understand'
+    }
+  };
+
   var NOT_SHARING = {
     detail: {
       isSharing: false
@@ -36,7 +51,16 @@
       }
     },
     'roomMuted': function(evt) {
-      toggleSwitch(false, audioSwitch, 'roomView:muteAllSwitch', evt.detail.status);
+      if (evt.detail.status) {
+        var toggle = toggleSwitch.bind(undefined, false, audioSwitch,
+                                       'roomView:muteAllSwitch', evt.detail.status);
+        showConfirm(MODAL_TXTS.join).then(toggle).catch(toggle);
+      } else {
+        toggleSwitch(false, audioSwitch, 'roomView:muteAllSwitch', evt.detail.status);
+      };
+    },
+    'joinRoomMuted': function() {
+      showConfirm(MODAL_TXTS.join);
     }
   };
 
@@ -146,6 +170,34 @@
     });
   }
 
+  function showConfirm(txt) {
+    return new Promise(function(resolve, reject) {
+      LazyLoader.dependencyLoad([
+        '/js/components/modal.js'
+      ]).then(function() {
+        var selector = '.switch-alert-modal';
+        var ui = document.querySelector(selector);
+        ui.querySelector(' header .msg').textContent = txt.head;
+        ui.querySelector(' p.detail').textContent = txt.detail;
+        ui.querySelector(' footer button.accept').textContent = txt.button;
+        Modal.show(selector).then(function() {
+          ui.addEventListener('click', function onClicked(evt) {
+            var classList = evt.target.classList;
+            var hasAccepted = classList.contains('accept');
+            if (evt.target.id !== 'switchAlerts' && !hasAccepted && !classList.contains('close')) {
+              return;
+            }
+            evt.stopImmediatePropagation();
+            evt.preventDefault();
+            ui.removeEventListener('click', onClicked);
+            Modal.hide(selector);
+            (hasAccepted) && resolve() || reject();
+          });
+        });
+      });
+    });
+  }
+
   var addHandlers = function() {
     handler.addEventListener('click', function(e) {
       dock.classList.toggle('collapsed');
@@ -187,7 +239,12 @@
           toggleSwitch(true, videoSwitch, 'roomView:videoSwitch');
           break;
         case 'audioSwitch':
-          toggleSwitch(true, audioSwitch, 'roomView:muteAllSwitch');
+          if (!audioSwitch.classList.contains('activated')) {
+            showConfirm(MODAL_TXTS.mute).
+              then(toggleSwitch.bind(undefined, true, audioSwitch, 'roomView:muteAllSwitch'));
+          } else {
+            toggleSwitch(true, audioSwitch, 'roomView:muteAllSwitch');
+          }
       }
     });
 
