@@ -17,15 +17,17 @@
     'hangout_vertical': HangoutVertical
   };
 
+  var HANGOUT_BY_DEFAULT = 'hangout_horizontal';
+
   var handlers = {
     'layout': function(evt) {
       userLayout = evt.detail.type;
       rearrange();
     },
-    'streamSelected': function(evt) {
-      if (isGroup() && Object.getPrototypeOf(currentLayout) === Grid.prototype) {
-        userLayout = 'hangout_horizontal';
-        rearrange(evt.detail.streamId);
+    'itemSelected': function(evt) {
+      if (isGroup() && isOnGoing(Grid)) {
+        userLayout = HANGOUT_BY_DEFAULT;
+        rearrange(evt.detail.item);
       }
     }
   };
@@ -38,10 +40,26 @@
     Utils.addEventsHandlers('layoutView:', handlers, global);
   }
 
+  function isOnGoing(layout) {
+    return Object.getPrototypeOf(currentLayout) === layout.prototype;
+  }
+
+  function isHangoutRequeried(item) {
+    // New screen shared and 3 or more items implies going to hangout if this isn't our current
+    // layout running
+    return Utils.isScreen(item) && isGroup() &&
+           !(isOnGoing(HangoutHorizontal) || isOnGoing(HangoutVertical));
+  }
+
   function append(id, options) {
     var item = LayoutView.append(id, options);
     items[id] = item;
-    rearrange();
+    if (isHangoutRequeried(item)) {
+      userLayout = HANGOUT_BY_DEFAULT;
+      rearrange(item);
+    } else {
+      rearrange();
+    }
     return item.querySelector('.opentok-stream-container');
   }
 
@@ -53,10 +71,10 @@
 
     LayoutView.remove(item);
     delete items[id];
-    rearrange();
-    Utils.sendEvent('layoutManager:streamDeleted', {
-      streamId: id
+    Utils.sendEvent('layoutManager:itemDeleted', {
+      item: item
     });
+    rearrange();
   }
 
   function getTotal() {
@@ -97,12 +115,12 @@
     });
   }
 
-  function rearrange(streamSelectedId) {
+  function rearrange(item) {
     var candidateLayout = calculateCandidateLayout();
 
     if (!currentLayout || Object.getPrototypeOf(currentLayout) !== candidateLayout.prototype) {
       currentLayout && currentLayout.destroy();
-      currentLayout = new candidateLayout(container, items, streamSelectedId);
+      currentLayout = new candidateLayout(container, items, item);
     }
 
     currentLayout.rearrange();

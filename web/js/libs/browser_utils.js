@@ -49,6 +49,10 @@
         return Draggable;
       });
     },
+    isScreen: function(item) {
+      var type = item.dataset.streamType;
+      return type === 'desktop' || type === 'screen';
+    },
     setTransform: setTransform
   };
 

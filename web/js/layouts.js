@@ -17,6 +17,7 @@ LayoutBase.prototype = {
         style[feature] = features[feature];
       });
     }, this);
+    return this;
   },
 
   get features() {
@@ -123,25 +124,43 @@ F2FVertical.prototype = {
   }
 };
 
-var Hangout = function(container, items, streamSelectedId, type) {
+var Hangout = function(container, items, item, type) {
   LayoutBase.call(this, container, items, type);
   Object.keys(this.handlers).forEach(function(type) {
     window.addEventListener(type, this);
   }, this);
-  this.putOnStage(streamSelectedId || this.onStageStreamId);
+
+  this.sanitize(!!item);
+
+  if (item) {
+    this.putItemOnStage(item);
+  } else if (!this.totalOnStage) {
+    this.putItemOnStage(this.getRandomItem());
+  }
+
+  this.updateTotalOnStage();
 };
 
 Hangout.prototype = {
   __proto__: LayoutBase.prototype,
 
   handlers: {
-    'layoutView:streamSelected': function(evt) {
-      this.putOnStage(evt.detail.streamId);
+    'layoutView:itemSelected': function(evt) {
+      var item = evt.detail.item;
+      if (this.isOnStage(item)) {
+        // Selected item is already on stage so it should be expanded to cover all. That means that
+        // the other item on stage should go to the strip leaving the stage
+        this.removeCurrentItemFromStage(this.getItemType(item) === 'camera' ? 'screen' : 'camera');
+      } else {
+        this.putItemOnStage(item);
+      }
+      this.updateTotalOnStage();
     },
-    'layoutManager:streamDeleted': function(evt) {
-      if (this.onStageStreamId === evt.detail.streamId) {
-        // Stream on stage was deleted so putting another random one
-        this.putOnStage(this.getRandomStreamId());
+    'layoutManager:itemDeleted': function(evt) {
+      var item = evt.detail.item;
+      if (this.isOnStage(item)) {
+        this.removeItemFromStage(item).
+             updateTotalOnStage();
       }
     }
   },
@@ -151,66 +170,200 @@ Hangout.prototype = {
   },
 
   /*
-   * It puts a stream on stage. If third parties do not provide id as param or the stream
-   * is not available, the layout puts a random stream different than publisher on stage.
+   * It puts an item on stage:
    *
-   * @param id - Stream id
+   * 1º) Remove the current item on stage of the same type if it exists and then...
+   * 2º) Put the item received as param on the stage
+   *
+   * @param item - item object
    */
-  putOnStage: function(id) {
-    var stream = this.items[id];
-    if (!stream) {
-      id = this.getRandomStreamId();
-      stream = this.items[id];
+  putItemOnStage: function(item) {
+    if (!item) {
+      return this;
     }
-
-    this.removeCurrentStreamFromStage().addStreamToStage(id, stream);
+    this.removeCurrentItemFromStage(this.getItemType(item)).
+         putStageId(item);
+    item.classList.add('on-stage');
+    return this;
   },
 
   /*
-   * It returns a random stream id (publisher stream is not included)
+   * It returns the id of item received as param
+   *
+   * @param item - item object
    */
-  getRandomStreamId() {
-    return Object.keys(this.items).find(function(id) {
+  getItemId: function(item) {
+    return item.dataset.id;
+  },
+
+  /*
+   * It returns a random item (publisher stream is not included)
+   */
+  getRandomItem() {
+    var id = Object.keys(this.items).find(function(id) {
       return id !== 'publisher';
     });
+
+    return this.items[id];
   },
 
   /*
-   * It adds a stream to stage
+   * Type of items on stage
+   */
+  stageTypes: ['camera', 'screen'],
+
+  /*
+   * It returns the type of item which is used to index internally
    *
-   * @param id - Stream id
-   * @param stream - Stream object
+   * @param item - item object
    */
-  addStreamToStage(id, stream) {
-    this.onStageStreamId = id;
-    stream.classList.add('on-stage');
-    return this;
+  getItemType: function(item) {
+    return item.dataset.streamType === 'camera' ? 'camera' : 'screen';
   },
 
   /*
-   * It removes the current stream on stage
+   * It returns the data attribute where the id will be stored depending on type
+   *
+   * @param type - camera or screen
    */
-  removeCurrentStreamFromStage() {
-    var previousOnStageStream = this.items[this.onStageStreamId];
-    if (previousOnStageStream) {
-      this.onStageStreamId = null;
-      previousOnStageStream.classList.remove('on-stage');
+  getAttributeName: function(type) {
+    return 'onStage' + type.charAt(0).toUpperCase() + type.slice(1);
+  },
+
+  /*
+   * It removes the current item on stage given a type if this exists
+   *
+   * @param type - type of item
+   */
+  removeCurrentItemFromStage: function(type) {
+    var item = this.items[this.stageIds[type]];
+    return this.removeItemFromStage(item);
+  },
+
+  /*
+   * It removes the current item on stage given a type if this exists
+   *
+   * @param item - item object
+   */
+  removeItemFromStage: function(item) {
+    if (item) {
+      this.removeStageId(item);
+      item.classList.remove('on-stage');
     }
     return this;
   },
 
   /*
-   * It returns the current stream id on stage
+   * It returns true if the item is already on stage
+   *
+   * @param item - item object
    */
-  get onStageStreamId() {
-    return this.container.dataset.onStageStreamId;
+  isOnStage: function(item) {
+    return item.classList.contains('on-stage');
   },
 
   /*
-   * It holds the current stream id on stage
+   * This method checks the latest status of the stage in order to be synchronized with current
+   * items available in the layout.
+   *
+   * * @param reset - all previous status will be deleted if this flag is true
    */
-  set onStageStreamId(id) {
-    this.container.dataset.onStageStreamId = id;
+  sanitize: function(reset) {
+    var sanitizedStageIds = {};
+    Array.prototype.forEach.call(this.container.querySelectorAll('.on-stage'), function(elem) {
+      elem.classList.remove('on-stage');
+    });
+
+    if (!reset) {
+      // Checking items previously on stage if they still exist
+      var stageIds = this.stageIds;
+      Object.keys(stageIds).forEach(function(type) {
+        var id = stageIds[type];
+        var item = this.items[id];
+        if (item) {
+          item.classList.add('on-stage');
+          sanitizedStageIds[type] = id;
+        }
+      }, this);
+    }
+
+    this.stageIds = sanitizedStageIds;
+    return this;
+  },
+
+  /*
+   * It returns all ids of items on stage
+   */
+  get stageIds() {
+    var ids = {};
+
+    this.stageTypes.forEach(function(type) {
+      var id = this.container.dataset[this.getAttributeName(type)];
+      id && (ids[type] = id);
+    }, this);
+
+    return ids;
+  },
+
+  /*
+   * Store all ids of items on stage
+   */
+  set stageIds(aIds) {
+    aIds = aIds || {};
+
+    this.stageTypes.forEach(function(type) {
+      if (aIds[type]) {
+        this.container.dataset[this.getAttributeName(type)] = aIds[type];
+      } else {
+        delete this.container.dataset[this.getAttributeName(type)];
+      }
+    }, this);
+  },
+
+  /*
+   * It saves an item id on stage
+   *
+   * @param item - item object
+   */
+  putStageId: function(item) {
+    var ids = this.stageIds;
+    ids[this.getItemType(item)] = this.getItemId(item);
+    this.stageIds = ids;
+    return this;
+  },
+
+  /*
+   * It removes an item id on stage
+   *
+   * @param item - item object
+   */
+  removeStageId: function(item) {
+    var ids = this.stageIds;
+    delete ids[this.getItemType(item)];
+    this.stageIds = ids;
+    return this;
+  },
+
+  /*
+   * It updates the flag that contains the total number of items on stage in order to update the UI
+   */
+  updateTotalOnStage: function() {
+    this.container.dataset.totalOnStage = this.totalOnStage;
+    return this.rearrange();
+  },
+
+  /*
+   * It returns the total number of items rendered on the stage
+   */
+  get totalOnStage() {
+    return Object.keys(this.stageIds).length;
+  },
+
+  /*
+   * It returns the total number of items rendered on the strip
+   */
+  get totalOnStrip() {
+    return this.total - this.totalOnStage;
   },
 
   destroy: function() {
@@ -230,7 +383,7 @@ HangoutHorizontal.prototype = {
 
   get features() {
     return {
-      width: ((100 / (this.total - 1)) - this._PADDING / 2) + '%',
+      width: ((100 / this.totalOnStrip) - this._PADDING / 2) + '%',
       height: '100%'
     };
   }
@@ -246,7 +399,7 @@ HangoutVertical.prototype = {
   get features() {
     return {
       width: '100%',
-      height: ((100 / (this.total - 1)) - this._PADDING / 2) + '%'
+      height: ((100 / this.totalOnStrip) - this._PADDING / 2) + '%'
     };
   }
 };

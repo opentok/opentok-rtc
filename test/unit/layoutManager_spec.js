@@ -12,11 +12,14 @@ describe('LayoutManager', function() {
     expect(getContainer().dataset.currentLayoutType).to.be.equal(type);
   }
 
+  var desktop = document.createElement('li');
+  desktop.dataset.streamType = 'desktop';
+
   before(function() {
     window.document.body.innerHTML = window.__html__['test/unit/layoutManager_spec.html'];
     sinon.stub(LayoutView, 'init');
-    sinon.stub(LayoutView, 'append', function() {
-      return document.createElement('li');
+    sinon.stub(LayoutView, 'append', function(id) {
+      return id === 'desktop' ? desktop : document.createElement('li');
     });
     sinon.stub(LayoutView, 'remove');
     sinon.stub(ItemsHandler, 'init');
@@ -58,9 +61,20 @@ describe('LayoutManager', function() {
       LayoutManager.append('3');
       checkLayout('grid');
     });
+
+    it('should set the hangout horizontal layout while sharing the screen', function() {
+      LayoutManager.append('desktop');
+      checkLayout('hangout_horizontal');
+    });
   });
 
   describe('#remove', function() {
+    it('should keep hangout horizontal layout with three remaining streams after leaving of ' +
+       'sharing the screen', function() {
+      LayoutManager.remove('desktop');
+      checkLayout('hangout_horizontal');
+    });
+
     it('should set the float layout with two remaining streams after removing one', function() {
       LayoutManager.remove('3');
       checkLayout('float');
@@ -72,7 +86,7 @@ describe('LayoutManager', function() {
     });
 
     it('should keep the float layout with no streams', function() {
-      LayoutManager.append('1');
+      LayoutManager.remove('1');
       checkLayout('float');
     });
   });

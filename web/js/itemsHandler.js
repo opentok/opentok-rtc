@@ -48,8 +48,8 @@
           var target = evt.target;
 
           if (target.classList.contains('dblclick_area')) {
-            Utils.sendEvent('layoutView:streamSelected', {
-              streamId: target.dataset.id
+            Utils.sendEvent('layoutView:itemSelected', {
+              item: this.items[target.dataset.id]
             });
           }
           break;
