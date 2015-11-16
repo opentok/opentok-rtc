@@ -12,7 +12,9 @@ basePath: /
 produces:
   - application/json
 x-implementation-module: serverMethods.js
-x-implementation-middleware: configReady,
+x-implementation-middleware:
+  - configReady
+  - iframingOptions
 paths:
   /room/{roomName}:
     get:

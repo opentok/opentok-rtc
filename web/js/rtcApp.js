@@ -54,15 +54,25 @@
 
 
 this.addEventListener('load', function startApp() {
-  // Check that everything was loaded correctly, or just use LazyLoader here...
-  LazyLoader.load([
-    '/js/libs/browser_utils.js',
-    '/shared/js/utils.js',
-    '/js/helpers/requests.js',
-    '/js/roomController.js',
-    '/js/landingController.js'
-  ]).then(function() {
-    RTCApp.init();
-  });
+  // Note that since the server forbids loading the content on an iframe this should not execute.
+  // But it doesn't hurt either
+  if (window.top !== window.self) {
+    // If we're being loaded inside an iframe just hijack the top level window and go back to
+    // the index page.
+    window.top.document.location = '/index.html';
+  } else {
+    // And setting this on an else because the re-location might fail in some cases
+    document.body.classList.add('allowed');
+    // Check that everything was loaded correctly, or just use LazyLoader here...
+    LazyLoader.load([
+      '/js/libs/browser_utils.js',
+      '/shared/js/utils.js',
+      '/js/helpers/requests.js',
+      '/js/roomController.js',
+      '/js/landingController.js'
+    ]).then(function() {
+      RTCApp.init();
+    });
+  }
 
 });

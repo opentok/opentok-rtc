@@ -56,6 +56,15 @@ function ServerMethods(aLogLevel, aModules) {
   // Chrome AddOn extension Id for sharing screen
   const RED_CHROME_EXTENSION_ID = 'chrome_extension_id';
 
+  // Do we want to allow being used inside an iframe?
+  // This can be:
+  //  'always': Allow iframing unconditionally (note that rtcApp.js should also be changed
+  //        to reflect this, this option only changes what the server allows)
+  //  'never': Set X-Frame-Options to 'DENY' (so deny from everyone)
+  //  'sameorigin': Set X-Frame-Options to 'SAMEORIGIN'
+  // We don't allow restricting it to some URIs because it doesn't work on Chrome
+  const RED_ALLOW_IFRAMING = 'allow_iframing';
+
   const REDIS_KEYS = [
     { key: RED_TB_API_KEY, defaultValue: null },
     { key: RED_TB_API_SECRET, defaultValue: null },
@@ -65,6 +74,7 @@ function ServerMethods(aLogLevel, aModules) {
     { key: RED_FB_AUTH_SECRET, defaultValue: null },
     { key: RED_TB_MAX_SESSION_AGE, defaultValue: 2 },
     { key: RED_EMPTY_ROOM_MAX_LIFETIME, defaultValue: 3 },
+    { key: RED_ALLOW_IFRAMING, defaultValue: 'never' },
     { key: RED_CHROME_EXTENSION_ID, defaultValue: 'undefined' }
   ];
 
@@ -173,6 +183,8 @@ function ServerMethods(aLogLevel, aModules) {
           parseFloat(redisConfig[RED_TB_ARCHIVE_POLLING_TIMEOUT_MULTIPLIER]);
         var otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret);
 
+        var allowIframing = redisConfig[RED_ALLOW_IFRAMING];
+
         // This isn't strictly necessary... but since we're using promises all over the place, it
         // makes sense. The _P are just a promisified version of the methods. We could have
         // overwritten the original methods but this way we make it explicit. That's also why we're
@@ -207,17 +219,32 @@ function ServerMethods(aLogLevel, aModules) {
               archivePollingTOMultiplier: archivePollingTOMultiplier,
               maxSessionAgeMs: maxSessionAge * 24 * 60 * 60 * 1000,
               fbArchives: firebaseArchives,
+              allowIframing: allowIframing,
               chromeExtId: chromeExtId
             };
           });
       });
   }
 
-  function waitForTB(aReq, aRes, aNext) {
+  function configReady(aReq, aRes, aNext) {
     tbConfigPromise.then(tbConfig => {
       aReq.tbConfig = tbConfig;
       aNext();
     });
+  }
+
+  function iframingOptions(aReq, aRes, aNext) {
+    // By default, and the fallback also in case of misconfiguration is 'never'
+    switch (aReq.tbConfig.allowIframing) {
+      case 'always': // Nothing to do
+        break;
+      case 'sameorigin':
+        aRes.set('X-Frame-Options', 'SAMEORIGIN');
+        break;
+      default:
+        aRes.set('X-Frame-Options', 'DENY');
+    }
+    aNext();
   }
 
   // Update archive callback. TO-DO: Is there any way of restricting calls to this?
@@ -242,6 +269,11 @@ function ServerMethods(aLogLevel, aModules) {
     logger.log('getRoom serving ' + aReq.path, 'roomName:', aReq.params.roomName,
                'userName:', aReq.query && aReq.query.userName);
     var userName = aReq.query && aReq.query.userName;
+    // We really don't want to cache this
+    aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    aRes.set('Pragma', 'no-cache');
+    aRes.set('Expires', 0);
+
     aRes.
       render('room.ejs',
              {
@@ -509,7 +541,8 @@ function ServerMethods(aLogLevel, aModules) {
 
   return {
     logger: logger,
-    configReady: waitForTB,
+    configReady: configReady,
+    iframingOptions: iframingOptions,
     loadConfig: loadConfig,
     getRoom: getRoom,
     getRoomInfo: getRoomInfo,
