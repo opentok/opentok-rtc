@@ -47,8 +47,7 @@
         case 'dblclick':
           var target = evt.target;
 
-          if (target.classList.contains('dblclick_area') &&
-              target.dataset.id !== 'publisher') {
+          if (target.classList.contains('dblclick_area')) {
             Utils.sendEvent('layoutView:streamSelected', {
               streamId: target.dataset.id
             });
