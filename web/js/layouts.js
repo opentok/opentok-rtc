@@ -171,7 +171,7 @@ Hangout.prototype = {
    */
   getRandomStreamId() {
     return Object.keys(this.items).find(function(id) {
-      return id !== 'publisher'
+      return id !== 'publisher';
     });
   },
 
