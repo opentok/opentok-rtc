@@ -28,6 +28,8 @@ describe('RecordingsView', function() {
     }
   };
 
+  var now = Date.now();
+
   var archives = {
     one: {
       id: '1',
@@ -35,7 +37,7 @@ describe('RecordingsView', function() {
       recordingUser: 'aUser1',
       status: 'stopped',
       duration: 1,
-      createdAt: Date.now()
+      createdAt: now
     },
     two: {
       id: '2',
@@ -43,7 +45,7 @@ describe('RecordingsView', function() {
       recordingUser: 'aUser2',
       status: 'started',
       duration: 50,
-      createdAt: Date.now()
+      createdAt: now - 1000
     },
     three: {
       id: '3',
@@ -51,7 +53,7 @@ describe('RecordingsView', function() {
       recordingUser: 'aUser3',
       status: 'available',
       duration: 459,
-      createdAt: Date.now()
+      createdAt: now - 2000
     }
   };
 
