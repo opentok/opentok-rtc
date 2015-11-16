@@ -42,7 +42,13 @@ module.exports = function App(aStaticPath, aApiDef, aLogLevel, aModules) {
 
   // Add the middleware, if needed
   var middleware = api['x-implementation-middleware'];
-  serverImpl[middleware] && app.use(serverImpl[middleware]);
+  if (!Array.isArray(middleware)) {
+    middleware = [middleware];
+  }
+  middleware.forEach(aMiddleware => {
+    logger.log('Using middleware: ', aMiddleware);
+    serverImpl[aMiddleware] && app.use(serverImpl[aMiddleware]);
+  });
 
   // Does the implementation require configuration?
   var configureApp = serverImpl[api['x-implementation-configuration']];

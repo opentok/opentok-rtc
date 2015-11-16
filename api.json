@@ -14,7 +14,7 @@
         "application/json"
     ],
     "x-implementation-module": "serverMethods.js",
-    "x-implementation-middleware": "configReady",
+    "x-implementation-middleware": ["configReady", "iframingOptions"],
     "x-implementation-configuration": "loadConfig",
     "paths": {
         "/room/{roomName}": {
