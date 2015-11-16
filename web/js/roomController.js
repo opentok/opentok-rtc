@@ -6,7 +6,13 @@
 
   var numUsrsInRoom = 0;
 
+  var publisherReady = Promise.resolve();
+
   var MAIN_PAGE = '/index.html';
+  var STATUS_KEY= 'room';
+  var _sharedStatus = {
+    roomMuted: false
+  };
 
   var userName = null,
       roomName = null;
@@ -115,6 +121,33 @@
       });
   };
 
+  var roomStatusHandlers = {
+    'updatedRemotely': function(evt) {
+      publisherReady.then(function() {
+        _sharedStatus = RoomStatus.get(STATUS_KEY);
+        var roomMuted = _sharedStatus.roomMuted;
+        setAudioStatus(roomMuted);
+        Utils.sendEvent('roomController:roomMuted', { status: roomMuted });
+      });
+    }
+  };
+
+  var changeSubscriberStatus = function(name, status) {
+    Object.keys(subscriberStreams).forEach(function(aStreamId) {
+      if (subscriberStreams[aStreamId] &&
+          subscriberStreams[aStreamId].stream.videoType === 'camera') {
+        viewEventHandlers.buttonClick({
+          detail: {
+            streamId: aStreamId,
+            name: name,
+            disableAll: true,
+            status: status
+          }
+        });
+      }
+    });
+  };
+
   var viewEventHandlers = {
     'endCall': function(evt) {
       var url = window.location.origin + MAIN_PAGE;
@@ -130,7 +163,7 @@
       var streamId = evt.detail.streamId;
       var name = evt.detail.name;
       var disableAll = !!evt.detail.disableAll;
-      var status = evt.detail.status;
+      var switchStatus = evt.detail.status;
       var buttonInfo = null;
       var args = [];
       var newStatus;
@@ -163,29 +196,34 @@
 
       args.push(newStatus);
 
-      if (!disableAll || disableAll && status !== newStatus) {
+      if (!disableAll || disableAll && switchStatus !== newStatus) {
         var obj = exports[buttonInfo.context];
         obj[buttonInfo.action].apply(obj, args);
-        !disableAll && Utils.sendEvent('roomController:userChangeStatus',
-          { status: newStatus, name: name });
+        if (!disableAll) {
+          Utils.sendEvent('roomController:userChangeStatus', { status: newStatus, name: name });
+          _sharedStatus.roomMuted = switchStatus;
+        }
       }
     },
     'videoSwitch': function(evt) {
-      var videosDisabled = evt.detail.status;
-      var name = 'video';
-      Object.keys(subscriberStreams).forEach(function(aStreamId) {
-        if (subscriberStreams[aStreamId].stream.videoType === 'camera') {
-          viewEventHandlers.buttonClick({
-            detail: {
-              streamId: aStreamId,
-              name: 'video',
-              disableAll: true,
-              status: videosDisabled
-            }
-          });
-        }
-      });
+      changeSubscriberStatus('video', evt.detail.status);
+    },
+    'muteAllSwitch': function(evt) {
+      var roomMuted = evt.detail.status;
+      _sharedStatus.roomMuted = roomMuted;
+      setAudioStatus(roomMuted);
     }
+  };
+
+  var setAudioStatus = function(switchStatus) {
+    OTHelper.isPublisherReady && viewEventHandlers.buttonClick({
+      detail: {
+        streamId: 'publisher',
+        name: 'audio',
+        disableAll: true,
+        status: switchStatus
+      }
+    });
   };
 
   var sendStatus = function(evt, control, enabled) {
@@ -239,6 +277,7 @@
       // see StreamEvent.
       var stream = evt.stream;
       var streamVideoType = stream.videoType;
+
       if (!(streamVideoType === 'camera' || streamVideoType === 'screen')) {
         debug.error('Stream not contemplated: ' + stream.videoType);
         return;
@@ -252,6 +291,8 @@
 
       var subOptions = subscriberOptions[streamVideoType];
 
+      _sharedStatus = RoomStatus.get(STATUS_KEY);
+
       var subsDiv = RoomView.createStreamView(streamId, {
         name: stream.name,
         type: stream.videoType,
@@ -259,20 +300,20 @@
       });
 
       OTHelper.subscribe(evt.stream, subsDiv, subOptions).
-      then(function(subscriber) {
-        if (streamVideoType === 'screen') {
-          return;
-        }
+        then(function(subscriber) {
+          if (streamVideoType === 'screen') {
+            return;
+          }
 
-        numUsrsInRoom++;
-        debug.log('New subscriber, total:', numUsrsInRoom);
-        RoomView.participantsNumber = numUsrsInRoom;
-        Object.keys(_subscriberHandlers).forEach(function(name) {
-          subscriber.on(name, _subscriberHandlers[name]);
+          numUsrsInRoom++;
+          debug.log('New subscriber, total:', numUsrsInRoom);
+          RoomView.participantsNumber = numUsrsInRoom;
+          Object.keys(_subscriberHandlers).forEach(function(name) {
+            subscriber.on(name, _subscriberHandlers[name]);
+          });
+        }, function(error) {
+          debug.error('Error susbscribing new participant. ' + error.message);
         });
-      }, function(error) {
-        debug.error('Error susbscribing new participant. ' + error.message);
-      });
     },
     'streamDestroyed': function(evt) {
       // A stream from another client has stopped publishing to the session.
@@ -303,7 +344,6 @@
       if (OTHelper.publisherId !== evt.stream.id) {
         return;
       }
-
       if (evt.changedProperty === 'hasVideo') {
         evt.reason = 'publishVideo';
         sendStatus(evt, 'video', evt.newValue);
@@ -442,6 +482,8 @@
     then(getRoomInfo).
     then(function(aParams) {
       Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
+      Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
+
       RoomView.init();
       roomName = aParams.roomName;
       userName = aParams.username ?
@@ -459,7 +501,7 @@
       // RoomView.roomName = aParams.roomName;
       RoomView.participantsNumber = 0;
 
-      _allHandlers = RoomStatus.init(userName, _allHandlers);
+      _allHandlers = RoomStatus.init(userName, _allHandlers, { room: _sharedStatus });
 
       ChatController.
         init(aParams.roomName, userName, _allHandlers).
@@ -471,8 +513,22 @@
             type: 'publisher',
             controlElems: publisherButtons
           });
+          // If we have all audios disabled, we need to set the button status
+          // and don't publish audio
+          if (_sharedStatus.roomMuted) {
+            // Set visual status of button
+            sendStatus({
+              stream: {
+                streamId: 'Publisher'
+              },
+              reason: 'publishAudio'
+            }, 'audio', false);
+            // Don't publish audio
+            publisherOptions.publishAudio = false;
+          }
           publisherOptions.name = userName;
-          return OTHelper.publish(publisherElement, publisherOptions);
+          publisherReady = OTHelper.publish(publisherElement, publisherOptions);
+          return publisherReady;
         }).
         then(function() {
           RoomView.participantsNumber = ++numUsrsInRoom;

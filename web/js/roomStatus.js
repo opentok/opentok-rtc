@@ -107,9 +107,9 @@
     return aGlobalHandlers;
   }
 
-  function init(aUsrId, aGlobalHandlers) {
+  function init(aUsrId, aGlobalHandlers, aEntries) {
     _usrId = aUsrId;
-    _entries = {};
+    _entries = aEntries || {};
     return addHandlers(aGlobalHandlers);
   };
 

@@ -37,6 +37,7 @@
 
   var _session;
   var _publisher;
+  var _publisherInitialized = false;
   var _screenShare;
 
   var _screenShareCapability = null;
@@ -227,6 +228,7 @@
             if (error) {
                 reject(error);
               } else {
+                _publisherInitialized = true;
                 resolve();
               }
           });
@@ -340,6 +342,9 @@
   var OTHelper = {
     connectToSession: connectToSession,
     publish: publish,
+    get isPublisherReady() {
+      return _publisherInitialized;
+    },
     sendSignal: sendSignal,
     disconnectFromSession: disconnectFromSession,
     removeListener: removeListener,

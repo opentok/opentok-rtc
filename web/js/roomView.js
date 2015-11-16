@@ -15,9 +15,6 @@
   var START_SHARING = 'Share your screen';
   var STOP_SHARING = 'Stop sharing your screen';
 
-  var _videosDisabled = false;
-  var _audiosDisabled = false;
-
   var NOT_SHARING = {
     detail: {
       isSharing: false
@@ -31,9 +28,15 @@
 
   var roomControllerEvents = {
     'userChangeStatus': function(evt) {
+      // If user changed the status we need to reset the switch
       if (evt.detail.name === 'video') {
-        toggleVideoSwitch(false, false);
+        toggleSwitch(false, videoSwitch, 'roomView:videoSwitch', false);
+      } else if (evt.detail.name === 'audio') {
+        toggleSwitch(false, audioSwitch, 'roomView:muteAllSwitch', false);
       }
+    },
+    'roomMuted': function(evt) {
+      toggleSwitch(false, audioSwitch, 'roomView:muteAllSwitch', evt.detail.status);
     }
   };
 
@@ -62,30 +65,19 @@
     LayoutManager.remove(id);
   }
 
-  function toggleAllAudioSwitch() {
-    _audiosDisabled = !_audiosDisabled;
-
-    if (_audiosDisabled) {
-      audioSwitch.classList.add('actived');
-    } else {
-      audioSwitch.classList.remove('actived');
-    }
-  }
-
-  function toggleVideoSwitch(bubbleUp, status) {
+  function toggleSwitch(bubbleUp, domElem, evtName, status) {
+    var newStatus;
     if (status === undefined) {
-      _videosDisabled = !_videosDisabled;
+      newStatus = domElem.classList.toggle('activated');
     } else {
-      _videosDisabled = status;
+      newStatus = status;
+      if (status) {
+        domElem.classList.add('activated');
+      } else {
+        domElem.classList.remove('activated');
+      }
     }
-
-    if (_videosDisabled) {
-      videoSwitch.classList.add('actived');
-    } else {
-      videoSwitch.classList.remove('actived');
-    }
-
-    bubbleUp && Utils.sendEvent('roomView:videoSwitch', { status: _videosDisabled });
+    bubbleUp && Utils.sendEvent(evtName, { status: newStatus });
   }
 
   function toggleChatNotification() {
@@ -192,10 +184,10 @@
           Utils.sendEvent('roomView:shareScreen');
           break;
         case 'videoSwitch':
-          toggleVideoSwitch(true);
+          toggleSwitch(true, videoSwitch, 'roomView:videoSwitch');
           break;
         case 'audioSwitch':
-          toggleAllAudioSwitch();
+          toggleSwitch(true, audioSwitch, 'roomView:muteAllSwitch');
       }
     });
 
