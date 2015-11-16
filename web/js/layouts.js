@@ -125,7 +125,7 @@ F2FVertical.prototype = {
 
 var Hangout = function(container, items, streamSelectedId, type) {
   LayoutBase.call(this, container, items, type);
-  this.events.forEach(function(type) {
+  Object.keys(this.handlers).forEach(function(type) {
     window.addEventListener(type, this);
   }, this);
   this.putOnStage(streamSelectedId || this.onStageStreamId);
@@ -134,21 +134,20 @@ var Hangout = function(container, items, streamSelectedId, type) {
 Hangout.prototype = {
   __proto__: LayoutBase.prototype,
 
-  events: ['layoutView:streamSelected', 'layoutManager:streamDeleted'],
+  handlers: {
+    'layoutView:streamSelected': function(evt) {
+      this.putOnStage(evt.detail.streamId);
+    },
+    'layoutManager:streamDeleted': function(evt) {
+      if (this.onStageStreamId === evt.detail.streamId) {
+        // Stream on stage was deleted so putting another random one
+        this.putOnStage(this.getRandomStreamId());
+      }
+    }
+  },
 
   handleEvent: function(evt) {
-    switch (evt.type) {
-      case 'layoutView:streamSelected':
-        this.putOnStage(evt.detail.streamId);
-        break;
-
-      case 'layoutManager:streamDeleted':
-        if (this.onStageStreamId === evt.detail.streamId) {
-          // Stream on stage was deleted so putting another random one
-          this.putOnStage(this.getRandomStreamId());
-        }
-        break;
-    }
+    this.handlers[evt.type].call(this, evt);
   },
 
   /*
@@ -215,7 +214,7 @@ Hangout.prototype = {
   },
 
   destroy: function() {
-    this.events.forEach(function(name) {
+    Object.keys(this.handlers).forEach(function(name) {
       window.removeEventListener(name, this);
     }, this);
     LayoutBase.prototype.destroy.apply(this, arguments);

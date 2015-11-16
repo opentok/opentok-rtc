@@ -44,6 +44,15 @@ describe('ItemsHandler', function() {
     control.click();
   }
 
+  function dblclick(elem) {
+    var event = new MouseEvent('dblclick', {
+      'view': window,
+      'bubbles': true,
+      'cancelable': true
+    });
+    elem.dispatchEvent(event);
+  }
+
   describe('#init', function() {
     it('should export a init function', function() {
       expect(ItemsHandler.init).to.exist;
@@ -74,6 +83,18 @@ describe('ItemsHandler', function() {
     it('should send the correct event when audio is selected in subscribers',
       sinon.test(function(done) {
       clickButton(this, '#subscriber i[data-icon="audio"]', 'subscriber', 'audio', done);
+    }));
+  });
+
+  describe('#event handlers: dblclick', function() {
+    it('should send the correct event when user clicks twice', sinon.test(function(done) {
+      this.stub(window, 'CustomEvent', function(name, data) {
+        expect(name).to.equal('layoutView:streamSelected');
+        expect(data.detail.streamId).to.equal('subscriber');
+        done();
+      });
+
+      dblclick(getContainer().querySelector('#subscriber .dblclick_area'));
     }));
   });
 
