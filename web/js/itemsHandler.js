@@ -2,7 +2,9 @@
   'use strict';
 
   var Handler = function(container, items) {
-    container.addEventListener('click', this);
+    ['click', 'dblclick'].forEach(function(name) {
+      container.addEventListener(name, this);
+    }, this);
     var events = ['roomController:video', 'roomController:audio'];
     events.forEach(function(name) {
       window.addEventListener(name, this);
@@ -40,6 +42,17 @@
 
           var action = evt.type.replace('roomController:', '');
           HTMLElems.setEnabled(item.querySelector('.' + action + '-action'), detail.enabled);
+          break;
+
+        case 'dblclick':
+          var target = evt.target;
+
+          if (target.classList.contains('dblclick_area') &&
+              target.dataset.id !== 'publisher') {
+            Utils.sendEvent('layoutView:streamSelected', {
+              streamId: target.dataset.id
+            });
+          }
           break;
       }
     }

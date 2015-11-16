@@ -123,12 +123,111 @@ F2FVertical.prototype = {
   }
 };
 
-var HangoutHorizontal = function(container, items) {
-  LayoutBase.call(this, container, items, 'hangout_horizontal');
+var Hangout = function(container, items, streamSelectedId, type) {
+  LayoutBase.call(this, container, items, type);
+  this.events.forEach(function(type) {
+    window.addEventListener(type, this);
+  }, this);
+  this.putOnStage(streamSelectedId || this.onStageStreamId);
+};
+
+Hangout.prototype = {
+  __proto__: LayoutBase.prototype,
+
+  events: ['layoutView:streamSelected', 'layoutManager:streamDeleted'],
+
+  handleEvent: function(evt) {
+    switch (evt.type) {
+      case 'layoutView:streamSelected':
+        this.putOnStage(evt.detail.streamId);
+        break;
+
+      case 'layoutManager:streamDeleted':
+        if (this.onStageStreamId === evt.detail.streamId) {
+          // Stream on stage was deleted so putting another random one
+          this.putOnStage(this.getRandomStreamId());
+        }
+        break;
+    }
+  },
+
+  /*
+   * It puts a stream on stage. If third parties do not provide id as param or the stream
+   * is not available, the layout puts a random stream different than publisher on stage.
+   *
+   * @param id - Stream id
+   */
+  putOnStage: function(id) {
+    var stream = this.items[id];
+    if (!stream) {
+      id = this.getRandomStreamId();
+      stream = this.items[id];
+    }
+
+    this.removeCurrentStreamFromStage().addStreamToStage(id, stream);
+  },
+
+  /*
+   * It returns a random stream id (publisher stream is not included)
+   */
+  getRandomStreamId() {
+    return Object.keys(this.items).find(function(id) {
+      return id !== 'publisher'
+    });
+  },
+
+  /*
+   * It adds a stream to stage
+   *
+   * @param id - Stream id
+   * @param stream - Stream object
+   */
+  addStreamToStage(id, stream) {
+    this.onStageStreamId = id;
+    stream.classList.add('on-stage');
+    return this;
+  },
+
+  /*
+   * It removes the current stream on stage
+   */
+  removeCurrentStreamFromStage() {
+    var previousOnStageStream = this.items[this.onStageStreamId];
+    if (previousOnStageStream) {
+      this.onStageStreamId = null;
+      previousOnStageStream.classList.remove('on-stage');
+    }
+    return this;
+  },
+
+  /*
+   * It returns the current stream id on stage
+   */
+  get onStageStreamId() {
+    return this.container.dataset.onStageStreamId;
+  },
+
+  /*
+   * It holds the current stream id on stage
+   */
+  set onStageStreamId(id) {
+    this.container.dataset.onStageStreamId = id;
+  },
+
+  destroy: function() {
+    this.events.forEach(function(name) {
+      window.removeEventListener(name, this);
+    }, this);
+    LayoutBase.prototype.destroy.apply(this, arguments);
+  }
+};
+
+var HangoutHorizontal = function(container, items, streamSelectedId) {
+  Hangout.call(this, container, items, streamSelectedId, 'hangout_horizontal');
 };
 
 HangoutHorizontal.prototype = {
-  __proto__: LayoutBase.prototype,
+  __proto__: Hangout.prototype,
 
   get features() {
     return {
@@ -138,12 +237,12 @@ HangoutHorizontal.prototype = {
   }
 };
 
-var HangoutVertical = function(container, items) {
-  LayoutBase.call(this, container, items, 'hangout_vertical');
+var HangoutVertical = function(container, items, streamSelectedId) {
+  Hangout.call(this, container, items, streamSelectedId, 'hangout_vertical');
 };
 
 HangoutVertical.prototype = {
-  __proto__: LayoutBase.prototype,
+  __proto__: Hangout.prototype,
 
   get features() {
     return {
