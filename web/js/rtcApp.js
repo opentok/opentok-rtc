@@ -62,8 +62,7 @@ this.addEventListener('load', function startApp() {
     window.top.document.location = '/index.html';
   } else {
     // And setting this on an else because the re-location might fail in some cases
-    var antiIframe = document.getElementById('antiIframe');
-    antiIframe && antiIframe.parentNode.removeChild(antiIframe);
+    document.body.classList.add('allowed');
     // Check that everything was loaded correctly, or just use LazyLoader here...
     LazyLoader.load([
       '/js/libs/browser_utils.js',
