@@ -359,6 +359,10 @@
     screenShareErrorCodes: PUB_SCREEN_ERROR_CODES,
     get publisherId() {
       return _publisher.stream.id;
+    },
+    isMyself: function(connection) {
+      return _publisher &&
+             _publisher.session.connection.connectionId === connection.connectionId;
     }
   };
 

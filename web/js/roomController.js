@@ -127,7 +127,7 @@
         _sharedStatus = RoomStatus.get(STATUS_KEY);
         var roomMuted = _sharedStatus.roomMuted;
         setAudioStatus(roomMuted);
-        Utils.sendEvent('roomController:roomMuted', { status: roomMuted });
+        roomMuted && Utils.sendEvent('roomController:roomMuted', { isJoining: true });
       });
     }
   };
@@ -145,6 +145,13 @@
           }
         });
       }
+    });
+  };
+
+  function sendSignalMuteAllChange(status, onlyChangeSwitch) {
+    OTHelper.sendSignal({
+      type: 'muteAll',
+      data: JSON.stringify({ status: status, onlyChangeSwitch: onlyChangeSwitch })
     });
   };
 
@@ -201,7 +208,8 @@
         obj[buttonInfo.action].apply(obj, args);
         if (!disableAll) {
           Utils.sendEvent('roomController:userChangeStatus', { status: newStatus, name: name });
-          _sharedStatus.roomMuted = switchStatus;
+          sendSignalMuteAllChange(false, true);
+          _sharedStatus.roomMuted = false;
         }
       }
     },
@@ -212,6 +220,7 @@
       var roomMuted = evt.detail.status;
       _sharedStatus.roomMuted = roomMuted;
       setAudioStatus(roomMuted);
+      sendSignalMuteAllChange(roomMuted, false);
     }
   };
 
@@ -365,6 +374,30 @@
     },
     'signal:chat': function(evt) {
       RoomView.toggleChatNotification();
+    },
+    'signal:muteAll': function(evt) {
+      var statusData = JSON.parse(evt.data);
+      var muteAllSwitch = statusData.status;
+      var onlyChangeSwitch = statusData.onlyChangeSwitch;
+
+      var setNewAudioStatus = function(isMuted, onlySwitch) {
+        !onlySwitch && setAudioStatus(isMuted);
+        RoomView.setAudioSwitchRemotely(isMuted);
+      }.bind(undefined, muteAllSwitch, onlyChangeSwitch);
+
+      if (!OTHelper.isMyself(evt.from)) {
+        _sharedStatus.roomMuted = muteAllSwitch;
+        if (muteAllSwitch) {
+          setAudioStatus(muteAllSwitch);
+          Utils.sendEvent('roomController:roomMuted', { isJoining: false });
+        } else {
+          if (onlyChangeSwitch) {
+            setNewAudioStatus();
+          } else {
+            RoomView.showConfirmChangeMicStatus(muteAllSwitch).then(setNewAudioStatus);
+          }
+        }
+      }
     }
   };
 
@@ -525,7 +558,6 @@
             }, 'audio', false);
             // Don't publish audio
             publisherOptions.publishAudio = false;
-            Utils.sendEvent('roomController:joinRoomMuted');
           }
           publisherOptions.name = userName;
           publisherReady = OTHelper.publish(publisherElement, publisherOptions);
