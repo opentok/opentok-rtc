@@ -21,6 +21,12 @@
     'layout': function(evt) {
       userLayout = evt.detail.type;
       rearrange();
+    },
+    'streamSelected': function(evt) {
+      if (isGroup() && Object.getPrototypeOf(currentLayout) === Grid.prototype) {
+        userLayout = 'hangout_horizontal';
+        rearrange(evt.detail.streamId);
+      }
     }
   };
 
@@ -29,6 +35,7 @@
     LayoutView.init(container);
     ItemsHandler.init(container, items);
     Utils.addEventsHandlers('layoutMenuView:', handlers, global);
+    Utils.addEventsHandlers('layoutView:', handlers, global);
   }
 
   function append(id, options) {
@@ -47,6 +54,9 @@
     LayoutView.remove(item);
     delete items[id];
     rearrange();
+    Utils.sendEvent('layoutManager:streamDeleted', {
+      streamId: id
+    });
   }
 
   function getTotal() {
@@ -87,12 +97,12 @@
     });
   }
 
-  function rearrange() {
+  function rearrange(streamSelectedId) {
     var candidateLayout = calculateCandidateLayout();
 
     if (!currentLayout || Object.getPrototypeOf(currentLayout) !== candidateLayout.prototype) {
       currentLayout && currentLayout.destroy();
-      currentLayout = new candidateLayout(container, items);
+      currentLayout = new candidateLayout(container, items, streamSelectedId);
     }
 
     currentLayout.rearrange();

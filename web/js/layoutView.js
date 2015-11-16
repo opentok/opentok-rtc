@@ -24,14 +24,14 @@
       var controls = HTMLElems.createElementAt(item, 'div');
       controls.classList.add('controls');
       this.appendControlElems(id, type, controls, options.controlElems, 'i');
-      this.appendAdditionalUI(item, type, options.name);
+      this.appendAdditionalUI(id, item, type, options.name);
       // Streams go inside <span> because of OpenTok overrides <li> styles if this
       // one would be the container.
       HTMLElems.createElementAt(item, 'span').classList.add('opentok-stream-container');
       return item;
     },
 
-    appendAdditionalUI: function(item, type, name) {
+    appendAdditionalUI: function(id, item, type, name) {
       var userInfoElem = HTMLElems.createElementAt(item, 'div');
       userInfoElem.classList.add('user-info');
 
@@ -39,7 +39,13 @@
       nameElem.classList.add('name');
       nameElem.textContent = name;
 
-      type === 'publisher' && HTMLElems.createElementAt(item, 'i', {'data-icon': 'record'});
+      if (type === 'publisher') {
+        HTMLElems.createElementAt(item, 'i', {'data-icon': 'record'});
+      } else {
+        HTMLElems.createElementAt(item, 'div', {
+          'data-id': id
+        }).classList.add('dblclick_area');
+      }
     },
 
     appendControlElems: function(id, type, main, controlElems, itemControlType) {

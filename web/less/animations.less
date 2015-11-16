@@ -1,0 +1,42 @@
+@animationDurationTime: 1s;
+@animationDelayTime: 0s;
+@animationFillMode: forwards;
+
+@-webkit-keyframes fadeIn {
+  0% {opacity: 0;}
+  100% {opacity: 1;}
+}
+
+@-moz-keyframes fadeIn {
+  0% {opacity: 0;}
+  100% {opacity: 1;}
+}
+
+@-o-keyframes fadeIn {
+  0% {opacity: 0;}
+  100% {opacity: 1;}
+}
+
+@keyframes fadeIn {
+  0% {opacity: 0;}
+  100% {opacity: 1;}
+}
+
+.animation(@animationName; @animationDurationTime: 1s; @animationDelayTime: 0s; @animationFillMode: both) {
+  -webkit-animation-duration: @animationDurationTime;
+  -moz-animation-duration: @animationDurationTime;
+  -o-animation-duration: @animationDurationTime;
+  animation-duration: @animationDurationTime;
+  -webkit-animation-delay: @animationDelayTime;
+  -moz-animation-delay: @animationDelayTime;
+  -o-animation-delay: @animationDelayTime;
+  animation-delay: @animationDelayTime;
+  -webkit-animation-fill-mode: @animationFillMode;
+  -moz-animation-fill-mode: @animationFillMode;
+  -o-animation-fill-mode: @animationFillMode;
+  animation-fill-mode: @animationFillMode;
+  -webkit-animation-name: @animationName;
+  -moz-animation-name: @animationName;
+  -o-animation-name: @animationName;
+  animation-name: @animationName;
+}

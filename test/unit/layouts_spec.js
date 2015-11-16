@@ -249,60 +249,84 @@ describe('Layouts', function() {
 
   });
 
-  describe('HangoutHorizontal', function() {
+  describe('Hangouts', function() {
+    var items = {
+      'publisher': document.createElement('div'),
+      '7y4813y4134123': document.createElement('div'),
+      '2u3h423h4hj2h3': document.createElement('div'),
+      'jjfnj43nj34nj4': document.createElement('div'),
+      '234fjwndfjjejj': document.createElement('div')
+    };
 
-    describe('#constructor', function() {
-      it('should be initialized properly', function() {
-        var container = getContainer();
-        instance = new HangoutHorizontal(container, {});
-
-        expect(container.dataset.currentLayoutType).to.equal('hangout_horizontal');
-      });
+    it('should be initialized properly with random stream on stage', function() {
+      var container = getContainer();
+      expect(container.dataset.onStageStreamId).to.not.exist;
+      instance = new Hangout(container, items);
+      expect(items).to.include.keys(container.dataset.onStageStreamId);
+      expect(container.dataset.onStageStreamId).to.not.equal('publisher');
     });
 
-    describe('#features', function() {
-      it('should fit items to container width divided by total minus one on stage', function() {
-        instance = new HangoutHorizontal(getContainer(), getItems(5));
-        var features = instance.features;
-        expect(features.width).to.equal((25 - (instance._PADDING / 2)) + '%');
-        expect(features.height).to.equal('100%');
-      });
+    it('should be initialized properly with selected stream', function() {
+      var container = getContainer();
+      var expectedId = 'jjfnj43nj34nj4';
+      instance = new Hangout(container, items, expectedId);
+      expect(container.dataset.onStageStreamId).to.equal(expectedId);
     });
 
-    describe('#rearrange', sinon.test(function() {
-      it('should visit all items and set dimensions', function() {
-        visitItems(HangoutHorizontal);
-      });
-    }));
+    describe('HangoutHorizontal', function() {
 
+      describe('#constructor', function() {
+        it('should be initialized properly', function() {
+          var container = getContainer();
+          instance = new HangoutHorizontal(container, items);
+
+          expect(container.dataset.currentLayoutType).to.equal('hangout_horizontal');
+        });
+      });
+
+      describe('#features', function() {
+        it('should fit items to container width divided by total minus one on stage', function() {
+          instance = new HangoutHorizontal(getContainer(), items);
+          var features = instance.features;
+          expect(features.width).to.equal((25 - (instance._PADDING / 2)) + '%');
+          expect(features.height).to.equal('100%');
+        });
+      });
+
+      describe('#rearrange', sinon.test(function() {
+        it('should visit all items and set dimensions', function() {
+          visitItems(HangoutHorizontal);
+        });
+      }));
+
+    });
+
+    describe('HangoutVertical', function() {
+
+      describe('#constructor', function() {
+        it('should be initialized properly', function() {
+          var container = getContainer();
+          instance = new HangoutVertical(container, items);
+
+          expect(container.dataset.currentLayoutType).to.equal('hangout_vertical');
+        });
+      });
+
+      describe('#features', function() {
+        it('should fit items to container height divided by total minus one on stage', function() {
+          instance = new HangoutVertical(getContainer(), items);
+          var features = instance.features;
+          expect(features.width).to.equal('100%');
+          expect(features.height).to.equal((25 - (instance._PADDING / 2)) + '%');
+        });
+      });
+
+      describe('#rearrange', sinon.test(function() {
+        it('should visit all items and set dimensions', function() {
+          visitItems(HangoutVertical);
+        });
+      }));
+
+    });
   });
-
-  describe('HangoutVertical', function() {
-
-    describe('#constructor', function() {
-      it('should be initialized properly', function() {
-        var container = getContainer();
-        instance = new HangoutVertical(container, {});
-
-        expect(container.dataset.currentLayoutType).to.equal('hangout_vertical');
-      });
-    });
-
-    describe('#features', function() {
-      it('should fit items to container height divided by total minus one on stage', function() {
-        instance = new HangoutVertical(getContainer(), getItems(5));
-        var features = instance.features;
-        expect(features.width).to.equal('100%');
-        expect(features.height).to.equal((25 - (instance._PADDING / 2)) + '%');
-      });
-    });
-
-    describe('#rearrange', sinon.test(function() {
-      it('should visit all items and set dimensions', function() {
-        visitItems(HangoutVertical);
-      });
-    }));
-
-  });
-
 });
