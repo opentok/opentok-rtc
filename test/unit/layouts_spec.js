@@ -263,6 +263,7 @@ describe('Layouts', function() {
       expect(container.dataset.onStageStreamId).to.not.exist;
       instance = new Hangout(container, items);
       expect(items).to.include.keys(container.dataset.onStageStreamId);
+      expect(container.dataset.onStageStreamId).to.not.equal('publisher');
     });
 
     it('should be initialized properly with selected stream', function() {
