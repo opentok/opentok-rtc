@@ -19,8 +19,20 @@
     mute: {
       head: 'All participants microphones are going to be disabled in the call',
       detail: 'If someone with to keep talking, ' +
-              'they must enable manually it own microphone',
+              'they must enable manually its own microphone',
       button: 'Mute All'
+    },
+    muteRemotely: {
+      head: 'All participants microphones are going to be disabled in the call',
+      detail: 'If you want to keep talking , ' +
+              'you must enable manually your own microphone',
+      button: 'I understand'
+    },
+    unmutedRemotely: {
+      head: 'Your microphone is going to be enabled in the call',
+      detail: 'If you want to keep muted , ' +
+              'you must disable manually your own microphone',
+      button: 'I understand'
     },
     join: {
       head: 'You are joining a call with all participants muted',
@@ -51,18 +63,19 @@
       }
     },
     'roomMuted': function(evt) {
-      if (evt.detail.status) {
-        var toggle = toggleSwitch.bind(undefined, false, audioSwitch,
-                                       'roomView:muteAllSwitch', evt.detail.status);
-        showConfirm(MODAL_TXTS.join).then(toggle).catch(toggle);
-      } else {
-        toggleSwitch(false, audioSwitch, 'roomView:muteAllSwitch', evt.detail.status);
-      };
-    },
-    'joinRoomMuted': function() {
-      showConfirm(MODAL_TXTS.join);
+      var isJoining = evt.detail.isJoining;
+      setAudioSwitchRemotely(true);
+      showConfirm(isJoining ? MODAL_TXTS.join : MODAL_TXTS.muteRemotely);
     }
   };
+
+  function setAudioSwitchRemotely(isMuted) {
+    toggleSwitch(false, audioSwitch, 'roomView:muteAllSwitch', isMuted);
+  }
+
+  function showConfirmChangeMicStatus(isMuted) {
+    return showConfirm(isMuted ? MODAL_TXTS.muteRemotely : MODAL_TXTS.unmutedRemotely);
+  }
 
   function initHTMLElements() {
     dock = document.getElementById('dock');
@@ -171,16 +184,20 @@
   }
 
   function showConfirm(txt) {
-    return new Promise(function(resolve, reject) {
-      LazyLoader.dependencyLoad([
+    var selector = '.switch-alert-modal';
+    var ui = document.querySelector(selector);
+    ui.querySelector(' header .msg').textContent = txt.head;
+    ui.querySelector(' p.detail').textContent = txt.detail;
+    ui.querySelector(' footer button.accept').textContent = txt.button;
+
+    return LazyLoader.dependencyLoad([
         '/js/components/modal.js'
-      ]).then(function() {
-        var selector = '.switch-alert-modal';
-        var ui = document.querySelector(selector);
-        ui.querySelector(' header .msg').textContent = txt.head;
-        ui.querySelector(' p.detail').textContent = txt.detail;
-        ui.querySelector(' footer button.accept').textContent = txt.button;
-        Modal.show(selector).then(function() {
+      ]).
+      then(function() {
+        return Modal.show(selector);
+      }).
+      then(function() {
+        return new Promise(function(resolve, reject) {
           ui.addEventListener('click', function onClicked(evt) {
             var classList = evt.target.classList;
             var hasAccepted = classList.contains('accept');
@@ -191,10 +208,9 @@
             evt.preventDefault();
             ui.removeEventListener('click', onClicked);
             Modal.hide(selector);
-            (hasAccepted) && resolve() || reject();
+            resolve(hasAccepted);
           });
         });
-      });
     });
   }
 
@@ -240,8 +256,9 @@
           break;
         case 'audioSwitch':
           if (!audioSwitch.classList.contains('activated')) {
-            showConfirm(MODAL_TXTS.mute).
-              then(toggleSwitch.bind(undefined, true, audioSwitch, 'roomView:muteAllSwitch'));
+            showConfirm(MODAL_TXTS.mute).then(function(hasAccepted) {
+              hasAccepted && toggleSwitch(true, audioSwitch, 'roomView:muteAllSwitch');
+            });
           } else {
             toggleSwitch(true, audioSwitch, 'roomView:muteAllSwitch');
           }
@@ -316,7 +333,9 @@
 
     createStreamView: createStreamView,
     deleteStreamView: deleteStreamView,
-    toggleChatNotification: toggleChatNotification
+    toggleChatNotification: toggleChatNotification,
+    setAudioSwitchRemotely: setAudioSwitchRemotely,
+    showConfirmChangeMicStatus: showConfirmChangeMicStatus
   };
 
 }(this);
