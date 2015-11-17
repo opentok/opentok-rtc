@@ -39,6 +39,11 @@
       detail: 'If you want to unmute yourself, ' +
               'just press the mic icon in the bottom of your video.',
       button: 'I understand'
+    },
+    disabledVideos: {
+      head: 'Unsubscribe from all videos',
+      detail: 'Disable all videos to decrease internet usage and increase audio quiality',
+      button: 'Disable All'
     }
   };
 
@@ -252,7 +257,12 @@
           Utils.sendEvent('roomView:shareScreen');
           break;
         case 'videoSwitch':
-          toggleSwitch(true, videoSwitch, 'roomView:videoSwitch');
+          if (!videoSwitch.classList.contains('activated')) {
+            showConfirm(MODAL_TXTS.disabledVideos).
+              then(toggleSwitch.bind(undefined, true, videoSwitch, 'roomView:videoSwitch'));
+          } else {
+            toggleSwitch(true, videoSwitch, 'roomView:videoSwitch');
+          }
           break;
         case 'audioSwitch':
           if (!audioSwitch.classList.contains('activated')) {
