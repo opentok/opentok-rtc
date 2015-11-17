@@ -65,6 +65,10 @@ function ServerMethods(aLogLevel, aModules) {
   // We don't allow restricting it to some URIs because it doesn't work on Chrome
   const RED_ALLOW_IFRAMING = 'allow_iframing';
 
+  // List (JSONified array) of the hosts that can hot link to URLs. This same server is always
+  // allowed to hot-link
+  const RED_VALID_REFERERS = 'valid_referers';
+
   const REDIS_KEYS = [
     { key: RED_TB_API_KEY, defaultValue: null },
     { key: RED_TB_API_SECRET, defaultValue: null },
@@ -75,6 +79,7 @@ function ServerMethods(aLogLevel, aModules) {
     { key: RED_TB_MAX_SESSION_AGE, defaultValue: 2 },
     { key: RED_EMPTY_ROOM_MAX_LIFETIME, defaultValue: 3 },
     { key: RED_ALLOW_IFRAMING, defaultValue: 'never' },
+    { key: RED_VALID_REFERERS, defaultValue: '[]' },
     { key: RED_CHROME_EXTENSION_ID, defaultValue: 'undefined' }
   ];
 
@@ -89,6 +94,8 @@ function ServerMethods(aLogLevel, aModules) {
   var Utils = require('./shared/utils');
   var Logger = Utils.MultiLevelLogger;
   var promisify = Utils.promisify;
+
+  var URL = require('url');
 
   var Opentok = aModules.Opentok || require('opentok');
 
@@ -184,6 +191,7 @@ function ServerMethods(aLogLevel, aModules) {
         var otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret);
 
         var allowIframing = redisConfig[RED_ALLOW_IFRAMING];
+        var validReferers = JSON.parse(redisConfig[RED_VALID_REFERERS]);
 
         // This isn't strictly necessary... but since we're using promises all over the place, it
         // makes sense. The _P are just a promisified version of the methods. We could have
@@ -220,6 +228,7 @@ function ServerMethods(aLogLevel, aModules) {
               maxSessionAgeMs: maxSessionAge * 24 * 60 * 60 * 1000,
               fbArchives: firebaseArchives,
               allowIframing: allowIframing,
+              validReferers: validReferers,
               chromeExtId: chromeExtId
             };
           });
@@ -264,11 +273,39 @@ function ServerMethods(aLogLevel, aModules) {
     aRes.send({});
   }
 
+  // aHost is the host header (so it's really host[:port])
+  // aReferer is the refere header (so it's an URL or '' or undefined)
+  // aValidList is a list of hostnames that are valid (on any port?)
+  function checkValidReferer(aMyHost, aReferer, aValidList) {
+    logger.log('checkValidReferer(', aMyHost, aReferer, aValidList, ')');
+    // First: no referer means direct load and that's valid always
+    if (!aReferer || aReferer === '') {
+      return true;
+    }
+    var refererData = URL.parse(aReferer);
+
+    // Second: my own host is always a valid referer
+    if (refererData.host === aMyHost) {
+      return true;
+    }
+
+    // And finally, if the host is on the valid list then it's valid also
+    var hostname = refererData.hostname;
+    return aValidList.some(aHostInList => aHostInList === hostname);
+  }
+
   // Return the personalized HTML for a room.
   function getRoom(aReq, aRes) {
     logger.log('getRoom serving ' + aReq.path, 'roomName:', aReq.params.roomName,
                'userName:', aReq.query && aReq.query.userName);
     var userName = aReq.query && aReq.query.userName;
+    var tbConfig = aReq.tbConfig;
+
+    if (!checkValidReferer(aReq.get('host'), aReq.get('referer'), tbConfig.validReferers)) {
+      aRes.status(403).send(new ErrorInfo(1001, 'Hot-linking is forbidden'));
+      return;
+    }
+
     // We really don't want to cache this
     aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
     aRes.set('Pragma', 'no-cache');
@@ -279,7 +316,7 @@ function ServerMethods(aLogLevel, aModules) {
              {
                userName: userName || DEFAULT_USER_NAME,
                roomName: aReq.params.roomName,
-               chromeExtensionId: aReq.tbConfig.chromeExtId
+               chromeExtensionId: tbConfig.chromeExtId
              });
   }
 

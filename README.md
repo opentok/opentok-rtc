@@ -67,13 +67,15 @@ redis). The supported parameters and their default values are:
 - chrome_extension_id (Optional, default value: 'undefined'): Chrome AddOn extension Id for sharing
    screen. Note that while the default value allows the server to run it doesn't actually allow
    screen sharing in chrome.
-- allow_iframing (Optional, default value: 'never'):   Controls the server-side restriction on 
+- allow_iframing (Optional, default value: 'never'): Controls the server-side restriction on
    allowing to load content inside an iframe. The allowed values are:
    - 'always': Allow iframing unconditionally (note that rtcApp.js should also be changed
                to reflect this, this option only changes what the server allows)
    - 'never': Set X-Frame-Options to 'DENY' (so deny from everyone)
    - 'sameorigin': Set X-Frame-Options to 'SAMEORIGIN'
    - We don't allow restricting it to some URIs because it doesn't work on Chrome
+- valid_referers (Optiona, default value: '[]'): List (JSONified array) of the hosts that can hot
+   link to URLs. This same server is always allowed to hot-link
 
 ## Running
 
