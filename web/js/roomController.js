@@ -148,7 +148,7 @@
     });
   };
 
-  function sendSignalMuteAllChange(status, onlyChangeSwitch) {
+  function sendSignalMuteAll(status, onlyChangeSwitch) {
     OTHelper.sendSignal({
       type: 'muteAll',
       data: JSON.stringify({ status: status, onlyChangeSwitch: onlyChangeSwitch })
@@ -208,7 +208,7 @@
         obj[buttonInfo.action].apply(obj, args);
         if (!disableAll) {
           Utils.sendEvent('roomController:userChangeStatus', { status: newStatus, name: name });
-          sendSignalMuteAllChange(false, true);
+          sendSignalMuteAll(false, true);
           _sharedStatus.roomMuted = false;
         }
       }
@@ -220,7 +220,7 @@
       var roomMuted = evt.detail.status;
       _sharedStatus.roomMuted = roomMuted;
       setAudioStatus(roomMuted);
-      sendSignalMuteAllChange(roomMuted, false);
+      sendSignalMuteAll(roomMuted, false);
     }
   };
 

@@ -258,16 +258,17 @@
           break;
         case 'videoSwitch':
           if (!videoSwitch.classList.contains('activated')) {
-            showConfirm(MODAL_TXTS.disabledVideos).
-              then(toggleSwitch.bind(undefined, true, videoSwitch, 'roomView:videoSwitch'));
+            showConfirm(MODAL_TXTS.disabledVideos).then(function(shouldDisable) {
+              shouldDisable && toggleSwitch(true, videoSwitch, 'roomView:videoSwitch');
+            });
           } else {
             toggleSwitch(true, videoSwitch, 'roomView:videoSwitch');
           }
           break;
         case 'audioSwitch':
           if (!audioSwitch.classList.contains('activated')) {
-            showConfirm(MODAL_TXTS.mute).then(function(hasAccepted) {
-              hasAccepted && toggleSwitch(true, audioSwitch, 'roomView:muteAllSwitch');
+            showConfirm(MODAL_TXTS.mute).then(function(shouldDisable) {
+              shouldDisable && toggleSwitch(true, audioSwitch, 'roomView:muteAllSwitch');
             });
           } else {
             toggleSwitch(true, audioSwitch, 'roomView:muteAllSwitch');
