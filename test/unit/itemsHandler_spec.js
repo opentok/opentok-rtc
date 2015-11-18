@@ -89,8 +89,8 @@ describe('ItemsHandler', function() {
   describe('#event handlers: dblclick', function() {
     it('should send the correct event when user clicks twice', sinon.test(function(done) {
       this.stub(window, 'CustomEvent', function(name, data) {
-        expect(name).to.equal('layoutView:streamSelected');
-        expect(data.detail.streamId).to.equal('subscriber');
+        expect(name).to.equal('layoutView:itemSelected');
+        expect(data.detail.item).to.equal(getContainer().querySelector('#subscriber'));
         done();
       });
 

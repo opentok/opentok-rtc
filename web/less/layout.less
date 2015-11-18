@@ -51,6 +51,17 @@
     }
   }
 
+  .streams[data-current-layout-type=hangout_vertical][data-total-on-stage="2"] .tc-list ul {
+    li.on-stage {
+      height: 49.75% !important;
+    }
+
+    li[data-stream-type=desktop].on-stage,
+    li[data-stream-type=screen].on-stage {
+      top: 50.25%;
+    }
+  }
+
   .streams[data-current-layout-type=hangout_horizontal] .tc-list ul {
     .flex-direction(row);
 
@@ -63,6 +74,17 @@
       left: 0;
       width: 100% !important;
       height: calc(~"99.5% - 200px") !important;
+    }
+  }
+
+  .streams[data-current-layout-type=hangout_horizontal][data-total-on-stage="2"] .tc-list ul {
+    li.on-stage {
+      width: 49.75% !important;
+    }
+
+    li[data-stream-type=desktop].on-stage,
+    li[data-stream-type=screen].on-stage {
+      left: 50.25%;
     }
   }
 
@@ -103,7 +125,7 @@
       }
 
       .dblclick_area {
-        z-index: 1000;
+        z-index: 1011;
         position: absolute;
         top: 0;
         left: 0;
@@ -193,7 +215,7 @@
   }
 
   .controls {
-    z-index: 1010;
+    z-index: 1012;
     position: absolute;
 
     .buttons {

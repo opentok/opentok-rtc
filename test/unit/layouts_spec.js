@@ -250,27 +250,46 @@ describe('Layouts', function() {
   });
 
   describe('Hangouts', function() {
-    var items = {
-      'publisher': document.createElement('div'),
-      '7y4813y4134123': document.createElement('div'),
-      '2u3h423h4hj2h3': document.createElement('div'),
-      'jjfnj43nj34nj4': document.createElement('div'),
-      '234fjwndfjjejj': document.createElement('div')
+    var getItem = function(id, type) {
+      var item = document.createElement('div');
+      item.dataset.id = id;
+      item.dataset.streamType = type || 'camera';
+      return item;
     };
 
-    it('should be initialized properly with random stream on stage', function() {
+    var items = {
+      'publisher': getItem('publisher'),
+      '7y4813y4134123': getItem('7y4813y4134123'),
+      'jjfnj43nj34nj4': getItem('jjfnj43nj34nj4'),
+      '234fjwndfjjejj': getItem('234fjwndfjjejj')
+    };
+
+    it('should be initialized properly with random item on stage', function() {
       var container = getContainer();
-      expect(container.dataset.onStageStreamId).to.not.exist;
+      expect(container.dataset.onStageCamera).to.not.exist;
       instance = new Hangout(container, items);
-      expect(items).to.include.keys(container.dataset.onStageStreamId);
-      expect(container.dataset.onStageStreamId).to.not.equal('publisher');
+      expect(items).to.include.keys(container.dataset.onStageCamera);
+      expect(instance.totalOnStage).to.equal(1);
+      expect(instance.totalOnStrip).to.equal(3);
+      expect(container.dataset.onStageCamera).to.not.equal('publisher');
     });
 
-    it('should be initialized properly with selected stream', function() {
+    it('should be initialized properly with selected camera', function() {
       var container = getContainer();
-      var expectedId = 'jjfnj43nj34nj4';
-      instance = new Hangout(container, items, expectedId);
-      expect(container.dataset.onStageStreamId).to.equal(expectedId);
+      var expectedItem = items['jjfnj43nj34nj4'];
+      instance = new Hangout(container, items, expectedItem);
+      expect(instance.totalOnStage).to.equal(1);
+      expect(instance.totalOnStrip).to.equal(3);
+      expect(container.dataset.onStageCamera).to.equal(expectedItem.dataset.id);
+    });
+
+    it('should be initialized properly with selected screen', function() {
+      var container = getContainer();
+      var expectedItem = items['a'] = getItem('jjfnj43nj34nj4', 'screen');
+      instance = new Hangout(container, items, expectedItem);
+      expect(instance.totalOnStage).to.equal(1);
+      expect(instance.totalOnStrip).to.equal(4);
+      expect(container.dataset.onStageScreen).to.equal(expectedItem.dataset.id);
     });
 
     describe('HangoutHorizontal', function() {
@@ -286,9 +305,10 @@ describe('Layouts', function() {
 
       describe('#features', function() {
         it('should fit items to container width divided by total minus one on stage', function() {
-          instance = new HangoutHorizontal(getContainer(), items);
+          instance = new HangoutHorizontal(getContainer(), items, items['7y4813y4134123']);
           var features = instance.features;
-          expect(features.width).to.equal((25 - (instance._PADDING / 2)) + '%');
+          var value = 100 / instance.totalOnStrip;
+          expect(features.width).to.equal((value - (instance._PADDING / 2)) + '%');
           expect(features.height).to.equal('100%');
         });
       });
@@ -313,11 +333,13 @@ describe('Layouts', function() {
       });
 
       describe('#features', function() {
-        it('should fit items to container height divided by total minus one on stage', function() {
-          instance = new HangoutVertical(getContainer(), items);
+        it('should fit items to container height divided by total minus one on stage ' +
+           'and the shared screen', function() {
+          instance = new HangoutVertical(getContainer(), items, items['7y4813y4134123']);
           var features = instance.features;
           expect(features.width).to.equal('100%');
-          expect(features.height).to.equal((25 - (instance._PADDING / 2)) + '%');
+          var value = 100 / instance.totalOnStrip;
+          expect(features.height).to.equal((value - (instance._PADDING / 2)) + '%');
         });
       });
 
