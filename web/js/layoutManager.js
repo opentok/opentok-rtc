@@ -19,6 +19,10 @@
 
   var HANGOUT_BY_DEFAULT = 'hangout_horizontal';
 
+  function isOnGoing(layout) {
+    return Object.getPrototypeOf(currentLayout) === layout.prototype;
+  }
+
   var handlers = {
     'layout': function(evt) {
       userLayout = evt.detail.type;
@@ -45,11 +49,7 @@
     Utils.addEventsHandlers('hangout:', handlers, global);
   }
 
-  function isOnGoing(layout) {
-    return Object.getPrototypeOf(currentLayout) === layout.prototype;
-  }
-
-  function isHangoutRequeried(item) {
+  function isHangoutRequired(item) {
     // New screen shared and 3 or more items implies going to hangout if this isn't our current
     // layout running
     return Utils.isScreen(item) && isGroup() &&
@@ -59,7 +59,7 @@
   function append(id, options) {
     var item = LayoutView.append(id, options);
     items[id] = item;
-    if (isHangoutRequeried(item)) {
+    if (isHangoutRequired(item)) {
       userLayout = HANGOUT_BY_DEFAULT;
       rearrange(item);
     } else {
@@ -123,7 +123,7 @@
   function rearrange(item) {
     var candidateLayout = calculateCandidateLayout();
 
-    if (!currentLayout || Object.getPrototypeOf(currentLayout) !== candidateLayout.prototype) {
+    if (!currentLayout || !isOnGoing(candidateLayout)) {
       currentLayout && currentLayout.destroy();
       currentLayout = new candidateLayout(container, items, item);
     }

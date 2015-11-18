@@ -69,10 +69,10 @@ describe('LayoutManager', function() {
   });
 
   describe('#remove', function() {
-    it('should keep hangout horizontal layout with three remaining streams after leaving of ' +
+    it('should set the grid layout with three remaining streams after leaving of ' +
        'sharing the screen', function() {
       LayoutManager.remove('desktop');
-      checkLayout('hangout_horizontal');
+      checkLayout('grid');
     });
 
     it('should set the float layout with two remaining streams after removing one', function() {

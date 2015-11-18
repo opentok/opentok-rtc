@@ -141,6 +141,43 @@ var Hangout = function(container, items, item, type) {
   this.updateTotalOnStage();
 };
 
+/*
+ * It returns the data attribute where the id will be stored depending on type
+ *
+ * @param type - camera or screen
+ */
+Hangout.getAttributeName = function(type) {
+  return 'onStage' + type.charAt(0).toUpperCase() + type.slice(1);
+};
+
+/*
+ * It returns the type of item which is used to index internally
+ *
+ * @param item - item object
+ */
+Hangout.getItemType = function(item) {
+  return item.dataset.streamType === 'camera' ? 'camera' : 'screen';
+};
+
+/*
+ * It returns the id of item received as param
+ *
+ * @param item - item object
+ */
+Hangout.getItemId = function(item) {
+  return item.dataset.id;
+};
+
+/*
+ * It returns an array of objects for each event with type and attribute name
+ */
+Hangout.stageTypeDescriptors = ['camera', 'screen'].map(function(aType) {
+  return {
+    type: aType,
+    attrName: Hangout.getAttributeName(aType)
+  };
+});
+
 Hangout.prototype = {
   __proto__: LayoutBase.prototype,
 
@@ -150,7 +187,9 @@ Hangout.prototype = {
       if (this.isOnStage(item)) {
         // Selected item is already on stage so it should be expanded to cover all. That means that
         // the other item on stage should go to the strip leaving the stage
-        this.removeCurrentItemFromStage(this.getItemType(item) === 'camera' ? 'screen' : 'camera');
+        this.removeCurrentItemFromStage(
+          Hangout.getItemType(item) === 'camera' ? 'screen' : 'camera'
+        );
       } else {
         this.putItemOnStage(item);
       }
@@ -159,8 +198,7 @@ Hangout.prototype = {
     'layoutManager:itemDeleted': function(evt) {
       var item = evt.detail.item;
       if (this.isOnStage(item)) {
-        this.removeItemFromStage(item).
-             updateTotalOnStage();
+        this.removeItemFromStage(item).updateTotalOnStage();
         !this.totalOnStage && Utils.sendEvent('hangout:emptyStage');
       }
     }
@@ -182,53 +220,18 @@ Hangout.prototype = {
     if (!item) {
       return this;
     }
-    this.removeCurrentItemFromStage(this.getItemType(item)).
-         putStageId(item);
+    this.removeCurrentItemFromStage(Hangout.getItemType(item)).putStageId(item);
     item.classList.add('on-stage');
     return this;
-  },
-
-  /*
-   * It returns the id of item received as param
-   *
-   * @param item - item object
-   */
-  getItemId: function(item) {
-    return item.dataset.id;
   },
 
   /*
    * It returns a random item (publisher stream is not included)
    */
   getRandomItem() {
-    var id = Object.keys(this.items).find(function(id) {
+    return this.items[Object.keys(this.items).find(function(id) {
       return id !== 'publisher';
-    });
-
-    return this.items[id];
-  },
-
-  /*
-   * Type of items on stage
-   */
-  stageTypes: ['camera', 'screen'],
-
-  /*
-   * It returns the type of item which is used to index internally
-   *
-   * @param item - item object
-   */
-  getItemType: function(item) {
-    return item.dataset.streamType === 'camera' ? 'camera' : 'screen';
-  },
-
-  /*
-   * It returns the data attribute where the id will be stored depending on type
-   *
-   * @param type - camera or screen
-   */
-  getAttributeName: function(type) {
-    return 'onStage' + type.charAt(0).toUpperCase() + type.slice(1);
+    })];
   },
 
   /*
@@ -298,9 +301,9 @@ Hangout.prototype = {
   get stageIds() {
     var ids = {};
 
-    this.stageTypes.forEach(function(type) {
-      var id = this.container.dataset[this.getAttributeName(type)];
-      id && (ids[type] = id);
+    Hangout.stageTypeDescriptors.forEach(function(descriptor) {
+      var id = this.container.dataset[descriptor.attrName];
+      id && (ids[descriptor.type] = id);
     }, this);
 
     return ids;
@@ -312,11 +315,11 @@ Hangout.prototype = {
   set stageIds(aIds) {
     aIds = aIds || {};
 
-    this.stageTypes.forEach(function(type) {
-      if (aIds[type]) {
-        this.container.dataset[this.getAttributeName(type)] = aIds[type];
+    Hangout.stageTypeDescriptors.forEach(function(descriptor) {
+      if (aIds[descriptor.type]) {
+        this.container.dataset[descriptor.attrName] = aIds[descriptor.type];
       } else {
-        delete this.container.dataset[this.getAttributeName(type)];
+        delete this.container.dataset[descriptor.attrName];
       }
     }, this);
   },
@@ -328,7 +331,7 @@ Hangout.prototype = {
    */
   putStageId: function(item) {
     var ids = this.stageIds;
-    ids[this.getItemType(item)] = this.getItemId(item);
+    ids[Hangout.getItemType(item)] = Hangout.getItemId(item);
     this.stageIds = ids;
     return this;
   },
@@ -340,7 +343,7 @@ Hangout.prototype = {
    */
   removeStageId: function(item) {
     var ids = this.stageIds;
-    delete ids[this.getItemType(item)];
+    delete ids[Hangout.getItemType(item)];
     this.stageIds = ids;
     return this;
   },
