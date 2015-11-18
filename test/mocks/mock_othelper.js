@@ -8,6 +8,7 @@
       code: 1,
       message: 'Not sharing'
     },
+    _myConnId: 'myConnectionId',
     isGoingToWork: true,
     _install: function() {
       realOTHelper = exports.OTHelper;
@@ -15,6 +16,9 @@
     },
     _restore: function() {
       exports.OTHelper = realOTHelper;
+    },
+    isMyself: function(connection) {
+      return this._myConnId === connection.connectionId;
     },
     registerScreenShareExtension: function() {},
     shareScreen: function() {
@@ -32,7 +36,9 @@
       notSupported: 'OT0003',
       errPublishingScreen: 'OT0004'
     },
-    sendSignal: function() {},
+    sendSignal: function() {
+      return Promise.resolve();
+    },
     removeListener: function(evtName) {}
   };
 

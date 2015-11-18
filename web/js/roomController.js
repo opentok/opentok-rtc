@@ -385,9 +385,6 @@
       // Dispatched when an archive recording of the session stops
       Utils.sendEvent('archiving', { status: 'stopped' });
     },
-    'signal:chat': function(evt) {
-      RoomView.toggleChatNotification();
-    },
     'signal:muteAll': function(evt) {
       var statusData = JSON.parse(evt.data);
       var muteAllSwitch = statusData.status;
@@ -549,8 +546,17 @@
 
       _allHandlers = RoomStatus.init(userName, _allHandlers, { room: _sharedStatus });
 
+      var handlersName = [
+      {
+        type: 'updatedRemotely',
+        name:'roomStatus:updatedRemotely'
+      }, {
+        type: 'chatVisibility',
+        name:'roomView:chatVisibility'
+      }];
+
       ChatController.
-        init(aParams.roomName, userName, _allHandlers).
+        init(aParams.roomName, userName, _allHandlers, handlersName).
         then(connect).
         then(LayoutMenuController.init).
         then(function() {

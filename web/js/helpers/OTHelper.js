@@ -361,8 +361,8 @@
       return _publisher.stream.id;
     },
     isMyself: function(connection) {
-      return _publisher &&
-             _publisher.session.connection.connectionId === connection.connectionId;
+      return _session &&
+             _session.connection.connectionId === connection.connectionId;
     }
   };
 

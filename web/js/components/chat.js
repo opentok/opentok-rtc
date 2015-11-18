@@ -3,7 +3,7 @@
 
   var transEndEventName =
     ('WebkitTransition' in document.documentElement.style) ?
-     'webkitTransitionEnd' : 'transitionend'
+     'webkitTransitionEnd' : 'transitionend';
 
   var container = null,
       chatShown = null,
@@ -18,9 +18,7 @@
   }
 
   function onClick(evt) {
-    if (evt.target.id === 'startChat') {
-      isCollapsed() ? expand() : hide();
-    } else if (!isCollapsed()) {
+    if (evt.target.id !== 'closeChat' && !isCollapsed()) {
       hide();
     }
   }
@@ -65,6 +63,7 @@
         document.body.removeEventListener('click', onClick);
         container.classList.remove('visible');
         chatShown = chatHidden = null;
+        Utils.sendEvent('chat:hidden');
         resolve();
       });
 

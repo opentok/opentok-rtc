@@ -5,7 +5,6 @@
   var dock;
   var screen;
   var handler;
-  var startChatBtn;
   var roomNameElem;
   var participantsNumberElem;
   var recordingsNumberElem;
@@ -53,6 +52,12 @@
     }
   };
 
+  var chatEvents = {
+    'hidden': function(evt) {
+      document.body.dataset.chatStatus = 'hidden';
+    }
+  };
+
   var screenShareCtrEvents = {
     'changeScreenShareStatus': toggleScreenSharing,
     'destroyed': toggleScreenSharing.bind(undefined, NOT_SHARING)
@@ -87,7 +92,6 @@
     screen = document.getElementById('screen');
     handler = dock.querySelector('#handler');
 
-    startChatBtn = dock.querySelector('#startChat');
     roomNameElem = dock.querySelector('#roomName');
     participantsNumberElem = dock.querySelectorAll('.participants');
     recordingsNumberElem = dock.querySelector('#recordings');
@@ -120,14 +124,6 @@
       }
     }
     bubbleUp && Utils.sendEvent(evtName, { status: newStatus });
-  }
-
-  function toggleChatNotification() {
-    if (!ChatView.visible) {
-      startChatBtn.classList.add('highlight');
-    } else {
-      startChatBtn.classList.remove('highlight');
-    }
   }
 
   var cronograph = null;
@@ -244,8 +240,10 @@
           Utils.sendEvent('roomView:' + elem.id);
           break;
         case 'startChat':
-          ChatView.visible = true;
-          toggleChatNotification();
+        case 'stopChat':
+          var isVisible = elem.id === 'startChat';
+          document.body.dataset.chatStatus =  isVisible ? 'visible' : 'hidden';
+          Utils.sendEvent('roomView:chatVisibility', isVisible);
           break;
         case 'endCall':
           RoomView.participantsNumber = 0;
@@ -295,6 +293,7 @@
 
     Utils.addEventsHandlers('screenShareController:', screenShareCtrEvents, exports);
     Utils.addEventsHandlers('roomController:', roomControllerEvents, exports);
+    Utils.addEventsHandlers('chat:', chatEvents);
   };
 
   function toggleScreenSharing(evt) {
@@ -344,7 +343,6 @@
 
     createStreamView: createStreamView,
     deleteStreamView: deleteStreamView,
-    toggleChatNotification: toggleChatNotification,
     setAudioSwitchRemotely: setAudioSwitchRemotely,
     showConfirmChangeMicStatus: showConfirmChangeMicStatus
   };

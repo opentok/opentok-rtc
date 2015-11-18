@@ -11,11 +11,11 @@ describe('ChatController', function() {
     text: 'a text'
   };
 
-  function getSignalEvent(user) {
+  function getSignalEvent(user, connectionId) {
     return {
       connection: {
         data: JSON.stringify({ userName: user }),
-        connectionId: 'querty'
+        connectionId: connectionId
       }
     };
   }
@@ -28,12 +28,13 @@ describe('ChatController', function() {
     sinon.stub(ChatView, 'init', function() {
       return Promise.resolve();
     });
-
+    window.MockRoomStatus._install();
     window.MockOTHelper._install();
   });
 
   after(function() {
     window.MockOTHelper._restore();
+    window.MockRoomStatus._restore();
     ChatView.init.restore();
     LazyLoader.dependencyLoad.restore();
   });
@@ -48,44 +49,76 @@ describe('ChatController', function() {
       expect(ChatController.init).to.be.a('function');
     });
 
-    it('should initialize properly the object and return the handlers set',
-       sinon.test(function(done) {
-      var handlers = [];
+    function verifyInit(done, handlerShouldHave, handlersName) {
+      var handlersOT = [];
+
+      ChatController.init('testRoomName', 'testUserName', handlersOT, handlersName).
+        then(function(aHandlers) {
+          expect(aHandlers.length).to.be.equals(1);
+          var chatHandlers = aHandlers[0];
+          expect(expectedHandlers.every(function(elem) {
+            return chatHandlers[elem] !== undefined;
+          })).to.be.true;
+          var spyArg = Utils.addHandlers.getCall(0).args[0];
+          expect(Object.keys(spyArg).length).to.be.
+            equal(Object.keys(handlerShouldHave).length);
+          expect(Object.keys(spyArg).every(function(action) {
+            return spyArg[action].name === handlerShouldHave[action].name;
+          })).to.be.true;
+          expect(RoomStatus.set.calledWith(STATUS_KEY, [])).to.be.true;
+          done();
+        });
+    }
+
+    it('should initialize properly the object and return the handlers set when called without ' +
+       'handlers', sinon.test(function(done) {
+
+      var handlersShouldHave = {
+        'updatedRemotely': {
+          name: 'roomStatus:updatedRemotely',
+          couldBeChanged: true
+        },
+        'outgoingMessage': {
+          name: 'chatView:outgoingMessage'
+        }
+      };
+
       this.stub(RoomStatus, 'set');
+      this.stub(Utils, 'addHandlers');
 
-      ChatController.init('testRoomName', 'testUserName', handlers).then(function(aHandlers) {
-        expect(aHandlers.length).to.be.equals(1);
-        var chatHandlers = aHandlers[0];
-        expect(expectedHandlers.every(function(elem) {
-          return chatHandlers[elem] !== undefined;
-        })).to.be.true;
+      verifyInit(done, handlersShouldHave);
+    }));
 
-        expect(RoomStatus.set.calledWith(STATUS_KEY, [])).to.be.true;
-        done();
-      });
+
+    it('should initialize properly the object and return the handlers set when called with ' +
+       'handlers', sinon.test(function(done) {
+      var handlersShouldHave = {
+        'updatedRemotely': {
+          name: 'changedRoomStatus:changedUpdatedRemotely',
+          couldBeChanged: true
+        },
+        'outgoingMessage': {
+          name: 'chatView:outgoingMessage'
+        }
+      };
+
+      var handlersName = [
+      {
+        type: 'updatedRemotely',
+        name: 'changedRoomStatus:changedUpdatedRemotely'
+      }, {
+        type: 'chatVisibility',
+        name:'roomView:chatVisibility'
+      }];
+
+      this.stub(RoomStatus, 'set');
+      this.stub(Utils, 'addHandlers');
+
+      verifyInit(done, handlersShouldHave, handlersName);
     }));
   });
 
-  describe('#sendMsg', function() {
-    it('should send the message as a Opentok signal', sinon.test(function(done) {
-      this.spy(OTHelper, 'sendSignal');
-      var handlers = [];
-
-      ChatController.init('testRoomName', 'testUserName', handlers).then(function(aHandlers) {
-        ChatController.sendMsg(data);
-
-        expect(OTHelper.sendSignal.calledOnce).to.be.true;
-        expect(OTHelper.sendSignal.calledWith({
-          type: 'chat',
-          data: JSON.stringify(data)
-        })).to.be.true;
-
-        done();
-      });
-    }));
-  });
-
-  describe('#handlers', function() {
+  describe('#handlers OT', function() {
     describe('#signal:chat', function() {
       it('should add a chat line', sinon.test(function(done) {
         var signalEvt = {
@@ -94,18 +127,20 @@ describe('ChatController', function() {
           type: 'chat'
         };
         var handlers = [];
-        this.stub(ChatView, 'insertChatLine');
+        window.addEventListener('chatController:incomingMessage', function handlerTest(evt) {
+          window.removeEventListener('chatController:incomingMessage', handlerTest);
+          expect(evt.detail.data).to.be.deep.equal(data);
+          done();
+        });
+
         ChatController.init('testRoomName', 'testUserName', handlers).then(function(aHandlers) {
           var chatHndls = aHandlers[0];
           chatHndls['signal:chat'](signalEvt);
-          expect(ChatView.insertChatLine.calledWith(data)).to.be.true;
-          done();
         });
       }));
     });
 
     describe('#connectionCreated', function() {
-
       var usr = 'mySelf';
       var room = 'room';
       var handlers = [];
@@ -120,85 +155,139 @@ describe('ChatController', function() {
       });
 
       it('should insert new user connected event when a different user connects',
-         sinon.test(function() {
+         sinon.test(function(done) {
 
-        this.stub(ChatView, 'insertChatEvent');
-
-        chatHndls['connectionCreated'](getSignalEvent('otherUser'));
-
-        expect(ChatView.insertChatEvent.calledOnce).to.be.true;
-        expect(ChatView.insertChatEvent.calledWith({
+        var connData = {
           userName: 'otherUser',
           text: '(has connected)'
-        })).to.be.true;
+        };
+
+        OTHelper._myConnId = 'myConnId';
+
+        window.addEventListener('chatController:newEvent', function handlerTest(evt) {
+          window.removeEventListener('chatController:newEvent', handlerTest);
+          expect(evt.detail).to.be.deep.equal(connData);
+          done();
+        });
+
+        chatHndls['connectionCreated'](getSignalEvent(connData.userName, 'otherConnId'));
       }));
 
       it('should not do anything when I receive a connect event for myself',
          sinon.test(function() {
 
-        this.stub(ChatView, 'insertChatEvent');
+        var connData = {
+          userName: 'mySelf',
+          text: '(has connected)'
+        };
 
-        chatHndls['connectionCreated'](getSignalEvent(usr));
+        OTHelper._myConnId = 'myConnId';
 
-        expect(ChatView.insertChatEvent.callCount).to.be.equal(0);
+        this.spy(window, 'dispatchEvent');
+        chatHndls['connectionCreated'](getSignalEvent(connData.userName, OTHelper._myConnId));
+        expect(window.dispatchEvent.called).to.be.false;
       }));
     });
 
     describe('#connectionDestroyed', function() {
-
       it('should add a line informing that a user has disconnected', sinon.test(function(done) {
-        this.stub(ChatView, 'insertChatEvent');
         var handlers = [];
 
         ChatController.init('testRoomName', 'mySelf', handlers).then(function(aHandlers) {
           var chatHndls = aHandlers[0];
 
-          chatHndls['connectionDestroyed'](getSignalEvent('mySelf'));
-
-          expect(ChatView.insertChatEvent.calledOnce).to.be.true;
-          expect(ChatView.insertChatEvent.calledWith({
-            userName: 'mySelf',
+          var disconnData = {
+            userName: 'otherUsr',
             text: '(left the room)'
-          })).to.be.true;
-          done();
+          };
+
+          OTHelper._myConnId = 'myConnId';
+
+          window.addEventListener('chatController:newEvent', function handlerTest(evt) {
+            window.removeEventListener('chatController:newEvent', handlerTest);
+            expect(evt.detail).to.be.deep.equal(disconnData);
+            done();
+          });
+
+          chatHndls['connectionDestroyed'](getSignalEvent(disconnData.userName, 'otherConnId'));
         });
       }));
     });
   });
 
   describe('#updatedRemotly event', function() {
-    it('should load chat history', sinon.test(function(done) {
-      var sharedHistory = [{
-          sender: 'aSender1',
-          time: Utils.getCurrentTime(),
-          text: 'a text 1'
-        }, {
-          sender: 'aSender2',
-          time: Utils.getCurrentTime(),
-          text: 'a text 2'
-        }
-      ];
 
+    var sharedHistory = [{
+      sender: 'aSender1',
+      time: Utils.getCurrentTime(),
+      text: 'a text 1'
+    }, {
+      sender: 'aSender2',
+      time: Utils.getCurrentTime(),
+      text: 'a text 2'
+    }];
+
+    var eventCount;
+    var loadHistoryTest;
+
+    before(function() {
+      eventCount = 0;
+    });
+
+    after(function() {
+      window.removeEventListener('chatController:incomingMessage', loadHistoryTest);
+    });
+
+    it('should load chat history', sinon.test(function(done) {
       this.stub(RoomStatus, 'get', function(key) {
         return sharedHistory;
       });
 
-      this.stub(ChatView, 'insertChatLine');
-
       var handlers = [];
+
+      loadHistoryTest = function(evt) {
+        var data = evt.detail.data;
+        expect(data).to.be.deep.equal(sharedHistory[eventCount]);
+        eventCount++;
+        if (eventCount === sharedHistory.length) {
+          done();
+        }
+      };
+
+      window.addEventListener('chatController:incomingMessage', loadHistoryTest);
 
       ChatController.init('testRoomName', 'testUserName', handlers).then(function(aHandlers) {
         window.dispatchEvent(new CustomEvent('roomStatus:updatedRemotely'));
-
-        expect(RoomStatus.get.calledWith(STATUS_KEY)).to.be.true;
-        var spyCall;
-        for(var i = 0, l = sharedHistory.length; i < l; i++) {
-          spyCall = ChatView.insertChatLine.getCall(i);
-          expect(spyCall.args[0]).to.be.deep.equal(sharedHistory[i]);
-        }
-        done();
       });
     }));
   });
 
+  describe('#outgoingMessage event', function() {
+    it('should send a message', sinon.test(function(done) {
+      this.stub(OTHelper, 'sendSignal', function(evt) {
+        return Promise.resolve();
+      });
+
+      var handlers = [];
+      var resolver;
+      var handlerExecuted = new Promise(function(resolve, reject) {
+        resolver = resolve;
+      });
+
+      window.addEventListener('chatController:messageDelivered', function handlerTest(evt) {
+        window.removeEventListener('chatController:messageDelivered', handlerTest);
+        resolver();
+      });
+
+      ChatController.init('testRoomName', 'testUserName', handlers).then(function(aHandlers) {
+        window.dispatchEvent(new CustomEvent('chatView:outgoingMessage', { detail: data }));
+
+        expect(OTHelper.sendSignal.calledWith({
+          type: 'chat',
+          data: JSON.stringify(data)
+        })).to.be.true;
+        handlerExecuted.then(done);
+      });
+    }));
+  });
 });

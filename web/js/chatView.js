@@ -11,9 +11,68 @@
       chatContent,
       chatForm;
 
-  var debug =
-    new Utils.MultiLevelLogger('chatView.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
+  var _visibilityChanging = Promise.resolve();
 
+  function isVisible() {
+    return _visibilityChanging.then(function() {
+      return Chat.visible;
+    });
+  }
+
+  function setVisibility(isVisible) {
+    if (isVisible) {
+      addHandlers();
+      return Chat.show().then(function() {
+        scrollTo();
+      });
+    } else {
+      removeHandlers();
+      return Chat.hide();
+    }
+  }
+
+  var eventHandlers;
+
+  function addEventsHandlers(configuredEvts) {
+    eventHandlers = {
+      incomingMessage: {
+        name: 'chatController:incomingMessage',
+        handler: function(evt) {
+          var data = evt.detail.data;
+          insertChatLine(data);
+          isVisible().then(function(visible) {
+            if (!visible) {
+              Utils.sendEvent('chatView:unreadMessage', { data: data });
+            }
+          });
+        }
+      },
+      newEvent: {
+        name: 'chatController:newEvent',
+        handler: function(evt) {
+          insertChatEvent(evt.detail);
+        }
+      },
+      messageDelivered: {
+        name: 'chatController:messageDelivered',
+        handler: function(evt) {
+          chatMsgInput.value = '';
+        }
+      },
+      chatVisibility: {
+        name: 'roomView:chatVisibility',
+        handler: function(evt) {
+          _visibilityChanging = setVisibility(evt.detail);
+        },
+        couldBeChanged: true
+      }
+    };
+    Array.isArray(configuredEvts) && configuredEvts.forEach(function(aEvt) {
+      var event = eventHandlers[aEvt.type];
+      event && event.couldBeChanged && (event.name = aEvt.name);
+    });
+    Utils.addHandlers(eventHandlers);
+  };
 
   function initHTMLElements() {
     var chatWndElem = document.getElementById('chat');
@@ -25,6 +84,18 @@
     chatContent = chatContainer.querySelector('ul');
     chatForm = chatWndElem.querySelector('#chatForm');
   }
+
+  var onSendClicked = function(evt) {
+    evt.preventDefault();
+    if (!chatMsgInput.value.trim().length) {
+      return;
+    }
+    Utils.sendEvent('chatView:outgoingMessage', {
+      sender: usrId,
+      time: Utils.getCurrentTime(),
+      text: chatMsgInput.value.trim()
+    });
+  };
 
   var onKeyPress = function(myfield, evt) {
     var keycode;
@@ -43,24 +114,6 @@
     }
   }.bind(undefined, chatMsgInput);
 
-  var onSendClicked = function(evt) {
-    evt.preventDefault();
-    if (chatMsgInput.value === '') {
-      return;
-    }
-
-    ChatController.sendMsg({
-      sender: usrId,
-      time: Utils.getCurrentTime(),
-      text: chatMsgInput.value.trim()
-    }).then(function() {
-      chatMsgInput.value = '';
-    }).catch(function(error) {
-      debug.error('Error sending [' + chatMsgInput.value + '] to the group. ' +
-                   error.message);
-    });
-  };
-
   var onSubmit = function(evt) {
     evt.preventDefault();
     return false;
@@ -68,7 +121,7 @@
 
   var onClose = function(evt) {
     evt.preventDefault();
-    ChatView.visible = false;
+    _visibilityChanging = setVisibility(false);
   };
 
   var onToggle = function(evt) {
@@ -87,8 +140,8 @@
 
   function removeHandlers() {
     chatForm.removeEventListener('keypress', onKeyPress);
-    chatForm.removeEventListener('submit', onSubmit);
     closeChatBtn.removeEventListener('click', onClose);
+    toggleChatBtn.removeEventListener('click', onToggle);
     sendMsgBtn.removeEventListener('click', onSendClicked);
   }
 
@@ -132,7 +185,7 @@
     chatContainer.scrollTop = chatContent.offsetHeight + item.clientHeight;
   }
 
-  function init(aUsrId, aRoomName) {
+  function init(aUsrId, aRoomName, configuredEvts) {
     return LazyLoader.dependencyLoad([
       '/js/helpers/textProcessor.js',
       '/js/components/chat.js'
@@ -140,30 +193,12 @@
       initHTMLElements();
       usrId = aUsrId;
       Chat.init();
+      addEventsHandlers(configuredEvts);
     });
   }
 
   var ChatView = {
-    init: init,
-
-    set visible(value) {
-      if (value) {
-        Chat.show().then(function() {
-          scrollTo();
-          addHandlers();
-        });
-      } else {
-        Chat.hide().then(removeHandlers);
-      }
-    },
-
-    get visible() {
-      return Chat.visible;
-    },
-
-    insertChatLine: insertChatLine,
-
-    insertChatEvent: insertChatEvent
+    init: init
   };
 
   exports.ChatView = ChatView;
