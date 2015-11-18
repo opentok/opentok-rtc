@@ -179,5 +179,5 @@ module.exports = function(grunt) {
     'configTests'
   ]);
 
-  grunt.registerTask('default', ['initialConfig']);
+  grunt.registerTask('default', ['clientBuild']);
 };

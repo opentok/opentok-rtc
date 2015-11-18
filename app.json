@@ -1,0 +1,29 @@
+{
+  "name": "OpenTokRTCV2",
+  "description": "OpenTok RTC sample application to show off the OpenTok API and platform capabilities ",
+  "keywords": [
+    "WebRTC",
+    "HTML5",
+    "productivity"
+  ],
+  "website": "https://tokbox.com/",
+  "repository": "https://github.com/opentok/OpentokRTC-V2.git",
+  "logo": "https://tokbox.com/developer/img/OT_logo.png",
+  "success_url": "/",
+  "scripts": {
+    "postdeploy": "bower install && grunt clientBuild"
+  },
+  "env": {
+    "SECRET_TOKEN": {
+      "description": "A secret key for verifying the integrity of signed cookies.",
+      "generator": "secret"
+    },
+    "WEB_CONCURRENCY": {
+      "description": "The number of processes to run.",
+      "value": "5"
+    }
+  },
+  "addons": [
+    "heroku-redis",
+  ]
+}

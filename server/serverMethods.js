@@ -69,18 +69,20 @@ function ServerMethods(aLogLevel, aModules) {
   // allowed to hot-link
   const RED_VALID_REFERERS = 'valid_referers';
 
+  var env = process.env;
+
   const REDIS_KEYS = [
-    { key: RED_TB_API_KEY, defaultValue: null },
-    { key: RED_TB_API_SECRET, defaultValue: null },
-    { key: RED_TB_ARCHIVE_POLLING_INITIAL_TIMEOUT, defaultValue: 5000 },
-    { key: RED_TB_ARCHIVE_POLLING_TIMEOUT_MULTIPLIER, defaultValue: 1.5 },
-    { key: RED_FB_DATA_URL, defaultValue: null },
-    { key: RED_FB_AUTH_SECRET, defaultValue: null },
-    { key: RED_TB_MAX_SESSION_AGE, defaultValue: 2 },
-    { key: RED_EMPTY_ROOM_MAX_LIFETIME, defaultValue: 3 },
-    { key: RED_ALLOW_IFRAMING, defaultValue: 'never' },
-    { key: RED_VALID_REFERERS, defaultValue: '[]' },
-    { key: RED_CHROME_EXTENSION_ID, defaultValue: 'undefined' }
+    { key: RED_TB_API_KEY, defaultValue: env.TB_API_KEY || null },
+    { key: RED_TB_API_SECRET, defaultValue: env.TB_API_SECRET || null },
+    { key: RED_TB_ARCHIVE_POLLING_INITIAL_TIMEOUT, defaultValue: env.ARCHIVE_TIMEOUT || 5000 },
+    { key: RED_TB_ARCHIVE_POLLING_TIMEOUT_MULTIPLIER, defaultValue: env.TIMEOUT_MULTIPLIER || 1.5 },
+    { key: RED_FB_DATA_URL, defaultValue: process.env.FB_DATA_URL || null },
+    { key: RED_FB_AUTH_SECRET, defaultValue: process.env.FB_AUTH_SECRET || null },
+    { key: RED_TB_MAX_SESSION_AGE, defaultValue: env.TB_MAX_SESSION_AGE || 2 },
+    { key: RED_EMPTY_ROOM_MAX_LIFETIME, defaultValue: env.EMPTY_ROOM_LIFETIME || 3 },
+    { key: RED_ALLOW_IFRAMING, defaultValue: env.ALLOW_IFRAMING || 'never' },
+    { key: RED_VALID_REFERERS, defaultValue: env.VALID_REFERERS || '[]' },
+    { key: RED_CHROME_EXTENSION_ID, defaultValue: env.CHROME_EXTENSION_ID || 'undefined' }
   ];
 
   // A prefix for the room sessionInfo (sessionId + timestamp + inProgressArchiveId).
@@ -111,7 +113,9 @@ function ServerMethods(aLogLevel, aModules) {
   var Redis = require('ioredis');
 
   const REDIS_CONNECT_TIMEOUT = 5000;
-  var redis = new Redis({ connectTimeout: REDIS_CONNECT_TIMEOUT });
+
+  var redisURL = env.REDIS_URL || env.REDISTOGO_URL || '';
+  var redis = new Redis(redisURL, { connectTimeout: REDIS_CONNECT_TIMEOUT });
   var redisWatchdog = setInterval(function() {
     logger.warn('Timeout while connecting to the Redis Server! Is Redis running?');
   }, REDIS_CONNECT_TIMEOUT);
