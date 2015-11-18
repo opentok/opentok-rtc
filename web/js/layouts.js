@@ -161,6 +161,7 @@ Hangout.prototype = {
       if (this.isOnStage(item)) {
         this.removeItemFromStage(item).
              updateTotalOnStage();
+        !this.totalOnStage && Utils.sendEvent('hangout:emptyStage');
       }
     }
   },

@@ -29,6 +29,10 @@
         userLayout = HANGOUT_BY_DEFAULT;
         rearrange(evt.detail.item);
       }
+    },
+    'emptyStage': function(evt) {
+      userLayout = 'grid';
+      rearrange();
     }
   };
 
@@ -38,6 +42,7 @@
     ItemsHandler.init(container, items);
     Utils.addEventsHandlers('layoutMenuView:', handlers, global);
     Utils.addEventsHandlers('layoutView:', handlers, global);
+    Utils.addEventsHandlers('hangout:', handlers, global);
   }
 
   function isOnGoing(layout) {
