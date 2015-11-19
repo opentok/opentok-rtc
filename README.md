@@ -79,9 +79,23 @@ redis). The supported parameters and their default values are:
    link to URLs. This same server is always allowed to hot-link
 
 ### Installing on Heroku
-The application is prepared to run on Heroku, but the configuration differs slightly from the one
-required to run It requires having some redis service as an addon. Currently it detects and supports
-the following redis services:
+
+Heroku is a PaaS (Platform as a Service) that can be used to deploy simple and small applications
+for free. To easily deploy this repository to Heroku, sign up for a Heroku account and click this
+button:
+
+<a href="https://heroku.com/deploy?template=https://github.com/opentok/OpenTokRTC-V2" target="_blank">
+  <img src="https://www.herokucdn.com/deploy/button.png" alt="Deploy">
+</a>
+
+Heroku will prompt you to add your OpenTok API key and OpenTok API secret, which you can
+obtain at the [TokBox Dashboard](https://dashboard.tokbox.com/keys).
+
+You can also install this repository on your own server (see the previous sections).
+
+If you prefer to deploy to Heroku manually, follow the procedure described next. The configuration
+differs slightly from the one required to run the application as standalone. It requires having
+some redis service as an addon. Currently it detects and supports the following redis services:
 
  - Heroku-redis: https://devcenter.heroku.com/articles/heroku-redis
  - Redis-to-go: https://elements.heroku.com/addons/redistogo
@@ -124,11 +138,6 @@ environment variables:
 - allow_iframing => ALLOW_IFRAMING
 - valid_refrers => VALID_REFERERS
 - chrome_extension_id => CHROME_EXTENSION_ID
-
-TO-DO: TO-DO: TO-DO:
-
-**** Add deploy button **** To add a deploy button correctly we can do it directly from the Tokbox
-dashboard (since we can get the api key and secret from there).
 
 ## Running
 
