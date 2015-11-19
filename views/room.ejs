@@ -6,7 +6,6 @@
     <title>OpenTok</title>
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="/css/room.opentok.css">
-    <link rel="stylesheet" href="https://fortawesome.github.io/Font-Awesome/assets/font-awesome/css/font-awesome.css">
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/<%=chromeExtensionId%>">
 
     <script type="text/javascript" src="https://static.opentok.com/webrtc/v2/js/opentok.min.js"></script>
@@ -78,9 +77,6 @@
           <ul></ul>
         </div>
       </div>
-      <footer>
-        Powered by TokBox
-      </footer>
     </section>
 
     <section id="screenShareErrors" class="screen-modal tc-modal">
@@ -148,15 +144,17 @@
     <section id="chat">
       <form class="dialog-chat" id="chatForm">
         <header>
-          <i data-icon="chat-view"></i><span>Chat:</span><span id="chatName"></span><a id="closeChat"><i data-icon="close-chat"></i></a>
+          <span>OpenTok Chat Room</span>
+          <i id="toggleChat" data-icon="collapse"></i>
+          <i id="closeChat" data-icon="close_white"></i>
         </header>
         <div id="chatMsgs" class="tc-list">
           <ul>
           </ul>
         </div>
         <footer>
-          <input class ="block" placeholder="New message here" id="msgText">
-          <button id="sendTxt" type="submit">Send</button>
+          <textarea id="msgText"></textarea>
+          <button id="sendTxt" type="submit" class="btn btn-blue btn-padding ctaarrow-white">Send</button>
         </footer>
       </form>
     </section>
@@ -198,6 +196,10 @@
         </footer>
       </form>
     </section>
+
+    <footer class="main">
+      Powered by TokBox
+    </footer>
 
   </body>
 </html>

@@ -5,8 +5,8 @@
 
   var _usrId;
 
-  var CONN_SUFIX = ' has connected';
-  var DISCONN_SUFIX = ' has disconnected';
+  var CONN_TEXT = '(has connected)';
+  var DISCONN_TEXT = '(left the room)';
   var STATUS_KEY = 'chat';
 
   function loadHistoricChat() {
@@ -56,11 +56,17 @@
       // client connects
         var newUsrName = JSON.parse(evt.connection.data).userName;
         if (newUsrName !== _usrId) {
-          ChatView.insertChatEvent( newUsrName + CONN_SUFIX);
+          ChatView.insertChatEvent({
+            userName: newUsrName,
+            text: CONN_TEXT
+          });
         }
     },
     'connectionDestroyed': function(evt) {
-      ChatView.insertChatEvent(JSON.parse(evt.connection.data).userName + DISCONN_SUFIX);
+      ChatView.insertChatEvent({
+        userName: JSON.parse(evt.connection.data).userName,
+        text: DISCONN_TEXT
+      });
     }
   };
 

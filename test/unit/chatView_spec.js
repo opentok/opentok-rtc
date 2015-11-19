@@ -4,7 +4,6 @@ describe('ChatView', function() {
 
   var container = null;
   var chatContainer = null;
-  var chatNameElem;
   var ROOM_NAME_TEST = 'roomNameTest';
 
   var ChatController = {
@@ -58,8 +57,6 @@ describe('ChatView', function() {
     it('should set the chat\'s room name and init the Chat object', sinon.test(function(done) {
       this.spy(Chat, 'init');
       ChatView.init('usr', ROOM_NAME_TEST).then(function() {
-        chatNameElem = getContainer().querySelector('#chatName');
-        expect(chatNameElem.textContent).to.equal(ROOM_NAME_TEST);
         expect(Chat.init.calledOnce).to.be.true;
         done();
       });
@@ -114,8 +111,8 @@ describe('ChatView', function() {
       var p = newLine.lastChild;
       expect(p.children.length).to.be.equal(3);
 
-      testSpan(p.childNodes[0], data.sender);
-      testSpan(p.childNodes[1], data.time, 'time');
+      testSpan(p.childNodes[0], data.time.toLowerCase(), 'time');
+      testSpan(p.childNodes[1], data.sender, 'sender');
 
       var elem = p.childNodes[2];
       expect(elem.nodeName).to.be.equal('P');
@@ -131,15 +128,20 @@ describe('ChatView', function() {
 
   describe('#insertChatEvent', function() {
     it('should add a new event correctly', function() {
-      var data = 'usr1 has connected';
-      var txtResult = '<p><p>' + data + '</p></p>';
+      var data = {
+        userName: 'usr1',
+        text: '(has connected)',
+        time: '00:00am'
+      };
 
       var chatContent = getChatContainer().querySelector('ul');
       var lengthBefore = chatContent.children.length;
       ChatView.insertChatEvent(data);
       expect(chatContent.children.length).to.be.equal(lengthBefore + 1);
       var newLine = chatContent.lastChild;
-      expect(newLine.innerHTML).to.be.equal(txtResult);
+      expect(newLine.querySelector('.time').textContent).to.be.equal(data.time);
+      expect(newLine.querySelector('.sender').textContent).to.be.equal(data.userName);
+      expect(newLine.querySelector('p p:last-child').textContent).to.be.equal(data.text);
     });
   });
 

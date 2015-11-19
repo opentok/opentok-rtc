@@ -10,14 +10,24 @@
   display: none;
 }
 
-[data-icon="close-chat"]:before { content:"\f00d"; }
-
-[data-icon="chat-view"]:before { content:"\f0e6"; }
-
-[data-icon="record"]:before { content:"\f111"; }
+[data-icon="close_white"] {
+  background-image: url("/images/icons/close_white.svg");
+}
 
 [data-icon="close_gray"] {
   background-image: url("/images/icons/close_gray.svg");
+}
+
+[data-icon="record"] {
+  background-image: url("/images/icons/record.svg");
+}
+
+[data-icon="collapse"] {
+  background-image: url("/images/icons/collapse.svg");
+}
+
+[data-icon="collapse"]:after {
+  background-image: url("/images/icons/expand.svg");
 }
 
 /* Layouts */

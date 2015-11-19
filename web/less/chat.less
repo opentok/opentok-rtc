@@ -1,21 +1,28 @@
 #chat {
   position: absolute;
-  min-width: 300px;
-  width: 25%;
+  width: 300px;
   height: 60%;
-  right: 50px;
-  bottom: 0;
+  right: 60px;
+  bottom: calc(~"-60% + 13px");
   background-color: white;
-  color: #9b9c9b;
   z-index: 1000;
+  font-size: 0;
 
   display: none;
 
-  transform: translateY(100%);
+  transform: translateY(0);
   transition: transform @transitionTime;
 
   &.show {
-    transform: translateY(-36px);
+    transform: translateY(-100%);
+  }
+
+  &.collapsed {
+    transform: translateY(-60px);
+
+    [data-icon="collapse"] {
+      background-image: url("/images/icons/expand.svg");
+    }
   }
 
   &.visible {
@@ -25,52 +32,67 @@
   .dialog-chat {
     height: 100%;
     width: 100%;
+    overflow-x: hidden;
 
     header {
-      height: 40px;
+      height: 60px;
       width: 100%;
-      font-size: 12px;
+      font-size: 16px;
       text-align: left;
-      font-weight: 100;
-      background-color: #d3d3d3;
+      background-color: #1a99ce;
+      color: #fff;
+      text-align: center;
+      position: relative;
 
-      i {
-        font-size: 30px;
-        float: left;
+      #toggleChat, #closeChat {
+        position: absolute;
+        top: 5px;
+        width: 20px;
+        height: 20px;
+      }
+
+      #toggleChat {
+        right: 25px;
       }
 
       #closeChat {
-        float: right;
+        right: 5px;
       }
 
       span {
         display: inline-block;
-        padding-left: 4px;
-        font-weight: 100;
-        line-height: 40px;
-      }
-
-      i[data-icon="close-chat"] {
-        padding-right: 6px;
-      }
-
-      i[data-icon="chat-view"] {
-        padding-left: 6px;
-        padding-right: 2px;
+        line-height: 60px;
       }
     }
 
     #chatMsgs {
       overflow-y: scroll;
       display: block;
-      height: calc(~"100% - 100px");
+      height: calc(~"100% - 175px");
+      width: calc(~"100% + 15px");
 
       li {
         background-color: transparent;
-        border-bottom: 1px solid #e5eaec;
+        padding: 12px 30px;
+        border: 0;
+
+        .time, .sender {
+          font-size: 12px;
+        }
 
         .time {
-          float: right;
+          color: #c5bbb4;
+        }
+
+        .sender {
+          color: #282828;
+          padding-left: 10px;
+        }
+
+        p {
+          color: #9b9c9b;
+          font-size: 11px;
+          word-break: break-all;
         }
 
         a {
@@ -101,22 +123,31 @@
     }
 
     footer {
-      height: 60px;
+      height: 115px;
       font-size: 12px;
-      line-height: 28px;
-      text-align: left;
-      background-color: #d3d3d3;
-      padding: 10px;
+      background-color: #f9f9f9;
+      text-align: center;
 
-      button {
-        background: transparent;
-        border: 0;
-        float: right;
-        color: #9b9c9b;
+      .btn {
+        height: 25px;
+        line-height: 25px;
+        margin: 0;
       }
 
-      input {
+      .btn, textarea {
         font-size: 12px;
+      }
+
+      .ctaarrow-white:after {
+        background-size: 9px 11px;
+        width: 9px;
+        height: 11px;
+        background-repeat: no-repeat;
+      }
+
+      textarea {
+        width: 240px;
+        margin: 20px 0 10px 0;
       }
     }
   }
