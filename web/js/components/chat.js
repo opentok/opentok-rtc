@@ -17,11 +17,31 @@
     });
   }
 
+  function onClick(evt) {
+    if (evt.target.id === 'startChat') {
+      isCollapsed() ? expand() : hide();
+    } else if (!isCollapsed()) {
+      hide();
+    }
+  }
+
+  function collapse() {
+    container.classList.add('collapsed');
+  }
+
+  function expand() {
+    container.classList.remove('collapsed');
+  }
+
+  function isCollapsed() {
+    return container.classList.contains('collapsed');
+  }
+
   function show() {
     chatShown = chatShown || new Promise(function(resolve, reject) {
       container.addEventListener(transEndEventName, function onEnd() {
         container.removeEventListener(transEndEventName, onEnd);
-        document.body.addEventListener('click', hide);
+        document.body.addEventListener('click', onClick);
         resolve();
       });
 
@@ -42,12 +62,13 @@
     chatHidden = chatHidden || new Promise(function(resolve, reject) {
       container.addEventListener(transEndEventName, function onEnd() {
         container.removeEventListener(transEndEventName, onEnd);
-        document.body.removeEventListener('click', hide);
+        document.body.removeEventListener('click', onClick);
         container.classList.remove('visible');
         chatShown = chatHidden = null;
         resolve();
       });
 
+      container.classList.remove('collapsed');
       container.classList.remove('show');
     });
 
@@ -58,6 +79,9 @@
     init: init,
     show: show,
     hide: hide,
+    collapse: collapse,
+    expand: expand,
+    isCollapsed: isCollapsed,
     get visible() {
       return container && container.classList.contains('visible');
     }

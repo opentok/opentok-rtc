@@ -127,7 +127,10 @@ describe('ChatController', function() {
         chatHndls['connectionCreated'](getSignalEvent('otherUser'));
 
         expect(ChatView.insertChatEvent.calledOnce).to.be.true;
-        expect(ChatView.insertChatEvent.calledWith('otherUser has connected')).to.be.true;
+        expect(ChatView.insertChatEvent.calledWith({
+          userName: 'otherUser',
+          text: '(has connected)'
+        })).to.be.true;
       }));
 
       it('should not do anything when I receive a connect event for myself',
@@ -153,8 +156,10 @@ describe('ChatController', function() {
           chatHndls['connectionDestroyed'](getSignalEvent('mySelf'));
 
           expect(ChatView.insertChatEvent.calledOnce).to.be.true;
-          expect(ChatView.insertChatEvent.calledWith('mySelf has disconnected')).
-                 to.be.true;
+          expect(ChatView.insertChatEvent.calledWith({
+            userName: 'mySelf',
+            text: '(left the room)'
+          })).to.be.true;
           done();
         });
       }));

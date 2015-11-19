@@ -4,9 +4,9 @@
   var usrId;
 
   var closeChatBtn,
+      toggleChatBtn,
       sendMsgBtn,
       chatMsgInput,
-      chatNameElem,
       chatContainer,
       chatContent,
       chatForm;
@@ -18,9 +18,9 @@
   function initHTMLElements() {
     var chatWndElem = document.getElementById('chat');
     closeChatBtn = chatWndElem.querySelector('#closeChat');
+    toggleChatBtn = chatWndElem.querySelector('#toggleChat');
     sendMsgBtn = chatWndElem.querySelector('#sendTxt');
     chatMsgInput = chatWndElem.querySelector('#msgText');
-    chatNameElem = chatWndElem.querySelector('#chatName');
     chatContainer = chatWndElem.querySelector('#chatMsgs');
     chatContent = chatContainer.querySelector('ul');
     chatForm = chatWndElem.querySelector('#chatForm');
@@ -71,12 +71,17 @@
     ChatView.visible = false;
   };
 
+  var onToggle = function(evt) {
+    Chat.isCollapsed() ? Chat.expand() : Chat.collapse();
+  };
+
   // The ChatController should have the handlers and call the view for
   // doing visual work
   function addHandlers() {
     chatForm.addEventListener('keypress', onKeyPress);
     chatForm.addEventListener('submit', onSubmit);
     closeChatBtn.addEventListener('click', onClose);
+    toggleChatBtn.addEventListener('click', onToggle);
     sendMsgBtn.addEventListener('click', onSendClicked);
   }
 
@@ -88,10 +93,8 @@
   }
 
   function insertChatEvent(data) {
-    var item = HTMLElems.createElementAt(chatContent, 'li');
-    var info = HTMLElems.createElementAt(item, 'p');
-    HTMLElems.createElementAt(info, 'p', null, data);
-    scrollTo(item);
+    data.time = data.time || Utils.getCurrentTime();
+    insertChatLine(data);
   }
 
   function insertText(elemRoot, text) {
@@ -114,9 +117,10 @@
 
     var info = HTMLElems.createElementAt(item, 'p');
 
-    HTMLElems.createElementAt(info, 'span', null, data.sender);
-    var time = HTMLElems.createElementAt(info, 'span', null, data.time);
-    time.classList.add('time');
+    var time = data.time.toLowerCase();
+    HTMLElems.createElementAt(info, 'span', null, time).classList.add('time');
+    HTMLElems.createElementAt(info, 'span', null, data.sender || data.userName).
+              classList.add('sender');
 
     insertText(info, data.text);
 
@@ -128,10 +132,6 @@
     chatContainer.scrollTop = chatContent.offsetHeight + item.clientHeight;
   }
 
-  function setRoomName(name) {
-    HTMLElems.addText(chatNameElem, name);
-  }
-
   function init(aUsrId, aRoomName) {
     return LazyLoader.dependencyLoad([
       '/js/helpers/textProcessor.js',
@@ -139,7 +139,6 @@
     ]).then(function() {
       initHTMLElements();
       usrId = aUsrId;
-      setRoomName(aRoomName);
       Chat.init();
     });
   }
