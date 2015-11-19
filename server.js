@@ -11,7 +11,7 @@ function parseCommandLine() {
     daemon: false,
     logFile: undefined,
     user: currentUid,
-    serverPort: 8123,
+    serverPort: process.env.PORT || 8123,
     staticPath: './web',
     serverLibs: './server/',
     certDir: 'serverCerts',
@@ -25,7 +25,10 @@ function parseCommandLine() {
       ['d', 'daemon', 'Starts as a daemon.'],
       ['l', 'logFile=ARG', 'Logs output to this file, only if started as a daemon.'],
       ['u', 'user=ARG', 'UID (name or number) to fork to after binding the port.'],
-      ['p', 'serverPort=ARG', 'Server listening port.'],
+      ['p',
+       'serverPort=ARG',
+       'Server listening port. If not present it uses either the PORT env variable or' +
+         ' the 8123 port'],
       ['s', 'staticPath=ARG', 'Directory that holds the static files.'],
       ['C', 'certDir=ARG', 'Directory that holds the cert.pem and key.pem files.'],
       ['S', 'secure', 'Starts as a secure server (HTTPS).']

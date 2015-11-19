@@ -12,6 +12,7 @@ installation at https://opentokrtc.com (TO-DO TO-DO: Fix this!)
 
 ## Installation
 
+### Local Installation:
 #### Prerequisites:
 You'll need:
 
@@ -77,6 +78,67 @@ redis). The supported parameters and their default values are:
 - valid_referers (Optiona, default value: '[]'): List (JSONified array) of the hosts that can hot
    link to URLs. This same server is always allowed to hot-link
 
+### Installing on Heroku
+
+Heroku is a PaaS (Platform as a Service) that can be used to deploy simple and small applications
+for free. To easily deploy this repository to Heroku, sign up for a Heroku account and click this
+button:
+
+<a href="https://heroku.com/deploy?template=https://github.com/opentok/OpenTokRTC-V2" target="_blank">
+  <img src="https://www.herokucdn.com/deploy/button.png" alt="Deploy">
+</a>
+
+Heroku will prompt you to add your OpenTok API key and OpenTok API secret, which you can
+obtain at the [TokBox Dashboard](https://dashboard.tokbox.com/keys).
+
+You can also install this repository on your own server (see the previous sections).
+
+If you prefer to deploy to Heroku manually, follow the procedure described next. The configuration
+differs slightly from the one required to run the application as standalone. It requires having
+some redis service as an addon. Currently it detects and supports the following redis services:
+
+ - Heroku-redis: https://devcenter.heroku.com/articles/heroku-redis
+ - Redis-to-go: https://elements.heroku.com/addons/redistogo
+
+#### Requirements:
+You have to own a validated Heroku account (with the ability to use free addons).
+
+#### Installation:
+
+You have to set the following environment variables on your heroku instance:
+ - TB_API_KEY: Your Opentok api key.
+ - TB_API_SECRET: Your Opentok api secret.
+ - FB_DATA_URL: A firebase URL to store the archive list for each room. If you don't want to use
+    this functionality, use any valor (like http://localhost for example)
+ - FB_AUTH_SECRET: The authentication secret for the previous URL. If you don't want to use this
+   functionality, pass any value (like anyvalue for example).
+
+Execute:
+```
+heroku create
+heroku config:set TB_API_KEY='yourkey' TB_API_SECRET='yoursecret'
+heroku config:set FB_DATA_URL='yourfburl' FB_AUTH_SECRET='yourfb_secret'
+
+```
+
+If you want to set up your redis instance, the instruction for setting up a heroku-redis addon are:
+
+```
+heroku plugins:install heroku-redis
+heroku addons:create heroku-redis:hobby-dev
+```
+
+Additionally you can also modify all the other configuration options described previously using
+environment variables:
+
+- tb_archive_polling_initial_timeout => ARCHIVE_TIMEOUT
+- tb_archive_polling_multiplier => TIMEOUT_MULTIPLIER
+- tb_max_session_age => TB_MAX_SESSION_AGE
+- tb_max_history_lifetime => EMPTY_ROOM_LIFETIME
+- allow_iframing => ALLOW_IFRAMING
+- valid_refrers => VALID_REFERERS
+- chrome_extension_id => CHROME_EXTENSION_ID
+
 ## Running
 
 ```
@@ -103,3 +165,39 @@ where:
 - static files directory: Filw where the web files reside. By default
   it's ./web.
 
+## Firebase security
+
+The application uses Firebase to store and share the archive list that's done on a given
+room/session. You can activate this feature by setting a valid Firebase URL and secret. If you want
+to ensure that the archive list is kept secure (as in only the actual people using a room can see
+it, and nobody can see the list of archives of other rooms) then you must add something like:
+
+
+```
+{
+    "rules": {
+        ".read": false,
+        ".write": false,
+        "sessions": {
+          ".read": "auth != null && auth.role == 'server'",
+          ".write": "auth != null && auth.role == 'server'",
+          "$sessionId": {
+            ".read": "auth != null && (auth.role == 'server' || auth.sessionId == $sessionId)",
+            ".write": "auth != null && auth.role == 'server'",
+            "archives": {
+            },
+            "connections": {
+              ".read": "auth != null && auth.role == 'server'",
+              ".write": "auth != null && (auth.role == 'server' || auth.sessionId == $sessionId)",
+              "$connectionId": {
+              }
+            }
+          }
+        }
+    }
+}
+```
+
+as a security rule on the Security & Rules section of your Firebase application. Replace 'sessions'
+with the root where you want to store the archive data (the actual URL that you set as fb_data_url
+configuration parameter.
