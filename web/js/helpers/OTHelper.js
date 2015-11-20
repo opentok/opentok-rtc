@@ -19,12 +19,12 @@
   var HEAD_SIZE =
     JSON.stringify({ _head: { id: 99, seq: 99, tot: 99}, data: "" }).length;
   var USER_DATA_SIZE = SIZE_MAX - HEAD_SIZE;
-  var debug =
+  var logger =
     new Utils.MultiLevelLogger('OTHelper.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
 
   var otLoaded = otPromise.then(function() {
     var hasRequirements = OT.checkSystemRequirements();
-    debug.log('checkSystemRequirements:', hasRequirements);
+    logger.log('checkSystemRequirements:', hasRequirements);
     if (!hasRequirements) {
       OT.upgradeSystemRequirements();
       throw new Error('Unsupported browser, probably needs upgrade');
@@ -339,6 +339,70 @@
     });
   }
 
+  // PreferredResolution algorithms. They all take as input the total screen real state available,
+  // the available real state for the subscriber being redimensioned, the maximum dimensions of the
+  // stream and the number of current subscribers. And based on that it returns the new recommended
+  // preferred resolution dimension. All the dimensions are objects that have both a width and
+  // height attributes
+  var preferedResolutionAlgorithms = {
+    // Assuming all the subscribers share a common DOM parent, we can calculate which percent of the
+    // whole size we're taking, and thus restrict the stream size...
+    percentOfAvailable: function(aStreamDimension, aTotalDimension, aSubsDimension, aSubsNumber) {
+      // Assumption: All the subscribers have the same size. What we're going to do is to assign a
+      // % of the total pool of pixels available (as sent, not as shown):
+      var totalWidth = aStreamDimension.width * aSubsNumber;
+      var totalHeight = aStreamDimension.height * aSubsNumber;
+      return {
+        width: Math.ceil(totalWidth * aSubsDimension.width / aTotalDimension.width),
+        height: Math.ceil(totalHeight * aSubsDimension.height / aTotalDimension.height)
+      };
+    },
+
+    // Assign a % of the actual stream size (as sent, not as shown):
+    percentOfStream: function(aStreamDimension, aTotalDimension, aSubsDimension, aSubsNumber) {
+      var totalWidth = aStreamDimension.width;
+      var totalHeight = aStreamDimension.height;
+      var percentW = aSubsDimension.width / aTotalDimension.width;
+      var percentH = aSubsDimension.height / aTotalDimension.height;
+      return {
+        width: Math.ceil(totalWidth * percentW),
+        height: Math.ceil(totalHeight * percentH)
+      };
+    },
+
+    // like percentOfStream but once we're over 70% on any of the dimensions, we just assign the
+    // maximum size on both dimensions.
+    biasedPercent: function(aStreamDimension, aTotalDimension, aSubsDimension, aSubsNumber) {
+      var totalWidth = aStreamDimension.width;
+      var totalHeight = aStreamDimension.height;
+      var percentW = aSubsDimension.width / aTotalDimension.width;
+      var percentH = aSubsDimension.height / aTotalDimension.height;
+      if (percentH >= 0.70 || percentW >= 0.70) {
+        percentH = 1;
+        percentW = 1;
+      }
+      return {
+        width: Math.ceil(totalWidth * percentW),
+        height: Math.ceil(totalHeight * percentH)
+      };
+    }
+  };
+  var defaultAlgorithm = 'biasedPercent';
+
+  function setPreferredResolution(aSubscriber, aTotalDimension, aSubsDimension,
+                                 aSubsNumber, aAlgorithm) {
+    var chosenAlgorithm =
+      aAlgorithm && preferedResolutionAlgorithms[aAlgorithm] && aAlgorithm ||
+      defaultAlgorithm;
+    var algorithm = preferedResolutionAlgorithms[chosenAlgorithm];
+    var streamDimension = aSubscriber.stream.videoDimensions;
+    var newDimension =
+      algorithm(streamDimension, aTotalDimension, aSubsDimension, aSubsNumber);
+    logger.log('setPreferedResolution -', chosenAlgorithm, ':', aSubscriber.stream.streamId,
+               'of', aSubsNumber, ': Existing:', streamDimension, 'Requesting:', newDimension);
+    aSubscriber.setPreferredResolution(newDimension);
+  }
+
   var OTHelper = {
     connectToSession: connectToSession,
     publish: publish,
@@ -357,6 +421,7 @@
     stopShareScreen: stopShareScreen,
     subscribe: subscribe,
     screenShareErrorCodes: PUB_SCREEN_ERROR_CODES,
+    setPreferredResolution: setPreferredResolution,
     get publisherId() {
       return _publisher.stream.id;
     },
