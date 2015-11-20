@@ -41,7 +41,7 @@
       button: 'I understand'
     },
     disabledVideos: {
-      head: 'Unsubscribe from all videos',
+      head: 'Disable all videos',
       detail: 'Disable all videos to decrease internet usage and increase audio quiality',
       button: 'Disable all'
     }
