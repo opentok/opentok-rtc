@@ -201,6 +201,13 @@ Hangout.prototype = {
         this.removeItemFromStage(item).updateTotalOnStage();
         !this.totalOnStage && Utils.sendEvent('hangout:emptyStage');
       }
+    },
+    'layoutManager:itemAdded': function(evt) {
+      var item = evt.detail.item;
+      // New screen shared goes to stage if there is not another screen shared there
+      if (Hangout.getItemType(item) === 'screen' && !this.stageIds['screen']) {
+        this.putItemOnStage(item).updateTotalOnStage();
+      }
     }
   },
 

@@ -292,6 +292,23 @@ describe('Layouts', function() {
       expect(container.dataset.onStageScreen).to.equal(expectedItem.dataset.id);
     });
 
+    describe('#event handler: layoutManager:itemAdded', function() {
+
+      it('should add screen shared to stage when there is not another one there', function() {
+        var container = getContainer();
+        instance = new Hangout(container, items, items['jjfnj43nj34nj4']);
+        expect(instance.totalOnStage).to.equal(1);
+        var newItem = items['newScreen'] = getItem('newScreen', 'screen');
+        window.dispatchEvent(new CustomEvent('layoutManager:itemAdded', {
+          detail: {
+            item: newItem
+          }
+        }));
+        expect(instance.totalOnStage).to.equal(2);
+      });
+
+    });
+
     describe('HangoutHorizontal', function() {
 
       describe('#constructor', function() {
