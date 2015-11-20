@@ -5,6 +5,7 @@
     new Utils.MultiLevelLogger('roomController.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
 
   var numUsrsInRoom = 0;
+  var _disabledAllVideos = false;
 
   var publisherReady = Promise.resolve();
 
@@ -133,17 +134,23 @@
   };
 
   var changeSubscriberStatus = function(name, status) {
+    _disabledAllVideos = status;
+
     Object.keys(subscriberStreams).forEach(function(aStreamId) {
       if (subscriberStreams[aStreamId] &&
           subscriberStreams[aStreamId].stream.videoType === 'camera') {
-        viewEventHandlers.buttonClick({
-          detail: {
-            streamId: aStreamId,
-            name: name,
-            disableAll: true,
-            status: status
-          }
-        });
+        pushSubscriberButton(aStreamId, name, status);
+      }
+    });
+  };
+
+  var pushSubscriberButton = function(streamId, name, status) {
+    viewEventHandlers.buttonClick({
+      detail: {
+        streamId: streamId,
+        name: name,
+        disableAll: true,
+        status: status
       }
     });
   };
@@ -299,6 +306,7 @@
       };
 
       var subOptions = subscriberOptions[streamVideoType];
+      var enterWithVideoDisabled = streamVideoType === 'camera' && _disabledAllVideos;
 
       _sharedStatus = RoomStatus.get(STATUS_KEY);
 
@@ -307,6 +315,8 @@
         type: stream.videoType,
         controlElems: subscriberStreams[streamId].buttons
       });
+
+      subOptions.subscribeToVideo = !enterWithVideoDisabled;
 
       OTHelper.subscribe(evt.stream, subsDiv, subOptions).
         then(function(subscriber) {
@@ -320,6 +330,9 @@
           Object.keys(_subscriberHandlers).forEach(function(name) {
             subscriber.on(name, _subscriberHandlers[name]);
           });
+          if (enterWithVideoDisabled) {
+            pushSubscriberButton(streamId, 'video', true);
+          }
         }, function(error) {
           debug.error('Error susbscribing new participant. ' + error.message);
         });
