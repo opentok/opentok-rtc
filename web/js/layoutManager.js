@@ -65,6 +65,9 @@
     } else {
       rearrange();
     }
+    Utils.sendEvent('layoutManager:itemAdded', {
+      item: item
+    });
     return item.querySelector('.opentok-stream-container');
   }
 
