@@ -522,7 +522,7 @@ function ServerMethods(aLogLevel, aModules) {
           readyToUpdateExternalDb.
             then(aUpdatedArchive => {
               aUpdatedArchive.localDownloadURL = '/archive/' + aArchive.id;
-              aUpdatedArchive.recordingUser = userName;
+              operation !== 'stop' ? aUpdatedArchive.recordingUser = userName : '';
               tbConfig.fbArchives.updateArchive(sessionInfo.sessionId, aUpdatedArchive);
             });
 
