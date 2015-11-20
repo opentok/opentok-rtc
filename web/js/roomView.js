@@ -20,7 +20,7 @@
       head: 'All participants microphones are going to be disabled in the call',
       detail: 'If someone with to keep talking, ' +
               'they must enable manually its own microphone',
-      button: 'Mute All'
+      button: 'Mute all'
     },
     muteRemotely: {
       head: 'All participants microphones are going to be disabled in the call',
@@ -43,7 +43,7 @@
     disabledVideos: {
       head: 'Unsubscribe from all videos',
       detail: 'Disable all videos to decrease internet usage and increase audio quiality',
-      button: 'Disable All'
+      button: 'Disable all'
     }
   };
 
