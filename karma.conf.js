@@ -18,6 +18,8 @@ module.exports = function(config) {
       'test/lib/**/*.js',
       {pattern: 'test/mocks/mock_firebase.js', include: true},
       {pattern: 'test/mocks/mock_othelper.js', include: true},
+      {pattern: 'test/mocks/mock_roomStatus.js', include: true},
+      {pattern: 'test/mocks/mock_chat.js', include: true},
       'web/js/vendor/**/*.js',
       'web/js/libs/**/*.js',
       'server/shared/**/*.js',

@@ -24,7 +24,15 @@
     (target || exports).dispatchEvent(newEvt);
   };
 
+  var addHandlers = function(events) {
+    Object.keys(events).forEach(function(evtName) {
+      var event = events[evtName];
+      (event.target || exports).addEventListener(event.name, event.handler);
+    });
+  };
+
   var addEventsHandlers = function(eventPreffixName, handlers, target) {
+    eventPreffixName = eventPreffixName || '';
     Object.keys(handlers).forEach(function(eventName) {
       (target || exports).addEventListener(eventPreffixName + eventName, handlers[eventName]);
     });
@@ -39,6 +47,7 @@
     inspectObject: inspectObject,
     sendEvent: sendEvent,
     addEventsHandlers: addEventsHandlers,
+    addHandlers: addHandlers,
     get draggableUI() {
       return document.querySelectorAll('[draggable]').length;
     },

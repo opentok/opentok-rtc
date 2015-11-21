@@ -274,6 +274,10 @@ body {
       display: none;
       color: #c61f4c;
     }
+
+    #stopChat {
+      display: none;
+    }
   }
 }
 
@@ -294,6 +298,18 @@ body {
     }
 
     #stopSharingDesktop {
+      display: inline-block;
+    }
+  }
+}
+
+[data-chat-status="visible"] {
+  #dock .menu {
+    #startChat {
+      display: none;
+    }
+
+    #stopChat {
       display: inline-block;
     }
   }

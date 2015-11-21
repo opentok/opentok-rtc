@@ -58,10 +58,10 @@
 
       send(newUsrConnection);
 
-      var intervalResendChat =
+      var intervalResendStatus =
         window.setInterval(send.bind(undefined, newUsrConnection),
                            TIME_RESEND_STATUS);
-      _connectedAfterMe[connectionId] = intervalResendChat;
+      _connectedAfterMe[connectionId] = intervalResendStatus;
     }
   };
 

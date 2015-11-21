@@ -385,9 +385,6 @@
       // Dispatched when an archive recording of the session stops
       Utils.sendEvent('archiving', { status: 'stopped' });
     },
-    'signal:chat': function(evt) {
-      RoomView.toggleChatNotification();
-    },
     'signal:muteAll': function(evt) {
       var statusData = JSON.parse(evt.data);
       var muteAllSwitch = statusData.status;
