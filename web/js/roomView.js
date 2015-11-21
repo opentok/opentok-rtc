@@ -14,6 +14,8 @@
   var START_SHARING = 'Share your screen';
   var STOP_SHARING = 'Stop sharing your screen';
 
+  var _unreadMsg = 0;
+
   var MODAL_TXTS = {
     mute: {
       head: 'All participants microphones are going to be disabled in the call',
@@ -49,6 +51,12 @@
   var NOT_SHARING = {
     detail: {
       isSharing: false
+    }
+  };
+
+  var chatViews = {
+    'unreadMessage': function(evt) {
+      _unreadMsg++;
     }
   };
 
@@ -242,6 +250,7 @@
         case 'startChat':
         case 'stopChat':
           var isVisible = elem.id === 'startChat';
+          _unreadMsg = isVisible ? 0 : _unreadMsg;
           document.body.dataset.chatStatus =  isVisible ? 'visible' : 'hidden';
           Utils.sendEvent('roomView:chatVisibility', isVisible);
           break;
@@ -294,6 +303,7 @@
     Utils.addEventsHandlers('screenShareController:', screenShareCtrEvents, exports);
     Utils.addEventsHandlers('roomController:', roomControllerEvents, exports);
     Utils.addEventsHandlers('chat:', chatEvents);
+    Utils.addEventsHandlers('chatView:', chatViews);
   };
 
   function toggleScreenSharing(evt) {
