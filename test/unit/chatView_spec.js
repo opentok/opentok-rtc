@@ -15,7 +15,7 @@ describe('ChatView', function() {
     });
   }
 
-  function dispatchKeyEvent(isReturn) {
+  function dispatchKeyEvent(keyPressed) {
     var keyEvt = document.createEvent('KeyboardEvent');
     var initMethod = (typeof keyEvt.initKeyboardEvent !== 'undefined') ?
           'initKeyboardEvent' :
@@ -30,20 +30,22 @@ describe('ChatView', function() {
         return this.keyCodeVal;
       }
     });
-    keyEvt[initMethod]
-    ('keypress',                 // evn type: keydown, keyup or keypress
-     true,                       // bubbles
-     true,                       // cancelable
-     window,                     // viewArg: should be window
-     false,                      // ctrlKeyArg
-     false,                      // altKeyArg
-     false,                      // shiftKeyArg
-     false,                      // metaKeyArg
-     isReturn ? 13 : 'a'.charCodeAt(0),  // keyCodeArg : unsigned long the virtual key code
-     0                                   // charCodeArgs : unsigned long the Unicode character
-     //            associated with the depressed key, else 0
+
+    var keyCode = keyPressed.charCodeAt(0);
+
+    keyEvt[initMethod]('keypress', // evn type: keydown, keyup or keypress
+                       true,       // bubbles
+                       true,       // cancelable
+                       window,     // viewArg: should be window
+                       false,      // ctrlKeyArg
+                       false,      // altKeyArg
+                       false,      // shiftKeyArg
+                       false,      // metaKeyArg
+                       keyCode,    // keyCodeArg : unsigned long the virtual key code
+                       0           // charCodeArgs : unsigned long the Unicode character
+                                   //                associated with the depressed key, else 0
     );
-    keyEvt.keyCodeVal = isReturn ? 13 : 'a'.charCodeAt(0);
+    keyEvt.keyCodeVal = keyCode;
     chatForm.dispatchEvent(keyEvt);
   };
 
@@ -90,7 +92,9 @@ describe('ChatView', function() {
 
   describe('#init', function() {
 
-    function verifyInit(done, handlerShouldHave, configuredHandlers) {
+    function verifyInit(context, done, handlerShouldHave, configuredHandlers) {
+      context.stub(Utils, 'addHandlers');
+      context.spy(Chat, 'init');
       ChatView.init('usr', ROOM_NAME_TEST, configuredHandlers).then(function() {
         expect(Chat.init.calledOnce).to.be.true;
         var spyArg = Utils.addHandlers.getCall(0).args[0];
@@ -113,8 +117,8 @@ describe('ChatView', function() {
         incomingMessage: {
           name: 'chatController:incomingMessage'
         },
-        newEvent: {
-          name: 'chatController:newEvent'
+        presenceEvent: {
+          name: 'chatController:presenceEvent'
         },
         messageDelivered: {
           name: 'chatController:messageDelivered'
@@ -124,10 +128,7 @@ describe('ChatView', function() {
           couldBeChanged: true
         }
       };
-      this.stub(Utils, 'addHandlers');
-      this.spy(Chat, 'init');
-
-      verifyInit(done, handlersShouldHave);
+      verifyInit(this, done, handlersShouldHave);
     }));
 
     it('should set the chat\'s room name and init the Chat object when called with configured ' +
@@ -136,8 +137,8 @@ describe('ChatView', function() {
         incomingMessage: {
           name: 'chatController:incomingMessage'
         },
-        newEvent: {
-          name: 'chatController:newEvent'
+        presenceEvent: {
+          name: 'chatController:presenceEvent'
         },
         messageDelivered: {
           name: 'chatController:messageDelivered'
@@ -155,10 +156,7 @@ describe('ChatView', function() {
         type: 'chatVisibility',
         name: 'changedRoomView:changedChatVisibility'
       }];
-      this.stub(Utils, 'addHandlers');
-      this.spy(Chat, 'init');
-
-      verifyInit(done, handlersShouldHave, configuredHandlers);
+      verifyInit(this, done, handlersShouldHave, configuredHandlers);
     }));
   });
 
@@ -246,7 +244,7 @@ describe('ChatView', function() {
     }));
   });
 
-  describe('#newEvent event', function() {
+  describe('#presenceEvent event', function() {
     it('should add a new event correctly', function() {
       var data = {
         userName: 'usr1',
@@ -257,7 +255,7 @@ describe('ChatView', function() {
       var chatContent = getChatContainer().querySelector('ul');
       var lengthBefore = chatContent.children.length;
 
-      window.dispatchEvent(new CustomEvent('chatController:newEvent', { detail: data }));
+      window.dispatchEvent(new CustomEvent('chatController:presenceEvent', { detail: data }));
 
       expect(chatContent.children.length).to.be.equal(lengthBefore + 1);
       var newLine = chatContent.lastChild;
@@ -279,7 +277,7 @@ describe('ChatView', function() {
   });
 
   describe('#chatVisibility event', function() {
-    it('should hidden chat when receives false', sinon.test(function() {
+    it('should hid chat when receives false', sinon.test(function() {
       this.spy(Chat, 'show');
       this.spy(Chat, 'hide');
 
@@ -290,7 +288,7 @@ describe('ChatView', function() {
 
     }));
 
-    it('should be visible when receives true', sinon.test(function() {
+    it('should show when it receives true', sinon.test(function() {
       this.spy(Chat, 'show');
       this.spy(Chat, 'hide');
 
@@ -322,7 +320,7 @@ describe('ChatView', function() {
         expect(evt.detail.text).to.be.equal(textArea.value);
         done();
       });
-      dispatchKeyEvent(true);
+      dispatchKeyEvent('\r');
     }));
 
     it('should not do anything when chat is visible, textArea is empty and ' +
@@ -332,7 +330,7 @@ describe('ChatView', function() {
       textArea.value = '';
 
       this.spy(window, 'dispatchEvent');
-      dispatchKeyEvent(true);
+      dispatchKeyEvent('\r');
       expect(window.dispatchEvent.called).to.be.false;
     }));
 
@@ -343,7 +341,7 @@ describe('ChatView', function() {
       textArea.value = 'It has text';
 
       this.spy(window, 'dispatchEvent');
-      dispatchKeyEvent(false);
+      dispatchKeyEvent('a');
       expect(window.dispatchEvent.called).to.be.false;
     }));
 
@@ -351,7 +349,7 @@ describe('ChatView', function() {
       window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: false }));
 
       this.spy(window, 'dispatchEvent');
-      dispatchKeyEvent(true);
+      dispatchKeyEvent('\r');
       expect(window.dispatchEvent.called).to.be.false;
     }));
 

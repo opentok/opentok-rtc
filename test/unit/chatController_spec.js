@@ -50,15 +50,14 @@ describe('ChatController', function() {
     });
 
     function verifyInit(done, handlerShouldHave, handlersName) {
-      var handlersOT = [];
-
-      ChatController.init('testRoomName', 'testUserName', handlersOT, handlersName).
+      ChatController.init('testRoomName', 'testUserName', [], handlersName).
         then(function(aHandlers) {
           expect(aHandlers.length).to.be.equals(1);
           var chatHandlers = aHandlers[0];
-          expect(expectedHandlers.every(function(elem) {
-            return chatHandlers[elem] !== undefined;
-          })).to.be.true;
+          expectedHandlers.every(function(elem) {
+            expect(chatHandlers[elem]).to.be.defined;
+          });
+
           var spyArg = Utils.addHandlers.getCall(0).args[0];
           expect(Object.keys(spyArg).length).to.be.
             equal(Object.keys(handlerShouldHave).length);
@@ -73,7 +72,7 @@ describe('ChatController', function() {
     it('should initialize properly the object and return the handlers set when called without ' +
        'handlers', sinon.test(function(done) {
 
-      var handlersShouldHave = {
+      var expectedHandlers = {
         'updatedRemotely': {
           name: 'roomStatus:updatedRemotely',
           couldBeChanged: true
@@ -86,13 +85,13 @@ describe('ChatController', function() {
       this.stub(RoomStatus, 'set');
       this.stub(Utils, 'addHandlers');
 
-      verifyInit(done, handlersShouldHave);
+      verifyInit(done, expectedHandlers);
     }));
 
 
     it('should initialize properly the object and return the handlers set when called with ' +
        'handlers', sinon.test(function(done) {
-      var handlersShouldHave = {
+      var expectedHandlers = {
         'updatedRemotely': {
           name: 'changedRoomStatus:changedUpdatedRemotely',
           couldBeChanged: true
@@ -114,13 +113,13 @@ describe('ChatController', function() {
       this.stub(RoomStatus, 'set');
       this.stub(Utils, 'addHandlers');
 
-      verifyInit(done, handlersShouldHave, handlersName);
+      verifyInit(done, expectedHandlers, handlersName);
     }));
   });
 
   describe('#handlers OT', function() {
     describe('#signal:chat', function() {
-      it('should add a chat line', sinon.test(function(done) {
+      it('should inform that a incoming message has been received', sinon.test(function(done) {
         var signalEvt = {
           data: JSON.stringify(data),
           from: 'from',
@@ -164,8 +163,8 @@ describe('ChatController', function() {
 
         OTHelper._myConnId = 'myConnId';
 
-        window.addEventListener('chatController:newEvent', function handlerTest(evt) {
-          window.removeEventListener('chatController:newEvent', handlerTest);
+        window.addEventListener('chatController:presenceEvent', function handlerTest(evt) {
+          window.removeEventListener('chatController:presenceEvent', handlerTest);
           expect(evt.detail).to.be.deep.equal(connData);
           done();
         });
@@ -203,8 +202,8 @@ describe('ChatController', function() {
 
           OTHelper._myConnId = 'myConnId';
 
-          window.addEventListener('chatController:newEvent', function handlerTest(evt) {
-            window.removeEventListener('chatController:newEvent', handlerTest);
+          window.addEventListener('chatController:presenceEvent', function handlerTest(evt) {
+            window.removeEventListener('chatController:presenceEvent', handlerTest);
             expect(evt.detail).to.be.deep.equal(disconnData);
             done();
           });
@@ -215,7 +214,7 @@ describe('ChatController', function() {
     });
   });
 
-  describe('#updatedRemotly event', function() {
+  describe('#updatedRemotely event', function() {
 
     var sharedHistory = [{
       sender: 'aSender1',
@@ -247,8 +246,7 @@ describe('ChatController', function() {
 
       loadHistoryTest = function(evt) {
         var data = evt.detail.data;
-        expect(data).to.be.deep.equal(sharedHistory[eventCount]);
-        eventCount++;
+        expect(data).to.be.deep.equal(sharedHistory[eventCount++]);
         if (eventCount === sharedHistory.length) {
           done();
         }
@@ -263,7 +261,7 @@ describe('ChatController', function() {
   });
 
   describe('#outgoingMessage event', function() {
-    it('should send a message', sinon.test(function(done) {
+    it('should send the message using an OT signal', sinon.test(function(done) {
       this.stub(OTHelper, 'sendSignal', function(evt) {
         return Promise.resolve();
       });

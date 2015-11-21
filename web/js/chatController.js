@@ -1,25 +1,25 @@
 /**
  * CHAT COMPONENT
  * They are formed by chatController.js chatView.js, chat.js and textProcessor.js
- * The chat module needs for work OTHelper.js and Utils.js
- * If you want to have the status pevious at your connection you need rooStatus.js too
- *
- * OUTGOING events: outside's events which attend to.
+ * The chat module needs for work OTHelper.js and browser_utils.js
+ * If you want to have the previous status and roomStatus at your connection you need
+ * roomStatus.js too
+ * INCOMING events: outside events that the module will listen for
  * You could change their default name calling init method with the appropiated variable
  * (explained later)
  * - updatedRemotely: This action should be fired to load the history of the chat (previous
  *                    messages to our connection)
- *   EVENT: roomStatus:updatedRemotely
+ *   Default value: roomStatus:updatedRemotely
  * - chatVisibility: This action should be fired to change the status (visible or hidden)
  *                    of the chat.
- *   Event Name: roomView:chatVisibility
+ *   Default value: roomView:chatVisibility
  *
- * INGOINT events: Events whom will fired
+ * OUTGOING events: events that will be fired by the module
  * - incomingMessage: A new message has been received
  *   NAME: chatController:incomingMessage
- * - newEvent: A new event has been received. A event could be that a new user has
- *             connected or disconnected.
- *   Name: chatController:newEvent
+ * - presenceEvent: A new event has been received. A event could be that a new user has
+ *                  connected or disconnected.
+ *   Name: chatController:presenceEvent
  * - messageDelivered: A message has been sended
  *   Name: chatController:messageDelivered
  * - outgoingMessage: A message has been sended
@@ -37,7 +37,7 @@
  *  <-------------------------------------*--|                 |
  *        chatController:incomingMessage  |  | ChatController  |
  *  <-----------------------------------*-)--|                 |
- *        chatController:newEvent       | |  |                 |
+ *        chatController:presenceEvent  | |  |                 |
  *  <---------------------------------*-)-)--|                 |
  *                                  --)-)-)->|                 |
  *                                  | | | |  |                 |
@@ -126,14 +126,14 @@
       // client connects
       var newUsrName = JSON.parse(evt.connection.data).userName;
       if (!OTHelper.isMyself(evt.connection)) {
-        Utils.sendEvent('chatController:newEvent', {
+        Utils.sendEvent('chatController:presenceEvent', {
             userName: newUsrName,
             text: CONN_TEXT
         });
       }
     },
     'connectionDestroyed': function(evt) {
-      Utils.sendEvent('chatController:newEvent', {
+      Utils.sendEvent('chatController:presenceEvent', {
         userName: JSON.parse(evt.connection.data).userName,
         text: DISCONN_TEXT
       });
@@ -145,7 +145,7 @@
   */
   function sendMsg(evt) {
     var data = evt.detail;
-    OTHelper.sendSignal({
+    return OTHelper.sendSignal({
       type: 'chat',
       data: JSON.stringify(data)
     }).then(function() {
@@ -168,7 +168,7 @@
 
   /**
    * Set the listener for the application custom events. If receives an array
-   * with the new name for the event (and it exists here) change its name
+   * with the new name for the event and it exists here change its name
    */
   function addEventsHandlers(aEvents) {
     Array.isArray(aEvents) && aEvents.forEach(function(aEvt) {

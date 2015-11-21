@@ -546,17 +546,8 @@
 
       _allHandlers = RoomStatus.init(userName, _allHandlers, { room: _sharedStatus });
 
-      var handlersName = [
-      {
-        type: 'updatedRemotely',
-        name:'roomStatus:updatedRemotely'
-      }, {
-        type: 'chatVisibility',
-        name:'roomView:chatVisibility'
-      }];
-
       ChatController.
-        init(aParams.roomName, userName, _allHandlers, handlersName).
+        init(aParams.roomName, userName, _allHandlers).
         then(connect).
         then(LayoutMenuController.init).
         then(function() {

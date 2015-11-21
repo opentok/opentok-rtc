@@ -47,8 +47,8 @@
           });
         }
       },
-      newEvent: {
-        name: 'chatController:newEvent',
+      presenceEvent: {
+        name: 'chatController:presenceEvent',
         handler: function(evt) {
           insertChatEvent(evt.detail);
         }
