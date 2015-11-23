@@ -154,7 +154,19 @@ Hangout.getAttributeName = function(type) {
  * @param item - item object
  */
 Hangout.getItemType = function(item) {
-  return item.dataset.streamType === 'camera' ? 'camera' : 'screen';
+  var type = null;
+
+  switch(item.dataset.streamType) {
+    case 'camera':
+    case 'publisher':
+      type = 'camera';
+      break;
+
+    default:
+      type = 'screen';
+  }
+
+  return type;
 };
 
 /*

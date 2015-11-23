@@ -309,6 +309,32 @@ describe('Layouts', function() {
 
     });
 
+    describe('getItemType', function() {
+
+      var createItem = function(type) {
+        var element = document.createElement('div');
+        element.dataset.streamType = type;
+        return element;
+      }
+
+      it('should return camera when the stream is a regular subscriber', function() {
+        expect(Hangout.getItemType(createItem('camera'))).to.equal('camera');
+      });
+
+      it('should return camera when the stream is the publisher', function() {
+        expect(Hangout.getItemType(createItem('publisher'))).to.equal('camera');
+      });
+
+      it('should return screen when the stream is a screen shared', function() {
+        expect(Hangout.getItemType(createItem('screen'))).to.equal('screen');
+      });
+
+      it('should return screen when the stream is unknown', function() {
+        expect(Hangout.getItemType(createItem('pedjamijatovic'))).to.equal('screen');
+      });
+
+    });
+
     describe('HangoutHorizontal', function() {
 
       describe('#constructor', function() {
