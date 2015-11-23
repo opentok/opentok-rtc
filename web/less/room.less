@@ -188,25 +188,27 @@ body {
       font-size: 12px;
     }
 
-    .tc-list li.bottom {
-      margin-top: auto;
+    .tc-list li.tight {
+      padding-top: 6px;
+      padding-bottom: 6px;
     }
 
-    .tc-list li.bottom-last {
-      margin-top: 1px;
+    .tc-list li.bottom {
+      margin-top: auto;
+      padding-top: 12px;
     }
 
     .tc-list li.surrounded:before {
       content: '';
       position: absolute;
-      top: 8px;
-      bottom: 8px;
+      top: 0;
+      height: 1px;
       left: 16px;
       right: 16px;
       opacity: 1;
-      z-index: -1;
+      z-index: 1;
 
-      border: 1px solid #c5bbb4;
+      background-color: #c5bbb4;
     }
 
     .tc-list a {
@@ -222,12 +224,6 @@ body {
       &:active {
         color: @blueText;
         background-color: #f9f9f9;
-      }
-    }
-
-    .tc-list li.surrounded a {
-      &:hover, &:active {
-        background-color: transparent;
       }
     }
 
