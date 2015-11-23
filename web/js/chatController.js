@@ -31,7 +31,7 @@
  *
  *
  *                                            -----------------
- *        roomStatus:updateRemotely          |                 |
+ *        roomStatus:updatedRemotely         |                 |
  *  ---------------------------------------->|                 |
  *        chatController:MessageDelivered    |                 |
  *  <-------------------------------------*--|                 |
@@ -77,7 +77,7 @@
   //  - handler: (mandatory) function which is going to be executed as respond of the event
   //  - target: (optional) who is listening for the event. It'll be global if it is not specified.
   //  - couldBeChanged: we only allow to modify the event's name of the event that come from the
-  //                    outside (e.g.: roomView:chatVisibility and roomStatus:updateRemotely).
+  //                    outside (e.g.: roomView:chatVisibility and roomStatus:updatedRemotely).
   //                    We don't allow to change the event's name originating inside the chat module
   //                    whether it'll be listened for in other module's component
   //                    (e.g. chatView:outgoingMessage)
