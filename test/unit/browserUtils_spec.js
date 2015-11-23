@@ -56,4 +56,174 @@ describe('Utils', function() {
     });
   });
 
+  describe('#generateSearchStr', function() {
+    it('should exist and be a function', function() {
+      expect(Utils.generateSearchStr).to.exist;
+      expect(Utils.generateSearchStr).to.be.a('function');
+    });
+
+    it('should throw a TypeError on undefined', sinon.test(function() {
+      this.spy(Utils, 'generateSearchStr');
+      try {
+        Utils.generateSearchStr(undefined);
+      } catch(e) {}
+      expect(Utils.generateSearchStr.threw('TypeError')).to.be.true;
+    }));
+
+    var useCases = [
+      {
+        input: {key: 'value'},
+        output: '?key=value'
+      },
+      {
+        input: {key: 'value', key2: 'value2'},
+        output: '?key=value&key2=value2'
+      },
+      {
+        input: {key: 'value', key2: ['value2', 'value3']},
+        output: '?key=value&key2=value2&key2=value3'
+      },
+      {
+        input: {key: 'value', key2: undefined, key3: 'value3'},
+        output: '?key=value&key2&key3=value3'
+      },
+      {
+        input: {key: 'value', key2: undefined,
+                key3: ['value3', 'value4', 'value5'], key4: undefined},
+        output: '?key=value&key2&key3=value3&key3=value4&key3=value5&key4'
+      }
+    ];
+
+    useCases.forEach(function(useCase) {
+      it('should generate ' + useCase.output + ' for ' + JSON.stringify(useCase.input), function() {
+        expect(Utils.generateSearchStr(useCase.input)).to.be.equal(useCase.output);
+      });
+    });
+
+  });
+
+
+  describe('#parseSearch', function() {
+    it('should exist and be a function', function() {
+      expect(Utils.parseSearch).to.exist;
+      expect(Utils.parseSearch).to.be.a('function');
+    });
+
+    it('should throw a TypeError on undefined', sinon.test(function() {
+      this.spy(Utils, 'parseSearch');
+      try {
+        Utils.parseSearch(undefined);
+      } catch(e) {}
+      expect(Utils.parseSearch.threw('TypeError')).to.be.true;
+    }));
+
+    var results = [];
+
+    var useCases = [
+      {
+        input: '',
+        output: {
+          '': null
+        },
+        getFirst: {
+          input: '',
+          output: null
+        }
+      },
+      {
+        input: 'SomeChain',
+        output: {
+          'omeChain': null
+        },
+        getFirst: {
+          input: 'omeChain',
+          output: null
+        }
+      },
+      {
+        input: '?someVariable',
+        output: {
+          'someVariable': null
+        },
+        getFirst: {
+          input: 'someVariable',
+          output: null
+        }
+      },
+      {
+        input: '?someVariable=someValue',
+        output: {
+          'someVariable': 'someValue'
+        },
+        getFirst: {
+          input: 'someVariable',
+          output: 'someValue'
+        }
+      },
+      {
+        input: '?someVariable=someValue&variableWithoutValue&someOtherVariable=someOtherValue',
+        output: {
+          'someVariable': 'someValue',
+          'variableWithoutValue': null,
+          'someOtherVariable': 'someOtherValue'
+        },
+        getFirst: {
+          input: 'someVariable',
+          output: 'someValue'
+        }
+      },
+      {
+        input: '?someVariable=someValue&variableWithoutValue&someVariable=someOtherValue',
+        output: {
+          'someVariable': ['someValue', 'someOtherValue'],
+          'variableWithoutValue': null
+        },
+        getFirst: {
+          input: 'someVariable',
+          output: 'someValue'
+        }
+      },
+      {
+        input: '?var1=val1&var2&var1=val2&var1=val2&var3&var3=val3',
+        output: {
+          'var1': ['val1', 'val2', 'val2'],
+          'var2': null,
+          var3: [null, 'val3']
+        },
+        getFirst: {
+          input: 'var3',
+          output: null
+        }
+      }
+
+    ];
+
+    useCases.forEach(function(useCase) {
+      it('should generate as params' + JSON.stringify(useCase.output) + ' for ' +
+         useCase.input, function() {
+        var result = Utils.parseSearch(useCase.input);
+        expect(result.params).to.be.deep.equal(useCase.output);
+        results.push(result);
+      });
+    });
+
+    describe('#getFirstValue', function() {
+      it('should always return a getFirstValue method on the object\'\'', sinon.test(function() {
+        results.forEach(function(aResult) {
+          expect(aResult.getFirstValue).to.exist;
+          expect(aResult.getFirstValue).to.be.a.function;
+        });
+      }));
+
+      results.forEach(function(result, index) {
+        it('should return ' + useCases[index].getFirst.output + ' when called with ' +
+           useCases[index].getFirst.input + 'on the use case #' + index, function() {
+             var useCase = useCases[index].getFirst;
+             expect(result.getFirstValue(useCase.input)).to.be.equal(useCase.output);
+        });
+      });
+    });
+
+  });
+
 });
