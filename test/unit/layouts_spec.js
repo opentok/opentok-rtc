@@ -315,7 +315,7 @@ describe('Layouts', function() {
         var element = document.createElement('div');
         element.dataset.streamType = type;
         return element;
-      }
+      };
 
       it('should return camera when the stream is a regular subscriber', function() {
         expect(Hangout.getItemType(createItem('camera'))).to.equal('camera');
