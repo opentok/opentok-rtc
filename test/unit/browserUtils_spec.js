@@ -102,7 +102,6 @@ describe('Utils', function() {
 
   });
 
-
   describe('#parseSearch', function() {
     it('should exist and be a function', function() {
       expect(Utils.parseSearch).to.exist;
@@ -195,7 +194,6 @@ describe('Utils', function() {
           output: null
         }
       }
-
     ];
 
     useCases.forEach(function(useCase) {
@@ -222,6 +220,7 @@ describe('Utils', function() {
              expect(result.getFirstValue(useCase.input)).to.be.equal(useCase.output);
         });
       });
+
     });
 
   });

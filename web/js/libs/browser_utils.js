@@ -85,13 +85,11 @@
     return Object.keys(aObject).
       reduce(function(aPrevious, aParam, aIndex) {
         var value = aObject[aParam];
-        if (!Array.isArray(value)) {
-          value = [value];
-        }
+        value = Array.isArray(value) ? value : [value];
         value.forEach(function(aSingleValue, aValueIndex) {
           (aIndex + aValueIndex) && aPrevious.push('&');
           aPrevious.push(aParam);
-          aSingleValue && aPrevious.push( '=',aSingleValue);
+          aSingleValue && aPrevious.push('=', aSingleValue);
         });
         return aPrevious;
       }, ['?']).
