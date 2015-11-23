@@ -7,8 +7,6 @@ var LayoutBase = function(container, items, type) {
 };
 
 LayoutBase.prototype = {
-  _PADDING: 0.5,
-
   rearrange: function() {
     var features = this.features;
     Object.keys(this.items).forEach(function(id) {
@@ -45,8 +43,8 @@ Grid.prototype = {
     var columns = Math.ceil(Math.sqrt(total));
 
     return {
-      width: ((100 / columns) - this._PADDING) + '%',
-      height: ((100 / Math.ceil(total / columns)) - this._PADDING) + '%'
+      width: (100 / columns) + '%',
+      height: (100 / Math.ceil(total / columns)) + '%'
     };
   }
 };
@@ -103,8 +101,8 @@ F2FHorizontal.prototype = {
 
   get features() {
     return {
-      width: (100 - this._PADDING) + '%',
-      height: ((100 / this.total) - this._PADDING) + '%'
+      width: '100%',
+      height: (100 / this.total) + '%'
     };
   }
 };
@@ -118,8 +116,8 @@ F2FVertical.prototype = {
 
   get features() {
     return {
-      width: ((100 / this.total) - this._PADDING) + '%',
-      height: (100 - this._PADDING) + '%',
+      width: (100 / this.total) + '%',
+      height: '100%',
     };
   }
 };
@@ -394,7 +392,7 @@ HangoutHorizontal.prototype = {
 
   get features() {
     return {
-      width: ((100 / this.totalOnStrip) - this._PADDING / 2) + '%',
+      width: (100 / this.totalOnStrip) + '%',
       height: '100%'
     };
   }
@@ -410,7 +408,7 @@ HangoutVertical.prototype = {
   get features() {
     return {
       width: '100%',
-      height: ((100 / this.totalOnStrip) - this._PADDING / 2) + '%'
+      height: (100 / this.totalOnStrip) + '%'
     };
   }
 };

@@ -22,8 +22,8 @@ describe('Layouts', function() {
 
   var checkSizes = function(width, height) {
     var features = instance.features;
-    expect(features.width).to.equal((width - instance._PADDING) + '%');
-    expect(features.height).to.equal((height - instance._PADDING) + '%');
+    expect(features.width).to.equal(width + '%');
+    expect(features.height).to.equal(height + '%');
   }
 
   var visitItems = function(clazz) {
@@ -325,7 +325,7 @@ describe('Layouts', function() {
           instance = new HangoutHorizontal(getContainer(), items, items['7y4813y4134123']);
           var features = instance.features;
           var value = 100 / instance.totalOnStrip;
-          expect(features.width).to.equal((value - (instance._PADDING / 2)) + '%');
+          expect(features.width).to.equal(value + '%');
           expect(features.height).to.equal('100%');
         });
       });
@@ -356,7 +356,7 @@ describe('Layouts', function() {
           var features = instance.features;
           expect(features.width).to.equal('100%');
           var value = 100 / instance.totalOnStrip;
-          expect(features.height).to.equal((value - (instance._PADDING / 2)) + '%');
+          expect(features.height).to.equal(value + '%');
         });
       });
 
