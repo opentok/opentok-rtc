@@ -8,10 +8,16 @@
   // loading it statically.
   if (dynamicOTLoad) {
     var OPENTOK_API = 'https://static.opentok.com/webrtc/v2/js/opentok.min.js';
-    otPromise = LazyLoader.load(OPENTOK_API);
+    otPromise = LazyLoader.load(OPENTOK_API,
+                                './resolutionAlgorithms.js');
   } else {
-    otPromise = Promise.resolve();
+    otPromise = LazyLoader.load('/js/helpers/resolutionAlgorithms.js');
   }
+
+  var PrefResolutionAlgProv;
+  otPromise.then(function () {
+    PrefResolutionAlgProv= exports.PreferredResolutionAlgorithmProvider;
+  });
 
   var MSG_MULTIPART = 'signal';
   var SIZE_MAX = 7800;
@@ -19,12 +25,12 @@
   var HEAD_SIZE =
     JSON.stringify({ _head: { id: 99, seq: 99, tot: 99}, data: "" }).length;
   var USER_DATA_SIZE = SIZE_MAX - HEAD_SIZE;
-  var debug =
+  var logger =
     new Utils.MultiLevelLogger('OTHelper.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
 
   var otLoaded = otPromise.then(function() {
     var hasRequirements = OT.checkSystemRequirements();
-    debug.log('checkSystemRequirements:', hasRequirements);
+    logger.log('checkSystemRequirements:', hasRequirements);
     if (!hasRequirements) {
       OT.upgradeSystemRequirements();
       throw new Error('Unsupported browser, probably needs upgrade');
@@ -339,6 +345,19 @@
     });
   }
 
+  function setPreferredResolution(aSubscriber, aTotalDimension, aSubsDimension,
+                                 aSubsNumber, aAlgorithm) {
+    var algInfo = PrefResolutionAlgProv.getAlg(aAlgorithm);
+    var chosenAlgorithm = algInfo.chosenAlgorithm;
+    var algorithm = algInfo.algorithm;
+    var streamDimension = aSubscriber.stream.videoDimensions;
+    var newDimension =
+      algorithm(streamDimension, aTotalDimension, aSubsDimension, aSubsNumber);
+    logger.log('setPreferedResolution -', chosenAlgorithm, ':', aSubscriber.stream.streamId,
+               'of', aSubsNumber, ': Existing:', streamDimension, 'Requesting:', newDimension);
+    aSubscriber.setPreferredResolution(newDimension);
+  }
+
   var OTHelper = {
     connectToSession: connectToSession,
     publish: publish,
@@ -357,6 +376,7 @@
     stopShareScreen: stopShareScreen,
     subscribe: subscribe,
     screenShareErrorCodes: PUB_SCREEN_ERROR_CODES,
+    setPreferredResolution: setPreferredResolution,
     get publisherId() {
       return _publisher.stream.id;
     },

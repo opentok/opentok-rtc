@@ -15,14 +15,17 @@
     roomMuted: false
   };
 
-  var userName = null,
-      roomName = null;
+  var userName = null;
+  var roomName = null;
+  var resolutionAlgorithm = null;
+  var debugPreferredResolution = null;
 
   var publisherOptions = {
     insertMode: 'append',
     width:'100%',
     height: '100%',
     showControls: true,
+    resolution: '1280x720',
     style: {
       audioLevelDisplayMode: 'auto',
       buttonDisplayMode: 'off',
@@ -108,6 +111,68 @@
 
   var subscriberStreams = {
   };
+
+  // We want to use media priorization on the subscriber streams. We're going to restrict the
+  // maximum width and height to the one that's actually displayed. To do that, we're going to
+  // observe changes on the elements that hold the subscribers.
+  // Note that mutationObserver only works on IE11+, but that the previous alternative doesn't
+  // work all that well either.
+  var processMutation = function(aMutation) {
+    var elem = aMutation.target;
+    if ((aMutation.attributeName !== 'style' && aMutation.attributeName !== 'class') ||
+        elem.dataset.streamType !== 'camera') {
+      return;
+    }
+    var streamId = elem.dataset.id;
+    var subscriberPromise =
+      subscriberStreams[streamId] && subscriberStreams[streamId].subscriberPromise;
+
+    subscriberPromise.then(function(subscriber) {
+      ////////////////////////////////////////////////////// REMOVE THIS BEFORE SHIPPING!
+      if (debugPreferredResolution) {
+        // If the user requested debugging this, we're going to export all the information through
+        // window so he can examine the values.
+        window.subscriberElem = window.subscriberElem || {};
+        window.subscriberElem[streamId] = elem;
+        window.subscriber = window.subscriber || {};
+        window.subscriber[streamId] = subscriber;
+        window.dumpResolutionInfo = window.dumpResolutionInfo || function() {
+          Object.keys(window.subscriber).
+            forEach(function(aSub) {
+              var sub = window.subscriber[aSub];
+              var stream = sub && sub.stream;
+              var vd = stream && stream.videoDimensions;
+              var streamPref = stream && stream.getPreferredResolution() ||
+                                 {width: 'NA', height: 'NA'};
+              stream && console.log(
+                "StreamId:", aSub, 'Real:', sub.videoWidth(), 'x', sub.videoHeight(),
+                'Stream.getPreferredResolution:', streamPref.width, 'x', streamPref.height,
+                'Stream.VDimension:', vd.width, 'x', vd.height
+              );
+            });
+        };
+      }
+      ////////////////////////////////////////////////////// REMOVE THIS BEFORE SHIPPING!
+
+      var parent = elem.parentNode;
+
+      var parentDimension = {
+        width: parent.clientWidth,
+        height: parent.clientHeight
+      };
+      var subsDimension = {
+        width: elem.clientWidth,
+        height: elem.clientHeight
+      };
+      OTHelper.setPreferredResolution(subscriber, parentDimension, subsDimension, numUsrsInRoom - 1,
+                                      resolutionAlgorithm);
+    });
+  };
+  var _mutationObserver = exports.MutationObserver &&
+    new exports.MutationObserver(function(aMutations) {
+      aMutations.forEach(processMutation);
+    });
+
 
   var sendArchivingOperation = function(operation) {
     var data = {
@@ -310,7 +375,7 @@
 
       _sharedStatus = RoomStatus.get(STATUS_KEY);
 
-      var subsDiv = RoomView.createStreamView(streamId, {
+      var subsDOMElem = RoomView.createStreamView(streamId, {
         name: stream.name,
         type: stream.videoType,
         controlElems: subscriberStreams[streamId].buttons
@@ -318,10 +383,15 @@
 
       subOptions.subscribeToVideo = !enterWithVideoDisabled;
 
-      OTHelper.subscribe(evt.stream, subsDiv, subOptions).
+      // We want to observe the container where the actual suscriber will live
+      var subsContainer = LayoutManager.getItemById(streamId);
+      subsContainer && _mutationObserver &&
+        _mutationObserver.observe(subsContainer, {attributes: true});
+      subscriberStreams[streamId].subscriberPromise =
+        OTHelper.subscribe(evt.stream, subsDOMElem, subOptions).
         then(function(subscriber) {
           if (streamVideoType === 'screen') {
-            return;
+            return subscriber;
           }
 
           numUsrsInRoom++;
@@ -333,6 +403,7 @@
           if (enterWithVideoDisabled) {
             pushSubscriberButton(streamId, 'video', true);
           }
+          return subscriber;
         }, function(error) {
           debug.error('Error susbscribing new participant. ' + error.message);
         });
@@ -468,12 +539,10 @@
     }
 
     // Recover user identifier
-    var search = document.location.search;
-    var usrId = '';
-    if (search && search.length > 0) {
-      search = search.substring(1);
-      usrId = search.split('=')[1];
-    }
+    var params = Utils.parseSearch(document.location.search);
+    var usrId = params.getFirstValue('userName');
+    resolutionAlgorithm = params.getFirstValue('resolutionAlgorithm');
+    debugPreferredResolution = params.getFirstValue('debugPreferredResolution');
 
     var info = {
       username: usrId,

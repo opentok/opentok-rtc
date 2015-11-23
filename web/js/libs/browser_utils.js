@@ -42,6 +42,43 @@
     style.MozTransform = style.webkitTransform = style.msTransform = style.transform = transform;
   };
 
+
+  // Adds newValue to currValue and returns the new value:
+  //  - if currValue is undefined, returns newValue
+  //  - if currValue is an array, it makes currValue.push(newValue) and returns currValue
+  //  - if currValue is not an array, creates a new one with that value, adds the new value
+  //    and returns that
+  function _addValue(currValue, newValue) {
+    if (!currValue) {
+      return newValue;
+    }
+    if (!Array.isArray(currValue)) {
+      currValue = [currValue];
+    }
+    currValue.push(newValue);
+    return currValue;
+  }
+
+  // parses a URL search string. It returns an object that has a key the parameter name(s)
+  // and as values either the value if the value is unique or an array of values if it exists
+  // more than once on the search
+  var parseSearch = function(aSearchStr) {
+    return aSearchStr.slice(1).split('&').
+      map(function(aParam) { return aParam.split('='); }).
+      reduce(function(aObject, aCurrentValue) {
+        var parName = aCurrentValue[0];
+        aObject.params[parName] = _addValue(aObject.params[parName], aCurrentValue[1]);
+        return aObject;
+      },
+      {
+        params: {},
+        getFirstValue: function(aParam) {
+          return Array.isArray(this.params[aParam]) ? this.params[aParam][0] : this.params[aParam];
+        }
+      }
+    );
+  };
+
   var Utils = {
     getCurrentTime: getCurrentTime,
     inspectObject: inspectObject,
@@ -51,7 +88,7 @@
     get draggableUI() {
       return document.querySelectorAll('[draggable]').length;
     },
-    getDraggable() {
+    getDraggable: function() {
       return LazyLoader.dependencyLoad([
         '/js/components/draggable.js'
       ]).then(function() {
@@ -62,7 +99,8 @@
       var type = item.dataset.streamType;
       return type === 'desktop' || type === 'screen';
     },
-    setTransform: setTransform
+    setTransform: setTransform,
+    parseSearch: parseSearch
   };
 
   // Just replacing global.utils might not be safe... let's just expand it...

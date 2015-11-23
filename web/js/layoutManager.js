@@ -85,6 +85,10 @@
     rearrange();
   }
 
+  function getItemById(aId) {
+    return items[aId];
+  }
+
   function getTotal() {
     return Object.keys(items).length;
   }
@@ -138,7 +142,8 @@
   global.LayoutManager = {
     init: init,
     append: append,
-    remove: remove
+    remove: remove,
+    getItemById: getItemById
   };
 
 }(this);
