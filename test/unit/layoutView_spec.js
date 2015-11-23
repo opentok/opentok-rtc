@@ -67,6 +67,9 @@ describe('LayoutView', function() {
 
       var buttons = list.querySelector('.buttons');
       expect(buttons).not.to.exist;
+
+      var dblclickAreaElement = list.querySelector('.dblclick_area');
+      expect(dblclickAreaElement).to.exist;
     });
 
     it('should add items with controls', function() {

@@ -41,11 +41,11 @@
 
       if (type === 'publisher') {
         HTMLElems.createElementAt(item, 'i', {'data-icon': 'record'});
-      } else {
-        HTMLElems.createElementAt(item, 'div', {
-          'data-id': id
-        }).classList.add('dblclick_area');
       }
+
+      HTMLElems.createElementAt(item, 'div', {
+        'data-id': id
+      }).classList.add('dblclick_area');
     },
 
     appendControlElems: function(id, type, main, controlElems, itemControlType) {
