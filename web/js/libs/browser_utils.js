@@ -49,7 +49,7 @@
   //  - if currValue is not an array, creates a new one with that value, adds the new value
   //    and returns that
   function _addValue(currValue, newValue) {
-    if (!currValue) {
+    if (currValue === undefined) {
       return newValue;
     }
     if (!Array.isArray(currValue)) {
@@ -67,7 +67,7 @@
       map(function(aParam) { return aParam.split('='); }).
       reduce(function(aObject, aCurrentValue) {
         var parName = aCurrentValue[0];
-        aObject.params[parName] = _addValue(aObject.params[parName], aCurrentValue[1]);
+        aObject.params[parName] = _addValue(aObject.params[parName], aCurrentValue[1] || null);
         return aObject;
       },
       {
@@ -78,6 +78,23 @@
       }
     );
   };
+
+  // Aux function to generate a search str from an object with
+  // key: value or key: [value1,value2] structure.
+  function generateSearchStr(aObject) {
+    return Object.keys(aObject).
+      reduce(function(aPrevious, aParam, aIndex) {
+        var value = aObject[aParam];
+        value = Array.isArray(value) ? value : [value];
+        value.forEach(function(aSingleValue, aValueIndex) {
+          (aIndex + aValueIndex) && aPrevious.push('&');
+          aPrevious.push(aParam);
+          aSingleValue && aPrevious.push('=', aSingleValue);
+        });
+        return aPrevious;
+      }, ['?']).
+      join('');
+  }
 
   var Utils = {
     getCurrentTime: getCurrentTime,
@@ -100,7 +117,8 @@
       return type === 'desktop' || type === 'screen';
     },
     setTransform: setTransform,
-    parseSearch: parseSearch
+    parseSearch: parseSearch,
+    generateSearchStr: generateSearchStr
   };
 
   // Just replacing global.utils might not be safe... let's just expand it...
