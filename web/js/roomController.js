@@ -24,7 +24,7 @@
     height: '100%',
     showControls: true,
     style: {
-      audioLevelDisplayMode: 'on',
+      audioLevelDisplayMode: 'auto',
       buttonDisplayMode: 'off',
       nameDisplayMode: 'off',
       videoDisabledDisplayMode: 'on',
@@ -39,7 +39,7 @@
       inserMode: 'append',
       showControls: true,
       style: {
-        audioLevelDisplayMode: 'on',
+        audioLevelDisplayMode: 'auto',
         buttonDisplayMode: 'off',
         nameDisplayMode: 'off',
         videoDisabledDisplayMode: 'auto'
