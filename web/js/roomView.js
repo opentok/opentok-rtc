@@ -77,7 +77,7 @@
     'unreadMessage': function(evt) {
       setUnreadMessages(++_unreadMsg);
       if (!_chatHasBeenShowed) {
-        changeChatStatus(true);
+        setChatStatus(true);
       }
     }
   };
@@ -273,7 +273,7 @@
           break;
         case 'startChat':
         case 'stopChat':
-          changeChatStatus(elem.id === 'startChat');
+          setChatStatus(elem.id === 'startChat');
           break;
         case 'endCall':
           RoomView.participantsNumber = 0;
