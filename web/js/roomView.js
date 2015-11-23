@@ -61,8 +61,8 @@
     unreadMsgElem.dataset.unreadMessages = unreadCountElem.textContent = count;
   }
 
-  function changeChatStatus(isVisible) {
-    if (isVisible) {
+  function setChatStatus(visible) {
+    if (visible) {
       _chatHasBeenShowed = true;
       _unreadMsg = 0;
       setUnreadMessages(_unreadMsg);
@@ -70,7 +70,7 @@
     } else {
       document.body.dataset.chatStatus = 'hidden';
     }
-    Utils.sendEvent('roomView:chatVisibility', isVisible);
+    Utils.sendEvent('roomView:chatVisibility', visible);
   }
 
   var chatViews = {
