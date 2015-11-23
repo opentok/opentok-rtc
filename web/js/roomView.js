@@ -10,6 +10,8 @@
   var recordingsNumberElem;
   var videoSwitch;
   var audioSwitch;
+  var unreadMsgElem;
+  var unreadCountElem;
 
   var START_SHARING = 'Share your screen';
   var STOP_SHARING = 'Stop sharing your screen';
@@ -54,9 +56,13 @@
     }
   };
 
+  function setUnreadMessages(count) {
+    unreadMsgElem.dataset.unreadMessages = unreadCountElem.textContent = count;
+  }
+
   var chatViews = {
     'unreadMessage': function(evt) {
-      _unreadMsg++;
+      setUnreadMessages(++_unreadMsg);
     }
   };
 
@@ -105,6 +111,8 @@
     recordingsNumberElem = dock.querySelector('#recordings');
     videoSwitch = dock.querySelector('#videoSwitch');
     audioSwitch = dock.querySelector('#audioSwitch');
+    unreadMsgElem = dock.querySelector('#unreadMsg');
+    unreadCountElem = dock.querySelector('#unreadCount');
   }
 
   var transEndEventName =
@@ -250,8 +258,13 @@
         case 'startChat':
         case 'stopChat':
           var isVisible = elem.id === 'startChat';
-          _unreadMsg = isVisible ? 0 : _unreadMsg;
-          document.body.dataset.chatStatus =  isVisible ? 'visible' : 'hidden';
+          if (isVisible) {
+            _unreadMsg = 0;
+            setUnreadMessages(_unreadMsg);
+            document.body.dataset.chatStatus = 'visible';
+          } else {
+            document.body.dataset.chatStatus = 'hidden';
+          }
           Utils.sendEvent('roomView:chatVisibility', isVisible);
           break;
         case 'endCall':
