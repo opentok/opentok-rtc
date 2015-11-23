@@ -119,7 +119,7 @@
   // work all that well either.
   var processMutation = function(aMutation) {
     var elem = aMutation.target;
-    if ((aMutation.attributeName !== 'style' && aMutation.attributeName !== 'class')||
+    if ((aMutation.attributeName !== 'style' && aMutation.attributeName !== 'class') ||
         elem.dataset.streamType !== 'camera') {
       return;
     }
@@ -142,8 +142,9 @@
               var sub = window.subscriber[aSub];
               var stream = sub && sub.stream;
               var vd = stream && stream.videoDimensions;
-              var streamPref = stream && stream.getPreferredResolution();
-              sub && stream && console.log(
+              var streamPref = stream && stream.getPreferredResolution() ||
+                                 {width: 'NA', height: 'NA'};
+              stream && console.log(
                 "StreamId:", aSub, 'Real:', sub.videoWidth(), 'x', sub.videoHeight(),
                 'Stream.getPreferredResolution:', streamPref.width, 'x', streamPref.height,
                 'Stream.VDimension:', vd.width, 'x', vd.height
@@ -383,7 +384,7 @@
       subOptions.subscribeToVideo = !enterWithVideoDisabled;
 
       // We want to observe the container where the actual suscriber will live
-      var subsContainer = LayoutManager.getElementById(streamId);
+      var subsContainer = LayoutManager.getItemById(streamId);
       subsContainer && _mutationObserver &&
         _mutationObserver.observe(subsContainer, {attributes: true});
       subscriberStreams[streamId].subscriberPromise =

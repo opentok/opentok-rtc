@@ -85,7 +85,7 @@
     rearrange();
   }
 
-  function getElementById(aId) {
+  function getItemById(aId) {
     return items[aId];
   }
 
@@ -143,7 +143,7 @@
     init: init,
     append: append,
     remove: remove,
-    getElementById: getElementById
+    getItemById: getItemById
   };
 
 }(this);

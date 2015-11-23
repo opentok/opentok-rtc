@@ -64,7 +64,7 @@
   // more than once on the search
   var parseSearch = function(aSearchStr) {
     return aSearchStr.slice(1).split('&').
-      map(function(aParam) { return aParam.split('=');}).
+      map(function(aParam) { return aParam.split('='); }).
       reduce(function(aObject, aCurrentValue) {
         var parName = aCurrentValue[0];
         aObject.params[parName] = _addValue(aObject.params[parName], aCurrentValue[1]);
