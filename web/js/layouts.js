@@ -117,7 +117,7 @@ F2FVertical.prototype = {
   get features() {
     return {
       width: (100 / this.total) + '%',
-      height: '100%',
+      height: '100%'
     };
   }
 };
