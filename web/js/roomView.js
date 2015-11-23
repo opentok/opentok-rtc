@@ -17,6 +17,7 @@
   var STOP_SHARING = 'Stop sharing your screen';
 
   var _unreadMsg = 0;
+  var _chatHasBeenShowed = false;
 
   var MODAL_TXTS = {
     mute: {
@@ -60,9 +61,24 @@
     unreadMsgElem.dataset.unreadMessages = unreadCountElem.textContent = count;
   }
 
+  function changeChatStatus(isVisible) {
+    if (isVisible) {
+      _chatHasBeenShowed = true;
+      _unreadMsg = 0;
+      setUnreadMessages(_unreadMsg);
+      document.body.dataset.chatStatus = 'visible';
+    } else {
+      document.body.dataset.chatStatus = 'hidden';
+    }
+    Utils.sendEvent('roomView:chatVisibility', isVisible);
+  }
+
   var chatViews = {
     'unreadMessage': function(evt) {
       setUnreadMessages(++_unreadMsg);
+      if (!_chatHasBeenShowed) {
+        changeChatStatus(true);
+      }
     }
   };
 
@@ -257,15 +273,7 @@
           break;
         case 'startChat':
         case 'stopChat':
-          var isVisible = elem.id === 'startChat';
-          if (isVisible) {
-            _unreadMsg = 0;
-            setUnreadMessages(_unreadMsg);
-            document.body.dataset.chatStatus = 'visible';
-          } else {
-            document.body.dataset.chatStatus = 'hidden';
-          }
-          Utils.sendEvent('roomView:chatVisibility', isVisible);
+          changeChatStatus(elem.id === 'startChat');
           break;
         case 'endCall':
           RoomView.participantsNumber = 0;
