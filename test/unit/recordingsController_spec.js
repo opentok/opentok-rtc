@@ -5,7 +5,15 @@ var should = chai.should();
 describe('RecordingsController', function() {
 
   before(function() {
+    window.LazyLoader = window.LazyLoader || { dependencyLoad: function() {} };
+    sinon.stub(LazyLoader, 'dependencyLoad', function(resources) {
+      return Promise.resolve();
+    });
     document.body.innerHTML = window.__html__['test/unit/recordingsView_spec.html'];
+  });
+
+  after(function() {
+    LazyLoader.dependencyLoad.restore();
   });
 
   describe('#init', function() {
@@ -15,12 +23,9 @@ describe('RecordingsController', function() {
 
     it('should be initialized and listen for "archive" events',
         sinon.test(function(done) {
-      this.stub(LazyLoader, 'dependencyLoad', function(resources) {
-        return Promise.resolve();
-      });
-
       this.stub(Modal, 'show', function() {
         done();
+        return Promise.resolve();
       });
 
       this.stub(RecordingsView, 'init', function() {
