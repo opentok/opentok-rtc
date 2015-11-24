@@ -614,7 +614,7 @@
       // RoomView.roomName = aParams.roomName;
       RoomView.participantsNumber = 0;
 
-      _allHandlers = RoomStatus.init(userName, _allHandlers, { room: _sharedStatus });
+      _allHandlers = RoomStatus.init(_allHandlers, { room: _sharedStatus });
 
       ChatController.
         init(aParams.roomName, userName, _allHandlers).

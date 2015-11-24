@@ -70,7 +70,9 @@
           seq: aSegmentOrder,
           tot: aTotalSegments
         },
-        data: aUsrMsg.data.substr(aSegmentOrder * USER_DATA_SIZE, USER_DATA_SIZE)
+        data: aUsrMsg.data ?
+                aUsrMsg.data.substr(aSegmentOrder * USER_DATA_SIZE, USER_DATA_SIZE) :
+                ''
       })
     };
     if (aUsrMsg.to) {
@@ -82,7 +84,7 @@
   function sendSignal(msg) {
     return new Promise(function(resolve, reject) {
       var msgId = ++messageOrder;
-      var totalSegments = Math.ceil(msg.data.length / USER_DATA_SIZE);
+      var totalSegments = msg.data ? Math.ceil(msg.data.length / USER_DATA_SIZE) : 1;
 
       var messagesSent = [];
       for (var segmentOrder = 0; segmentOrder < totalSegments; segmentOrder++) {

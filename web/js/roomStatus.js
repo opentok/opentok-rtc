@@ -9,15 +9,13 @@
   var _entries = {
   };
 
-  var _usrId;
   var _myCreationTime;
   var _connectedAfterMe = {};
   var _connectedEarlierThanMe = 0;
 
   function sendStatusAck() {
     OTHelper.sendSignal({
-      type: 'statusACK',
-      data: _usrId
+      type: 'statusACK'
     });
   }
 
@@ -43,13 +41,12 @@
 
   function proccessNewConnection(evt) {
     var newUsrConnection = evt.connection;
-    var newUsr = JSON.parse(newUsrConnection.data).userName;
     var creationTime = newUsrConnection.creationTime;
     var connectionId = newUsrConnection.connectionId;
 
     if (creationTime < _myCreationTime) {
       _connectedEarlierThanMe++;
-    } else if (newUsr !== _usrId) {
+    } else if (!OTHelper.isMyself(newUsrConnection)) {
       var send = function(aNewUsrConnection) {
         if (iMustSend()) {
           sendStatus(aNewUsrConnection);
@@ -107,8 +104,7 @@
     return aGlobalHandlers;
   }
 
-  function init(aUsrId, aGlobalHandlers, aEntries) {
-    _usrId = aUsrId;
+  function init(aGlobalHandlers, aEntries) {
     _entries = aEntries || {};
     return addHandlers(aGlobalHandlers);
   };

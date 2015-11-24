@@ -5,12 +5,12 @@ describe('roomStatus', function() {
   var expectedHandlers = ['signal:status', 'signal:statusACK', 'connectionCreated',
                           'sessionConnected', 'connectionDestroyed'];
 
-  function getSignalEvent(user, date) {
+  function getSignalEvent(connId, date, user) {
     return {
       connection: {
         data: JSON.stringify({ userName: user }),
         creationTime: date,
-        connectionId: 'querty'
+        connectionId: connId
       }
     };
   }
@@ -37,7 +37,7 @@ describe('roomStatus', function() {
        sinon.test(function() {
       var handlers = [];
 
-      RoomStatus.init('mySelf', handlers);
+      RoomStatus.init(handlers);
 
       expect(handlers.length).to.be.equals(1);
       var statusHandlers = handlers[0];
@@ -67,7 +67,9 @@ describe('roomStatus', function() {
 
         var signalEvt = {
           data: JSON.stringify(status),
-          from: 'from',
+          from: {
+            connectionId: 'otherUser'
+          },
           type: 'status'
         };
 
@@ -82,14 +84,13 @@ describe('roomStatus', function() {
         });
 
         var handlers = [];
-        RoomStatus.init('mySelf', handlers);
+        RoomStatus.init(handlers);
 
         var hndls = handlers[0];
         hndls['signal:status'](signalEvt);
 
         expect(OTHelper.sendSignal.calledWith({
-          type: 'statusACK',
-          data: 'mySelf'
+          type: 'statusACK'
         })).to.be.true;
 
         expect(OTHelper.removeListener.calledWith('signal:status')).to.be.true;
@@ -101,14 +102,13 @@ describe('roomStatus', function() {
 
     describe('#connectionCreated', function() {
 
-      var usr = 'mySelf';
       var handlers = [];
       var statusHndls;
       var myCreationTime = (new Date(1975, 06, 06, 15, 0, 0)).getTime();
       var entries = {};
 
       before(function() {
-        RoomStatus.init(usr, handlers);
+        RoomStatus.init(handlers);
         statusHndls = handlers[0];
         statusHndls['sessionConnected']({
           target: {
@@ -119,14 +119,8 @@ describe('roomStatus', function() {
         });
       });
 
-      it('should send status when a different user connects and I was the oldest connected one',
-         sinon.test(function() {
-
-        this.spy(OTHelper, 'sendSignal');
-
-        var otherCreationTime = myCreationTime + 1;
-
-        var signalEvt = getSignalEvent('otherUser', otherCreationTime);
+      function verifySend(connId, userId, creationTime) {
+        var signalEvt = getSignalEvent(connId, creationTime, userId);
         statusHndls['connectionCreated'](signalEvt);
 
         expect(OTHelper.sendSignal.calledOnce).to.be.true;
@@ -135,6 +129,20 @@ describe('roomStatus', function() {
           to: signalEvt.connection,
           data: JSON.stringify(entries)
         })).to.be.true;
+      }
+
+      it('should send status when a different user connects and I was the oldest connected one',
+         sinon.test(function() {
+        this.spy(OTHelper, 'sendSignal');
+        var otherCreationTime = myCreationTime + 1;
+        verifySend('otherConnId', 'otherUser', otherCreationTime);
+      }));
+
+      it('should send status when a different user with my same identifier connects and ' +
+         ' I was the oldest connected', sinon.test(function() {
+        this.spy(OTHelper, 'sendSignal');
+        var otherCreationTime = myCreationTime + 1;
+        verifySend('otherConnId', 'mySelf', otherCreationTime);
       }));
 
       it('should not send the status when a different user connects and I was not the oldest ' +
@@ -145,8 +153,12 @@ describe('roomStatus', function() {
         var otherConnectedCreationTime = myCreationTime - 1;
         var newConnectedCreationTime = myCreationTime + 1;
 
-        statusHndls['connectionCreated'](getSignalEvent('firstUser', otherConnectedCreationTime));
-        statusHndls['connectionCreated'](getSignalEvent('newUser', newConnectedCreationTime));
+        statusHndls['connectionCreated'](getSignalEvent('connIdfirstUsr',
+                                                        otherConnectedCreationTime,
+                                                        'firstUser'));
+        statusHndls['connectionCreated'](getSignalEvent('connNewUsr',
+                                                        newConnectedCreationTime),
+                                                        'newUser');
 
         expect(OTHelper.sendSignal.callCount).to.be.equal(0);
       }));
@@ -156,10 +168,13 @@ describe('roomStatus', function() {
 
         this.spy(OTHelper, 'sendSignal');
 
-        statusHndls['connectionCreated'](getSignalEvent(usr, myCreationTime));
+        statusHndls['connectionCreated'](getSignalEvent('myConnectionId',
+                                                        myCreationTime,
+                                                        'mySelf'));
 
         expect(OTHelper.sendSignal.callCount).to.be.equal(0);
       }));
+
     });
   });
 });
