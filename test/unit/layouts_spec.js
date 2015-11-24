@@ -166,7 +166,7 @@ describe('Layouts', function() {
     }));
 
     describe('#destroy', function() {
-      it('should disable drag feature for the publisher', sinon.test(function() {
+      it('should disable drag feature for the publisher', sinon.test(function(done) {
         var publisher = document.createElement('div');
         stubDraggable(this, function() {
           return Promise.resolve({
