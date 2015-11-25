@@ -17,6 +17,17 @@
     width: 20% !important;
     height: 20% !important;
     border: 0;
+
+    .controls .buttons {
+      border-radius: 20px;
+      padding: 10px 5px;
+    }
+
+    .user-info .name {
+      border-radius: 25px;
+      padding: 12.5px 25px;
+      max-width: calc(~"100% - 50px");
+    }
   }
 
   .streams[data-current-layout-type=hangout_vertical] .tc-list ul,
@@ -156,31 +167,6 @@
       height: 20px;
       margin: 0 2px 3px 0;
     }
-
-    .controls {
-      margin-left: auto;
-      margin-right: auto;
-      left: 0;
-      right: 0;
-      bottom: 10px;
-      text-align: center;
-
-      .buttons {
-        padding: 8px;
-        background-color: transparent;
-        border-radius: 0;
-      }
-    }
-
-    .user-info {
-      left: 2px;
-      right: 2px;
-      top: 20px;
-
-      .name {
-        font-size: 11px;
-      }
-    }
   }
 
   .streams .tc-list li[data-stream-type=desktop] {
@@ -189,7 +175,7 @@
     }
   }
 
-  .streams .tc-list li:not([data-stream-type=publisher]) {
+  .streams .tc-list li {
     .controls {
       top: 40px;
       left: 40px;
@@ -214,7 +200,7 @@
     }
   }
 
-  .streams .tc-list li:hover:not([data-stream-type=publisher]) {
+  .streams .tc-list li:hover {
     .user-info {
       opacity: 1;
       transform: translateY(0);
