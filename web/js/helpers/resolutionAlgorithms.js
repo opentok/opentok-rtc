@@ -59,6 +59,12 @@
         chosenAlgorithm: chosenAlgorithm,
         algorithm: preferredResolutionAlgorithms[chosenAlgorithm]
       };
+    },
+    get algorithmNames() {
+      return Object.keys(preferredResolutionAlgorithms);
+    },
+    get defaultAlgorithmName() {
+      return defaultAlgorithm;
     }
   };
 

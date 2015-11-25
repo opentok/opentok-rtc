@@ -13,6 +13,7 @@
     },
 
     append: function(id, options) {
+      options = options || {};
       Object.keys(this.defaultOptions).forEach(function(option) {
         options[option] = options[option] || this.defaultOptions[option];
       }, this);
@@ -84,7 +85,6 @@
     },
 
     append: function(id, options) {
-      options = options || {};
       return renderer.append.apply(renderer, arguments);
     },
 

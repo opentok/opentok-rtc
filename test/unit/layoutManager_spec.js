@@ -17,9 +17,16 @@ describe('LayoutManager', function() {
 
   before(function() {
     window.document.body.innerHTML = window.__html__['test/unit/layoutManager_spec.html'];
+    function getLayoutElement() {
+      var li = document.createElement('li');
+      var span = document.createElement('span');
+      li.appendChild(span);
+      span.classList.add('opentok-stream-container');
+      return li;
+    }
     sinon.stub(LayoutView, 'init');
     sinon.stub(LayoutView, 'append', function(id) {
-      return id === 'desktop' ? desktop : document.createElement('li');
+      return id === 'desktop' ? desktop : getLayoutElement();
     });
     sinon.stub(LayoutView, 'remove');
     sinon.stub(ItemsHandler, 'init');
@@ -47,25 +54,35 @@ describe('LayoutManager', function() {
   });
 
   describe('#append', function() {
+
+    var addedElements = [];
+
     it('should set the float layout with one stream', function() {
-      LayoutManager.append('1');
+      addedElements.push(LayoutManager.append('1'));
       checkLayout('float');
     });
 
     it('should keep the float layout with two streams', function() {
-      LayoutManager.append('2');
+      addedElements.push(LayoutManager.append('2'));
       checkLayout('float');
     });
 
     it('should set the grid layout with three streams', function() {
-      LayoutManager.append('3');
+      addedElements.push(LayoutManager.append('3'));
       checkLayout('grid');
     });
 
     it('should set the hangout horizontal layout while sharing the screen', function() {
-      LayoutManager.append('desktop');
+      addedElements.push(LayoutManager.append('desktop'));
       checkLayout('hangout_horizontal');
     });
+
+    it('should always return a reference to the element added', function() {
+      addedElements.every(function(item) {
+        expect(item).to.be.defined;
+      });
+    });
+
   });
 
   describe('#remove', function() {
@@ -98,7 +115,7 @@ describe('LayoutManager', function() {
           type: type
         }
       }));
-    }
+    };
 
     it('should set the f2f_horizontal layout with two streams', function() {
       LayoutManager.append('1');
@@ -140,6 +157,17 @@ describe('LayoutManager', function() {
 
       sendUserLayoutEvent('hangout_vertical');
       checkLayout('hangout_vertical');
+    });
+  });
+
+  describe('#getItemById', function () {
+    it('should return an ancestor of the element returned by append', function() {
+      var childElement = LayoutManager.append('testItemById');
+      var parentElement = LayoutManager.getItemById('testItemById');
+      while (childElement && parentElement != childElement) {
+        childElement = childElement.parentNode;
+      }
+      expect(parentElement).to.be.equal(childElement);
     });
   });
 
