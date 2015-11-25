@@ -22,18 +22,19 @@
 
   DragDetector.prototype = {
     attachHandlers: function() {
-      this.element.addEventListener(touchmove, this);
-      this.element.addEventListener(touchend, this);
-      this.element.addEventListener('contextmenu', this);
+      [touchmove, touchend, 'contextmenu'].forEach(function(eventName) {
+        this.element.addEventListener(eventName, this);
+      }, this);
     },
 
     removeHandlers: function() {
-      this.element.removeEventListener(touchmove, this);
-      this.element.removeEventListener(touchend, this);
-      this.element.removeEventListener('contextmenu', this);
+      [touchmove, touchend, 'contextmenu'].forEach(function(eventName) {
+        this.element.removeEventListener(eventName, this);
+      }, this);
     },
 
     startTimer: function() {
+      this.attachHandlers();
       this.clearTimer();
       this.timer = setTimeout(function() {
         this.sendEvent();
@@ -49,7 +50,7 @@
     },
 
     sendEvent: function() {
-      Utils.sendEvent('dragstart', {
+      Utils.sendEvent('DragDetector:dragstart', {
         pageX: this.startX,
         pageY: this.startY
       }, this.element);
@@ -63,7 +64,6 @@
           this.startX = touch.pageX;
           this.startY = touch.pageY;
           this.startTimer();
-          this.attachHandlers();
 
           break;
 
@@ -102,23 +102,25 @@
     this.translate();
 
     this.detector = new DragDetector(element);
-    element.addEventListener('dragstart', this);
+    element.addEventListener('DragDetector:dragstart', this);
   };
 
   DraggableElement.prototype = {
     attachHandlers: function() {
-      exports.addEventListener(touchmove, this);
-      exports.addEventListener(touchend, this);
+      [touchmove, touchend].forEach(function(eventName) {
+        exports.addEventListener(eventName, this);
+      }, this);
     },
 
     removeHandlers: function() {
-      exports.removeEventListener(touchmove, this);
-      exports.removeEventListener(touchend, this);
+      [touchmove, touchend].forEach(function(eventName) {
+        exports.removeEventListener(eventName, this);
+      }, this);
     },
 
     handleEvent: function(evt) {
       switch (evt.type) {
-        case 'dragstart':
+        case 'DragDetector:dragstart':
           this.startX = evt.detail.pageX - this.translatedX;
           this.startY = evt.detail.pageY - this.translatedY;
           this.attachHandlers();
@@ -148,7 +150,7 @@
     },
 
     destroy: function() {
-      this.element.removeEventListener('dragstart', this);
+      this.element.removeEventListener('DragDetector:dragstart', this);
       this.detector.destroy();
       Utils.setTransform(this.elementStyle, '');
       this.removeHandlers();
@@ -171,7 +173,11 @@
         draggableElement.destroy();
         elements[element] = null;
       }
-    }
+    },
+
+    DRAG_TIMEOUT: DragDetector.DRAG_TIMEOUT,
+
+    CLICK_THRESHOLD: DragDetector.CLICK_THRESHOLD
   };
 
   exports.Draggable = Draggable;

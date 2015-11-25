@@ -4,7 +4,7 @@ var should = chai.should();
 
 describe('Draggable', function() {
 
-  var DRAG_TIMEOUT = 200;
+  var DRAG_TIMEOUT = Draggable.DRAG_TIMEOUT;
 
   var item = document.createElement('div');
 
@@ -42,10 +42,10 @@ describe('Draggable', function() {
       checkTranslation(10, 10);
     });
 
-    describe('#event dispatcher: dragstart', function() {
+    describe('#event dispatcher: DragDetector:dragstart', function() {
       var checkHoldstartEvent = function(ctx, x, y, done) {
         ctx.stub(window, 'CustomEvent', function(name, data) {
-          expect(name).to.equal('dragstart');
+          expect(name).to.equal('DragDetector:dragstart');
           expect(data.detail.pageX).to.equal(x);
           expect(data.detail.pageY).to.equal(y);
           done();
@@ -68,7 +68,8 @@ describe('Draggable', function() {
         clock.tick(DRAG_TIMEOUT);
       }));
 
-      it('should send the event if the cursor is moved more than 10px', sinon.test(function(done) {
+      it('should send the event if the cursor is moved more than ' + Draggable.CLICK_THRESHOLD +
+         'px', sinon.test(function(done) {
         var clock = sinon.useFakeTimers();
         var x = 2;
         var y = 2;
@@ -81,7 +82,7 @@ describe('Draggable', function() {
         Draggable.on(item);
         sendMouseEvent('mousedown', { x: x, y: y });
         clock.tick(50);
-        sendMouseEvent('mousemove', { x: x + 11, y: y });
+        sendMouseEvent('mousemove', { x: x + Draggable.CLICK_THRESHOLD + 1, y: y });
         clock.tick(DRAG_TIMEOUT - 50);
       }));
 
