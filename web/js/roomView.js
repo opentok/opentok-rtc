@@ -21,9 +21,9 @@
 
   var MODAL_TXTS = {
     mute: {
-      head: 'All participants microphones are going to be disabled in the call',
-      detail: 'If someone with to keep talking, ' +
-              'they must enable manually its own microphone',
+      head: 'To mute all participants, including yourself, click Mute all',
+      detail: 'Everyone will be notified and can click their <microphone icon> to unmute ' +
+              'themselves.',
       button: 'Mute all'
     },
     muteRemotely: {
@@ -39,15 +39,16 @@
       button: 'I understand'
     },
     join: {
-      head: 'You are joining a call with all participants muted',
-      detail: 'If you want to unmute yourself, ' +
-              'just press the mic icon in the bottom of your video.',
+      head: 'All participants are muted',
+      detail: 'You can unmute everyone by toggling the Mute all participants option. Or you can ' +
+              'unmute just yourself by clicking your <microphone icon> icon',
       button: 'I understand'
     },
     disabledVideos: {
-      head: 'Disable all videos',
-      detail: 'Disable all videos to decrease internet usage and increase audio quiality',
-      button: 'Disable all'
+      head: 'Stop receiving video from the other participants, click Stop receiving video',
+      detail: 'This option can help to improve or preserve call quality in situations of poor ' +
+              'bandwidth or other resource constraints. ',
+      button: 'Stop receiving video'
     }
   };
 
