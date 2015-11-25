@@ -164,9 +164,7 @@ describe('LayoutManager', function() {
     it('should return an ancestor of the element returned by append', function() {
       var childElement = LayoutManager.append('testItemById');
       var parentElement = LayoutManager.getItemById('testItemById');
-      console.log(childElement);
       while (childElement && parentElement != childElement) {
-        console.log(childElement);
         childElement = childElement.parentNode;
       }
       expect(parentElement).to.be.equal(childElement);

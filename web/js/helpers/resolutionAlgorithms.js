@@ -60,10 +60,10 @@
         algorithm: preferredResolutionAlgorithms[chosenAlgorithm]
       };
     },
-    get algorithms() {
+    get algorithmNames() {
       return Object.keys(preferredResolutionAlgorithms);
     },
-    get defaultAlgorithm() {
+    get defaultAlgorithmName() {
       return defaultAlgorithm;
     }
   };

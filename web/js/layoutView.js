@@ -85,7 +85,6 @@
     },
 
     append: function(id, options) {
-      options = options || {};
       return renderer.append.apply(renderer, arguments);
     },
 
