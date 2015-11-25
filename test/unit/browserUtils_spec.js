@@ -56,6 +56,20 @@ describe('Utils', function() {
     });
   });
 
+  describe('#decodeStr', function(){
+    it('should exist and be a function', function() {
+      expect(Utils.decodeStr).to.exist;
+      expect(Utils.decodeStr).to.be.a('function');
+    });
+
+    it('should decode strings', function() {
+      var str = 'Collaboration%20Demo';
+      expect(Utils.decodeStr(str)).to.equal('Collaboration Demo');
+      str = 'Collaboration+Demo';
+      expect(Utils.decodeStr(str)).to.equal('Collaboration Demo');
+    });
+  });
+
   describe('#generateSearchStr', function() {
     it('should exist and be a function', function() {
       expect(Utils.generateSearchStr).to.exist;
@@ -157,6 +171,26 @@ describe('Utils', function() {
         getFirst: {
           input: 'someVariable',
           output: 'someValue'
+        }
+      },
+      {
+        input: '?someVariable=some+Value',
+        output: {
+          'someVariable': 'some Value'
+        },
+        getFirst: {
+          input: 'someVariable',
+          output: 'some Value'
+        }
+      },
+      {
+        input: '?someVariable=some%20Value',
+        output: {
+          'someVariable': 'some Value'
+        },
+        getFirst: {
+          input: 'someVariable',
+          output: 'some Value'
         }
       },
       {

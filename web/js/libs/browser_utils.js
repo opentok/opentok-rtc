@@ -63,6 +63,7 @@
   // and as values either the value if the value is unique or an array of values if it exists
   // more than once on the search
   var parseSearch = function(aSearchStr) {
+    aSearchStr = decodeStr(aSearchStr);
     return aSearchStr.slice(1).split('&').
       map(function(aParam) { return aParam.split('='); }).
       reduce(function(aObject, aCurrentValue) {
@@ -96,6 +97,10 @@
       join('');
   }
 
+  function decodeStr(str) {
+    return str ? window.decodeURIComponent(str).replace('+', ' ') : str;
+  }
+
   var Utils = {
     getCurrentTime: getCurrentTime,
     inspectObject: inspectObject,
@@ -118,7 +123,8 @@
     },
     setTransform: setTransform,
     parseSearch: parseSearch,
-    generateSearchStr: generateSearchStr
+    generateSearchStr: generateSearchStr,
+    decodeStr: decodeStr
   };
 
   // Just replacing global.utils might not be safe... let's just expand it...

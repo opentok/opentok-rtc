@@ -538,6 +538,7 @@
     if (length > 0) {
       roomName = pathName[length - 1];
     }
+    roomName = Utils.decodeStr(roomName);
 
     // Recover user identifier
     var params = Utils.parseSearch(document.location.search);
