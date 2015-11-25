@@ -4,6 +4,7 @@
   var debug;
   var _chromeExtId;
   var _isSharing;
+  var _hasPendingOperation = false;
   var _userName;
   var NAME_SUFFIX = '\'s screen';
   var DEFAULT_NAME = 'Unknown';
@@ -31,6 +32,10 @@
 
   var roomViewEvents = {
     'shareScreen': function(evt) {
+      if (_hasPendingOperation) {
+        return;
+      }
+
       if (_isSharing) {
         OTHelper.stopShareScreen();
         _isSharing = false;
@@ -41,14 +46,17 @@
           type: 'desktop',
           controlElems: {}
         });
+        _hasPendingOperation = true;
         OTHelper.shareScreen(desktopElement, screenPublisherOptions, streamHandlers).
           then(function() {
             _isSharing = true;
+            _hasPendingOperation = false;
             Utils.sendEvent('screenShareController:changeScreenShareStatus',
                             { isSharing: _isSharing });
 
           }).
           catch(function(error) {
+            _hasPendingOperation = false;
             Utils.sendEvent('screenShareController:shareScreenError',
                             { code: error.code, message: error.message });
           });
