@@ -47,8 +47,14 @@
     disabledVideos: {
       head: 'Stop receiving video from the other participants, click Stop receiving video',
       detail: 'This option can help to improve or preserve call quality in situations of poor ' +
-              'bandwidth or other resource constraints. ',
+              'bandwidth or other resource constraints.',
       button: 'Stop receiving video'
+    },
+    endCall: {
+      head: 'Exit the Video Call',
+      detail: 'You are going to exit the OpenTok Meeting Room. The call will continue with the ' +
+              'remaining participants.',
+      button: 'End call'
     }
   };
 
@@ -277,9 +283,13 @@
           setChatStatus(elem.id === 'startChat');
           break;
         case 'endCall':
-          RoomView.participantsNumber = 0;
-          OTHelper.disconnectFromSession();
-          Utils.sendEvent('roomView:endCall');
+          showConfirm(MODAL_TXTS.endCall).then(function(endCall) {
+            if (endCall) {
+              RoomView.participantsNumber = 0;
+              OTHelper.disconnectFromSession();
+              Utils.sendEvent('roomView:endCall');
+            }
+          });
           break;
         case 'startSharingDesktop':
         case 'stopSharingDesktop':
