@@ -7,6 +7,9 @@
 
   var closeHandlers = {};
 
+  var _queuedModals = [];
+  var _modalShown = false;
+
   function addCloseHandler(selector) {
     var closeElement = document.querySelector(selector + ' .close');
     if (!closeElement) {
@@ -27,18 +30,30 @@
     obj && obj.target.removeEventListener('click', obj.handler);
   }
 
-  function show(selector) {
-    return new Promise(function(resolve, reject) {
-      var modal = document.querySelector(selector);
+  function show(selector, preShowCb) {
 
-      modal.addEventListener(transEndEventName, function onTransitionend() {
-        modal.removeEventListener(transEndEventName, onTransitionend);
-        addCloseHandler(selector);
-        resolve();
+    var screenFree;
+    if (!_modalShown) {
+      screenFree = Promise.resolve();
+    } else {
+      screenFree = new Promise(function(resolve, reject) {
+        _queuedModals.push(resolve);
       });
+    }
 
-      modal.classList.add('visible');
-      modal.classList.add('show');
+    return screenFree.then(function() {
+      return new Promise(function(resolve, reject) {
+        _modalShown = true;
+        preShowCb && preShowCb();
+        var modal = document.querySelector(selector);
+        modal.addEventListener(transEndEventName, function onTransitionend() {
+          modal.removeEventListener(transEndEventName, onTransitionend);
+          addCloseHandler(selector);
+          resolve();
+        });
+        modal.classList.add('visible');
+        modal.classList.add('show');
+      });
     });
   }
 
@@ -53,6 +68,10 @@
       });
       removeCloseHandler(selector);
       modal.classList.remove('show');
+    }).then(function() {
+      _modalShown = false;
+      var nextScreen = _queuedModals.pop();
+      nextScreen && nextScreen();
     });
   }
 

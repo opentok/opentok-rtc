@@ -12,8 +12,19 @@ describe('ScreenShareView', function() {
     return document.querySelector('.screen-modal');
   }
 
-  function testMsgError(event, msgError, expectedResult) {
+  function testMsgError(event, msgError, expectedResult, done) {
     ScreenShareView.init();
+
+    var resolveShow;
+    var showDone = new Promise(function(resolve, reject) {
+      resolveShow = resolve;
+    });
+
+    sinon.stub(Modal, 'show', function(selector, fcCb) {
+      fcCb && fcCb();
+      resolveShow();
+      return showDone;
+    });
 
     // DispatchEvent is synchronous by definition
     // https://dom.spec.whatwg.org/#dom-eventtarget-dispatchevent
@@ -21,10 +32,14 @@ describe('ScreenShareView', function() {
     // pretty, isn't it?
     window.dispatchEvent(event);
 
-    expect(shareErrors.dataset.screenSharingType).to.be.equal(expectedResult);
+    showDone.then(function() {
+      expect(shareErrors.dataset.screenSharingType).to.be.equal(expectedResult);
 
-    var span = shareErrors.querySelector('.errorDescription');
-    expect(span.textContent).to.be.equal(msgError);
+      var span = shareErrors.querySelector('.errorDescription');
+      expect(span.textContent).to.be.equal(msgError);
+      Modal.show.restore();
+      done();
+    });
   }
 
   before(function() {
@@ -33,9 +48,6 @@ describe('ScreenShareView', function() {
       return Promise.resolve();
     });
     window.MockOTHelper._install();
-    sinon.stub(Modal, 'show', function() {
-      return Promise.resolve();
-    });
   });
 
   beforeEach(function() {
@@ -48,7 +60,6 @@ describe('ScreenShareView', function() {
   });
 
   after(function() {
-    Modal.show.restore();
     window.MockOTHelper._restore();
     LazyLoader.dependencyLoad.restore();
   });
@@ -72,7 +83,7 @@ describe('ScreenShareView', function() {
     });
   });
 
-  it('should show message when user denied access', function() {
+  it('should show message when user denied access', function(done) {
     var err = {
       code: 1500,
       message: 'Access Denied'
@@ -80,11 +91,11 @@ describe('ScreenShareView', function() {
 
     var event = new CustomEvent('screenShareController:shareScreenError', { detail: err });
 
-    testMsgError(event, err.message, 'error-sharing');
+    testMsgError(event, err.message, 'error-sharing', done);
   });
 
   it('should show a message when has error and is not userDenied or extensionNotInstalled',
-     function() {
+     function(done) {
      var err = {
        code: 'AAAA',
        message: 'whatEver Error'
@@ -92,10 +103,10 @@ describe('ScreenShareView', function() {
 
      var event = new CustomEvent('screenShareController:shareScreenError', { detail: err });
 
-     testMsgError(event, err.message, 'error-sharing');
+     testMsgError(event, err.message, 'error-sharing', done);
   });
 
-  it('should show install message when error is extNotInstalled', function() {
+  it('should show install message when error is extNotInstalled', function(done) {
     var err = {
       code: 'OT0001',
       message: 'Install extension'
@@ -103,20 +114,20 @@ describe('ScreenShareView', function() {
 
     var event = new CustomEvent('screenShareController:shareScreenError', { detail: err });
 
-    testMsgError(event, '', 'error-installing');
+    testMsgError(event, '', 'error-installing', done);
   });
 
-  it('should show installation success', function() {
+  it('should show installation success', function(done) {
     var err = {
       error: false
     };
 
     var event = new CustomEvent('screenShareController:extInstallationResult', { detail: err });
 
-    testMsgError(event, '', 'successful-installation');
+    testMsgError(event, '', 'successful-installation', done);
   });
 
-  it('should show installation success', function() {
+  it('should show installation success', function(done) {
     var err = {
       error: true,
       message: 'Error message'
@@ -124,7 +135,7 @@ describe('ScreenShareView', function() {
 
     var event = new CustomEvent('screenShareController:extInstallationResult', { detail: err });
 
-    testMsgError(event, err.message, 'error-sharing');
+    testMsgError(event, err.message, 'error-sharing', done);
   });
 
   it('should close the stream window once it has been destroyed', sinon.test(function(done) {
