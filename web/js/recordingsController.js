@@ -34,8 +34,10 @@
         '/js/components/modal.js'
       ]).then(function() {
         var selector = '.archive-delete-modal';
-        document.querySelector(selector + ' .username').textContent = data.username;
-        return Modal.show(selector).then(function() {
+        function loadModalText() {
+          document.querySelector(selector + ' .username').textContent = data.username;
+        }
+        return Modal.show(selector, loadModalText).then(function() {
           return new Promise(function(resolve, reject) {
             var ui = document.querySelector(selector);
             ui.addEventListener('click', function onClicked(evt) {

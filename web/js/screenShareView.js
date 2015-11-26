@@ -45,9 +45,11 @@
   }
 
   function showError(title, description) {
-    shareError.querySelector('.errorTitle').textContent = title;
-    shareError.querySelector('.errorDescription').textContent = description;
-    showShareScreenError('error-sharing');
+    function loadModalText() {
+      shareError.querySelector('.errorTitle').textContent = title;
+      shareError.querySelector('.errorDescription').textContent = description;
+    }
+    showShareScreenError('error-sharing', loadModalText);
   }
 
   function extInstallationResult(evt) {
@@ -91,12 +93,15 @@
     });
   }
 
-  function showShareScreenError(type) {
-    shareError.dataset.screenSharingType = type;
+  function showShareScreenError(type, preLoad) {
+    function loadModalText() {
+      preLoad && preLoad();
+      shareError.dataset.screenSharingType = type;
+    }
     return LazyLoader.dependencyLoad([
       '/js/components/modal.js'
     ]).then(function() {
-      Modal.show('.screen-modal').then(function(e) {
+      Modal.show('.screen-modal', loadModalText).then(function(e) {
         shareError.addEventListener('click', onClick);
       });
     });

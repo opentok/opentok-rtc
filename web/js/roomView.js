@@ -226,15 +226,17 @@
   function showConfirm(txt) {
     var selector = '.switch-alert-modal';
     var ui = document.querySelector(selector);
-    ui.querySelector(' header .msg').textContent = txt.head;
-    ui.querySelector(' p.detail').textContent = txt.detail;
-    ui.querySelector(' footer button.accept').textContent = txt.button;
+    function loadModalText() {
+      ui.querySelector(' header .msg').textContent = txt.head;
+      ui.querySelector(' p.detail').textContent = txt.detail;
+      ui.querySelector(' footer button.accept').textContent = txt.button;
+    }
 
     return LazyLoader.dependencyLoad([
         '/js/components/modal.js'
       ]).
       then(function() {
-        return Modal.show(selector);
+        return Modal.show(selector, loadModalText);
       }).
       then(function() {
         return new Promise(function(resolve, reject) {
