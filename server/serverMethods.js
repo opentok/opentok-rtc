@@ -92,6 +92,7 @@ function ServerMethods(aLogLevel, aModules) {
   // (and in fact it would be more robust if we didn't!) because we can just call listArchives
   // to get that, it's more efficient if we cache it locally.
   const RED_ROOM_PREFIX = 'otrtc_room__';
+  const RED_ROOM_MATCHES = RED_ROOM_PREFIX + '*';
 
   var Utils = require('./shared/utils');
   var Logger = Utils.MultiLevelLogger;
@@ -156,19 +157,77 @@ function ServerMethods(aLogLevel, aModules) {
     });
   }
 
+  function getPipelineForArrayOps(aRedisInst, aKeyArray, aOp) {
+    var pipeline = aRedisInst.pipeline();
+    for (var i = 0, l = aKeyArray.length; i < l ; i++) {
+      pipeline = pipeline[aOp](aKeyArray[i]);
+    }
+    return pipeline;
+  }
+
+  // To-Do (PSE-115): Move this to its own module (or as part of the general Redis Module)
+  function RedisCleaner(aMaxSessionAge) {
+    function _loadRoomKeys(aMatch) {
+      return new Promise((resolve, reject) => {
+        var keyStream = redis.scanStream({ match: aMatch });
+        var allKeys = [];
+        keyStream.on('data', data => {
+          allKeys.push.apply(allKeys, data);
+        });
+        keyStream.on('end', () => {
+          resolve(allKeys);
+        });
+      });
+    }
+
+    function cleanStaleRoomKeys() {
+      return _loadRoomKeys(RED_ROOM_MATCHES).
+        then(keyArray => {
+          var pipeline = getPipelineForArrayOps(redis, keyArray, 'get');
+          pipeline.
+            exec().
+            then(results => {
+              var minLastUsage = Date.now() - aMaxSessionAge;
+              logger.log('cleanStaleRoomKeys: Erasing rooms older than:',
+                         new Date(minLastUsage).toISOString());
+              var keysToErase = results.reduce((aPrevious, aCurrent, aIndex) => {
+                try {
+                  var lastUsage = JSON.parse(aCurrent[1]).lastUsage;
+                  lastUsage < minLastUsage && aPrevious.push(keyArray[aIndex]) &&
+                    logger.log('cleanStaleRoomKeys: Erasing stale room:', keyArray[aIndex],
+                               'Last Usage:', new Date(lastUsage).toISOString());
+                } catch (e) {
+                  logger.error('cleanStaleRoomKeys: Invalid value for key:', keyArray[aIndex]);
+                }
+                return aPrevious;
+              }, []);
+              return getPipelineForArrayOps(redis, keysToErase, 'del').exec();
+            });
+        });
+    }
+
+    return cleanStaleRoomKeys().then(() => {
+      // Execute daily
+      var interval = setInterval(cleanStaleRoomKeys, 86400);
+      return {
+        shutdown: function() {
+          clearInterval(interval);
+        }
+      };
+    });
+  }
+
+
+  function _shutdownOldInstance(aOldPromise, aNewPromise) {
+    aOldPromise && (aNewPromise !== aOldPromise) &&
+          aOldPromise.then(aObject => aObject.shutdown());
+  }
+
   function _initialTBConfig() {
     // This will hold the configuration read from Redis
     var redisConfig = {};
 
-    function getArray (aPipeline, aKeyArray) {
-      for (var i = 0, l = aKeyArray.length; i < l ; i++) {
-        aPipeline = aPipeline.get(aKeyArray[i].key);
-      }
-      return aPipeline;
-    }
-
-    var pipeline = redis.pipeline();
-    pipeline = getArray(pipeline, REDIS_KEYS);
+    var pipeline = getPipelineForArrayOps(redis, REDIS_KEYS.map(elem => elem.key), 'get');
     return pipeline.
       exec().
       then(results => {
@@ -206,6 +265,7 @@ function ServerMethods(aLogLevel, aModules) {
           forEach(method => otInstance[method + '_P'] = promisify(otInstance[method]));
 
         var maxSessionAge = parseInt(redisConfig[RED_TB_MAX_SESSION_AGE]);
+        var maxSessionAgeMs = maxSessionAge * 24 * 60 * 60 * 1000;
         var chromeExtId = redisConfig[RED_CHROME_EXTENSION_ID];
 
         // For this object we need to know if/when we're reconnecting so we can shutdown the
@@ -216,9 +276,11 @@ function ServerMethods(aLogLevel, aModules) {
           Utils.CachifiedObject(FirebaseArchives, redisConfig[RED_FB_DATA_URL],
                                 redisConfig[RED_FB_AUTH_SECRET],
                                 redisConfig[RED_EMPTY_ROOM_MAX_LIFETIME], aLogLevel);
+        _shutdownOldInstance(oldFirebaseArchivesPromise, firebaseArchivesPromise);
 
-        oldFirebaseArchivesPromise && (firebaseArchivesPromise !== oldFirebaseArchivesPromise) &&
-          oldFirebaseArchivesPromise.then(aFirebaseArchive => aFirebaseArchive.shutdown());
+        var oldRedisCleaner = Utils.CachifiedObject.getCached(RedisCleaner);
+        var redisCleaner= Utils.CachifiedObject(RedisCleaner, maxSessionAgeMs);
+        _shutdownOldInstance(oldRedisCleaner, redisCleaner);
 
         return firebaseArchivesPromise.
           then(firebaseArchives => {
@@ -229,7 +291,7 @@ function ServerMethods(aLogLevel, aModules) {
               apiSecret: apiSecret,
               archivePollingTO: archivePollingTO,
               archivePollingTOMultiplier: archivePollingTOMultiplier,
-              maxSessionAgeMs: maxSessionAge * 24 * 60 * 60 * 1000,
+              maxSessionAgeMs: maxSessionAgeMs,
               fbArchives: firebaseArchives,
               allowIframing: allowIframing,
               validReferers: validReferers,
