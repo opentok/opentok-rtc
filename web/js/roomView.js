@@ -10,7 +10,7 @@
   var recordingsNumberElem;
   var videoSwitch;
   var audioSwitch;
-  var unreadMsgElem;
+  var startChatElem;
   var unreadCountElem;
 
   var START_SHARING = 'Share your screen';
@@ -65,7 +65,7 @@
   };
 
   function setUnreadMessages(count) {
-    unreadMsgElem.dataset.unreadMessages = unreadCountElem.textContent = count;
+    startChatElem.dataset.unreadMessages = unreadCountElem.textContent = count;
   }
 
   function setChatStatus(visible) {
@@ -134,7 +134,7 @@
     recordingsNumberElem = dock.querySelector('#recordings');
     videoSwitch = dock.querySelector('#videoSwitch');
     audioSwitch = dock.querySelector('#audioSwitch');
-    unreadMsgElem = dock.querySelector('#unreadMsg');
+    startChatElem = dock.querySelector('#startChat');
     unreadCountElem = dock.querySelector('#unreadCount');
   }
 
