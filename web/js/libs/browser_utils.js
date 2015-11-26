@@ -98,7 +98,7 @@
   }
 
   function decodeStr(str) {
-    return str ? window.decodeURIComponent(str).replace('+', ' ') : str;
+    return str ? window.decodeURIComponent(str) : str;
   }
 
   var Utils = {

@@ -66,7 +66,7 @@ describe('Utils', function() {
       var str = 'Collaboration%20Demo';
       expect(Utils.decodeStr(str)).to.equal('Collaboration Demo');
       str = 'Collaboration+Demo';
-      expect(Utils.decodeStr(str)).to.equal('Collaboration Demo');
+      expect(Utils.decodeStr(str)).to.equal('Collaboration+Demo');
     });
   });
 
@@ -176,7 +176,7 @@ describe('Utils', function() {
       {
         input: '?someVariable=some+Value',
         output: {
-          'someVariable': 'some Value'
+          'someVariable': 'some+Value'
         },
         getFirst: {
           input: 'someVariable',
