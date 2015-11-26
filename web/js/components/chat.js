@@ -35,6 +35,11 @@
     return container.classList.contains('collapsed');
   }
 
+  function setVisible(visible) {
+    document.body.dataset.chatVisible = visible;
+    visible ? container.classList.add('visible') : container.classList.remove('visible');
+  }
+
   function show() {
     chatShown = chatShown || new Promise(function(resolve, reject) {
       container.addEventListener(transEndEventName, function onEnd() {
@@ -43,7 +48,7 @@
         resolve();
       });
 
-      container.classList.add('visible');
+      setVisible(true);
       setTimeout(function() {
         container.classList.add('show');
       }, 50); // Give the chance to paint the UI element before fading in
@@ -61,7 +66,7 @@
       container.addEventListener(transEndEventName, function onEnd() {
         container.removeEventListener(transEndEventName, onEnd);
         document.body.removeEventListener('click', onClick);
-        container.classList.remove('visible');
+        setVisible(false);
         chatShown = chatHidden = null;
         Utils.sendEvent('chat:hidden');
         resolve();
