@@ -174,7 +174,7 @@ function ServerMethods(aLogLevel, aModules) {
         keyStream.on('data', data => {
           allKeys.push.apply(allKeys, data);
         });
-        keyStream.on('end', () =>{
+        keyStream.on('end', () => {
           resolve(allKeys);
         });
       });
