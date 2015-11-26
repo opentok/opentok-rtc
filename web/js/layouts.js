@@ -245,7 +245,7 @@ Hangout.prototype = {
   /*
    * It returns a random item (publisher stream is not included)
    */
-  getRandomItem() {
+  getRandomItem: function() {
     return this.items[Object.keys(this.items).find(function(id) {
       return id !== 'publisher';
     })];

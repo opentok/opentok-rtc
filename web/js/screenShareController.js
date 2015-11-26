@@ -19,8 +19,7 @@
       nameDisplayMode: 'off'
     },
     publishAudio: false,
-    videoSource: 'screen',
-    insertMode: 'append'
+    videoSource: 'screen'
   };
 
   var streamHandlers = {
