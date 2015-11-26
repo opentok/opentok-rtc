@@ -8,14 +8,7 @@
 
   var items = {};
 
-  var layouts = {
-    'grid': Grid,
-    'float': Float,
-    'f2f_horizontal': F2FHorizontal,
-    'f2f_vertical': F2FVertical,
-    'hangout_horizontal': HangoutHorizontal,
-    'hangout_vertical': HangoutVertical
-  };
+  var layouts;
 
   var HANGOUT_BY_DEFAULT = 'hangout_horizontal';
 
@@ -41,6 +34,14 @@
   };
 
   function init(selector) {
+    layouts = {
+      'grid': Grid,
+      'float': Float,
+      'f2f_horizontal': F2FHorizontal,
+      'f2f_vertical': F2FVertical,
+      'hangout_horizontal': HangoutHorizontal,
+      'hangout_vertical': HangoutVertical
+    };
     container = document.querySelector(selector);
     LayoutView.init(container);
     ItemsHandler.init(container, items);
