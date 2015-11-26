@@ -170,6 +170,7 @@ body {
       position: absolute;
       height: 100%;
       width: 100%;
+      overflow-y: scroll;
 
       ul {
         height: calc(~"100% - 20px");
@@ -186,11 +187,13 @@ body {
       padding: 18px 0 18px 30px;
       text-overflow: clip;
       font-size: 12px;
+      min-height: 52px;
     }
 
     .tc-list li.tight {
       padding-top: 6px;
       padding-bottom: 6px;
+      min-height: 38px;
     }
 
     .tc-list li.bottom {
