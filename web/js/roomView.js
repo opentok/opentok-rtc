@@ -104,9 +104,9 @@
     'userChangeStatus': function(evt) {
       // If user changed the status we need to reset the switch
       if (evt.detail.name === 'video') {
-        toggleSwitch(false, videoSwitch, 'roomView:videoSwitch', false);
+        setSwitchStatus(false, false, videoSwitch, 'roomView:videoSwitch');
       } else if (evt.detail.name === 'audio') {
-        toggleSwitch(false, audioSwitch, 'roomView:muteAllSwitch', false);
+        setSwitchStatus(false, false, audioSwitch, 'roomView:muteAllSwitch');
       }
     },
     'roomMuted': function(evt) {
@@ -117,7 +117,7 @@
   };
 
   function setAudioSwitchRemotely(isMuted) {
-    toggleSwitch(false, audioSwitch, 'roomView:muteAllSwitch', isMuted);
+    setSwitchStatus(isMuted, false, audioSwitch, 'roomView:muteAllSwitch');
   }
 
   function showConfirmChangeMicStatus(isMuted) {
@@ -150,7 +150,8 @@
     LayoutManager.remove(id);
   }
 
-  function toggleSwitch(bubbleUp, domElem, evtName, status) {
+  function setSwitchStatus(status, bubbleUp, domElem, evtName) {
+    var oldStatus = domElem.classList.contains('activated');
     var newStatus;
     if (status === undefined) {
       newStatus = domElem.classList.toggle('activated');
@@ -162,7 +163,7 @@
         domElem.classList.remove('activated');
       }
     }
-    bubbleUp && Utils.sendEvent(evtName, { status: newStatus });
+    bubbleUp && newStatus !== oldStatus && Utils.sendEvent(evtName, { status: newStatus });
   }
 
   var cronograph = null;
@@ -300,19 +301,20 @@
         case 'videoSwitch':
           if (!videoSwitch.classList.contains('activated')) {
             showConfirm(MODAL_TXTS.disabledVideos).then(function(shouldDisable) {
-              shouldDisable && toggleSwitch(true, videoSwitch, 'roomView:videoSwitch');
+              shouldDisable && setSwitchStatus(true, true, videoSwitch, 'roomView:videoSwitch');
             });
           } else {
-            toggleSwitch(true, videoSwitch, 'roomView:videoSwitch');
+            setSwitchStatus(false, true, videoSwitch, 'roomView:videoSwitch');
           }
           break;
         case 'audioSwitch':
           if (!audioSwitch.classList.contains('activated')) {
             showConfirm(MODAL_TXTS.mute).then(function(shouldDisable) {
-              shouldDisable && toggleSwitch(true, audioSwitch, 'roomView:muteAllSwitch');
+              shouldDisable &&
+                setSwitchStatus(true, true, audioSwitch, 'roomView:muteAllSwitch');
             });
           } else {
-            toggleSwitch(true, audioSwitch, 'roomView:muteAllSwitch');
+            setSwitchStatus(false, true, audioSwitch, 'roomView:muteAllSwitch');
           }
       }
     });

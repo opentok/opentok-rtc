@@ -463,6 +463,9 @@
       var onlyChangeSwitch = statusData.onlyChangeSwitch;
 
       var setNewAudioStatus = function(isMuted, onlySwitch) {
+        if (_sharedStatus.roomMuted !== isMuted) {
+          return;
+        }
         !onlySwitch && setAudioStatus(isMuted);
         RoomView.setAudioSwitchRemotely(isMuted);
       }.bind(undefined, muteAllSwitch, onlyChangeSwitch);
