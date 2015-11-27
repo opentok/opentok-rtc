@@ -241,14 +241,19 @@
     },
     'buttonClick': function(evt) {
       var streamId = evt.detail.streamId;
+      var streamType = evt.detail.streamType;
       var name = evt.detail.name;
       var disableAll = !!evt.detail.disableAll;
       var switchStatus = evt.detail.status;
       var buttonInfo = null;
       var args = [];
       var newStatus;
+      var isPublisher = streamId === 'publisher';
 
-      if (streamId !== 'publisher') {
+      if (isPublisher) {
+        buttonInfo = publisherButtons[name];
+        newStatus = !buttonInfo.enabled;
+      } else {
         var stream = subscriberStreams[streamId];
         if (!stream) {
           debug.error('Got an event from an nonexistent stream');
@@ -260,13 +265,10 @@
         // BUG xxxx - We don't receive videoDisabled/videoEnabled events when
         // stopping/starting the screen sharing video
         // OPENTOK-26021 - We don't receive any event when mute/unmute the audio in local streams
-        if (evt.detail.streamType === 'screen' || name === 'audio') {
+        if (streamType === 'screen' || name === 'audio') {
           // so we assume the operation was performed properly and change the UI status
           sendStatus({ stream: stream.stream }, name, newStatus);
         }
-      } else {
-        buttonInfo = publisherButtons[name];
-        newStatus = !buttonInfo.enabled;
       }
 
       if (!buttonInfo) {
@@ -279,10 +281,23 @@
       if (!disableAll || disableAll && switchStatus !== newStatus) {
         var obj = exports[buttonInfo.context];
         obj[buttonInfo.action].apply(obj, args);
-        if (!disableAll) {
-          Utils.sendEvent('roomController:userChangeStatus', { status: newStatus, name: name });
-          sendSignalMuteAll(false, true);
-          _sharedStatus.roomMuted = false;
+        // if stream button clicked and isn't a screen
+        if (!disableAll && streamType !== 'screen') {
+          // If type = 'audio'
+          //   it only has to propagate the change when the button clicked is the microphone
+          // if type = 'video'
+          //   only when button clicked is not the publisher's one (is a subscriber's video button)
+          // it type = 'screen'
+          //   don't do anything
+          var isMicrophone = name === 'audio' && isPublisher;
+          var isSubscribeToVideo = name === 'video' && !isPublisher;
+          if (isMicrophone || isSubscribeToVideo) {
+            Utils.sendEvent('roomController:userChangeStatus', { status: newStatus, name: name });
+            if (isMicrophone) {
+              sendSignalMuteAll(false, true);
+              _sharedStatus.roomMuted = false;
+            }
+          }
         }
       }
     },
