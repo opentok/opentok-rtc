@@ -356,6 +356,16 @@
     var linkToShare = document.querySelector('#addToCall');
     input.value = linkToShare.dataset.clipboardText = getURLtoShare();
     var zc = new ZeroClipboard(linkToShare);
+    var config = ZeroClipboard.config();
+    var swfObject = document.getElementById(config.swfObjectId);
+    var myHoverClass = 'my-zeroclipboard-is-hover';
+    swfObject.addEventListener('mouseenter', function(evt) {
+      linkToShare.classList.add(myHoverClass);
+      swfObject.addEventListener('mouseleave', function onMouseLeave() {
+        swfObject.removeEventListener('mouseleave', onMouseLeave);
+        linkToShare.classList.remove(myHoverClass);
+      });
+    });
   };
 
   var init = function() {

@@ -229,11 +229,15 @@ body {
       }
     }
 
-    .tc-list a.zeroclipboard-is-hover [data-icon="add"], [data-icon="add"]:after {
+    .tc-list a.zeroclipboard-is-hover {
+      cursor: default;
+    }
+
+    .tc-list a.my-zeroclipboard-is-hover [data-icon="add"], [data-icon="add"]:after {
       background-image: url("/images/icons/add_hover.svg");
     }
 
-    .tc-list a.zeroclipboard-is-hover {
+    .tc-list a.my-zeroclipboard-is-hover {
       color: @blueText;
       background-color: #f9f9f9;
     }
