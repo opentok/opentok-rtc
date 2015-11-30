@@ -128,11 +128,18 @@
     Chat.isCollapsed() ? Chat.expand() : Chat.collapse();
   };
 
+  var onDrop = function(evt) {
+    evt.preventDefault();
+    evt.stopPropagation();
+    return false;
+  };
+
   // The ChatController should have the handlers and call the view for
   // doing visual work
   function addHandlers() {
     chatForm.addEventListener('keypress', onKeyPress);
     chatForm.addEventListener('submit', onSubmit);
+    chatForm.addEventListener('drop', onDrop);
     closeChatBtn.addEventListener('click', onClose);
     toggleChatBtn.addEventListener('click', onToggle);
     sendMsgBtn.addEventListener('click', onSendClicked);
@@ -143,6 +150,7 @@
     closeChatBtn.removeEventListener('click', onClose);
     toggleChatBtn.removeEventListener('click', onToggle);
     sendMsgBtn.removeEventListener('click', onSendClicked);
+    chatForm.removeEventListener('drop', onDrop);
   }
 
   function insertChatEvent(data) {
