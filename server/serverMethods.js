@@ -604,11 +604,28 @@ function ServerMethods(aLogLevel, aModules) {
 
   function getArchive(aReq, aRes) {
     var archiveId = aReq.params.archiveId;
-    logger.log('getAchive:', archiveId);
+    var generatePreview = (aReq.query && aReq.query.generatePreview !== undefined);
+    logger.log('getAchive:', archiveId, generatePreview);
+
     aReq.tbConfig.otInstance.
       getArchive_P(archiveId).
       then(aArchive => {
-        aRes.redirect(301, aArchive.url);
+        if (!generatePreview) {
+          aRes.redirect(301, aArchive.url);
+          return;
+        }
+
+        aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+        aRes.set('Pragma', 'no-cache');
+        aRes.set('Expires', 0);
+
+        aRes.
+          render('archivePreview.ejs',
+            {
+              archiveName: aArchive.name,
+              archiveURL: aArchive.url
+            });
+
       }).catch(e => {
         logger.error('getArchive error:', e);
         aRes.status(405).send(e);

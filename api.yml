@@ -196,9 +196,18 @@ paths:
           description: Id of the archive.
           required: true
           type: string
+        - name: generatePreview
+          in: path
+          description: If the parameter is present (the value is irrelevant) the server should generate and return an HTML page that embeds the video instead of returning the video directly.
+          required: false
+          type: string
       responses:
         '301':
           description: Information to download or view the archive file.
+          schema:
+            $ref: '#/definitions/ArchiveURL'
+        '200':
+          description: HTML with the video embedded.
           schema:
             $ref: '#/definitions/ArchiveURL'
         '400':

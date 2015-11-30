@@ -99,7 +99,9 @@ describe('RecordingsView', function() {
         var item = items[i];
         var values = archives[keysArchives[i]];
         expect(item.textContent).to.contain(values.recordingUser);
-        expect(item.href).to.equal(values.localDownloadURL);
+        expect(item.href).to.contain('?generatePreview');
+        var baseHref = item.href.replace('?generatePreview', '');
+        expect(baseHref).to.equal(values.localDownloadURL);
         expect(item.parentNode.dataset.status).to.equal(values.status);
       }
 
