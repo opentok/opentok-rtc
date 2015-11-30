@@ -17,7 +17,7 @@
   var STOP_SHARING = 'Stop sharing your screen';
 
   var _unreadMsg = 0;
-  var _chatHasBeenShowed = false;
+  var _chatHasBeenShown = false;
 
   var MODAL_TXTS = {
     mute: {
@@ -65,14 +65,14 @@
   };
 
   function setUnreadMessages(count) {
+    _unreadMsg = count;
     startChatElem.dataset.unreadMessages = unreadCountElem.textContent = count;
   }
 
   function setChatStatus(visible) {
     if (visible) {
-      _chatHasBeenShowed = true;
-      _unreadMsg = 0;
-      setUnreadMessages(_unreadMsg);
+      _chatHasBeenShown = true;
+      setUnreadMessages(0);
       document.body.dataset.chatStatus = 'visible';
     } else {
       document.body.dataset.chatStatus = 'hidden';
@@ -82,8 +82,8 @@
 
   var chatViews = {
     'unreadMessage': function(evt) {
-      setUnreadMessages(++_unreadMsg);
-      if (!_chatHasBeenShowed) {
+      setUnreadMessages(_unreadMsg + 1);
+      if (!_chatHasBeenShown) {
         setChatStatus(true);
       }
     }
@@ -92,6 +92,7 @@
   var chatEvents = {
     'hidden': function(evt) {
       document.body.dataset.chatStatus = 'hidden';
+      setUnreadMessages(0);
     }
   };
 
