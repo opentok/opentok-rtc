@@ -11,6 +11,7 @@
 @import 'icons.less';
 @import 'bubble.less';
 @import 'layout.less';
+@import 'tooltips.less';
 
 body {
   margin: 0;
@@ -20,6 +21,8 @@ body {
   height: 100%;
   overflow: hidden;
   color: #fff;
+  overflow-y: auto;
+  background-color: @mainBackgroundColor;
 }
 
 #dock.collapsed {
@@ -53,8 +56,15 @@ body {
       }
     }
 
-    .tc-list li.surrounded:after {
-      opacity: 0;
+    .tc-list li.surrounded a:before {
+      border: 0;
+    }
+
+    .tc-list li:hover {
+      &[tooltip]:before,
+      &[tooltip]:after {
+        opacity: 1;
+      }
     }
   }
 }
@@ -62,6 +72,7 @@ body {
 #dock {
   width: 300px;
   height: 100%;
+  min-height: 600px;
   background-color: #F9F9F9;
 
   transition: width @transitionTime;
@@ -187,7 +198,6 @@ body {
       position: absolute;
       height: 100%;
       width: 100%;
-      overflow-y: auto;
 
       ul {
         height: calc(~"100% - 20px");
@@ -198,44 +208,45 @@ body {
     }
 
     .tc-list li {
-      .truncate();
       background-color: transparent;
       border-bottom: 0;
-      padding: 18px 0 18px 40px;
+      padding: 3px 0 3px 40px;
       text-overflow: clip;
       font-size: 14px;
-      min-height: 52px;
+
+      &[tooltip]:before,
+      &[tooltip]:after {
+        opacity: 0;
+        transition: opacity @transitionTime;
+      }
     }
 
     .tc-list li.tight {
-      padding-top: 6px;
-      padding-bottom: 6px;
-      min-height: 38px;
+      padding: 0 0 2px 40px;
+
+      a {
+        line-height: 30px;
+      }
     }
 
     .tc-list li.bottom {
       margin-top: auto;
-      padding-top: 12px;
-      margin-bottom: 6px;
     }
 
-    .tc-list li.surrounded:after {
-      content: '';
-      position: absolute;
-      top: 0;
-      height: 1px;
-      left: 26px;
-      right: 26px;
-      opacity: 1;
-      z-index: 1;
-
-      background-color: #c5bbb4;
+    .tc-list li.surrounded a:before {
+      border-top: 1px solid #c5bbb4;
     }
 
     .tc-list a {
+      .truncate();
+      text-overflow: clip;
       color: #9b9c9b;
-      width: calc(~"100% - 12px");
+      padding: 0;
+      margin: 0;
+      width: 100%;
+      line-height: 36px;
       padding-left: 12px;
+      margin-left: -12px;
       position: relative;
       z-index: 1;
 
@@ -298,8 +309,8 @@ body {
 
       span.duration {
         position: absolute;
+        top: 0;
         right: 32px;
-        top: 13px;
       }
 
       .duration {
@@ -348,7 +359,7 @@ body {
   }
 
   #stopArchiving {
-    display: inline-block;
+    display: block;
   }
 }
 
@@ -359,7 +370,7 @@ body {
     }
 
     #stopSharingDesktop {
-      display: inline-block;
+      display: block;
     }
   }
 }
@@ -371,7 +382,7 @@ body {
     }
 
     #stopChat {
-      display: inline-block;
+      display: block;
     }
   }
 }
