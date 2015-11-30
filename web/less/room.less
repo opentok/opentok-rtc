@@ -375,7 +375,7 @@ body {
 
 .user-name-modal .tc-dialog {
   padding: 65px 100px;
-  max-width: calc(~"100% - 220px");
+  max-width: calc(~"100% - 510px");
   margin: 0;
 
   header, footer, p {
@@ -390,9 +390,7 @@ body {
     line-height: 60px;
     color: @blueText;
     margin-bottom: 23px;
-    overflow: hidden;
-    .truncate();
-    text-overflow: ellipsis;
+    word-break: break-all;
   }
 
   p {
