@@ -619,12 +619,10 @@ function ServerMethods(aLogLevel, aModules) {
         aRes.set('Pragma', 'no-cache');
         aRes.set('Expires', 0);
 
-        aRes.
-          render('archivePreview.ejs',
-            {
-              archiveName: aArchive.name,
-              archiveURL: aArchive.url
-            });
+        aRes.render('archivePreview.ejs', {
+          archiveName: aArchive.name,
+          archiveURL: aArchive.url
+        });
 
       }).catch(e => {
         logger.error('getArchive error:', e);
