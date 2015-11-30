@@ -23,7 +23,7 @@ body {
 }
 
 #dock.collapsed {
-  width: 75px;
+  width: 95px;
   min-width: auto;
 
   .info {
@@ -53,14 +53,14 @@ body {
       }
     }
 
-    .tc-list li.surrounded:before {
+    .tc-list li.surrounded:after {
       opacity: 0;
     }
   }
 }
 
 #dock {
-  width: 280px;
+  width: 300px;
   height: 100%;
   background-color: #F9F9F9;
 
@@ -76,11 +76,11 @@ body {
   }
 
   .info {
-    width: calc(~"100% - 60px");
+    width: calc(~"100% - 80px");
     background-color: #1a99ce;
     border-radius: 16px;
     border-top-left-radius: 0;
-    margin: 15px 20px;
+    margin: 15px 30px;
     padding: 15px 15px 5px 15px;
 
     #handler {
@@ -184,7 +184,7 @@ body {
       .truncate();
       background-color: transparent;
       border-bottom: 0;
-      padding: 18px 0 18px 30px;
+      padding: 18px 0 18px 40px;
       text-overflow: clip;
       font-size: 14px;
       min-height: 52px;
@@ -207,8 +207,8 @@ body {
       position: absolute;
       top: 0;
       height: 1px;
-      left: 16px;
-      right: 16px;
+      left: 26px;
+      right: 26px;
       opacity: 1;
       z-index: 1;
 
@@ -238,7 +238,7 @@ body {
       position: absolute;
       top: 0;
       left: 0;
-      right: 16px;
+      right: 26px;
       bottom: 0;
       z-index: -1;
 
@@ -281,8 +281,8 @@ body {
 
       span.duration {
         position: absolute;
-        right: 30px;
-        top: 19px;
+        right: 32px;
+        top: 13px;
       }
 
       .duration {
