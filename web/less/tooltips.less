@@ -1,0 +1,33 @@
+.tooltip {
+  position: relative;
+  display: inline-block;
+
+  &[tooltip]:before {
+    content: attr(tooltip);
+    background-color: rgba(49,50,59,0.6);
+    color: white;
+    font-size: 14px;
+    height: 36px;
+    line-height: 36px;
+    text-align: left;
+    white-space: pre;
+    word-break: break-word;
+    padding: 0 15px;
+    top: -3px;
+  }
+
+  &[tooltip]:after {
+    content: '';
+    border: 8px solid transparent;
+    border-right: 8px solid rgba(49,50,59,0.6);
+    margin: 8px 0 0 -16px;
+    top: 0;
+  }
+
+  &[tooltip]:before,
+  &[tooltip]:after {
+    position: absolute;
+    z-index: 50;
+    left: 100%;
+  }
+}
