@@ -83,7 +83,7 @@
 
       HTMLElems.createElementAt(item, 'a', {
         'target': '_blank',
-        'href': url
+        'href': url + '?generatePreview'
       }, getLabelText(archive)).classList.add('file');
 
       HTMLElems.createElementAt(item, 'i', {

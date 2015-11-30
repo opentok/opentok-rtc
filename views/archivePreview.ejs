@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>WebRTC Demo - Archive</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="OpenTokRTC is a simple and easy to use WebRTC Demo that supports multi-party video chat, Audio/Video recording, mobile support on iOS and Android, and text-chat. It works with all browsers that supports WebRTC, including chrome on Android. Developed by Song Zheng and Ankur Oberoi from TokBox, OpenTokRTC is open-sourced and all source code is available on Github."> 
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link rel="stylesheet" href="/css/room.opentok.css" />
+  </head>
+  <body>
+    <section class="main">
+      <div class="tc-dialog">
+        <h1>
+          <a href="http://tokbox.com/?utm_source=opentokrtc&utm_medium=web&utm_campaign=webrtc">
+            <img src="/images/opentok-logo.png" alt="opentok transparent logo" height='60px'></a>
+          OpenTok Archive: <%=archiveName%></h1>
+        <div id="roomContainer">
+          <video id="archiveVideo" src="<%=archiveURL%>" autoplay="" controls="true"></video>
+          <br>
+          <br>
+          <a href="<%=archiveURL%>" class="btn btn-blue btn-padding ctaarrow-white" download="<%=archiveName%>.mp4">Download</a>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>
