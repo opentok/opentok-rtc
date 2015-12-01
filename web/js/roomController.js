@@ -357,15 +357,9 @@
       // call to the disconnect() method of the Session object.
       // The event may also be disptached if a session connection is lost
       // inadvertantly, as in the case of a lost network connection.
-
-      // The default behavior is that all Subscriber objects are unsubscribed
-      // and removed from the HTML DOM. Each Subscriber object dispatches a
-      // destroyed event when the element is removed from the HTML DOM.
-      // If you call the preventDefault() method in the event listener for the
-      // sessionDisconnect event, the default behavior is prevented, and you
-      // can, optionally, clean up Subscriber objects using your own code.
-      numUsrsInRoom--;
-      RoomView.participantsNumber = numUsrsInRoom;
+      numUsrsInRoom = 0;
+      Utils.sendEvent('roomController:sessionDisconnected');
+      subscriberStreams = {};
     },
     'streamCreated': function(evt) {
       // A new stream, published by another client, has been created on this

@@ -86,6 +86,10 @@
     rearrange();
   }
 
+  function removeAll() {
+    LayoutView.removeAll();
+  }
+
   function getItemById(aId) {
     return items[aId];
   }
@@ -144,6 +148,7 @@
     init: init,
     append: append,
     remove: remove,
+    removeAll: removeAll,
     getItemById: getItemById
   };
 
