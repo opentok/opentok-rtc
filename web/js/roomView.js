@@ -55,6 +55,12 @@
       detail: 'You are going to exit the OpenTok Meeting Room. The call will continue with the ' +
               'remaining participants.',
       button: 'End call'
+    },
+    sessionDisconnected: {
+      head: 'Session disconected',
+      detail: 'The connection to the OpenTok platform has been lost. Check your network ' +
+              'connectivity and press Reload to connect again.',
+      button: 'Reload'
     }
   };
 
@@ -114,6 +120,13 @@
       var isJoining = evt.detail.isJoining;
       setAudioSwitchRemotely(true);
       showConfirm(isJoining ? MODAL_TXTS.join : MODAL_TXTS.muteRemotely);
+    },
+    'sessionDisconnected': function(evt) {
+      RoomView.participantsNumber = 0;
+      LayoutManager.removeAll();
+      showConfirm(MODAL_TXTS.sessionDisconnected).then(function(hasAccepted) {
+        hasAccepted && document.location.reload();
+      });
     }
   };
 

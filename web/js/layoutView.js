@@ -74,6 +74,10 @@
 
     remove: function(item) {
       return this.container.removeChild(item);
+    },
+
+    removeAll: function() {
+      this.container.innerHTML = '';
     }
   };
 
@@ -90,6 +94,10 @@
 
     remove: function(item) {
       return renderer.remove.apply(renderer, arguments);
+    },
+
+    removeAll: function() {
+      renderer.removeAll.apply(renderer);
     }
   };
 
