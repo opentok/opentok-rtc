@@ -131,6 +131,7 @@
   };
 
   var init = function(model) {
+    document.body.dataset.downloadAvailable = Utils.isChrome();
     model.addEventListener('value', render);
     render(model.archives);
     addHandlers();

@@ -124,7 +124,12 @@
     setTransform: setTransform,
     parseSearch: parseSearch,
     generateSearchStr: generateSearchStr,
-    decodeStr: decodeStr
+    decodeStr: decodeStr,
+    isChrome: function() {
+      var userAgent = 'userAgent' in navigator && navigator.userAgent.toLowerCase() || '';
+      var vendor = 'vendor' in navigator && navigator.vendor.toLowerCase() || '';
+      return /chrome|chromium/i.test(userAgent) && /google inc/.test(vendor);
+    }
   };
 
   // Just replacing global.utils might not be safe... let's just expand it...
