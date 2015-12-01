@@ -259,4 +259,57 @@ describe('Utils', function() {
 
   });
 
+  describe('#isChrome', function() {
+
+    var realUserAgent = null,
+        realVendor = null,
+        customUserAgent = '',
+        customVendor = '';
+
+    before(function() {
+      realUserAgent = navigator.userAgent;
+      Object.defineProperty(window.navigator, 'userAgent', {
+        configurable: true,
+        get: function() {
+          return customUserAgent;
+        }
+      });
+
+      realVendor = navigator.vendor;
+      Object.defineProperty(window.navigator, 'vendor', {
+        configurable: true,
+        get: function() {
+          return customVendor;
+        }
+      });
+    });
+
+    after(function() {
+      realUserAgent = customUserAgent;
+      realVendor = customVendor;
+    });
+
+    it('should exist and be a function', function() {
+      expect(Utils.isChrome).to.exist;
+      expect(Utils.isChrome).to.be.a('function');
+    });
+
+    it('should return true when browser is chrome', function() {
+      customUserAgent = 'Chrome';
+      customVendor = 'google inc';
+      expect(Utils.isChrome()).to.be.true;
+    });
+
+    it('should return false when browser is firefox', function() {
+      customUserAgent = 'Mozilla/5.0';
+      expect(Utils.isChrome()).to.be.false;
+    });
+
+    it('should return false when browser is IE', function() {
+      customUserAgent = 'msie';
+      expect(Utils.isChrome()).to.be.false;
+    });
+
+  });
+
 });

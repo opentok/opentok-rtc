@@ -149,6 +149,8 @@
       margin: -2px 0 0 0;
       padding: 0;
       border: 0;
+      visibility: hidden;
+      pointer-events: none;
     }
 
     a {
@@ -165,6 +167,13 @@
       float: right;
       display: none;
     }
+  }
+}
+
+[data-download-available=true] [for="viewRecordings"] {
+  .tc-list a.download {
+    visibility: visible;
+    pointer-events: auto;
   }
 }
 

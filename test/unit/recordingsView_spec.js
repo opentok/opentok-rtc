@@ -82,6 +82,7 @@ describe('RecordingsView', function() {
       expect(keys.length).to.equal(1);
       expect(keys[0]).to.equal('value');
       expect(model._listeners.value.length).to.equal(1);
+      expect(document.body.dataset.downloadAvailable).to.be.equal(Utils.isChrome().toString());
     });
 
     it('should render archives', function() {
