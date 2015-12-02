@@ -125,9 +125,6 @@
     'sessionDisconnected': function(evt) {
       RoomView.participantsNumber = 0;
       LayoutManager.removeAll();
-      showConfirm(MODAL_TXTS.sessionDisconnected).then(function(hasAccepted) {
-        hasAccepted && document.location.reload();
-      });
     }
   };
 
