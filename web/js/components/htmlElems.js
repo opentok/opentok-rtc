@@ -54,6 +54,21 @@
     enabled ? classList.add('enabled') : classList.remove('enabled');
   }
 
+  function getAncestorByTagName(el, tagName) {
+    tagName = tagName.toUpperCase();
+    if (el.tagName === tagName) {
+      return el;
+    } else {
+      while (el.parentNode) {
+        el = el.parentNode;
+        if (el.tagName === tagName) {
+          return el;
+        }
+      }
+      return null;
+    }
+  }
+
   exports.HTMLElems = {
     addText: addText,
     replaceText: replaceText,
@@ -62,7 +77,8 @@
     isAction: function(aElem) {
       return ('action' in aElem.dataset);
     },
-    setEnabled: setEnabled
+    setEnabled: setEnabled,
+    getAncestorByTagName: getAncestorByTagName
   };
 
 }(this);
