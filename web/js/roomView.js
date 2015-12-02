@@ -152,6 +152,12 @@
     audioSwitch = dock.querySelector('#audioSwitch');
     startChatElem = dock.querySelector('#startChat');
     unreadCountElem = dock.querySelector('#unreadCount');
+
+    // The title takes two lines maximum when the dock is expanded. When the title takes
+    // one line with expanded mode, it ends taking two lines while is collapsing because the witdh
+    // is reduced, so we have to fix the height to avoid this ugly effect during transition.
+    var title = dock.querySelector('.info h1');
+    title.style.height = title.clientHeight + 'px';
   }
 
   var transEndEventName =
