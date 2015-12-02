@@ -47,6 +47,7 @@
    * Closes all bubbles clicking outside them
    */
   var onBodyClicked = function(evt) {
+    document.body.removeEventListener('click', onBodyClicked);
     Object.keys(bubbles).forEach(function(id) {
       var bubble = bubbles[id];
       (bubble.associatedWith !== evt.target) && bubble.hide();
