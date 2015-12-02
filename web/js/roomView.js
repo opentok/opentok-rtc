@@ -281,6 +281,11 @@
     menu.addEventListener('click', function(e) {
       var elem = e.target;
       elem.blur();
+      // pointer-events is not working on IE so we can receive as target a child
+      elem = HTMLElems.getAncestorByTagName(elem, 'a');
+      if (!elem) {
+        return;
+      }
       switch (elem.id) {
         case 'addToCall':
           BubbleFactory.get('addToCall').toggle();
