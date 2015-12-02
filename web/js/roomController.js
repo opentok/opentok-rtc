@@ -496,24 +496,20 @@
   };
 
   function showUserNamePrompt(roomName) {
-    return LazyLoader.dependencyLoad([
-      '/js/components/modal.js'
-    ]).then(function() {
-      var selector = '.user-name-modal';
-      function loadModalText() {
-        document.querySelector(selector + ' header .room-name').textContent = roomName;
-      }
-      return Modal.show(selector, loadModalText).then(function() {
-        return new Promise(function(resolve, reject) {
-          var enterButton = document.querySelector(selector + ' button');
-          enterButton.addEventListener('click', function onClicked(event) {
-            event.preventDefault();
-            enterButton.removeEventListener('click', onClicked);
-            return Modal.hide(selector).
-              then(function() {
-                resolve(document.querySelector(selector + ' input').value.trim());
+    var selector = '.user-name-modal';
+    function loadModalText() {
+      document.querySelector(selector + ' header .room-name').textContent = roomName;
+    }
+    return Modal.show(selector, loadModalText).then(function() {
+      return new Promise(function(resolve, reject) {
+        var enterButton = document.querySelector(selector + ' button');
+        enterButton.addEventListener('click', function onClicked(event) {
+          event.preventDefault();
+          enterButton.removeEventListener('click', onClicked);
+          return Modal.hide(selector).
+            then(function() {
+              resolve(document.querySelector(selector + ' input').value.trim());
             });
-          });
         });
       });
     });

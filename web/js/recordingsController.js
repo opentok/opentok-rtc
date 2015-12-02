@@ -30,28 +30,24 @@
 
   var handlers = {
     delete: function(data) {
-      return LazyLoader.dependencyLoad([
-        '/js/components/modal.js'
-      ]).then(function() {
-        var selector = '.archive-delete-modal';
-        function loadModalText() {
-          document.querySelector(selector + ' .username').textContent = data.username;
-        }
-        return Modal.show(selector, loadModalText).then(function() {
-          return new Promise(function(resolve, reject) {
-            var ui = document.querySelector(selector);
-            ui.addEventListener('click', function onClicked(evt) {
-              var classList = evt.target.classList;
-              evt.stopImmediatePropagation();
-              evt.preventDefault();
+      var selector = '.archive-delete-modal';
+      function loadModalText() {
+        document.querySelector(selector + ' .username').textContent = data.username;
+      }
+      return Modal.show(selector, loadModalText).then(function() {
+        return new Promise(function(resolve, reject) {
+          var ui = document.querySelector(selector);
+          ui.addEventListener('click', function onClicked(evt) {
+            var classList = evt.target.classList;
+            evt.stopImmediatePropagation();
+            evt.preventDefault();
 
-              (classList.contains('delete-archive')) && onDeleteArchive(data);
+            (classList.contains('delete-archive')) && onDeleteArchive(data);
 
-              if (classList.contains('btn')) {
-                ui.removeEventListener('click', onClicked);
-                return Modal.hide(selector);
-              }
-            });
+            if (classList.contains('btn')) {
+              ui.removeEventListener('click', onClicked);
+              return Modal.hide(selector);
+            }
           });
         });
       });
