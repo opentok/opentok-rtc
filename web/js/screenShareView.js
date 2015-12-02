@@ -98,12 +98,8 @@
       preLoad && preLoad();
       shareError.dataset.screenSharingType = type;
     }
-    return LazyLoader.dependencyLoad([
-      '/js/components/modal.js'
-    ]).then(function() {
-      Modal.show('.screen-modal', loadModalText).then(function(e) {
-        shareError.addEventListener('click', onClick);
-      });
+    Modal.show('.screen-modal', loadModalText).then(function(e) {
+      shareError.addEventListener('click', onClick);
     });
   }
 

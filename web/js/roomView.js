@@ -255,12 +255,7 @@
       ui.querySelector(' footer button.accept').textContent = txt.button;
     }
 
-    return LazyLoader.dependencyLoad([
-        '/js/components/modal.js'
-      ]).
-      then(function() {
-        return Modal.show(selector, loadModalText);
-      }).
+    return Modal.show(selector, loadModalText).
       then(function() {
         return new Promise(function(resolve, reject) {
           ui.addEventListener('click', function onClicked(evt) {
@@ -276,7 +271,7 @@
             resolve(hasAccepted);
           });
         });
-    });
+      });
   }
 
   var addHandlers = function() {
