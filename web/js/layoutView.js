@@ -67,7 +67,9 @@
           'data-streamType': type
         };
         var wrapper = HTMLElems.createElementAt(controls, 'div');
-        wrapper.classList.add(controlName + '-action', 'enabled');
+        // IE does not support adding multiple classes
+        wrapper.classList.add(controlName + '-action');
+        wrapper.classList.add('enabled');
         HTMLElems.createElementAt(wrapper, 'i', options);
       });
     },
