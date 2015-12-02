@@ -7,6 +7,7 @@
   var handler;
   var roomNameElem;
   var participantsNumberElem;
+  var participantsStrElem;
   var recordingsNumberElem;
   var videoSwitch;
   var audioSwitch;
@@ -145,6 +146,7 @@
 
     roomNameElem = dock.querySelector('#roomName');
     participantsNumberElem = dock.querySelectorAll('.participants');
+    participantsStrElem = dock.querySelector('.participantsStr');
     recordingsNumberElem = dock.querySelector('#recordings');
     videoSwitch = dock.querySelector('#videoSwitch');
     audioSwitch = dock.querySelector('#audioSwitch');
@@ -405,6 +407,7 @@
       for (var i = 0, l = participantsNumberElem.length; i < l; i++) {
         HTMLElems.replaceText(participantsNumberElem[i], value);
       }
+      HTMLElems.replaceText(participantsStrElem, value === 1 ? 'participant' : 'participants');
     },
 
     set recordingsNumber(value) {
