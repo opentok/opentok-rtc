@@ -2,6 +2,7 @@
   'use strict';
 
   var shareError;
+  var _userName;
 
   var screenShareCtrlEvents = {
     'shareScreenError': launchShareError,
@@ -13,7 +14,8 @@
     RoomView.deleteStreamView('desktop');
   }
 
-  function init() {
+  function init(aUserName) {
+    _userName = aUserName;
     shareError = document.querySelector('.screen-modal');
 
     var installLink = shareError.querySelector('#screenShareErrorInstall button');
@@ -72,7 +74,16 @@
 
     btnReload.addEventListener('click', function btnConfirmReload(evt) {
       btnReload.removeEventListener('click', btnConfirmReload);
-      document.location.reload(true);
+      var location = document.location;
+      var href = location.href;
+      if (href.indexOf('?userName=') < 0) {
+        var params = Utils.parseSearch(document.location.search).params;
+        params.userName = _userName;
+        var search = Utils.generateSearchStr(params);
+        href = location.protocol + '//' + location.hostname + ':' + location.port +
+               location.pathname + search;
+      }
+      window.location.href = href;
     });
 
     showShareScreenError('successful-installation');

@@ -98,7 +98,7 @@
       _chromeExtId = aChromeExtId;
       aChromeExtId && aChromeExtId !== 'undefined' &&
         OTHelper.registerScreenShareExtension({ chrome: aChromeExtId });
-      ScreenShareView.init();
+      ScreenShareView.init(aUserName);
     });
   };
 
