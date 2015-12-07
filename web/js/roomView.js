@@ -13,6 +13,7 @@
   var audioSwitch;
   var startChatElem;
   var unreadCountElem;
+  var viewRecordingsMsgElem;
 
   var START_SHARING = 'Share your screen';
   var STOP_SHARING = 'Stop sharing your screen';
@@ -137,9 +138,12 @@
   }
 
   function initHTMLElements() {
+    var viewRecordingsMsgToHide;
+
     dock = document.getElementById('dock');
     screen = document.getElementById('screen');
     handler = dock.querySelector('#handler');
+    viewRecordingsMsgElem = document.querySelector('section[for=viewRecordings] .bubble-content');
 
     roomNameElem = dock.querySelector('#roomName');
     participantsNumberElem = dock.querySelectorAll('.participants');
@@ -155,6 +159,14 @@
     // is reduced, so we have to fix the height to avoid this ugly effect during transition.
     var title = dock.querySelector('.info h1');
     title.style.height = title.clientHeight + 'px';
+
+    // The view recordings message is different between Chrome and FF/IE browsers
+    if (Utils.isChrome()) {
+      viewRecordingsMsgToHide = viewRecordingsMsgElem.querySelector('p[for=not-chrome]');
+    } else {
+      viewRecordingsMsgToHide = viewRecordingsMsgElem.querySelector('p[for=chrome]');
+    }
+    viewRecordingsMsgToHide.parentNode.removeChild(viewRecordingsMsgToHide);
   }
 
   var transEndEventName =
