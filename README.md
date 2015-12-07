@@ -16,9 +16,10 @@ installation at https://opentokrtc.com (TO-DO TO-DO: Fix this!)
 #### Prerequisites:
 You'll need:
 
-- NodeJS: https://nodejs.org/en/. You can install it with nvm. You'll
-  need version 4.0.0 or newer of Node.
-  https://github.com/creationix/nvm/.
+- NodeJS: https://nodejs.org/. This application is tested and supported on  v4 LTS.
+  If you use [nvm](https://github.com/creationix/nvm/) to manage your node
+  installations (recommended), you can run `nvm use` in the project directory to
+  select the right version.
 - Redis: http://redis.io.
 - An active OpenTok account on https://tokbox.com/developer/. You'll
   need the API Key and secret, which you can get from
