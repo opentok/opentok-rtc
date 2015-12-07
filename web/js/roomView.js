@@ -52,10 +52,10 @@
       button: 'Stop receiving video'
     },
     endCall: {
-      head: 'Exit the Video Call',
+      head: 'Exit the Meeting',
       detail: 'You are going to exit the OpenTok Meeting Room. The call will continue with the ' +
               'remaining participants.',
-      button: 'End call'
+      button: 'End meeting'
     },
     sessionDisconnected: {
       head: 'Session disconected',
