@@ -75,4 +75,10 @@ this.addEventListener('load', function startApp() {
     });
   }
 
+// Allow only https on production
+if (document.location.protocol === 'http:' &&
+    document.location.hostname.indexOf('.tokbox.com') > 0) {
+  document.location.href = document.location.href.replace(new RegExp('^http:'), 'https:');
+}
+
 });
