@@ -1,8 +1,7 @@
 !function(global) {
+  'use strict';
 
   var Utils = {};
-
-  'use strict';
 
   // Simple logger that allow multiple level logs. The configured level
   // must be a bitmask of the desired enabled levels.
