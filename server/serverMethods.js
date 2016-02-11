@@ -65,10 +65,6 @@ function ServerMethods(aLogLevel, aModules) {
   // We don't allow restricting it to some URIs because it doesn't work on Chrome
   const RED_ALLOW_IFRAMING = 'allow_iframing';
 
-  // List (JSONified array) of the hosts that can hot link to URLs. This same server is always
-  // allowed to hot-link
-  const RED_VALID_REFERERS = 'valid_referers';
-
   var env = process.env;
 
   const REDIS_KEYS = [
@@ -76,12 +72,11 @@ function ServerMethods(aLogLevel, aModules) {
     { key: RED_TB_API_SECRET, defaultValue: env.TB_API_SECRET || null },
     { key: RED_TB_ARCHIVE_POLLING_INITIAL_TIMEOUT, defaultValue: env.ARCHIVE_TIMEOUT || 5000 },
     { key: RED_TB_ARCHIVE_POLLING_TIMEOUT_MULTIPLIER, defaultValue: env.TIMEOUT_MULTIPLIER || 1.5 },
-    { key: RED_FB_DATA_URL, defaultValue: process.env.FB_DATA_URL || null },
-    { key: RED_FB_AUTH_SECRET, defaultValue: process.env.FB_AUTH_SECRET || null },
+    { key: RED_FB_DATA_URL, defaultValue: env.FB_DATA_URL || null },
+    { key: RED_FB_AUTH_SECRET, defaultValue: env.FB_AUTH_SECRET || null },
     { key: RED_TB_MAX_SESSION_AGE, defaultValue: env.TB_MAX_SESSION_AGE || 2 },
     { key: RED_EMPTY_ROOM_MAX_LIFETIME, defaultValue: env.EMPTY_ROOM_LIFETIME || 3 },
     { key: RED_ALLOW_IFRAMING, defaultValue: env.ALLOW_IFRAMING || 'never' },
-    { key: RED_VALID_REFERERS, defaultValue: env.VALID_REFERERS || '[]' },
     { key: RED_CHROME_EXTENSION_ID, defaultValue: env.CHROME_EXTENSION_ID || 'undefined' }
   ];
 
@@ -254,7 +249,6 @@ function ServerMethods(aLogLevel, aModules) {
         var otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret);
 
         var allowIframing = redisConfig[RED_ALLOW_IFRAMING];
-        var validReferers = JSON.parse(redisConfig[RED_VALID_REFERERS]);
 
         // This isn't strictly necessary... but since we're using promises all over the place, it
         // makes sense. The _P are just a promisified version of the methods. We could have
@@ -294,7 +288,6 @@ function ServerMethods(aLogLevel, aModules) {
               maxSessionAgeMs: maxSessionAgeMs,
               fbArchives: firebaseArchives,
               allowIframing: allowIframing,
-              validReferers: validReferers,
               chromeExtId: chromeExtId
             };
           });
@@ -339,38 +332,12 @@ function ServerMethods(aLogLevel, aModules) {
     aRes.send({});
   }
 
-  // aHost is the host header (so it's really host[:port])
-  // aReferer is the refere header (so it's an URL or '' or undefined)
-  // aValidList is a list of hostnames that are valid (on any port?)
-  function checkValidReferer(aMyHost, aReferer, aValidList) {
-    logger.log('checkValidReferer(', aMyHost, aReferer, aValidList, ')');
-    // First: no referer means direct load and that's valid always
-    if (!aReferer || aReferer === '') {
-      return true;
-    }
-    var refererData = URL.parse(aReferer);
-
-    // Second: my own host is always a valid referer
-    if (refererData.host === aMyHost) {
-      return true;
-    }
-
-    // And finally, if the host is on the valid list then it's valid also
-    var hostname = refererData.hostname;
-    return aValidList.some(aHostInList => aHostInList === hostname);
-  }
-
   // Return the personalized HTML for a room.
   function getRoom(aReq, aRes) {
     logger.log('getRoom serving ' + aReq.path, 'roomName:', aReq.params.roomName,
                'userName:', aReq.query && aReq.query.userName);
     var userName = aReq.query && aReq.query.userName;
     var tbConfig = aReq.tbConfig;
-
-    if (!checkValidReferer(aReq.get('host'), aReq.get('referer'), tbConfig.validReferers)) {
-      aRes.status(403).send(new ErrorInfo(1001, 'Hot-linking is forbidden'));
-      return;
-    }
 
     // We really don't want to cache this
     aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
