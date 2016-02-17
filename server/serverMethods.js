@@ -401,7 +401,7 @@ function ServerMethods(aLogLevel, aModules) {
   function getRoomInfo(aReq, aRes) {
     var tbConfig = aReq.tbConfig;
     var fbArchives = tbConfig.fbArchives;
-    var roomName = aReq.params.roomName;
+    var roomName = aReq.params.roomName.toLowerCase();
     var userName =
       (aReq.query && aReq.query.userName) || DEFAULT_USER_NAME + _numAnonymousUsers++;
     logger.log('getRoomInfo serving ' + aReq.path, 'roomName: ', roomName, 'userName: ', userName);
@@ -499,7 +499,7 @@ function ServerMethods(aLogLevel, aModules) {
       aRes.status(400).send(new ErrorInfo(100, 'Missing required parameter'));
       return;
     }
-    var roomName = aReq.params.roomName;
+    var roomName = aReq.params.roomName.toLowerCase();
     var userName = body.userName;
     var operation = body.operation;
     var otInstance = tbConfig.otInstance;

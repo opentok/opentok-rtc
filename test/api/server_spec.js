@@ -74,6 +74,30 @@ describe('OpenTokRTC server', function() {
       expect(200, done);
   });
 
+  it('GET /room/:roomName/info, roomName should ignore caps', function(done) {
+    function getInfo(aRoomName) {
+      return new Promise((resolve, reject) => {
+        var sessionId;
+        function getSessionId(aRes) {
+          sessionId = aRes && aRes.body && aRes.body.sessionId;
+        }
+        var solve = () => resolve(sessionId);
+        request(app).
+          get('/room/' + aRoomName + '/info').
+          set('Accept', 'application/json').
+          expect('Content-Type', new RegExp('application/json')).
+          expect(checkForAttributes.bind(undefined, RoomInfo)).
+          expect(getSessionId).
+          expect(200, solve);
+      });
+    }
+    Promise.all([getInfo('UNITTESTROOM'), getInfo('unitTestRoom')]).
+      then(aResults => {
+        expect(aResults[0]).to.be.equal(aResults[1]);
+        done();
+      });
+  });
+
   it('GET /room/:roomName/info?userName=xxxYYY', function(done) {
     request(app).
       get('/room/unitTestRoom/info?userName=xxxYYY').

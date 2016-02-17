@@ -5,22 +5,33 @@
         "description": "OpenTok Demo App, v2.0 path and API description. TO-DO: Add here a general description of the page navigation.",
         "version": "1.0.0"
     },
-    "host": "opentokrtc.com",
+    "host": "opentokdemo.tokbox.com",
     "schemes": [
         "https"
     ],
     "basePath": "/",
-    "produces": [
+    "consumes": [
+        "application/x-www-form-urlencoded",
         "application/json"
     ],
+    "produces": [
+        "application/json",
+        "text/html"
+    ],
     "x-implementation-module": "serverMethods.js",
-    "x-implementation-middleware": ["configReady", "iframingOptions"],
+    "x-implementation-middleware": [
+        "configReady",
+        "iframingOptions"
+    ],
     "x-implementation-configuration": "loadConfig",
     "paths": {
         "/room/{roomName}": {
             "get": {
                 "summary": "Connects to a new or existing room.",
                 "x-implemented-in": "getRoom",
+                "produces": [
+                    "text/html,"
+                ],
                 "description": "Returns an HTML document that shows the defined UI for a chat 'room' where the user may or may not have specified an identity. The document returned will NOT have any of the information needed to connect to the Tokbox servers already factored in. TO-DO: ¿Queremos que esto sea así o que devolvamos ya todo configurado?",
                 "parameters": [
                     {
@@ -58,74 +69,11 @@
                 "description": "Gets the updated information for a recording archive.",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "otArchiveInfo",
                         "in": "body",
-                        "description": "Id of the updated archive",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "createdAt",
-                        "in": "body",
-                        "description": "The timestamp for when the archive started recording, expressed in milliseconds since the Unix epoch (January 1, 1970, 00:00:00 UTC).",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "duration",
-                        "in": "body",
-                        "description": "The duration of the archive in seconds. For archives that have are being recorded (with the status property set \"started\"), this value is set to 0.",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "name",
-                        "in": "body",
-                        "description": "The name of the archive you supplied (this is optional)",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "partnerId",
-                        "in": "body",
-                        "description": "Your OpenTok API key.",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "reason",
-                        "in": "body",
-                        "description": "For archives with the status \"stopped\", this can be set to \"90 mins exceeded\", \"failure\", \"session ended\", \"user initiated\". For archives with the status \"failed\", this can be set to \"system failure\".",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "sessionId",
-                        "in": "body",
-                        "description": "The session ID of the OpenTok session that was archived.",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "size",
-                        "in": "body",
-                        "description": "The size of the archive file. For archives that have not been generated, this value is set to 0.",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "status",
-                        "in": "body",
-                        "description": "The status of the archive. Only 'available' and 'uploaded' statuses are actually processed.",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "url",
-                        "in": "body",
-                        "description": "The download URL of the available archive file. This is only set for an archive with the status set to \"available\"; for other archives, (including archives with the status \"uploaded\") this property is set to null. The download URL is obfuscated, and the file is only available from the URL for 10 minutes. To generate a new URL, use the REST API for retrieving archive information or listing archives.",
-                        "required": true,
-                        "type": "string"
+                        "schema": {
+                            "$ref": "#/definitions/OTArchiveInfo"
+                        }
                     }
                 ],
                 "tags": [
@@ -142,7 +90,10 @@
             "get": {
                 "summary": "Information needed to connect to the TB servers.",
                 "x-implemented-in": "getRoomInfo",
-                "description": "Returns the information (sessionId, token, apiKey) that's required to connect to an opentok session. The sessionId returned is specific for the room, and the token MAY include information about the user that's connecting (identified as anonymous if the user didn't specify a name). Note that every time this URL is fetched a new token is created. TO-DO: Explain what we're going to do with Firebase.",
+                "produces": [
+                    "application/json,"
+                ],
+                "description": "Returns the information (sessionId, token, apiKey) that's required to connect to an opentok session. The sessionId returned is specific for the room, and the token MAY include information about the user that's connecting (identified as anonymous if the user didn't specify a name). Note that every time this URL is fetched a new token is created.",
                 "parameters": [
                     {
                         "name": "roomName",
@@ -182,6 +133,12 @@
             "post": {
                 "summary": "Starts/stop an archiving operation.",
                 "x-implemented-in": "postRoomArchive",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json,"
+                ],
                 "description": "Starts or stops an archiving operation. Returns the information about the new recording, and inserts that information on the firebase record associated to the room. Once a recording is in process, succesives call with operation=start are ignored and the existing record of the current archive is returned.",
                 "tags": [
                     "Archives"
@@ -229,6 +186,9 @@
             "get": {
                 "summary": "Gets and returns a temporary archive URL.",
                 "x-implemented-in": "getArchive",
+                "produces": [
+                    "application/json"
+                ],
                 "description": "Creates a new temporary archive URL to allow the visualization or download of an existing archive. The URL created is valid for 10 minutes only! What this API actually does is just returning a 301 with the actual download URL",
                 "tags": [
                     "Archives"
@@ -244,20 +204,20 @@
                     {
                         "name": "generatePreview",
                         "in": "query",
-                        "description": "If the parameter is present (the value is irrelevant) the server should generate and return an HTML page that embeds the video instead of returning the video directly.",
+                        "description": "If the parameter is present (the value is irrelevant) the server should generate and return an HTML page that embeds the video  instead of returning the video directly.",
                         "required": false,
                         "type": "string"
                     }
                 ],
                 "responses": {
-                    "301": {
-                        "description": "Information to download or view the archive file.",
+                    "200": {
+                        "description": "HTML with the video embedded.",
                         "schema": {
                             "$ref": "#/definitions/ArchiveURL"
                         }
                     },
-                    "200": {
-                        "description": "HTML with the video embedded.",
+                    "301": {
+                        "description": "Information to download or view the archive file.",
                         "schema": {
                             "$ref": "#/definitions/ArchiveURL"
                         }
@@ -273,6 +233,9 @@
             "delete": {
                 "summary": "Erases an archive.",
                 "x-implemented-in": "deleteArchive",
+                "produces": [
+                    "application/json"
+                ],
                 "description": "Erases an stored archive.",
                 "tags": [
                     "Archives"
@@ -357,6 +320,51 @@
                 },
                 "fields": {
                     "type": "string"
+                }
+            }
+        },
+        "OTArchiveInfo": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "Id of the updated archive",
+                    "type": "string"
+                },
+                "createdAt": {
+                    "description": "The timestamp for when the archive started recording, expressed in milliseconds since the Unix epoch (January 1, 1970, 00:00:00 UTC).",
+                    "type": "string"
+                },
+                "duration": {
+                    "description": "The duration of the archive in seconds. For archives that have are being recorded (with the status property set \"started\"), this value is set to 0.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "The name of the archive you supplied (this is optional)",
+                    "type": "string"
+                },
+                "partnerId": {
+                    "description": "Your OpenTok API key.",
+                    "type": "string"
+                },
+                "reason": {
+                    "description": "For archives with the status \"stopped\", this can be set to \"90 mins exceeded\", \"failure\", \"session ended\", \"user initiated\". For archives with the status \"failed\", this can be set to \"system failure\".",
+                    "type": "string"
+                },
+                "sessionId": {
+                    "description": "The session ID of the OpenTok session that was archived.",
+                    "type": "string"
+                },
+                "size": {
+                    "description": "The size of the archive file. For archives that have not been generated, this value is set to 0.",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "The status of the archive. Only 'available' and 'uploaded' statuses are actually processed.",
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string",
+                    "description": "The download URL of the available archive file. This is only set for an archive with the status set to \"available\"; for other archives, (including archives with the status \"uploaded\") this property is set to null. The download URL is obfuscated, and the file is only available from the URL for 10 minutes. To generate a new URL, use the REST API for retrieving archive information or listing archives."
                 }
             }
         }
