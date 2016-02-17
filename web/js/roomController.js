@@ -351,6 +351,18 @@
   };
 
   var _allHandlers = {
+    'connectionCreated': function(evt) {
+      RoomView.participantsNumber = ++numUsrsInRoom;
+      debug.log('New participant, total:', numUsrsInRoom,
+                'user:', (evt.connection.data ?
+                          JSON.parse(evt.connection.data).userName: 'unknown'));
+    },
+    'connectionDestroyed': function(evt) {
+      RoomView.participantsNumber = --numUsrsInRoom;
+      debug.log('a participant left, total:', numUsrsInRoom,
+                'user:', (evt.connection.data ?
+                          JSON.parse(evt.connection.data).userName: 'unknown'));
+    },
     'sessionDisconnected': function(evt) {
       // The client has disconnected from the session.
       // This event may be dispatched asynchronously in response to a successful
@@ -404,9 +416,6 @@
             return subscriber;
           }
 
-          numUsrsInRoom++;
-          debug.log('New subscriber, total:', numUsrsInRoom);
-          RoomView.participantsNumber = numUsrsInRoom;
           Object.keys(_subscriberHandlers).forEach(function(name) {
             subscriber.on(name, _subscriberHandlers[name]);
           });
@@ -430,9 +439,6 @@
       // For streams published by your own client, the Publisher object
       // dispatches a streamDestroyed event.
       // For a code example and more details, see StreamEvent.
-      numUsrsInRoom--;
-      RoomView.participantsNumber = numUsrsInRoom;
-
       var stream = evt.stream;
       RoomView.deleteStreamView(stream.streamId);
       subscriberStreams[stream.streamId] = null;
@@ -655,7 +661,6 @@
           return publisherReady;
         }).
         then(function() {
-          RoomView.participantsNumber = ++numUsrsInRoom;
           RecordingsController.init(aParams.firebaseURL, aParams.firebaseToken);
           ScreenShareController.init(userName, aParams.chromeExtId);
         }).
