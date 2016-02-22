@@ -4,6 +4,22 @@
   height: calc(~"100% - 15px");
   padding: 15px 15px 0 20px;
 
+  .streams[data-current-layout-type=hangout_vertical] .tc-list li.on-stage,
+  .streams[data-current-layout-type=hangout_horizontal] .tc-list li.on-stage,
+  .streams[data-current-layout-type=f2f_vertical] .tc-list li[data-stream-type=camera],
+  .streams[data-current-layout-type=f2f_vertical] .tc-list li[data-stream-type=publisher],
+  .streams[data-current-layout-type=f2f_horizontal] .tc-list li[data-stream-type=camera],
+  .streams[data-current-layout-type=f2f_horizontal] .tc-list li[data-stream-type=publisher],
+  .streams[data-current-layout-type=float] .tc-list li[data-stream-type=camera] {
+    .controls {
+      top: 40px;
+      left: 40px;
+      .buttons {
+        padding: 15px;
+      }
+    }
+  }
+
   .streams[data-current-layout-type=float] .tc-list li[data-stream-type=publisher] {
     position: absolute;
     z-index: 1001;
@@ -18,8 +34,8 @@
     border: 0;
 
     .controls {
-      top: 20px;
-      left: 20px;
+      top: 5px;
+      left: 5px;
 
       .buttons {
         border-radius: 20px;
@@ -29,7 +45,7 @@
 
     .user-info .name {
       border-radius: 25px;
-      padding: 12.5px 25px;
+      padding: 10px 20px;
       max-width: calc(~"100% - 50px");
     }
   }
@@ -181,8 +197,8 @@
 
   .streams .tc-list li {
     .controls {
-      top: 40px;
-      left: 40px;
+      top: 5px;
+      left: 5px;
     }
 
     .user-info {
@@ -197,7 +213,7 @@
 
         background-color: rgba(0, 0, 0, .4);
         border-radius: 50px;
-        padding: 25px 50px;
+        padding: 10px 20px;
 
         max-width: calc(~"100% - 100px");
       }
@@ -218,7 +234,7 @@
     .buttons {
       background-color: rgba(0, 0, 0, .4);
       border-radius: 25px;
-      padding: 15px;
+      padding: 8px;
       display: inline-block;
 
       div {
