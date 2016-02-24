@@ -70,6 +70,22 @@ describe('Utils', function() {
     });
   });
 
+  describe('#setDisabled', function() {
+    it('should exist and be a function', function() {
+      expect(Utils.setDisabled).to.exist;
+      expect(Utils.setDisabled).to.be.a('function');
+    });
+
+    it('should disable/enable DOM elements', function() {
+      var elem = document.createElement('div');
+      expect(elem.disabled).to.be.undefined;
+      Utils.setDisabled(elem, true);
+      expect(elem.disabled).to.be.equal(true);
+      Utils.setDisabled(elem, false);
+      expect(elem.disabled).to.be.equal(false);
+    });
+  });
+
   describe('#generateSearchStr', function() {
     it('should exist and be a function', function() {
       expect(Utils.generateSearchStr).to.exist;

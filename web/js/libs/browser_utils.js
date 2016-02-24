@@ -101,6 +101,12 @@
     return str ? window.decodeURIComponent(str) : str;
   }
 
+  var setDisabled = function(element, disabled) {
+    element.disabled = disabled;
+    disabled ? element.setAttribute('disabled', 'disabled') :
+               element.removeAttribute('disabled');
+  };
+
   var Utils = {
     getCurrentTime: getCurrentTime,
     inspectObject: inspectObject,
@@ -129,7 +135,8 @@
       var userAgent = 'userAgent' in navigator && navigator.userAgent.toLowerCase() || '';
       var vendor = 'vendor' in navigator && navigator.vendor.toLowerCase() || '';
       return /chrome|chromium/i.test(userAgent) && /google inc/.test(vendor);
-    }
+    },
+    setDisabled: setDisabled
   };
 
   // Just replacing global.utils might not be safe... let's just expand it...

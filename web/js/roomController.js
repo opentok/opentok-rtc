@@ -663,6 +663,7 @@
         then(function() {
           RecordingsController.init(aParams.firebaseURL, aParams.firebaseToken);
           ScreenShareController.init(userName, aParams.chromeExtId);
+          Utils.sendEvent('roomController:controllersReady');
         }).
         catch(function(error) {
           debug.error('Error Connecting to room. ' + error.message);

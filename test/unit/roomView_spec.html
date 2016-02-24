@@ -1,0 +1,123 @@
+<section id="dock">
+  <header class="info">
+    <div id="handler">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <h1>
+      <span id="roomName"><%= roomName %></span>
+    </h1>
+    <hr>
+    <h2><span class="participants"></span></h2>
+    <h3>
+      <i data-icon="participants"></i><span class="participants"></span><span class="participantsStr"></span>
+    </h3>
+  </header>
+  <nav class="menu tc-sidebar">
+    <div class="tc-list">
+      <ul>
+        <li>
+          <a id="addToCall"><i data-icon="add"></i><span>Add participants</span></a>
+        </li>
+        <li disabled>
+          <a id="startArchiving"><i data-icon="archive"></i><span>Start recording</span></a>
+          <a id="stopArchiving"><i data-icon="archive_saving"></i><span class="duration"></span><span>Stop recording</span></a>
+        </li>
+        <li>
+          <a id="viewRecordings"><i data-icon="recordings"></i><span>Manage recordings (<span id="recordings">0</span>)</span></a>
+        </li>
+        <li disabled>
+          <a id="startSharingDesktop"><i data-icon="screen"></i><span>Share your screen</span></a>
+          <a id="stopSharingDesktop"><i data-icon="screen_sharing"></i><span>Stop sharing your screen</span></a>
+        </li>
+        <li>
+          <a id="chooseLayout"><i data-icon="layouts"></i><span>Change layout</span></a>
+        </li>
+        <li>
+          <a id="startChat" data-unread-messages="0"><i data-icon="chat"></i><span>Open text chat<span id="unreadMsg">(<span id="unreadCount">0</span>)</span></span></a>
+          <a id="stopChat"><i data-icon="chat"></i><span>Close text chat</span></a>
+        </li>
+        <li>
+          <a id="endCall" class="danger"><i data-icon="end"></i><span>End meeting</span></a>
+        </li>
+        <li class="surrounded bottom tight tooltip" tooltip="Stop receiving video">
+          <a id="videoSwitch"><i data-icon="videoSwitch"></i><span>Stop receiving video</span></a>
+        </li>
+        <li class="tight tooltip" tooltip="Mute all participants">
+          <a id="audioSwitch"><i data-icon="audioSwitch"></i><span>Mute all participants</span></a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</section>
+
+<section id="screen">
+  <div class="streams">
+    <div class="tc-list">
+      <ul></ul>
+    </div>
+  </div>
+</section>
+
+<section id="screenShareErrors" class="screen-modal tc-modal">
+  <div class="tc-dialog">
+    <i data-icon="close_gray" class="close"></i>
+    <section id="screenShareErrorMsg">
+      <header class="errorTitle"></header>
+      <hr>
+      <p class="errorDescription"></p>
+    </section>
+    <section id="screenShareErrorInstall">
+      <header>You need a Chrome extension to share your screen.</header>
+        <hr>
+        <p>Once you have installed it, refresh your browser and click 'share screen' again.</p>
+        <footer>
+          <button class="btn btn-blue btn-padding ctaarrow-white delete-archive">Install extension</button>
+        </footer>
+    </section>
+    <section id="extInstallationSuccessful">
+      <header>Chrome extension was installed successfully.</header>
+      <hr>
+      <p>You need to refresh your browser in order to use it.</p>
+      <footer>
+        <button id="scrShrLater" class="btn btn-white btn-padding ctaarrow-blue">Later</button>
+        <button id="scrShrReload" class="btn btn-blue btn-padding ctaarrow-white">Reload</button>
+      </footer>
+    </section>
+  </div>
+</section>
+
+<section class="bubbles">
+  <section for="addToCall" class="bubble">
+    <div class="bubble-content">
+      <p>Meeting link has been copied.</p>
+      <p>Share link to add others to the meeting.</p>
+      <input class="block" onclick="this.select();">
+    </div>
+  </section>
+
+  <section for="viewRecordings" class="bubble">
+    <div class="bubble-content">
+      <p class="title">Your archived recordings</p>
+      <p>This archive will only stick around 3 days.<br>Please download your recording if you need it.</p>
+      <hr>
+      <div class="tc-list videos">
+        <ul></ul>
+      </div>
+    </div>
+  </section>
+
+  <section for="chooseLayout" class="bubble">
+    <div class="bubble-content">
+      <ul>
+        <li><a data-layout-type="float"></a></li>
+        <li><a data-layout-type="f2f_horizontal"></a></li>
+        <li><a data-layout-type="grid"></a></li>
+        <li><a data-layout-type="f2f_vertical"></a></li>
+        <li><a data-layout-type="hangout_horizontal"></a></li>
+        <li><a data-layout-type="hangout_vertical"></a></li>
+      </ul>
+    </div>
+  </section>
+</section>

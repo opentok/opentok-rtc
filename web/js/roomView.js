@@ -125,6 +125,12 @@
     'sessionDisconnected': function(evt) {
       RoomView.participantsNumber = 0;
       LayoutManager.removeAll();
+    },
+    'controllersReady': function() {
+      var elements = dock.querySelectorAll('.menu [disabled]');
+      Array.prototype.forEach.call(elements, function(element) {
+        Utils.setDisabled(element, false);
+      });
     }
   };
 
