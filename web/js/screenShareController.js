@@ -56,8 +56,12 @@
           }).
           catch(function(error) {
             _hasPendingOperation = false;
-            Utils.sendEvent('screenShareController:shareScreenError',
-                            { code: error.code, message: error.message });
+            if (error.code === OTHelper.screenShareErrorCodes.accessDenied) {
+              RoomView.deleteStreamView('desktop');
+            } else {
+              Utils.sendEvent('screenShareController:shareScreenError',
+                              { code: error.code, message: error.message });
+            }
           });
       }
     }

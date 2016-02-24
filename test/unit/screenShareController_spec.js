@@ -91,11 +91,13 @@ describe('ScreenShareController', function() {
     expect(OTHelper.stopShareScreen.calledOnce).to.be.true;
   }));
 
-  it('should respond correctly when roomView:shareScreen is received and sharing does not work',
-     sinon.test(function(done) {
+  it('should respond correctly when roomView:shareScreen is received and sharing does not work' +
+     ' because an error different that user denied permission', sinon.test(function(done) {
 
    var event = new CustomEvent('roomView:shareScreen');
    OTHelper.isGoingToWork = false;
+   OTHelper.error.code = OTHelper.screenShareErrorCodes.notSupported;
+
    this.spy(OTHelper, 'shareScreen');
 
    this.stub(RoomView, 'createStreamView', function(id, options) {
@@ -108,6 +110,28 @@ describe('ScreenShareController', function() {
       expect(OTHelper.shareScreen.calledOnce).to.be.true;
       done();
     });
+
+    ScreenShareController.init('usr', chromeExtId).then(function() {
+      window.dispatchEvent(event);
+    });
+  }));
+
+  it('should respond correctly when roomView:shareScreen is received and sharing does not work' +
+     ' because the user denied the permission', sinon.test(function(done) {
+
+   var event = new CustomEvent('roomView:shareScreen');
+   OTHelper.isGoingToWork = false;
+   OTHelper.error.code = OTHelper.screenShareErrorCodes.accessDenied;
+   this.spy(OTHelper, 'shareScreen');
+
+   this.stub(RoomView, 'createStreamView', function(id, options) {
+     return document.createElement('div');
+   });
+
+   this.stub(RoomView, 'deleteStreamView', function(id, options) {
+     expect(OTHelper.shareScreen.calledOnce).to.be.true;
+     done();
+   });
 
     ScreenShareController.init('usr', chromeExtId).then(function() {
       window.dispatchEvent(event);
