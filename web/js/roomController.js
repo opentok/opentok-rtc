@@ -517,6 +517,7 @@
               resolve(document.querySelector(selector + ' input').value.trim());
             });
         });
+        document.querySelector(selector + ' input.username').focus();
       });
     });
   }
