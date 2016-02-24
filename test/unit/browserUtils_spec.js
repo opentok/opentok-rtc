@@ -78,11 +78,10 @@ describe('Utils', function() {
 
     it('should disable/enable DOM elements', function() {
       var elem = document.createElement('div');
-      expect(elem.disabled).to.be.undefined;
-      Utils.setDisabled(elem, true);
-      expect(elem.disabled).to.be.equal(true);
-      Utils.setDisabled(elem, false);
-      expect(elem.disabled).to.be.equal(false);
+      [true, false].forEach(function(aValue) {
+        Utils.setDisabled(elem, aValue);
+        expect(elem.disabled).to.be.equal(aValue);
+      });
     });
   });
 
