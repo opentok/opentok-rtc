@@ -22,10 +22,10 @@
 
   var MODAL_TXTS = {
     mute: {
-      head: 'To mute all participants, including yourself, click Mute all',
-      detail: 'Everyone will be notified and can click their <microphone icon> to unmute ' +
-              'themselves.',
-      button: 'Mute all'
+      head: 'Mute all participants, including yourself',
+      detail: 'Everyone will be notified and can click their <i data-icon="no_mic"></i> to ' +
+              'unmute themselves.',
+      button: 'Mute all participants'
     },
     muteRemotely: {
       head: 'All participants microphones are going to be disabled in the call',
@@ -46,7 +46,7 @@
       button: 'I understand'
     },
     disabledVideos: {
-      head: 'Stop receiving video from the other participants, click Stop receiving video',
+      head: 'Stop receiving video from other participants',
       detail: 'This option can help to improve or preserve call quality in situations of poor ' +
               'bandwidth or other resource constraints.',
       button: 'Stop receiving video'
@@ -248,7 +248,7 @@
     var ui = document.querySelector(selector);
     function loadModalText() {
       ui.querySelector(' header .msg').textContent = txt.head;
-      ui.querySelector(' p.detail').textContent = txt.detail;
+      ui.querySelector(' p.detail').innerHTML = txt.detail;
       ui.querySelector(' footer button.accept').textContent = txt.button;
     }
 
