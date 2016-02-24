@@ -105,11 +105,19 @@ describe('ItemsHandler', function() {
       var check = function(id) {
         var reasonPrefix = (id === 'publisher') ? 'publish' : 'subscribe';
 
-        var elem = getContainer().querySelector('#' + id + ' .video-action');
+        var item = getContainer().querySelector('#' + id);
+        var elem = item.querySelector('.video-action');
 
         expect(elem.classList.contains('enabled')).to.be.true;
         dispatchCustomEvent('roomController:video', reasonPrefix + 'Video', id);
         expect(elem.classList.contains('enabled')).to.be.false;
+        expect(item.dataset.videoDisabled).to.be.equal('true');
+
+        dispatchCustomEvent('roomController:videoEnabled', '', id);
+        expect(item.dataset.videoDisabled).to.be.equal('false');
+
+        dispatchCustomEvent('roomController:videoDisabled', '', id);
+        expect(item.dataset.videoDisabled).to.be.equal('true');
 
         elem = getContainer().querySelector('#' + id + ' .audio-action');
 

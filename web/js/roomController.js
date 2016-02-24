@@ -177,6 +177,15 @@
       aMutations.forEach(processMutation);
     });
 
+  var sendVideoEvent = function(stream) {
+    if (!stream) {
+      return;
+    }
+
+    Utils.sendEvent('roomController:' + (stream.hasVideo ? 'videoEnabled' : 'videoDisabled'), {
+      id: stream.streamId
+    });
+  };
 
   var sendArchivingOperation = function(operation) {
     var data = {
@@ -347,9 +356,11 @@
   var _subscriberHandlers = {
     'videoDisabled': function(evt) {
       evt.reason === 'subscribeToVideo' && sendStatus(evt, 'video');
+      sendVideoEvent(evt.target.stream);
     },
     'videoEnabled': function(evt) {
       evt.reason === 'subscribeToVideo' && sendStatus(evt, 'video', true);
+      sendVideoEvent(evt.target.stream);
     }
   };
 
@@ -426,6 +437,7 @@
             if (enterWithVideoDisabled) {
               pushSubscriberButton(streamId, 'video', true);
             }
+            sendVideoEvent(evt.stream);
             return subscriber;
           }, function(error) {
             debug.error('Error susbscribing new participant. ' + error.message);
