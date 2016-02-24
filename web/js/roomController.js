@@ -7,7 +7,10 @@
   var numUsrsInRoom = 0;
   var _disabledAllVideos = false;
 
-  var publisherReady = Promise.resolve();
+  var setPublisherReady;
+  var publisherReady = new Promise(function(resolve, reject) {
+    setPublisherReady = resolve;
+  });
 
   var MAIN_PAGE = '/index.html';
   var STATUS_KEY= 'room';
@@ -374,58 +377,60 @@
       subscriberStreams = {};
     },
     'streamCreated': function(evt) {
-      // A new stream, published by another client, has been created on this
-      // session. For streams published by your own client, the Publisher object
-      // dispatches a streamCreated event. For a code example and more details,
-      // see StreamEvent.
-      var stream = evt.stream;
-      var streamVideoType = stream.videoType;
+      publisherReady.then(function() {
+        // A new stream, published by another client, has been created on this
+        // session. For streams published by your own client, the Publisher object
+        // dispatches a streamCreated event. For a code example and more details,
+        // see StreamEvent.
+        var stream = evt.stream;
+        var streamVideoType = stream.videoType;
 
-      if (!(streamVideoType === 'camera' || streamVideoType === 'screen')) {
-        debug.error('Stream not contemplated: ' + stream.videoType);
-        return;
-      }
+        if (!(streamVideoType === 'camera' || streamVideoType === 'screen')) {
+          debug.error('Stream not contemplated: ' + stream.videoType);
+          return;
+        }
 
-      var streamId = stream.streamId;
-      subscriberStreams[streamId] = {
-        stream: stream,
-        buttons: new SubscriberButtons(streamVideoType)
-      };
+        var streamId = stream.streamId;
+        subscriberStreams[streamId] = {
+          stream: stream,
+          buttons: new SubscriberButtons(streamVideoType)
+        };
 
-      var subOptions = subscriberOptions[streamVideoType];
-      var enterWithVideoDisabled = streamVideoType === 'camera' && _disabledAllVideos;
+        var subOptions = subscriberOptions[streamVideoType];
+        var enterWithVideoDisabled = streamVideoType === 'camera' && _disabledAllVideos;
 
-      _sharedStatus = RoomStatus.get(STATUS_KEY);
+        _sharedStatus = RoomStatus.get(STATUS_KEY);
 
-      var subsDOMElem = RoomView.createStreamView(streamId, {
-        name: stream.name,
-        type: stream.videoType,
-        controlElems: subscriberStreams[streamId].buttons
-      });
-
-      subOptions.subscribeToVideo = !enterWithVideoDisabled;
-
-      // We want to observe the container where the actual suscriber will live
-      var subsContainer = LayoutManager.getItemById(streamId);
-      subsContainer && _mutationObserver &&
-        _mutationObserver.observe(subsContainer, {attributes: true});
-      subscriberStreams[streamId].subscriberPromise =
-        OTHelper.subscribe(evt.stream, subsDOMElem, subOptions).
-        then(function(subscriber) {
-          if (streamVideoType === 'screen') {
-            return subscriber;
-          }
-
-          Object.keys(_subscriberHandlers).forEach(function(name) {
-            subscriber.on(name, _subscriberHandlers[name]);
-          });
-          if (enterWithVideoDisabled) {
-            pushSubscriberButton(streamId, 'video', true);
-          }
-          return subscriber;
-        }, function(error) {
-          debug.error('Error susbscribing new participant. ' + error.message);
+        var subsDOMElem = RoomView.createStreamView(streamId, {
+          name: stream.name,
+          type: stream.videoType,
+          controlElems: subscriberStreams[streamId].buttons
         });
+
+        subOptions.subscribeToVideo = !enterWithVideoDisabled;
+
+        // We want to observe the container where the actual suscriber will live
+        var subsContainer = LayoutManager.getItemById(streamId);
+        subsContainer && _mutationObserver &&
+          _mutationObserver.observe(subsContainer, {attributes: true});
+        subscriberStreams[streamId].subscriberPromise =
+          OTHelper.subscribe(evt.stream, subsDOMElem, subOptions).
+          then(function(subscriber) {
+            if (streamVideoType === 'screen') {
+              return subscriber;
+            }
+
+            Object.keys(_subscriberHandlers).forEach(function(name) {
+              subscriber.on(name, _subscriberHandlers[name]);
+            });
+            if (enterWithVideoDisabled) {
+              pushSubscriberButton(streamId, 'video', true);
+            }
+            return subscriber;
+          }, function(error) {
+            debug.error('Error susbscribing new participant. ' + error.message);
+          });
+      });
     },
     'streamDestroyed': function(evt) {
       // A stream from another client has stopped publishing to the session.
@@ -658,8 +663,9 @@
             publisherOptions.publishAudio = false;
           }
           publisherOptions.name = userName;
-          publisherReady = OTHelper.publish(publisherElement, publisherOptions);
-          return publisherReady;
+          return OTHelper.publish(publisherElement, publisherOptions).then(function() {
+            setPublisherReady();
+          });
         }).
         then(function() {
           RecordingsController.init(aParams.firebaseURL, aParams.firebaseToken);
