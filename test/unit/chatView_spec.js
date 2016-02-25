@@ -95,7 +95,7 @@ describe('ChatView', function() {
     function verifyInit(context, done, handlerShouldHave, configuredHandlers) {
       context.stub(Utils, 'addHandlers');
       context.spy(Chat, 'init');
-      ChatView.init('usr', ROOM_NAME_TEST, configuredHandlers).then(function() {
+      ChatView.init('myself', ROOM_NAME_TEST, configuredHandlers).then(function() {
         expect(Chat.init.calledOnce).to.be.true;
         var spyArg = Utils.addHandlers.getCall(0).args[0];
         expect(Object.keys(spyArg).length).to.be.equal(Object.keys(handlerShouldHave).length);
@@ -185,7 +185,7 @@ describe('ChatView', function() {
       expect(domElem.text).to.be.equal(txt);
     }
 
-    function testVisualElems(chatContent, lengthBefore) {
+    function testVisualElems(chatContent, lengthBefore, isMyself) {
       expect(chatContent.children.length).to.be.equal(lengthBefore + 1);
 
       var newLine = chatContent.lastChild;
@@ -193,6 +193,9 @@ describe('ChatView', function() {
 
       var p = newLine.lastChild;
       expect(p.children.length).to.be.equal(3);
+
+      isMyself = !!isMyself;
+      expect(p.classList.contains('yourself')).to.be.equal(isMyself);
 
       testSpan(p.childNodes[0], data.time.toLowerCase(), 'time');
       testSpan(p.childNodes[1], data.sender, 'sender');
@@ -209,21 +212,38 @@ describe('ChatView', function() {
     }
 
     before(function(done) {
-      ChatView.init('usr', ROOM_NAME_TEST).then(function() {
+      ChatView.init('myself', ROOM_NAME_TEST).then(function() {
         done();
       });
     });
 
-    it('should add a new text line correctly when chat is visible', sinon.test(function() {
+    it('should add a new text line correctly when chat is visible and sender is yourself',
+       sinon.test(function() {
       var chatContent = getChatContainer().querySelector('ul');
       var lengthBefore = chatContent.children.length;
+
+      Chat._isVisible = true;
+      this.spy(window, 'dispatchEvent');
+      data.sender = 'myself';
+      window.dispatchEvent(new CustomEvent('chatController:incomingMessage',
+                                           { detail: { data: data }}));
+
+      testVisualElems(chatContent, lengthBefore, true);
+      expect(window.dispatchEvent.calledOnce).to.be.true;
+    }));
+
+    it('should add a new text line correctly when chat is visible and sender is other',
+       sinon.test(function() {
+      var chatContent = getChatContainer().querySelector('ul');
+      var lengthBefore = chatContent.children.length;
+      data.sender = 'other';
 
       Chat._isVisible = true;
       this.spy(window, 'dispatchEvent');
       window.dispatchEvent(new CustomEvent('chatController:incomingMessage',
                                            { detail: { data: data }}));
 
-      testVisualElems(chatContent, lengthBefore);
+      testVisualElems(chatContent, lengthBefore, false);
       expect(window.dispatchEvent.calledOnce).to.be.true;
     }));
 
@@ -316,7 +336,7 @@ describe('ChatView', function() {
 
       window.addEventListener('chatView:outgoingMessage', function handlerTest(evt) {
         window.removeEventListener('chatView:outgoingMessage', handlerTest);
-        expect(evt.detail.sender).to.be.equal('usr');
+        expect(evt.detail.sender).to.be.equal('myself');
         expect(evt.detail.text).to.be.equal(textArea.value);
         done();
       });
@@ -450,7 +470,7 @@ describe('ChatView', function() {
 
       window.addEventListener('chatView:outgoingMessage', function handlerTest(evt) {
         window.removeEventListener('chatView:outgoingMessage', handlerTest);
-        expect(evt.detail.sender).to.be.equal('usr');
+        expect(evt.detail.sender).to.be.equal('myself');
         expect(evt.detail.text).to.be.equal(textArea.value);
         done();
       });
