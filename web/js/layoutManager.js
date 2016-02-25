@@ -10,7 +10,7 @@
 
   var layouts;
 
-  var HANGOUT_BY_DEFAULT = 'hangout_horizontal';
+  var HANGOUT_BY_DEFAULT = 'hangout_vertical';
 
   function isOnGoing(layout) {
     return Object.getPrototypeOf(currentLayout) === layout.prototype;

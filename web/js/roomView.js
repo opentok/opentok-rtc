@@ -103,6 +103,12 @@
     }
   };
 
+  var hangoutEvents = {
+    'screenOnStage': function() {
+      dock.classList.add('collapsed');
+    }
+  };
+
   var screenShareCtrEvents = {
     'changeScreenShareStatus': toggleScreenSharing,
     'destroyed': toggleScreenSharing.bind(undefined, NOT_SHARING)
@@ -365,6 +371,7 @@
     Utils.addEventsHandlers('roomController:', roomControllerEvents, exports);
     Utils.addEventsHandlers('chat:', chatEvents);
     Utils.addEventsHandlers('chatView:', chatViews);
+    Utils.addEventsHandlers('hangout:', hangoutEvents);
   };
 
   function toggleScreenSharing(evt) {

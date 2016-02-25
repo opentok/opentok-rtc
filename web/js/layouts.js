@@ -237,7 +237,9 @@ Hangout.prototype = {
     if (!item) {
       return this;
     }
-    this.removeCurrentItemFromStage(Hangout.getItemType(item)).putStageId(item);
+    var type = Hangout.getItemType(item);
+    type === 'screen' && Utils.sendEvent('hangout:screenOnStage');
+    this.removeCurrentItemFromStage(type).putStageId(item);
     item.classList.add('on-stage');
     return this;
   },
