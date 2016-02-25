@@ -1,18 +1,14 @@
 <?xml version="1.0"?>
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="25" height="20">
-    <desc iVinci="yes" version="4.6" gridStep="20" showGrid="yes" snapToGrid="yes" codePlatform="0"/>
+    <desc iVinci="yes" version="4.6" gridStep="20" showGrid="no" snapToGrid="no" codePlatform="0"/>
     <g id="Layer1" name="Layer 1" opacity="1">
         <g id="Shape1">
             <desc shapeID="1" type="0" basicInfo-basicType="0" basicInfo-roundedRectRadius="12" basicInfo-polygonSides="6" basicInfo-starPoints="5" bounding="rect(-12.1,-4.25,24.2,8.5)" text="" font-familyName="" font-pixelSize="20" font-bold="0" font-underline="0" font-alignment="1" strokeStyle="0" markerStart="0" markerEnd="0" shadowEnabled="0" shadowOffsetX="0" shadowOffsetY="2" shadowBlur="4" shadowOpacity="160" blurEnabled="0" blurRadius="4" transform="matrix(1,0,0,1,12.5,5.05)" pers-center="0,0" pers-size="0,0" pers-start="0,0" pers-end="0,0" locked="0" mesh="" flag=""/>
-            <path id="shapePath1" d="M5.9,9.2 C6.6,9.2 7.2,8.9 7.7,8.5 C8.1,8 8.4,7.4 8.4,6.7 L8.4,6.2 C11.1,6 13.9,6 16.6,6.2 L16.6,6.7 C16.6,8.1 17.7,9.2 19.1,9.2 L22.1,9.2 C22.8,9.2 23.4,8.9 23.9,8.5 C24.4,8 24.6,7.4 24.6,6.7 L24.6,5.1 C24.6,3.4 23.4,2 21.8,1.7 C15.7,0.5 9.3,0.5 3.2,1.7 C2.5,1.8 1.9,2.2 1.4,2.7 C0.7,3.4 0.4,4.2 0.4,5.2 L0.4,6.8 C0.4,8.2 1.5,9.3 2.9,9.3 L5.9,9.2 Z" style="stroke:none;fill-rule:nonzero;fill:#ff0000;fill-opacity:1;"/>
+            <path id="shapePath1" d="M5.9,9.2 C6.6,9.2 7.2,8.9 7.7,8.5 C8.1,8 8.4,7.4 8.4,6.7 L8.4,6.2 C11.1,6 13.9,6 16.6,6.2 L16.6,6.7 C16.6,8.1 17.7,9.2 19.1,9.2 L22.1,9.2 C22.8,9.2 23.4,8.9 23.9,8.5 C24.4,8 24.6,7.4 24.6,6.7 L24.6,5.1 C24.6,3.4 23.4,2 21.8,1.7 C15.7,0.5 9.3,0.5 3.2,1.7 C2.5,1.8 1.9,2.2 1.4,2.7 C0.7,3.4 0.4,4.2 0.4,5.2 L0.4,6.8 C0.4,8.2 1.5,9.3 2.9,9.3 L5.9,9.2 Z" style="stroke:none;fill-rule:nonzero;fill:#c61f4c;fill-opacity:1;"/>
         </g>
         <g id="Shape2">
             <desc shapeID="2" type="0" basicInfo-basicType="0" basicInfo-roundedRectRadius="12" basicInfo-polygonSides="6" basicInfo-starPoints="5" bounding="rect(-5.1,-5.0875,10.2,10.175)" text="" font-familyName="" font-pixelSize="20" font-bold="0" font-underline="0" font-alignment="1" strokeStyle="0" markerStart="0" markerEnd="0" shadowEnabled="0" shadowOffsetX="0" shadowOffsetY="2" shadowBlur="4" shadowOpacity="160" blurEnabled="0" blurRadius="4" transform="matrix(1,0,0,1,12.55,14.1875)" pers-center="0,0" pers-size="0,0" pers-start="0,0" pers-end="0,0" locked="0" mesh="" flag=""/>
-            <path id="shapePath2" d="M12.2,19.2 C12.3,19.2 12.3,19.2 12.2,19.2 C12.4,19.3 12.5,19.3 12.7,19.2 C12.8,19.2 12.8,19.1 12.9,19.1 L17.5,14.5 C17.7,14.3 17.7,14 17.5,13.8 C17.3,13.6 17,13.6 16.8,13.8 L13,17.6 L13,9.6 C13,9.3 12.8,9.1 12.5,9.1 C12.4,9.1 12.2,9.2 12.1,9.2 C12,9.2 12,9.5 12,9.6 L12,17.5 L8.3,13.8 C8.1,13.6 7.8,13.6 7.6,13.8 C7.4,14 7.4,14.3 7.6,14.5 L12.2,19.2 Z" style="stroke:none;fill-rule:nonzero;fill:#ff0000;fill-opacity:1;"/>
-        </g>
-        <g id="Shape3">
-            <desc shapeID="3" type="0" basicInfo-basicType="0" basicInfo-roundedRectRadius="12" basicInfo-polygonSides="6" basicInfo-starPoints="5" bounding="rect(-14.1421,0,28.2843,0)" text="" font-familyName="Helvetica" font-pixelSize="20" font-bold="0" font-underline="0" font-alignment="1" strokeStyle="0" markerStart="0" markerEnd="0" shadowEnabled="0" shadowOffsetX="0" shadowOffsetY="2" shadowBlur="4" shadowOpacity="160" blurEnabled="0" blurRadius="4" transform="matrix(1,0,0,1,14.6421,0.5)" pers-center="0,0" pers-size="0,0" pers-start="0,0" pers-end="0,0" locked="0" mesh="" flag=""/>
-            <path id="shapePath3" d="M0.5,0.5 C20.5,0.5 40.5,0.5 20.5,0.5 C0.5,0.5 0.5,0.5 0.5,0.5 Z" style="stroke:none;fill-rule:evenodd;fill:#ff0000;fill-opacity:1;"/>
+            <path id="shapePath2" d="M12.2,19.2 C12.3,19.2 12.3,19.2 12.2,19.2 C12.4,19.3 12.5,19.3 12.7,19.2 C12.8,19.2 12.8,19.1 12.9,19.1 L17.5,14.5 C17.7,14.3 17.7,14 17.5,13.8 C17.3,13.6 17,13.6 16.8,13.8 L13,17.6 L13,9.6 C13,9.3 12.8,9.1 12.5,9.1 C12.4,9.1 12.2,9.2 12.1,9.2 C12,9.2 12,9.5 12,9.6 L12,17.5 L8.3,13.8 C8.1,13.6 7.8,13.6 7.6,13.8 C7.4,14 7.4,14.3 7.6,14.5 L12.2,19.2 Z" style="stroke:none;fill-rule:nonzero;fill:#c61f4c;fill-opacity:1;"/>
         </g>
     </g>
 </svg>
