@@ -59,7 +59,10 @@
       return;
     }
 
-    var list = document.querySelector(listSelector);
+    var bubble = document.querySelector('[for="viewRecordings"]');
+    bubble.dataset.recordings = Object.keys(archives).length;
+
+    var list = bubble.querySelector(listSelector);
 
     list.innerHTML = '';
 

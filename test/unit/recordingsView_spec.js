@@ -58,11 +58,13 @@ describe('RecordingsView', function() {
   };
 
   var container = null;
+  var bubble = null;
 
   before(function() {
     model._listeners = {};
     window.document.body.innerHTML =
       window.__html__['test/unit/recordingsView_spec.html'];
+    bubble = document.querySelector('[for="viewRecordings"]');
     container = document.querySelector('.videos.tc-list ul');
   });
 
@@ -77,6 +79,7 @@ describe('RecordingsView', function() {
     });
 
     it('should be initialized properly with only a listener for onvalue event', function() {
+      expect(bubble.dataset.recordings).to.equal('loading');
       RecordingsView.init(model);
       var keys = Object.keys(model._listeners);
       expect(keys.length).to.equal(1);
@@ -87,12 +90,13 @@ describe('RecordingsView', function() {
 
     it('should render archives', function() {
       expect(container.children.length).to.equal(0);
-
+      expect(bubble.dataset.recordings).to.equal('0');
       RecordingsView.init(model);
 
       model._fire(archives);
 
       expect(container.children.length).to.equal(3);
+      expect(bubble.dataset.recordings).to.equal('3');
 
       var items = container.querySelectorAll('li > a.file');
       var keysArchives = Object.keys(archives);
