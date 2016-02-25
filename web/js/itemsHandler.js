@@ -5,11 +5,16 @@
     ['click', 'dblclick'].forEach(function(name) {
       container.addEventListener(name, this);
     }, this);
-    var events = ['roomController:video', 'roomController:audio'];
+    var events = ['roomController:video', 'roomController:audio', 'roomController:videoDisabled',
+                  'roomController:videoEnabled'];
     events.forEach(function(name) {
       window.addEventListener(name, this);
     }, this);
     this.items = items;
+  };
+
+  var setVideoDisabled = function(item, disabled) {
+    item && (item.dataset.videoDisabled = disabled);
   };
 
   Handler.prototype = {
@@ -42,6 +47,12 @@
 
           var action = evt.type.replace('roomController:', '');
           HTMLElems.setEnabled(item.querySelector('.' + action + '-action'), detail.enabled);
+          action === 'video' && setVideoDisabled(item, !detail.enabled);
+          break;
+
+        case 'roomController:videoDisabled':
+        case 'roomController:videoEnabled':
+          setVideoDisabled(this.items[evt.detail.id], evt.type === 'roomController:videoDisabled');
           break;
 
         case 'dblclick':
