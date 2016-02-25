@@ -72,9 +72,9 @@ describe('LayoutManager', function() {
       checkLayout('grid');
     });
 
-    it('should set the hangout horizontal layout while sharing the screen', function() {
+    it('should set the hangout vertical layout while sharing the screen', function() {
       addedElements.push(LayoutManager.append('desktop'));
-      checkLayout('hangout_horizontal');
+      checkLayout('hangout_vertical');
     });
 
     it('should always return a reference to the element added', function() {
