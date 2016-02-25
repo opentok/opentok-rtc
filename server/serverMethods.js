@@ -20,76 +20,10 @@ function ServerMethods(aLogLevel, aModules) {
   ErrorInfo.prototype = {
     toString: () => JSON.stringify(this)
   };
-
-
-  const DEFAULT_USER_NAME = 'Anonymous User';
-
-  // Some Redis keys...
-  // OpenTok API key:
-  const RED_TB_API_KEY = 'tb_api_key';
-
-  // Timeout (in milliseconds) for polling for archive status change updates. Set this to zero
-  // to disable polling. This is the initial timeout (timeout for the first poll).
-  const RED_TB_ARCHIVE_POLLING_INITIAL_TIMEOUT = 'tb_archive_polling_initial_timeout';
-  // Timeout multiplier. After the first poll (if it fails) the next one will apply this multiplier
-  // successively. Set to a lower number to poll often.
-  const RED_TB_ARCHIVE_POLLING_TIMEOUT_MULTIPLIER = 'tb_archive_polling_multiplier';
-
-  // OpenTok API Secret
-  const RED_TB_API_SECRET ='tb_api_secret';
-
-  // Firebase data URL. This should be the root of the archives section of your Firebase app URL,
-  // which isn't necessarily the root of the app.
-  const RED_FB_DATA_URL = 'fb_data_url';
-
-  // Firebase secret to generate auth tokens
-  const RED_FB_AUTH_SECRET = 'fb_auth_secret';
-
-  // Sessions should not live forever. So we'll store the last time a session was used and if when
-  // we fetch it from Redis we determine it's older than this max age (in days). This is the key
-  // where that value (in days) should be stored. By default, sessions live two days.
-  const RED_TB_MAX_SESSION_AGE = 'tb_max_session_age';
-
-  // Maximum time an empty room will keep it's history alive, in minutes.
-  const RED_EMPTY_ROOM_MAX_LIFETIME = 'tb_max_history_lifetime';
-
-  // Chrome AddOn extension Id for sharing screen
-  const RED_CHROME_EXTENSION_ID = 'chrome_extension_id';
-
-  // Do we want to allow being used inside an iframe?
-  // This can be:
-  //  'always': Allow iframing unconditionally (note that rtcApp.js should also be changed
-  //        to reflect this, this option only changes what the server allows)
-  //  'never': Set X-Frame-Options to 'DENY' (so deny from everyone)
-  //  'sameorigin': Set X-Frame-Options to 'SAMEORIGIN'
-  // We don't allow restricting it to some URIs because it doesn't work on Chrome
-  const RED_ALLOW_IFRAMING = 'allow_iframing';
-
   var env = process.env;
 
-  const REDIS_KEYS = [
-    { key: RED_TB_API_KEY, defaultValue: env.TB_API_KEY || null },
-    { key: RED_TB_API_SECRET, defaultValue: env.TB_API_SECRET || null },
-    { key: RED_TB_ARCHIVE_POLLING_INITIAL_TIMEOUT, defaultValue: env.ARCHIVE_TIMEOUT || 5000 },
-    { key: RED_TB_ARCHIVE_POLLING_TIMEOUT_MULTIPLIER, defaultValue: env.TIMEOUT_MULTIPLIER || 1.5 },
-    { key: RED_FB_DATA_URL, defaultValue: env.FB_DATA_URL || null },
-    { key: RED_FB_AUTH_SECRET, defaultValue: env.FB_AUTH_SECRET || null },
-    { key: RED_TB_MAX_SESSION_AGE, defaultValue: env.TB_MAX_SESSION_AGE || 2 },
-    { key: RED_EMPTY_ROOM_MAX_LIFETIME, defaultValue: env.EMPTY_ROOM_LIFETIME || 3 },
-    { key: RED_ALLOW_IFRAMING, defaultValue: env.ALLOW_IFRAMING || 'never' },
-    { key: RED_CHROME_EXTENSION_ID, defaultValue: env.CHROME_EXTENSION_ID || 'undefined' }
-  ];
-
-  // A prefix for the room sessionInfo (sessionId + timestamp + inProgressArchiveId).
-  // inProgressArchiveId will be present (and not undefined) only if there's an archive
-  // operation running on that session.
-  // Also note that while we don't actually need to store the in-progress archive operation
-  // (and in fact it would be more robust if we didn't!) because we can just call listArchives
-  // to get that, it's more efficient if we cache it locally.
-  const RED_ROOM_PREFIX = 'otrtc_room__';
-  const RED_ROOM_MATCHES = RED_ROOM_PREFIX + '*';
-
   var Utils = require('./shared/utils');
+  var C = require('./serverConstants');
   var Logger = Utils.MultiLevelLogger;
   var promisify = Utils.promisify;
 
@@ -176,7 +110,7 @@ function ServerMethods(aLogLevel, aModules) {
     }
 
     function cleanStaleRoomKeys() {
-      return _loadRoomKeys(RED_ROOM_MATCHES).
+      return _loadRoomKeys(C.RED_ROOM_MATCHES).
         then(keyArray => {
           var pipeline = getPipelineForArrayOps(redis, keyArray, 'get');
           pipeline.
@@ -222,33 +156,33 @@ function ServerMethods(aLogLevel, aModules) {
     // This will hold the configuration read from Redis
     var redisConfig = {};
 
-    var pipeline = getPipelineForArrayOps(redis, REDIS_KEYS.map(elem => elem.key), 'get');
+    var pipeline = getPipelineForArrayOps(redis, C.REDIS_KEYS.map(elem => elem.key), 'get');
     return pipeline.
       exec().
       then(results => {
         // Results should be a n row array of two row arrays...
         // Just so we don't have to C&P a bunch of validations...
-        for (var i = 0, l = REDIS_KEYS.length; i < l; i++) {
-          var keyValue = results[i][1] || REDIS_KEYS[i].defaultValue;
+        for (var i = 0, l = C.REDIS_KEYS.length; i < l; i++) {
+          var keyValue = results[i][1] || C.REDIS_KEYS[i].defaultValue;
           // Since we set null as default for mandatory items...
           if (keyValue === null) {
-            var message = 'Missing required redis key: ' + REDIS_KEYS[i].key +
+            var message = 'Missing required redis key: ' + C.REDIS_KEYS[i].key +
               '. Please check the installation instructions';
             logger.error(message);
             throw new Error(message);
           }
-          redisConfig[REDIS_KEYS[i].key] = keyValue;
-          logger.log('RedisConfig[', REDIS_KEYS[i].key, '] =', keyValue);
+          redisConfig[C.REDIS_KEYS[i].key] = keyValue;
+          logger.log('RedisConfig[', C.REDIS_KEYS[i].key, '] =', keyValue);
         }
 
-        var apiKey = redisConfig[RED_TB_API_KEY];
-        var apiSecret = redisConfig[RED_TB_API_SECRET];
-        var archivePollingTO = parseInt(redisConfig[RED_TB_ARCHIVE_POLLING_INITIAL_TIMEOUT]);
+        var apiKey = redisConfig[C.RED_TB_API_KEY];
+        var apiSecret = redisConfig[C.RED_TB_API_SECRET];
+        var archivePollingTO = parseInt(redisConfig[C.RED_TB_ARCHIVE_POLLING_INITIAL_TIMEOUT]);
         var archivePollingTOMultiplier =
-          parseFloat(redisConfig[RED_TB_ARCHIVE_POLLING_TIMEOUT_MULTIPLIER]);
+          parseFloat(redisConfig[C.RED_TB_ARCHIVE_POLLING_TIMEOUT_MULTIPLIER]);
         var otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret);
 
-        var allowIframing = redisConfig[RED_ALLOW_IFRAMING];
+        var allowIframing = redisConfig[C.RED_ALLOW_IFRAMING];
 
         // This isn't strictly necessary... but since we're using promises all over the place, it
         // makes sense. The _P are just a promisified version of the methods. We could have
@@ -258,18 +192,18 @@ function ServerMethods(aLogLevel, aModules) {
         ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'deleteArchive'].
           forEach(method => otInstance[method + '_P'] = promisify(otInstance[method]));
 
-        var maxSessionAge = parseInt(redisConfig[RED_TB_MAX_SESSION_AGE]);
+        var maxSessionAge = parseInt(redisConfig[C.RED_TB_MAX_SESSION_AGE]);
         var maxSessionAgeMs = maxSessionAge * 24 * 60 * 60 * 1000;
-        var chromeExtId = redisConfig[RED_CHROME_EXTENSION_ID];
+        var chromeExtId = redisConfig[C.RED_CHROME_EXTENSION_ID];
 
         // For this object we need to know if/when we're reconnecting so we can shutdown the
         // old instance.
         var oldFirebaseArchivesPromise = Utils.CachifiedObject.getCached(FirebaseArchives);
 
         var firebaseArchivesPromise =
-          Utils.CachifiedObject(FirebaseArchives, redisConfig[RED_FB_DATA_URL],
-                                redisConfig[RED_FB_AUTH_SECRET],
-                                redisConfig[RED_EMPTY_ROOM_MAX_LIFETIME], aLogLevel);
+          Utils.CachifiedObject(FirebaseArchives, redisConfig[C.RED_FB_DATA_URL],
+                                redisConfig[C.RED_FB_AUTH_SECRET],
+                                redisConfig[C.RED_EMPTY_ROOM_MAX_LIFETIME], aLogLevel);
         _shutdownOldInstance(oldFirebaseArchivesPromise, firebaseArchivesPromise);
 
         var oldRedisCleaner = Utils.CachifiedObject.getCached(RedisCleaner);
@@ -347,7 +281,7 @@ function ServerMethods(aLogLevel, aModules) {
     aRes.
       render('room.ejs',
              {
-               userName: userName || DEFAULT_USER_NAME,
+               userName: userName || C.DEFAULT_USER_NAME,
                roomName: aReq.params.roomName,
                chromeExtensionId: tbConfig.chromeExtId
              });
@@ -403,17 +337,17 @@ function ServerMethods(aLogLevel, aModules) {
     var fbArchives = tbConfig.fbArchives;
     var roomName = aReq.params.roomName.toLowerCase();
     var userName =
-      (aReq.query && aReq.query.userName) || DEFAULT_USER_NAME + _numAnonymousUsers++;
+      (aReq.query && aReq.query.userName) || C.DEFAULT_USER_NAME + _numAnonymousUsers++;
     logger.log('getRoomInfo serving ' + aReq.path, 'roomName: ', roomName, 'userName: ', userName);
 
     // We have to check if we have a session id stored already on redis (and if it's not too old).
     // Note that we do not store tokens on the Redis database.
     redis.
-      get(RED_ROOM_PREFIX + roomName).
+      get(C.RED_ROOM_PREFIX + roomName).
       then(_getUsableSessionInfo.bind(tbConfig.otInstance, tbConfig.maxSessionAgeMs)).
       then(usableSessionInfo => {
         // Update the database. We could do this on getUsable...
-        redis.set(RED_ROOM_PREFIX + roomName, JSON.stringify(usableSessionInfo));
+        redis.set(C.RED_ROOM_PREFIX + roomName, JSON.stringify(usableSessionInfo));
 
         // We have to create an authentication token for the new user...
         var fbUserToken = fbArchives.createUserToken(usableSessionInfo.sessionId, userName);
@@ -510,7 +444,7 @@ function ServerMethods(aLogLevel, aModules) {
     // API makes it simpler for the client app, since it only needs the room name to stop an
     // in-progress recording. So we can just get the sessionInfo from redis.
     redis.
-      get(RED_ROOM_PREFIX + roomName).
+      get(C.RED_ROOM_PREFIX + roomName).
       then(_getUpdatedArchiveInfo.bind(undefined, tbConfig, operation)).
       then(sessionInfo => {
         var now = new Date();
@@ -534,7 +468,7 @@ function ServerMethods(aLogLevel, aModules) {
         return archiveOp().then(aArchive => {
           sessionInfo.inProgressArchiveId = aArchive.status === 'started' ? aArchive.id : undefined;
           // Update the internal database
-          redis.set(RED_ROOM_PREFIX + roomName, JSON.stringify(sessionInfo));
+          redis.set(C.RED_ROOM_PREFIX + roomName, JSON.stringify(sessionInfo));
 
           // We need to update the external database also. We have a conundrum here, though.
           // At this point, if the operation requested was stopping an active recording, the
