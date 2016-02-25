@@ -99,7 +99,7 @@
     background-color: transparent;
     max-height: 200px;
     overflow-x: hidden;
-    overflow-y: auto;
+    padding: 10px 0;
 
     ul {
       height: 100%;
@@ -140,7 +140,7 @@
 
     a.file {
       .truncate();
-      width: calc(~"100% - 50px");
+      width: calc(~"100% - 60px");
       display: inline-block;
       pointer-events: none;
       padding: 12px 0;
@@ -169,6 +169,36 @@
       float: right;
       display: none;
     }
+  }
+}
+
+[for="viewRecordings"] {
+  .title, .subtitle {
+    display: none;
+  }
+}
+
+[for="viewRecordings"][data-recordings] {
+  .recordings, .subtitle {
+    display: block;
+  }
+}
+
+[for="viewRecordings"][data-recordings="loading"] {
+  .loading {
+    display: block;
+  }
+  .recordings, .subtitle {
+    display: none;
+  }
+}
+
+[for="viewRecordings"][data-recordings="0"] {
+  .no-recordings {
+    display: block;
+  }
+  .recordings, .subtitle {
+    display: none;
   }
 }
 
