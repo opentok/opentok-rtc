@@ -51,9 +51,35 @@ body {
       padding: 0;
     }
 
+    .error-title, .error-description {
+      display: block;
+      font-size: 14px;
+      color: #C40D49;
+      opacity: 0;
+    }
+
+    .error-title {
+      margin-top: 10px;
+    }
+
+    .error-description {
+      margin: 0 356px 10px 0;
+    }
+
+    &.error {
+      .error-title, .error-description {
+        transition: opacity @transitionTime;
+        opacity: 1;
+      }
+
+      #room {
+        transition: border-color @transitionTime;
+        border-color: #C40D49;
+      }
+    }
+
     .btn {
-      margin-top: 25px;
-      display: inline-block;
+      margin-top: 10px;
     }
   }
 
@@ -62,7 +88,6 @@ body {
     line-height: 24px;
     margin: 0;
     padding: 0;
-
   }
 
   section {
