@@ -386,22 +386,30 @@ describe('ChatView', function() {
       window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: true }));
       this.spy(Chat, 'hide');
       this.spy(Chat, 'show');
+      this.spy(Chat, 'expand');
+      this.spy(Chat, 'collapse');
 
       closeChatBtn.dispatchEvent(getMouseClickEvt());
 
       expect(Chat.show.called).to.be.false;
       expect(Chat.hide.called).to.be.true;
+      expect(Chat.expand.called).to.be.false;
+      expect(Chat.collapse.called).to.be.false;
     }));
 
     it('should not do anything when the chat is hidden', sinon.test(function() {
       window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: false }));
       this.spy(Chat, 'hide');
       this.spy(Chat, 'show');
+      this.spy(Chat, 'expand');
+      this.spy(Chat, 'collapse');
 
       closeChatBtn.dispatchEvent(getMouseClickEvt());
 
       expect(Chat.show.called).to.be.false;
       expect(Chat.hide.called).to.be.false;
+      expect(Chat.expand.called).to.be.false;
+      expect(Chat.collapse.called).to.be.false;
     }));
   });
 
@@ -409,13 +417,15 @@ describe('ChatView', function() {
     var toggleChatBtn;
 
     before(function() {
-      toggleChatBtn = getContainer().querySelector('#toggleChat');
+      toggleChatBtn = getContainer().querySelector('header');
     });
 
     it('should expand when the chat is visible and collapsed', sinon.test(function() {
       window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: true }));
       this.spy(Chat, 'expand');
       this.spy(Chat, 'collapse');
+      this.spy(Chat, 'hide');
+      this.spy(Chat, 'show');
 
       Chat._isCollapsed = true;
 
@@ -423,6 +433,8 @@ describe('ChatView', function() {
 
       expect(Chat.expand.called).to.be.true;
       expect(Chat.collapse.called).to.be.false;
+      expect(Chat.hide.called).to.be.false;
+      expect(Chat.show.called).to.be.false;
     }));
 
     it('should collapse when the chat is visible and not collapsed', sinon.test(function() {
@@ -430,6 +442,8 @@ describe('ChatView', function() {
 
       this.spy(Chat, 'expand');
       this.spy(Chat, 'collapse');
+      this.spy(Chat, 'hide');
+      this.spy(Chat, 'show');
 
       Chat._isCollapsed = false;
 
@@ -437,6 +451,8 @@ describe('ChatView', function() {
 
       expect(Chat.expand.called).to.be.false;
       expect(Chat.collapse.called).to.be.true;
+      expect(Chat.hide.called).to.be.false;
+      expect(Chat.show.called).to.be.false;
     }));
 
     it('should not do anything when the chat is hidden', sinon.test(function() {
@@ -444,6 +460,8 @@ describe('ChatView', function() {
 
       this.spy(Chat, 'expand');
       this.spy(Chat, 'collapse');
+      this.spy(Chat, 'hide');
+      this.spy(Chat, 'show');
 
       Chat._isCollapsed = false;
 
@@ -451,6 +469,8 @@ describe('ChatView', function() {
 
       expect(Chat.expand.called).to.be.false;
       expect(Chat.collapse.called).to.be.false;
+      expect(Chat.hide.called).to.be.false;
+      expect(Chat.show.called).to.be.false;
     }));
   });
 

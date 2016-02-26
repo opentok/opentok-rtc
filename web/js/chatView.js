@@ -3,13 +3,13 @@
 
   var usrId;
 
-  var closeChatBtn,
-      toggleChatBtn,
-      sendMsgBtn,
-      chatMsgInput,
-      chatContainer,
-      chatContent,
-      chatForm;
+  var closeChatBtn;
+  var headerChat;
+  var sendMsgBtn;
+  var chatMsgInput;
+  var chatContainer;
+  var chatContent;
+  var chatForm;
 
   var _visibilityChanging = Promise.resolve();
 
@@ -76,8 +76,8 @@
 
   function initHTMLElements() {
     var chatWndElem = document.getElementById('chat');
+    headerChat = chatWndElem.querySelector('header');
     closeChatBtn = chatWndElem.querySelector('#closeChat');
-    toggleChatBtn = chatWndElem.querySelector('#toggleChat');
     sendMsgBtn = chatWndElem.querySelector('#sendTxt');
     chatMsgInput = chatWndElem.querySelector('#msgText');
     chatContainer = chatWndElem.querySelector('#chatMsgs');
@@ -121,6 +121,7 @@
 
   var onClose = function(evt) {
     evt.preventDefault();
+    evt.stopImmediatePropagation();
     _visibilityChanging = setVisibility(false);
   };
 
@@ -141,14 +142,14 @@
     chatForm.addEventListener('submit', onSubmit);
     chatForm.addEventListener('drop', onDrop);
     closeChatBtn.addEventListener('click', onClose);
-    toggleChatBtn.addEventListener('click', onToggle);
+    headerChat.addEventListener('click', onToggle);
     sendMsgBtn.addEventListener('click', onSendClicked);
   }
 
   function removeHandlers() {
     chatForm.removeEventListener('keypress', onKeyPress);
     closeChatBtn.removeEventListener('click', onClose);
-    toggleChatBtn.removeEventListener('click', onToggle);
+    headerChat.removeEventListener('click', onToggle);
     sendMsgBtn.removeEventListener('click', onSendClicked);
     chatForm.removeEventListener('drop', onDrop);
   }
