@@ -6,7 +6,8 @@
       container.addEventListener(name, this);
     }, this);
     var events = ['roomController:video', 'roomController:audio', 'roomController:videoDisabled',
-                  'roomController:videoEnabled'];
+                  'roomController:videoEnabled', 'roomController:disconnected',
+                  'roomController:connected'];
     events.forEach(function(name) {
       window.addEventListener(name, this);
     }, this);
@@ -53,6 +54,12 @@
         case 'roomController:videoDisabled':
         case 'roomController:videoEnabled':
           setVideoDisabled(this.items[evt.detail.id], evt.type === 'roomController:videoDisabled');
+          break;
+
+        case 'roomController:connected':
+        case 'roomController:disconnected':
+          var item = this.items[evt.detail.id];
+          item && (item.dataset.disconnected = evt.type === 'roomController:disconnected');
           break;
 
         case 'dblclick':

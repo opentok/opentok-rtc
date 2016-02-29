@@ -124,6 +124,12 @@ describe('ItemsHandler', function() {
         expect(elem.classList.contains('enabled')).to.be.true;
         dispatchCustomEvent('roomController:audio', reasonPrefix + 'Audio', id);
         expect(elem.classList.contains('enabled')).to.be.false;
+
+        expect(item.dataset.disconnected).to.be.undefined;
+        dispatchCustomEvent('roomController:disconnected', '', id);
+        expect(item.dataset.disconnected).to.equal('true');
+        dispatchCustomEvent('roomController:connected', '', id);
+        expect(item.dataset.disconnected).to.equal('false');
       };
 
       check('publisher');
