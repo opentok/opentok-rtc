@@ -361,6 +361,16 @@
     'videoEnabled': function(evt) {
       evt.reason === 'subscribeToVideo' && sendStatus(evt, 'video', true);
       sendVideoEvent(evt.target.stream);
+    },
+    'disconnected': function(evt) {
+      Utils.sendEvent('roomController:disconnected', {
+        id: evt.target.stream.streamId
+      });
+    },
+    'connected': function(evt) {
+      Utils.sendEvent('roomController:connected', {
+        id: evt.target.stream.streamId
+      });
     }
   };
 
