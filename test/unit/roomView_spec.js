@@ -4,8 +4,11 @@ var should = chai.should();
 
 describe('RoomView', function() {
 
+  var dock = null;
+
   before(function() {
     window.document.body.innerHTML = window.__html__['test/unit/roomView_spec.html'];
+    dock = document.getElementById('dock');
   });
 
   it('should exist', function() {
@@ -30,6 +33,64 @@ describe('RoomView', function() {
       window.dispatchEvent(new CustomEvent('roomController:controllersReady'));
       expect(document.querySelectorAll('.menu [disabled]').length).to.equal(0);
     });
+  });
+
+  describe('#screenOnStage', function() {
+    it('should collapse the dock when there is a screen on stage', function() {
+      expect(dock.classList.contains('collapsed')).to.false;
+      window.dispatchEvent(new CustomEvent('hangout:screenOnStage', {
+        detail: {
+          status: 'on'
+        }
+      }));
+      expect(dock.classList.contains('collapsed')).to.true;
+      window.dispatchEvent(new CustomEvent('hangout:screenOnStage', {
+        detail: {
+          status: 'off'
+        }
+      }));
+      expect(dock.classList.contains('collapsed')).to.false;
+    });
+
+    it('should recover the dock position when screen stops sharing and users do not change it',
+      function() {
+        dock.classList.add('collapsed');
+        expect(dock.classList.contains('collapsed')).to.true;
+        window.dispatchEvent(new CustomEvent('hangout:screenOnStage', {
+          detail: {
+            status: 'on'
+          }
+        }));
+        expect(dock.classList.contains('collapsed')).to.true;
+        window.dispatchEvent(new CustomEvent('hangout:screenOnStage', {
+          detail: {
+            status: 'off'
+          }
+        }));
+        expect(dock.classList.contains('collapsed')).to.true;
+      }
+    );
+
+    it('should not recover the dock position when screen stops sharing and users change it',
+      function() {
+        dock.classList.remove('collapsed');
+        expect(dock.classList.contains('collapsed')).to.false;
+        window.dispatchEvent(new CustomEvent('hangout:screenOnStage', {
+          detail: {
+            status: 'on'
+          }
+        }));
+        expect(dock.classList.contains('collapsed')).to.true;
+        dock.querySelector('#handler').click();
+        expect(dock.classList.contains('collapsed')).to.false;
+        window.dispatchEvent(new CustomEvent('hangout:screenOnStage', {
+          detail: {
+            status: 'off'
+          }
+        }));
+        expect(dock.classList.contains('collapsed')).to.false;
+      }
+    );
   });
 
 });

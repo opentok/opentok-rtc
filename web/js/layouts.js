@@ -238,9 +238,9 @@ Hangout.prototype = {
       return this;
     }
     var type = Hangout.getItemType(item);
-    type === 'screen' && Utils.sendEvent('hangout:screenOnStage');
     this.removeCurrentItemFromStage(type).putStageId(item);
     item.classList.add('on-stage');
+    type === 'screen' && Utils.sendEvent('hangout:screenOnStage', { status: 'on' });
     return this;
   },
 
@@ -272,6 +272,8 @@ Hangout.prototype = {
     if (item) {
       this.removeStageId(item);
       item.classList.remove('on-stage');
+      Hangout.getItemType(item) === 'screen' &&
+        Utils.sendEvent('hangout:screenOnStage', { status: 'off' });
     }
     return this;
   },

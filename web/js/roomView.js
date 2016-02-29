@@ -104,8 +104,18 @@
   };
 
   var hangoutEvents = {
-    'screenOnStage': function() {
-      dock.classList.add('collapsed');
+    'screenOnStage': function(event) {
+      var status = event.detail.status;
+      if (status === 'on') {
+        dock.dataset.previouslyCollapsed = dock.classList.contains('collapsed');
+        dock.classList.add('collapsed');
+      } else {
+        if ('previouslyCollapsed' in dock.dataset) {
+          dock.dataset.previouslyCollapsed === 'true' ? dock.classList.add('collapsed') :
+                                                        dock.classList.remove('collapsed');
+          delete dock.dataset.previouslyCollapsed;
+        }
+      }
     }
   };
 
@@ -286,6 +296,7 @@
   var addHandlers = function() {
     handler.addEventListener('click', function(e) {
       dock.classList.toggle('collapsed');
+      delete dock.dataset.previouslyCollapsed;
     });
 
     var menu = document.querySelector('.menu ul');
