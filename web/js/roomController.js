@@ -241,10 +241,6 @@
   };
 
   var viewEventHandlers = {
-    'endCall': function(evt) {
-      var url = window.location.origin + MAIN_PAGE;
-      window.location = url;
-    },
     'startArchiving': function(evt) {
       sendArchivingOperation((evt.detail && evt.detail.operation) || 'startComposite');
     },
