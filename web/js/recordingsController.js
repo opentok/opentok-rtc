@@ -3,7 +3,7 @@
 
   var model = null;
 
-  function init(firebaseUrl, firebaseToken) {
+  function init(firebaseUrl, firebaseToken, sessionId) {
     return LazyLoader.dependencyLoad([
       '/js/models/firebase.js',
       '/js/recordingsView.js',
@@ -16,7 +16,7 @@
           Utils.sendEvent('recordings-model-ready', null, exports);
           addListeners();
           RecordingsView.init(model);
-          EndCallController.init(model);
+          EndCallController.init(model, sessionId);
         });
     });
   }

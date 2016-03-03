@@ -8,6 +8,7 @@
   var _templateSrc = '/templates/endMeeting.ejs';
   var _template;
   var _model;
+  var _sessionId;
 
   var addHandlers = function() {
     HTMLElems.addHandlerArchive(LIST_SELECTOR);
@@ -48,6 +49,7 @@
       data.archives.push(anArch);
     });
     data.numArchives = data.archives.length;
+    data.sessionId = _sessionId;
 
     var html = _template.render(data);
     document.body.innerHTML = html;
@@ -61,8 +63,9 @@
     }
   };
 
-  var init = function(model) {
+  var init = function(model, sessionId) {
     _model = model;
+    _sessionId = sessionId;
     Utils.addEventsHandlers('', eventHandlers);
     _template = new EJS({ url: _templateSrc });
   };

@@ -10,12 +10,12 @@
     'roomView:endCall': endCall
   };
 
-  var init = function(model) {
+  var init = function(model, sessionId) {
     return LazyLoader.dependencyLoad([
       '/js/vendor/ejs_production.js',
       '/js/endCallView.js'
     ]).then(function() {
-      EndCallView.init(model);
+      EndCallView.init(model, sessionId);
       Utils.addEventsHandlers('', eventHandlers);
     });
   };
