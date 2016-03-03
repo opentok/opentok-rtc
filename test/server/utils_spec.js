@@ -395,7 +395,7 @@ describe('Utils', function(){
 
     testCases.forEach(function(aTC) {
       it('should return ' + aTC.output + ' for ' + aTC.input + '(' + typeof aTC.input + ')',
-        function() {
+         function() {
         expect(Utils.booleanify(aTC.input)).to.be.equal(aTC.output);
       });
     });

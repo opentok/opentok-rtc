@@ -3,7 +3,6 @@
 
   var Utils = {};
 
-
   // Simple logger that allow multiple level logs. The configured level
   // must be a bitmask of the desired enabled levels.
   // Usage:

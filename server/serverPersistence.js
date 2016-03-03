@@ -25,7 +25,7 @@ function ServerPersistence(aCachedEntries, aConnectParameters, aLogLevel, aModul
   var Logger = Utils.MultiLevelLogger;
   var logger = new Logger('ServerPersistence', aLogLevel);
   logger.trace('Connecting to:', aConnectParameters, 'Provider:',
-             aModules.PersistenceProvider || 'Redis');
+               aModules.PersistenceProvider || 'Redis');
 
   const CONNECT_TIMEOUT = 5000;
 

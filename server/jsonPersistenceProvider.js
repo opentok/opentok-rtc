@@ -48,9 +48,9 @@ module.exports = function(aFilepath, aOptions) {
       if (typeof internalState !== 'object') {
         throw new Error('The file content was a valid JSON but not an object!');
       }
-    }).catch((e) => {
+    }).catch(e => {
       logger.error('Error reading file:', aFilepath, e,
-                 ' Initializing state to empty and creating the file');
+                   ' Initializing state to empty and creating the file');
       internalState = {};
       return writeFile(aFilepath, JSON.stringify(internalState));
     }).then(() => {
@@ -76,8 +76,8 @@ module.exports = function(aFilepath, aOptions) {
       return isReady.then(() => internalState[aKey]);
     },
 
-
-// TO-DO TO-DO: Currently when we write the file the watcher fires up and we read it again. That's suboptimal Fix it.
+    // TO-DO TO-DO: Currently when we write the file the watcher fires up and we read it again.
+    // That's suboptimal. Fix it.
     set: function(aKey, aValue) {
       return isReady.then(() => {
         internalState[aKey] = aValue;
