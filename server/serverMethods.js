@@ -38,22 +38,12 @@ function ServerMethods(aLogLevel, aModules) {
   }
 
   var logger = new Logger('ServerMethods', aLogLevel);
-
-  // We'll use redis to add persistence
-  var Redis = require('ioredis');
-
-  const REDIS_CONNECT_TIMEOUT = 5000;
-
-  var redisURL = env.REDIS_URL || env.REDISTOGO_URL || '';
-  var redis = new Redis(redisURL, { connectTimeout: REDIS_CONNECT_TIMEOUT });
-  var redisWatchdog = setInterval(function() {
-    logger.warn('Timeout while connecting to the Redis Server! Is Redis running?');
-  }, REDIS_CONNECT_TIMEOUT);
-
-  redis.on('ready', function() {
-    logger.log('Successfully connected to Redis and DB is ready.');
-    clearInterval(redisWatchdog);
-  });
+  var ServerPersistence = require('./serverPersistence');
+  var connectionString =
+    (aModules && aModules.params && aModules.params.persistenceConfig) ||
+    env.REDIS_URL || env.REDISTOGO_URL || '';
+  var serverPersistence =
+    new ServerPersistence(C.REDIS_KEYS, connectionString, aLogLevel, aModules);
 
   // Opentok API instance, which will be configured only after tbConfigPromise
   // is resolved
@@ -86,103 +76,23 @@ function ServerMethods(aLogLevel, aModules) {
     });
   }
 
-  function getPipelineForArrayOps(aRedisInst, aKeyArray, aOp) {
-    var pipeline = aRedisInst.pipeline();
-    for (var i = 0, l = aKeyArray.length; i < l ; i++) {
-      pipeline = pipeline[aOp](aKeyArray[i]);
-    }
-    return pipeline;
-  }
-
-  // To-Do (PSE-115): Move this to its own module (or as part of the general Redis Module)
-  function RedisCleaner(aMaxSessionAge) {
-    function _loadRoomKeys(aMatch) {
-      return new Promise((resolve, reject) => {
-        var keyStream = redis.scanStream({ match: aMatch });
-        var allKeys = [];
-        keyStream.on('data', data => {
-          allKeys.push.apply(allKeys, data);
-        });
-        keyStream.on('end', () => {
-          resolve(allKeys);
-        });
-      });
-    }
-
-    function cleanStaleRoomKeys() {
-      return _loadRoomKeys(C.RED_ROOM_MATCHES).
-        then(keyArray => {
-          var pipeline = getPipelineForArrayOps(redis, keyArray, 'get');
-          pipeline.
-            exec().
-            then(results => {
-              var minLastUsage = Date.now() - aMaxSessionAge;
-              logger.log('cleanStaleRoomKeys: Erasing rooms older than:',
-                         new Date(minLastUsage).toISOString());
-              var keysToErase = results.reduce((aPrevious, aCurrent, aIndex) => {
-                try {
-                  var lastUsage = JSON.parse(aCurrent[1]).lastUsage;
-                  lastUsage < minLastUsage && aPrevious.push(keyArray[aIndex]) &&
-                    logger.log('cleanStaleRoomKeys: Erasing stale room:', keyArray[aIndex],
-                               'Last Usage:', new Date(lastUsage).toISOString());
-                } catch (e) {
-                  logger.error('cleanStaleRoomKeys: Invalid value for key:', keyArray[aIndex]);
-                }
-                return aPrevious;
-              }, []);
-              return getPipelineForArrayOps(redis, keysToErase, 'del').exec();
-            });
-        });
-    }
-
-    return cleanStaleRoomKeys().then(() => {
-      // Execute daily
-      var interval = setInterval(cleanStaleRoomKeys, 86400);
-      return {
-        shutdown: function() {
-          clearInterval(interval);
-        }
-      };
-    });
-  }
-
-
   function _shutdownOldInstance(aOldPromise, aNewPromise) {
     aOldPromise && (aNewPromise !== aOldPromise) &&
-          aOldPromise.then(aObject => aObject.shutdown());
+      aOldPromise.then(aObject => aObject.shutdown());
   }
 
   function _initialTBConfig() {
     // This will hold the configuration read from Redis
-    var redisConfig = {};
-
-    var pipeline = getPipelineForArrayOps(redis, C.REDIS_KEYS.map(elem => elem.key), 'get');
-    return pipeline.
-      exec().
-      then(results => {
-        // Results should be a n row array of two row arrays...
-        // Just so we don't have to C&P a bunch of validations...
-        for (var i = 0, l = C.REDIS_KEYS.length; i < l; i++) {
-          var keyValue = results[i][1] || C.REDIS_KEYS[i].defaultValue;
-          // Since we set null as default for mandatory items...
-          if (keyValue === null) {
-            var message = 'Missing required redis key: ' + C.REDIS_KEYS[i].key +
-              '. Please check the installation instructions';
-            logger.error(message);
-            throw new Error(message);
-          }
-          redisConfig[C.REDIS_KEYS[i].key] = keyValue;
-          logger.log('RedisConfig[', C.REDIS_KEYS[i].key, '] =', keyValue);
-        }
-
-        var apiKey = redisConfig[C.RED_TB_API_KEY];
-        var apiSecret = redisConfig[C.RED_TB_API_SECRET];
-        var archivePollingTO = parseInt(redisConfig[C.RED_TB_ARCHIVE_POLLING_INITIAL_TIMEOUT]);
+    return serverPersistence.updateCache().
+      then(persistConfig => {
+        var apiKey = persistConfig[C.RED_TB_API_KEY];
+        var apiSecret = persistConfig[C.RED_TB_API_SECRET];
+        var archivePollingTO = parseInt(persistConfig[C.RED_TB_ARCHIVE_POLLING_INITIAL_TIMEOUT]);
         var archivePollingTOMultiplier =
-          parseFloat(redisConfig[C.RED_TB_ARCHIVE_POLLING_TIMEOUT_MULTIPLIER]);
+          parseFloat(persistConfig[C.RED_TB_ARCHIVE_POLLING_TIMEOUT_MULTIPLIER]);
         var otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret);
 
-        var allowIframing = redisConfig[C.RED_ALLOW_IFRAMING];
+        var allowIframing = persistConfig[C.RED_ALLOW_IFRAMING];
 
         // This isn't strictly necessary... but since we're using promises all over the place, it
         // makes sense. The _P are just a promisified version of the methods. We could have
@@ -192,23 +102,19 @@ function ServerMethods(aLogLevel, aModules) {
         ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'deleteArchive'].
           forEach(method => otInstance[method + '_P'] = promisify(otInstance[method]));
 
-        var maxSessionAge = parseInt(redisConfig[C.RED_TB_MAX_SESSION_AGE]);
+        var maxSessionAge = parseInt(persistConfig[C.RED_TB_MAX_SESSION_AGE]);
         var maxSessionAgeMs = maxSessionAge * 24 * 60 * 60 * 1000;
-        var chromeExtId = redisConfig[C.RED_CHROME_EXTENSION_ID];
+        var chromeExtId = persistConfig[C.RED_CHROME_EXTENSION_ID];
 
         // For this object we need to know if/when we're reconnecting so we can shutdown the
         // old instance.
         var oldFirebaseArchivesPromise = Utils.CachifiedObject.getCached(FirebaseArchives);
 
         var firebaseArchivesPromise =
-          Utils.CachifiedObject(FirebaseArchives, redisConfig[C.RED_FB_DATA_URL],
-                                redisConfig[C.RED_FB_AUTH_SECRET],
-                                redisConfig[C.RED_EMPTY_ROOM_MAX_LIFETIME], aLogLevel);
+          Utils.CachifiedObject(FirebaseArchives, persistConfig[C.RED_FB_DATA_URL],
+                                persistConfig[C.RED_FB_AUTH_SECRET],
+                                persistConfig[C.RED_EMPTY_ROOM_MAX_LIFETIME], aLogLevel);
         _shutdownOldInstance(oldFirebaseArchivesPromise, firebaseArchivesPromise);
-
-        var oldRedisCleaner = Utils.CachifiedObject.getCached(RedisCleaner);
-        var redisCleaner= Utils.CachifiedObject(RedisCleaner, maxSessionAgeMs);
-        _shutdownOldInstance(oldRedisCleaner, redisCleaner);
 
         return firebaseArchivesPromise.
           then(firebaseArchives => {
@@ -340,14 +246,16 @@ function ServerMethods(aLogLevel, aModules) {
       (aReq.query && aReq.query.userName) || C.DEFAULT_USER_NAME + _numAnonymousUsers++;
     logger.log('getRoomInfo serving ' + aReq.path, 'roomName: ', roomName, 'userName: ', userName);
 
-    // We have to check if we have a session id stored already on redis (and if it's not too old).
-    // Note that we do not store tokens on the Redis database.
-    redis.
-      get(C.RED_ROOM_PREFIX + roomName).
+    // We have to check if we have a session id stored already on the persistence provider (and if
+    // it's not too old).
+    // Note that we do not persist tokens.
+    serverPersistence.
+      getKey(C.RED_ROOM_PREFIX + roomName).
       then(_getUsableSessionInfo.bind(tbConfig.otInstance, tbConfig.maxSessionAgeMs)).
       then(usableSessionInfo => {
         // Update the database. We could do this on getUsable...
-        redis.set(C.RED_ROOM_PREFIX + roomName, JSON.stringify(usableSessionInfo));
+        serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, C.RED_ROOM_PREFIX + roomName,
+                                   JSON.stringify(usableSessionInfo));
 
         // We have to create an authentication token for the new user...
         var fbUserToken = fbArchives.createUserToken(usableSessionInfo.sessionId, userName);
@@ -442,9 +350,9 @@ function ServerMethods(aLogLevel, aModules) {
                'userName:', userName);
     // We could also keep track of the current archive ID on the client app. But the proposed
     // API makes it simpler for the client app, since it only needs the room name to stop an
-    // in-progress recording. So we can just get the sessionInfo from redis.
-    redis.
-      get(C.RED_ROOM_PREFIX + roomName).
+    // in-progress recording. So we can just get the sessionInfo from the serverPersistence.
+    serverPersistence.
+      getKey(C.RED_ROOM_PREFIX + roomName).
       then(_getUpdatedArchiveInfo.bind(undefined, tbConfig, operation)).
       then(sessionInfo => {
         var now = new Date();
@@ -468,7 +376,7 @@ function ServerMethods(aLogLevel, aModules) {
         return archiveOp().then(aArchive => {
           sessionInfo.inProgressArchiveId = aArchive.status === 'started' ? aArchive.id : undefined;
           // Update the internal database
-          redis.set(C.RED_ROOM_PREFIX + roomName, JSON.stringify(sessionInfo));
+          serverPersistence.setKey(C.RED_ROOM_PREFIX + roomName, JSON.stringify(sessionInfo));
 
           // We need to update the external database also. We have a conundrum here, though.
           // At this point, if the operation requested was stopping an active recording, the
