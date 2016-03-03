@@ -55,6 +55,10 @@
     }
   }
 
+  footer[data-recordings="0"] {
+    margin-top: 35px;
+  }
+
   .archives {
     border: 1px solid @archivesBorderColor;
     margin-bottom: 35px;
@@ -85,13 +89,9 @@
       display: none;
     }
   }
+
   .archives[data-recordings="0"] {
-    .no-recordings {
-      display: block;
-    }
-    .recordings {
-      display: none
-    }
+    display: none;
   }
 
   .tc-list {
