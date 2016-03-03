@@ -39,7 +39,8 @@
     sendSignal: function() {
       return Promise.resolve();
     },
-    removeListener: function(evtName) {}
+    removeListener: function(evtName) {},
+    disconnectFromSession: function() {}
   };
 
   exports.MockOTHelper = MockOTHelper;
