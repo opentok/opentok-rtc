@@ -107,6 +107,55 @@
                element.removeAttribute('disabled');
   };
 
+  var formatter = new Intl.DateTimeFormat('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  });
+
+  function toPrettyDuration(duration) {
+    var time = [];
+
+    // 0 hours -> Don't add digit
+    var hours = Math.floor(duration / (60 * 60));
+    if (hours) {
+      time.push(hours);
+      time.push(':');
+    }
+
+    // 0 minutes -> if 0 hours -> Don't add digit
+    // 0 minutes -> if hours > 0 -> Add minutes with zero as prefix if minutes < 10
+    var minutes = Math.floor(duration / 60) % 60;
+    if (time.length) {
+      (minutes < 10) && time.push('0');
+      time.push(minutes);
+      time.push(':');
+    } else if (minutes) {
+      time.push(minutes);
+      time.push(':');
+    }
+
+    var seconds = duration % 60;
+    (time.length) && (seconds < 10) && time.push('0');
+    time.push(seconds);
+
+    return time.join('');
+  }
+
+  function getLabelText(archive) {
+    var date = new Date(archive.createdAt);
+
+    var time = formatter.format(date).toLowerCase();
+
+    var prefix = '';
+    time.indexOf(':') === 1 && (prefix = '0');
+
+    var label = [prefix, time, ' - ', archive.recordingUser, '\'s Archive (',
+                 toPrettyDuration(archive.duration), 's)'];
+
+    return label.join('');
+  }
+
   var Utils = {
     getCurrentTime: getCurrentTime,
     inspectObject: inspectObject,
@@ -136,7 +185,8 @@
       var vendor = 'vendor' in navigator && navigator.vendor.toLowerCase() || '';
       return /chrome|chromium/i.test(userAgent) && /google inc/.test(vendor);
     },
-    setDisabled: setDisabled
+    setDisabled: setDisabled,
+    getLabelText: getLabelText
   };
 
   // Just replacing global.utils might not be safe... let's just expand it...

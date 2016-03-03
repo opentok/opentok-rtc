@@ -6,7 +6,8 @@
   function init(firebaseUrl, firebaseToken) {
     return LazyLoader.dependencyLoad([
       '/js/models/firebase.js',
-      '/js/recordingsView.js'
+      '/js/recordingsView.js',
+      '/js/endCallController.js'
     ]).then(function() {
       FirebaseModel.
         init(firebaseUrl, firebaseToken).
@@ -15,6 +16,7 @@
           Utils.sendEvent('recordings-model-ready', null, exports);
           addListeners();
           RecordingsView.init(model);
+          EndCallController.init(model);
         });
     });
   }
@@ -22,10 +24,14 @@
   function onDeleteArchive(data) {
     var previousStatus = data.status;
     data.status = 'deleting';
-    Request.deleteArchive(data.id).catch(function(error) {
-      // Archived couldn't be deleted from server...
-      data.status = previousStatus;
-    });
+    Request.deleteArchive(data.id).
+      then(function() {
+        Utils.sendEvent('RecordingsController:deleteArchive', { id: data.id });
+      }).
+      catch(function(error) {
+        // Archived couldn't be deleted from server...
+        data.status = previousStatus;
+      });
   }
 
   var handlers = {

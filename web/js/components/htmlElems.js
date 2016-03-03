@@ -69,6 +69,33 @@
     }
   }
 
+  function addHandlerArchive(selector) {
+    var list = document.querySelector(selector);
+
+    list.addEventListener('click', function(evt) {
+      switch (evt.type) {
+        case 'click':
+          var elemClicked = evt.target;
+          if (!(HTMLElems.isAction(elemClicked))) {
+            return;
+          }
+          var dataset = elemClicked.dataset;
+          Utils.sendEvent('archive', {
+            id: dataset.id,
+            action: dataset.action,
+            username: dataset.username,
+            set status(value) {
+              elemClicked.parentNode.dataset.status = value;
+            },
+            get status() {
+              return elemClicked.parentNode.dataset.status;
+            }
+          });
+          break;
+      }
+    });
+  }
+
   exports.HTMLElems = {
     addText: addText,
     replaceText: replaceText,
@@ -78,7 +105,8 @@
       return ('action' in aElem.dataset);
     },
     setEnabled: setEnabled,
-    getAncestorByTagName: getAncestorByTagName
+    getAncestorByTagName: getAncestorByTagName,
+    addHandlerArchive: addHandlerArchive
   };
 
 }(this);

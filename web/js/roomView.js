@@ -286,8 +286,7 @@
             evt.stopImmediatePropagation();
             evt.preventDefault();
             ui.removeEventListener('click', onClicked);
-            Modal.hide(selector);
-            resolve(hasAccepted);
+            Modal.hide(selector).then(function() { resolve(hasAccepted); });
           });
         });
       });
@@ -331,7 +330,6 @@
           showConfirm(MODAL_TXTS.endCall).then(function(endCall) {
             if (endCall) {
               RoomView.participantsNumber = 0;
-              OTHelper.disconnectFromSession();
               Utils.sendEvent('roomView:endCall');
             }
           });

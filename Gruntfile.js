@@ -83,7 +83,8 @@ module.exports = function(grunt) {
       default: {
         files: {
           'web/css/landing.opentok.css': 'web/less/landing.less',
-          'web/css/room.opentok.css': 'web/less/room.less'
+          'web/css/room.opentok.css': 'web/less/room.less',
+          'web/css/endMeeting.opentok.css': 'web/less/endMeeting.less'
         }
       }
     },
