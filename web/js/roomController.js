@@ -686,7 +686,7 @@
           });
         }).
         then(function() {
-          RecordingsController.init(aParams.firebaseURL, aParams.firebaseToken);
+          RecordingsController.init(aParams.firebaseURL, aParams.firebaseToken, aParams.sessionId);
           ScreenShareController.init(userName, aParams.chromeExtId);
           Utils.sendEvent('roomController:controllersReady');
         }).
