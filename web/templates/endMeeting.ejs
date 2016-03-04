@@ -23,7 +23,11 @@
     </div>
   </section>
   <footer data-recordings="<%=numArchives%>">
+<% if (sessionId !== 'NOT_AVAILABLE') { %>
     <p> Get more information about the quality of your last meeting using our <a href=" https://tokbox.com/developer/tools/inspector/account/admin/lookupSession?sessionId=<%=sessionId%>">Inspector tool</a>.</p>
+<%} else {%>
+    <p> You didn't join the meeting, so no information about the quality is available</p>
+<%}%>
   </footer>
 </section>
 

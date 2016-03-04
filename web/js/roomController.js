@@ -629,9 +629,13 @@
       '/js/roomStatus.js',
       '/js/chatController.js',
       '/js/recordingsController.js',
+      '/js/endCallController.js',
       '/js/layoutMenuController.js',
       '/js/screenShareController.js'
     ]).
+    then(function() {
+      EndCallController.init({addEventListener: function() {}}, 'NOT_AVAILABLE');
+    }).
     then(getRoomParams).
     then(getRoomInfo).
     then(function(aParams) {

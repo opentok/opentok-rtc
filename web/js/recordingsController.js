@@ -6,8 +6,7 @@
   function init(firebaseUrl, firebaseToken, sessionId) {
     return LazyLoader.dependencyLoad([
       '/js/models/firebase.js',
-      '/js/recordingsView.js',
-      '/js/endCallController.js'
+      '/js/recordingsView.js'
     ]).then(function() {
       FirebaseModel.
         init(firebaseUrl, firebaseToken).
