@@ -63,11 +63,17 @@
     }
   };
 
+  var alreadyInitialized = false;
+
   var init = function(model, sessionId) {
     _model = model;
     _sessionId = sessionId;
+    if (alreadyInitialized) {
+      return;
+    }
     Utils.addEventsHandlers('', eventHandlers);
     _template = new EJS({ url: _templateSrc });
+    alreadyInitialized = true;
   };
 
   exports.EndCallView = {
