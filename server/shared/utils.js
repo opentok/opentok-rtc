@@ -150,8 +150,11 @@
     var templateIsArray = Array.isArray(aTemplate);
     var objectIsArray = Array.isArray(aObject);
     if (templateIsArray && objectIsArray) {
-      return (aObject.length != 0 && aObject.every(element => _isA(aTemplate[0], element))) ||
-        aObject.length === 0 && aTemplate.length === 0;
+      return (aObject.length != 0 && aObject.every &&
+              aObject.every(function(element) {
+                return _isA(aTemplate[0], element);}
+              )) ||
+              aObject.length === 0 && aTemplate.length === 0;
     }
     if (templateIsArray || objectIsArray) {
       return false;
@@ -159,7 +162,7 @@
     if (typeof aTemplate !== 'object' || typeof aObject !=='object') {
       return typeof aTemplate === typeof aObject;
     }
-    return Object.keys(aTemplate).every(aKey => {
+    return [].every && Object.keys(aTemplate).every(function(aKey) {
       return typeof aObject[aKey] === typeof aTemplate[aKey] &&
         (typeof aObject[aKey] !== 'object' || _isA(aTemplate[aKey], aObject[aKey]));
     });
