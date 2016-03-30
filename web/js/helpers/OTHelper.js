@@ -61,11 +61,12 @@
   //
   // Multipart message sending proccess
   //
-  function composeSegment(aMsgId, aSegmentOrder, aTotalSegments, aUsrMsg) {
+  function composeSegment(aMsgId, aSegmentOrder, aTotalSegments, aUsrMsg, aConnectionId) {
     var obj = {
       type: aUsrMsg.type,
       data: JSON.stringify({
         _head: {
+          connId: aConnectionId,
           id: aMsgId,
           seq: aSegmentOrder,
           tot: aTotalSegments
@@ -88,7 +89,8 @@
 
       var messagesSent = [];
       for (var segmentOrder = 0; segmentOrder < totalSegments; segmentOrder++) {
-        var signalData = composeSegment(msgId, segmentOrder, totalSegments, msg);
+        var signalData =
+          composeSegment(msgId, segmentOrder, totalSegments, msg, _session.connection.connectionId);
         messagesSent[segmentOrder] =
           new Promise(function(resolveMessage, rejectMessage) {
             _session.signal(signalData, function(error) {
