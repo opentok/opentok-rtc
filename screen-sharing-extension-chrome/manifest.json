@@ -1,0 +1,31 @@
+{
+"update_url": "https://clients2.google.com/service/update2/crx",
+
+  "name" : "OpenTokRTC Screen Sharing",
+  "author": "TokBox, Inc.",
+  "version" : "1.4",
+  "manifest_version" : 2,
+  "minimum_chrome_version": "34",
+  "description" : "This Chrome extension is developed for Tokbox demos. It simply captures the content of your screen.",
+  "homepage_url": "https://opentokdemo.tokbox.com",
+  "background": {
+    "scripts": ["background-script.js"],
+    "persistent": false
+  },
+  "content_scripts": [ {
+   "js": [ "content-script.js" ],
+   "all_frames": true,
+   "matches": ["https://opentokdemo.tokbox.com/*", "https://pse001-iad.herokuapp.com/*"]
+  }],
+  "icons": {
+    "16": "logo16.png",
+    "48": "logo48.png",
+    "128": "logo128.png"
+  },
+  "permissions": [
+    "desktopCapture"
+  ],
+  "web_accessible_resources": [
+    "icon.png"
+  ]
+}
