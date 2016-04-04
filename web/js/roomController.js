@@ -7,9 +7,14 @@
   var numUsrsInRoom = 0;
   var _disabledAllVideos = false;
 
-  var setPublisherReady;
+  var isPublisherReady = false;
+  var publisherPromiseSolver;
+  var setPublisherReady = function() {
+    isPublisherReady = true;
+    publisherPromiseSolver();
+  };
   var publisherReady = new Promise(function(resolve, reject) {
-    setPublisherReady = resolve;
+    publisherPromiseSolver = resolve;
   });
 
   var MAIN_PAGE = '/index.html';
@@ -261,6 +266,12 @@
       if (isPublisher) {
         buttonInfo = publisherButtons[name];
         newStatus = !buttonInfo.enabled;
+        // If the user changes the status (presses the buttons) before the publisher is ready then
+        // we won't get a stream event. So assume the operation was performed and change the UI
+        // status
+        if (!isPublisherReady) {
+          sendStatus({ stream: { streamId: 'publisher' } }, name, newStatus);
+        }
       } else {
         var stream = subscriberStreams[streamId];
         if (!stream) {
