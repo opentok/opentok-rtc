@@ -381,6 +381,9 @@
     subscribe: subscribe,
     screenShareErrorCodes: PUB_SCREEN_ERROR_CODES,
     setPreferredResolution: setPreferredResolution,
+    publisherHas: function(aType) {
+      return _publisher.stream['has' + (aType.toLowerCase() === 'audio' && 'Audio' || 'Video')];
+    },
     get publisherId() {
       return _publisher.stream.id;
     },
