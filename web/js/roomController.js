@@ -7,14 +7,9 @@
   var numUsrsInRoom = 0;
   var _disabledAllVideos = false;
 
-  var isPublisherReady = false;
-  var publisherPromiseSolver;
-  var setPublisherReady = function() {
-    isPublisherReady = true;
-    publisherPromiseSolver();
-  };
+  var setPublisherReady;
   var publisherReady = new Promise(function(resolve, reject) {
-    publisherPromiseSolver = resolve;
+    setPublisherReady = resolve;
   });
 
   var MAIN_PAGE = '/index.html';
@@ -266,10 +261,10 @@
       if (isPublisher) {
         buttonInfo = publisherButtons[name];
         newStatus = !buttonInfo.enabled;
-        // If the user changes the status (presses the buttons) before the publisher is ready then
-        // we won't get a stream event. So assume the operation was performed and change the UI
-        // status
-        if (!isPublisherReady) {
+        // There are a couple of possible race conditions that would end on us not changing
+        // the status on the publisher (because it's already on that state) but where we should
+        // update the UI to reflect the correct state.
+        if (!OTHelper.isPublisherReady || OTHelper.publisherHas(name) === newStatus) {
           sendStatus({ stream: { streamId: 'publisher' } }, name, newStatus);
         }
       } else {
