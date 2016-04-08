@@ -29,7 +29,7 @@
 			<key>metadata</key>
 			<dict>
 				<key>bundle-identifier</key>
-				<string>com.tokbox.iosOpenTokDemoApp</string>
+				<string>com.opentok.iosOpenTokDemoApp</string>
 				<key>bundle-version</key>
 				<string>1.0</string>
 				<key>kind</key>
