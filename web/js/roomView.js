@@ -400,7 +400,7 @@
     var config = ZeroClipboard.config();
     var swfObject = document.getElementById(config.swfObjectId);
     var myHoverClass = 'my-zeroclipboard-is-hover';
-    swfObject.addEventListener('mouseenter', function(evt) {
+    swfObject && swfObject.addEventListener('mouseenter', function(evt) {
       linkToShare.classList.add(myHoverClass);
       swfObject.addEventListener('mouseleave', function onMouseLeave() {
         swfObject.removeEventListener('mouseleave', onMouseLeave);
