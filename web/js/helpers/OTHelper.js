@@ -297,7 +297,8 @@
               code: PUB_SCREEN_ERROR_CODES.extNotRegistered,
               message: 'This browser does not support screen sharing.'
             });
-          } else if (response.extensionInstalled === false) {
+          } else if (response.extensionRequired !== undefined &&
+                     response.extensionInstalled === false) {
             reject({
               code: PUB_SCREEN_ERROR_CODES.extNotInstalled,
               message: 'Please install the screen sharing extension and load your app over https.'
