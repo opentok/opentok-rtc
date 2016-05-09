@@ -93,6 +93,7 @@ function ServerMethods(aLogLevel, aModules) {
         var otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret);
 
         var allowIframing = persistConfig[C.RED_ALLOW_IFRAMING];
+        var archiveAlways = persistConfig[C.ARCHIVE_ALWAYS] == 'true' ? true : false;
 
         // This isn't strictly necessary... but since we're using promises all over the place, it
         // makes sense. The _P are just a promisified version of the methods. We could have
@@ -128,7 +129,8 @@ function ServerMethods(aLogLevel, aModules) {
               maxSessionAgeMs: maxSessionAgeMs,
               fbArchives: firebaseArchives,
               allowIframing: allowIframing,
-              chromeExtId: chromeExtId
+              chromeExtId: chromeExtId,
+              archiveAlways: archiveAlways
             };
           });
       });
@@ -205,18 +207,23 @@ function ServerMethods(aLogLevel, aModules) {
   // Given a sessionInfo (which might be empty or non usable) returns a promise than will fullfill
   // to an usable sessionInfo. This function cannot be invoked directly, it has
   // to be bound so 'this' is a valid Opentok instance!
-  function _getUsableSessionInfo(aMaxSessionAge, aSessionInfo) {
+  function _getUsableSessionInfo(aMaxSessionAge, aArchiveAlways, aSessionInfo) {
     aSessionInfo = aSessionInfo && JSON.parse(aSessionInfo);
     return new Promise((resolve) => {
       var minLastUsage = Date.now() - aMaxSessionAge;
 
       logger.log('getUsableSessionInfo. aSessionInfo:', JSON.stringify(aSessionInfo),
-                 'minLastUsage: ', minLastUsage, 'maxSessionAge:', aMaxSessionAge);
+                 'minLastUsage: ', minLastUsage, 'maxSessionAge:', aMaxSessionAge,
+                 'archiveAlways:', aArchiveAlways);
 
       if (!aSessionInfo || aSessionInfo.lastUsage <= minLastUsage) {
         // We need to create a new session...
+        var sessionOptions = { mediaMode: 'routed' };
+        if (aArchiveAlways) {
+          sessionOptions.archiveMode = 'always';
+        }
         this.
-          createSession({ mediaMode: 'routed' }, (error, session) => {
+          createSession(sessionOptions, (error, session) => {
             resolve({
               sessionId: session.sessionId,
               lastUsage: Date.now(),
@@ -260,7 +267,8 @@ function ServerMethods(aLogLevel, aModules) {
     // Note that we do not persist tokens.
     serverPersistence.
       getKey(C.RED_ROOM_PREFIX + roomName).
-      then(_getUsableSessionInfo.bind(tbConfig.otInstance, tbConfig.maxSessionAgeMs)).
+      then(_getUsableSessionInfo.bind(tbConfig.otInstance, tbConfig.maxSessionAgeMs,
+                                      tbConfig.archiveAlways)).
       then(usableSessionInfo => {
         // Update the database. We could do this on getUsable...
         serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, C.RED_ROOM_PREFIX + roomName,

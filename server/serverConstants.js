@@ -59,6 +59,8 @@ E.RED_ALLOW_IFRAMING = 'allow_iframing';
 E.RED_ROOM_PREFIX = 'otrtc_room__';
 E.RED_ROOM_MATCHES = E.RED_ROOM_PREFIX + '*';
 
+E.ARCHIVE_ALWAYS = 'tbAlwaysArchiveSession';
+
 E.REDIS_KEYS = [
   { key: E.RED_TB_API_KEY, defaultValue: env.TB_API_KEY || null },
   { key: E.RED_TB_API_SECRET, defaultValue: env.TB_API_SECRET || null },
@@ -69,5 +71,6 @@ E.REDIS_KEYS = [
   { key: E.RED_TB_MAX_SESSION_AGE, defaultValue: env.TB_MAX_SESSION_AGE || 2 },
   { key: E.RED_EMPTY_ROOM_MAX_LIFETIME, defaultValue: env.EMPTY_ROOM_LIFETIME || 3 },
   { key: E.RED_ALLOW_IFRAMING, defaultValue: env.ALLOW_IFRAMING || 'never' },
-  { key: E.RED_CHROME_EXTENSION_ID, defaultValue: env.CHROME_EXTENSION_ID || 'undefined' }
+  { key: E.RED_CHROME_EXTENSION_ID, defaultValue: env.CHROME_EXTENSION_ID || 'undefined' },
+  { key: E.ARCHIVE_ALWAYS, defaultValue: env.ARCHIVE_ALWAYS || 'false' }
 ];
