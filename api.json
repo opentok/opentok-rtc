@@ -47,6 +47,13 @@
                         "in": "query",
                         "required": false,
                         "type": "string"
+                    },
+                    {
+                        "name": "template",
+                        "description": "Desired template.",
+                        "in": "query",
+                        "required": false,
+                        "type": "string"
                     }
                 ],
                 "tags": [
@@ -57,6 +64,12 @@
                         "description": "The HTML for the room",
                         "schema": {
                             "$ref": "#/definitions/RoomHTML"
+                        }
+                    },
+                    "400": {
+                        "description": "Unknown template",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorInfo"
                         }
                     }
                 }

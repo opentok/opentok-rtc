@@ -175,7 +175,9 @@ function ServerMethods(aLogLevel, aModules) {
   // Return the personalized HTML for a room.
   function getRoom(aReq, aRes) {
     logger.log('getRoom serving ' + aReq.path, 'roomName:', aReq.params.roomName,
-               'userName:', aReq.query && aReq.query.userName);
+               'userName:', aReq.query && aReq.query.userName,
+               'template:', aReq.query && aReq.query.template);
+    var template = aReq.query && aReq.query.template;
     var userName = aReq.query && aReq.query.userName;
     var tbConfig = aReq.tbConfig;
 
@@ -185,11 +187,18 @@ function ServerMethods(aLogLevel, aModules) {
     aRes.set('Expires', 0);
 
     aRes.
-      render('room.ejs',
+      render((template ? template : 'room') + '.ejs',
              {
                userName: userName || C.DEFAULT_USER_NAME,
                roomName: aReq.params.roomName,
                chromeExtensionId: tbConfig.chromeExtId
+             }, (err, html) => {
+               if (err) {
+                 logger.log('getRoom. error:', err);
+                 aRes.status(400).send(new ErrorInfo(400, 'Unknown template.'));
+               } else {
+                 aRes.send(html);
+               }
              });
   }
 
