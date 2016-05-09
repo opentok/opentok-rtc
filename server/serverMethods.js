@@ -241,6 +241,8 @@ function ServerMethods(aLogLevel, aModules) {
     aRes.
       render((template ? template : tbConfig.defaultTemplate) + '.ejs',
              {
+               iosURL: 'https://opentokdemo.tokbox.com/room/'+ aReq.params.roomName +
+                       '?userName=' + (userName || C.DEFAULT_USER_NAME),
                userName: userName || C.DEFAULT_USER_NAME,
                roomName: aReq.params.roomName,
                chromeExtensionId: tbConfig.chromeExtId
