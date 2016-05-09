@@ -63,7 +63,7 @@ describe('OpenTokRTC server', function() {
   const RoomInfo = ['sessionId', 'apiKey', 'token', 'username'];
   const ArchiveInfo = ['archiveId', 'archiveType'];
   const ArchiveURL = ['archiveId'];
-  const ReturnError = ['code', 'message', 'fields'];
+  const ReturnError = ['code', 'message'];
 
   it('GET /room/:roomName/info', function(done) {
     request(app).
@@ -120,6 +120,23 @@ describe('OpenTokRTC server', function() {
       set('Accept', 'text/html').
       expect('Content-Type', new RegExp('text/html')).
       expect(200, done);
+  });
+
+  it('GET /room/:roomName?template=room', function(done) {
+    request(app).
+      get('/room/roomName?template=room').
+      set('Accept', 'text/html').
+      expect('Content-Type', new RegExp('text/html')).
+      expect(200, done);
+  });
+
+  it('GET /room/:roomName?template=unknownTemplate', function(done) {
+    request(app).
+      get('/room/roomName?template=unknownTemplate').
+      set('Accept', 'application/json').
+      expect('Content-Type', new RegExp('application/json')).
+      expect(checkForAttributes.bind(undefined, ReturnError)).
+      expect(400, done);
   });
 
   it('POST /room/:roomName/archive should allow composite archiving', function(done) {
