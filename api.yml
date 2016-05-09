@@ -2,8 +2,8 @@ swagger: '2.0'
 info:
   title: OpenTokRTC_v2 API
   description: >-
-    OpenTok Demo App, v2.0 path and API description.
-    TO-DO: Add here a general description of the page navigation.
+    OpenTok Demo App, v2.0 path and API description. TO-DO: Add here a general
+    description of the page navigation.
   version: 1.0.0
 host: opentokdemo.tokbox.com
 schemes:
@@ -21,20 +21,18 @@ x-implementation-middleware:
   - iframingOptions
 x-implementation-configuration: loadConfig
 paths:
-  /room/{roomName}:
+  '/room/{roomName}':
     get:
       summary: Connects to a new or existing room.
       x-implemented-in: getRoom
       produces:
-         - text/html,
+        - 'text/html,'
       description: >-
-        Returns an HTML document that shows the defined UI for a chat
-        'room' where the user may or may not have specified an
-        identity. The document returned will NOT have any of the
-        information needed to connect to the Tokbox servers already
-        factored in.
-        TO-DO: ¿Queremos que esto sea así o que
-        devolvamos ya todo configurado?
+        Returns an HTML document that shows the defined UI for a chat 'room'
+        where the user may or may not have specified an identity. The document
+        returned will NOT have any of the information needed to connect to the
+        Tokbox servers already factored in. TO-DO: ¿Queremos que esto sea así o
+        que devolvamos ya todo configurado?
       parameters:
         - name: roomName
           in: path
@@ -46,7 +44,7 @@ paths:
           in: query
           required: false
           type: string
-       - name: template
+        - name: template
           description: Desired template.
           in: query
           required: false
@@ -66,8 +64,7 @@ paths:
     post:
       summary: Callback for the OpenTok Archive API.
       x-implemented-in: postUpdateArchiveInfo
-      description: >-
-        Gets the updated information for a recording archive.
+      description: Gets the updated information for a recording archive.
       parameters:
         - name: otArchiveInfo
           in: body
@@ -78,19 +75,18 @@ paths:
       responses:
         '200':
           description: OK
-  /room/{roomName}/info:
+  '/room/{roomName}/info':
     get:
       summary: Information needed to connect to the TB servers.
       x-implemented-in: getRoomInfo
       produces:
-         - application/json,
+        - 'application/json,'
       description: >-
-        Returns the information (sessionId, token, apiKey) that's
-        required to connect to an opentok session. The sessionId
-        returned is specific for the room, and the token MAY include
-        information about the user that's connecting (identified as
-        anonymous if the user didn't specify a name). Note that
-        every time this URL is fetched a new token is created.
+        Returns the information (sessionId, token, apiKey) that's required to
+        connect to an opentok session. The sessionId returned is specific for
+        the room, and the token MAY include information about the user that's
+        connecting (identified as anonymous if the user didn't specify a name).
+        Note that every time this URL is fetched a new token is created.
       parameters:
         - name: roomName
           in: path
@@ -113,21 +109,45 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/ErrorInfo'
-  /room/{roomName}/archive:
+  '/room/{roomName}/archive':
+    get:
+      summary: Last archive recorded of roomName
+      x-implemented-in: getRoomArchive
+      produces:
+        - text/html
+      description: >-
+        Returns the information of the last archive recorded (if it exists)  of
+        the sessionId belonging to roomName
+      parameters:
+        - name: roomName
+          in: path
+          type: string
+          description: Name of the room
+          required: true
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/ErrorInfo'
+        '404':
+          description: Archive not found
+          schema:
+            $ref: '#/definitions/ErrorInfo'
     post:
       summary: Starts/stop an archiving operation.
       x-implemented-in: postRoomArchive
       consumes:
-         - application/x-www-form-urlencoded
+        - application/x-www-form-urlencoded
       produces:
-         - application/json,
+        - 'application/json,'
       description: >-
-        Starts or stops an archiving operation. Returns the
-        information about the new recording, and inserts that
-        information on the firebase record associated to the
-        room. Once a recording is in process, succesives call with
-        operation=start are ignored and the existing record of the
-        current archive is returned.
+        Starts or stops an archiving operation. Returns the information about
+        the new recording, and inserts that information on the firebase record
+        associated to the room. Once a recording is in process, succesives call
+        with operation=start are ignored and the existing record of the current
+        archive is returned.
       tags:
         - Archives
       parameters:
@@ -155,17 +175,17 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/ErrorInfo'
-  /archive/{archiveId}:
+  '/archive/{archiveId}':
     get:
       summary: Gets and returns a temporary archive URL.
       x-implemented-in: getArchive
       produces:
         - application/json
       description: >-
-        Creates a new temporary archive URL to allow the visualization
-        or download of an existing archive. The URL created is valid
-        for 10 minutes only! What this API actually does is just
-        returning a 301 with the actual download URL
+        Creates a new temporary archive URL to allow the visualization or
+        download of an existing archive. The URL created is valid for 10 minutes
+        only! What this API actually does is just returning a 301 with the
+        actual download URL
       tags:
         - Archives
       parameters:
@@ -183,12 +203,12 @@ paths:
           required: false
           type: string
       responses:
-        '301':
-          description: Information to download or view the archive file.
-          schema:
-            $ref: '#/definitions/ArchiveURL'
         '200':
           description: HTML with the video embedded.
+          schema:
+            $ref: '#/definitions/ArchiveURL'
+        '301':
+          description: Information to download or view the archive file.
           schema:
             $ref: '#/definitions/ArchiveURL'
         '400':
@@ -200,8 +220,7 @@ paths:
       x-implemented-in: deleteArchive
       produces:
         - application/json
-      description: >-
-        Erases an stored archive.
+      description: Erases an stored archive.
       tags:
         - Archives
       parameters:
@@ -271,8 +290,8 @@ definitions:
       duration:
         description: >-
           The duration of the archive in seconds. For archives that have are
-          being recorded (with the status property set "started"), this value
-          is set to 0.
+          being recorded (with the status property set "started"), this value is
+          set to 0.
         type: string
       name:
         description: The name of the archive you supplied (this is optional)
@@ -282,10 +301,9 @@ definitions:
         type: string
       reason:
         description: >-
-          For archives with the status "stopped", this can be set to
-          "90 mins exceeded", "failure", "session ended", "user initiated".
-          For archives with the status "failed", this can be set to
-          "system failure".
+          For archives with the status "stopped", this can be set to "90 mins
+          exceeded", "failure", "session ended", "user initiated". For archives
+          with the status "failed", this can be set to "system failure".
         type: string
       sessionId:
         description: The session ID of the OpenTok session that was archived.
@@ -303,9 +321,9 @@ definitions:
       url:
         type: string
         description: >-
-          The download URL of the available archive file. This is only set
-          for an archive with the status set to "available"; for other archives,
-          (including archives with the status "uploaded") this property is set to
-          null. The download URL is obfuscated, and the file is only available from
-          the URL for 10 minutes. To generate a new URL, use the REST API for
-          retrieving archive information or listing archives.
+          The download URL of the available archive file. This is only set for
+          an archive with the status set to "available"; for other archives,
+          (including archives with the status "uploaded") this property is set
+          to null. The download URL is obfuscated, and the file is only
+          available from the URL for 10 minutes. To generate a new URL, use the
+          REST API for retrieving archive information or listing archives.
