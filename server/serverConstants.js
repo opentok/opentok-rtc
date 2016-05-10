@@ -59,7 +59,12 @@ E.RED_ALLOW_IFRAMING = 'allow_iframing';
 E.RED_ROOM_PREFIX = 'otrtc_room__';
 E.RED_ROOM_MATCHES = E.RED_ROOM_PREFIX + '*';
 
-E.ARCHIVE_ALWAYS = 'tbAlwaysArchiveSession';
+// Set to 'true' if we want the sessions to be archived always.
+E.ARCHIVE_ALWAYS = 'tb_always_archive_session';
+
+E.DEFAULT_TEMPLATE = 'default_template';
+E.TEMPLATING_SECRET = 'templating_secret';
+
 
 E.REDIS_KEYS = [
   { key: E.RED_TB_API_KEY, defaultValue: env.TB_API_KEY || null },
@@ -72,5 +77,7 @@ E.REDIS_KEYS = [
   { key: E.RED_EMPTY_ROOM_MAX_LIFETIME, defaultValue: env.EMPTY_ROOM_LIFETIME || 3 },
   { key: E.RED_ALLOW_IFRAMING, defaultValue: env.ALLOW_IFRAMING || 'never' },
   { key: E.RED_CHROME_EXTENSION_ID, defaultValue: env.CHROME_EXTENSION_ID || 'undefined' },
+  { key: E.DEFAULT_TEMPLATE, defaultValue: env.DEFAULT_TEMPLATE || 'room' },
+  { key: E.TEMPLATING_SECRET, defaultValue: env.TEMPLATING_SECRET || undefined },
   { key: E.ARCHIVE_ALWAYS, defaultValue: env.ARCHIVE_ALWAYS || 'false' }
 ];

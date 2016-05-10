@@ -19,6 +19,7 @@ describe('OpenTokRTC server', function() {
     var fs = require('fs');
 
     MockOpentok = require('../mocks/mock_opentok.js');
+    process.env.TEMPLATING_SECRET='123456';
 
     // Note that we're not actually testing anything that uses Firebase here. They'll
     // have their own unit tests. We're only avoiding using it at all.
@@ -130,9 +131,27 @@ describe('OpenTokRTC server', function() {
       expect(200, done);
   });
 
-  it('GET /room/:roomName?template=unknownTemplate', function(done) {
+  it('GET /room/:roomName?template=unknownTemplate without auth, return default', function(done) {
     request(app).
       get('/room/roomName?template=unknownTemplate').
+      set('Accept', 'text/html').
+      expect('Content-Type', new RegExp('text/html')).
+      expect(200, done);
+  });
+
+  it('GET /room/:roomName?template=unknownTemplate&template_auth=1234 invalid auth',
+    function(done) {
+    request(app).
+      get('/room/roomName?template=unknownTemplate&template_auth=1234').
+      set('Accept', 'text/html').
+      expect('Content-Type', new RegExp('text/html')).
+      expect(200, done);
+  });
+
+  it('GET /room/:roomName?template=unknownTemplate&template_auth=123456 valid auth',
+    function(done) {
+    request(app).
+      get('/room/roomName?template=unknownTemplate&template_auth=123456').
       set('Accept', 'application/json').
       expect('Content-Type', new RegExp('application/json')).
       expect(checkForAttributes.bind(undefined, ReturnError)).

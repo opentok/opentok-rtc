@@ -85,6 +85,8 @@ function ServerMethods(aLogLevel, aModules) {
     // This will hold the configuration read from Redis
     return serverPersistence.updateCache().
       then(persistConfig => {
+        var defaultTemplate = persistConfig[C.DEFAULT_TEMPLATE];
+        var templatingSecret = persistConfig[C.TEMPLATING_SECRET];
         var apiKey = persistConfig[C.RED_TB_API_KEY];
         var apiSecret = persistConfig[C.RED_TB_API_SECRET];
         var archivePollingTO = parseInt(persistConfig[C.RED_TB_ARCHIVE_POLLING_INITIAL_TIMEOUT]);
@@ -130,6 +132,8 @@ function ServerMethods(aLogLevel, aModules) {
               fbArchives: firebaseArchives,
               allowIframing: allowIframing,
               chromeExtId: chromeExtId,
+              defaultTemplate: defaultTemplate,
+              templatingSecret: templatingSecret,
               archiveAlways: archiveAlways
             };
           });
@@ -176,12 +180,14 @@ function ServerMethods(aLogLevel, aModules) {
 
   // Return the personalized HTML for a room.
   function getRoom(aReq, aRes) {
+    var query = aReq.query;
     logger.log('getRoom serving ' + aReq.path, 'roomName:', aReq.params.roomName,
-               'userName:', aReq.query && aReq.query.userName,
-               'template:', aReq.query && aReq.query.template);
-    var template = aReq.query && aReq.query.template;
-    var userName = aReq.query && aReq.query.userName;
+               'userName:', query && query.userName,
+               'template:', query && query.template);
     var tbConfig = aReq.tbConfig;
+    var template = query && tbConfig.templatingSecret &&
+      (tbConfig.templatingSecret === query.template_auth) && query.template;
+    var userName = query && query.userName;
 
     // We really don't want to cache this
     aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
@@ -189,7 +195,7 @@ function ServerMethods(aLogLevel, aModules) {
     aRes.set('Expires', 0);
 
     aRes.
-      render((template ? template : 'room') + '.ejs',
+      render((template ? template : tbConfig.defaultTemplate) + '.ejs',
              {
                userName: userName || C.DEFAULT_USER_NAME,
                roomName: aReq.params.roomName,
