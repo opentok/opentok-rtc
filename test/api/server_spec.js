@@ -202,5 +202,9 @@ describe('OpenTokRTC server', function() {
       expect(200, done);
   });
 
-
+  it('GET /room/:roomName/archive should return 404 for not exiting archive', function(done) {
+    request(app).
+      get('/room/unitTestRoom/archive').
+      expect(404, done);
+  });
 });
