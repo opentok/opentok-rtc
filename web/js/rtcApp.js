@@ -56,7 +56,7 @@
 this.addEventListener('load', function startApp() {
   // Note that since the server forbids loading the content on an iframe this should not execute.
   // But it doesn't hurt either
-  if (window.top !== window.self) {
+  if (window.top !== window.self && !window.iframing_allowed) {
     // If we're being loaded inside an iframe just hijack the top level window and go back to
     // the index page.
     window.top.document.location = '/index.html';
