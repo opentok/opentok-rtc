@@ -143,6 +143,40 @@
             }
         },
         "/room/{roomName}/archive": {
+            "get": {
+                "summary": "Last archive recorded of roomName",
+                "x-implemented-in": "getRoomArchive",
+                "produces": [
+                    "text/html"
+                ],
+                "description": "Returns the information of the last archive recorded (if it exists)  of the sessionId belonging to roomName",
+                "parameters": [
+                    {
+                        "name": "roomName",
+                        "in": "path",
+                        "type": "string",
+                        "description": "Name of the room",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorInfo"
+                        }
+                    },
+                    "404": {
+                        "description": "Archive not found",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorInfo"
+                        }
+                    }
+                }
+            },
             "post": {
                 "summary": "Starts/stop an archiving operation.",
                 "x-implemented-in": "postRoomArchive",

@@ -161,6 +161,50 @@ function ServerMethods(aLogLevel, aModules) {
     aNext();
   }
 
+  function getRoomArchive(aReq, aRes) {
+    logger.log('getRoomArchive ' + aReq.path, 'roomName: ' + aReq.params.roomName);
+    var tbConfig = aReq.tbConfig;
+    var roomName = aReq.params.roomName;
+    serverPersistence.
+      getKey(C.RED_ROOM_PREFIX + roomName).
+      then(_getUsableSessionInfo.bind(tbConfig.otInstance,
+                                      tbConfig.maxSessionAgeMs,
+                                      tbConfig.archiveAlways)).
+      then(usableSessionInfo => {
+        serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, C.RED_ROOM_PREFIX + roomName,
+                                   JSON.stringify(usableSessionInfo));
+        var sessionId = usableSessionInfo.sessionId;
+        tbConfig.otInstance.listArchives_P({ offset: 0, count: 1000 }).
+          then(aArchives => {
+            var archive = aArchives.reduce((aLastArch, aCurrArch) => {
+              return aCurrArch.sessionId === sessionId &&
+                     aCurrArch.createdAt > aLastArch.createdAt && aCurrArch ||
+                     aLastArch;
+            }, { createdAt: 0 });
+
+            if (!archive.sessionId || !archive.url) {
+              aRes.status(404).send(new ErrorInfo(404, 'Unknown archive'));
+            } else {
+              aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+              aRes.set('Pragma', 'no-cache');
+              aRes.set('Expires', 0);
+
+              aRes.render('archivePreview.ejs', {
+                archiveName: archive.name,
+                archiveURL: archive.url
+              });
+            }
+          }).
+          catch(error => {
+            logger.log('getRoomArchive. Error:', error);
+            aRes.status(400).send(error);
+          });
+      }).catch(error => {
+        logger.log('getRoomArchive. Error:', error);
+        aRes.status(400).send(error);
+      });
+  }
+
   // Update archive callback. TO-DO: Is there any way of restricting calls to this?
   function postUpdateArchiveInfo(aReq, aRes) {
     var archive = aReq.body;
@@ -220,7 +264,7 @@ function ServerMethods(aLogLevel, aModules) {
 
       logger.log('getUsableSessionInfo. aSessionInfo:', JSON.stringify(aSessionInfo),
                  'minLastUsage: ', minLastUsage, 'maxSessionAge:', aMaxSessionAge,
-                 'archiveAlways:', aArchiveAlways);
+                 'archiveAlways: ', aArchiveAlways);
 
       if (!aSessionInfo || aSessionInfo.lastUsage <= minLastUsage) {
         // We need to create a new session...
@@ -499,7 +543,8 @@ function ServerMethods(aLogLevel, aModules) {
     postRoomArchive: postRoomArchive,
     postUpdateArchiveInfo: postUpdateArchiveInfo,
     getArchive: getArchive,
-    deleteArchive: deleteArchive
+    deleteArchive: deleteArchive,
+    getRoomArchive: getRoomArchive
   };
 
 }

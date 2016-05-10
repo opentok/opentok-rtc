@@ -51,7 +51,7 @@ function Opentok(aApiKey, aApiSecret) {
 
   sinon.stub(opentok, 'listArchives', function(aOptions, aCallback) {
     var list = Object.keys(_archives).map(key => _archives[key]);
-    setTimeout(aCallback.bind(undefined, list));
+    setTimeout(aCallback.bind(undefined, undefined, list));
   });
 
   opentok._sinonRestore = function() {
