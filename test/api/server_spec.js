@@ -19,7 +19,7 @@ describe('OpenTokRTC server', function() {
     var fs = require('fs');
 
     MockOpentok = require('../mocks/mock_opentok.js');
-    process.env.TEMPLATING_SECRET='123456';
+    process.env.TEMPLATING_SECRET = '123456';
 
     // Note that we're not actually testing anything that uses Firebase here. They'll
     // have their own unit tests. We're only avoiding using it at all.
