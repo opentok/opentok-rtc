@@ -177,15 +177,10 @@ function ServerMethods(aLogLevel, aModules) {
         tbConfig.otInstance.listArchives_P({ offset: 0, count: 1000 }).
           then(aArchives => {
             var archive = aArchives.reduce((aLastArch, aCurrArch) => {
-              var archTmp = aLastArch;
-              var lastCreatedAt = aLastArch.createdAt || 0;
-              if (aCurrArch.sessionId === sessionId) {
-                if (aCurrArch.createdAt > lastCreatedAt) {
-                  archTmp = aCurrArch;
-                }
-              }
-              return archTmp;
-            }, {});
+              return aCurrArch.sessionId === sessionId &&
+                     aCurrArch.createdAt > aLastArch.createdAt && aCurrArch ||
+                     aLastArch;
+            }, { createdAt: 0 });
 
             if (!archive.sessionId || !archive.url) {
               aRes.status(404).send(new ErrorInfo(404, 'Unknown archive'));
