@@ -162,7 +162,7 @@ function ServerMethods(aLogLevel, aModules) {
   }
 
   function getRoomArchive(aReq, aRes) {
-    logger.log('getRoomArchive ' + aReq.path, 'roomName:' + aReq.params.roomName);
+    logger.log('getRoomArchive ' + aReq.path, 'roomName: ' + aReq.params.roomName);
     var tbConfig = aReq.tbConfig;
     var roomName = aReq.params.roomName;
     serverPersistence.
@@ -269,7 +269,7 @@ function ServerMethods(aLogLevel, aModules) {
 
       logger.log('getUsableSessionInfo. aSessionInfo:', JSON.stringify(aSessionInfo),
                  'minLastUsage: ', minLastUsage, 'maxSessionAge:', aMaxSessionAge,
-                 'archiveAlways:', aArchiveAlways);
+                 'archiveAlways: ', aArchiveAlways);
 
       if (!aSessionInfo || aSessionInfo.lastUsage <= minLastUsage) {
         // We need to create a new session...

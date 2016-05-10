@@ -65,7 +65,6 @@ E.ARCHIVE_ALWAYS = 'tb_always_archive_session';
 E.DEFAULT_TEMPLATE = 'default_template';
 E.TEMPLATING_SECRET = 'templating_secret';
 
-
 E.REDIS_KEYS = [
   { key: E.RED_TB_API_KEY, defaultValue: env.TB_API_KEY || null },
   { key: E.RED_TB_API_SECRET, defaultValue: env.TB_API_SECRET || null },
