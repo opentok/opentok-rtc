@@ -50,7 +50,15 @@
     document.body.removeEventListener('click', onBodyClicked);
     Object.keys(bubbles).forEach(function(id) {
       var bubble = bubbles[id];
-      (bubble.associatedWith !== evt.target) && bubble.hide();
+      var target = evt.target;
+      if (bubble.associatedWith !== target) {
+        // pointer-events is not working on IE so we can receive as target a child of
+        // "change layout" item in main menu
+        target = HTMLElems.getAncestorByTagName(target, 'a');
+        if (bubble.associatedWith !== target) {
+          bubble.hide();
+        }
+      }
     });
   };
 
