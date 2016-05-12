@@ -15,6 +15,7 @@ LayoutBase.prototype = {
         style[feature] = features[feature];
       });
     }, this);
+    this.flush();
     return this;
   },
 
@@ -24,6 +25,10 @@ LayoutBase.prototype = {
 
   get total() {
     return Object.keys(this.items).length;
+  },
+
+  flush: function() {
+    HTMLElems.flush(this.container);
   },
 
   destroy: function() {
