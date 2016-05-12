@@ -103,7 +103,7 @@
       // element being redrawn - we have to trigger out reflow manually.
       return function(element) {
         element = typeof element === 'string' ? document.querySelector(element) : element;
-        element.classList.toggle('flush-this-element-please');
+        element && element.classList.toggle('flush-this-element-please');
       };
     } else {
       return function() {
