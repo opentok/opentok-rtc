@@ -85,6 +85,7 @@
       document.body.dataset.chatStatus = 'hidden';
     }
     Utils.sendEvent('roomView:chatVisibility', visible);
+    HTMLElems.flush('#toggleChat');
   }
 
   var chatViews = {
@@ -100,6 +101,7 @@
     'hidden': function(evt) {
       document.body.dataset.chatStatus = 'hidden';
       setUnreadMessages(0);
+      HTMLElems.flush('#toggleChat');
     }
   };
 
