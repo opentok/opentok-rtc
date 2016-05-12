@@ -376,6 +376,7 @@
       }
 
       document.body.dataset.archiveStatus = e.detail.status;
+      HTMLElems.flush(['#toggleArchiving', '[data-stream-type=publisher] [data-icon="record"]']);
     });
 
     Utils.addEventsHandlers('screenShareController:', screenShareCtrEvents, exports);
