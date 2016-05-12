@@ -96,6 +96,22 @@
     });
   }
 
+  var flush = (function flush() {
+    if (/MSIE (\d+\.\d+);/.test(navigator.userAgent) || navigator.userAgent.indexOf("Trident/")) {
+      // While many attributes, when changed, cause a reflow this doesn't appear to be the case with
+      // data-* attributes in Internet Explorer. Changing these will not immediately result in the
+      // element being redrawn - we have to trigger out reflow manually.
+      return function(element) {
+        element = typeof element === 'string' ? document.querySelector(element) : element;
+        element.classList.toggle('flush-this-element-please');
+      };
+    } else {
+      return function() {
+
+      };
+    }
+  })();
+
   exports.HTMLElems = {
     addText: addText,
     replaceText: replaceText,
@@ -106,7 +122,8 @@
     },
     setEnabled: setEnabled,
     getAncestorByTagName: getAncestorByTagName,
-    addHandlerArchive: addHandlerArchive
+    addHandlerArchive: addHandlerArchive,
+    flush: flush
   };
 
 }(this);
