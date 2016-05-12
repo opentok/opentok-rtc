@@ -156,6 +156,11 @@
     return label.join('');
   }
 
+  function isIE() {
+    var userAgent = 'userAgent' in navigator && navigator.userAgent.toLowerCase() || '';
+    return /msie/.test(userAgent) || userAgent.indexOf("trident/") !== -1;
+  }
+
   var Utils = {
     getCurrentTime: getCurrentTime,
     inspectObject: inspectObject,
@@ -186,7 +191,8 @@
       return /chrome|chromium/i.test(userAgent) && /google inc/.test(vendor);
     },
     setDisabled: setDisabled,
-    getLabelText: getLabelText
+    getLabelText: getLabelText,
+    isIE: isIE
   };
 
   // Just replacing global.utils might not be safe... let's just expand it...

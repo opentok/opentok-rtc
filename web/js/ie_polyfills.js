@@ -30,4 +30,17 @@
       return evt;
     };
   }
+
+  if (typeof global.URL !== 'function') {
+    global._ieURL = global.URL;
+    global.URL = function(str) {
+      var parser = document.createElement('a');
+      parser.href = str;
+      if (!parser.hostname) {
+        throw new Error('URL is not valid');
+      }
+    };
+    global.URL.createObjectURL = global._ieURL.createObjectURL;
+    global.URL.revokeObjectURL = global._ieURL.revokeObjectURL;
+  }
 }(this);
