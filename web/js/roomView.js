@@ -390,6 +390,7 @@
   function toggleScreenSharing(evt) {
     var isSharing = evt.detail.isSharing;
     document.body.dataset.desktopStatus = isSharing ? 'sharing' : 'notSharing';
+    HTMLElems.flush('#toggleSharing');
   }
 
   var getURLtoShare = function() {
