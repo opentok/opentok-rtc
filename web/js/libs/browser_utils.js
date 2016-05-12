@@ -161,24 +161,6 @@
     return /msie/.test(userAgent) || userAgent.indexOf("trident/") !== -1;
   }
 
-  var isURL = (function isURL() {
-    if (isIE()) {
-      return function(word) {
-        var parser = document.createElement('a');
-        parser.href = word;
-        return !!parser.hostname;
-      };
-    } else {
-      return function(word) {
-        try {
-          return !!new URL(word);
-        } catch (e) {
-          return false;
-        }
-      };
-    }
-  })();
-
   var Utils = {
     getCurrentTime: getCurrentTime,
     inspectObject: inspectObject,
@@ -210,8 +192,7 @@
     },
     setDisabled: setDisabled,
     getLabelText: getLabelText,
-    isIE: isIE,
-    isURL: isURL
+    isIE: isIE
   };
 
   // Just replacing global.utils might not be safe... let's just expand it...

@@ -34,7 +34,8 @@
         // we need to add word separator, i.o.c. just the white space
         txt = txt.concat((i > 0 && tokens[i - 1].length > 0) ? '  ' : ' ');
       } else {
-        if (Utils.isURL(word)) {
+        try {
+          var isUrl = new URL(word);
           if (txt.length > 0) {
             if (tokens[i - 1].length > 0) {
               txt = txt.concat(' ');
@@ -47,7 +48,7 @@
              result.push({ type: TXT_TYPE, value: ' ' });
           }
           result.push({ type: URL_TYPE, value: tokens[i] });
-        } else {
+        } catch (e) {
           txt = (i > 0 && tokens[i - 1].length > 0) ?
             txt.concat(' ', word) :
             txt.concat(word);
