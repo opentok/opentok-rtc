@@ -156,6 +156,29 @@
     return label.join('');
   }
 
+  function isIE() {
+    var userAgent = 'userAgent' in navigator && navigator.userAgent.toLowerCase() || '';
+    return /msie/.test(userAgent) || userAgent.indexOf("trident/") !== -1;
+  }
+
+  var isURL = (function isURL() {
+    if (isIE()) {
+      return function(word) {
+        var parser = document.createElement('a');
+        parser.href = word;
+        return !!parser.hostname;
+      };
+    } else {
+      return function(word) {
+        try {
+          return !!new URL(word);
+        } catch (e) {
+          return false;
+        }
+      };
+    }
+  })();
+
   var Utils = {
     getCurrentTime: getCurrentTime,
     inspectObject: inspectObject,
@@ -186,7 +209,9 @@
       return /chrome|chromium/i.test(userAgent) && /google inc/.test(vendor);
     },
     setDisabled: setDisabled,
-    getLabelText: getLabelText
+    getLabelText: getLabelText,
+    isIE: isIE,
+    isURL: isURL
   };
 
   // Just replacing global.utils might not be safe... let's just expand it...

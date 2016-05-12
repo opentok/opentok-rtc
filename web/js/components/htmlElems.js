@@ -97,7 +97,7 @@
   }
 
   var flush = (function flush() {
-    if (/MSIE (\d+\.\d+);/.test(navigator.userAgent) || navigator.userAgent.indexOf("Trident/")) {
+    if (Utils.isIE()) {
       // While many attributes, when changed, cause a reflow this doesn't appear to be the case with
       // data-* attributes in Internet Explorer. Changing these will not immediately result in the
       // element being redrawn - we have to trigger out reflow manually.
