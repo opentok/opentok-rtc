@@ -74,6 +74,7 @@
   function setUnreadMessages(count) {
     _unreadMsg = count;
     startChatElem.dataset.unreadMessages = unreadCountElem.textContent = count;
+    HTMLElems.flush(startChatElem);
   }
 
   function setChatStatus(visible) {
