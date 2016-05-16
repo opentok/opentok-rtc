@@ -97,7 +97,7 @@
   // hasn't been constructed already, or a cached object if it's been cached already
   // Note that this implementation *requires* WeapMap, so it won't work on IE9.
   // If at some point this is needed on IE it will have to be implemented using x-linked arrays.
-  var _objectCache = typeof WeakMap !== undefined && new WeakMap();
+  var _objectCache = typeof global.WeakMap !== undefined && new WeakMap();
   Utils.CachifiedObject = function(aCachedObject) {
     // The actual argument list includes not only the cached object but also the parameters...
     var args = Array.prototype.slice.call(arguments);
@@ -141,8 +141,8 @@
 
   // Returns true if the structure (fields) of aObject is the same of aTemplate. That is, is a
   // kind of "is aObject a aTemplate". The function will return true when, for attributes that
-  // are arrays on the template, all the elements of the array in aObject are of the same 
-  // type (isA) than the  *first* element of the array on the template 
+  // are arrays on the template, all the elements of the array in aObject are of the same
+  // type (isA) than the  *first* element of the array on the template
   Utils.isA = function _isA(aTemplate, aObject) {
     if (aTemplate === aObject) {
       return true;

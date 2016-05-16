@@ -67,4 +67,44 @@
       return undefined;
     };
   }
+
+  if (!global.Intl) {
+    global.Intl = {
+      DateTimeFormat: function(locales, options) {
+        return {
+          format: function(date) {
+            var time = [];
+            var suffix = '';
+
+            var hours = date.getHours();
+            if (options.hour12) {
+              if (hours > 12) {
+                suffix = ' PM';
+                hours -= 12;
+              } else {
+                suffix = ' AM';
+              }
+            }
+
+            if (options.hour === '2-digit' && hours < 10) {
+              time.push('0');
+            }
+
+            time.push(hours);
+            time.push(':');
+
+            var minutes = date.getMinutes();
+            if (options.minute === '2-digit' && minutes < 10) {
+              time.push('0');
+            }
+
+            time.push(minutes);
+            time.push(suffix);
+
+            return time.join('');
+          }
+        }
+      }
+    };
+  }
 }(this);
