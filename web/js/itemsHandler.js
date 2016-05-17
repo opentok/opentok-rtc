@@ -15,7 +15,7 @@
   };
 
   var setVideoDisabled = function(item, disabled) {
-    item && (item.dataset.videoDisabled = disabled);
+    item && item.data('videoDisabled', disabled);
   };
 
   Handler.prototype = {
@@ -26,11 +26,10 @@
           if (!(HTMLElems.isAction(elemClicked))) {
             return;
           }
-          var dataset = elemClicked.dataset;
-          Utils.sendEvent(dataset.eventName, {
-            streamId: dataset.streamId,
-            name: dataset.action,
-            streamType: dataset.streamType
+          Utils.sendEvent(elemClicked.data('eventName'), {
+            streamId: elemClicked.data('streamId'),
+            name: elemClicked.data('action'),
+            streamType: elemClicked.data('streamType')
           });
           break;
 
@@ -59,7 +58,7 @@
         case 'roomController:connected':
         case 'roomController:disconnected':
           var item = this.items[evt.detail.id];
-          item && (item.dataset.disconnected = evt.type === 'roomController:disconnected');
+          item && item.data('disconnected', evt.type === 'roomController:disconnected');
           break;
 
         case 'dblclick':
@@ -67,7 +66,7 @@
 
           if (target.classList.contains('dblclick_area')) {
             Utils.sendEvent('layoutView:itemSelected', {
-              item: this.items[target.dataset.id]
+              item: this.items[target.data('id')]
             });
           }
           break;

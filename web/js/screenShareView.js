@@ -100,14 +100,14 @@
   function hideShareScreenError(e) {
     shareError.removeEventListener('click', onClick);
     Modal.hide('.screen-modal').then(function() {
-      delete shareError.dataset.screenSharingType;
+      shareError.data('screenSharingType', null);
     });
   }
 
   function showShareScreenError(type, preLoad) {
     function loadModalText() {
       preLoad && preLoad();
-      shareError.dataset.screenSharingType = type;
+      shareError.data('screenSharingType', type);
     }
     Modal.show('.screen-modal', loadModalText).then(function(e) {
       shareError.addEventListener('click', onClick);

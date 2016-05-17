@@ -148,4 +148,5 @@
       window.WeakMap = WeakMap;
     })();
   }
+
 }(this);

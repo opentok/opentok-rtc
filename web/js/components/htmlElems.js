@@ -2,6 +2,24 @@
 
   'use strict';
 
+  Element.prototype.data = function(name, value) {
+    if (!name) {
+      return null;
+    }
+
+    var dashed = name.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+
+    if (arguments.length === 2) {
+      if (value === null || typeof value === 'undefined') {
+        return this.removeAttribute('data-' + dashed);
+      } else {
+        return this.setAttribute('data-' + dashed, value);
+      }
+    } else {
+      return this.getAttribute('data-' + dashed);
+    }
+  };
+
   function replaceText(aElem, aText) {
     var newChild = document.createTextNode(aText);
     if (aElem.hasChildNodes()) {
@@ -23,7 +41,7 @@
       for (var i in aAttrs) {
         if (i.startsWith('data-')) {
           var dataElem = i.replace('data-', '');
-          elem.dataset[dataElem] = aAttrs[i];
+          elem.data(dataElem, aAttrs[i]);
         } else {
           elem.setAttribute(i, aAttrs[i]);
         }
@@ -79,16 +97,15 @@
           if (!(HTMLElems.isAction(elemClicked))) {
             return;
           }
-          var dataset = elemClicked.dataset;
           Utils.sendEvent('archive', {
-            id: dataset.id,
-            action: dataset.action,
-            username: dataset.username,
+            id: elemClicked.data('id'),
+            action: elemClicked.data('action'),
+            username: elemClicked.data('username'),
             set status(value) {
-              elemClicked.parentNode.dataset.status = value;
+              elemClicked.parentNode.data('status', value);
             },
             get status() {
-              return elemClicked.parentNode.dataset.status;
+              return elemClicked.parentNode.data('status');
             }
           });
           break;
@@ -121,7 +138,7 @@
     createElement: createElement,
     createElementAt: createElementAt,
     isAction: function(aElem) {
-      return ('action' in aElem.dataset);
+      return (aElem.data('action') !== null);
     },
     setEnabled: setEnabled,
     getAncestorByTagName: getAncestorByTagName,

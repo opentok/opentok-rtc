@@ -6,7 +6,7 @@
 
   var addHandlers = function() {
     menu.addEventListener('click', function(evt) {
-      var type = evt.target.dataset.layoutType;
+      var type = evt.target.data('layoutType');
       if (type) {
         BubbleFactory.get('chooseLayout').toggle();
         Utils.sendEvent('layoutMenuView:layout', {
@@ -19,7 +19,7 @@
       var availableLayouts = evt.detail.layouts;
 
       Array.prototype.map.call(items, function(elem) {
-        var layoutType = elem.dataset.layoutType;
+        var layoutType = elem.data('layoutType');
         var isAvailable = !!availableLayouts[layoutType];
         elem.disabled = !isAvailable;
         isAvailable ? elem.removeAttribute('disabled') : elem.setAttribute('disabled', 'disabled');

@@ -73,7 +73,8 @@
 
   function setUnreadMessages(count) {
     _unreadMsg = count;
-    startChatElem.dataset.unreadMessages = unreadCountElem.textContent = count;
+    unreadCountElem.textContent = count;
+    startChatElem.data('unreadMessages', count);
     HTMLElems.flush(startChatElem);
   }
 
@@ -81,9 +82,9 @@
     if (visible) {
       _chatHasBeenShown = true;
       setUnreadMessages(0);
-      document.body.dataset.chatStatus = 'visible';
+      document.body.data('chatStatus', 'visible');
     } else {
-      document.body.dataset.chatStatus = 'hidden';
+      document.body.data('chatStatus', 'hidden');
     }
     Utils.sendEvent('roomView:chatVisibility', visible);
     HTMLElems.flush('#toggleChat');
@@ -100,7 +101,7 @@
 
   var chatEvents = {
     'hidden': function(evt) {
-      document.body.dataset.chatStatus = 'hidden';
+      document.body.data('chatStatus', 'hidden');
       setUnreadMessages(0);
       HTMLElems.flush('#toggleChat');
     }
@@ -110,13 +111,13 @@
     'screenOnStage': function(event) {
       var status = event.detail.status;
       if (status === 'on') {
-        dock.dataset.previouslyCollapsed = dock.classList.contains('collapsed');
+        dock.data('previouslyCollapsed', dock.classList.contains('collapsed'));
         dock.classList.add('collapsed');
       } else {
-        if ('previouslyCollapsed' in dock.dataset) {
-          dock.dataset.previouslyCollapsed === 'true' ? dock.classList.add('collapsed') :
+        if (dock.data('previouslyCollapsed') !== null) {
+          dock.data('previouslyCollapsed') === 'true' ? dock.classList.add('collapsed') :
                                                         dock.classList.remove('collapsed');
-          delete dock.dataset.previouslyCollapsed;
+          dock.data('previouslyCollapsed', null);
         }
       }
     }
@@ -298,7 +299,7 @@
   var addHandlers = function() {
     handler.addEventListener('click', function(e) {
       dock.classList.toggle('collapsed');
-      delete dock.dataset.previouslyCollapsed;
+      dock.data('previouslyCollapsed', null);
     });
 
     var menu = document.querySelector('.menu ul');
@@ -376,7 +377,7 @@
           break;
       }
 
-      document.body.dataset.archiveStatus = e.detail.status;
+      document.body.data('archiveStatus', e.detail.status);
       HTMLElems.flush(['#toggleArchiving', '[data-stream-type=publisher] [data-icon="record"]']);
     });
 
@@ -389,7 +390,7 @@
 
   function toggleScreenSharing(evt) {
     var isSharing = evt.detail.isSharing;
-    document.body.dataset.desktopStatus = isSharing ? 'sharing' : 'notSharing';
+    document.body.data('desktopStatus', isSharing ? 'sharing' : 'notSharing');
     HTMLElems.flush('#toggleSharing');
   }
 
@@ -400,7 +401,8 @@
   var addClipboardFeature = function() {
     var input = document.querySelector('.bubble[for="addToCall"] input');
     var linkToShare = document.querySelector('#addToCall');
-    input.value = linkToShare.dataset.clipboardText = getURLtoShare();
+    input.value = getURLtoShare();
+    linkToShare.data('clipboardText', input.value);
     var zc = new ZeroClipboard(linkToShare);
     var config = ZeroClipboard.config();
     var swfObject = document.getElementById(config.swfObjectId);
