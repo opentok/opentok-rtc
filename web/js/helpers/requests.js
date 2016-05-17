@@ -11,7 +11,7 @@
       var xhr = new XMLHttpRequest();
       xhr.open(aType, aURL);
       xhr.responseType = 'json';
-      xhr.overrideMimeType('application/json');
+      xhr.overrideMimeType && xhr.overrideMimeType('application/json');
       if (aDataType) {
         // Note that this requires
         xhr.setRequestHeader('Content-Type', aDataType);
