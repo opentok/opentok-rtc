@@ -39,6 +39,7 @@
       if (!parser.hostname) {
         throw new Error('URL is not valid');
       }
+      this.origin = parser.protocol + '//' + parser.host;
     };
     global.URL.createObjectURL = global._ieURL.createObjectURL;
     global.URL.revokeObjectURL = global._ieURL.revokeObjectURL;
