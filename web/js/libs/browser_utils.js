@@ -4,10 +4,25 @@
 
   var getCurrentTime = function() {
     var now = new Date();
-    var min = now.getMinutes().toString();
-    var hours = now.getHours().toString();
-    var ampm = now.getHours() >= 12 ? 'PM' : 'AM';
-    return hours + ':' + min + ' ' + ampm;
+    var time = [];
+    var suffix = ' AM';
+
+    var hours = now.getHours();
+    if (hours > 12) {
+      suffix = ' PM';
+      hours -= 12;
+    }
+
+    time.push(hours);
+    time.push(':');
+
+    var minutes = now.getMinutes();
+    minutes < 10 && time.push('0');
+
+    time.push(minutes);
+    time.push(suffix);
+
+    return time.join('');
   };
 
   var inspectObject = function(obj){
