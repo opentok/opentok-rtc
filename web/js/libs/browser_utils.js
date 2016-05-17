@@ -3,11 +3,7 @@
   'use strict';
 
   var getCurrentTime = function() {
-    var now = new Date();
-    var min = now.getMinutes().toString();
-    var hours = now.getHours().toString();
-    var ampm = now.getHours() >= 12 ? 'PM' : 'AM';
-    return hours + ':' + min + ' ' + ampm;
+    return formatter.format(new Date());
   };
 
   var inspectObject = function(obj){
