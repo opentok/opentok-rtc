@@ -59,6 +59,15 @@
 }
 
 [for="addToCall"] {
+  .check-mark {
+    color: #1a99ce;
+    opacity: 0;
+  }
+
+  &.show .check-mark {
+    .animation(fadeIn, 1s, .3s, forwards);
+  }
+
   input {
     font-size: 12px;
     margin: 16px 0 0 0;
