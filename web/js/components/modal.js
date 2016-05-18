@@ -70,7 +70,7 @@
       modal.classList.remove('show');
     }).then(function() {
       _modalShown = false;
-      var nextScreen = _queuedModals.pop();
+      var nextScreen = _queuedModals.shift();
       nextScreen && nextScreen();
     });
   }
