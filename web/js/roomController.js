@@ -124,10 +124,10 @@
   var processMutation = function(aMutation) {
     var elem = aMutation.target;
     if ((aMutation.attributeName !== 'style' && aMutation.attributeName !== 'class') ||
-        elem.dataset.streamType !== 'camera') {
+        elem.data('streamType') !== 'camera') {
       return;
     }
-    var streamId = elem.dataset.id;
+    var streamId = elem.data('id');
     var subscriberPromise =
       subscriberStreams[streamId] && subscriberStreams[streamId].subscriberPromise;
 

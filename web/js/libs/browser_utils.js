@@ -193,7 +193,7 @@
       });
     },
     isScreen: function(item) {
-      var type = item.dataset.streamType;
+      var type = item.data('streamType');
       return type === 'desktop' || type === 'screen';
     },
     setTransform: setTransform,

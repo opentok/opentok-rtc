@@ -36,7 +36,7 @@
   }
 
   function setVisible(visible) {
-    document.body.dataset.chatVisible = visible;
+    document.body.data('chatVisible', visible);
     visible ? container.classList.add('visible') : container.classList.remove('visible');
   }
 

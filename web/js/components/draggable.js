@@ -97,8 +97,8 @@
     this.element = element;
     this.elementStyle = element.style;
 
-    this.translatedX = parseInt(element.dataset.translatedX || '0', 10);
-    this.translatedY = parseInt(element.dataset.translatedY || '0', 10);
+    this.translatedX = parseInt(element.data('translatedX') || '0', 10);
+    this.translatedY = parseInt(element.data('translatedY') || '0', 10);
     this.translate();
 
     this.detector = new DragDetector(element);
@@ -130,8 +130,10 @@
 
         case touchmove:
           var touch = getTouch(evt);
-          this.element.dataset.translatedX = this.translatedX = touch.pageX - this.startX;
-          this.element.dataset.translatedY = this.translatedY = touch.pageY - this.startY;
+          this.translatedX = touch.pageX - this.startX;
+          this.element.data('translatedX', this.translatedX);
+          this.translatedY = touch.pageY - this.startY;
+          this.element.data('translatedY', this.translatedY);
           this.translate();
 
           break;

@@ -11,7 +11,7 @@
     }
 
     var bubble = document.querySelector('[for="viewRecordings"]');
-    bubble.dataset.recordings = Object.keys(archives).length;
+    bubble.data('recordings', Object.keys(archives).length);
 
     var list = bubble.querySelector(LIST_SELECTOR);
 
@@ -33,7 +33,7 @@
       var url = archive.localDownloadURL;
       var item = HTMLElems.createElementAt(list, 'li');
 
-      item.dataset.status = archive.status;
+      item.data('status', archive.status);
 
       HTMLElems.createElementAt(item, 'a', {
         'target': '_blank',
@@ -62,7 +62,7 @@
   };
 
   var init = function(model) {
-    document.body.dataset.downloadAvailable = Utils.isChrome();
+    document.body.data('downloadAvailable', Utils.isChrome());
     model.addEventListener('value', render);
     render(model.archives);
     addHandlers();
