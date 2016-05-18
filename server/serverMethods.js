@@ -382,7 +382,8 @@ function ServerMethods(aLogLevel, aModules) {
           return aSessionInfo;
         });
     } else if (aOperation.startsWith('stop') && !aSessionInfo.inProgressArchiveId) {
-      return aTbConfig.otInstance.listArchives_P({ offset: 0, count: 1 }).
+      return aTbConfig.otInstance.listArchives_P({ offset: 0, count: 100 }).
+        then(aArch => aArch.filter(aArchive => aArchive.sessionId === aSessionInfo.sessionId)).
         then(aArchives => {
           var recordingInProgress = aArchives[0] && aArchives[0].status === 'started';
           if (recordingInProgress) {
@@ -390,6 +391,7 @@ function ServerMethods(aLogLevel, aModules) {
           } else {
             throw new ErrorInfo(105, 'Cannot stop a non existant recording');
           }
+          return aSessionInfo;
         });
     } else {
       // We might still need to update the archive information but for now consider it's valid.
