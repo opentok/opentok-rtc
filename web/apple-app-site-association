@@ -4,7 +4,7 @@
     "details": [
       {
         "appID": "MGD69Q275W.com.opentok.iosOpenTokRTCv2",
-        "paths":[ "*" ]
+        "paths":[ "/room/*" ]
       }
     ]
   }
