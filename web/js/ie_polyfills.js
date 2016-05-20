@@ -10,17 +10,28 @@
     };
   }
 
+  if (!String.prototype.endsWith) {
+    String.prototype.endsWith = function(searchString, position) {
+        var subjectString = this.toString();
+        if (typeof position !== 'number' || !isFinite(position) ||
+            Math.floor(position) !== position || position > subjectString.length) {
+          position = subjectString.length;
+        }
+        position -= searchString.length;
+        var lastIndex = subjectString.indexOf(searchString, position);
+        return lastIndex !== -1 && lastIndex === position;
+    };
+  }
+
   // window.location.origin doesn't exist in IE...
   if (global && global.location && !global.location.origin) {
     // So we just create it:
     var loc = global.location;
     var protocol = loc.protocol;
     var port = loc.port;
-    console.log('loc.port', port);
     if (!port) {
       port = protocol === 'https' ? 443 : 80;
     }
-    console.log('port', port);
     global.location.origin = protocol + '//' + loc.host + ':' + port;
   }
 
@@ -47,6 +58,10 @@
         throw new Error('URL is not valid');
       }
       this.origin = parser.protocol + '//' + parser.host;
+      var port = parser.protocol === 'https' ? 443 : 80;
+      if (this.origin.endsWith(':' + port)) {
+        this.origin = this.origin.replace(':' + port, '');
+      }
     };
     global.URL.createObjectURL = global._ieURL.createObjectURL;
     global.URL.revokeObjectURL = global._ieURL.revokeObjectURL;
