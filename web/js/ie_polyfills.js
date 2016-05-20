@@ -40,6 +40,8 @@
         throw new Error('URL is not valid');
       }
       this.origin = parser.protocol + '//' + parser.host;
+      console.log('Protocol:', parser.protocol, ', host:', parser.host);
+      console.log('Origin:', this.origin);
     };
     global.URL.createObjectURL = global._ieURL.createObjectURL;
     global.URL.revokeObjectURL = global._ieURL.revokeObjectURL;

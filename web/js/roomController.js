@@ -597,7 +597,12 @@
       roomName: roomName
     };
 
-    if (usrId || (window.location.origin === getReferrerURL().origin)) {
+    console.log('usrId:', usrId);
+    var origin = window.location.origin;
+    var refOrigin = getReferrerURL().origin;
+    console.log('window.location.origin:', origin);
+    console.log('getReferrerURL().origin:', refOrigin);
+    if (usrId || (origin === refOrigin)) {
       return Promise.resolve(info);
     } else {
       return showUserNamePrompt(roomName).then(function(userName) {
