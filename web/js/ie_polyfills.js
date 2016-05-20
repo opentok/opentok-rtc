@@ -14,7 +14,7 @@
   if (global && global.location && !global.location.origin) {
     // So we just create it:
     var loc = global.location;
-    global.location.origin = loc.protocol + '//' + loc.host;
+    global.location.origin = loc.protocol + '//' + loc.host + (loc.port ? ':' + loc.port : '');
   }
 
   // And IE uses a curious way to init custom events... and to make things more
@@ -40,7 +40,6 @@
         throw new Error('URL is not valid');
       }
       this.origin = parser.protocol + '//' + parser.host;
-      console.log('Protocol:', parser.protocol, ', host:', parser.host);
     };
     global.URL.createObjectURL = global._ieURL.createObjectURL;
     global.URL.revokeObjectURL = global._ieURL.revokeObjectURL;
