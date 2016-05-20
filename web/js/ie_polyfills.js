@@ -14,7 +14,12 @@
   if (global && global.location && !global.location.origin) {
     // So we just create it:
     var loc = global.location;
-    global.location.origin = loc.protocol + '//' + loc.host + (loc.port ? ':' + loc.port : '');
+    var protocol = loc.protocol;
+    var port = loc.port;
+    if (!port) {
+      port = protocol === 'https' ? 443 : 80;
+    }
+    global.location.origin = protocol + '//' + loc.host + ':' + port;
   }
 
   // And IE uses a curious way to init custom events... and to make things more
