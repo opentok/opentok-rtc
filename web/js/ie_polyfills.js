@@ -16,9 +16,11 @@
     var loc = global.location;
     var protocol = loc.protocol;
     var port = loc.port;
+    console.log('loc.port', port);
     if (!port) {
       port = protocol === 'https' ? 443 : 80;
     }
+    console.log('port', port);
     global.location.origin = protocol + '//' + loc.host + ':' + port;
   }
 

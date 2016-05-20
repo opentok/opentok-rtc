@@ -597,6 +597,8 @@
       roomName: roomName
     };
 
+    console.log('window.location.origin', window.location.origin);
+    console.log('getReferrerURL().origin', getReferrerURL().origin);
     if (usrId || (window.location.origin === getReferrerURL().origin)) {
       return Promise.resolve(info);
     } else {
