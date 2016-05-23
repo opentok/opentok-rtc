@@ -5,6 +5,10 @@
       {
         "appID": "MGD69Q275W.com.opentok.iosOpenTokRTCv2",
         "paths":[ "/room/*" ]
+      },
+      {
+        "appID": "3YZZL55SSX.com.opentok.openTokRTCv2TEF",
+        "paths":[ "/room/*" ]
       }
     ]
   }
