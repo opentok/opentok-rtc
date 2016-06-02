@@ -164,7 +164,7 @@ function ServerMethods(aLogLevel, aModules) {
   function getRoomArchive(aReq, aRes) {
     logger.log('getRoomArchive ' + aReq.path, 'roomName: ' + aReq.params.roomName);
     var tbConfig = aReq.tbConfig;
-    var roomName = aReq.params.roomName;
+    var roomName = aReq.params.roomName.toLowerCase();
     serverPersistence.
       getKey(C.RED_ROOM_PREFIX + roomName).
       then(_getUsableSessionInfo.bind(tbConfig.otInstance,
