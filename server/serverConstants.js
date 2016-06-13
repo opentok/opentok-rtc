@@ -65,6 +65,9 @@ E.ARCHIVE_ALWAYS = 'tb_always_archive_session';
 E.DEFAULT_TEMPLATE = 'default_template';
 E.TEMPLATING_SECRET = 'templating_secret';
 
+E.IOS_APP_ID = 'tb_ios_app_id';
+E.IOS_URL_PREFIX = 'tb_ios_url_prefix';
+
 E.REDIS_KEYS = [
   { key: E.RED_TB_API_KEY, defaultValue: env.TB_API_KEY || null },
   { key: E.RED_TB_API_SECRET, defaultValue: env.TB_API_SECRET || null },
@@ -78,5 +81,7 @@ E.REDIS_KEYS = [
   { key: E.RED_CHROME_EXTENSION_ID, defaultValue: env.CHROME_EXTENSION_ID || 'undefined' },
   { key: E.DEFAULT_TEMPLATE, defaultValue: env.DEFAULT_TEMPLATE || 'room' },
   { key: E.TEMPLATING_SECRET, defaultValue: env.TEMPLATING_SECRET || undefined },
-  { key: E.ARCHIVE_ALWAYS, defaultValue: env.ARCHIVE_ALWAYS || 'false' }
+  { key: E.ARCHIVE_ALWAYS, defaultValue: env.ARCHIVE_ALWAYS || 'false' },
+  { key: E.IOS_APP_ID, defaultValue: env.IOS_APP_ID || undefined },
+  { key: E.IOS_URL_PREFIX, defaultValue: env.IOS_URL_PREFIX || '' }
 ];

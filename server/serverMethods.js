@@ -97,6 +97,9 @@ function ServerMethods(aLogLevel, aModules) {
         var allowIframing = persistConfig[C.RED_ALLOW_IFRAMING];
         var archiveAlways = persistConfig[C.ARCHIVE_ALWAYS] == 'true' ? true : false;
 
+        var iosAppId = persistConfig[C.IOS_APP_ID];
+        var iosUrlPrefix = persistConfig[C.IOS_URL_PREFIX];
+
         // This isn't strictly necessary... but since we're using promises all over the place, it
         // makes sense. The _P are just a promisified version of the methods. We could have
         // overwritten the original methods but this way we make it explicit. That's also why we're
@@ -134,7 +137,9 @@ function ServerMethods(aLogLevel, aModules) {
               chromeExtId: chromeExtId,
               defaultTemplate: defaultTemplate,
               templatingSecret: templatingSecret,
-              archiveAlways: archiveAlways
+              archiveAlways: archiveAlways,
+              iosAppId: iosAppId,
+              iosUrlPrefix: iosUrlPrefix
             };
           });
       });
@@ -243,7 +248,13 @@ function ServerMethods(aLogLevel, aModules) {
              {
                userName: userName || C.DEFAULT_USER_NAME,
                roomName: aReq.params.roomName,
-               chromeExtensionId: tbConfig.chromeExtId
+               chromeExtensionId: tbConfig.chromeExtId,
+               iosAppId: tbConfig.iosAppId,
+               // iosUrlPrefix should have something like:
+               // https://opentokdemo.tokbox.com/room/
+               // or whatever other thing that should be before the roomName
+               iosURL: tbConfig.iosUrlPrefix + aReq.params.roomName + '?userName=' +
+                       (userName || C.DEFAULT_USER_NAME)
              }, (err, html) => {
                if (err) {
                  logger.log('getRoom. error:', err);
