@@ -1,4 +1,0 @@
-[submodule "pattern-library"]
-	path = pattern-library
-	url = https://github.com/opentok/pattern-library-v2.git
-  ignore = dirty

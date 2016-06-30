@@ -47,7 +47,7 @@
     "ioredis": "^1.7.6",
     "node-getopt": "^0.2.3",
     "opentok": "^2.3.0",
-    "grunt-subgrunt": "^1.2.0"
+    "pattern-library-v2": "git+https://bc9fa338c1a7d921029ac5b64f72815d59389715:x-oauth-basic@github.com/opentok/pattern-library-v2.git"
   },
   "devDependencies": {
     "chai": "^3.3.0",

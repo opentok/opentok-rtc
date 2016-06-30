@@ -14,8 +14,7 @@ module.exports = function(grunt) {
     'grunt-mocha-test', // Server side test runner
     'grunt-bower-task',
     'grunt-gitinfo',
-    'grunt-karma', // Client side test runner.
-    'grunt-subgrunt'
+    'grunt-karma' // Client side test runner.
   ].forEach(grunt.loadNpmTasks);
 
   grunt.loadTasks('tasks');
@@ -123,30 +122,19 @@ module.exports = function(grunt) {
       }
     },
 
-    subgrunt: {
-      target0: {
-        options: {
-          npmInstall: true
-        },
-        projects: {
-          'pattern-library': 'build'
-        }
-      }
-    },
-
     copy: {
       main: {
         files: [
           {
             expand: true,
-            cwd: 'pattern-library/out/images/icons',
+            cwd: 'node_modules/pattern-library-v2/out/images/icons',
             src: ['**/*'],
             dest: 'web/images/icons/'
           },
 
           {
             expand: true,
-            cwd: 'pattern-library/out/css',
+            cwd: 'node_modules/pattern-library-v2/out/css',
             src: ['**/*'],
             dest: 'web/css/'
           }
@@ -167,7 +155,6 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('copyPatternLibrary', 'Copy pattern library', [
-    'subgrunt',
     'copy'
   ]);
 
