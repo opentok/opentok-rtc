@@ -46,7 +46,8 @@
     "grunt-mocha-test": "^0.12.7",
     "ioredis": "^1.7.6",
     "node-getopt": "^0.2.3",
-    "opentok": "^2.3.0"
+    "opentok": "^2.3.0",
+    "grunt-subgrunt": "^1.2.0"
   },
   "devDependencies": {
     "chai": "^3.3.0",
