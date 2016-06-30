@@ -2,8 +2,6 @@
 @import '../bower_components/utils/reset.less';
 @import '../bower_components/utils/mixins.less';
 
-@import 'buttons.less';
-
 @import 'base.less';
 
 body {
@@ -21,24 +19,30 @@ body {
     padding-bottom: 25px;
   }
 
-  h1, h3 {
-    margin: 10px 0;
+  h1, h2, h3 {
+    font-family: "AvantGardeGothicITCW01X", arial;
     padding: 0;
   }
 
   h1 {
-    font-family: "AvantGardeGothicITCW01X", arial;
     font-size: 48px;
     font-weight: 200;
     line-height: 60px;
     color: @blueText;
+    margin: 10px 0;
+  }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 6px 0;
   }
 
   h3 {
-    font-family: "AvantGardeGothicITCW01M 731087", arial;
-    font-size: 20px;
-    line-height: 26px;
-    color: #5f6062;
+    font-size: 14px;
+    margin: 5px 0;
+    font-weight: 600;
+    color: #95a4ab;
   }
 
   form {
@@ -63,7 +67,7 @@ body {
     }
 
     .error-description {
-      margin: 0 356px 10px 0;
+      margin: 0 356px 0 0;
     }
 
     &.error {
@@ -80,6 +84,40 @@ body {
 
     .btn {
       margin-top: 10px;
+    }
+
+    .tb.btn {
+      font-family: "AvantGardeGothicITCW01B 731069", arial;
+      font-size: 16px;
+      font-weight: normal;
+      line-height: 50px;
+      border-radius: 0;
+      height: 50px;
+    }
+
+    .contract {
+      text-align: center;
+
+      & > p {
+        display: inline-block;
+        text-align: left;
+      }
+
+      label.checkbox {
+        &:first-child {
+          padding-top: 0;
+        }
+
+        a {
+          color: inherit;
+        }
+
+        span {
+          display: inline-block;
+          pointer-events: auto;
+          font-size: 11px;
+        }
+      }
     }
   }
 
@@ -100,14 +138,6 @@ body {
 
   a {
     text-decoration: none;
-    color: @blueText;
   }
 
-  a:hover {
-    cursor: pointer;
-  }
-
-  a:visited {
-    color: @blueText;
-  }
 }

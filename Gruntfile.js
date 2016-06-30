@@ -8,13 +8,14 @@ module.exports = function(grunt) {
     'grunt-contrib-clean',
 //    'grunt-contrib-compress',
 //    'grunt-contrib-connect',
-//    'grunt-contrib-copy',
+    'grunt-contrib-copy',
     'grunt-contrib-less',
     'grunt-contrib-watch',
     'grunt-mocha-test', // Server side test runner
     'grunt-bower-task',
     'grunt-gitinfo',
-    'grunt-karma' // Client side test runner.
+    'grunt-karma', // Client side test runner.
+    'grunt-subgrunt'
   ].forEach(grunt.loadNpmTasks);
 
   grunt.loadTasks('tasks');
@@ -120,7 +121,38 @@ module.exports = function(grunt) {
         ],
         tasks: ['serverTest']
       }
-    }
+    },
+
+    subgrunt: {
+      target0: {
+        options: {
+          npmInstall: true
+        },
+        projects: {
+          'pattern-library': 'build'
+        }
+      }
+    },
+
+    copy: {
+      main: {
+        files: [
+          {
+            expand: true,
+            cwd: 'pattern-library/out/images/icons',
+            src: ['**/*'],
+            dest: 'web/images/icons/'
+          },
+
+          {
+            expand: true,
+            cwd: 'pattern-library/out/css',
+            src: ['**/*'],
+            dest: 'web/css/'
+          }
+        ],
+      }
+    },
 
   });
 
@@ -134,13 +166,19 @@ module.exports = function(grunt) {
     }
   });
 
+  grunt.registerTask('copyPatternLibrary', 'Copy pattern library', [
+    'subgrunt',
+    'copy'
+  ]);
 
   grunt.registerTask('clientBuild', 'Build css files', [
+    'copyPatternLibrary',
     'less',
     'autoprefixer'
   ]);
 
   grunt.registerTask('clientDev', 'Watch for changes on less files', [
+    'copyPatternLibrary',
     'clientBuild',
     'watch'
   ]);
