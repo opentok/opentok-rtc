@@ -1,0 +1,26 @@
+@import 'room.less';
+
+#dock .menu {
+  .tc-list .tooltip a [data-icon] {
+    margin: 0 10px -3px -5px;
+  }
+
+  .tc-list a.button {
+    text-align: center;
+    position: initial;
+    width: calc(~"100% - 14px");
+    padding-left: 0;
+
+    &.see-documentation {
+      background-color: @blueText;
+      color: white;
+    }
+
+    &.talk-to-sales {
+      background-color: white;
+      color: @blueText;
+      border: 1px solid @blueText;
+      width: calc(~"100% - 16px");
+    }
+  }
+}

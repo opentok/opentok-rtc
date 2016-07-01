@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<% if(iosAppId) { %>
-    <meta name="apple-itunes-app" content="app-id=<%=iosAppId%>, app-argument=<%=iosURL%>">
-<% } %>
+    <% if(iosAppId) { %>
+      <meta name="apple-itunes-app" content="app-id=<%=iosAppId%>, app-argument=<%=iosURL%>">
+    <% } %>
     <title>OpenTok</title>
     <meta name="viewport" content="width=device-width">
 
@@ -13,7 +13,13 @@
     <link rel="icon" href="/favicon.png">
 
     <link rel="stylesheet" href="/css/endMeeting.opentok.css">
-    <link rel="stylesheet" href="/css/room.opentok.css">
+
+    <% if(isWebRTCVersion) { %>
+      <link rel="stylesheet" href="/css/webrtc.opentok.css">
+    <% } else { %>
+      <link rel="stylesheet" href="/css/room.opentok.css">
+    <% } %>
+
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/<%=chromeExtensionId%>">
 
     <script type="text/javascript" src="https://d3brof7fu9hlhe.cloudfront.net/static/snoop.js"></script>
@@ -50,6 +56,7 @@
             <li>
               <a id="addToCall"><i data-icon="add"></i><span>Add participants</span></a>
             </li>
+            <% if(!isWebRTCVersion) { %>
             <li id="toggleArchiving" disabled>
               <a id="startArchiving"><i data-icon="archive"></i><span>Start recording</span></a>
               <a id="stopArchiving"><i data-icon="archive_saving"></i><span class="duration"></span><span>Stop recording</span></a>
@@ -57,6 +64,7 @@
             <li>
               <a id="viewRecordings"><i data-icon="recordings"></i><span>Manage recordings (<span id="recordings">0</span>)</span></a>
             </li>
+            <% } %>
             <li id="toggleSharing" disabled>
               <a id="startSharingDesktop"><i data-icon="screen"></i><span>Share your screen</span></a>
               <a id="stopSharingDesktop"><i data-icon="screen_sharing"></i><span>Stop sharing your screen</span></a>
@@ -68,6 +76,7 @@
               <a id="startChat" data-unread-messages="0"><i data-icon="chat"></i><span>Open text chat<span id="unreadMsg">(<span id="unreadCount">0</span>)</span></span></a>
               <a id="stopChat"><i data-icon="chat"></i><span>Close text chat</span></a>
             </li>
+            <% if(!isWebRTCVersion) { %>
             <li>
               <a id="endCall" class="danger"><i data-icon="end"></i><span>End meeting</span></a>
             </li>
@@ -77,6 +86,23 @@
             <li class="tight tooltip" tooltip="Mute all participants">
               <a id="audioSwitch"><i data-icon="audioSwitch"></i><span>Mute all participants</span></a>
             </li>
+            <% } else { %>
+            <li class="tooltip" tooltip="Stop receiving video">
+              <a id="videoSwitch"><i data-icon="videoSwitch"></i><span>Stop receiving video</span></a>
+            </li>
+            <li class="tooltip" tooltip="Mute all participants">
+              <a id="audioSwitch"><i data-icon="audioSwitch"></i><span>Mute all participants</span></a>
+            </li>
+            <li>
+              <a id="endCall" class="danger"><i data-icon="end"></i><span>End meeting</span></a>
+            </li>
+            <li class="bottom tooltip" tooltip="See Documentation">
+              <a href="https://tokbox.com/developer/" target="_blanck" class="button see-documentation"><span>See Documentation</span></a>
+            </li>
+            <li class="tooltip" tooltip="Talk to Sales">
+              <a href="https://tokbox.com/contact/sales" target="_blanck" class="button talk-to-sales"><span>Talk to Sales</span></a>
+            </li>
+            <% } %>
           </ul>
         </div>
       </nav>
