@@ -62,11 +62,19 @@ E.RED_ROOM_MATCHES = E.RED_ROOM_PREFIX + '*';
 // Set to 'true' if we want the sessions to be archived always.
 E.ARCHIVE_ALWAYS = 'tb_always_archive_session';
 
+// Default template for the room
 E.DEFAULT_TEMPLATE = 'default_template';
+// Template secret for the room (if it does not exist, templating is not allowed)
 E.TEMPLATING_SECRET = 'templating_secret';
 
+// Data to include (or not) the iOS banner
 E.IOS_APP_ID = 'tb_ios_app_id';
 E.IOS_URL_PREFIX = 'tb_ios_url_prefix';
+
+// To have several app main views, and to disable features...
+E.DEFAULT_INDEX_PAGE = 'default_index_page';
+// Comma separated list of disabled features/paths. Default value is all features enabled
+E.DISABLED_FEATURES = 'disabled_features';
 
 E.REDIS_KEYS = [
   { key: E.RED_TB_API_KEY, defaultValue: env.TB_API_KEY || null },
@@ -83,5 +91,7 @@ E.REDIS_KEYS = [
   { key: E.TEMPLATING_SECRET, defaultValue: env.TEMPLATING_SECRET || undefined },
   { key: E.ARCHIVE_ALWAYS, defaultValue: env.ARCHIVE_ALWAYS || 'false' },
   { key: E.IOS_APP_ID, defaultValue: env.IOS_APP_ID || undefined },
-  { key: E.IOS_URL_PREFIX, defaultValue: env.IOS_URL_PREFIX || '' }
+  { key: E.IOS_URL_PREFIX, defaultValue: env.IOS_URL_PREFIX || '' },
+  { key: E.DEFAULT_INDEX_PAGE, defaultValue: env.DEFAULT_INDEX_PAGE || undefined },
+  { key: E.DISABLED_FEATURES, defaultValue: env.DISABLED_FEATURES || undefined },
 ];
