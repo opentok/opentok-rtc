@@ -50,6 +50,7 @@
     });
     data.numArchives = data.archives.length;
     data.sessionId = _sessionId;
+    data.isWebRTCVersion = exports.isWebRTCVersion;
 
     var html = _template.render(data);
     document.body.innerHTML = html;
@@ -71,6 +72,7 @@
     if (alreadyInitialized) {
       return;
     }
+
     Utils.addEventsHandlers('', eventHandlers);
     _template = new EJS({ url: _templateSrc });
     alreadyInitialized = true;
