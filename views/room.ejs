@@ -22,6 +22,10 @@
 
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/<%=chromeExtensionId%>">
 
+    <script>
+      window.isWebRTCVersion=<%=isWebRTCVersion%>
+    </script>
+
     <script type="text/javascript" src="https://d3brof7fu9hlhe.cloudfront.net/static/snoop.js"></script>
     <script type="text/javascript" src="https://static.opentok.com/webrtc/v2/js/opentok.min.js"></script>
     <script defer src="/js/vendor/es6-promise.min.js"></script>
@@ -97,10 +101,10 @@
               <a id="endCall" class="danger"><i data-icon="end"></i><span>End meeting</span></a>
             </li>
             <li class="bottom tooltip" tooltip="See Documentation">
-              <a href="https://tokbox.com/developer/" target="_blanck" class="button see-documentation"><span>See Documentation</span></a>
+              <a href="https://tokbox.com/developer/" target="_blank" class="button see-documentation"><span>See Documentation</span></a>
             </li>
             <li class="tooltip" tooltip="Talk to Sales">
-              <a href="https://tokbox.com/contact/sales" target="_blanck" class="button talk-to-sales"><span>Talk to Sales</span></a>
+              <a href="https://tokbox.com/contact/sales" target="_blank" class="button talk-to-sales"><span>Talk to Sales</span></a>
             </li>
             <% } %>
           </ul>

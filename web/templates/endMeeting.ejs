@@ -1,8 +1,13 @@
 <section class="endMeeting">
   <header>
     <img src="/images/opentok-logo.png" alt="opentok transparent logo">
+    <% if(!isWebRTCVersion) { %>
     <p>Thank you for using OpenTok Platform Demo</p>
+    <% } else { %>
+    <p class="bold">Thank you for trying TokBox’s WebRTC Demo</p>
+    <% } %>
   </header>
+  <% if(!isWebRTCVersion) { %>
   <button id="newCall" class="btn btn-blue btn-padding-large ctaarrow-white">Start a new meeting</button>
   <section  class="archives" data-recordings="<%=numArchives%>">
     <div class="content">
@@ -43,3 +48,9 @@
     </footer>
   </form>
 </section>
+<% } else { %>
+    <div class="toolbar">
+      <button target="_blank" href="https://tokbox.com/developer/" class="btn btn-blue btn-padding-large ctaarrow-white">Build a WebRTC app</button>
+      <button target="_blank" href="https://tokbox.com/" class="btn btn-white btn-padding-large ctaarrow-blue">Learn about TokBox</button>
+    </div>
+    <% } %>
