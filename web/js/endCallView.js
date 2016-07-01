@@ -11,9 +11,9 @@
   var _sessionId;
 
   var addHandlers = function() {
-    HTMLElems.addHandlerArchive(LIST_SELECTOR);
+    !exports.isWebRTCVersion && HTMLElems.addHandlerArchive(LIST_SELECTOR);
     var btn = document.getElementById('newCall');
-    btn.addEventListener('click', function clicked(evt) {
+    btn && btn.addEventListener('click', function clicked(evt) {
       evt.preventDefault();
       evt.stopImmediatePropagation();
       window.location = window.location.origin + MAIN_PAGE;
