@@ -112,6 +112,10 @@ function ServerMethods(aLogLevel, aModules) {
         var maxSessionAgeMs = maxSessionAge * 24 * 60 * 60 * 1000;
         var chromeExtId = persistConfig[C.RED_CHROME_EXTENSION_ID];
 
+        var isWebRTCVersion = persistConfig[C.DEFAULT_INDEX_PAGE] === 'opentokrtc';
+        var disabledFeatures =
+          persistConfig[C.DISABLED_FEATURES] && persistConfig[C.DISABLED_FEATURES].split(',');
+
         // For this object we need to know if/when we're reconnecting so we can shutdown the
         // old instance.
         var oldFirebaseArchivesPromise = Utils.CachifiedObject.getCached(FirebaseArchives);
@@ -139,7 +143,9 @@ function ServerMethods(aLogLevel, aModules) {
               templatingSecret: templatingSecret,
               archiveAlways: archiveAlways,
               iosAppId: iosAppId,
-              iosUrlPrefix: iosUrlPrefix
+              iosUrlPrefix: iosUrlPrefix,
+              isWebRTCVersion: isWebRTCVersion,
+              disabledFeatures: disabledFeatures
             };
           });
       });
@@ -164,6 +170,21 @@ function ServerMethods(aLogLevel, aModules) {
         aRes.set('X-Frame-Options', 'DENY');
     }
     aNext();
+  }
+
+  function featureEnabled(aReq, aRes, aNext) {
+    var disabledFeatures = aReq.tbConfig.disabledFeatures;
+    if (!disabledFeatures) {
+      aNext();
+      return;
+    }
+    var path = aReq.path;
+    if (disabledFeatures.filter(feature => path.search('\\/' + feature + '(\\/|$)') !== -1).length > 0) {
+      logger.log('featureEnabled: Refusing to serve disabled feature: ' + path);
+      aRes.status(400).send(new ErrorInfo(400, 'Unauthorized access'));
+    } else {
+      aNext();
+    }
   }
 
   function getRoomArchive(aReq, aRes) {
@@ -225,6 +246,22 @@ function ServerMethods(aLogLevel, aModules) {
                  archive.status);
     }
     aRes.send({});
+  }
+
+  // Returns the personalized root page
+  function getRoot(aReq, aRes) {
+    aRes.
+      render('index.ejs', {
+        isWebRTCVersion: aReq.tbConfig.isWebRTCVersion
+      }, (err, html) => {
+        if (err) {
+          logger.error('getRoot. error: ', err);
+          aRes.status(500).send(new ErrorInfo(500, 'Invalid Template'));
+        } else {
+          aRes.send(html);
+        }
+      }
+    );
   }
 
   // Return the personalized HTML for a room.
@@ -550,7 +587,9 @@ function ServerMethods(aLogLevel, aModules) {
     logger: logger,
     configReady: configReady,
     iframingOptions: iframingOptions,
+    featureEnabled: featureEnabled,
     loadConfig: loadConfig,
+    getRoot: getRoot,
     getRoom: getRoom,
     getRoomInfo: getRoomInfo,
     postRoomArchive: postRoomArchive,

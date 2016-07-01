@@ -21,16 +21,32 @@
     "x-implementation-module": "serverMethods.js",
     "x-implementation-middleware": [
         "configReady",
-        "iframingOptions"
+        "iframingOptions",
+        "featureEnabled"
     ],
     "x-implementation-configuration": "loadConfig",
     "paths": {
+        "/": {
+            "get": {
+                "summary": "Gets the configured index page.",
+                "x-implemented-in": "getRoot",
+                "produces": [
+                    "text/html"
+                ],
+                "description": "Returns a customized root page when the / is accessed.",
+                "responses": {
+                    "200": {
+                        "description": "The HTML for the root page"
+                    }
+                }
+            }
+        },
         "/room/{roomName}": {
             "get": {
                 "summary": "Connects to a new or existing room.",
                 "x-implemented-in": "getRoom",
                 "produces": [
-                    "text/html,"
+                    "text/html"
                 ],
                 "description": "Returns an HTML document that shows the defined UI for a chat 'room' where the user may or may not have specified an identity. The document returned will NOT have any of the information needed to connect to the Tokbox servers already factored in. TO-DO: ¿Queremos que esto sea así o que devolvamos ya todo configurado?",
                 "parameters": [

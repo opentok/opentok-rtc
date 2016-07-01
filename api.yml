@@ -19,8 +19,20 @@ x-implementation-module: serverMethods.js
 x-implementation-middleware:
   - configReady
   - iframingOptions
+  - featureEnabled
 x-implementation-configuration: loadConfig
 paths:
+  '/':
+    get:
+      summary: Gets the configured index page.
+      x-implemented-in: getRoot
+      produces:
+        - 'text/html'
+      description: >-
+        Returns a customized root page when the / is accessed.
+      responses:
+        '200':
+          description: The HTML for the root page
   '/room/{roomName}':
     get:
       summary: Connects to a new or existing room.

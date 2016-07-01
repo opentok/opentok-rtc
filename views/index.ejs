@@ -7,6 +7,9 @@
     <meta name="viewport" content="width=device-width">
 
     <link rel="stylesheet" href="css/buttons.css" />
+<% if (isWebRTCVersion) { %>
+    <link rel="stylesheet" href="css/checkboxes.css" />
+<% } %>
     <link rel="stylesheet" href="css/landing.opentok.css">
 
     <!--[if IE]><link rel="shortcut icon" href="/favicon.ico"><![endif]-->
@@ -24,15 +27,38 @@
         <header>
           <img src="images/opentok-logo.png" alt="opentok transparent logo">
         </header>
+<% if (!isWebRTCVersion) { %>
         <h1>The OpenTok Platform Demo</h1>
 
+<% } else { %>
+         <h1>WebRTC Demo</h1>
+         <h2>Built by TokBox with the OpenTok Platform</h2>
+         <h3>This WebRTC Demo enables group video conferencing, text chat, screen sharing, and more</h3>
+<% } %>
         <form>
           <p>
             <input id="room" placeholder="* Type the name of the meeting">
             <input id="user" placeholder="Type your name">
             <p class="error-description">Please enter a meeting name</p>
           </p>
+<% if (!isWebRTCVersion) { %>
           <button id="enter" class="btn tb btn-primary btn-arrow btn-next btn-padding">Create Meeting</button>
+<% } else { %>
+           <div class="contract">
+             <p>
+               <label class="checkbox block">
+                 <input id="terms" type="checkbox">
+                 <span>I accept the <a target="_blank" href="https://tokbox.com/support/tos">user agreement</a> and <a target="_blank" href="https://tokbox.com/support/privacy-policy">privacy policy</a></span>
+               </label>
+               <label class="checkbox">
+                 <input id="adult" type="checkbox">
+                 <span>I am at least 18 years of old</span>
+               </label>
+             </p>
+           </div>
+           <button id="enter" disabled class="btn tb btn-primary btn-arrow btn-next btn-padding">Create Meeting</button>
+<% } %>
+
           <p class="error-title">Please fill in required information</p>
         </form>
       </section>
