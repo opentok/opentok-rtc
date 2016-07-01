@@ -255,7 +255,7 @@ function ServerMethods(aLogLevel, aModules) {
         isWebRTCVersion: aReq.tbConfig.isWebRTCVersion
       }, (err, html) => {
         if (err) {
-          logger.log('getRoot. error: ', err);
+          logger.error('getRoot. error: ', err);
           aRes.status(500).send(new ErrorInfo(500, 'Invalid Template'));
         } else {
           aRes.send(html);
