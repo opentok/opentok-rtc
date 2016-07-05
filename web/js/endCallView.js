@@ -52,9 +52,10 @@
     data.sessionId = _sessionId;
     data.isWebRTCVersion = exports.isWebRTCVersion;
 
-    var html = _template.render(data);
-    document.body.innerHTML = html;
-    addHandlers();
+    _template.render(data).then(function(aHTML) {
+      document.body.innerHTML = aHTML;
+      addHandlers();
+    });
   };
 
   var eventHandlers = {
@@ -66,6 +67,24 @@
 
   var alreadyInitialized = false;
 
+  exports.EJS = function(aTemplateOptions) {
+    var self = this;
+    if (aTemplateOptions.url) {
+      this._templatePromise =
+        exports.Request.sendXHR('GET', aTemplateOptions.url, null, null, 'text').
+          then(function(aTemplateSrc) {
+            return exports.ejs.compile(aTemplateSrc, { filename: aTemplateOptions.url });
+          });
+    } else {
+      this._templatePromise = Promise.resolve(exports.ejs.compile(aTemplateOptions.text));
+    }
+    this.render = function(aData) {
+      return this._templatePromise.then(function(aTemplate) {
+        return aTemplate(aData);
+      });
+    };
+  };
+
   var init = function(model, sessionId) {
     _model = model;
     _sessionId = sessionId;
@@ -74,7 +93,7 @@
     }
 
     Utils.addEventsHandlers('', eventHandlers);
-    _template = new EJS({ url: _templateSrc });
+    _template = new exports.EJS({ url: _templateSrc });
     alreadyInitialized = true;
   };
 

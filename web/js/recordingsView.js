@@ -11,6 +11,9 @@
     }
 
     var bubble = document.querySelector('[for="viewRecordings"]');
+    if (!bubble) {
+      return;
+    }
     bubble.data('recordings', Object.keys(archives).length);
 
     var list = bubble.querySelector(LIST_SELECTOR);

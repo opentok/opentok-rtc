@@ -6,11 +6,11 @@
   var debug =
     new Utils.MultiLevelLogger('requests.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
 
-  function sendXHR(aType, aURL, aData, aDataType) {
+  function sendXHR(aType, aURL, aData, aDataType, aResponseType) {
     return new Promise(function(resolve, reject) {
       var xhr = new XMLHttpRequest();
       xhr.open(aType, aURL);
-      xhr.responseType = 'json';
+      xhr.responseType = aResponseType || 'json';
       xhr.overrideMimeType && xhr.overrideMimeType('application/json');
       if (aDataType) {
         // Note that this requires
@@ -20,8 +20,8 @@
 
       xhr.onload = function (aEvt) {
         if (xhr.status === 200) {
-          var response = xhr.response;
-          if (typeof xhr.response === 'string') {
+          var response = xhr.responseType === 'json' && xhr.response || xhr.responseText;
+          if (xhr.responseType === 'json' && typeof xhr.response === 'string') {
             response = JSON.parse(response);
           }
           resolve(response);
@@ -82,7 +82,8 @@
   var Request = {
     getRoomInfo: getRoomInfo,
     sendArchivingOperation: sendArchivingOperation,
-    deleteArchive: deleteArchive
+    deleteArchive: deleteArchive,
+    sendXHR: sendXHR
   };
 
   exports.Request = Request;
