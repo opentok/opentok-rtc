@@ -99,9 +99,13 @@ describe('EndCallView', function() {
   });
 
   describe('#EndCallController:endCall event', function() {
-    before(function() {
+    before(function(done) {
       var endCallEvent = new CustomEvent('EndCallController:endCall');
       window.dispatchEvent(endCallEvent);
+      setTimeout(function() {
+        // Allow the asynchronous part to execute...
+        done();
+      }, 10);
     });
 
     it('should render as many archives as the model holds', function() {
