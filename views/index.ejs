@@ -37,29 +37,28 @@
 <% } %>
         <form>
           <p>
-            <input id="room" placeholder="Type the name of the meeting">
+            <input id="room" class="required" placeholder="Type the name of the meeting">
             <input id="user" placeholder="Type your name">
-            <p class="error-description">Please enter a meeting name</p>
+            <p class="error-room error-text">Please enter a meeting name</p>
           </p>
-<% if (!isWebRTCVersion) { %>
-          <button id="enter" class="btn tb btn-primary btn-arrow btn-next btn-padding">Create Meeting</button>
-<% } else { %>
+<% if (isWebRTCVersion) { %>
            <div class="contract">
              <p>
-               <label class="checkbox block">
-                 <input id="terms" type="checkbox">
-                 <span>I accept the <a target="_blank" href="https://tokbox.com/support/tos">user agreement</a> and <a target="_blank" href="https://tokbox.com/support/privacy-policy">privacy policy</a></span>
-               </label>
                <label class="checkbox">
-                 <input id="adult" type="checkbox">
+                 <input id="terms" class="required" type="checkbox">
+                 <span>I accept the <a target="_blank" href="https://tokbox.com/support/tos">user agreement</a> and <a target="_blank" href="https://tokbox.com/support/privacy-policy">privacy policy</a></span>
+               </label><span class="error-terms error-text">You must agree to the terms of service</span>
+               <br/>
+               <label class="checkbox">
+                 <input id="adult" class="required" type="checkbox">
                  <span>I am at least 18 years of old</span>
                </label>
+               <span class="error-adult error-text">You must be at least 18 years of old</span>
              </p>
            </div>
-           <button id="enter" disabled class="btn tb btn-primary btn-arrow btn-next btn-padding">Create Meeting</button>
 <% } %>
-
-          <p class="error-title">Please fill in required information</p>
+          <button id="enter" class="btn tb btn-primary btn-arrow btn-next btn-padding">Create Meeting</button>
+          <p class="error-title error-text">Please fill in required information</p>
         </form>
       </section>
     </section>

@@ -7,6 +7,7 @@
 body {
   background-color: #FFF;
   color: @text;
+  overflow: hidden;
 }
 
 .main {
@@ -56,30 +57,29 @@ body {
       padding: 0;
     }
 
-    .error-title, .error-description {
+    .error-text {
       display: block;
       font-size: 14px;
       color: #C40D49;
       opacity: 0;
     }
 
+    .error-terms, .error-adult {
+      display: inline-block;
+    }
+
     .error-title {
       margin-top: 10px;
     }
 
-    .error-description {
+    .error-room {
       margin: 0 356px 0 0;
     }
 
     &.error {
-      .error-title, .error-description {
+      .show, .error-title {
         transition: opacity @transitionTime;
         opacity: 1;
-      }
-
-      #room {
-        transition: border-color @transitionTime;
-        border-color: #C40D49;
       }
     }
 
@@ -97,11 +97,15 @@ body {
     }
 
     .contract {
-      text-align: center;
+      text-align: left;
+      position: relative;
+      left: 50%;
 
       & > p {
+        width: auto;
         display: inline-block;
         text-align: left;
+        transform: translateX(-25%);
       }
 
       label.checkbox {
@@ -122,6 +126,7 @@ body {
           display: inline-block;
           pointer-events: auto;
           font-size: 15px;
+          padding-right: 10px;
           color: #5F6062;
         }
 
@@ -149,10 +154,6 @@ body {
 
   a {
     text-decoration: none;
-  }
-
-  .tb.btn[disabled].btn-primary.btn-arrow.btn-next:after {
-    display: none;
   }
 
 }
