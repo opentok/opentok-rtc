@@ -9,11 +9,22 @@
     adult = document.getElementById('adult');
     room = document.getElementById('room');
     resetForm();
-    addHandlers(terms && adult);
+    addHandlers();
   };
 
   var isValid = function() {
-    return room.value.trim();
+    var formValid = true;
+
+    var fields = document.querySelectorAll('form input.required');
+
+    Array.prototype.map.call(fields, function(field) {
+      var errorMessage = document.querySelector('.error-' + field.id);
+      var valid = field.type === 'checkbox' ? field.checked : field.value.trim();
+      valid ? errorMessage.classList.remove('show') : errorMessage.classList.add('show');
+      formValid = formValid && valid;
+    });
+
+    return formValid;
   };
 
   var resetForm = function() {
@@ -24,7 +35,7 @@
     });
   };
 
-  var addHandlers = function(addContractHandlers) {
+  var addHandlers = function() {
     enterButton.addEventListener('click', function onEnterClicked(event) {
       event.preventDefault();
       event.stopImmediatePropagation();
@@ -46,15 +57,6 @@
       resetForm();
       window.location.href = url;
     });
-
-    if (addContractHandlers) {
-      var onChange = function() {
-        Utils.setDisabled(enterButton, !terms.checked || !adult.checked);
-      };
-
-      terms.addEventListener('change', onChange);
-      adult.addEventListener('change', onChange);
-    }
   };
 
   global.LandingView = {
