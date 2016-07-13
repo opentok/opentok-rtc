@@ -21,6 +21,7 @@
     "x-implementation-module": "serverMethods.js",
     "x-implementation-middleware": [
         "configReady",
+        "oldVersionCompat",
         "iframingOptions",
         "featureEnabled"
     ],
