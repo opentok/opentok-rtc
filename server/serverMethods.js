@@ -377,8 +377,7 @@ function ServerMethods(aLogLevel, aModules) {
         var fbUserToken = fbArchives.createUserToken(usableSessionInfo.sessionId, userName);
 
         // and finally, answer...
-        aRes.send({
-          sessionId: usableSessionInfo.sessionId,
+        var answer = {
           apiKey: tbConfig.apiKey,
           token: tbConfig.otInstance.
                   generateToken(usableSessionInfo.sessionId, {
@@ -389,7 +388,10 @@ function ServerMethods(aLogLevel, aModules) {
           firebaseURL: fbArchives.baseURL + '/' + usableSessionInfo.sessionId,
           firebaseToken: fbUserToken,
           chromeExtId: tbConfig.chromeExtId
-        });
+        };
+        answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId,
+
+        aRes.send(answer);
       });
   }
 
@@ -592,6 +594,7 @@ function ServerMethods(aLogLevel, aModules) {
     var matches = aReq.path.match(/^\/([^/]+)\.json$/);
     if (matches) {
       aReq.url = '/room/' + matches[1] + '/info';
+      aReq.sessionIdField = 'sid';
       logger.log('oldVersionCompat: Rewrote path to: ' + aReq.url);
     }
     aNext();
