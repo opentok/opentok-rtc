@@ -21,7 +21,8 @@
       xhr.onload = function (aEvt) {
         if (xhr.status === 200) {
           var response = xhr.responseType === 'json' && xhr.response || xhr.responseText;
-          if (xhr.responseType === 'json' && typeof xhr.response === 'string') {
+          if ((xhr.responseType === 'json' || !xhr.responseType) &&
+            typeof xhr.response === 'string') {
             response = JSON.parse(response);
           }
           resolve(response);
