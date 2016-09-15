@@ -191,9 +191,9 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('test', 'Launch server unit tests', [
-    'serverUnitTest',
-    'RESTApiTest',
-    'clientTest'
+    'serverTest',
+    'apiTest',
+    'karma:integration'
   ]);
 
   grunt.registerTask('configTests', [

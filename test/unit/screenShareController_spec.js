@@ -49,7 +49,7 @@ describe('ScreenShareController', function() {
   });
 
   it('should initialized properly the object and return chromeExtId', function(done) {
-    ScreenShareController.init('usr', chromeExtId).then(function() {
+    ScreenShareController.init('usr', chromeExtId, otHelper).then(function() {
       expect(ScreenShareController.chromeExtId).to.be.equal(chromeExtId);
       done();
     });
@@ -59,8 +59,8 @@ describe('ScreenShareController', function() {
      sinon.test(function(done) {
 
     var event = new CustomEvent('roomView:shareScreen');
-    OTHelper.isGoingToWork = true;
-    this.spy(OTHelper, 'shareScreen');
+    otHelper.isGoingToWork = true;
+    this.spy(otHelper, 'shareScreen');
 
     this.stub(RoomView, 'createStreamView', function(id, options) {
       return document.createElement('div');
@@ -70,11 +70,11 @@ describe('ScreenShareController', function() {
                             function handlerTest(evt) {
       window.removeEventListener('screenShareController:changeScreenShareStatus', handlerTest);
       expect(evt.detail.isSharing).to.be.true;
-      expect(OTHelper.shareScreen.calledOnce).to.be.true;
+      expect(otHelper.shareScreen.calledOnce).to.be.true;
       done();
     });
 
-    ScreenShareController.init('usr', chromeExtId).then(function() {
+    ScreenShareController.init('usr', chromeExtId, otHelper).then(function() {
       window.dispatchEvent(event);
     });
   }));
@@ -83,22 +83,22 @@ describe('ScreenShareController', function() {
      sinon.test(function() {
 
     var event = new CustomEvent('roomView:shareScreen');
-    OTHelper.isGoingToWork = true;
-    this.spy(OTHelper, 'stopShareScreen');
+    otHelper.isGoingToWork = true;
+    this.spy(otHelper, 'stopShareScreen');
 
     window.dispatchEvent(event);
 
-    expect(OTHelper.stopShareScreen.calledOnce).to.be.true;
+    expect(otHelper.stopShareScreen.calledOnce).to.be.true;
   }));
 
   it('should respond correctly when roomView:shareScreen is received and sharing does not work' +
      ' because an error different that user denied permission', sinon.test(function(done) {
 
    var event = new CustomEvent('roomView:shareScreen');
-   OTHelper.isGoingToWork = false;
-   OTHelper.error.code = OTHelper.screenShareErrorCodes.notSupported;
+   otHelper.isGoingToWork = false;
+   otHelper.error.code = otHelper.screenShareErrorCodes.notSupported;
 
-   this.spy(OTHelper, 'shareScreen');
+   this.spy(otHelper, 'shareScreen');
 
    this.stub(RoomView, 'createStreamView', function(id, options) {
      return document.createElement('div');
@@ -106,12 +106,12 @@ describe('ScreenShareController', function() {
 
    window.addEventListener('screenShareController:shareScreenError', function handlerTest(evt) {
       window.removeEventListener('screenShareController:shareScreenError', handlerTest);
-      expect(evt.detail).to.be.deep.equal(OTHelper.error);
-      expect(OTHelper.shareScreen.calledOnce).to.be.true;
+      expect(evt.detail).to.be.deep.equal(otHelper.error);
+      expect(otHelper.shareScreen.calledOnce).to.be.true;
       done();
     });
 
-    ScreenShareController.init('usr', chromeExtId).then(function() {
+    ScreenShareController.init('usr', chromeExtId, otHelper).then(function() {
       window.dispatchEvent(event);
     });
   }));
@@ -120,20 +120,20 @@ describe('ScreenShareController', function() {
      ' because the user denied the permission', sinon.test(function(done) {
 
    var event = new CustomEvent('roomView:shareScreen');
-   OTHelper.isGoingToWork = false;
-   OTHelper.error.code = OTHelper.screenShareErrorCodes.accessDenied;
-   this.spy(OTHelper, 'shareScreen');
+   otHelper.isGoingToWork = false;
+   otHelper.error.code = otHelper.screenShareErrorCodes.accessDenied;
+   this.spy(otHelper, 'shareScreen');
 
    this.stub(RoomView, 'createStreamView', function(id, options) {
      return document.createElement('div');
    });
 
    this.stub(RoomView, 'deleteStreamView', function(id, options) {
-     expect(OTHelper.shareScreen.calledOnce).to.be.true;
+     expect(otHelper.shareScreen.calledOnce).to.be.true;
      done();
    });
 
-    ScreenShareController.init('usr', chromeExtId).then(function() {
+    ScreenShareController.init('usr', chromeExtId, otHelper).then(function() {
       window.dispatchEvent(event);
     });
   }));
@@ -151,7 +151,7 @@ describe('ScreenShareController', function() {
        done();
      });
 
-     ScreenShareController.init('usr', chromeExtId).then(function() {
+     ScreenShareController.init('usr', chromeExtId, otHelper).then(function() {
        window.dispatchEvent(event);
      });
   });
@@ -169,7 +169,7 @@ describe('ScreenShareController', function() {
       done();
     });
 
-    ScreenShareController.init('usr', chromeExtId).then(function() {
+    ScreenShareController.init('usr', chromeExtId, otHelper).then(function() {
       window.dispatchEvent(event);
     });
   });

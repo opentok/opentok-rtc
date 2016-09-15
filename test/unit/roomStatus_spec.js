@@ -73,8 +73,8 @@ describe('roomStatus', function() {
           type: 'status'
         };
 
-        this.spy(OTHelper, 'sendSignal');
-        this.spy(OTHelper, 'removeListener');
+        this.spy(otHelper, 'sendSignal');
+        this.spy(otHelper, 'removeListener');
 
         // Testing that roomStatus:updatedRemotely was called we just put
         // a listener over it, if it wasn't executed correctly we'll have a
@@ -86,12 +86,10 @@ describe('roomStatus', function() {
         var handlers = [];
         RoomStatus.init(handlers);
 
-        var hndls = handlers[0];
+        var hndls = OTHelper.bindHandlers(handlers[0]);
         hndls['signal:status'](signalEvt);
 
-        expect(OTHelper.sendSignal.calledWith({
-          type: 'statusACK'
-        })).to.be.true;
+        expect(OTHelper.sendSignal.calledWith('statusACK')).to.be.true;
 
         expect(OTHelper.removeListener.calledWith('signal:status')).to.be.true;
         Object.keys(status).forEach(function(key) {
@@ -109,7 +107,7 @@ describe('roomStatus', function() {
 
       before(function() {
         RoomStatus.init(handlers);
-        statusHndls = handlers[0];
+        statusHndls = OTHelper.bindHandlers(handlers[0]);
         statusHndls['sessionConnected']({
           target: {
             connection: {
@@ -124,11 +122,7 @@ describe('roomStatus', function() {
         statusHndls['connectionCreated'](signalEvt);
 
         expect(OTHelper.sendSignal.calledOnce).to.be.true;
-        expect(OTHelper.sendSignal.calledWith({
-          type: 'status',
-          to: signalEvt.connection,
-          data: JSON.stringify(entries)
-        })).to.be.true;
+        expect(OTHelper.sendSignal.calledWith('status', entries, signalEvt.connection)).to.be.true;
       }
 
       it('should send status when a different user connects and I was the oldest connected one',
