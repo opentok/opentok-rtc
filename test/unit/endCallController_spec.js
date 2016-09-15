@@ -35,13 +35,10 @@ describe('EndCallController', function() {
   });
 
   describe('#roomView:endCall event', function() {
-    it('should disconnect from session and send endCall event', sinon.test(function() {
-      this.stub(OTHelper, 'disconnectFromSession');
+    it('should send endCall event', sinon.test(function() {
       this.spy(Utils, 'sendEvent');
 
       window.dispatchEvent(new CustomEvent('roomView:endCall'));
-
-      expect(OTHelper.disconnectFromSession.calledOnce).to.be.true;
       expect(Utils.sendEvent.calledOnce).to.be.true;
     }));
   });

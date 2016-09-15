@@ -2,7 +2,6 @@
   'use strict';
 
   var endCall = function() {
-    OTHelper.disconnectFromSession();
     Utils.sendEvent('EndCallController:endCall');
   };
 

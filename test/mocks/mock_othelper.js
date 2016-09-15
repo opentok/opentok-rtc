@@ -2,8 +2,20 @@
   'use strict';
 
   var realOTHelper = null;
+  var realotHelper = null;
 
-  var MockOTHelper = {
+  var _MockOTHelper = {
+    bindHandlers: function (aHandlers) {
+      if (Array.isArray(aHandlers)) {
+        return aHandlers.map(handler => handler.bind(window.OTHelper));
+      } else {
+        return Object.keys(aHandlers).
+          reduce((previous, elem, index, array) => {
+            previous[elem] = aHandlers[elem].bind(window.OTHelper);
+            return previous;
+          }, {});
+      }
+    },
     error: {
       code: 1,
       message: 'Not sharing'
@@ -12,10 +24,13 @@
     isGoingToWork: true,
     _install: function() {
       realOTHelper = exports.OTHelper;
+      realotHelper = exports.otHelper;
       exports.OTHelper = MockOTHelper;
+      exports.otHelper = _MockOTHelper;
     },
     _restore: function() {
       exports.OTHelper = realOTHelper;
+      exports.otHelper = realotHelper;
     },
     isMyself: function(connection) {
       return this._myConnId === connection.connectionId;
@@ -43,6 +58,13 @@
     disconnectFromSession: function() {}
   };
 
+  function MockOTHelper() {
+    return _MockOTHelper;
+  }
+
   exports.MockOTHelper = MockOTHelper;
+  Object.keys(_MockOTHelper).forEach(attr => {
+    exports.MockOTHelper[attr] = _MockOTHelper[attr];
+  });
 
 }(this);

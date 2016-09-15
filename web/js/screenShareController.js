@@ -8,6 +8,8 @@
   var _userName;
   var NAME_SUFFIX = '\'s screen';
   var DEFAULT_NAME = 'Unknown';
+  var otHelper;
+  var enableAnnotations = false;
 
   var screenPublisherOptions = {
     insertMode: 'append',
@@ -36,7 +38,7 @@
       }
 
       if (_isSharing) {
-        OTHelper.stopShareScreen();
+        otHelper.stopShareScreen();
         _isSharing = false;
         // We don't need to send this because desktop stream is sending a destroyed event.
       } else {
@@ -46,7 +48,8 @@
           controlElems: {}
         });
         _hasPendingOperation = true;
-        OTHelper.shareScreen(desktopElement, screenPublisherOptions, streamHandlers).
+        otHelper.shareScreen(desktopElement, screenPublisherOptions, streamHandlers,
+                             enableAnnotations).
           then(function() {
             _isSharing = true;
             _hasPendingOperation = false;
@@ -87,10 +90,12 @@
     }
   };
 
-  function init(aUserName, aChromeExtId) {
+  function init(aUserName, aChromeExtId, aOTHelper, aEnableAnnotations) {
     return LazyLoader.dependencyLoad([
       '/js/screenShareView.js'
     ]).then(function() {
+      enableAnnotations = aEnableAnnotations;
+      otHelper = aOTHelper;
       debug = new Utils.MultiLevelLogger('screenShareController.js',
                                          Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
 
@@ -101,7 +106,7 @@
       screenPublisherOptions.name = (aUserName ? aUserName : DEFAULT_NAME) + NAME_SUFFIX;
       _chromeExtId = aChromeExtId;
       aChromeExtId && aChromeExtId !== 'undefined' &&
-        OTHelper.registerScreenShareExtension({ chrome: aChromeExtId });
+        OTHelper.registerScreenShareExtension({ chrome: aChromeExtId }, 1);
       ScreenShareView.init(aUserName);
     });
   };

@@ -106,6 +106,8 @@
     }
   }
 
+  var otHelper;
+
   var _chatHandlers = {
     'signal:chat': function(evt) {
       // A signal of the specified type was received from the session. The
@@ -125,11 +127,13 @@
       // Session object also dispatches a sessionConnected evt when your local
       // client connects
       var newUsrName = JSON.parse(evt.connection.data).userName;
-      if (!OTHelper.isMyself(evt.connection)) {
+      if (!this.isMyself(evt.connection)) {
         Utils.sendEvent('chatController:presenceEvent', {
             userName: newUsrName,
             text: CONN_TEXT
         });
+      } else {
+        otHelper = this;
       }
     },
     'connectionDestroyed': function(evt) {
@@ -145,14 +149,12 @@
   */
   function sendMsg(evt) {
     var data = evt.detail;
-    return OTHelper.sendSignal({
-      type: 'chat',
-      data: JSON.stringify(data)
-    }).then(function() {
-      Utils.sendEvent('chatController:messageDelivered');
-    }).catch(function(error) {
-      debug.error('Error sending [', data.text.value, '] to the group. ', error.message);
-    });
+    return otHelper.sendSignal('chat', data).
+      then(function() {
+        Utils.sendEvent('chatController:messageDelivered');
+      }).catch(function(error) {
+        debug.error('Error sending [', data.text.value, '] to the group. ', error.message);
+      });
   }
 
  /**

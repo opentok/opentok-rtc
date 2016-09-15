@@ -4,8 +4,10 @@
   var debug =
     new Utils.MultiLevelLogger('roomController.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
 
+  var otHelper;
   var numUsrsInRoom = 0;
   var _disabledAllVideos = false;
+  var enableAnnotations = false;
 
   var setPublisherReady;
   var publisherReady = new Promise(function(resolve, reject) {
@@ -74,7 +76,7 @@
         eventFiredName: 'roomView:buttonClick',
         dataIcon: isScreenSharing ? 'desktop' : 'video',
         eventName: 'click',
-        context: 'OTHelper',
+        context: 'otHelper',
         action: 'toggleSubscribersVideo',
         enabled: true
       }
@@ -85,7 +87,7 @@
         eventFiredName: 'roomView:buttonClick',
         dataIcon: 'audio',
         eventName: 'click',
-        context: 'OTHelper',
+        context: 'otHelper',
         action: 'toggleSubscribersAudio',
         enabled: true
       };
@@ -99,7 +101,7 @@
       eventFiredName: 'roomView:buttonClick',
       dataIcon: 'video',
       eventName: 'click',
-      context: 'OTHelper',
+      context: 'otHelper',
       action: 'togglePublisherVideo',
       enabled: true
     },
@@ -107,7 +109,7 @@
       eventFiredName: 'roomView:buttonClick',
       dataIcon: 'mic',
       eventName: 'click',
-      context: 'OTHelper',
+      context: 'otHelper',
       action: 'togglePublisherAudio',
       enabled: true
     }
@@ -168,7 +170,7 @@
         width: elem.clientWidth,
         height: elem.clientHeight
       };
-      OTHelper.setPreferredResolution(subscriber, parentDimension, subsDimension, numUsrsInRoom - 1,
+      otHelper.setPreferredResolution(subscriber, parentDimension, subsDimension, numUsrsInRoom - 1,
                                       resolutionAlgorithm);
     });
   };
@@ -234,13 +236,13 @@
   };
 
   function sendSignalMuteAll(status, onlyChangeSwitch) {
-    OTHelper.sendSignal({
-      type: 'muteAll',
-      data: JSON.stringify({ status: status, onlyChangeSwitch: onlyChangeSwitch })
-    });
+    otHelper.sendSignal('muteAll', { status: status, onlyChangeSwitch: onlyChangeSwitch });
   };
 
   var viewEventHandlers = {
+    'endCall': function() {
+      otHelper.disconnect();
+    },
     'startArchiving': function(evt) {
       sendArchivingOperation((evt.detail && evt.detail.operation) || 'startComposite');
     },
@@ -264,7 +266,7 @@
         // There are a couple of possible race conditions that would end on us not changing
         // the status on the publisher (because it's already on that state) but where we should
         // update the UI to reflect the correct state.
-        if (!OTHelper.isPublisherReady || OTHelper.publisherHas(name) === newStatus) {
+        if (!otHelper.isPublisherReady || otHelper.publisherHas(name) === newStatus) {
           sendStatus({ stream: { streamId: 'publisher' } }, name, newStatus);
         }
       } else {
@@ -327,7 +329,7 @@
   };
 
   var setAudioStatus = function(switchStatus) {
-    OTHelper.isPublisherReady && viewEventHandlers.buttonClick({
+    otHelper.isPublisherReady && viewEventHandlers.buttonClick({
       detail: {
         streamId: 'publisher',
         name: 'audio',
@@ -437,7 +439,7 @@
         subsContainer && _mutationObserver &&
           _mutationObserver.observe(subsContainer, {attributes: true});
         subscriberStreams[streamId].subscriberPromise =
-          OTHelper.subscribe(evt.stream, subsDOMElem, subOptions).
+          otHelper.subscribe(evt.stream, subsDOMElem, subOptions, {}, enableAnnotations).
           then(function(subscriber) {
             if (streamVideoType === 'screen') {
               return subscriber;
@@ -471,15 +473,9 @@
       var stream = evt.stream;
       RoomView.deleteStreamView(stream.streamId);
       subscriberStreams[stream.streamId] = null;
-      var subscribers = this.getSubscribersForStream(stream);
-      subscribers.forEach(function(subscriber) {
-        Object.keys(_subscriberHandlers).forEach(function(name) {
-          subscriber.off(name, _subscriberHandlers[name]);
-        });
-      });
     },
     'streamPropertyChanged': function(evt) {
-      if (OTHelper.publisherId !== evt.stream.id) {
+      if (otHelper.publisherId !== evt.stream.id) {
         return;
       }
       if (evt.changedProperty === 'hasVideo') {
@@ -514,7 +510,7 @@
         RoomView.setAudioSwitchRemotely(isMuted);
       }.bind(undefined, muteAllSwitch, onlyChangeSwitch);
 
-      if (!OTHelper.isMyself(evt.from)) {
+      if (!otHelper.isMyself(evt.from)) {
         _sharedStatus.roomMuted = muteAllSwitch;
         if (muteAllSwitch) {
           setAudioStatus(muteAllSwitch);
@@ -591,6 +587,7 @@
     var usrId = params.getFirstValue('userName');
     resolutionAlgorithm = params.getFirstValue('resolutionAlgorithm');
     debugPreferredResolution = params.getFirstValue('debugPreferredResolution');
+    enableAnnotations = params.getFirstValue('enableAnnotations') !== undefined;
 
     var info = {
       username: usrId,
@@ -626,6 +623,7 @@
   var init = function() {
     LazyLoader.load([
       '/js/components/htmlElems.js',
+      '/js/helpers/resolutionAlgorithms.js',
       '/js/helpers/OTHelper.js',
       '/js/itemsHandler.js',
       '/js/layoutView.js',
@@ -643,6 +641,25 @@
       EndCallController.init({addEventListener: function() {}}, 'NOT_AVAILABLE');
     }).
     then(getRoomParams).
+    then(function(aParams) {
+      var loadAnnotations = Promise.resolve();
+      if (enableAnnotations) {
+        exports.OTKAnalytics = exports.OTKAnalytics ||
+          function() { return {
+          addSessionInfo: function() {},
+          logEvent: function(a,b) {
+            console.log(a,b);
+          }
+          };
+        };
+        loadAnnotations = LazyLoader.load([
+          'https://code.jquery.com/jquery-3.1.0.min.js',
+          'https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js',
+          '/js/vendor/opentok-annotation.js'
+        ]);
+      }
+      return loadAnnotations.then(function() { return aParams; });
+    }).
     then(getRoomInfo).
     then(function(aParams) {
       Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
@@ -655,10 +672,11 @@
                    aParams.username.substring(0, 1000) :
                    aParams.username) :
                   '';
+      // This kinda sucks, but it's the easiest way to leave the 'context' thing work as it does now
+      otHelper = new exports.OTHelper(aParams);
+      exports.otHelper = otHelper;
 
-      var connect =
-        OTHelper.connectToSession.bind(OTHelper, aParams.apiKey,
-                                       aParams.sessionId, aParams.token);
+      var connect = otHelper.connect.bind(otHelper);
 
       // Room's name is set by server, we don't need to do this, but
       // perphaps it would be convenient
@@ -691,13 +709,13 @@
             publisherOptions.publishAudio = false;
           }
           publisherOptions.name = userName;
-          return OTHelper.publish(publisherElement, publisherOptions).then(function() {
+          return otHelper.publish(publisherElement, publisherOptions, {}).then(function() {
             setPublisherReady();
           });
         }).
         then(function() {
           RecordingsController.init(aParams.firebaseURL, aParams.firebaseToken, aParams.sessionId);
-          ScreenShareController.init(userName, aParams.chromeExtId);
+          ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
           Utils.sendEvent('roomController:controllersReady');
         }).
         catch(function(error) {

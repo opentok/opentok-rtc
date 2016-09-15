@@ -12,11 +12,10 @@
   var _myCreationTime;
   var _connectedAfterMe = {};
   var _connectedEarlierThanMe = 0;
+  var otHelper;
 
-  function sendStatusAck() {
-    OTHelper.sendSignal({
-      type: 'statusACK'
-    });
+  function sendStatusAck(aOTHelper) {
+    (aOTHelper || otHelper).sendSignal('statusACK');
   }
 
   function cancelPendingSend(aConnectionId) {
@@ -32,11 +31,7 @@
   }
 
   function sendStatus(aUser) {
-    return OTHelper.sendSignal({
-      type: 'status',
-      to: aUser,
-      data: JSON.stringify(_entries)
-    });
+    return otHelper.sendSignal('status', _entries, aUser);
   }
 
   function proccessNewConnection(evt) {
@@ -46,7 +41,7 @@
 
     if (creationTime < _myCreationTime) {
       _connectedEarlierThanMe++;
-    } else if (!OTHelper.isMyself(newUsrConnection)) {
+    } else if (!otHelper.isMyself(newUsrConnection)) {
       var send = function(aNewUsrConnection) {
         if (iMustSend()) {
           sendStatus(aNewUsrConnection);
@@ -65,10 +60,10 @@
   var _statusHandlers = {
     'signal:status': function(evt) {
       _entries = JSON.parse(evt.data);
-      sendStatusAck();
+      sendStatusAck(this);
       // FOLLOW-UP This event must have been an once event and don't need
       // to remove it
-      OTHelper.removeListener('signal:status');
+      this.removeListener('signal:status');
       Utils.sendEvent('roomStatus:updatedRemotely');
     },
     'signal:statusACK': function(evt) {
@@ -83,6 +78,7 @@
     },
     'sessionConnected': function(evt) {
       _myCreationTime = evt.target.connection.creationTime;
+      otHelper = this;
     },
     'connectionDestroyed': function(evt) {
       // If connection destroyed belongs to someone older than me,

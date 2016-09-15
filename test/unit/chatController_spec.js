@@ -148,7 +148,7 @@ describe('ChatController', function() {
       before(function(done) {
         ChatController.init(room, usr, handlers).then(function(aHandlers) {
           handlers  = aHandlers;
-          chatHndls = aHandlers[0];
+          chatHndls = window.MockOTHelper.bindHandlers(aHandlers[0]);
           done();
         });
       });
@@ -193,7 +193,7 @@ describe('ChatController', function() {
         var handlers = [];
 
         ChatController.init('testRoomName', 'mySelf', handlers).then(function(aHandlers) {
-          var chatHndls = aHandlers[0];
+          var chatHndls = window.MockOTHelper.bindHandlers(aHandlers[0]);
 
           var disconnData = {
             userName: 'otherUsr',
@@ -280,10 +280,7 @@ describe('ChatController', function() {
       ChatController.init('testRoomName', 'testUserName', handlers).then(function(aHandlers) {
         window.dispatchEvent(new CustomEvent('chatView:outgoingMessage', { detail: data }));
 
-        expect(OTHelper.sendSignal.calledWith({
-          type: 'chat',
-          data: JSON.stringify(data)
-        })).to.be.true;
+        expect(OTHelper.sendSignal.calledWith('chat', data)).to.be.true;
         handlerExecuted.then(done);
       });
     }));
