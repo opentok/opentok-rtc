@@ -61,7 +61,7 @@
   //--------------------------------------
   //  OPENTOK ANNOTATION CANVAS/VIEW
   //--------------------------------------
-  const DEFAULT_ASSET_URL = 'https://assets.tokbox.com/solutions/images/';
+  var DEFAULT_ASSET_URL = 'https://assets.tokbox.com/solutions/images/';
 
   OTSolution = this.OTSolution || {};
 
@@ -94,6 +94,39 @@
       canvas.style.height = window.getComputedStyle(this.parent).height;
     }
 
+    var _scale = {
+      get X() {
+        return self.videoFeed.stream.videoDimensions.width / canvas.width;
+      },
+      get Y() {
+        return self.videoFeed.stream.videoDimensions.height / canvas.height;
+      }
+    };
+
+    function VideoRelativeCoordinateSet(update) {
+      var returnedObj = {};
+
+      Object.keys(update).forEach(function(attr) {
+        returnedObj[attr] = update[attr];
+      });
+      ['X', 'Y'].forEach(function(coord) {
+        ['to', 'from', 'last', 'm', 'start', 'point'].forEach(function(verb) {
+          var attr = verb + coord;
+          returnedObj['_' + attr] = returnedObj[attr];
+          Object.defineProperty(returnedObj, attr, {
+            get: function() {
+              return returnedObj['_' + attr] / _scale[coord];
+            },
+            set: function(newVal) {
+              returnedObj['_' + attr] = newVal;// * _scale[coord];
+            }
+          });
+        });
+      });
+      return returnedObj;
+    }
+
+
     var self = this,
       ctx,
       cbs = [],
@@ -106,9 +139,9 @@
       updateHistory = [],
       eventHistory = [],
       isStartPoint = false,
-      client = {
+      client = new VideoRelativeCoordinateSet({
         dragging: false
-      };
+      });
 
 
 
@@ -160,7 +193,7 @@
         self.overlay = null;
       }
 
-      if (item && item.id === 'OT_capture') {
+      if (item.id === 'OT_capture') {
         self.selectedItem = item;
 
         if (!self.overlay) {
@@ -197,7 +230,7 @@
         } else {
           self.overlay.style = 'inline';
         }
-      } else if (item && item.id.indexOf('OT_line_width') !== -1) {
+      } else if (item.id.indexOf('OT_line_width') !== -1) {
         if (item.size) {
           self.changeLineWidth(item.size);
         }
@@ -323,6 +356,7 @@
     }
 
     function updateCanvas(event, resizeEvent) {
+
       // Ensure that our canvas has been properly sized
       if (canvas.width === 0) {
         canvas.width = self.parent.getBoundingClientRect().width;
@@ -344,7 +378,6 @@
         (event.changedTouches && event.changedTouches[0].pageX - offsetLeft);
       var offsetY = event.offsetY || event.pageY - offsetTop ||
         (event.changedTouches && event.changedTouches[0].pageY - offsetTop);
-
       var x = offsetX * scaleX;
       var y = offsetY * scaleY;
 
@@ -369,8 +402,8 @@
                 update = {
                   id: self.videoFeed.stream.connection.connectionId,
                   fromId: self.session.connection.connectionId,
-                  fromX: client.lastX,
-                  fromY: client.lastY,
+                  fromX: client._lastX,
+                  fromY: client._lastY,
                   toX: x,
                   toY: y,
                   color: resizeEvent ? event.userColor : self.userColor,
@@ -384,7 +417,7 @@
                   endPoint: false,
                   selectedItem: selectedItem
                 };
-                draw(new Update(update), true);
+                draw(new VideoRelativeCoordinateSet(update), true);
                 client.lastX = x;
                 client.lastY = y;
                 !resizeEvent && sendUpdate(update);
@@ -397,8 +430,8 @@
               update = {
                 id: self.videoFeed.stream.connection.connectionId,
                 fromId: self.session.connection.connectionId,
-                fromX: client.lastX,
-                fromY: client.lastY,
+                fromX: client._lastX,
+                fromY: client._lastY,
                 toX: x,
                 toY: y,
                 color: resizeEvent ? event.userColor : self.userColor,
@@ -412,7 +445,7 @@
                 endPoint: true,
                 selectedItem: selectedItem
               };
-              draw(new Update(update), true);
+              draw(new VideoRelativeCoordinateSet(update), true);
               client.lastX = x;
               client.lastY = y;
               !resizeEvent && sendUpdate(update);
@@ -440,7 +473,7 @@
             selectedItem: selectedItem
           };
 
-          draw(new Update(update));
+          draw(new VideoRelativeCoordinateSet(update));
           !resizeEvent && sendUpdate(update);
         } else {
           // We have a shape or custom object
@@ -466,7 +499,7 @@
                       // INFO The points for scaling will get added when drawing is complete
                   };
 
-                  draw(new Update(update), true);
+                  draw(new VideoRelativeCoordinateSet(update), true);
                 }
                 break;
               case 'mouseup':
@@ -479,10 +512,10 @@
                   update = {
                     id: self.videoFeed.stream.connection.connectionId,
                     fromId: self.session.connection.connectionId,
-                    fromX: client.startX,
-                    fromY: client.startY,
-                    toX: client.mX,
-                    toY: client.mY,
+                    fromX: client._startX,
+                    fromY: client._startY,
+                    toX: client._mX,
+                    toY: client._mY,
                     color: resizeEvent ? event.userColor : self.userColor,
                     lineWidth: resizeEvent ? event.lineWidth : self.lineWidth,
                     videoWidth: self.videoFeed.videoElement().clientWidth,
@@ -496,7 +529,7 @@
                     selectedItem: selectedItem
                   };
 
-                  drawHistory.push(update);
+                  drawHistory.push(new VideoRelativeCoordinateSet(update));
 
                   !resizeEvent && sendUpdate(update);
                 } else {
@@ -507,8 +540,8 @@
                     var endPoint = false;
 
                     // Scale the points according to the difference between the start and end points
-                    var pointX = client.startX + (scale.x * points[i][0]);
-                    var pointY = client.startY + (scale.y * points[i][1]);
+                    var pointX = client._startX + (scale.x * points[i][0]);
+                    var pointY = client._startY + (scale.y * points[i][1]);
 
                     if (i === 0) {
                       client.lastX = pointX;
@@ -521,8 +554,8 @@
                     update = {
                       id: self.videoFeed.stream.connection.connectionId,
                       fromId: self.session.connection.connectionId,
-                      fromX: client.lastX,
-                      fromY: client.lastY,
+                      fromX: client._lastX,
+                      fromY: client._lastY,
                       toX: pointX,
                       toY: pointY,
                       color: resizeEvent ? event.userColor : self.userColor,
@@ -537,11 +570,11 @@
                       endPoint: endPoint
                     };
 
-                    drawHistory.push(update);
+                    drawHistory.push(new VideoRelativeCoordinateSet(update));
 
                     !resizeEvent && sendUpdate(update);
 
-                    client.lastX = pointX;
+                    client.lastX = pointX; // SCALE BACK!
                     client.lastY = pointY;
                   }
 
@@ -582,6 +615,7 @@
         event.lineWidth = self.lineWidth;
         eventHistory.push(event);
       }
+
       updateCanvas(event);
 
     });
@@ -708,38 +742,6 @@
 
     addEventListeners(canvas, 'click', handleClick);
 
-    var _scale = {
-      get X() {
-        return self.videoFeed.stream.videoDimensions.width / canvas.width;
-      },
-      get Y() {
-        return self.videoFeed.stream.videoDimensions.height / canvas.height;
-      }
-    };
-
-    function Update(update) {
-      var returnedObj = {};
-
-      Object.keys(update).forEach(function(attr) {
-        returnedObj[attr] = update[attr];
-      });
-      ['X', 'Y'].forEach(function(coord) {
-        ['to', 'from'].forEach(function(verb) {
-          var attr = verb + coord;
-          returnedObj['_' + attr] = returnedObj[attr];
-          Object.defineProperty(returnedObj, attr, {
-            get: function() {
-              return returnedObj['_' + attr] / _scale[coord];
-            },
-            set: function(newVal) {
-              returnedObj['_' + attr] = newVal * _scale[coord];
-            }
-          });
-        });
-      });
-      return returnedObj;
-    }
-
     /**
      * End Handle text markup
      */
@@ -864,31 +866,34 @@
       } else {
         for (var i = 0; i < points.length; i++) {
           // Scale the points according to the difference between the start and end points
-          var pointX = client.startX + (scale.x * points[i][0]);
-          var pointY = client.startY + (scale.y * points[i][1]);
+          // Use device independent points here!
+          client.pointX = client._startX + (scale.x * points[i][0]);
+          client.pointY = client._startY + (scale.y * points[i][1]);
 
           if (self.selectedItem.enableSmoothing) {
             if (i === 0) {
               // Do nothing
             } else if (i === 1) {
-              ctx.moveTo((pointX + client.lastX) / 2, (pointY + client.lastY) / 2);
-              client.lastX = (pointX + client.lastX) / 2;
-              client.lastX = (pointY + client.lastY) / 2;
+              ctx.moveTo((client.pointX + client.lastX) / 2, (client.pointY + client.lastY) / 2);
+              client.lastX = (client._pointX + client._lastX) / 2;
+              client.lastX = (client._pointY + client._lastY) / 2;
             } else {
-              ctx.quadraticCurveTo(client.lastX, client.lastY, (pointX + client.lastX) / 2, (pointY + client.lastY) / 2);
-              client.lastX = (pointX + client.lastX) / 2;
-              client.lastY = (pointY + client.lastY) / 2;
+              ctx.quadraticCurveTo(client.lastX, client.lastY, (client.pointX + client.lastX) / 2,
+                                   (client.pointY + client.lastY) / 2);
+              client.lastX = (client._pointX + client._lastX) / 2;
+              client.lastY = (client._pointY + client._lastY) / 2;
             }
           } else {
+//          console.log('HEHEHEHE', client._pointX, client.pointX);
             if (i === 0) {
-              ctx.moveTo(pointX, pointY);
+              ctx.moveTo(client.pointX, client.pointY);
             } else {
-              ctx.lineTo(pointX, pointY);
+              ctx.lineTo(client.pointX, client.pointY);
             }
           }
 
-          client.lastX = pointX;
-          client.lastY = pointY;
+          client.lastX = client._pointX; // SCALE BACK!
+          client.lastY = client._pointY;
         }
       }
 
@@ -918,8 +923,8 @@
       var dx = Math.abs(maxX - minX);
       var dy = Math.abs(maxY - minY);
 
-      var scaleX = (client.mX - client.startX) / dx;
-      var scaleY = (client.mY - client.startY) / dy;
+      var scaleX = (client._mX - client._startX) / dx;
+      var scaleY = (client._mY - client._startY) / dy;
 
       return {
         x: scaleX,
@@ -980,10 +985,9 @@
         updateHistory[index] = updateForHistory;
       } else {
         updateHistory.push(updateForHistory);
-        drawHistory.push(new Update(update));
+        drawHistory.push(new VideoRelativeCoordinateSet(update));
       }
       /** ********************************** */
-
 
       draw(null);
     };
@@ -1694,33 +1698,11 @@
           });
         };
 
-        var onClear = context.getElementById('OT_clear').onclick = function () {
+        context.getElementById('OT_clear').onclick = function () {
           canvases.forEach(function (canvas) {
             canvas.clear();
           });
         };
-
-        window.addEventListener('OT_clear', function() {
-          onClear();
-          self.selectedItem = null;
-          canvases.forEach(function (canvas) {
-            canvas.selectItem(self.selectedItem);
-          });
-        });
-
-        window.addEventListener('OT_pen', function(evt) {
-          var item = self.items.find(function(item) {
-            return item.id === 'OT_pen';
-          });
-
-          self.selectedItem = item;
-          attachDefaultAction(item);
-          var color = evt.detail.color;
-          canvases.forEach(function (canvas) {
-            canvas.selectItem(self.selectedItem);
-            color && canvas.changeColor(color);
-          });
-        });
       }
     };
 
@@ -1984,7 +1966,6 @@
     }
 
     var videoDimensions = _canvas.videoFeed.stream.videoDimensions;
-
     var origRatio = videoDimensions.width / videoDimensions.height;
     var destRatio = width / height;
     var calcDimensions = {
@@ -2062,7 +2043,7 @@
 
     var width = screen.width * 0.80 | 0;
     var height = width / (_aspectRatio);
-    var externalWindowHTML = '<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-type" content="text/html; charset=utf-8"><title>OpenTok Screen Sharing Solution Annotation</title><style type="text/css" media="screen"> body{margin: 0; background-color: rgba(0, 153, 203, 0.7); box-sizing: border-box; height: 100vh;}canvas{top: 0; z-index: 1000;}.hidden{display: none;}.main-wrap{width: 100%; height: 100%; -ms-box-orient: horizontal; display: -webkit-box; display: -moz-box; display: -ms-flexbox; display: -moz-flex; display: -webkit-flex; display: flex; -webkit-justify-content: center; justify-content: center; -webkit-align-items: center; align-items: center;}.inner-wrap{position: relative; border-radius: 8px; overflow: hidden;}.fixed-container{position: fixed; top: 275px; right: 0; width: 40px; z-index: 1001;}.fixed-container .toolbar-wrap{position: absolute; top: 0; left: 0;}.fixed-container .toolbar-wrap input{display: block; top: 0 !important; transform: none !important;}.fixed-container .toolbar-wrap .OT_color{width: 30px; margin-right: 5px !important; margin-left: 5px !important; padding: 0;}.fixed-container .toolbar-wrap .OT_subpanel, .fixed-container .toolbar-wrap .color-picker{position: absolute; top: 0; right: 40px; padding-left: 0 !important; overflow: hidden;}.fixed-container .toolbar-wrap .OT_subpanel> div{top: 0 !important; transform: none !important;}.fixed-container .toolbar-wrap .color-picker{left: -30px;}.fixed-container .toolbar-wrap .color-picker .color-choice{display: block !important; height: 20px !important; width: 20px !important;}.publisherContainer{display: block; background-color: #000000; position: absolute;}.publisher-wrap{height: 100%; width: 100%;}.subscriberContainer{position: absolute; top: 20px; left: 20px; width: 200px; height: 120px; background-color: #000000; border: 2px solid white; border-radius: 6px;}.subscriberContainer .OT_video-poster{width: 100%; height: 100%; opacity: .25; background-repeat: no-repeat; background-image: url(https://static.opentok.com/webrtc/v2.8.2/images/rtc/audioonly-silhouette.svg); background-size: 50%; background-position: center;}.OT_video-element{height: 100%; width: 100%;}.OT_edge-bar-item{display: none;}</style></head><body> <div class="main-wrap"> <div id="annotationContainer" class="inner-wrap"></div></div><div id="toolbarContainer" class="fixed-container"> <div id="toolbar" class="toolbar-wrap"></div></div><div id="subscriberVideo" class="subscriberContainer hidden"></div><script type="text/javascript" charset="utf-8"> /** Must use double-quotes since everything must be converted to a string */ var opener; var canvas; if (!toolbar){alert("Something went wrong: You must pass an OpenTok annotation toolbar object into the window.")}else{opener=window.opener; window.onbeforeunload=window.triggerCloseEvent;}var localScreenProperties={insertMode: "append", width: "100%", height: "100%", videoSource: "window", showControls: false, style:{buttonDisplayMode: "off"}, fitMode: "contain"}; var createContainerElements=function(){var parentDiv=document.getElementById("annotationContainer"); var publisherContainer=document.createElement("div"); publisherContainer.setAttribute("id", "screenshare_publisher"); publisherContainer.classList.add("publisher-wrap"); parentDiv.appendChild(publisherContainer); return{annotation: parentDiv, publisher: publisherContainer};}; var addSubscriberVideo=function(stream){var container=document.getElementById("subscriberVideo"); var subscriber=session.subscribe(stream, container, localScreenProperties, function(error){if (error){console.log("Failed to add subscriber video", error);}container.classList.remove("hidden");}); console.log("subscriber", subscriber); subscriber.subscribeToAudio(false);}; if (navigator.userAgent.indexOf("Firefox") !==-1){var ghost=window.open("about:blank"); ghost.focus(); ghost.close();}</script></body></html>';
+    var externalWindowHTML = '<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-type" content="text/html; charset=utf-8"><title>OpenTok Screen Sharing Solution Annotation</title><style type="text/css" media="screen"> body{margin: 0; background-color: rgba(0, 153, 203, 0.7); box-sizing: border-box; height: 100vh;}canvas{top: 0; z-index: 1000;}.hidden{display: none;}.main-wrap{width: 100%; height: 100%; -ms-box-orient: horizontal; display: -webkit-box; display: -moz-box; display: -ms-flexbox; display: -moz-flex; display: -webkit-flex; display: flex; -webkit-justify-content: center; justify-content: center; -webkit-align-items: center; align-items: center;}.inner-wrap{position: relative; border-radius: 8px; overflow: hidden;}.fixed-container{position: fixed; top: 275px; right: 0; width: 40px; z-index: 1001;}.fixed-container .toolbar-wrap{position: absolute; top: 0; left: 0;}.fixed-container .toolbar-wrap input{display: block; top: 0 !important; transform: none !important;}.fixed-container .toolbar-wrap .OT_color{width: 30px; margin-right: 5px !important; margin-left: 5px !important; padding: 0;}.fixed-container .toolbar-wrap .OT_subpanel, .fixed-container .toolbar-wrap .color-picker{position: absolute; top: 0; right: 40px; padding-left: 0 !important; overflow: hidden;}.fixed-container .toolbar-wrap .OT_subpanel> div{top: 0 !important; transform: none !important;}.fixed-container .toolbar-wrap .color-picker{left: -30px;}.fixed-container .toolbar-wrap .color-picker .color-choice{display: block !important; height: 20px !important; width: 20px !important;}.publisherContainer{display: block; background-color: #000000; position: absolute;}.publisher-wrap{height: 100%; width: 100%;}.subscriberContainer{position: absolute; top: 20px; left: 20px; width: 200px; height: 120px; background-color: #000000; border: 2px solid white; border-radius: 6px;}.subscriberContainer .OT_video-poster{width: 100%; height: 100%; opacity: .25; background-repeat: no-repeat; background-image: url(https://static.opentok.com/webrtc/v2.8.2/images/rtc/audioonly-silhouette.svg); background-size: 50%; background-position: center;}.OT_video-element{height: 100%; width: 100%;}.OT_edge-bar-item{display: none;}</style></head><body> <div class="main-wrap"> <div id="annotationContainer" class="inner-wrap"></div></div><div id="toolbarContainer" class="fixed-container"> <div id="toolbar" class="toolbar-wrap"></div></div><div id="subscriberVideo" class="subscriberContainer hidden"></div><script type="text/javascript" charset="utf-8"> /** Must use double-quotes since everything must be converted to a string */ var opener; var canvas; if (!toolbar){alert("Something went wrong: You must pass an OpenTok annotation toolbar object into the window.")}else{opener=window.opener; window.onbeforeunload=window.triggerCloseEvent;}var localScreenProperties={insertMode: "append", width: "100%", height: "100%", videoSource: "window", showControls: false, style:{buttonDisplayMode: "off"}, subscribeToVideo: "true", subscribeToAudio: "false", fitMode: "contain"}; var createContainerElements=function(){var parentDiv=document.getElementById("annotationContainer"); var publisherContainer=document.createElement("div"); publisherContainer.setAttribute("id", "screenshare_publisher"); publisherContainer.classList.add("publisher-wrap"); parentDiv.appendChild(publisherContainer); return{annotation: parentDiv, publisher: publisherContainer};}; var addSubscriberVideo=function(stream){var container=document.getElementById("subscriberVideo"); var subscriber=session.subscribe(stream, container, localScreenProperties, function(error){if (error){console.log("Failed to add subscriber video", error);}container.classList.remove("hidden");});}; if (navigator.userAgent.indexOf("Firefox") !==-1){var ghost=window.open("about:blank"); ghost.focus(); ghost.close();}</script></body></html>';
 
     /* eslint-disable max-len */
     var windowFeatures = [
