@@ -7,6 +7,7 @@
   var otHelper;
   var numUsrsInRoom = 0;
   var _disabledAllVideos = false;
+  var enableAnnotations = false;
 
   var setPublisherReady;
   var publisherReady = new Promise(function(resolve, reject) {
@@ -438,7 +439,7 @@
         subsContainer && _mutationObserver &&
           _mutationObserver.observe(subsContainer, {attributes: true});
         subscriberStreams[streamId].subscriberPromise =
-          otHelper.subscribe(evt.stream, subsDOMElem, subOptions, {}).
+          otHelper.subscribe(evt.stream, subsDOMElem, subOptions, {}, enableAnnotations).
           then(function(subscriber) {
             if (streamVideoType === 'screen') {
               return subscriber;
@@ -472,12 +473,6 @@
       var stream = evt.stream;
       RoomView.deleteStreamView(stream.streamId);
       subscriberStreams[stream.streamId] = null;
-      var subscribers = this.getSubscribersForStream(stream);
-      subscribers.forEach(function(subscriber) {
-        Object.keys(_subscriberHandlers).forEach(function(name) {
-          subscriber.off(name, _subscriberHandlers[name]);
-        });
-      });
     },
     'streamPropertyChanged': function(evt) {
       if (otHelper.publisherId !== evt.stream.id) {
@@ -592,6 +587,7 @@
     var usrId = params.getFirstValue('userName');
     resolutionAlgorithm = params.getFirstValue('resolutionAlgorithm');
     debugPreferredResolution = params.getFirstValue('debugPreferredResolution');
+    enableAnnotations = params.getFirstValue('enableAnnotations') !== undefined;
 
     var info = {
       username: usrId,
@@ -645,6 +641,25 @@
       EndCallController.init({addEventListener: function() {}}, 'NOT_AVAILABLE');
     }).
     then(getRoomParams).
+    then(function(aParams) {
+      var loadAnnotations = Promise.resolve();
+      if (enableAnnotations) {
+        exports.OTKAnalytics = exports.OTKAnalytics ||
+          function() { return {
+          addSessionInfo: function() {},
+          logEvent: function(a,b) {
+            console.log(a,b);
+          }
+          };
+        };
+        loadAnnotations = LazyLoader.load([
+          'https://code.jquery.com/jquery-3.1.0.min.js',
+          'https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js',
+          '/js/vendor/opentok-annotation.js'
+        ]);
+      }
+      return loadAnnotations.then(function() { return aParams; });
+    }).
     then(getRoomInfo).
     then(function(aParams) {
       Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
@@ -700,7 +715,7 @@
         }).
         then(function() {
           RecordingsController.init(aParams.firebaseURL, aParams.firebaseToken, aParams.sessionId);
-          ScreenShareController.init(userName, aParams.chromeExtId, otHelper);
+          ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
           Utils.sendEvent('roomController:controllersReady');
         }).
         catch(function(error) {
