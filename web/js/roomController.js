@@ -442,6 +442,7 @@
           otHelper.subscribe(evt.stream, subsDOMElem, subOptions, {}, enableAnnotations).
           then(function(subscriber) {
             if (streamVideoType === 'screen') {
+              enableAnnotations && Utils.sendEvent('roomController:annotationStarted');
               return subscriber;
             }
 
@@ -471,6 +472,9 @@
       // dispatches a streamDestroyed event.
       // For a code example and more details, see StreamEvent.
       var stream = evt.stream;
+      if (stream.videoType === 'screen') {
+        Utils.sendEvent('roomController:annotationEnded');
+      }
       RoomView.deleteStreamView(stream.streamId);
       subscriberStreams[stream.streamId] = null;
     },
