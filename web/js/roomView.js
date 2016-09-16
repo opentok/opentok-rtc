@@ -157,6 +157,12 @@
       Array.prototype.forEach.call(elements, function(element) {
         Utils.setDisabled(element, false);
       });
+    },
+    'annotationStarted': function(evt) {
+      document.body.data('annotationVisible', 'true');
+    },
+    'annotationEnded': function(evt) {
+      document.body.data('annotationVisible', 'false');
     }
   };
 
