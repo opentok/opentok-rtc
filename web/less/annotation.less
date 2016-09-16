@@ -1,0 +1,38 @@
+#opentok_canvas {
+  z-index: 1012;
+}
+
+[data-annotation-visible=true] #screen {
+  padding-right: 55px;
+
+  .streams[data-current-layout-type=float] .tc-list li[data-stream-type=publisher] {
+    right: 65px;
+  }
+}
+
+.ots-annotation-toolbar-container {
+  z-index: 1001;
+  top: 18px;
+  right: 9.5px;
+
+  & > div {
+    input {
+      margin: 0;
+    }
+
+    .OT_panel {
+      border-radius: 8px;
+    }
+
+    .OT_subpanel, .color-picker {
+      border-top-left-radius: 8px;
+      border-bottom-left-radius: 8px;
+      height: auto !important;
+    }
+
+    .OT_subpanel, .color-picker {
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+}

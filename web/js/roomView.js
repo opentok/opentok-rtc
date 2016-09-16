@@ -107,6 +107,15 @@
     }
   };
 
+  var otEvents = {
+    'annotationStarted': function(evt) {
+      document.body.data('annotationVisible', 'true');
+    },
+    'annotationEnded': function(evt) {
+      document.body.data('annotationVisible', 'false');
+    }
+  };
+
   var hangoutEvents = {
     'screenOnStage': function(event) {
       var status = event.detail.status;
@@ -386,6 +395,7 @@
     Utils.addEventsHandlers('chat:', chatEvents);
     Utils.addEventsHandlers('chatView:', chatViews);
     Utils.addEventsHandlers('hangout:', hangoutEvents);
+    Utils.addEventsHandlers('OTHelper:', otEvents);
   };
 
   function toggleScreenSharing(evt) {

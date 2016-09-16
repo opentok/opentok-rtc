@@ -388,6 +388,7 @@
 
     // TO-DO: Make this configurable
     const IMAGE_ASSETS = '/images/annotations/';
+    const TOOLBAR_BG_COLOR = '#1a99ce';
 
     function getAnnotation(aDomElement, aOptions) {
       aOptions = aOptions || {};
@@ -405,13 +406,22 @@
       if (!aAccPack) {
         return Promise.resolve();
       }
-      return aAccPack.start(_session, { imageAssets: IMAGE_ASSETS });
+      return aAccPack.start(_session,
+        { imageAssets: IMAGE_ASSETS,
+          backgroundColor: TOOLBAR_BG_COLOR
+        })
+        .then(function() {
+          Utils.sendEvent('OTHelper:annotationStarted');
+        });
     }
 
     // aElement can be a publisher, a subscriber or a AnnotationPack
     function endAnnotation(aElement) {
       var annPack =  aElement && aElement._ANNOTATION_PACK || aElement;
-      annPack && annPack.end && annPack.end();
+      if (annPack && annPack.end) {
+        annPack.end();
+        Utils.sendEvent('OTHelper:annotationEnded');
+      }
     }
 
     function setupAnnotation(aAccPack, aPubSub, aParentElement) {
