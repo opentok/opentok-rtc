@@ -2002,6 +2002,7 @@
     var items = _.property('toolbarItems')(options);
     var colors = _.property('colors')(options) || _palette;
     var imageAssets = _.property('imageAssets')(options) || null;
+    var backgroundColor = _.property('backgroundColor')(options) || null;
 
     var container = function () {
       var w = !!externalWindow ? externalWindow : window;
@@ -2016,6 +2017,7 @@
       items: !!items && !!items.length ? options.items : null,
       externalWindow: externalWindow || null,
       imageAssets: imageAssets,
+      backgroundColor: backgroundColor,
       OTKAnalytics: OTKAnalytics
     });
 

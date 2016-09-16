@@ -44,7 +44,8 @@ module.exports = function(config) {
       'web/bower_components/**/*.js',
       'web/js/vendor/lazy_loader.js',
       'web/js/helpers/OTHelper.js',
-      'web/js/rtcApp.js'
+      'web/js/rtcApp.js',
+      'web/js/vendor/opentok-annotation.js'
     ],
 
 

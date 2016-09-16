@@ -388,6 +388,7 @@
 
     // TO-DO: Make this configurable
     const IMAGE_ASSETS = '/images/annotations/';
+    const TOOLBAR_BG_COLOR = '#1a99ce';
 
     function getAnnotation(aDomElement, aOptions) {
       aOptions = aOptions || {};
@@ -405,7 +406,10 @@
       if (!aAccPack) {
         return Promise.resolve();
       }
-      return aAccPack.start(_session, { imageAssets: IMAGE_ASSETS });
+      return aAccPack.start(_session, {
+        imageAssets: IMAGE_ASSETS,
+        backgroundColor: TOOLBAR_BG_COLOR
+      });
     }
 
     // aElement can be a publisher, a subscriber or a AnnotationPack

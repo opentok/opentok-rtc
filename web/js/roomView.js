@@ -125,7 +125,13 @@
 
   var screenShareCtrEvents = {
     'changeScreenShareStatus': toggleScreenSharing,
-    'destroyed': toggleScreenSharing.bind(undefined, NOT_SHARING)
+    'destroyed': toggleScreenSharing.bind(undefined, NOT_SHARING),
+    'annotationStarted': function(evt) {
+      document.body.data('annotationVisible', 'true');
+    },
+    'annotationEnded': function(evt) {
+      document.body.data('annotationVisible', 'false');
+    }
   };
 
   var roomControllerEvents = {
