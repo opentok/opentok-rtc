@@ -107,15 +107,6 @@
     }
   };
 
-  var otEvents = {
-    'annotationStarted': function(evt) {
-      document.body.data('annotationVisible', 'true');
-    },
-    'annotationEnded': function(evt) {
-      document.body.data('annotationVisible', 'false');
-    }
-  };
-
   var hangoutEvents = {
     'screenOnStage': function(event) {
       var status = event.detail.status;
@@ -134,7 +125,13 @@
 
   var screenShareCtrEvents = {
     'changeScreenShareStatus': toggleScreenSharing,
-    'destroyed': toggleScreenSharing.bind(undefined, NOT_SHARING)
+    'destroyed': toggleScreenSharing.bind(undefined, NOT_SHARING),
+    'annotationStarted': function(evt) {
+      document.body.data('annotationVisible', 'true');
+    },
+    'annotationEnded': function(evt) {
+      document.body.data('annotationVisible', 'false');
+    }
   };
 
   var roomControllerEvents = {
@@ -395,7 +392,6 @@
     Utils.addEventsHandlers('chat:', chatEvents);
     Utils.addEventsHandlers('chatView:', chatViews);
     Utils.addEventsHandlers('hangout:', hangoutEvents);
-    Utils.addEventsHandlers('OTHelper:', otEvents);
   };
 
   function toggleScreenSharing(evt) {

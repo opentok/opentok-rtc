@@ -406,22 +406,16 @@
       if (!aAccPack) {
         return Promise.resolve();
       }
-      return aAccPack.start(_session,
-        { imageAssets: IMAGE_ASSETS,
-          backgroundColor: TOOLBAR_BG_COLOR
-        })
-        .then(function() {
-          Utils.sendEvent('OTHelper:annotationStarted');
-        });
+      return aAccPack.start(_session, {
+        imageAssets: IMAGE_ASSETS,
+        backgroundColor: TOOLBAR_BG_COLOR
+      });
     }
 
     // aElement can be a publisher, a subscriber or a AnnotationPack
     function endAnnotation(aElement) {
       var annPack =  aElement && aElement._ANNOTATION_PACK || aElement;
-      if (annPack && annPack.end) {
-        annPack.end();
-        Utils.sendEvent('OTHelper:annotationEnded');
-      }
+      annPack && annPack.end && annPack.end();
     }
 
     function setupAnnotation(aAccPack, aPubSub, aParentElement) {

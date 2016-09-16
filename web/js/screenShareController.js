@@ -28,6 +28,7 @@
     'destroyed': function(evt) {
       _isSharing = false;
       Utils.sendEvent('screenShareController:destroyed');
+      enableAnnotations &&  Utils.sendEvent('screenShareController:annotationEnded');
     }
   };
 
@@ -55,6 +56,7 @@
             _hasPendingOperation = false;
             Utils.sendEvent('screenShareController:changeScreenShareStatus',
                             { isSharing: _isSharing });
+            enableAnnotations &&  Utils.sendEvent('screenShareController:annotationStarted');
 
           }).
           catch(function(error) {
