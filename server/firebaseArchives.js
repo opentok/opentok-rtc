@@ -94,18 +94,31 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
     };
   }
 
+  // Consider connections stale after 8 hours.
+  const STALE_TIME = 8 * 3600000;
+
   // We could get the session here by binding this function when setting the handler or from the
   // snapshot. Going with the second option because it should be slightly slower but more memory
   // efficient.
   function _checkConnectionsNumber(aConnectionSnapshot) {
+    function hasNewChildren(aConnectionSnapshot) {
+      var aRecentChilds = 0;
+      aConnectionSnapshot.forEach(aConnData => {
+        (typeof aConnData.val() !== 'string') && (now - aConnData.val() < STALE_TIME) 
+          && recentChilds ++;
+      });
+      return !!aRecentChilds;
+    }
+
     var connRef = aConnectionSnapshot.ref();
     var sessionId = connRef.parent().key();
     logger.log('_checkConnectionsNumber: Found a change on', sessionId);
-    if (!aConnectionSnapshot.exists() || !aConnectionSnapshot.hasChildren()) {
+    if (!aConnectionSnapshot.exists() || !aConnectionSnapshot.hasChildren() ||
+        !hasNewChildren(aConnectionSnapshot)) {
       // Nobody connected... start the destruction timer!
       logger.log('_checkConnectionsNumber: setting the cleanup timer for: ', sessionId, 'to',
                  aCleanupTime, 'ms');
-      _timers[sessionId] =
+      _timers[sessionId] = _timers[sessionId] ||
         setTimeout(() => {
           logger.log('_checkConnectionsNumber: cleaning up: ', sessionId);
           // Cleanup handlers before removing.
@@ -113,7 +126,8 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
           fbRootRef.child(sessionId).remove();
         }, aCleanupTime);
     } else {
-      logger.log('_checkConnectionsNumber: cleaning timer timer for: ', sessionId);
+      var now = new Date().getTime();
+      logger.log('_checkConnectionsNumber: cleaning timer timer for:', sessionId);
       // Clear the doomsday timer
       clearTimeout(_timers[sessionId]);
       _timers[sessionId] = undefined;

@@ -31,7 +31,7 @@
               archiveValues.then(aHandler.method.bind(aHandler.context));
             });
           });
-          sessionRef.child('connections').push('whateverthing').onDisconnect().remove();
+          sessionRef.child('connections').push(new Date().getTime()).onDisconnect().remove();
           resolve(self);
         });
       });
