@@ -102,12 +102,13 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
   // efficient.
   function _checkConnectionsNumber(aConnectionSnapshot) {
     function hasNewChildren(aConnectionSnapshot) {
-      var aRecentChilds = 0;
+      var recentChilds = 0;
+      var now = new Date().getTime();
       aConnectionSnapshot.forEach(aConnData => {
-        (typeof aConnData.val() !== 'string') && (now - aConnData.val() < STALE_TIME) 
+        (typeof aConnData.val() !== 'string') && (now - aConnData.val() < STALE_TIME)
           && recentChilds ++;
       });
-      return !!aRecentChilds;
+      return !!recentChilds;
     }
 
     var connRef = aConnectionSnapshot.ref();
@@ -126,7 +127,6 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
           fbRootRef.child(sessionId).remove();
         }, aCleanupTime);
     } else {
-      var now = new Date().getTime();
       logger.log('_checkConnectionsNumber: cleaning timer timer for:', sessionId);
       // Clear the doomsday timer
       clearTimeout(_timers[sessionId]);
