@@ -249,6 +249,31 @@
     'stopArchiving': function(evt) {
       sendArchivingOperation('stop');
     },
+    'streamVisibilityChange': function(evt) {
+      var getStatus = function(info) {
+        var status = null;
+
+        if (evt.detail.value === 'hidden') {
+          info.prevEnabled = 'prevEnabled' in info ? info.prevEnabled : info.enabled;
+          status = false;
+        } else {
+          status = 'prevEnabled' in info ? info.prevEnabled : info.enabled;
+          delete info.prevEnabled;
+        }
+
+        return status;
+      };
+
+      var streamId = evt.detail.id;
+      if (streamId === 'publisher') {
+        var status = getStatus(publisherButtons['video']);
+        otHelper.togglePublisherVideo(status);
+      } else {
+        var stream = subscriberStreams[streamId];
+        stream && otHelper.toggleSubscribersVideo(stream.stream,
+                     getStatus(stream.buttons['video']));
+      }
+    },
     'buttonClick': function(evt) {
       var streamId = evt.detail.streamId;
       var streamType = evt.detail.streamType;

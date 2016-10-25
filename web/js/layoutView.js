@@ -20,7 +20,8 @@
       var type = options.type;
       var item = HTMLElems.createElementAt(this.container, 'li', {
         'data-id': id,
-        'data-streamType': type
+        'data-streamType': type,
+        'class': 'stream'
       }, null, type === 'publisher' ? null : this.container.firstChild);
       var controls = HTMLElems.createElementAt(item, 'div');
       controls.classList.add('controls');

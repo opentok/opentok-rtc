@@ -48,6 +48,11 @@
     Utils.addEventsHandlers('layoutMenuView:', handlers, global);
     Utils.addEventsHandlers('layoutView:', handlers, global);
     Utils.addEventsHandlers('hangout:', handlers, global);
+    return LazyLoader.load([
+      '/js/layoutViewport.js'
+      ]).then(function() {
+        LayoutViewport.init(container.querySelector('.tc-list ul'), '.stream');
+      });
   }
 
   function isHangoutRequired(item) {
@@ -138,6 +143,7 @@
     if (!currentLayout || !isOnGoing(candidateLayout)) {
       currentLayout && currentLayout.destroy();
       currentLayout = new candidateLayout(container, items, item);
+      Utils.sendEvent('layoutManager:layoutChanged');
     }
 
     currentLayout.rearrange();
