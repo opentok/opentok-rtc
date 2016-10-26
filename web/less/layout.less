@@ -1,51 +1,7 @@
-#dock.collapsed + #screen {
-  .streams[data-current-layout-type=hangout_vertical] .tc-list ul {
-    li.on-stage {
-      left: calc(~"95px + 20px");
-      width: calc(~"100% - 330px") !important;
-    }
-  }
-
-  .streams[data-current-layout-type=hangout_vertical][data-total-on-stage="2"] .tc-list ul {
-    li.on-stage {
-      height: calc(~"50% - 22.5px") !important;
-    }
-
-    li[data-stream-type=desktop].on-stage,
-    li[data-stream-type=screen].on-stage {
-      top: calc(~"50% - 10px");
-    }
-  }
-
-  .streams[data-current-layout-type=hangout_horizontal] .tc-list ul {
-    li.on-stage {
-      left: calc(~"95px + 20px");
-      width: calc(~"100% - 130px") !important;
-    }
-  }
-
-  .streams[data-current-layout-type=hangout_horizontal][data-total-on-stage="2"] .tc-list ul {
-    li.on-stage {
-      width: calc(~"50% - 65px") !important;
-    }
-
-    li[data-stream-type=desktop].on-stage,
-    li[data-stream-type=screen].on-stage {
-      left: calc(~"50% + 50px");
-    }
-  }
-}
-
 #screen {
   flex: 1;
   height: calc(~"100% - 15px");
-  width: calc(~"100% - 300px");
   padding: 15px 15px 0 20px;
-  box-sizing: border-box;
-
-  li.on-stage {
-    transition: left @transitionTime, width @transitionTime;
-  }
 
   .streams[data-current-layout-type=hangout_vertical] .tc-list li.on-stage,
   .streams[data-current-layout-type=hangout_horizontal] .tc-list li.on-stage,
@@ -96,40 +52,33 @@
   .streams[data-current-layout-type=hangout_vertical] .tc-list ul,
   .streams[data-current-layout-type=hangout_horizontal] .tc-list ul {
     display: flex;
+    .justify-content(center);
     .flex(1);
     position: relative;
 
     li.on-stage {
-      position: fixed;
+      position: absolute;
       top: 0;
       opacity: 0;
       .animation(fadeIn, 1s, .2s, forwards);
-    }
-
-    li:not(.on-stage) {
-      flex: 0 0 auto;
     }
   }
 
   .streams[data-current-layout-type=hangout_vertical] .tc-list ul {
     .flex-direction(column);
-    overflow-y: auto;
-    height: 100% !important;
 
     li {
       width: 200px !important;
-      left: calc(~"100% - 200px");
     }
 
     li:not(.on-stage) {
-      height: 150px !important;
+      max-height: 150px;
     }
 
     li.on-stage {
-      top: 15px;
-      left: calc(~"300px + 20px");
-      width: calc(~"100% - 535px") !important;
-      height: calc(~"100% - 45px") !important;
+      left: 200px;
+      width: calc(~"100% - 200px") !important;
+      height: 100% !important;
     }
   }
 
@@ -146,8 +95,6 @@
 
   .streams[data-current-layout-type=hangout_horizontal] .tc-list ul {
     .flex-direction(row);
-    overflow-x: auto;
-    width: 100% !important;
 
     li {
       height: 200px !important;
@@ -155,25 +102,24 @@
     }
 
     li:not(.on-stage) {
-      width: 266px !important;
+      max-width: 266px;
     }
 
     li.on-stage {
-      top: 15px;
-      left: calc(~"300px + 20px");
-      width: calc(~"100% - 335px") !important;
-      height: calc(~"100% - 245px") !important;
+      left: 0;
+      width: 100% !important;
+      height: calc(~"100% - 200px") !important;
     }
   }
 
   .streams[data-current-layout-type=hangout_horizontal][data-total-on-stage="2"] .tc-list ul {
     li.on-stage {
-      width: calc(~"50% - 167.5px") !important;
+      width: 50% !important;
     }
 
     li[data-stream-type=desktop].on-stage,
     li[data-stream-type=screen].on-stage {
-      left: calc(~"50% + 152px");
+      left: 50%;
     }
   }
 
@@ -184,7 +130,6 @@
     .tc-list {
       width: 100%;
       height: 100%;
-      position: relative;
 
       ul {
         width: 100%;
