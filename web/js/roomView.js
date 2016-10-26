@@ -428,7 +428,7 @@
     });
   };
 
-  var init = function() {
+  var init = function(enableHangoutScroll) {
     initHTMLElements();
     addHandlers();
     // Due to security issues, flash cannot access the clipboard unless the
@@ -437,7 +437,7 @@
     // will be copied once users click on link to share the URL.
     // Programmatically, setText() wouldn't work.
     addClipboardFeature();
-    LayoutManager.init('.streams');
+    LayoutManager.init('.streams', enableHangoutScroll);
   };
 
   exports.RoomView = {

@@ -8,6 +8,7 @@
   var numUsrsInRoom = 0;
   var _disabledAllVideos = false;
   var enableAnnotations = false;
+  var enableHangoutScroll = false;
 
   var setPublisherReady;
   var publisherReady = new Promise(function(resolve, reject) {
@@ -248,6 +249,31 @@
     },
     'stopArchiving': function(evt) {
       sendArchivingOperation('stop');
+    },
+    'streamVisibilityChange': function(evt) {
+      var getStatus = function(info) {
+        var status = null;
+
+        if (evt.detail.value === 'hidden') {
+          info.prevEnabled = 'prevEnabled' in info ? info.prevEnabled : info.enabled;
+          status = false;
+        } else {
+          status = 'prevEnabled' in info ? info.prevEnabled : info.enabled;
+          delete info.prevEnabled;
+        }
+
+        return status;
+      };
+
+      var streamId = evt.detail.id;
+      if (streamId === 'publisher') {
+        var status = getStatus(publisherButtons['video']);
+        otHelper.togglePublisherVideo(status);
+      } else {
+        var stream = subscriberStreams[streamId];
+        stream && otHelper.toggleSubscribersVideo(stream.stream,
+                     getStatus(stream.buttons['video']));
+      }
     },
     'buttonClick': function(evt) {
       var streamId = evt.detail.streamId;
@@ -592,6 +618,7 @@
     resolutionAlgorithm = params.getFirstValue('resolutionAlgorithm');
     debugPreferredResolution = params.getFirstValue('debugPreferredResolution');
     enableAnnotations = params.getFirstValue('enableAnnotations') !== undefined;
+    enableHangoutScroll = params.getFirstValue('enableHangoutScroll') !== undefined;
 
     var info = {
       username: usrId,
@@ -669,7 +696,7 @@
       Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
       Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
 
-      RoomView.init();
+      RoomView.init(enableHangoutScroll);
       roomName = aParams.roomName;
       userName = aParams.username ?
                   (aParams.username.length > 1000 ?
