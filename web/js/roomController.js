@@ -266,10 +266,7 @@
       };
 
       var streamId = evt.detail.id;
-      if (streamId === 'publisher') {
-        var status = getStatus(publisherButtons['video']);
-        otHelper.togglePublisherVideo(status);
-      } else {
+      if (streamId !== 'publisher') {
         var stream = subscriberStreams[streamId];
         stream && otHelper.toggleSubscribersVideo(stream.stream,
                      getStatus(stream.buttons['video']));
