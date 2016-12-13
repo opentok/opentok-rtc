@@ -17,7 +17,7 @@
 
   // vars for the analytics logs. Internal use
   var _logEventData = {
-    clientVersion: 'js-vsol-1.0.0',
+    clientVersion: 'js-vsol-1.1.0',
     componentId: 'annotationsAccPack',
     name: 'guidAnnotationsKit',
     actionStartDrawing: 'StartDrawing',
@@ -78,6 +78,9 @@
       _logAnalytics();
     }
 
+    if (typeof module === 'object' && typeof module.exports === 'object') {
+      $ = require('jquery');
+    }
 
     var context = options.externalWindow ? options.externalWindow.document : window.document;
 
@@ -139,6 +142,7 @@
       updateHistory = [],
       eventHistory = [],
       isStartPoint = false,
+      isVideo = self.videoFeed && self.videoFeed.element ? true : false,
       client = new VideoRelativeCoordinateSet({
         dragging: false
       });
@@ -146,9 +150,14 @@
 
 
     // INFO Mirrored feeds contain the OT_mirrored class
-    isPublisher = (' ' + self.videoFeed.element.className + ' ').indexOf(' ' + 'OT_publisher' + ' ') > -1;
-    mirrored = isPublisher ? (' ' + self.videoFeed.element.className + ' ').indexOf(' ' + 'OT_mirrored' + ' ') > -1 : false;
-    scaledToFill = (' ' + self.videoFeed.element.className + ' ').indexOf(' ' + 'OT_fit-mode-cover' + ' ') > -1;
+    if (isVideo) {
+      isPublisher = (' ' + self.videoFeed.element.className + ' ').indexOf(' ' + 'OT_publisher' + ' ') > -1;
+      mirrored = isPublisher ? (' ' + self.videoFeed.element.className + ' ').indexOf(' ' + 'OT_mirrored' + ' ') > -1 : false;
+      scaledToFill = (' ' + self.videoFeed.element.className + ' ').indexOf(' ' + 'OT_fit-mode-cover' + ' ') > -1;
+    } else {
+      mirrored = false;
+      scaledToFill = false;
+    }
 
     this.canvas = function () {
       return canvas;
@@ -175,6 +184,24 @@
     };
 
     /**
+     * Changes the active annotation color for the canvas.
+     * @param colorIndex - the index regarding the colors array
+     */
+    this.changeColorByIndex = function (colorIndex) {
+
+      //set the user color
+      self.userColor = this.colors[colorIndex];
+
+      //activate the change on the toolbar
+      var colorChoices = context.querySelectorAll('.color-choice');
+      colorChoices[colorIndex].classList.add('active');
+      var button = context.getElementById('OT_colors');
+      button.setAttribute('class', 'OT_color annotation-btn colors');
+      button.style.borderRadius = '50%';
+      button.style.backgroundColor = this.colors[colorIndex];
+    };
+
+    /**
      * Changes the line/stroke width of the active annotation for the canvas.
      * @param size The size in pixels.
      */
@@ -193,48 +220,35 @@
         self.overlay = null;
       }
 
-      if (item.id === 'OT_capture') {
-        self.selectedItem = item;
+      /**
+       * Update classes for toolbar items
+       */
+      var updateSelected = function () {
 
-        if (!self.overlay) {
-          self.overlay = document.createElement('div');
-          self.overlay.id = 'captureOverlay';
-          self.overlay.style.position = 'absolute';
-          self.overlay.style.top = '0px';
-          self.overlay.style.width = self.parent.clientWidth + 'px';
-          self.overlay.style.height = self.parent.clientHeight + 'px';
-          self.overlay.style.background = 'rgba(0,0,0,0.4) url("' +
-            self.imageAssets +'annotation-camera.png") no-repeat center';
-          self.overlay.style.backgroundSize = '50px 50px';
-          self.overlay.style.cursor = 'pointer';
-          self.overlay.style.opacity = 0;
+        // Remove the 'selected' class from the currently selected item (or parent)
+        var current = context.getElementById(self.selectedItem.id);
+        var shapesBtn = context.getElementById('OT_shapes');
+        var currentIsShape = shapesBtn.classList.contains('selected');
+        currentIsShape ? shapesBtn.classList.remove('selected') : current.classList.remove('selected');
 
-          self.parent.appendChild(self.overlay);
-
-          self.parent.onmouseover = function () {
-            self.overlay.style.opacity = 1;
-            self.overlay.style.zIndex = 1010;
-          };
-
-          self.parent.onmouseout = function () {
-            self.overlay.style.opacity = 0;
-          };
-
-          self.overlay.onclick = function () {
-            self.captureScreenshot();
-            self.parent.removeChild(self.overlay);
-            self.overlay = null;
-            self.parent.onmouseover = null;
-            self.parent.onmouseout = null;
-          };
+        // If the newly selected item is a shape, update the shapes subpanel button
+        var newlySelected = context.getElementById(item.id);
+        if (newlySelected.parentElement.classList.contains('shapes')) {
+          shapesBtn.classList.add('selected');
         } else {
-          self.overlay.style = 'inline';
+          newlySelected.classList.add('selected');
         }
-      } else if (item.id.indexOf('OT_line_width') !== -1) {
+      }
+
+      if (item && item.id === 'OT_capture') {
+        self.captureScreenshot();
+      } else if (item && item.id.indexOf('OT_line_width') !== -1) {
         if (item.size) {
           self.changeLineWidth(item.size);
         }
-      } else {
+        // 'undo' and 'clear' are actions, not items that can be selected
+      } else if (item.id !== 'OT_undo' && item.id !== 'OT_clear') {
+        updateSelected();
         self.selectedItem = item;
       }
     };
@@ -261,6 +275,10 @@
       }
     };
 
+    this.undo = function () {
+      undoLast(false, self.session.connection.connectionId);
+    }
+
     // TODO Allow the user to choose the image type? (jpg, png) Also allow size?
     /**
      * Captures a screenshot of the annotations displayed on top of the active video feed.
@@ -271,8 +289,8 @@
       canvasCopy.width = canvas.width;
       canvasCopy.height = canvas.height;
 
-      var width = self.videoFeed.videoWidth();
-      var height = self.videoFeed.videoHeight();
+      var width = isVideo ? self.videoFeed.videoWidth() : canvas.width;
+      var height = isVideo ? self.videoFeed.videoHeight() : canvas.height;
 
       var scale = 1;
 
@@ -289,25 +307,30 @@
           height = canvas.height;
           width = width * scale;
         }
+        // If stretched to fill, we need an offset to center the image
+        offsetX = (width - canvas.width) / 2;
+        offsetY = (height - canvas.height) / 2;
 
       } else {
         if (width > height) {
           scale = canvas.width / width;
           width = canvas.width;
           height = height * scale;
+          offsetX = 0;
+          offsetY = (canvas.height - height) / 2;
         } else {
           scale = canvas.height / height;
           height = canvas.height;
           width = width * scale;
+          offsetX = (canvas.width - width) / 2;
+          offsetY = 0;
         }
-      }
 
-      // If stretched to fill, we need an offset to center the image
-      offsetX = (width - canvas.width) / 2;
-      offsetY = (height - canvas.height) / 2;
+      }
 
       // Combine the video and annotation images
       var image = new Image();
+
       image.onload = function () {
         var ctxCopy = canvasCopy.getContext('2d');
         if (mirrored) {
@@ -330,8 +353,14 @@
         // Clear and destroy the canvas copy
         canvasCopy = null;
       };
-      image.src = 'data:image/png;base64,' + self.videoFeed.getImgData();
 
+      if (isVideo) {
+        imgData = 'data:image/png;base64,' + self.videoFeed.getImgData();
+        image.src = imgData;
+      } else {
+        var currentWindow = options.externalWindow ? options.externalWindow : window;
+        image.src = currentWindow.getComputedStyle(self.parent)['background-image'].replace(/url\("|"\)/g, '');
+      }
 
     };
 
@@ -400,7 +429,7 @@
             case 'touchmove':
               if (client.dragging) {
                 update = {
-                  id: self.videoFeed.stream.connection.connectionId,
+                  id: isVideo ? self.videoFeed.stream.connection.connectionId : self.session.connection.connectionId,
                   fromId: self.session.connection.connectionId,
                   fromX: client._lastX,
                   fromY: client._lastY,
@@ -408,14 +437,16 @@
                   toY: y,
                   color: resizeEvent ? event.userColor : self.userColor,
                   lineWidth: self.lineWidth,
-                  videoWidth: self.videoFeed.videoElement().clientWidth,
-                  videoHeight: self.videoFeed.videoElement().clientHeight,
+                  videoWidth: isVideo ? self.videoFeed.videoElement().clientWidth : canvas.width,
+                  videoHeight: isVideo ? self.videoFeed.videoElement().clientHeight : canvas.height,
                   canvasWidth: canvas.width,
                   canvasHeight: canvas.height,
                   mirrored: mirrored,
                   startPoint: self.isStartPoint, // Each segment is treated as a new set of points
                   endPoint: false,
-                  selectedItem: selectedItem
+                  selectedItem: selectedItem,
+                  platform: 'web',
+                  guid: event.guid
                 };
                 draw(new VideoRelativeCoordinateSet(update), true);
                 client.lastX = x;
@@ -428,7 +459,7 @@
             case 'touchend':
               client.dragging = false;
               update = {
-                id: self.videoFeed.stream.connection.connectionId,
+                id: isVideo ? self.videoFeed.stream.connection.connectionId : self.session.connection.connectionId,
                 fromId: self.session.connection.connectionId,
                 fromX: client._lastX,
                 fromY: client._lastY,
@@ -436,14 +467,16 @@
                 toY: y,
                 color: resizeEvent ? event.userColor : self.userColor,
                 lineWidth: self.lineWidth,
-                videoWidth: self.videoFeed.videoElement().clientWidth,
-                videoHeight: self.videoFeed.videoElement().clientHeight,
+                videoWidth: isVideo ? self.videoFeed.videoElement().clientWidth : canvas.width,
+                videoHeight: isVideo ? self.videoFeed.videoElement().clientHeight : canvas.height,
                 canvasWidth: canvas.width,
                 canvasHeight: canvas.height,
                 mirrored: mirrored,
                 startPoint: self.isStartPoint, // Each segment is treated as a new set of points
                 endPoint: true,
-                selectedItem: selectedItem
+                selectedItem: selectedItem,
+                platform: 'web',
+                guid: event.guid
               };
               draw(new VideoRelativeCoordinateSet(update), true);
               client.lastX = x;
@@ -458,25 +491,31 @@
         } else if (selectedItem.id === 'OT_text') {
 
           update = {
-            id: self.videoFeed.stream.connection.connectionId,
+            id: isVideo ? self.videoFeed.stream.connection.connectionId : self.session.connection.connectionId,
             fromId: self.session.connection.connectionId,
             fromX: x,
             fromY: y + event.inputHeight, // Account for the height of the text input
             color: event.userColor,
             font: event.font,
             text: event.text,
-            videoWidth: self.videoFeed.videoElement().clientWidth,
-            videoHeight: self.videoFeed.videoElement().clientHeight,
+            videoWidth: isVideo ? self.videoFeed.videoElement().clientWidth : canvas.width,
+            videoHeight: isVideo ? self.videoFeed.videoElement().clientHeight : canvas.height,
             canvasWidth: canvas.width,
             canvasHeight: canvas.height,
             mirrored: mirrored,
-            selectedItem: selectedItem
+            selectedItem: selectedItem,
+            platform: 'web',
+            guid: event.guid
           };
 
           draw(new VideoRelativeCoordinateSet(update));
           !resizeEvent && sendUpdate(update);
         } else {
           // We have a shape or custom object
+
+          // We are currently using a constant default width for shapes
+          var shapeLineWidth = 2;
+
           if (selectedItem && selectedItem.points) {
             client.mX = x;
             client.mY = y;
@@ -494,7 +533,7 @@
                 if (client.dragging) {
                   update = {
                     color: resizeEvent ? event.userColor : self.userColor,
-                    lineWidth: resizeEvent ? event.lineWidth : self.lineWidth,
+                    lineWidth: resizeEvent ? event.lineWidth : shapeLineWidth,
                     selectedItem: selectedItem
                       // INFO The points for scaling will get added when drawing is complete
                   };
@@ -510,23 +549,24 @@
 
                 if (points.length === 2) {
                   update = {
-                    id: self.videoFeed.stream.connection.connectionId,
+                    id: isVideo ? self.videoFeed.stream.connection.connectionId : self.session.connection.connectionId,
                     fromId: self.session.connection.connectionId,
                     fromX: client._startX,
                     fromY: client._startY,
                     toX: client._mX,
                     toY: client._mY,
                     color: resizeEvent ? event.userColor : self.userColor,
-                    lineWidth: resizeEvent ? event.lineWidth : self.lineWidth,
-                    videoWidth: self.videoFeed.videoElement().clientWidth,
-                    videoHeight: self.videoFeed.videoElement().clientHeight,
+                    lineWidth: resizeEvent ? event.lineWidth : shapeLineWidth,
+                    videoWidth: isVideo ? self.videoFeed.videoElement().clientWidth : canvas.width,
+                    videoHeight: isVideo ? self.videoFeed.videoElement().clientHeight : canvas.height,
                     canvasWidth: canvas.width,
                     canvasHeight: canvas.height,
                     mirrored: mirrored,
                     smoothed: false,
                     startPoint: true,
-                    endPoint: true,
-                    selectedItem: selectedItem
+                    selectedItem: selectedItem,
+                    platform: 'web',
+                    guid: event.guid
                   };
 
                   drawHistory.push(new VideoRelativeCoordinateSet(update));
@@ -552,22 +592,26 @@
                     }
 
                     update = {
-                      id: self.videoFeed.stream.connection.connectionId,
+                      id: isVideo ? self.videoFeed.stream.connection.connectionId : self.session.connection.connectionId,
                       fromId: self.session.connection.connectionId,
                       fromX: client._lastX,
                       fromY: client._lastY,
                       toX: pointX,
                       toY: pointY,
                       color: resizeEvent ? event.userColor : self.userColor,
-                      lineWidth: resizeEvent ? event.lineWidth : self.lineWidth,
-                      videoWidth: self.videoFeed.videoElement().clientWidth,
-                      videoHeight: self.videoFeed.videoElement().clientHeight,
+                      lineWidth: resizeEvent ? event.lineWidth : shapeLineWidth,
+                      videoWidth: isVideo ? self.videoFeed.videoElement().clientWidth : canvas.width,
+                      videoHeight: isVideo ? self.videoFeed.videoElement().clientHeight : canvas.height,
                       canvasWidth: canvas.width,
                       canvasHeight: canvas.height,
                       mirrored: mirrored,
                       smoothed: selectedItem.enableSmoothing,
                       startPoint: firstPoint,
-                      endPoint: endPoint
+                      endPoint: endPoint,
+                      selectedItem: selectedItem,
+                      platform: 'web',
+                      guid: event.guid
+
                     };
 
                     drawHistory.push(new VideoRelativeCoordinateSet(update));
@@ -586,6 +630,14 @@
           }
         }
       }
+    }
+
+    function guid() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0,
+          v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
     }
 
     addEventListeners(canvas, 'mousedown mousemove mouseup mouseout touchstart touchmove touchend', function (event) {
@@ -613,6 +665,7 @@
 
         event.userColor = self.userColor;
         event.lineWidth = self.lineWidth;
+        event.guid = guid();
         eventHistory.push(event);
       }
 
@@ -769,10 +822,9 @@
         history.startPoint = !!history.startPoint;
 
         var secondPoint = false;
-        var isText = !!history.selectedItem && history.selectedItem.title === 'Text' && history.text;
+        var isText = history.hasOwnProperty('text');
 
         if (isText) {
-
           ctx.font = history.font;
           ctx.fillStyle = history.color;
           ctx.fillText(history.text, history.fromX, history.fromY);
@@ -800,6 +852,7 @@
               // console.log('Points: (' + (history.fromX + history.toX) / 2 + ', ' + (history.fromY + history.toY) / 2 + ')');
               // console.log('Control Points: (' + history.fromX + ', ' + history.fromY + ')');
               ctx.quadraticCurveTo(history.fromX, history.fromY, (history.fromX + history.toX) / 2, (history.fromY + history.toY) / 2);
+
               ctx.stroke();
             }
           } else {
@@ -884,7 +937,6 @@
               client.lastY = (client._pointY + client._lastY) / 2;
             }
           } else {
-//          console.log('HEHEHEHE', client._pointX, client.pointX);
             if (i === 0) {
               ctx.moveTo(client.pointX, client.pointY);
             } else {
@@ -932,14 +984,6 @@
       };
     };
 
-    var drawTextUpdate = function (update) {
-
-
-
-
-
-    };
-
     var drawIncoming = function (update, resizeEvent, index) {
 
       var iCanvas = {
@@ -953,8 +997,8 @@
       };
 
       var video = {
-        width: self.videoFeed.videoElement().clientWidth,
-        height: self.videoFeed.videoElement().clientHeight
+        width: isVideo ? self.videoFeed.videoElement().clientWidth : canvas.width,
+        height: isVideo ? self.videoFeed.videoElement().clientHeight : canvas.height
       };
 
       // INFO iOS serializes bools as 0 or 1
@@ -995,7 +1039,7 @@
     var drawUpdates = function (updates, resizeEvent) {
 
       updates.forEach(function (update, index) {
-        if (self.videoFeed.stream && update.id === self.videoFeed.stream.connection.connectionId) {
+        if (!isVideo || (self.videoFeed && self.videoFeed.stream && update.id === self.videoFeed.stream.connection.connectionId)) {
           drawIncoming(update, resizeEvent, index);
         }
       });
@@ -1004,8 +1048,8 @@
     var clearCanvas = function (incoming, cid) {
       // console.log('cid: ' + cid);
       // Remove all elements from history that were drawn by the sender
+
       drawHistory = drawHistory.filter(function (history) {
-        console.log(history.fromId);
         return history.fromId !== cid;
       });
 
@@ -1020,20 +1064,102 @@
         updateHistory = [];
       }
 
+
+
       // Refresh the canvas
       draw();
     };
 
+    var undoLast = function (incoming, cid, itemsToRemove) {
+
+      var historyItem;
+      var removed;
+      var endPoint = false;
+      var removedItems = [];
+      for (var i = drawHistory.length - 1; i >= 0; i--) {
+        historyItem = drawHistory[i];
+        if (historyItem.fromId === cid) {
+
+          if (historyItem.platform === 'ios' && !!itemsToRemove && !!itemsToRemove.length && itemsToRemove[0] !== null) {
+            undoLastIos(incoming, cid, itemsToRemove);
+            break;
+          }
+
+          endPoint = endPoint || historyItem.endPoint;
+          removed = drawHistory.splice(i, 1)[0];
+          removedItems.push(removed.guid);
+          if (!endPoint || (endPoint && removed.startPoint === true)) {
+            break;
+          }
+        }
+      }
+
+      if (incoming) {
+        updateHistory = updateHistory.filter(function (history) {
+          return !itemsToRemove.includes(history.guid);
+        });
+      } else {
+        eventHistory = eventHistory.filter(function (history) {
+          return !removedItems.includes(history.guid);
+        });
+
+        self.session.signal({
+          type: 'otAnnotation_undo',
+          data: JSON.stringify(removedItems)
+        });
+      }
+
+      draw();
+    }
+
+    var undoLastIos = function (incoming, cid, itemsToRemove) {
+
+      var historyItem;
+      var removed;
+      var endPoint = false;
+      var removedItems = [];
+
+
+      for (var i = drawHistory.length - 1; i >= 0; i--) {
+        historyItem = drawHistory[i];
+        if (historyItem.fromId === cid) {
+          if (historyItem.guid === itemsToRemove[0]) {
+            removed = drawHistory.splice(i, 1)[0];
+            removedItems.push(removed.guid);
+          }
+        }
+      }
+
+      if (incoming) {
+        updateHistory = updateHistory.filter(function (history) {
+          return !itemsToRemove.includes(history.guid);
+        });
+      } else {
+        eventHistory = eventHistory.filter(function (history) {
+          return !removedItems.includes(history.guid);
+        });
+
+        self.session.signal({
+          type: 'otAnnotation_undo',
+          data: JSON.stringify(removedItems)
+        });
+      }
+
+      draw();
+    }
+
+
+    var count = 0;
     /** Signal Handling **/
-    if (self.videoFeed.session) {
-      self.videoFeed.session.on({
+    if (_session) {
+      _session.on({
         'signal:otAnnotation_pen': function (event) {
-          if (event.from.connectionId !== self.session.connection.connectionId) {
+          if (event.from.connectionId !== _session.connection.connectionId) {
             drawUpdates(JSON.parse(event.data));
           }
         },
         'signal:otAnnotation_text': function (event) {
-          if (event.from.connectionId !== self.session.connection.connectionId) {
+          if (event.from.connectionId !== _session.connection.connectionId) {
             drawUpdates(JSON.parse(event.data));
           }
         },
@@ -1046,13 +1172,19 @@
           }
         },
         'signal:otAnnotation_clear': function (event) {
-          if (event.from.connectionId !== self.session.connection.connectionId) {
+          if (event.from.connectionId !== _session.connection.connectionId) {
             // Only clear elements drawn by the sender's (from) Id
             clearCanvas(true, event.from.connectionId);
           }
         },
+        'signal:otAnnotation_undo': function (event) {
+          if (event.from.connectionId !== _session.connection.connectionId) {
+            // Only clear elements drawn by the sender's (from) Id
+            undoLast(true, event.from.connectionId, JSON.parse(event.data));
+          }
+        },
         connectionCreated: function (event) {
-          if (drawHistory.length > 0 && event.connection.connectionId !== self.session.connection.connectionId) {
+          if (drawHistory.length > 0 && event.connection.connectionId !== _session.connection.connectionId) {
             batchSignal('otWhiteboard_history', drawHistory, event.connection);
           }
         }
@@ -1060,9 +1192,7 @@
     }
 
     var batchSignal = function (data, toConnection) {
-      // We send data in small chunks so that they fit in a signal
-      // Each packet is maximum ~250 chars, we can fit 8192/250 ~= 32 updates per signal
-      var dataCopy = data.slice();
+
       var signalError = function (err) {
         if (err) {
           TB.error(err);
@@ -1078,14 +1208,31 @@
         type = id === 'OT_text' ? 'otAnnotation_text' : 'otAnnotation_pen';
       };
 
-      while (dataCopy.length) {
-        var dataChunk = dataCopy.splice(0, Math.min(dataCopy.length, 32));
+      /**
+       * If the 'type' string exceeds the maximum length (128 bytes), or the
+       * 'data' string exceeds the maximum size (8 kB), OT will return a 413 error
+       * and the signal will not be sent.  The maximum number of characters that
+       * can be sent in the signal is 8,192.  Currently, the largest updates are
+       * 995 characters, meaning that the limit for the number of updates per
+       * signal should be 8, even taking into account the additional characters
+       * required to convert the entire array of updates as opposed to each one
+       * individually.  However, OT is throwing a 413 error once the size exceeds
+       * 7,900 characters. So, 7 is the magic number for the time being.
+       */
+      var dataChunk;
+      var start = 0;
+      var updatesPerSignal = 7;
+      while (start < data.length) {
+        dataChunk = data.slice(start, start + updatesPerSignal);
         updateType(dataChunk);
+        start += updatesPerSignal;
         var signal = {
           type: type,
           data: JSON.stringify(dataChunk)
         };
-        if (toConnection) signal.to = toConnection;
+        if (toConnection) {
+          signal.to = toConnection;
+        }
         self.session.signal(signal, signalError);
       }
     };
@@ -1136,118 +1283,148 @@
     this.parent = options.container;
     this.externalWindow = options.externalWindow;
     // TODO Allow 'style' objects to be passed in for buttons, menu toolbar, etc?
-    this.backgroundColor = options.backgroundColor || 'rgba(0, 0, 0, 0.7)';
-    this.buttonWidth = options.buttonWidth || '40px';
-    this.buttonHeight = options.buttonHeight || '40px';
-    this.iconWidth = options.iconWidth || '30px';
-    this.iconHeight = options.iconHeight || '30px';
+    this.backgroundColor = options.backgroundColor || 'rgba(102, 102, 102, 0.90)';
+    this.subpanelBackgroundColor = options.subpanelBackgroundColor || '#323232';
+
     var imageAssets = options.imageAssets || DEFAULT_ASSET_URL;
 
     var toolbarItems = [{
-      id: 'OT_pen',
-      title: 'Pen',
-      icon: [imageAssets, 'annotation-freehand.png'].join(''),
-      selectedIcon: [imageAssets, 'annotation-freehand_selected.png'].join('')
-    }, {
-      id: 'OT_line',
-      title: 'Line',
-      icon: [imageAssets, 'annotation-line.png'].join(''),
-      selectedIcon: [imageAssets, 'annotation-line_selected.png'].join(''),
-      points: [
-        [0, 0],
-        [0, 1]
-      ]
-    }, {
-      id: 'OT_shapes',
-      title: 'Shapes',
-      icon: [imageAssets, 'annotation-shapes.png'].join(''),
-      items: [{
-        id: 'OT_arrow',
-        title: 'Arrow',
-        icon: [imageAssets, 'annotation-arrow.png'].join(''),
-        points: [
-          [0, 1],
-          [3, 1],
-          [3, 0],
-          [5, 2],
-          [3, 4],
-          [3, 3],
-          [0, 3],
-          [0, 1] // Reconnect point
+        id: 'OT_pen',
+        title: 'Pen',
+        icon: [imageAssets, 'annotation-pencil.png'].join(''),
+        selectedIcon: [imageAssets, 'annotation-pencil.png'].join(''),
+        items: { /* Built dynamically */ }
+      }, {
+        id: 'OT_colors',
+        title: 'Colors',
+        icon: '',
+        items: { /* Built dynamically */ }
+      }, {
+        id: 'OT_shapes',
+        title: 'Shapes',
+        icon: [imageAssets, 'annotation-shapes.png'].join(''),
+        items: [{
+            id: 'OT_rect',
+            title: 'Rectangle',
+            icon: [imageAssets, 'annotation-rectangle.png'].join(''),
+            points: [
+              [0, 0],
+              [1, 0],
+              [1, 1],
+              [0, 1],
+              [0, 0] // Reconnect point
+            ]
+          },
+          {
+            id: 'OT_rect_fill',
+            title: 'Rectangle-Fill',
+            icon: [imageAssets, 'annotation-rectangle.png'].join(''),
+            points: [
+              [0, 0],
+              [1, 0],
+              [1, 1],
+              [0, 1],
+              [0, 0] // Reconnect point
+            ]
+          }, {
+            id: 'OT_oval',
+            title: 'Oval',
+            icon: [imageAssets, 'annotation-oval.png'].join(''),
+            enableSmoothing: true,
+            points: [
+              [0, 0.5],
+              [0.5 + 0.5 * Math.cos(5 * Math.PI / 4), 0.5 + 0.5 * Math.sin(5 * Math.PI / 4)],
+              [0.5, 0],
+              [0.5 + 0.5 * Math.cos(7 * Math.PI / 4), 0.5 + 0.5 * Math.sin(7 * Math.PI / 4)],
+              [1, 0.5],
+              [0.5 + 0.5 * Math.cos(Math.PI / 4), 0.5 + 0.5 * Math.sin(Math.PI / 4)],
+              [0.5, 1],
+              [0.5 + 0.5 * Math.cos(3 * Math.PI / 4), 0.5 + 0.5 * Math.sin(3 * Math.PI / 4)],
+              [0, 0.5],
+              [0.5 + 0.5 * Math.cos(5 * Math.PI / 4), 0.5 + 0.5 * Math.sin(5 * Math.PI / 4)]
+            ]
+          }, {
+            id: 'OT_oval_fill',
+            title: 'Oval-Fill',
+            icon: [imageAssets, 'annotation-oval-fill.png'].join(''),
+            enableSmoothing: true,
+            points: [
+              [0, 0.5],
+              [0.5 + 0.5 * Math.cos(5 * Math.PI / 4), 0.5 + 0.5 * Math.sin(5 * Math.PI / 4)],
+              [0.5, 0],
+              [0.5 + 0.5 * Math.cos(7 * Math.PI / 4), 0.5 + 0.5 * Math.sin(7 * Math.PI / 4)],
+              [1, 0.5],
+              [0.5 + 0.5 * Math.cos(Math.PI / 4), 0.5 + 0.5 * Math.sin(Math.PI / 4)],
+              [0.5, 1],
+              [0.5 + 0.5 * Math.cos(3 * Math.PI / 4), 0.5 + 0.5 * Math.sin(3 * Math.PI / 4)],
+              [0, 0.5],
+              [0.5 + 0.5 * Math.cos(5 * Math.PI / 4), 0.5 + 0.5 * Math.sin(5 * Math.PI / 4)]
+            ]
+          }, {
+            id: 'OT_star',
+            title: 'Star',
+            icon: [imageAssets, 'annotation-star.png'].join(''),
+            points: [
+              /* eslint-disable max-len */
+              [0.5 + 0.5 * Math.cos(90 * (Math.PI / 180)), 0.5 + 0.5 * Math.sin(90 * (Math.PI / 180))],
+              [0.5 + 0.25 * Math.cos(126 * (Math.PI / 180)), 0.5 + 0.25 * Math.sin(126 * (Math.PI / 180))],
+              [0.5 + 0.5 * Math.cos(162 * (Math.PI / 180)), 0.5 + 0.5 * Math.sin(162 * (Math.PI / 180))],
+              [0.5 + 0.25 * Math.cos(198 * (Math.PI / 180)), 0.5 + 0.25 * Math.sin(198 * (Math.PI / 180))],
+              [0.5 + 0.5 * Math.cos(234 * (Math.PI / 180)), 0.5 + 0.5 * Math.sin(234 * (Math.PI / 180))],
+              [0.5 + 0.25 * Math.cos(270 * (Math.PI / 180)), 0.5 + 0.25 * Math.sin(270 * (Math.PI / 180))],
+              [0.5 + 0.5 * Math.cos(306 * (Math.PI / 180)), 0.5 + 0.5 * Math.sin(306 * (Math.PI / 180))],
+              [0.5 + 0.25 * Math.cos(342 * (Math.PI / 180)), 0.5 + 0.25 * Math.sin(342 * (Math.PI / 180))],
+              [0.5 + 0.5 * Math.cos(18 * (Math.PI / 180)), 0.5 + 0.5 * Math.sin(18 * (Math.PI / 180))],
+              [0.5 + 0.25 * Math.cos(54 * (Math.PI / 180)), 0.5 + 0.25 * Math.sin(54 * (Math.PI / 180))],
+              [0.5 + 0.5 * Math.cos(90 * (Math.PI / 180)), 0.5 + 0.5 * Math.sin(90 * (Math.PI / 180))]
+              /* eslint-enable max-len */
+            ]
+          }, {
+            id: 'OT_arrow',
+            title: 'Arrow',
+            icon: [imageAssets, 'annotation-arrow.png'].join(''),
+            points: [
+              [0, 1],
+              [3, 1],
+              [3, 0],
+              [5, 2],
+              [3, 4],
+              [3, 3],
+              [0, 3],
+              [0, 1] // Reconnect point
+            ]
+          }, {
+            id: 'OT_line',
+            title: 'Line',
+            icon: [imageAssets, 'annotation-line.png'].join(''),
+            selectedIcon: [imageAssets, 'annotation-line.png'].join(''),
+            points: [
+              [0, 0],
+              [0, 1]
+            ]
+          }
         ]
       }, {
-        id: 'OT_rect',
-        title: 'Rectangle',
-        icon: [imageAssets, 'annotation-rectangle.png'].join(''),
-        points: [
-          [0, 0],
-          [1, 0],
-          [1, 1],
-          [0, 1],
-          [0, 0] // Reconnect point
-        ]
+        id: 'OT_text',
+        title: 'Text',
+        icon: [imageAssets, 'annotation-text.png'].join(''),
+        selectedIcon: [imageAssets, 'annotation-text.png'].join('')
       }, {
-        id: 'OT_oval',
-        title: 'Oval',
-        icon: [imageAssets, 'annotation-oval.png'].join(''),
-        enableSmoothing: true,
-        points: [
-          [0, 0.5],
-          [0.5 + 0.5 * Math.cos(5 * Math.PI / 4), 0.5 + 0.5 * Math.sin(5 * Math.PI / 4)],
-          [0.5, 0],
-          [0.5 + 0.5 * Math.cos(7 * Math.PI / 4), 0.5 + 0.5 * Math.sin(7 * Math.PI / 4)],
-          [1, 0.5],
-          [0.5 + 0.5 * Math.cos(Math.PI / 4), 0.5 + 0.5 * Math.sin(Math.PI / 4)],
-          [0.5, 1],
-          [0.5 + 0.5 * Math.cos(3 * Math.PI / 4), 0.5 + 0.5 * Math.sin(3 * Math.PI / 4)],
-          [0, 0.5],
-          [0.5 + 0.5 * Math.cos(5 * Math.PI / 4), 0.5 + 0.5 * Math.sin(5 * Math.PI / 4)]
-        ]
+        id: 'OT_capture',
+        title: 'Capture',
+        icon: [imageAssets, 'annotation-camera.png'].join(''),
+        selectedIcon: [imageAssets, 'annotation-camera.png'].join('')
       }, {
-        id: 'OT_star',
-        title: 'Star',
-        icon: [imageAssets, 'annotation-star.png'].join(''),
-        points: [
-          /* eslint-disable max-len */
-          [0.5 + 0.5 * Math.cos(90 * (Math.PI / 180)), 0.5 + 0.5 * Math.sin(90 * (Math.PI / 180))],
-          [0.5 + 0.25 * Math.cos(126 * (Math.PI / 180)), 0.5 + 0.25 * Math.sin(126 * (Math.PI / 180))],
-          [0.5 + 0.5 * Math.cos(162 * (Math.PI / 180)), 0.5 + 0.5 * Math.sin(162 * (Math.PI / 180))],
-          [0.5 + 0.25 * Math.cos(198 * (Math.PI / 180)), 0.5 + 0.25 * Math.sin(198 * (Math.PI / 180))],
-          [0.5 + 0.5 * Math.cos(234 * (Math.PI / 180)), 0.5 + 0.5 * Math.sin(234 * (Math.PI / 180))],
-          [0.5 + 0.25 * Math.cos(270 * (Math.PI / 180)), 0.5 + 0.25 * Math.sin(270 * (Math.PI / 180))],
-          [0.5 + 0.5 * Math.cos(306 * (Math.PI / 180)), 0.5 + 0.5 * Math.sin(306 * (Math.PI / 180))],
-          [0.5 + 0.25 * Math.cos(342 * (Math.PI / 180)), 0.5 + 0.25 * Math.sin(342 * (Math.PI / 180))],
-          [0.5 + 0.5 * Math.cos(18 * (Math.PI / 180)), 0.5 + 0.5 * Math.sin(18 * (Math.PI / 180))],
-          [0.5 + 0.25 * Math.cos(54 * (Math.PI / 180)), 0.5 + 0.25 * Math.sin(54 * (Math.PI / 180))],
-          [0.5 + 0.5 * Math.cos(90 * (Math.PI / 180)), 0.5 + 0.5 * Math.sin(90 * (Math.PI / 180))]
-          /* eslint-enable max-len */
-        ]
-      }]
-    }, {
-      id: 'OT_text',
-      title: 'Text',
-      icon: [imageAssets, 'annotation-text.png'].join(''),
-      selectedIcon: [imageAssets, 'annotation-text.png'].join('')
-    }, {
-      id: 'OT_colors',
-      title: 'Colors',
-      icon: '',
-      items: { /* Built dynamically */ }
-    }, {
-      id: 'OT_line_width',
-      title: 'Line Width',
-      icon: [imageAssets, 'annotation-line_width.png'].join(''),
-      items: { /* Built dynamically */ }
-    }, {
-      id: 'OT_clear',
-      title: 'Clear',
-      icon: [imageAssets, 'annotation-clear.png'].join('')
-    }, {
-      id: 'OT_capture',
-      title: 'Capture',
-      icon: [imageAssets, 'annotation-camera.png'].join(''),
-      selectedIcon: [imageAssets, 'annotation-camera_selected.png'].join('')
-    }];
+        id: 'OT_undo',
+        title: 'Undo',
+        icon: [imageAssets, 'annotation-undo.png'].join('')
+      },
+      {
+        id: 'OT_clear',
+        title: 'Clear',
+        icon: [imageAssets, 'annotation-clear.png'].join('')
+      }
+    ];
 
 
 
@@ -1256,24 +1433,33 @@
      * Otherwise, include all items.
      */
     var getItems = function () {
-      var itemNames = ['pen', 'line', 'shapes', 'text', 'colors', 'line-width', 'clear', 'capture'];
+      var itemNames = ['pen', 'colors', 'shapes', 'text', 'capture', 'undo', 'clear'];
+      var shapeNames = ['rectangle', 'rectangle-fill', 'oval', 'oval-fill', 'star', 'arrow', 'line'];
       var addItem = function (acc, item) {
         var index = itemNames.indexOf(item);
         if (index !== -1) {
-          acc.push(toolbarItems[index]);
+          var toolbarItem = toolbarItems[index];
+          if (toolbarItem.title === 'Shapes' && !!options.shapes) {
+            var shapes = options.shapes.reduce(function (shapeAcc, shape) {
+              var shapeIndex = shapeNames.indexOf(shape);
+              return shapeIndex !== -1 ? shapeAcc.concat(toolbarItem.items[shapeIndex]) : shapeAcc;
+            }, []);
+            toolbarItem.items = shapes;
+          }
+          acc.push(toolbarItem);
         }
         return acc;
       }
 
       if (!!options.items && !!options.items.length) {
-        return options.items.reduce(addItem, []);
+        var itemsToBuild = options.items[0] === '*' ? itemNames : options.items;
+        return itemsToBuild.reduce(addItem, []);
       } else {
         return toolbarItems;
       }
     }
 
     this.items = getItems();
-
 
     this.colors = options.colors || [
       '#1abc9c',
@@ -1321,9 +1507,9 @@
       var self = this;
       var context = _toolbar.externalWindow ? _toolbar.externalWindow.document : document;
 
-      this.getElm = function (el) {
+      this.getElm = function (el, all) {
         if (typeof el === 'string') {
-          return context.querySelector(el);
+          return all ? context.querySelectorAll(el) : context.querySelector(el);
         }
         return el;
       };
@@ -1340,11 +1526,14 @@
       };
 
       this.close = function () {
-        this.elm.style.display = 'none';
+        // this.elm.style.display = 'none';
+        this.elm.classList.add('ots-hidden');
       };
 
       this.open = function () {
-        this.elm.style.display = this.options.style.display;
+        // this.elm.style.display = this.options.style.display;
+        this.elm.classList.remove('ots-hidden')
+
       };
 
       this.colorChosen = function (cb) {
@@ -1365,7 +1554,7 @@
       options = options || {};
       options.openEvent = options.openEvent || 'click';
       options.style = Object(options.style);
-      options.style.display = options.style.display || 'block';
+      // options.style.display = options.style.display || 'block';
       options.template = options.template || '<div class=\"color-choice\" data-col=\"{color}\" style=\"background-color: {color}\"></div>';
       self.elm = self.getElm(parent);
       self.cbs = [];
@@ -1379,6 +1568,11 @@
         if (!color) {
           return;
         }
+        var colors = Array.from(self.getElm('.color-choice', true));
+        colors.forEach(function (el) {
+          el.classList.remove('active');
+        });
+        ev.target.classList.add('active');
         self.set(color);
         self.close();
       });
@@ -1397,8 +1591,6 @@
         panel.setAttribute('class', 'OT_panel');
         panel.style.width = '100%';
         panel.style.height = '100%';
-        panel.style.backgroundColor = this.backgroundColor;
-        // panel.style.paddingLeft = '15px';
         this.parent.appendChild(panel);
         this.parent.style.position = 'relative';
         this.parent.zIndex = 1000;
@@ -1412,17 +1604,14 @@
           var button = context.createElement('input');
           button.setAttribute('type', 'button');
           button.setAttribute('id', item.id);
-
-          button.style.position = 'relative';
-          button.style.top = '50%';
-          button.style.transform = 'translateY(-50%)';
+          button.classList.add('annotation-btn');
+          button.classList.add(item.title.split(' ').join('-').toLowerCase());
 
           if (item.id === 'OT_colors') {
-            button.style.webkitTransform = 'translateY(-85%)';
 
             var colorPicker = context.createElement('div');
             colorPicker.setAttribute('class', 'color-picker');
-            colorPicker.style.backgroundColor = this.backgroundColor;
+            // colorPicker.style.backgroundColor = this.subpanelBackgroundColor;
             this.parent.appendChild(colorPicker);
 
             var pk = new ColorPicker('.color-picker', this.colors, {
@@ -1439,41 +1628,14 @@
             });
 
             var colorChoices = context.querySelectorAll('.color-choice');
-
-            for (var j = 0; j < colorChoices.length; j++) {
-              colorChoices[j].style.display = 'inline-block';
-              colorChoices[j].style.width = '30px';
-              colorChoices[j].style.height = '30px';
-              colorChoices[j].style.margin = '5px';
-              colorChoices[j].style.cursor = 'pointer';
-              colorChoices[j].style.borderRadius = '100%';
-              colorChoices[j].style.opacity = 0.7;
-              colorChoices[j].onmouseover = function () {
-                this.style.opacity = 1;
-              };
-              colorChoices[j].onmouseout = function () {
-                this.style.opacity = 0.7;
-              };
-            }
-
-            button.setAttribute('class', 'OT_color');
-            button.style.marginLeft = '10px';
-            button.style.marginRight = '10px';
+            colorChoices[0].classList.add('active');
+            button.setAttribute('class', 'OT_color annotation-btn colors');
             button.style.borderRadius = '50%';
             button.style.backgroundColor = this.colors[0];
-            button.style.width = this.iconWidth;
-            button.style.height = this.iconHeight;
-            button.style.paddingTop = this.buttonHeight.replace('px', '') - this.iconHeight.replace('px', '') + 'px';
-          } else {
-            button.style.background = 'url("' + item.icon + '") no-repeat';
-            button.style.backgroundSize = this.iconWidth + ' ' + this.iconHeight;
-            button.style.backgroundPosition = 'center';
-            button.style.width = this.buttonWidth;
-            button.style.height = this.buttonHeight;
+
           }
 
-          // If we have an object as item.items, it was never set by the user
-          if (item.title === 'Line Width' && !Array.isArray(item.items)) {
+          if (item.title === 'Pen' && !Array.isArray(item.items)) {
             // Add defaults
             item.items = [{
               id: 'OT_line_width_2',
@@ -1512,40 +1674,43 @@
           }
 
           button.setAttribute('data-col', item.title);
-          button.style.border = 'none';
-          button.style.cursor = 'pointer';
+
 
           toolbarItems.push(button.outerHTML);
         }
 
         panel.innerHTML = toolbarItems.join('');
 
+        /**
+         * Since the color picker button uses its background to display the
+         * current color, we need to add a pseudo-element element to the toolbar
+         * to simulate hover state on the button.  When the user hovers over the
+         * button, we add the 'colors-hover' class to 'OT_toolbar' which has a
+         * pseudo-element which makes it seem as though the color picker button
+         * background is changing.
+         * TODO: Update the color picker and color choices to display colors
+         *       using pseudo-elements, so that we can more easily apply hover
+         *       states.
+         */
+        var toggleColorsHover = function (hover) {
+          var action = hover ? 'add' : 'remove';
+          document.getElementById('OT_toolbar').classList[action]('colors-hover');
+        };
+        var colors = context.getElementById('OT_colors');
+        colors.addEventListener('mouseenter', function () { toggleColorsHover(true); });
+        colors.addEventListener('mouseleave', function () { toggleColorsHover(false); });
+        /** End color picker hover state */
+
         panel.onclick = function (ev) {
           var group = ev.target.getAttribute('data-type') === 'group';
           var itemName = ev.target.getAttribute('data-col');
           var id = ev.target.getAttribute('id');
 
+
           // Close the submenu if we are clicking on an item and not a group button
           if (!group) {
             self.items.forEach(function (item) {
-              if (item.title !== 'Clear' && item.title === itemName) {
-                if (self.selectedItem) {
-                  var lastBtn = context.getElementById(self.selectedItem.id);
-                  if (lastBtn) {
-                    lastBtn.style.background = 'url("' + self.selectedItem.icon + '") no-repeat';
-                    lastBtn.style.backgroundSize = self.iconWidth + ' ' + self.iconHeight;
-                    lastBtn.style.backgroundPosition = 'center';
-                  }
-                }
-
-                if (item.selectedIcon) {
-                  var selBtn = context.getElementById(item.id);
-                  if (selBtn) {
-                    selBtn.style.background = 'url("' + item.selectedIcon + '") no-repeat';
-                    selBtn.style.backgroundSize = self.iconWidth + ' ' + self.iconHeight;
-                    selBtn.style.backgroundPosition = 'center';
-                  }
-                }
+              if ((item.title !== 'Clear' || item.title !== 'Undo') && item.title === itemName) {
 
                 self.selectedItem = item;
 
@@ -1558,42 +1723,32 @@
                 return false;
               }
             });
-            subPanel.style.display = 'none';
+            subPanel.classList.add('ots-hidden')
           } else {
             self.items.forEach(function (item) {
               if (item.title === itemName) {
                 self.selectedGroup = item;
 
                 if (item.items) {
-                  subPanel.setAttribute('class', 'OT_subpanel');
-                  subPanel.style.backgroundColor = self.backgroundColor;
-                  subPanel.style.width = '100%';
-                  subPanel.style.height = '100%';
-                  subPanel.style.paddingLeft = '15px';
-                  subPanel.style.display = 'none';
+                  subPanel.setAttribute('class', ['OT_subpanel', 'ots-hidden', item.title.toLowerCase()].join(' '));
+
                   self.parent.appendChild(subPanel);
 
                   if (Array.isArray(item.items)) {
                     var submenuItems = [];
 
-                    if (item.id === 'OT_line_width') {
+                    if (item.id === 'OT_pen') {
                       // We want to dynamically create icons for the list of possible line widths
                       item.items.forEach(function (subItem) {
                         // INFO Using a div here - not input to create an inner div representing the line width - better option?
                         var itemButton = context.createElement('div');
                         itemButton.setAttribute('data-col', subItem.title);
+                        itemButton.setAttribute('class', ['line-width-option', subItem.size].join(' '));
                         itemButton.setAttribute('id', subItem.id);
-                        itemButton.style.position = 'relative';
-                        itemButton.style.top = '50%';
-                        itemButton.style.transform = 'translateY(-50%)';
-                        itemButton.style['float'] = 'left';
-                        itemButton.style.width = self.buttonWidth;
-                        itemButton.style.height = self.buttonHeight;
-                        itemButton.style.border = 'none';
-                        itemButton.style.cursor = 'pointer';
 
                         var lineIcon = context.createElement('div');
-                        // TODO Allow devs to change this?
+                        lineIcon.setAttribute('class', 'line-width-icon')
+                          // TODO Allow devs to change this?
                         lineIcon.style.backgroundColor = '#FFFFFF';
                         lineIcon.style.width = '80%';
                         lineIcon.style.height = subItem.size + 'px';
@@ -1614,16 +1769,17 @@
                         itemButton.setAttribute('type', 'button');
                         itemButton.setAttribute('data-col', subItem.title);
                         itemButton.setAttribute('id', subItem.id);
-                        itemButton.style.background = 'url("' + subItem.icon + '") no-repeat';
-                        itemButton.style.position = 'relative';
-                        itemButton.style.top = '50%';
-                        itemButton.style.transform = 'translateY(-50%)';
-                        itemButton.style.backgroundSize = self.iconWidth + ' ' + self.iconHeight;
-                        itemButton.style.backgroundPosition = 'center';
-                        itemButton.style.width = self.buttonWidth;
-                        itemButton.style.height = self.buttonHeight;
-                        itemButton.style.border = 'none';
-                        itemButton.style.cursor = 'pointer';
+                        itemButton.setAttribute('class', ['annotation-btn', subItem.title.toLowerCase()].join(' '));
+                        // itemButton.style.backgroundImage = 'url("' + subItem.icon + '")';
+                        // itemButton.style.position = 'relative';
+                        // itemButton.style.top = '50%';
+                        // itemButton.style.transform = 'translateY(-50%)';
+                        // itemButton.style.backgroundSize = self.iconWidth + ' ' + self.iconHeight;
+                        // itemButton.style.backgroundPosition = 'center';
+                        // itemButton.style.width = self.buttonWidth;
+                        // itemButton.style.height = self.buttonHeight;
+                        // itemButton.style.border = 'none';
+                        // itemButton.style.cursor = 'pointer';
 
                         submenuItems.push(itemButton.outerHTML);
                       });
@@ -1633,14 +1789,14 @@
                   }
                 }
 
-                if (id === 'OT_shapes' || id === 'OT_line_width') {
+                if (id === 'OT_shapes' || id === 'OT_pen') {
                   if (subPanel) {
-                    subPanel.style.display = 'block';
+                    subPanel.classList.remove('ots-hidden');
                   }
                   pk.close();
                 } else if (id === 'OT_colors') {
                   if (subPanel) {
-                    subPanel.style.display = 'none';
+                    subPanel.classList.add('ots-hidden');
                   }
                   pk.open();
                 }
@@ -1657,7 +1813,15 @@
           var group = ev.target.getAttribute('data-type') === 'group';
           var itemName = ev.target.getAttribute('data-col');
           var id = ev.target.getAttribute('id');
-          subPanel.style.display = 'none';
+
+
+          if (!!id && id.replace(/[^a-z]/g, '') === 'linewidth') {
+            canvases.forEach(function (canvas) {
+              canvas.selectItem(self.selectedGroup);
+            });
+          }
+
+          subPanel.classList.add('ots-hidden');
 
           if (!group) {
             self.selectedGroup.items.forEach(function (item) {
@@ -1665,9 +1829,9 @@
                 if (self.selectedItem) {
                   var lastBtn = document.getElementById(self.selectedItem.id);
                   if (lastBtn) {
-                    lastBtn.style.background = 'url("' + self.selectedItem.icon + '") no-repeat';
-                    lastBtn.style.backgroundSize = self.iconWidth + ' ' + self.iconHeight;
-                    lastBtn.style.backgroundPosition = 'center';
+                    // lastBtn.style.background = 'url("' + self.selectedItem.icon + '") no-repeat';
+                    // lastBtn.style.backgroundSize = self.iconWidth + ' ' + self.iconHeight;
+                    // lastBtn.style.backgroundPosition = 'center';
                   }
                 }
 
@@ -1698,11 +1862,39 @@
           });
         };
 
-        context.getElementById('OT_clear').onclick = function () {
+        var onClear = context.getElementById('OT_clear').onclick = function () {
           canvases.forEach(function (canvas) {
             canvas.clear();
           });
         };
+
+        context.getElementById('OT_undo').onclick = function () {
+          canvases.forEach(function (canvas) {
+            canvas.undo();
+          });
+        };
+
+        window.addEventListener('OT_clear', function () {
+          onClear();
+          self.selectedItem = null;
+          canvases.forEach(function (canvas) {
+            canvas.selectItem(self.selectedItem);
+          });
+        });
+
+        window.addEventListener('OT_pen', function (evt) {
+          var item = self.items.find(function (item) {
+            return item.id === 'OT_pen';
+          });
+
+          self.selectedItem = item;
+          attachDefaultAction(item);
+          var color = evt.detail.color;
+          canvases.forEach(function (canvas) {
+            canvas.selectItem(self.selectedItem);
+            color && canvas.changeColor(color);
+          });
+        });
       }
     };
 
@@ -1764,12 +1956,18 @@
     /**
      * Links an annotation canvas to the toolbar so that menu actions can be handled on it.
      * @param canvas The annotation canvas to be linked to the toolbar.
+     * @param externalWindow External screen sharing window
      */
-    this.addCanvas = function (canvas) {
+    this.addCanvas = function (canvas, externalWindow) {
       var self = this;
+      var context = externalWindow ? externalWindow.document : document;
       canvas.link(self.session);
       canvas.colors(self.colors);
       canvases.push(canvas);
+      canvases.forEach(function (canvas) {
+        canvas.selectedItem = canvas.selectedItem || self.items[0];
+        context.getElementById(canvas.selectedItem.id).classList.add('selected');
+      });
     };
 
     /**
@@ -1847,7 +2045,7 @@
 
   // vars for the analytics logs. Internal use
   var _logEventData = {
-    clientVersion: 'js-vsol-1.0.0',
+    clientVersion: 'js-vsol-1.1.0',
     componentId: 'annotationsAccPack',
     name: 'guidAnnotationsKit',
     actionInitialize: 'Init',
@@ -1960,9 +2158,11 @@
       width = windowDimensions.width;
       height = windowDimensions.height;
     } else {
-      var el = _elements.absoluteParent || _elements.canvasContainer;
-      width = el.clientWidth;
-      height = el.clientHeight;
+      if (_elements.imageId === null) {
+        var el = _elements.absoluteParent || _elements.canvasContainer;
+        width = el.clientWidth;
+        height = el.clientHeight;
+      }
     }
 
     var videoDimensions = _canvas.videoFeed.stream.videoDimensions;
@@ -1991,6 +2191,10 @@
     _triggerEvent('resizeCanvas');
   };
 
+  var _changeColorByIndex = function(colorIndex) {
+    _canvas.changeColorByIndex(colorIndex);
+  };
+
   var _listenForResize = function () {
     $(_elements.resizeSubject).on('resize', _.throttle(function () {
       _resizeCanvas();
@@ -1998,8 +2202,11 @@
   };
 
   var _createToolbar = function (session, options, externalWindow) {
+    _setupUI();
+
     var toolbarId = _.property('toolbarId')(options) || 'toolbar';
-    var items = _.property('toolbarItems')(options);
+    var items = _.property('toolbarItems')(options) || [];
+    var shapes = _.property('toolbarShapes')(options) || [];
     var colors = _.property('colors')(options) || _palette;
     var imageAssets = _.property('imageAssets')(options) || null;
     var backgroundColor = _.property('backgroundColor')(options) || null;
@@ -2014,7 +2221,8 @@
       session: session,
       container: container(),
       colors: colors,
-      items: !!items && !!items.length ? options.items : null,
+      items: items.length ? items : ['*'],
+      shapes: shapes.length ? shapes : ['rectangle', 'oval', 'star', 'arrow', 'line'],
       externalWindow: externalWindow || null,
       imageAssets: imageAssets,
       backgroundColor: backgroundColor,
@@ -2045,7 +2253,7 @@
 
     var width = screen.width * 0.80 | 0;
     var height = width / (_aspectRatio);
-    var externalWindowHTML = '<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-type" content="text/html; charset=utf-8"><title>OpenTok Screen Sharing Solution Annotation</title><style type="text/css" media="screen"> body{margin: 0; background-color: rgba(0, 153, 203, 0.7); box-sizing: border-box; height: 100vh;}canvas{top: 0; z-index: 1000;}.hidden{display: none;}.main-wrap{width: 100%; height: 100%; -ms-box-orient: horizontal; display: -webkit-box; display: -moz-box; display: -ms-flexbox; display: -moz-flex; display: -webkit-flex; display: flex; -webkit-justify-content: center; justify-content: center; -webkit-align-items: center; align-items: center;}.inner-wrap{position: relative; border-radius: 8px; overflow: hidden;}.fixed-container{position: fixed; top: 275px; right: 0; width: 40px; z-index: 1001;}.fixed-container .toolbar-wrap{position: absolute; top: 0; left: 0;}.fixed-container .toolbar-wrap input{display: block; top: 0 !important; transform: none !important;}.fixed-container .toolbar-wrap .OT_color{width: 30px; margin-right: 5px !important; margin-left: 5px !important; padding: 0;}.fixed-container .toolbar-wrap .OT_subpanel, .fixed-container .toolbar-wrap .color-picker{position: absolute; top: 0; right: 40px; padding-left: 0 !important; overflow: hidden;}.fixed-container .toolbar-wrap .OT_subpanel> div{top: 0 !important; transform: none !important;}.fixed-container .toolbar-wrap .color-picker{left: -30px;}.fixed-container .toolbar-wrap .color-picker .color-choice{display: block !important; height: 20px !important; width: 20px !important;}.publisherContainer{display: block; background-color: #000000; position: absolute;}.publisher-wrap{height: 100%; width: 100%;}.subscriberContainer{position: absolute; top: 20px; left: 20px; width: 200px; height: 120px; background-color: #000000; border: 2px solid white; border-radius: 6px;}.subscriberContainer .OT_video-poster{width: 100%; height: 100%; opacity: .25; background-repeat: no-repeat; background-image: url(https://static.opentok.com/webrtc/v2.8.2/images/rtc/audioonly-silhouette.svg); background-size: 50%; background-position: center;}.OT_video-element{height: 100%; width: 100%;}.OT_edge-bar-item{display: none;}</style></head><body> <div class="main-wrap"> <div id="annotationContainer" class="inner-wrap"></div></div><div id="toolbarContainer" class="fixed-container"> <div id="toolbar" class="toolbar-wrap"></div></div><div id="subscriberVideo" class="subscriberContainer hidden"></div><script type="text/javascript" charset="utf-8"> /** Must use double-quotes since everything must be converted to a string */ var opener; var canvas; if (!toolbar){alert("Something went wrong: You must pass an OpenTok annotation toolbar object into the window.")}else{opener=window.opener; window.onbeforeunload=window.triggerCloseEvent;}var localScreenProperties={insertMode: "append", width: "100%", height: "100%", videoSource: "window", showControls: false, style:{buttonDisplayMode: "off"}, subscribeToVideo: "true", subscribeToAudio: "false", fitMode: "contain"}; var createContainerElements=function(){var parentDiv=document.getElementById("annotationContainer"); var publisherContainer=document.createElement("div"); publisherContainer.setAttribute("id", "screenshare_publisher"); publisherContainer.classList.add("publisher-wrap"); parentDiv.appendChild(publisherContainer); return{annotation: parentDiv, publisher: publisherContainer};}; var addSubscriberVideo=function(stream){var container=document.getElementById("subscriberVideo"); var subscriber=session.subscribe(stream, container, localScreenProperties, function(error){if (error){console.log("Failed to add subscriber video", error);}container.classList.remove("hidden");});}; if (navigator.userAgent.indexOf("Firefox") !==-1){var ghost=window.open("about:blank"); ghost.focus(); ghost.close();}</script></body></html>';
+    var externalWindowHTML = '<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-type" content="text/html; charset=utf-8"><title>OpenTok Screen Sharing Solution Annotation</title><link rel="stylesheet" href="https://assets.tokbox.com/solutions/css/style.css"><style type="text/css" media="screen"> body{margin:0;background-color:rgba(0,153,203,.7);box-sizing:border-box;height:100vh}canvas{top:0;z-index:1000}.hidden{display:none}.ots-hidden{display:none !important}.main-wrap{width:100%;height:100%;-ms-box-orient:horizontal;display:-webkit-box;display:-moz-box;display:-ms-flexbox;display:-moz-flex;display:-webkit-flex;display:flex;-webkit-justify-content:center;justify-content:center;-webkit-align-items:center;align-items:center}.inner-wrap{position:relative;border-radius:8px;overflow:hidden}.publisherContainer{display:block;background-color:#000;position:absolute}.publisher-wrap{height:100%;width:100%}.subscriberContainer{position:absolute;display:flex;top:20px;left:20px;width:200px;height:120px;background-color:#000;border:2px solid #fff;border-radius:6px}.subscriberContainer .OT_video-poster{width:100%;height:100%;opacity:.25;background-repeat:no-repeat;background-image:url(https://static.opentok.com/webrtc/v2.8.2/images/rtc/audioonly-silhouette.svg);background-size:50%;background-position:center}.OT_video-element{height:100%;width:100%}.OT_edge-bar-item{display:none}</style></head><body> <div class="main-wrap"> <div id="annotationContainer" class="inner-wrap"></div></div><div id="toolbarContainer" class="ots-annotation-toolbar-container"> <div id="toolbar" class="toolbar-wrap"></div></div><div id="subscriberVideo" class="subscriberContainer hidden"></div><script type="text/javascript" charset="utf-8"> /** Must use double-quotes since everything must be converted to a string */ var opener; var canvas; if (!toolbar){alert("Something went wrong: You must pass an OpenTok annotation toolbar object into the window.")}else{opener=window.opener; window.onbeforeunload=window.triggerCloseEvent;}var localScreenProperties={insertMode: "append", width: "100%", height: "100%", videoSource: "window", showControls: false, style:{buttonDisplayMode: "off"}, subscribeToVideo: "true", subscribeToAudio: "false", fitMode: "contain"}; var createContainerElements=function(){var parentDiv=document.getElementById("annotationContainer"); var publisherContainer=document.createElement("div"); publisherContainer.setAttribute("id", "screenshare_publisher"); publisherContainer.classList.add("publisher-wrap"); parentDiv.appendChild(publisherContainer); return{annotation: parentDiv, publisher: publisherContainer};}; var addSubscriberVideo=function(stream){var container=document.getElementById("subscriberVideo"); var subscriber=session.subscribe(stream, container, localScreenProperties, function(error){if (error){console.log("Failed to add subscriber video", error);}container.classList.remove("hidden");});}; if (navigator.userAgent.indexOf("Firefox") !==-1){var ghost=window.open("about:blank"); ghost.focus(); ghost.close();}</script></body></html>';
 
     /* eslint-disable max-len */
     var windowFeatures = [
@@ -2100,9 +2308,7 @@
   var _removeToolbar = function () {
     $(_elements.resizeSubject).off('resize', _resizeCanvas);
     toolbar.remove();
-    if (!_elements.externalWindow) {
-      $('#annotationToolbarContainer').remove();
-    }
+    $('#annotationToolbarContainer').remove();
   };
 
   /**
@@ -2157,6 +2363,7 @@
     _elements.resizeSubject = _.property('externalWindow')(options) || window;
     _elements.externalWindow = _.property('externalWindow')(options) || null;
     _elements.absoluteParent = _.property('absoluteParent')(options) || null;
+    _elements.imageId = _.property('imageId')(options) || null;
     _elements.canvasContainer = container;
 
 
@@ -2167,7 +2374,7 @@
       externalWindow: _elements.externalWindow
     });
 
-    toolbar.addCanvas(_canvas);
+    toolbar.addCanvas(_canvas, _elements.externalWindow);
 
     var onScreenCapture = _this.options.onScreenCapture ? _this.options.onScreenCapture :
       function (dataUrl) {
@@ -2193,6 +2400,14 @@
    */
   var resizeCanvas = function () {
     _resizeCanvas();
+  };
+
+  /**
+   * Change the annotation color of the toolbar passing the colorIndex
+   * @param {Integer} colorIndex - The color index number
+   */
+  var changeColorByIndex = function (colorIndex) {
+    _changeColorByIndex(colorIndex);
   };
 
   /**
@@ -2224,6 +2439,15 @@
 
     _log(_logEventData.actionEnd, _logEventData.variationSuccess);
   };
+
+  var hideToolbar = function () {
+    $(toolbar.parent).hide();
+  };
+
+  var showToolbar = function () {
+    $(toolbar.parent).show();
+  };
+
   /**
    * @constructor
    * Represents an annotation component, used for annotation over video or a shared screen
@@ -2246,7 +2470,6 @@
     // init analytics logs
     _logAnalytics();
     _log(_logEventData.actionInitialize, _logEventData.variationSuccess);
-    _setupUI();
   };
 
   AnnotationAccPack.prototype = {
@@ -2255,7 +2478,10 @@
     linkCanvas: linkCanvas,
     resizeCanvas: resizeCanvas,
     addSubscriberToExternalWindow: addSubscriberToExternalWindow,
-    end: end
+    end: end,
+    hideToolbar: hideToolbar,
+    showToolbar: showToolbar,
+    changeColorByIndex: changeColorByIndex
   };
 
   if (typeof exports === 'object') {
