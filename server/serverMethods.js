@@ -115,6 +115,8 @@ function ServerMethods(aLogLevel, aModules) {
         var isWebRTCVersion = persistConfig[C.DEFAULT_INDEX_PAGE] === 'opentokrtc';
         var disabledFeatures =
           persistConfig[C.DISABLED_FEATURES] && persistConfig[C.DISABLED_FEATURES].split(',');
+        var disabledFirebase = (disabledFeatures || []).
+          some(aFeature => aFeature === 'archive' || aFeature === 'firebase');
 
         // For this object we need to know if/when we're reconnecting so we can shutdown the
         // old instance.
@@ -145,6 +147,7 @@ function ServerMethods(aLogLevel, aModules) {
               iosAppId: iosAppId,
               iosUrlPrefix: iosUrlPrefix,
               isWebRTCVersion: isWebRTCVersion,
+              enabledFirebase: !disabledFirebase,
               disabledFeatures: disabledFeatures
             };
           });
@@ -361,6 +364,7 @@ function ServerMethods(aLogLevel, aModules) {
       (aReq.query && aReq.query.userName) || C.DEFAULT_USER_NAME + _numAnonymousUsers++;
     logger.log('getRoomInfo serving ' + aReq.path, 'roomName: ', roomName, 'userName: ', userName);
 
+    var enabledFirebase = tbConfig.enabledFirebase;
     // We have to check if we have a session id stored already on the persistence provider (and if
     // it's not too old).
     // Note that we do not persist tokens.
@@ -374,7 +378,8 @@ function ServerMethods(aLogLevel, aModules) {
                                    JSON.stringify(usableSessionInfo));
 
         // We have to create an authentication token for the new user...
-        var fbUserToken = fbArchives.createUserToken(usableSessionInfo.sessionId, userName);
+        var fbUserToken =
+          enabledFirebase && fbArchives.createUserToken(usableSessionInfo.sessionId, userName);
 
         // and finally, answer...
         var answer = {
@@ -385,8 +390,9 @@ function ServerMethods(aLogLevel, aModules) {
                     data: JSON.stringify({ userName: userName })
                   }),
           username: userName,
-          firebaseURL: fbArchives.baseURL + '/' + usableSessionInfo.sessionId,
-          firebaseToken: fbUserToken,
+          firebaseURL:
+            enabledFirebase && fbArchives.baseURL + '/' + usableSessionInfo.sessionId || 'unknown',
+          firebaseToken: fbUserToken || 'unknown',
           chromeExtId: tbConfig.chromeExtId
         };
         answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId,
