@@ -6,7 +6,7 @@ var sighup = {
 
 // Capture signals and optionally daemonize and change username
 function setupProcess(aLogger, aDaemonize, aLogFile) {
-  aLogger.log('Setting up process. Run as a daemon:', aDaemonize);
+  aLogger.log('Setting up process. Run as a daemon:', aDaemonize, 'Logfile:', aLogFile);
 
   // Since we might need to open some files, and that's an asynchronous operation,
   // we will return a promise here that will never resolve on the parent (process will die instead)
@@ -20,6 +20,7 @@ function setupProcess(aLogger, aDaemonize, aLogFile) {
       return resolve({ stdout: process.stdout, stderr: process.stderr });
     }
 
+    var fs = require('fs');
     var outputStream = fs.createWriteStream(aLogFile);
     outputStream.on('open', function() {
       resolve({ stdout: outputStream, stderr: outputStream });
