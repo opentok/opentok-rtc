@@ -76,6 +76,10 @@
                     composeDate(data), 'application/x-www-form-urlencoded');
   }
 
+  function sendFeedback(data) {
+
+  }
+
   function deleteArchive(id) {
     return sendXHR('DELETE', server + '/archive/' + id);
   }
@@ -83,6 +87,7 @@
   var Request = {
     getRoomInfo: getRoomInfo,
     sendArchivingOperation: sendArchivingOperation,
+    sendFeedback: sendFeedback,
     deleteArchive: deleteArchive,
     sendXHR: sendXHR
   };
