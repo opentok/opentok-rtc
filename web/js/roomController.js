@@ -745,7 +745,7 @@
         then(function() {
           RecordingsController.init(aParams.firebaseURL, aParams.firebaseToken, aParams.sessionId);
           ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
-          FeedbackController.init();
+          FeedbackController.init(otHelper);
           Utils.sendEvent('roomController:controllersReady');
         }).
         catch(function(error) {

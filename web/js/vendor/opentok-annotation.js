@@ -2150,19 +2150,10 @@
     var width;
     var height;
 
-    if (!!_elements.externalWindow) {
-      var windowDimensions = {
-        width: _elements.externalWindow.innerWidth,
-        height: _elements.externalWindow.innerHeight
-      };
-      width = windowDimensions.width;
-      height = windowDimensions.height;
-    } else {
-      if (_elements.imageId === null) {
-        var el = _elements.absoluteParent || _elements.canvasContainer;
-        width = el.clientWidth;
-        height = el.clientHeight;
-      }
+    if (_elements.imageId === null) {
+      var el = _elements.absoluteParent || _elements.canvasContainer;
+      width = el.clientWidth;
+      height = el.clientHeight;
     }
 
     var videoDimensions = _canvas.videoFeed.stream.videoDimensions;
@@ -2174,13 +2165,16 @@
       height: height,
       width: width
     };
-    if (origRatio < destRatio) {
-      // height is the limiting prop, we'll get vertical bars
-      calcDimensions.width = calcDimensions.height * origRatio;
-      calcDimensions.left = (width - calcDimensions.width) / 2;
-    } else {
-      calcDimensions.height = calcDimensions.width / origRatio;
-      calcDimensions.top = (height - calcDimensions.height) / 2;
+
+    if (!_elements.externalWindow) {
+      if (origRatio < destRatio) {
+        // height is the limiting prop, we'll get vertical bars
+        calcDimensions.width = calcDimensions.height * origRatio;
+        calcDimensions.left = (width - calcDimensions.width) / 2;
+      } else {
+        calcDimensions.height = calcDimensions.width / origRatio;
+        calcDimensions.top = (height - calcDimensions.height) / 2;
+      }
     }
 
     $(_elements.canvasContainer).find('canvas').css(calcDimensions);

@@ -34,7 +34,7 @@
       Utils.sendEvent('feedbackView:sendFeedback', {
         audioScore: audioScore.options[audioScore.selectedIndex].value,
         videoScore: videoScore.options[videoScore.selectedIndex].value,
-        otherInfo: otherInfo.value
+        description: otherInfo.value
       });
 
       hideForm();
