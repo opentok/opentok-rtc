@@ -316,21 +316,24 @@
 
         _publisher = OT.initPublisher(aDOMElement, aProperties, function(error) {
           if (error) {
-            processError({ message: 'Error initializing publisher. ' + error.message });
-          } else {
-            _session.publish(_publisher, function(error) {
-              if (error) {
-                processError(error);
-              } else {
-                _publisherInitialized = true;
-                Object.keys(aHandlers).forEach(function(name) {
-                  _publisher.on(name, aHandlers[name].bind(self));
-                });
-                _solvePublisherPromise(_publisher);
-                resolve(_publisher);
-              }
+            processError({
+              name: error.name,
+              message: 'Error initializing publisher. ' + error.message
             });
+           return;
           }
+          _session.publish(_publisher, function(error) {
+            if (error) {
+              processError(error);
+            } else {
+              _publisherInitialized = true;
+              Object.keys(aHandlers).forEach(function(name) {
+                _publisher.on(name, aHandlers[name].bind(self));
+              });
+              _solvePublisherPromise(_publisher);
+              resolve(_publisher);
+            }
+          });
         });
       });
     }
