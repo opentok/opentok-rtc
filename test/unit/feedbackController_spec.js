@@ -4,19 +4,36 @@ var should = chai.should();
 
 describe('FeedbackController', function() {
 
-  var mockLazyLoader = null;
+  var realLazyLoader = null;
+  var realOT = null;
+  var fakeOTHelper = {
+    session: {
+      id: 'abcd1234',
+      connection: {
+        id: 'connectionIdID'
+      }
+    },
+    publisherId: 'somePublisherId'
+  };
 
   before(function() {
-    mockLazyLoader = window.LazyLoader;
+    realLazyLoader = window.LazyLoader;
     window.LazyLoader = { load: function() {} };
+    realOT = window.OT;
+    window.OT = {
+      analytics: {
+        logEvent: function() {}
+      }
+    };
     sinon.stub(LazyLoader, 'load', function(resources) {
       return Promise.resolve();
     });
   });
 
   after(function() {
-    LazyLoader.load.restore();
-    window.LazyLoader = mockLazyLoader;
+    window.LazyLoader.load.restore();
+    window.LazyLoader = realLazyLoader;
+    window.OT = realOT;
   });
 
   describe('#init', function() {
@@ -28,7 +45,7 @@ describe('FeedbackController', function() {
     it('should be initialized', sinon.test(function(done) {
       this.stub(FeedbackView, 'init', function() {});
 
-      FeedbackController.init().then(function() {
+      FeedbackController.init(fakeOTHelper).then(function() {
         expect(FeedbackView.init.called).to.be.true;
         done();
       });
@@ -38,10 +55,25 @@ describe('FeedbackController', function() {
 
   describe('#feedbackView:sendFeedback event', function() {
     it('should send feedback event', sinon.test(function() {
-      this.spy(Request, 'sendFeedback');
 
-      window.dispatchEvent(new CustomEvent('feedbackView:sendFeedback'));
-      expect(Request.sendFeedback.calledOnce).to.be.true;
+      var logEventStub = this.stub(window.OT.analytics, 'logEvent', function(aLoggedEvent) {});
+      var report = {
+        audioScore: 1,
+        videoScore: 2,
+        description: 'description'
+      };
+      window.dispatchEvent(new CustomEvent('feedbackView:sendFeedback', { detail : report }));
+      expect(logEventStub.calledOnce).to.be.true;
+      expect(logEventStub.calledWith({
+        action: 'SessionQuality',
+        sessionId: fakeOTHelper.session.id,
+        connectionId: fakeOTHelper.session.connection.id,
+        publisherId: fakeOTHelper.publisherId,
+        audioScore: report.audioScore,
+        videoScore: report.videoScore,
+        description: report.description
+      })).to.be.true;
+
     }));
   });
 });

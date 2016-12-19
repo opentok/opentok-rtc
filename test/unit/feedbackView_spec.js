@@ -39,18 +39,19 @@ describe('FeedbackView', function() {
 
     it('should send event when it is submitted', sinon.test(function() {
       this.spy(Modal, 'hide');
-      this.spy(Utils, 'sendEvent');
+      this.stub(Utils, 'sendEvent');
 
       otherInfo.value = 'further info';
       sendButton.click();
 
       expect(Modal.hide.calledOnce).to.be.true;
+
       expect(Utils.sendEvent.calledOnce).to.be.true;
       expect(Utils.sendEvent.getCall(0).args[0]).to.be.equal('feedbackView:sendFeedback');
       expect(Utils.sendEvent.getCall(0).args[1]).to.be.deep.equal({
         audioScore: audioScore.options[audioScore.selectedIndex].value,
         videoScore: videoScore.options[videoScore.selectedIndex].value,
-        otherInfo: otherInfo.value
+        description: otherInfo.value
       });
 
     }));
