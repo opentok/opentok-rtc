@@ -112,6 +112,9 @@
           </ul>
         </div>
       </nav>
+      <footer class="feedback">
+        <a id="showFeedback"><span><span class="plus-icon">[+]</span> Give Demo Feedback</span></a>
+      </footer>
     </section>
 
     <section id="screen">
@@ -214,6 +217,46 @@
         <input class="block username" placeholder="Enter your name">
         <footer>
           <button id="enter" class="btn btn-blue btn-padding-large ctaarrow-white">Join Meeting</button>
+        </footer>
+      </form>
+    </section>
+
+    <section class="tc-modal feedback-report">
+      <form class="tc-dialog">
+        <i data-icon="close_gray" class="close"></i>
+        <header>
+          <span>Demo Feedback Report</span>
+        </header>
+        <section>
+          <label>Audio Score:</label>
+          <div class="tc-dropdown" data-icon="down">
+            <select class="audio-score">
+              <option value="1">Bad. Very annoying.</option>
+              <option value="2">Poor. Annoying.</option>
+              <option value="3" selected="selected">Fair. Slightly annoying.</option>
+              <option value="4">Good. Not perfect but not annoying.</option>
+              <option value="5">Excellent. Imperceptible impairment.</option>
+            </select>
+          </div>
+        </section>
+        <section>
+          <label>Video Score:</label>
+          <div class="tc-dropdown" data-icon="down">
+            <select class="video-score">
+              <option value="1">Bad. Very annoying.</option>
+              <option value="2">Poor. Annoying.</option>
+              <option value="3" selected="selected">Fair. Slightly annoying.</option>
+              <option value="4">Good. Not perfect but not annoying.</option>
+              <option value="5">Excellent. Imperceptible impairment.</option>
+            </select>
+          </div>
+        </section>
+        <section>
+          <label>Other info:</label>
+          <input class="other-info" placeholder="Type additional info optionally">
+        </section>
+        <footer>
+          <button class="btn btn-blue btn-padding-large ctaarrow-white send-feedback">Send</button>
         </footer>
       </form>
     </section>

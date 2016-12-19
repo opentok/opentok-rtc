@@ -3,6 +3,7 @@
 @import '../bower_components/utils/mixins.less';
 @import '../bower_components/modals/modals.less';
 @import '../bower_components/sidebars/sidebars.less';
+@import '../bower_components/dropdowns/dropdowns.less';
 @import '../bower_components/lists/lists.less';
 
 @import 'chat.less';
@@ -359,6 +360,26 @@ body {
       display: none;
     }
   }
+
+  .feedback {
+    width: 100%;
+    background-image: linear-gradient(to bottom, #ffffff, #e7e7e7);
+    border-top: solid 1px #eeeeee;
+    box-sizing: border-box;
+    text-align: center;
+
+    #showFeedback {
+      line-height: 49px;
+      cursor: pointer;
+      opacity: .5;
+      color: #202a2f;
+      font-size: 16px;
+
+      .plus-icon {
+        letter-spacing: 1.5px;
+      }
+    }
+  }
 }
 
 [data-archive-status="started"] #dock .menu {
@@ -437,6 +458,62 @@ body {
 
   .username {
     margin: 40px 0;
+  }
+
+  .btn {
+    font-size: 16px;
+    height: 50px;
+    line-height: 50px;
+  }
+}
+
+.feedback-report .tc-dialog {
+  max-width: none;
+
+  header {
+    font-family: "AvantGardeGothicITCW01X", arial;
+    font-size: 32px;
+    font-weight: 200;
+    line-height: 44px;
+    color: @blueText;
+    margin-bottom: 25px;
+    word-break: break-all;
+  }
+
+  section {
+    font-family: "AvantGardeGothicITCW01M 731087", arial;
+    font-size: 16px;
+    color: #5f6062;
+    text-align: left;
+    display: block;
+    height: 55px;
+
+    label {
+      float: left;
+      line-height: 40px;
+      margin-right: 20px;
+    }
+  }
+
+  .tc-dropdown, .other-info {
+    float: right;
+    width: 320px;
+    box-sizing: border-box;
+  }
+
+  .tc-dropdown {
+    select, span {
+      background-color: transparent;
+      font-family: "AvantGardeGothicITCW01B 731069", arial;
+      border: 1px solid #c5bbb4;
+      padding: 12px 10px;
+      font-size: 16px;
+      border-radius: 0;
+    }
+  }
+
+  .other-info {
+    margin: 0;
   }
 
   .btn {

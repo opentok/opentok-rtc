@@ -663,7 +663,8 @@
       '/js/recordingsController.js',
       '/js/endCallController.js',
       '/js/layoutMenuController.js',
-      '/js/screenShareController.js'
+      '/js/screenShareController.js',
+      '/js/feedbackController.js'
     ]).
     then(function() {
       EndCallController.init({addEventListener: function() {}}, 'NOT_AVAILABLE');
@@ -744,6 +745,7 @@
         then(function() {
           RecordingsController.init(aParams.firebaseURL, aParams.firebaseToken, aParams.sessionId);
           ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
+          FeedbackController.init(otHelper);
           Utils.sendEvent('roomController:controllersReady');
         }).
         catch(function(error) {
