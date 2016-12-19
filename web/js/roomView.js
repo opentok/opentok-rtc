@@ -62,6 +62,12 @@
       detail: 'The connection to the OpenTok platform has been lost. Check your network ' +
               'connectivity and press Reload to connect again.',
       button: 'Reload'
+    },
+    chromePublisherError: {
+      head: 'Internal Chrome Error',
+      detail: 'Failed to acquire microphone. This is a known Chrome bug. Please completely quit ' +
+              'and restart your browser.',
+      button: 'Reload'
     }
   };
 
@@ -163,6 +169,11 @@
     },
     'annotationEnded': function(evt) {
       document.body.data('annotationVisible', 'false');
+    },
+    'chromePublisherError': function(evt) {
+      showConfirm(MODAL_TXTS.chromePublisherError).then(function() {
+        document.location.reload();
+      });
     }
   };
 
