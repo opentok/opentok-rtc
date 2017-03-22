@@ -1,3 +1,6 @@
+/* global Utils, Request, RoomStatus, RoomView, LayoutManager, Modal, LazyLoader,
+          EndCallController, ChatController, LayoutMenuController, RecordingsController,
+          ScreenShareController, FeedbackController */
 !function(exports) {
   'use strict';
 
@@ -238,7 +241,7 @@
 
   function sendSignalMuteAll(status, onlyChangeSwitch) {
     otHelper.sendSignal('muteAll', { status: status, onlyChangeSwitch: onlyChangeSwitch });
-  };
+  }
 
   var viewEventHandlers = {
     'endCall': function() {
@@ -636,9 +639,9 @@
     return Request.
       getRoomInfo(aRoomParams).
       then(function(aRoomInfo) {
-        if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId
-            && aRoomInfo.apiKey && aRoomInfo.username
-            && aRoomInfo.firebaseToken && aRoomInfo.firebaseURL)) {
+        if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId &&
+              aRoomInfo.apiKey && aRoomInfo.username &&
+              aRoomInfo.firebaseToken && aRoomInfo.firebaseURL)) {
           debug.error('Error getRoomParams [', aRoomInfo,
                       '] without correct response');
           throw new Error('Error getting room parameters');
@@ -648,29 +651,40 @@
       });
   }
 
+  var isSafari = Utils.isSafari();
+
+  var modules = [
+    '/js/components/htmlElems.js',
+    '/js/helpers/resolutionAlgorithms.js'
+  ];
+  if (!isSafari) {
+    modules.push('/js/helpers/OTHelper.js');
+  }
+  modules.push(
+    '/js/itemsHandler.js',
+    '/js/layoutView.js',
+    '/js/layouts.js',
+    '/js/layoutManager.js',
+    '/js/roomView.js',
+    '/js/roomStatus.js',
+    '/js/chatController.js',
+    '/js/recordingsController.js',
+    '/js/endCallController.js',
+    '/js/layoutMenuController.js',
+    '/js/screenShareController.js',
+    '/js/feedbackController.js'
+  );
+
   var init = function() {
-    LazyLoader.load([
-      '/js/components/htmlElems.js',
-      '/js/helpers/resolutionAlgorithms.js',
-      '/js/helpers/OTHelper.js',
-      '/js/itemsHandler.js',
-      '/js/layoutView.js',
-      '/js/layouts.js',
-      '/js/layoutManager.js',
-      '/js/roomView.js',
-      '/js/roomStatus.js',
-      '/js/chatController.js',
-      '/js/recordingsController.js',
-      '/js/endCallController.js',
-      '/js/layoutMenuController.js',
-      '/js/screenShareController.js',
-      '/js/feedbackController.js'
-    ]).
+    LazyLoader.load(modules).
     then(function() {
       EndCallController.init({addEventListener: function() {}}, 'NOT_AVAILABLE');
     }).
     then(getRoomParams).
     then(function(aParams) {
+      if (isSafari) {
+        return aParams;
+      }
       var loadAnnotations = Promise.resolve();
       if (enableAnnotations) {
         exports.OTKAnalytics = exports.OTKAnalytics ||
@@ -695,6 +709,12 @@
       Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
 
       RoomView.init(enableHangoutScroll);
+      if (isSafari) {
+        debug.log('Launching Electron app');
+        document.location.href = 'teladoc://' + btoa(JSON.stringify(aParams));
+        Utils.sendEvent('roomController:externalAppLaunched');
+        return;
+      }
       roomName = aParams.roomName;
       userName = aParams.username ?
                   (aParams.username.length > 1000 ?

@@ -1,3 +1,4 @@
+/* global window, safari, LazyLoader, Draggable */
 !function(exports) {
 
   'use strict';
@@ -176,7 +177,14 @@
     return /msie/.test(userAgent) || userAgent.indexOf("trident/") !== -1;
   }
 
+  function isSafari() {
+    var checkObject = function (p) { return p.toString() === "[object SafariRemoteNotification]"; };
+      return /constructor/i.test(window.HTMLElement) ||
+        checkObject(!window['safari'] || safari.pushNotification);
+  }
+
   var Utils = {
+    isSafari: isSafari,
     getCurrentTime: getCurrentTime,
     inspectObject: inspectObject,
     sendEvent: sendEvent,

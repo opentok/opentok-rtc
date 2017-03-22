@@ -21,6 +21,11 @@
   var _chatHasBeenShown = false;
 
   var MODAL_TXTS = {
+    externalApp: {
+      head: 'External App Launched',
+      detail: 'An external app should have been launched to connect to the room.',
+      button: 'Ok'
+    },
     mute: {
       head: 'Mute all participants, including yourself',
       detail: 'Everyone will be notified and can click their <i data-icon="no_mic"></i> to ' +
@@ -141,6 +146,11 @@
   };
 
   var roomControllerEvents = {
+    'externalAppLaunched': function(evt) {
+      showConfirm(MODAL_TXTS.externalApp).then(function() {
+        document.body.innerHTML = '<html></html>';
+      });
+    },
     'userChangeStatus': function(evt) {
       // If user changed the status we need to reset the switch
       if (evt.detail.name === 'video') {

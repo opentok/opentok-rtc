@@ -1,7 +1,7 @@
 !function(global) {
   'use strict';
 
-  var dynamicOTLoad = false;
+  var dynamicOTLoad = true;
   var otPromise = Promise.resolve();
 
   var preReqSources = [
