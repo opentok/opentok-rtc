@@ -1,3 +1,6 @@
+/* global Utils, Request, RoomStatus, RoomView, LayoutManager, Modal, LazyLoader,
+          EndCallController, ChatController, LayoutMenuController, RecordingsController,
+          ScreenShareController, FeedbackController */
 !function(exports) {
   'use strict';
 
@@ -238,7 +241,7 @@
 
   function sendSignalMuteAll(status, onlyChangeSwitch) {
     otHelper.sendSignal('muteAll', { status: status, onlyChangeSwitch: onlyChangeSwitch });
-  };
+  }
 
   var viewEventHandlers = {
     'endCall': function() {
@@ -636,9 +639,9 @@
     return Request.
       getRoomInfo(aRoomParams).
       then(function(aRoomInfo) {
-        if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId
-            && aRoomInfo.apiKey && aRoomInfo.username
-            && aRoomInfo.firebaseToken && aRoomInfo.firebaseURL)) {
+        if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId &&
+              aRoomInfo.apiKey && aRoomInfo.username &&
+              aRoomInfo.firebaseToken && aRoomInfo.firebaseURL)) {
           debug.error('Error getRoomParams [', aRoomInfo,
                       '] without correct response');
           throw new Error('Error getting room parameters');
@@ -647,9 +650,8 @@
         return aRoomInfo;
       });
   }
-  var isSafari = /constructor/i.test(window.HTMLElement) ||
-    (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })
-      (!window['safari'] || safari.pushNotification);
+
+  var isSafari = Utils.isSafari();
 
   var modules = [
     '/js/components/htmlElems.js',
