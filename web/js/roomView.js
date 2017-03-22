@@ -23,7 +23,7 @@
   var MODAL_TXTS = {
     externalApp: {
       head: 'External App Launched',
-      detail: 'A external app should have been launched to connect to the room.',
+      detail: 'An external app should have been launched to connect to the room.',
       button: 'Ok'
     },
     mute: {
