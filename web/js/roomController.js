@@ -1,5 +1,5 @@
 /* global Utils, Request, RoomStatus, RoomView, LayoutManager, Modal, LazyLoader,
-          EndCallController, ChatController, LayoutMenuController, RecordingsController,
+          EndCallController, ChatController, LayoutMenuController,
           ScreenShareController, FeedbackController */
 !function(exports) {
   'use strict';
@@ -667,7 +667,6 @@
     '/js/roomView.js',
     '/js/roomStatus.js',
     '/js/chatController.js',
-    '/js/recordingsController.js',
     '/js/endCallController.js',
     '/js/layoutMenuController.js',
     '/js/screenShareController.js',
@@ -767,7 +766,7 @@
           });
         }).
         then(function() {
-          RecordingsController.init(aParams.sessionId);
+          EndCallController.init(aParams.sessionId);
           ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
           FeedbackController.init(otHelper);
           Utils.sendEvent('roomController:controllersReady');
