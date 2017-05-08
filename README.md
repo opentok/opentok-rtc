@@ -1,3 +1,5 @@
+![logo](./tokbox-logo.png)
+
 # TokBox Reference Apps: conferencing
 This is a TokBox reference application illustrating the use case: conferencing.
 
@@ -19,8 +21,7 @@ You'll need:
 - Grunt: http://gruntjs.com (only if you intend to develop or run the tests)
 
 #### Installation:
-Execute
-
+You will need your opentok api
 ```
 redis-cli set tb_api_key yourkeyhere
 redis-cli set tb_api_secret yoursecrethere
