@@ -1,14 +1,5 @@
-# opentokRTCV2:
-#### Showcase application for the OpenTok API.
-## Introduction
-
-This repository holds a complete demo application for the OpenTok API.
-
-(TO-DO TO-DO: Add OpenTok reference URLS)
-
-The repository includes a complete client application, and the server
-needed to access the OpenTok functionality. You can access a demo
-installation at https://opentokrtc.com (TO-DO TO-DO: Fix this!)
+# TokBox Reference Apps: conferencing
+This is a TokBox reference application illustrating the use case: conferencing.
 
 ## Installation
 
