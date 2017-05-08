@@ -277,10 +277,6 @@ definitions:
         type: string
       username:
         type: string
-      firebaseURL:
-        type: string
-      firebaseToken:
-        type: string
   ArchiveInfo:
     type: object
     properties:
