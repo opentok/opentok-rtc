@@ -640,8 +640,7 @@
       getRoomInfo(aRoomParams).
       then(function(aRoomInfo) {
         if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId &&
-              aRoomInfo.apiKey && aRoomInfo.username &&
-              aRoomInfo.firebaseToken && aRoomInfo.firebaseURL)) {
+              aRoomInfo.apiKey && aRoomInfo.username)) {
           debug.error('Error getRoomParams [', aRoomInfo,
                       '] without correct response');
           throw new Error('Error getting room parameters');
@@ -768,7 +767,7 @@
           });
         }).
         then(function() {
-          RecordingsController.init(aParams.firebaseURL, aParams.firebaseToken, aParams.sessionId);
+          RecordingsController.init(aParams.sessionId);
           ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
           FeedbackController.init(otHelper);
           Utils.sendEvent('roomController:controllersReady');
