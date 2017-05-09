@@ -10,7 +10,7 @@
   var otHelper;
   var numUsrsInRoom = 0;
   var _disabledAllVideos = false;
-  var enableAnnotations = true;
+  var enableAnnotations = false;
   var enableHangoutScroll = false;
 
   var setPublisherReady;
@@ -617,6 +617,7 @@
     var usrId = params.getFirstValue('userName');
     resolutionAlgorithm = params.getFirstValue('resolutionAlgorithm');
     debugPreferredResolution = params.getFirstValue('debugPreferredResolution');
+    enableAnnotations = params.getFirstValue('enableAnnotations') !== undefined;
     enableHangoutScroll = params.getFirstValue('enableHangoutScroll') !== undefined;
 
     var info = {
