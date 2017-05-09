@@ -1,14 +1,7 @@
-# opentokRTCV2:
-#### Showcase application for the OpenTok API.
-## Introduction
+![logo](./tokbox-logo.png)
 
-This repository holds a complete demo application for the OpenTok API.
-
-(TO-DO TO-DO: Add OpenTok reference URLS)
-
-The repository includes a complete client application, and the server
-needed to access the OpenTok functionality. You can access a demo
-installation at https://opentokrtc.com (TO-DO TO-DO: Fix this!)
+# TokBox Reference Apps: conferencing
+This is a TokBox reference application illustrating the use case: conferencing.
 
 ## Installation
 
@@ -28,20 +21,16 @@ You'll need:
 - Grunt: http://gruntjs.com (only if you intend to develop or run the tests)
 
 #### Installation:
-Execute
+You will need your OpenTok API Key and Secret. These can be obtained from the [developer dashboard](https://tokbox.com/account/#/)
+Substitute your key and secret into the snippet below and execute.
 
 ```
 redis-cli set tb_api_key yourkeyhere
 redis-cli set tb_api_secret yoursecrethere
-redis-cli set fb_data_url yourfirebaseappurlhere
-redis-cli set fb_auth_secret yourfirebasesecrethere
 npm install
 bower install
 grunt
 ```
-
-(replace yourkeyhere and yoursecret here with the API key and API
-secret).
 
 
 #### Configuration parameters:
@@ -57,9 +46,6 @@ redis). The supported parameters and their default values are:
 - tb_archive_polling_multiplier (Optional, default value: 1.5) : Timeout multiplier. After the first
    poll (if it fails) the next ones will apply this multiplier successively. Set to a lower number
    to poll more often.
-- fb_data_url (*Mandatory*): Firebase data URL. This should be the root of the archives section of
-   your Firebase app URL, which isn't necessarily the root of the app.
-- fb_auth_secret (*Mandatory*): Firebase secret to generate auth tokens.
 - tb_max_session_age (Optional, default value 2):  Sessions should not live forever. So we'll store
    the last time a session was used and if when we fetch it from Redis we determine it's older than
    this max age (in days). This is the key where that value (in days) should be stored.
@@ -85,9 +71,7 @@ Heroku is a PaaS (Platform as a Service) that can be used to deploy simple and s
 for free. To easily deploy this repository to Heroku, sign up for a Heroku account and click this
 button:
 
-<a href="https://heroku.com/deploy?template=https://github.com/opentok/OpenTokRTC-V2" target="_blank">
-  <img src="https://www.herokucdn.com/deploy/button.png" alt="Deploy">
-</a>
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/opentok/OpenTokRTC-V2)
 
 Heroku will prompt you to add your OpenTok API key and OpenTok API secret, which you can
 obtain at the [TokBox Dashboard](https://dashboard.tokbox.com/keys).
@@ -109,17 +93,11 @@ You have to own a validated Heroku account (with the ability to use free addons)
 You have to set the following environment variables on your heroku instance:
  - TB_API_KEY: Your Opentok api key.
  - TB_API_SECRET: Your Opentok api secret.
- - FB_DATA_URL: A firebase URL to store the archive list for each room. If you don't want to use
-    this functionality, use any valor (like http://localhost for example)
- - FB_AUTH_SECRET: The authentication secret for the previous URL. If you don't want to use this
-   functionality, pass any value (like anyvalue for example).
 
 Execute:
 ```
 heroku create
 heroku config:set TB_API_KEY='yourkey' TB_API_SECRET='yoursecret'
-heroku config:set FB_DATA_URL='yourfburl' FB_AUTH_SECRET='yourfb_secret'
-
 ```
 
 If you want to set up your redis instance, the instruction for setting up a heroku-redis addon are:
@@ -166,39 +144,29 @@ where:
 - static files directory: Filw where the web files reside. By default
   it's ./web.
 
-## Firebase security
+## Screenshare extension
+The screen sharing extension included in this repository is for Chrome.
+You can read the tokbox general guide for screen sharing on different browsers in the [tokbox developer center](https://tokbox.com/developer/guides/screen-sharing/js/).
 
-The application uses Firebase to store and share the archive list that's done on a given
-room/session. You can activate this feature by setting a valid Firebase URL and secret. If you want
-to ensure that the archive list is kept secure (as in only the actual people using a room can see
-it, and nobody can see the list of archives of other rooms) then you must add something like:
+### Chrome Screensharing Extension
+Follow these steps to use the chrome extension included in this repository.
+1. Edit the `manifest.json` file:
+
+    Most importantly, ensure that `matches` is set to your own domains only, (when developing in local you can use ```"matches": ["http://localhost/*"]```).
+
+    You will also want to change the `name` and `author` settings, and replace the icon files (logo16.png, logo48.png, logo128.png, and logo128transparent.png) with your own website logos. You should change the `version` setting with each new version of your extension. And you may want to change the `description`. For more information, see the [Chrome extension manifest documentation](https://developer.chrome.com/extensions/manifest).
+
+2. Load the extension into Chrome:
+
+    Open [chrome://extensions](chrome://extensions) and drag the screen-sharing-extension-chrome directory onto the page, or click 'Load unpacked extension...'. For more information see [Chrome's documentation on loading unpacked
+    extensions](https://developer.chrome.com/extensions/getstarted#unpacked).
+
+3. Add the `extensionId` to redis as `chrome_extension_id`:
+
+ You can get the ID of the extension in the [chrome://extensions](chrome://extensions) page. (It looks like `ffngmcfincpecmcgfdpacbdbdlfeeokh`.)
+Set the value in redis e.g.
+    ```
+    redis-cli set chrome_extension_id ffngmcfincpecmcgfdpacbdbdlfeeokh```
 
 
-```
-{
-    "rules": {
-        ".read": false,
-        ".write": false,
-        "sessions": {
-          ".read": "auth != null && auth.role == 'server'",
-          ".write": "auth != null && auth.role == 'server'",
-          "$sessionId": {
-            ".read": "auth != null && (auth.role == 'server' || auth.sessionId == $sessionId)",
-            ".write": "auth != null && auth.role == 'server'",
-            "archives": {
-            },
-            "connections": {
-              ".read": "auth != null && auth.role == 'server'",
-              ".write": "auth != null && (auth.role == 'server' || auth.sessionId == $sessionId)",
-              "$connectionId": {
-              }
-            }
-          }
-        }
-    }
-}
-```
-
-as a security rule on the Security & Rules section of your Firebase application. Replace 'sessions'
-with the root where you want to store the archive data (the actual URL that you set as fb_data_url
-configuration parameter.
+For more information and how to use your extension in production see  [opentok/screensharing-extensions](https://github.com/opentok/screensharing-extensions/blob/master/chrome/ScreenSharing/README.md#customizing-the-extension-for-your-website).
