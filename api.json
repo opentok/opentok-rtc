@@ -364,12 +364,6 @@
                 },
                 "username": {
                     "type": "string"
-                },
-                "firebaseURL": {
-                    "type": "string"
-                },
-                "firebaseToken": {
-                    "type": "string"
                 }
             }
         },

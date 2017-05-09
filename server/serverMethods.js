@@ -31,12 +31,6 @@ function ServerMethods(aLogLevel, aModules) {
 
   var Opentok = aModules.Opentok || require('opentok');
 
-  var FirebaseArchives = require('./firebaseArchives');
-
-  if (aModules.Firebase) {
-    FirebaseArchives.Firebase = aModules.Firebase;
-  }
-
   var logger = new Logger('ServerMethods', aLogLevel);
   var ServerPersistence = require('./serverPersistence');
   var connectionString =
@@ -115,30 +109,14 @@ function ServerMethods(aLogLevel, aModules) {
         var isWebRTCVersion = persistConfig[C.DEFAULT_INDEX_PAGE] === 'opentokrtc';
         var disabledFeatures =
           persistConfig[C.DISABLED_FEATURES] && persistConfig[C.DISABLED_FEATURES].split(',');
-        var disabledFirebase = (disabledFeatures || []).
-          some(aFeature => aFeature === 'archive' || aFeature === 'firebase');
 
-        // For this object we need to know if/when we're reconnecting so we can shutdown the
-        // old instance.
-        var oldFirebaseArchivesPromise = Utils.CachifiedObject.getCached(FirebaseArchives);
-
-        var firebaseArchivesPromise =
-          Utils.CachifiedObject(FirebaseArchives, persistConfig[C.RED_FB_DATA_URL],
-                                persistConfig[C.RED_FB_AUTH_SECRET],
-                                persistConfig[C.RED_EMPTY_ROOM_MAX_LIFETIME], aLogLevel);
-        _shutdownOldInstance(oldFirebaseArchivesPromise, firebaseArchivesPromise);
-
-        return firebaseArchivesPromise.
-          then(firebaseArchives => {
-            return {
-              firebaseArchivesPromise: firebaseArchivesPromise,
+        return {
               otInstance: otInstance,
               apiKey: apiKey,
               apiSecret: apiSecret,
               archivePollingTO: archivePollingTO,
               archivePollingTOMultiplier: archivePollingTOMultiplier,
               maxSessionAgeMs: maxSessionAgeMs,
-              fbArchives: firebaseArchives,
               allowIframing: allowIframing,
               chromeExtId: chromeExtId,
               defaultTemplate: defaultTemplate,
@@ -147,10 +125,8 @@ function ServerMethods(aLogLevel, aModules) {
               iosAppId: iosAppId,
               iosUrlPrefix: iosUrlPrefix,
               isWebRTCVersion: isWebRTCVersion,
-              enabledFirebase: !disabledFirebase,
               disabledFeatures: disabledFeatures
             };
-          });
       });
   }
 
@@ -238,12 +214,10 @@ function ServerMethods(aLogLevel, aModules) {
   function postUpdateArchiveInfo(aReq, aRes) {
     var archive = aReq.body;
     var tbConfig = aReq.tbConfig;
-    var fbArchives = tbConfig.fbArchives;
     if (!archive.sessionId || !archive.id) {
       logger.log('postUpdateArchiveInfo: Got an invalid call! Ignoring.', archive);
     } else if (archive.status === 'available' || archive.status === 'updated') {
       logger.log('postUpdateArchiveInfo: Updating information for archive:', archive.id);
-      tbConfig.fbArchives.updateArchive(archive.sessionId, archive);
     } else {
       logger.log('postUpdateArchiveInfo: Ignoring updated status for', archive.id, ':',
                  archive.status);
@@ -351,8 +325,6 @@ function ServerMethods(aLogLevel, aModules) {
   //   apiKey: string
   //   token: string
   //   username: string
-  //   firebaseURL: string
-  //   firebaseToken: string
   //   chromeExtId: string value || 'undefined'
   // }
   var _numAnonymousUsers = 1;
@@ -364,7 +336,6 @@ function ServerMethods(aLogLevel, aModules) {
       (aReq.query && aReq.query.userName) || C.DEFAULT_USER_NAME + _numAnonymousUsers++;
     logger.log('getRoomInfo serving ' + aReq.path, 'roomName: ', roomName, 'userName: ', userName);
 
-    var enabledFirebase = tbConfig.enabledFirebase;
     // We have to check if we have a session id stored already on the persistence provider (and if
     // it's not too old).
     // Note that we do not persist tokens.
@@ -377,9 +348,6 @@ function ServerMethods(aLogLevel, aModules) {
         serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, C.RED_ROOM_PREFIX + roomName,
                                    JSON.stringify(usableSessionInfo));
 
-        // We have to create an authentication token for the new user...
-        var fbUserToken =
-          enabledFirebase && fbArchives.createUserToken(usableSessionInfo.sessionId, userName);
 
         // and finally, answer...
         var answer = {
@@ -390,9 +358,6 @@ function ServerMethods(aLogLevel, aModules) {
                     data: JSON.stringify({ userName: userName })
                   }),
           username: userName,
-          firebaseURL:
-            enabledFirebase && fbArchives.baseURL + '/' + usableSessionInfo.sessionId || 'unknown',
-          firebaseToken: fbUserToken || 'unknown',
           chromeExtId: tbConfig.chromeExtId
         };
         answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId,
