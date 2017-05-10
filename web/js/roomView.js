@@ -261,38 +261,9 @@
 
   function onStartArchiving(data) {
     getCronograph().then(function(cronograph) {
-      var start = function(archive) {
+        cronograph.init()
         var duration = 0;
-        archive && (duration = Math.round((Date.now() - archive.createdAt) / 1000));
         cronograph.start(duration);
-      };
-
-      var onModel = function(model) {
-        var archives = FirebaseModel.archives;
-        var archiveId = data.id;
-
-        if (archives) {
-          return start(archives[archiveId]);
-        }
-
-        FirebaseModel.addEventListener('value', function onValue(archives) {
-          FirebaseModel.removeEventListener('value', onValue);
-          start(archives[archiveId]);
-        });
-      };
-
-      var model = RecordingsController.model;
-
-      if (model) {
-        cronograph.init();
-        return onModel(model);
-      }
-
-      cronograph.init('Calculating...');
-      exports.addEventListener('recordings-model-ready', function gotModel() {
-        exports.removeEventListener('recordings-model-ready', gotModel);
-        onModel(RecordingsController.model);
-      });
     });
   }
 

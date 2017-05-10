@@ -7,11 +7,9 @@
 
   var _templateSrc = '/templates/endMeeting.ejs';
   var _template;
-  var _model;
   var _sessionId;
 
   var addHandlers = function() {
-    !exports.isWebRTCVersion && HTMLElems.addHandlerArchive(LIST_SELECTOR);
     var btn = document.getElementById('newCall');
     btn && btn.addEventListener('click', function clicked(evt) {
       evt.preventDefault();
@@ -20,35 +18,8 @@
     });
   };
 
-  function render(archives) {
-    var data = {
-      archives: []
-    };
-    var sortingDescending = function(a, b) {
-      var tA = archives[a].createdAt;
-      var tB = archives[b].createdAt;
-
-      return tB - tA;
-    };
-
-    archives = archives || {};
-
-    Object.keys(archives).sort(sortingDescending).forEach(function(archId) {
-      var archive = archives[archId];
-      var anArch = {};
-      // data for preview
-      anArch.status = archive.status;
-      anArch.hrefPrev = archive.localDownloadURL + '?generatePreview';
-      anArch.txtPrev = Utils.getLabelText(archive);
-      // data for delete
-      anArch.id = archive.id;
-      anArch.recordingUser = archive.recordingUser;
-      // data for download
-      anArch.hrefDwnld = archive.localDownloadURL;
-      anArch.dwnldName = archive.name + '.' + VIDEO_EXT;
-      data.archives.push(anArch);
-    });
-    data.numArchives = data.archives.length;
+  function render() {
+    var data = {};
     data.sessionId = _sessionId;
     data.isWebRTCVersion = exports.isWebRTCVersion;
 
@@ -60,8 +31,7 @@
 
   var eventHandlers = {
     'EndCallController:endCall': function(evt) {
-      _model.addEventListener('value', render);
-      render(_model.archives);
+      render();
     }
   };
 
@@ -85,8 +55,7 @@
     };
   };
 
-  var init = function(model, sessionId) {
-    _model = model;
+  var init = function(sessionId) {
     _sessionId = sessionId;
     if (alreadyInitialized) {
       return;

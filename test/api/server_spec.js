@@ -24,11 +24,8 @@ describe('OpenTokRTC server', function() {
     // Note that we're not actually testing anything that uses Firebase here. They'll
     // have their own unit tests. We're only avoiding using it at all.
     var mocks = {
-      Opentok: MockOpentok,
-      Firebase: require('../mocks/mock_firebase')
-    };
-
-    var mockFirebase;
+      Opentok: MockOpentok
+  };
 
     // Note that this actually executes on the level where the Grunt file is
     // So that's what '.' is. OTOH, the requires are relative to *this* file.
@@ -180,31 +177,5 @@ describe('OpenTokRTC server', function() {
       send('userName=xxxYYY&operation=startIndividual').
       expect(checkForAttributes.bind(undefined, ArchiveInfo)).
       expect(200, done);
-  });
-
-  // Temporary tests, TBD later
-  it('GET /archive/:archiveId', function(done) {
-    request(app).
-      get('/archive/12345').
-      expect(405, done);
-  });
-
-  it('DELETE /archive/:archiveId', function(done) {
-    request(app).
-      delete('/archive/12345').
-      expect(405, done);
-  });
-
-  // This test looks stupid but... updateArchiveInfo should return 200 always.
-  it('POST /updateArchiveInfo', function(done) {
-    request(app).
-      post('/updateArchiveInfo').
-      expect(200, done);
-  });
-
-  it('GET /room/:roomName/archive should return 404 for not existing archive', function(done) {
-    request(app).
-      get('/room/unitTestRoom_/archive').
-      expect(404, done);
   });
 });

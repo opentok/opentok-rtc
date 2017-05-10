@@ -54,8 +54,19 @@ function Opentok(aApiKey, aApiSecret) {
     setTimeout(aCallback.bind(undefined, undefined, list));
   });
 
+  sinon.stub(opentok, 'createSession', function(aOptions, aCallback) {
+      var sessionInfo = {
+          sessionId: "123123"
+      };
+      setTimeout(aCallback.bind(undefined, undefined, sessionInfo));
+  });
+
+  sinon.stub(opentok, 'generateToken', function(aOptions) {
+      return "tokentoken";
+  });
+
   opentok._sinonRestore = function() {
-    ['startArchive', 'stopArchive', 'getArchive', 'listArchives'].forEach(method => {
+    ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'createSession', 'generateToken'].forEach(method => {
       opentok[method].restore();
     });
   };
