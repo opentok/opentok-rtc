@@ -23,13 +23,6 @@ E.RED_TB_ARCHIVE_POLLING_TIMEOUT_MULTIPLIER = 'tb_archive_polling_multiplier';
 // OpenTok API Secret
 E.RED_TB_API_SECRET ='tb_api_secret';
 
-// Firebase data URL. This should be the root of the archives section of your Firebase app URL,
-// which isn't necessarily the root of the app.
-E.RED_FB_DATA_URL = 'fb_data_url';
-
-// Firebase secret to generate auth tokens
-E.RED_FB_AUTH_SECRET = 'fb_auth_secret';
-
 // Sessions should not live forever. So we'll store the last time a session was used and if when
 // we fetch it from Redis we determine it's older than this max age (in days). This is the key
 // where that value (in days) should be stored. By default, sessions live two days.
@@ -81,8 +74,6 @@ E.REDIS_KEYS = [
   { key: E.RED_TB_API_SECRET, defaultValue: env.TB_API_SECRET || null },
   { key: E.RED_TB_ARCHIVE_POLLING_INITIAL_TIMEOUT, defaultValue: env.ARCHIVE_TIMEOUT || 5000 },
   { key: E.RED_TB_ARCHIVE_POLLING_TIMEOUT_MULTIPLIER, defaultValue: env.TIMEOUT_MULTIPLIER || 1.5 },
-  { key: E.RED_FB_DATA_URL, defaultValue: env.FB_DATA_URL || null },
-  { key: E.RED_FB_AUTH_SECRET, defaultValue: env.FB_AUTH_SECRET || null },
   { key: E.RED_TB_MAX_SESSION_AGE, defaultValue: env.TB_MAX_SESSION_AGE || 2 },
   { key: E.RED_EMPTY_ROOM_MAX_LIFETIME, defaultValue: env.EMPTY_ROOM_LIFETIME || 3 },
   { key: E.RED_ALLOW_IFRAMING, defaultValue: env.ALLOW_IFRAMING || 'never' },

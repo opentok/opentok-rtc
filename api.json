@@ -106,31 +106,7 @@
                     }
                 }
             }
-        },
-        "/updateArchiveInfo": {
-            "post": {
-                "summary": "Callback for the OpenTok Archive API.",
-                "x-implemented-in": "postUpdateArchiveInfo",
-                "description": "Gets the updated information for a recording archive.",
-                "parameters": [
-                    {
-                        "name": "otArchiveInfo",
-                        "in": "body",
-                        "schema": {
-                            "$ref": "#/definitions/OTArchiveInfo"
-                        }
-                    }
-                ],
-                "tags": [
-                    "Archives"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            }
-        },
+        },        
         "/room/{roomName}/info": {
             "get": {
                 "summary": "Information needed to connect to the TB servers.",
@@ -260,89 +236,6 @@
                     }
                 }
             }
-        },
-        "/archive/{archiveId}": {
-            "get": {
-                "summary": "Gets and returns a temporary archive URL.",
-                "x-implemented-in": "getArchive",
-                "produces": [
-                    "application/json"
-                ],
-                "description": "Creates a new temporary archive URL to allow the visualization or download of an existing archive. The URL created is valid for 10 minutes only! What this API actually does is just returning a 301 with the actual download URL",
-                "tags": [
-                    "Archives"
-                ],
-                "parameters": [
-                    {
-                        "name": "archiveId",
-                        "in": "path",
-                        "description": "Id of the archive.",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "generatePreview",
-                        "in": "query",
-                        "description": "If the parameter is present (the value is irrelevant) the server should generate and return an HTML page that embeds the video  instead of returning the video directly.",
-                        "required": false,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "HTML with the video embedded.",
-                        "schema": {
-                            "$ref": "#/definitions/ArchiveURL"
-                        }
-                    },
-                    "301": {
-                        "description": "Information to download or view the archive file.",
-                        "schema": {
-                            "$ref": "#/definitions/ArchiveURL"
-                        }
-                    },
-                    "400": {
-                        "description": "Unexpected error",
-                        "schema": {
-                            "$ref": "#/definitions/ErrorInfo"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "summary": "Erases an archive.",
-                "x-implemented-in": "deleteArchive",
-                "produces": [
-                    "application/json"
-                ],
-                "description": "Erases an stored archive.",
-                "tags": [
-                    "Archives"
-                ],
-                "parameters": [
-                    {
-                        "name": "archiveId",
-                        "in": "path",
-                        "description": "Id of the archive.",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Archive erases.",
-                        "schema": {
-                            "$ref": "#/definitions/ArchiveInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Unexpected error",
-                        "schema": {
-                            "$ref": "#/definitions/ErrorInfo"
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
@@ -363,12 +256,6 @@
                     "type": "string"
                 },
                 "username": {
-                    "type": "string"
-                },
-                "firebaseURL": {
-                    "type": "string"
-                },
-                "firebaseToken": {
                     "type": "string"
                 }
             }

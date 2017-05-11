@@ -16,7 +16,6 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'test/lib/**/*.js',
-      {pattern: 'test/mocks/mock_firebase.js', include: true},
       {pattern: 'test/mocks/mock_othelper.js', include: true},
       {pattern: 'test/mocks/mock_roomStatus.js', include: true},
       {pattern: 'test/mocks/mock_chat.js', include: true},
@@ -77,16 +76,16 @@ module.exports = function(config) {
 
 
     // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: true,
+    autoWatch: false,
 
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Firefox', 'Chrome'],
+    browsers: ['Firefox'],
 
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false
+    singleRun: true
   });
 }

@@ -1,5 +1,5 @@
 /* global Utils, Request, RoomStatus, RoomView, LayoutManager, Modal, LazyLoader,
-          EndCallController, ChatController, LayoutMenuController, RecordingsController,
+          EndCallController, ChatController, LayoutMenuController,
           ScreenShareController, FeedbackController */
 !function(exports) {
   'use strict';
@@ -10,7 +10,7 @@
   var otHelper;
   var numUsrsInRoom = 0;
   var _disabledAllVideos = false;
-  var enableAnnotations = false;
+  var enableAnnotations = true;
   var enableHangoutScroll = false;
 
   var setPublisherReady;
@@ -617,7 +617,6 @@
     var usrId = params.getFirstValue('userName');
     resolutionAlgorithm = params.getFirstValue('resolutionAlgorithm');
     debugPreferredResolution = params.getFirstValue('debugPreferredResolution');
-    enableAnnotations = params.getFirstValue('enableAnnotations') !== undefined;
     enableHangoutScroll = params.getFirstValue('enableHangoutScroll') !== undefined;
 
     var info = {
@@ -640,8 +639,7 @@
       getRoomInfo(aRoomParams).
       then(function(aRoomInfo) {
         if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId &&
-              aRoomInfo.apiKey && aRoomInfo.username &&
-              aRoomInfo.firebaseToken && aRoomInfo.firebaseURL)) {
+              aRoomInfo.apiKey && aRoomInfo.username)) {
           debug.error('Error getRoomParams [', aRoomInfo,
                       '] without correct response');
           throw new Error('Error getting room parameters');
@@ -668,7 +666,6 @@
     '/js/roomView.js',
     '/js/roomStatus.js',
     '/js/chatController.js',
-    '/js/recordingsController.js',
     '/js/endCallController.js',
     '/js/layoutMenuController.js',
     '/js/screenShareController.js',
@@ -768,7 +765,7 @@
           });
         }).
         then(function() {
-          RecordingsController.init(aParams.firebaseURL, aParams.firebaseToken, aParams.sessionId);
+          EndCallController.init(aParams.sessionId);
           ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
           FeedbackController.init(otHelper);
           Utils.sendEvent('roomController:controllersReady');
