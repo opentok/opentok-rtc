@@ -11,7 +11,7 @@ describe('OpenTokRTC server', function() {
 
   var app, MockOpentok;
 
-  // Note that since everything is in api.json, we could just parse
+  // Note that since everything is in api.yml, we could just parse
   // that and generate the test cases automatically. At the moment
   // it's more work than doing it manually though, so not worth it.
 
@@ -33,14 +33,20 @@ describe('OpenTokRTC server', function() {
     // Note that this actually executes on the level where the Grunt file is
     // So that's what '.' is. OTOH, the requires are relative to *this* file.
     // Yep, I don't like that either. Nope, I can't do anything about that.
-    fs.readFile('./api.json', function(err, data) {
-      // Create the app with the json we've just read. The third parameter is
-      // the app loglevel. Disable logs for the tests.
-      app = require('../../server/app')('../../web', data, 0, mocks);
-
-      done();
+    var YAML = require('yamljs');
+    var loadYAML =
+         apiFile => new Promise((resolve, reject) => {
+           try {
+             YAML.load(apiFile, result => resolve(result));
+           } catch(e) {
+             reject(e);
+           }
+         });
+      loadYAML("./api.yml").then( (result) => {
+          app = require('../../server/app')('../../web', result, 0, mocks);
+          done();
+      })
     });
-  });
 
   after(function() {
     MockOpentok.restoreInstances();
