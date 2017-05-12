@@ -204,7 +204,7 @@ describe('OpenTokRTC server', function() {
 
   it('GET /room/:roomName/archive should return 404 for not existing archive', function(done) {
     request(app).
-      get('/room/unitTestRoom_/archive').
+      get('/room/'+ Math.random() +'/archive').
       expect(404, done);
   });
 });

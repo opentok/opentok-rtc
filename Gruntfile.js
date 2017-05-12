@@ -32,7 +32,16 @@ module.exports = function(grunt) {
           quiet: false,
           clearRequireCache: true
         },
-        src: ['test/server/**/*_spec.js']
+        src: ['test/server/**/*_spec.js', '!test/server/firebaseArchives_spec.js']
+      },
+      archives: {
+          options: {
+            reporter: 'spec',
+            captureFile: 'resultsUnit.txt',
+            quiet: false,
+            clearRequireCache: true
+          },
+          src: ['test/server/firebaseArchives_spec.js']
       },
       rest: {
         options: {
@@ -184,19 +193,24 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('serverTest', 'Launch server unit tests', [
-    'mochaTest:unit',
-    'watch'
+    'mochaTest:unit'
   ]);
 
   grunt.registerTask('apiTest', 'Launch server unit tests', [
     'mochaTest:rest'
   ]);
 
-  grunt.registerTask('test', 'Launch server unit tests', [
-    'serverTest',
-    'apiTest',
-    'karma:integration'
+  grunt.registerTask('archivesTest', 'Launch server unit tests', [
+    'mochaTest:archives'
   ]);
+
+  grunt.registerTask('test', 'Launch server unit tests', function() {
+    grunt.task.run(['configTests', 'serverTest']);
+    if (grunt.option('enable-archives-test')) {
+        grunt.task.run(['archivesTest']);
+    }
+    grunt.task.run(['apiTest','clientTest']);
+  });
 
   grunt.registerTask('configTests', [
     'preBowerInstall',
