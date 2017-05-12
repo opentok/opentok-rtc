@@ -184,8 +184,7 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('serverTest', 'Launch server unit tests', [
-    'mochaTest:unit',
-    'watch'
+    'mochaTest:unit'
   ]);
 
   grunt.registerTask('apiTest', 'Launch server unit tests', [
@@ -193,9 +192,10 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('test', 'Launch server unit tests', [
+    'configTests',
     'serverTest',
     'apiTest',
-    'karma:integration'
+    'clientTest'
   ]);
 
   grunt.registerTask('configTests', [
