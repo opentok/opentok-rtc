@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/opentok/OpenTokRTC-V2.svg?token=qPpN1jG8Wftsn1cafKif&branch=master)](https://travis-ci.com/opentok/OpenTokRTC-V2)
+
 # opentokRTCV2:
 #### Showcase application for the OpenTok API.
 ## Introduction
