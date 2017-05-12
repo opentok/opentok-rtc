@@ -8,3 +8,4 @@ before_script:
   - redis-cli set tb_api_key 123
 addons:
   firefox: "latest"
+  
