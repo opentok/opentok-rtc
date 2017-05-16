@@ -39,6 +39,19 @@ var Firebase = require('firebase');
 function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
   'use strict';
 
+  if (!aRootURL || !aSecret) {
+    // Just return an object with the right signature and be done...
+    return Promise.resolve({
+      get baseURL() {
+        return '';
+      },
+      createUserToken: () => Promise.resolve(),
+      updateArchive: () => Promise.resolve(),
+      removeArchive: () => Promise.resolve(),
+      shutdown: () => {}
+    });
+  }
+
   // Time is in minutes but we need it in ms.
   aCleanupTime = aCleanupTime * 60 * 1000;
   var SwaggerBP =  require('swagger-boilerplate');

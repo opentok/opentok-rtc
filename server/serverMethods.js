@@ -108,8 +108,14 @@ function ServerMethods(aLogLevel, aModules) {
         var isWebRTCVersion = persistConfig[C.DEFAULT_INDEX_PAGE] === 'opentokrtc';
         var disabledFeatures =
           persistConfig[C.DISABLED_FEATURES] && persistConfig[C.DISABLED_FEATURES].split(',');
-        var disabledFirebase = (disabledFeatures || []).
-          some(aFeature => aFeature === 'archive' || aFeature === 'firebase');
+
+        var disabledFirebase =
+          !!persistConfig[C.RED_FB_DATA_URL] || !! persistConfig[C.RED_FB_AUTH_SECRET] ||
+          (disabledFeatures || []).
+            some(aFeature => aFeature === 'archive' || aFeature === 'firebase');
+
+        disabledFirebase &&
+         logger.warn('initialConfig: Firebase not configured. Restricted Archive functionality');
 
         // For this object we need to know if/when we're reconnecting so we can shutdown the
         // old instance.
@@ -124,7 +130,6 @@ function ServerMethods(aLogLevel, aModules) {
         return firebaseArchivesPromise.
           then(firebaseArchives => {
             return {
-              firebaseArchivesPromise: firebaseArchivesPromise,
               otInstance: otInstance,
               apiKey: apiKey,
               apiSecret: apiSecret,
