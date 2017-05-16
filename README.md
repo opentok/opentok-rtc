@@ -1,18 +1,19 @@
-[![Build Status](https://travis-ci.com/opentok/OpenTokRTC-V2.svg?token=qPpN1jG8Wftsn1cafKif&branch=master)](https://travis-ci.com/opentok/OpenTokRTC-V2)
+![logo](./tokbox-logo.png)
 
 # opentokRTCV2:
+[![Build Status](https://travis-ci.com/opentok/OpenTokRTC-V2.svg?token=qPpN1jG8Wftsn1cafKif&branch=master)](https://travis-ci.com/opentok/OpenTokRTC-V2)
+
 #### Showcase application for the OpenTok API.
 ## Introduction
 
 This repository holds a complete demo application for the OpenTok API.
 
-(TO-DO TO-DO: Add OpenTok reference URLS)
-
 The repository includes a complete client application, and the server
 needed to access the OpenTok functionality. You can access a demo
-installation at https://opentokrtc.com (TO-DO TO-DO: Fix this!)
+installation at https://opentokdemo.tokbox.com
 
 ## Installation
+The steps below detail two methods of setting up an instance of the application. You may choose to set it up [locally](#local-installation) on your machine, or quickly deploy it to an instance on [Heroku](#installing-on-heroku).
 
 ### Local Installation:
 #### Prerequisites:
@@ -30,7 +31,8 @@ You'll need:
 - Grunt: http://gruntjs.com (only if you intend to develop or run the tests)
 
 #### Installation:
-Execute
+You will need your OpenTok API Key and Secret from the [developer dashboard](https://tokbox.com/account/#/).
+Substitute your key and secret into the snippet below and execute.
 
 ```
 redis-cli set tb_api_key yourkeyhere
@@ -41,12 +43,9 @@ npm install
 bower install
 grunt
 ```
+To run the application follow the instructions in [Running](#running)
 
-(replace yourkeyhere and yoursecret here with the API key and API
-secret).
-
-
-#### Configuration parameters:
+#### Configuration:
 
 You can customize the behavior of the server in part by using persistent parameters (stored in
 redis). The supported parameters and their default values are:
@@ -84,29 +83,24 @@ redis). The supported parameters and their default values are:
 ### Installing on Heroku
 
 Heroku is a PaaS (Platform as a Service) that can be used to deploy simple and small applications
-for free. To easily deploy this repository to Heroku, sign up for a Heroku account and click this
-button:
+for free.
+#### Requirements:
+You will need a validated Heroku account (with the ability to use free add-ons). You can read about account verification in [this Heroku Article](https://devcenter.heroku.com/articles/account-verification). (Verification is needed as the application uses the [Heroku-redis service](https://devcenter.heroku.com/articles/heroku-redis)).
 
-<a href="https://heroku.com/deploy?template=https://github.com/opentok/OpenTokRTC-V2" target="_blank">
-  <img src="https://www.herokucdn.com/deploy/button.png" alt="Deploy">
-</a>
+#### Quick Installation
+Once you have verified your account just click this button
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/opentok/OpenTokRTC-V2)
 
 Heroku will prompt you to add your OpenTok API key and OpenTok API secret, which you can
 obtain at the [TokBox Dashboard](https://dashboard.tokbox.com/keys).
 
 You can also install this repository on your own server (see the previous sections).
 
-If you prefer to deploy to Heroku manually, follow the procedure described next. The configuration
-differs slightly from the one required to run the application as standalone. It requires having
-some redis service as an addon. Currently it detects and supports the following redis services:
+If you prefer to deploy to Heroku manually, see the following section.
 
- - Heroku-redis: https://devcenter.heroku.com/articles/heroku-redis
- - Redis-to-go: https://elements.heroku.com/addons/redistogo
-
-#### Requirements:
-You have to own a validated Heroku account (with the ability to use free addons).
-
-#### Installation:
+#### Manual Installation using Heroku CLI:
+For information on downloading and using the heroku CLI see their official documentation: https://devcenter.heroku.com/articles/heroku-cli
 
 You have to set the following environment variables on your heroku instance:
  - TB_API_KEY: Your Opentok api key.
@@ -123,13 +117,17 @@ heroku config:set TB_API_KEY='yourkey' TB_API_SECRET='yoursecret'
 heroku config:set FB_DATA_URL='yourfburl' FB_AUTH_SECRET='yourfb_secret'
 
 ```
+You will need to choose a redis addon. These two are currently supported,
+ - Heroku-redis: https://devcenter.heroku.com/articles/heroku-redis
+ - Redis-to-go: https://elements.heroku.com/addons/redistogo
 
-If you want to set up your redis instance, the instruction for setting up a heroku-redis addon are:
 
+ We have used heroku-redis which can be set up like this:
 ```
 heroku plugins:install heroku-redis
 heroku addons:create heroku-redis:hobby-dev
 ```
+You can deploy your code using git: https://devcenter.heroku.com/articles/git#deploying-code
 
 Additionally you can also modify all the other configuration options described previously using
 environment variables:
@@ -204,3 +202,30 @@ it, and nobody can see the list of archives of other rooms) then you must add so
 as a security rule on the Security & Rules section of your Firebase application. Replace 'sessions'
 with the root where you want to store the archive data (the actual URL that you set as fb_data_url
 configuration parameter.
+
+## Screenshare extension
+The screen sharing extension included in this repository is for Chrome.
+You can read the tokbox general guide for screen sharing on different browsers in the [tokbox developer center](https://tokbox.com/developer/guides/screen-sharing/js/).
+
+### Chrome Screensharing Extension
+Follow these steps to use the chrome extension included in this repository.
+1. Edit the `manifest.json` file:
+
+    Most importantly, ensure that `matches` is set to your own domains only, (when developing in local you can use ```"matches": ["http://localhost/*"]```).
+
+    You will also want to change the `name` and `author` settings, and replace the icon files (logo16.png, logo48.png, logo128.png, and logo128transparent.png) with your own website logos. You should change the `version` setting with each new version of your extension. And you may want to change the `description`. For more information, see the [Chrome extension manifest documentation](https://developer.chrome.com/extensions/manifest).
+
+2. Load the extension into Chrome:
+
+    Open [chrome://extensions](chrome://extensions) and drag the screen-sharing-extension-chrome directory onto the page, or click 'Load unpacked extension...'. For more information see [Chrome's documentation on loading unpacked
+    extensions](https://developer.chrome.com/extensions/getstarted#unpacked).
+
+3. Add the `extensionId` to redis as `chrome_extension_id`:
+
+ You can get the ID of the extension in the [chrome://extensions](chrome://extensions) page. (It looks like `ffngmcfincpecmcgfdpacbdbdlfeeokh`.)
+ Set the value in redis e.g.
+    ```
+    redis-cli set chrome_extension_id ffngmcfincpecmcgfdpacbdbdlfeeokh```
+
+
+For more information and how to use your extension in production see  [opentok/screensharing-extensions](https://github.com/opentok/screensharing-extensions/blob/master/chrome/ScreenSharing/README.md#customizing-the-extension-for-your-website).
