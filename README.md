@@ -32,7 +32,8 @@ You'll need:
 - Grunt: http://gruntjs.com (only if you intend to develop or run the tests)
 
 #### Installation:
-Execute
+You will need your OpenTok API Key and Secret from the [developer dashboard](https://tokbox.com/account/#/)
+Substitute your key and secret into the snippet below and execute.
 
 ```
 redis-cli set tb_api_key yourkeyhere
@@ -43,9 +44,6 @@ npm install
 bower install
 grunt
 ```
-
-(replace yourkeyhere and yoursecret here with the API key and API
-secret).
 
 
 #### Configuration parameters:
