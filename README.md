@@ -202,3 +202,30 @@ it, and nobody can see the list of archives of other rooms) then you must add so
 as a security rule on the Security & Rules section of your Firebase application. Replace 'sessions'
 with the root where you want to store the archive data (the actual URL that you set as fb_data_url
 configuration parameter.
+
+## Screenshare extension
+The screen sharing extension included in this repository is for Chrome.
+You can read the tokbox general guide for screen sharing on different browsers in the [tokbox developer center](https://tokbox.com/developer/guides/screen-sharing/js/).
+
+### Chrome Screensharing Extension
+Follow these steps to use the chrome extension included in this repository.
+1. Edit the `manifest.json` file:
+
+    Most importantly, ensure that `matches` is set to your own domains only, (when developing in local you can use ```"matches": ["http://localhost/*"]```).
+
+    You will also want to change the `name` and `author` settings, and replace the icon files (logo16.png, logo48.png, logo128.png, and logo128transparent.png) with your own website logos. You should change the `version` setting with each new version of your extension. And you may want to change the `description`. For more information, see the [Chrome extension manifest documentation](https://developer.chrome.com/extensions/manifest).
+
+2. Load the extension into Chrome:
+
+    Open [chrome://extensions](chrome://extensions) and drag the screen-sharing-extension-chrome directory onto the page, or click 'Load unpacked extension...'. For more information see [Chrome's documentation on loading unpacked
+    extensions](https://developer.chrome.com/extensions/getstarted#unpacked).
+
+3. Add the `extensionId` to redis as `chrome_extension_id`:
+
+ You can get the ID of the extension in the [chrome://extensions](chrome://extensions) page. (It looks like `ffngmcfincpecmcgfdpacbdbdlfeeokh`.)
+ Set the value in redis e.g.
+    ```
+    redis-cli set chrome_extension_id ffngmcfincpecmcgfdpacbdbdlfeeokh```
+
+
+For more information and how to use your extension in production see  [opentok/screensharing-extensions](https://github.com/opentok/screensharing-extensions/blob/master/chrome/ScreenSharing/README.md#customizing-the-extension-for-your-website).
