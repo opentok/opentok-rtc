@@ -110,7 +110,7 @@ function ServerMethods(aLogLevel, aModules) {
           persistConfig[C.DISABLED_FEATURES] && persistConfig[C.DISABLED_FEATURES].split(',');
 
         var disabledFirebase =
-          !!persistConfig[C.RED_FB_DATA_URL] || !! persistConfig[C.RED_FB_AUTH_SECRET] ||
+          !!persistConfig[C.RED_FB_DATA_URL] || !!persistConfig[C.RED_FB_AUTH_SECRET] ||
           (disabledFeatures || []).
             some(aFeature => aFeature === 'archive' || aFeature === 'firebase');
 
