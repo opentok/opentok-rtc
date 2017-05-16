@@ -41,8 +41,9 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
 
   // Time is in minutes but we need it in ms.
   aCleanupTime = aCleanupTime * 60 * 1000;
+  var SwaggerBP =  require('swagger-boilerplate');
 
-  var Utils = require('./shared/utils');
+  var Utils = SwaggerBP.Utils;
   var Logger = Utils.MultiLevelLogger;
   var promisify = Utils.promisify;
 

@@ -1,10 +1,8 @@
 var chai = require('chai');
-var assert = chai.assert;
 var expect = chai.expect;
-var should = chai.should();
-var sinon = require('sinon');
 
 var request = require('supertest');
+const TEST_LOG_LEVEL = 0;
 
 describe('OpenTokRTC server', function() {
   'use strict';
@@ -16,7 +14,6 @@ describe('OpenTokRTC server', function() {
   // it's more work than doing it manually though, so not worth it.
 
   before(function(done) {
-    var fs = require('fs');
 
     MockOpentok = require('../mocks/mock_opentok.js');
     process.env.TEMPLATING_SECRET = '123456';
@@ -28,8 +25,6 @@ describe('OpenTokRTC server', function() {
       Firebase: require('../mocks/mock_firebase')
     };
 
-    var mockFirebase;
-
     // Note that this actually executes on the level where the Grunt file is
     // So that's what '.' is. OTOH, the requires are relative to *this* file.
     // Yep, I don't like that either. Nope, I can't do anything about that.
@@ -37,15 +32,20 @@ describe('OpenTokRTC server', function() {
     var loadYAML =
          apiFile => new Promise((resolve, reject) => {
            try {
-             YAML.load(apiFile, result => resolve(result));
+             YAML.load(apiFile, resolve);
            } catch(e) {
              reject(e);
            }
          });
-      loadYAML("./api.yml").then( (result) => {
-          app = require('../../server/app')('../../web', result, 0, mocks);
+      loadYAML("./api.yml").then(apiSpec => {
+          app = (require('swagger-boilerplate').App)({
+            modulePath: __dirname + '/../../server/',
+            staticPath: '../../web',
+            apiDef: apiSpec,
+            logLevel: TEST_LOG_LEVEL
+          }, mocks);
           done();
-      })
+      });
     });
 
   after(function() {
@@ -83,7 +83,7 @@ describe('OpenTokRTC server', function() {
 
   it('GET /room/:roomName/info, roomName should ignore caps', function(done) {
     function getInfo(aRoomName) {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         var sessionId;
         function getSessionId(aRes) {
           sessionId = aRes && aRes.body && aRes.body.sessionId;
@@ -98,7 +98,7 @@ describe('OpenTokRTC server', function() {
           expect(200, solve);
       });
     }
-    Promise.all([getInfo('UNITTESTROOM'), getInfo('unitTestRoom')]).
+    Promise.all([ getInfo('UNITTESTROOM'), getInfo('unitTestRoom') ]).
       then(aResults => {
         expect(aResults[0]).to.be.equal(aResults[1]);
         done();
@@ -112,7 +112,7 @@ describe('OpenTokRTC server', function() {
       expect('Content-Type', new RegExp('application/json')).
       expect(checkForAttributes.bind(undefined, RoomInfo)).
       expect(function(aRes) {
-        if (aRes.body.username != 'xxxYYY') {
+        if (aRes.body.username !== 'xxxYYY') {
           throw new Error('The response username should coincide with the passed one');
         }
       }).

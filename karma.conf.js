@@ -22,7 +22,7 @@ module.exports = function(config) {
       {pattern: 'test/mocks/mock_chat.js', include: true},
       'web/js/vendor/**/*.js',
       'web/js/libs/**/*.js',
-      'server/shared/**/*.js',
+      'node_modules/swagger-boilerplate/lib/shared/**/*.js',
       'web/js/components/modal.js',
       'web/js/landingView.js', // Don't load the views yet
       'web/js/landingController.js',
