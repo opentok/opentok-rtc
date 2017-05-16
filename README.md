@@ -10,7 +10,7 @@ This repository holds a complete demo application for the OpenTok API.
 
 The repository includes a complete client application, and the server
 needed to access the OpenTok functionality. You can access a demo
-installation at https://opentokrtc.com (TO-DO TO-DO: Fix this!)
+installation at https://opentokdemo.tokbox.com
 
 ## Installation
 The steps below detail two methods of setting up an instance of the application. You may choose to set it up [locally](#local-installation) on your machine, or quickly deploy it to an instance on [Heroku](#installing-on-heroku).
