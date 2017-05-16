@@ -117,8 +117,12 @@ heroku config:set TB_API_KEY='yourkey' TB_API_SECRET='yoursecret'
 heroku config:set FB_DATA_URL='yourfburl' FB_AUTH_SECRET='yourfb_secret'
 
 ```
-You will need to [choose a redis addon](https://elements.heroku.com/addons), we have used heroku-redis which can be set up like this:
+You will need to choose a redis addon. These two are currently supported,
+ - Heroku-redis: https://devcenter.heroku.com/articles/heroku-redis
+ - Redis-to-go: https://elements.heroku.com/addons/redistogo
 
+
+ We have used heroku-redis which can be set up like this:
 ```
 heroku plugins:install heroku-redis
 heroku addons:create heroku-redis:hobby-dev
