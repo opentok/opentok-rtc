@@ -10,7 +10,7 @@ module.exports = function App(aStaticPath, aApiDef, aLogLevel, aModules) {
 
   logger.log('Starting process');
 
-  var api = JSON.parse(aApiDef);
+  var api = aApiDef;
   var paths = api.paths;
 
   // This holds the module that implements the methods...

@@ -1,5 +1,5 @@
 // This app serves some static content from a static path and serves a REST API that's
-// defined on the api.json file (derived from a swagger 2.0 yml file)
+// defined on the api.yaml swagger 2.0 file
 // Usage:
 // node server -h
 
@@ -43,12 +43,21 @@ try {
     serverType = require('http');
     loadServerConfig = Promise.resolve([]);
   }
+  var YAML = require('yamljs');
+  var loadYAML =
+     apiFile => new Promise((resolve, reject) => {
+       try {
+         YAML.load(apiFile, result => resolve(result));
+       } catch(e) {
+         reject(e);
+       }
+     });
 
-  // The API definition is on the api.json file...
-  Promise.all([loadServerConfig, readFile('./api.json')]).then(requisites => {
+  // The API definition is on the api.yml file...
+  Promise.all([loadServerConfig, loadYAML('./api.yml')]).then(requisites => {
     var serverParams = requisites[0];
     var apiDef = requisites[1];
-    logger.log('api.json file read');
+    logger.log('api.yaml file read');
 
     var app = require('./server/app')(staticPath, apiDef, logLevel);
 
