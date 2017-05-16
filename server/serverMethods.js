@@ -12,22 +12,15 @@ function ServerMethods(aLogLevel, aModules) {
   'use strict';
   aModules = aModules || {};
 
-  function ErrorInfo(aCode, aMessage) {
-    this.code = aCode;
-    this.message = aMessage;
-  }
+  var SwaggerBP = require('swagger-boilerplate');
+  var ErrorInfo = SwaggerBP.ErrorInfo;
 
-  ErrorInfo.prototype = {
-    toString: () => JSON.stringify(this)
-  };
   var env = process.env;
 
-  var Utils = require('./shared/utils');
+  var Utils = SwaggerBP.Utils;
   var C = require('./serverConstants');
   var Logger = Utils.MultiLevelLogger;
   var promisify = Utils.promisify;
-
-  var URL = require('url');
 
   var Opentok = aModules.Opentok || require('opentok');
 
@@ -38,7 +31,7 @@ function ServerMethods(aLogLevel, aModules) {
   }
 
   var logger = new Logger('ServerMethods', aLogLevel);
-  var ServerPersistence = require('./serverPersistence');
+  var ServerPersistence = SwaggerBP.ServerPersistence;
   var connectionString =
     (aModules && aModules.params && aModules.params.persistenceConfig) ||
     env.REDIS_URL || env.REDISTOGO_URL || '';
@@ -56,7 +49,7 @@ function ServerMethods(aLogLevel, aModules) {
   // increases exponentially (on the theory that if the archive is small it'll be copied fast
   // and if it's big we don't want to look too impatient).
   function _launchArchivePolling(aOtInstance, aArchiveId, aTimeout, aTimeoutMultiplier) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       var timeout = aTimeout;
       var pollArchive = function _pollArchive() {
         logger.log('Poll [', aArchiveId, ']: polling...');
@@ -67,7 +60,7 @@ function ServerMethods(aLogLevel, aModules) {
           } else {
             timeout = timeout * aTimeoutMultiplier;
             logger.log('Poll [', aArchiveId, ']: Retrying in', timeout);
-            seTimeout(_pollArchive, timeout);
+            setTimeout(_pollArchive, timeout);
           }
         });
       };
@@ -243,7 +236,7 @@ function ServerMethods(aLogLevel, aModules) {
       logger.log('postUpdateArchiveInfo: Got an invalid call! Ignoring.', archive);
     } else if (archive.status === 'available' || archive.status === 'updated') {
       logger.log('postUpdateArchiveInfo: Updating information for archive:', archive.id);
-      tbConfig.fbArchives.updateArchive(archive.sessionId, archive);
+      fbArchives.updateArchive(archive.sessionId, archive);
     } else {
       logger.log('postUpdateArchiveInfo: Ignoring updated status for', archive.id, ':',
                  archive.status);

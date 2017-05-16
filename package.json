@@ -1,6 +1,6 @@
 {
-  "name": "OpenTokRTCV2",
-  "version": "0.1.0",
+  "name": "opentokrtc-v2",
+  "version": "1.0.0",
   "description": "OpenTok RTC sample application to show off the OpenTok API and platform capabilities ",
   "main": "server.js",
   "engines": {
@@ -22,7 +22,6 @@
   },
   "homepage": "https://github.com/AntonioMA/openTokRTCV2/",
   "dependencies": {
-    "body-parser": "^1.14.1",
     "bower": "^1.6.5",
     "cors": "^2.7.1",
     "daemon": "^1.1.0",
@@ -45,10 +44,10 @@
     "grunt-karma": "^0.12.1",
     "grunt-mocha-test": "^0.12.7",
     "ioredis": "^1.7.6",
-    "node-getopt": "^0.2.3",
     "opentok": "^2.3.0",
-    "yamljs": "^0.2.10",
-    "pattern-library-v2": "git+https://bc9fa338c1a7d921029ac5b64f72815d59389715:x-oauth-basic@github.com/opentok/pattern-library-v2.git"
+    "pattern-library-v2": "git+https://bc9fa338c1a7d921029ac5b64f72815d59389715:x-oauth-basic@github.com/opentok/pattern-library-v2.git",
+    "swagger-boilerplate": "^0.0.8",
+    "yamljs": "^0.2.10"
   },
   "devDependencies": {
     "chai": "^3.3.0",
