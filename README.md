@@ -8,13 +8,12 @@
 
 This repository holds a complete demo application for the OpenTok API.
 
-(TO-DO TO-DO: Add OpenTok reference URLS)
-
 The repository includes a complete client application, and the server
 needed to access the OpenTok functionality. You can access a demo
 installation at https://opentokrtc.com (TO-DO TO-DO: Fix this!)
 
 ## Installation
+The steps below detail two methods of setting up an instance of the application. You may choose to set it up [locally](#local-installation) on your machine, or quickly deploy it to an instance on [Heroku](#installing-on-heroku).
 
 ### Local Installation:
 #### Prerequisites:
@@ -32,7 +31,7 @@ You'll need:
 - Grunt: http://gruntjs.com (only if you intend to develop or run the tests)
 
 #### Installation:
-You will need your OpenTok API Key and Secret from the [developer dashboard](https://tokbox.com/account/#/)
+You will need your OpenTok API Key and Secret from the [developer dashboard](https://tokbox.com/account/#/).
 Substitute your key and secret into the snippet below and execute.
 
 ```
@@ -44,9 +43,9 @@ npm install
 bower install
 grunt
 ```
+To run the application follow the instructions in [Running](#running)
 
-
-#### Configuration parameters:
+#### Configuration:
 
 You can customize the behavior of the server in part by using persistent parameters (stored in
 redis). The supported parameters and their default values are:
@@ -84,8 +83,12 @@ redis). The supported parameters and their default values are:
 ### Installing on Heroku
 
 Heroku is a PaaS (Platform as a Service) that can be used to deploy simple and small applications
-for free. To easily deploy this repository to Heroku, sign up for a Heroku account and click this
-button:
+for free.
+#### Requirements:
+You will need a validated Heroku account (with the ability to use free add-ons). You can read about account verification in [this Heroku Article](https://devcenter.heroku.com/articles/account-verification). (Verification is needed as the application uses the [Heroku-redis service](https://devcenter.heroku.com/articles/heroku-redis)).
+
+#### Quick Installation
+Once you have verified your account just click this button
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/opentok/OpenTokRTC-V2)
 
@@ -94,17 +97,10 @@ obtain at the [TokBox Dashboard](https://dashboard.tokbox.com/keys).
 
 You can also install this repository on your own server (see the previous sections).
 
-If you prefer to deploy to Heroku manually, follow the procedure described next. The configuration
-differs slightly from the one required to run the application as standalone. It requires having
-some redis service as an addon. Currently it detects and supports the following redis services:
+If you prefer to deploy to Heroku manually, see the following section.
 
- - Heroku-redis: https://devcenter.heroku.com/articles/heroku-redis
- - Redis-to-go: https://elements.heroku.com/addons/redistogo
-
-#### Requirements:
-You have to own a validated Heroku account (with the ability to use free addons).
-
-#### Installation:
+#### Manual Installation using Heroku CLI:
+For information on downloading and using the heroku CLI see their official documentation: https://devcenter.heroku.com/articles/heroku-cli
 
 You have to set the following environment variables on your heroku instance:
  - TB_API_KEY: Your Opentok api key.
@@ -121,13 +117,13 @@ heroku config:set TB_API_KEY='yourkey' TB_API_SECRET='yoursecret'
 heroku config:set FB_DATA_URL='yourfburl' FB_AUTH_SECRET='yourfb_secret'
 
 ```
-
-If you want to set up your redis instance, the instruction for setting up a heroku-redis addon are:
+You will need to [choose a redis addon](https://elements.heroku.com/addons), we have used heroku-redis which can be set up like this:
 
 ```
 heroku plugins:install heroku-redis
 heroku addons:create heroku-redis:hobby-dev
 ```
+You can deploy your code using git: https://devcenter.heroku.com/articles/git#deploying-code
 
 Additionally you can also modify all the other configuration options described previously using
 environment variables:
