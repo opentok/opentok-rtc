@@ -73,8 +73,16 @@ E.IOS_URL_PREFIX = 'tb_ios_url_prefix';
 
 // To have several app main views, and to disable features...
 E.DEFAULT_INDEX_PAGE = 'default_index_page';
-// Comma separated list of disabled features/paths. Default value is all features enabled
+// Comma separated list of disabled features/paths for features enabled by default
+// Possible values:
+//  - archive
+//  - firebase
 E.DISABLED_FEATURES = 'disabled_features';
+
+// Comma separated list of enabled features/paths for features disabled by default
+// Possible values:
+//  - giveFeedbackButton
+E.ENABLED_FEATURES = 'enabled_features';
 
 E.REDIS_KEYS = [
   { key: E.RED_TB_API_KEY, defaultValue: env.TB_API_KEY || null },
@@ -94,4 +102,5 @@ E.REDIS_KEYS = [
   { key: E.IOS_URL_PREFIX, defaultValue: env.IOS_URL_PREFIX || '' },
   { key: E.DEFAULT_INDEX_PAGE, defaultValue: env.DEFAULT_INDEX_PAGE || undefined },
   { key: E.DISABLED_FEATURES, defaultValue: env.DISABLED_FEATURES || undefined },
+  { key: E.ENABLED_FEATURES, defaultValue: env.ENABLED_FEATURES || undefined },
 ];

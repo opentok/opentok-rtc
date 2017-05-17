@@ -117,6 +117,7 @@ function ServerMethods(aLogLevel, aModules) {
         disabledFirebase &&
          logger.warn('initialConfig: Firebase not configured. Restricted Archive functionality');
 
+        var enabledFeatures = persistConfig[C.ENABLED_FEATURES];
         // For this object we need to know if/when we're reconnecting so we can shutdown the
         // old instance.
         var oldFirebaseArchivesPromise = Utils.CachifiedObject.getCached(FirebaseArchives);
@@ -146,7 +147,8 @@ function ServerMethods(aLogLevel, aModules) {
               iosUrlPrefix: iosUrlPrefix,
               isWebRTCVersion: isWebRTCVersion,
               enabledFirebase: !disabledFirebase,
-              disabledFeatures: disabledFeatures
+              disabledFeatures: disabledFeatures,
+              enabledFeatures: enabledFeatures
             };
           });
       });
@@ -293,7 +295,8 @@ function ServerMethods(aLogLevel, aModules) {
                // https://opentokdemo.tokbox.com/room/
                // or whatever other thing that should be before the roomName
                iosURL: tbConfig.iosUrlPrefix + aReq.params.roomName + '?userName=' +
-                       (userName || C.DEFAULT_USER_NAME)
+                       (userName || C.DEFAULT_USER_NAME),
+               enabledFeatures: tbConfig.enabledFeatures
              }, (err, html) => {
                if (err) {
                  logger.log('getRoom. error:', err);

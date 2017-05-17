@@ -114,9 +114,12 @@
           </ul>
         </div>
       </nav>
+      <% if (enabledFeatures !== undefined &&
+        enabledFeatures.includes("giveFeedbackButton")) { %>
       <footer class="feedback">
         <a id="showFeedback"><span><span class="plus-icon">[+]</span> Give Demo Feedback</span></a>
       </footer>
+      <% } %>
     </section>
 
     <section id="screen">
