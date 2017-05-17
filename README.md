@@ -45,7 +45,7 @@ grunt
 ```
 To run the application follow the instructions in [Running](#running)
 
-#### Configuration:
+#### Configuring the server
 
 You can customize the behavior of the server in part by using persistent parameters (stored in
 redis). The supported parameters and their default values are:
@@ -79,6 +79,21 @@ redis). The supported parameters and their default values are:
    - We don't allow restricting it to some URIs because it doesn't work on Chrome
 - valid_referers (Optiona, default value: '[]'): List (JSONified array) of the hosts that can hot
    link to URLs. This same server is always allowed to hot-link
+
+#### Configuring the client
+
+Web client allows to be configured in some of its features. You can disable feature by adding them to `DISABLED_FEATURES` environment variable or by setting `disabled_features` key in redis.
+
+If you want to have the client with all the features enabled you should execute
+```
+redis-cli set disabled_features none
+```
+
+On the other hand, if you want to disable some of them, set the redis key to their values sepparated by commas like this example:
+
+```
+redis-cli set disabled_features annotations, archiving
+```
 
 ### Installing on Heroku
 
