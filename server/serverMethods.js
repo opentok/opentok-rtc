@@ -293,8 +293,7 @@ function ServerMethods(aLogLevel, aModules) {
                // https://opentokdemo.tokbox.com/room/
                // or whatever other thing that should be before the roomName
                iosURL: tbConfig.iosUrlPrefix + aReq.params.roomName + '?userName=' +
-                       (userName || C.DEFAULT_USER_NAME),
-               disabledFeatures: tbConfig.disabledFeatures
+                       (userName || C.DEFAULT_USER_NAME)
              }, (err, html) => {
                if (err) {
                  logger.log('getRoom. error:', err);
