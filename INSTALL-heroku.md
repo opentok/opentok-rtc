@@ -6,7 +6,7 @@ for free.
 You will need a validated Heroku account (with the ability to use free add-ons). You can read about account verification in [this Heroku Article](https://devcenter.heroku.com/articles/account-verification). (Verification is needed as the application uses the [Heroku-redis service](https://devcenter.heroku.com/articles/heroku-redis)).
 
 #### Quick Installation
-Once you have verified your account just click this button
+Once you have verified your account, just click this button
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/opentok/OpenTokRTC-V2)
 
@@ -20,20 +20,22 @@ If you prefer to deploy to Heroku manually, see the following section.
 For information on downloading and using the heroku CLI, see their official documentation: https://devcenter.heroku.com/articles/heroku-cli
 
 #### Installation:
-
-You have to set the following environment variables on your heroku instance:
-- `TB_API_KEY`: Your Opentok api key.
-- `TB_API_SECRET`: Your Opentok api secret.
-- `FB_DATA_URL`: A firebase URL to store the archive list for each room. If you don't want to use this functionality, use any value (like http://localhost for example)
-- `FB_AUTH_SECRET`: The authentication secret for the previous URL. If you don't want to use this
-   functionality, pass any value (like anyvalue for example).
-
-To do these, execute:
+First, create the app:
 
 ```sh
-heroku create
-heroku config:set TB_API_KEY='yourkey' TB_API_SECRET='yoursecret'
-heroku config:set FB_DATA_URL='yourfburl' FB_AUTH_SECRET='yourfb_secret'
+$ heroku create
+```
+
+Now you will have to set the following environment variables on your heroku instance. Replace `<key>` with your OpenTok API key and `<secret>` with the corresponding API secret in this command:
+
+```sh
+$ heroku config:set TB_API_KEY=<yourkey> TB_API_SECRET=<yoursecret>
+```
+
+If you want to use archiving, set up Firebase configuration. Replace `<appurl>` with your Firebase application URL and `<appsecret>` with the secret for that Firebase app in this command:
+
+```sh
+$ heroku config:set FB_DATA_URL=<yourfburl> FB_AUTH_SECRET=<yourfb_secret>
 ```
 
 You will need to choose a redis addon. These two are currently supported,
@@ -42,7 +44,7 @@ You will need to choose a redis addon. These two are currently supported,
 
 
  We have used heroku-redis which can be set up like this:
-```
+```sh
 heroku plugins:install heroku-redis
 heroku addons:create heroku-redis:hobby-dev
 ```
