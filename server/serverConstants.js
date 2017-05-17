@@ -93,5 +93,5 @@ E.REDIS_KEYS = [
   { key: E.IOS_APP_ID, defaultValue: env.IOS_APP_ID || undefined },
   { key: E.IOS_URL_PREFIX, defaultValue: env.IOS_URL_PREFIX || '' },
   { key: E.DEFAULT_INDEX_PAGE, defaultValue: env.DEFAULT_INDEX_PAGE || undefined },
-  { key: E.DISABLED_FEATURES, defaultValue: env.DISABLED_FEATURES || "feedback, screensharing, archiving" },
+  { key: E.DISABLED_FEATURES, defaultValue: env.DISABLED_FEATURES || undefined },
 ];
