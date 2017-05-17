@@ -3,9 +3,6 @@
 # OpenTokRTC v2
 [![Build Status](https://travis-ci.com/opentok/OpenTokRTC-V2.svg?token=qPpN1jG8Wftsn1cafKif&branch=master)](https://travis-ci.com/opentok/OpenTokRTC-V2)
 
-#### Showcase application for the OpenTok API.
-## Introduction
-
 OpenTokRTC is your private web-based video conferencing solution. It is based on TokBox's OpenTok platform and uses OpenTok's SDKs and API. You can deploy OpenTokRTC on your servers to get your own Google Hangouts alternative running on WebRTC.
 
 This repository contains a NodeJS server and a web client application.
