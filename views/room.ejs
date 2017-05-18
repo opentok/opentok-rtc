@@ -115,7 +115,7 @@
         </div>
       </nav>
       <% if (disabledFeatures === undefined ||
-        !disabledFeatures.includes("feedback")) { %>
+        (disabledFeatures.indexOf("feedback") == -1) ) { %>
       <footer class="feedback">
         <a id="showFeedback"><span><span class="plus-icon">[+]</span> Give Demo Feedback</span></a>
       </footer>
