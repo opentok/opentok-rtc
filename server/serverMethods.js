@@ -107,7 +107,7 @@ function ServerMethods(aLogLevel, aModules) {
 
         var isWebRTCVersion = persistConfig[C.DEFAULT_INDEX_PAGE] === 'opentokrtc';
         var disabledFeatures =
-          persistConfig[C.DISABLED_FEATURES] && persistConfig[C.DISABLED_FEATURES].split(',');
+          persistConfig[C.DISABLED_FEATURES] && persistConfig[C.DISABLED_FEATURES].replace(/, +/g, ',').split(',');
 
         var disabledFirebase =
           !persistConfig[C.RED_FB_DATA_URL] || !persistConfig[C.RED_FB_AUTH_SECRET] ||
@@ -126,7 +126,6 @@ function ServerMethods(aLogLevel, aModules) {
                                 persistConfig[C.RED_FB_AUTH_SECRET],
                                 persistConfig[C.RED_EMPTY_ROOM_MAX_LIFETIME], aLogLevel);
         _shutdownOldInstance(oldFirebaseArchivesPromise, firebaseArchivesPromise);
-
         return firebaseArchivesPromise.
           then(firebaseArchives => {
             return {
