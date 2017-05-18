@@ -107,7 +107,7 @@ function ServerMethods(aLogLevel, aModules) {
 
         var isWebRTCVersion = persistConfig[C.DEFAULT_INDEX_PAGE] === 'opentokrtc';
         var disabledFeatures =
-          persistConfig[C.DISABLED_FEATURES] && persistConfig[C.DISABLED_FEATURES].split(', ');
+          persistConfig[C.DISABLED_FEATURES] && persistConfig[C.DISABLED_FEATURES].replace(/, +/g, ',').split(',');
 
         var disabledFirebase =
           !persistConfig[C.RED_FB_DATA_URL] || !persistConfig[C.RED_FB_AUTH_SECRET] ||
