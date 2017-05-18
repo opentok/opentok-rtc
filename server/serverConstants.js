@@ -73,8 +73,16 @@ E.IOS_URL_PREFIX = 'tb_ios_url_prefix';
 
 // To have several app main views, and to disable features...
 E.DEFAULT_INDEX_PAGE = 'default_index_page';
+
 // Comma separated list of disabled features/paths. Default value is all features enabled
 E.DISABLED_FEATURES = 'disabled_features';
+
+// ENUM for ensuring correct strings used when checking disabled features.
+E.FEATURES = {
+    FEEDBACK: 'feedback',
+    SCREENSHARING: 'screensharing',
+    ARCHIVING: 'archiving'
+}
 
 E.REDIS_KEYS = [
   { key: E.RED_TB_API_KEY, defaultValue: env.TB_API_KEY || null },

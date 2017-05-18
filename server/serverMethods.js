@@ -152,7 +152,8 @@ function ServerMethods(aLogLevel, aModules) {
               iosUrlPrefix: iosUrlPrefix,
               isWebRTCVersion: isWebRTCVersion,
               enabledFirebase: !disabledFirebase,
-              disabledFeatures: disabledFeatures
+              disabledFeatures: disabledFeatures,
+              features: C.FEATURES
             };
           });
       });
@@ -301,6 +302,7 @@ function ServerMethods(aLogLevel, aModules) {
                // or whatever other thing that should be before the roomName
                iosURL: tbConfig.iosUrlPrefix + aReq.params.roomName + '?userName=' +
                        (userName || C.DEFAULT_USER_NAME),
+               features: tbConfig.features,
                isDisabledFeature: feature => _isDisabledFeature(tbConfig.disabledFeatures, feature),
              }, (err, html) => {
                if (err) {
