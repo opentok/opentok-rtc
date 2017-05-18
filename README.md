@@ -144,6 +144,21 @@ These are the detailed configuration options that can be set using `redis-cli`:
 - `tb_max_history_lifetime` (Optional, default value 3): Maximum time, in minutes,  an empty room
   will keep it's history (of recordings) alive.
 
+### Web client configuration
+
+Web client allows to be configured in some of its features. You can disable feature by adding them to `DISABLED_FEATURES` environment variable or by setting `disabled_features` key in redis.
+
+If you want to have the client with all the features enabled you should execute
+```
+redis-cli set disabled_features none
+```
+
+On the other hand, if you want to disable some of them, set the redis key to their values sepparated by commas like this example:
+
+```
+redis-cli set disabled_features annotations, archiving
+```
+
 ### Additional configuration
 
 - `chrome_extension_id` (Optional, default value: 'undefined'): Chrome AddOn extension Id for sharing
