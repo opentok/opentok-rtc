@@ -74,6 +74,12 @@ function ServerMethods(aLogLevel, aModules) {
       aOldPromise.then(aObject => aObject.shutdown());
   }
 
+  // Returns true if the string 'feature' is in the array of disabledFeatures
+  function _isDisabledFeature(disabledFeatures, feature) {
+      return ((disabledFeatures !== undefined) &&
+        (disabledFeatures.indexOf(feature) !== -1));
+  }
+
   function _initialTBConfig() {
     // This will hold the configuration read from Redis
     return serverPersistence.updateCache().
@@ -126,6 +132,7 @@ function ServerMethods(aLogLevel, aModules) {
                                 persistConfig[C.RED_FB_AUTH_SECRET],
                                 persistConfig[C.RED_EMPTY_ROOM_MAX_LIFETIME], aLogLevel);
         _shutdownOldInstance(oldFirebaseArchivesPromise, firebaseArchivesPromise);
+
         return firebaseArchivesPromise.
           then(firebaseArchives => {
             return {
@@ -157,6 +164,7 @@ function ServerMethods(aLogLevel, aModules) {
       aNext();
     });
   }
+
 
   function iframingOptions(aReq, aRes, aNext) {
     // By default, and the fallback also in case of misconfiguration is 'never'
@@ -293,7 +301,7 @@ function ServerMethods(aLogLevel, aModules) {
                // or whatever other thing that should be before the roomName
                iosURL: tbConfig.iosUrlPrefix + aReq.params.roomName + '?userName=' +
                        (userName || C.DEFAULT_USER_NAME),
-               disabledFeatures: tbConfig.disabledFeatures
+               isDisabledFeature: feature => _isDisabledFeature(tbConfig.disabledFeatures, feature),
              }, (err, html) => {
                if (err) {
                  logger.log('getRoom. error:', err);
