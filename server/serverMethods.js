@@ -74,11 +74,6 @@ function ServerMethods(aLogLevel, aModules) {
       aOldPromise.then(aObject => aObject.shutdown());
   }
 
-  // Returns true if the string 'feature' is in the array of disabledFeatures
-  function _isDisabledFeature(disabledFeatures, feature) {
-      return ((disabledFeatures !== undefined) &&
-        (disabledFeatures.indexOf(feature) !== -1));
-  }
 
   function _initialTBConfig() {
     // This will hold the configuration read from Redis
@@ -120,6 +115,9 @@ function ServerMethods(aLogLevel, aModules) {
           (disabledFeatures || []).
             some(aFeature => aFeature === 'archive' || aFeature === 'firebase');
 
+        // Returns true if the string 'feature' is in the array of disabledFeatures
+        var isDisabledFeature = feature => Array.isArray(disabledFeatures) && disabledFeatures.indexOf(feature) !== -1
+
         disabledFirebase &&
          logger.warn('initialConfig: Firebase not configured. Restricted Archive functionality');
 
@@ -153,8 +151,8 @@ function ServerMethods(aLogLevel, aModules) {
               isWebRTCVersion: isWebRTCVersion,
               enabledFirebase: !disabledFirebase,
               disabledFeatures: disabledFeatures,
-              features: C.FEATURES
-            };
+              isDisabledFeature: isDisabledFeature
+              };
           });
       });
   }
@@ -302,8 +300,8 @@ function ServerMethods(aLogLevel, aModules) {
                // or whatever other thing that should be before the roomName
                iosURL: tbConfig.iosUrlPrefix + aReq.params.roomName + '?userName=' +
                        (userName || C.DEFAULT_USER_NAME),
-               features: tbConfig.features,
-               isDisabledFeature: feature => _isDisabledFeature(tbConfig.disabledFeatures, feature),
+               features: C.FEATURES,
+               isDisabledFeature: tbConfig.isDisabledFeature,
              }, (err, html) => {
                if (err) {
                  logger.log('getRoom. error:', err);
