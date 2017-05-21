@@ -152,7 +152,7 @@ function ServerMethods(aLogLevel, aModules) {
               enabledFirebase: !disabledFirebase,
               disabledFeatures: disabledFeatures,
               isDisabledFeature: isDisabledFeature
-              };
+            };
           });
       });
   }
