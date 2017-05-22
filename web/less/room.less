@@ -28,6 +28,10 @@ body {
 
 #dock.collapsed {
   width: 95px;
+
+  @media @smartphones {
+    width: 50px;
+  }
   min-width: auto;
 
   .info {
@@ -89,6 +93,9 @@ body {
 
   .info {
     width: calc(~"100% - 80px");
+    @media @smartphones {
+      width: calc(~"100% - 40px");
+    }
     background-color: #1a99ce;
     border-radius: 16px;
     border-top-left-radius: 0;
@@ -212,6 +219,9 @@ body {
       background-color: transparent;
       border-bottom: 0;
       padding: 3px 0 3px 40px;
+      @media @smartphones {
+        padding: 3px 0 3px 16px;
+      }
       text-overflow: clip;
       font-size: 14px;
 
@@ -272,6 +282,9 @@ body {
       top: 0;
       left: 0;
       right: 26px;
+      @media @smartphones {
+        right: 4px;
+      }
       bottom: 0;
       z-index: -1;
 

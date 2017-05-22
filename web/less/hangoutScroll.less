@@ -24,6 +24,9 @@
   .streams[data-current-layout-type=hangout_horizontal] .tc-list ul {
     li.on-stage {
       left: calc(~"95px + 20px");
+      @media @smartphones {
+        left: calc(~"50px + 20px");
+      }
       width: calc(~"100% - 130px") !important;
     }
   }

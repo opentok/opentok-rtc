@@ -26,6 +26,25 @@
 
     <script>
       window.isWebRTCVersion=<%=isWebRTCVersion%>
+      var isMobile = function() { return typeof window.orientation !== 'undefined'; }
+      window.onload = function() {
+          if (true || isMobile()) {
+              document.getElementById("dock").classList.toggle("collapsed");
+
+              if (document.getElementById('toggleSharing')) {
+                  document.getElementById('toggleSharing').style.display = "none";
+              }
+              if (document.getElementById('manageRecordings')) {
+                  document.getElementById('manageRecordings').style.display = "none";
+              }
+              if (document.getElementById('videoSwitch')) {
+                  document.getElementById('videoSwitch').style.display = "none";
+              }
+              if (document.getElementById('audioSwitch')) {
+                  document.getElementById('audioSwitch').style.display = "none";
+              }
+          }
+      }
     </script>
 
     <script type="text/javascript" src="https://d3brof7fu9hlhe.cloudfront.net/static/snoop.js"></script>
@@ -69,7 +88,7 @@
               <a id="startArchiving"><i data-icon="archive"></i><span>Start recording</span></a>
               <a id="stopArchiving"><i data-icon="archive_saving"></i><span class="duration"></span><span>Stop recording</span></a>
             </li>
-            <li>
+            <li id="manageRecordings">
               <a id="viewRecordings"><i data-icon="recordings"></i><span>Manage recordings (<span id="recordings">0</span>)</span></a>
             </li>
             <% if (disabledFeatures === undefined ||
