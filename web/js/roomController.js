@@ -683,11 +683,14 @@
       EndCallController.init({addEventListener: function() {}}, 'NOT_AVAILABLE');
     }).
     then(getRoomParams).
+    then(function (aParams) {
+        if (isSafari) {
+            return aParams;
+        }
+        return Promise.resolve(aParams);
+    }).
     then(getRoomInfo).
-    then(function(aParams) {
-      Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
-      Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
-
+    then(function (aParams) {
       var loadAnnotations = Promise.resolve();
       if (enableAnnotations) {
         exports.OTKAnalytics = exports.OTKAnalytics ||
@@ -707,6 +710,9 @@
       return loadAnnotations.then(function() { return aParams; });
   }).
   then(function (aParams) {
+      Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
+      Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
+
       RoomView.init(enableHangoutScroll);
       if (isSafari) {
         debug.log('Launching Electron app');
