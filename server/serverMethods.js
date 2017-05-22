@@ -302,6 +302,7 @@ function ServerMethods(aLogLevel, aModules) {
                        (userName || C.DEFAULT_USER_NAME),
                features: C.FEATURES,
                isDisabledFeature: tbConfig.isDisabledFeature,
+               enabledFirebase: tbConfig.enabledFirebase,
              }, (err, html) => {
                if (err) {
                  logger.log('getRoom. error:', err);
