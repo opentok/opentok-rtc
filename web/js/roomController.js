@@ -707,8 +707,9 @@
     then(function(aParams) {
       Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
       Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
+      var enabledFirebase = (aParams.firebaseURL !== 'unknown');
+      RoomView.init(enableHangoutScroll, enabledFirebase);
 
-      RoomView.init(enableHangoutScroll);
       if (isSafari) {
         debug.log('Launching Electron app');
         document.location.href = 'teladoc://' + btoa(JSON.stringify(aParams));
