@@ -10,7 +10,7 @@
   var otHelper;
   var numUsrsInRoom = 0;
   var _disabledAllVideos = false;
-  var enableAnnotations = false;
+  var enableAnnotations = true;
   var enableHangoutScroll = false;
 
   var setPublisherReady;
@@ -617,7 +617,6 @@
     var usrId = params.getFirstValue('userName');
     resolutionAlgorithm = params.getFirstValue('resolutionAlgorithm');
     debugPreferredResolution = params.getFirstValue('debugPreferredResolution');
-    enableAnnotations = params.getFirstValue('enableAnnotations') !== undefined;
     enableHangoutScroll = params.getFirstValue('enableHangoutScroll') !== undefined;
 
     var info = {
@@ -647,6 +646,9 @@
           throw new Error('Error getting room parameters');
         }
         aRoomInfo.roomName = aRoomParams.roomName;
+        if (Array.isArray(aRoomInfo.disabledFeatures)) {
+            enableAnnotations = aRoomInfo.disabledFeatures.indexOf("annotations") == -1;
+        }
         return aRoomInfo;
       });
   }
@@ -681,10 +683,14 @@
       EndCallController.init({addEventListener: function() {}}, 'NOT_AVAILABLE');
     }).
     then(getRoomParams).
-    then(function(aParams) {
-      if (isSafari) {
-        return aParams;
-      }
+    then(function (aParams) {
+        if (isSafari) {
+            return aParams;
+        }
+        return Promise.resolve(aParams);
+    }).
+    then(getRoomInfo).
+    then(function (aParams) {
       var loadAnnotations = Promise.resolve();
       if (enableAnnotations) {
         exports.OTKAnalytics = exports.OTKAnalytics ||
@@ -702,9 +708,8 @@
         ]);
       }
       return loadAnnotations.then(function() { return aParams; });
-    }).
-    then(getRoomInfo).
-    then(function(aParams) {
+  }).
+  then(function (aParams) {
       Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
       Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
 
