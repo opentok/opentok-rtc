@@ -70,14 +70,14 @@ $ npm install
 
 ## Running
 
-In a development environment, start the application by running:
+In a development environment, you can start the application by running:
 
 ```sh
-$ npm start
+$ npm run dev
 ```
 This will start the node server on port `8123` and start watching `.less` files for changes.
 
-For production environments use `node server`.
+For production environments, use `node server`.
 To specify a custom port number, use the `-p` flag when calling `node server`, e.g., to run the application on port `8080`:
 
 ```sh
