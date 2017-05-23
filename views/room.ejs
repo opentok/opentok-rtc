@@ -27,20 +27,24 @@
     <script>
       window.isWebRTCVersion=<%=isWebRTCVersion%>
       var isMobile = function() { return typeof window.orientation !== 'undefined'; }
+
       var mobileSettings = function() {
-          if (isMobile()) {
-              document.getElementById("dock").classList.toggle("collapsed");
-              ['toggleSharing', 'manageRecordings', 'videoSwitch',
-                'audioSwitch', 'showFeedback', 'screenShareErrors'].forEach(function(id) {
-                var elem = document.getElementById(id);
-                elem && elem.classList.add('hidden');
-              });
-          }
-      }
+        document.getElementById("dock").classList.add("collapsed");
+
+        var ids = ['toggleSharing', 'manageRecordings', 'videoSwitch',
+          'audioSwitch', 'showFeedback', 'screenShareErrors'];
+
+        ids.forEach(function(id) {
+          var elem = document.getElementById(id);
+          elem && elem.classList.add('hidden');
+        });
+      };
 
       window.addEventListener('DOMContentLoaded', function loaded() {
-        mobileSettings();
         window.removeEventListener('DOMContentLoaded', loaded);
+        if (isMobile()) {
+            mobileSettings();
+        }
       });
     </script>
 
