@@ -647,7 +647,7 @@
         }
         aRoomInfo.roomName = aRoomParams.roomName;
         if (Array.isArray(aRoomInfo.disabledFeatures)) {
-            enableAnnotations = aRoomInfo.disabledFeatures.indexOf("annotations") == -1;
+            enableAnnotations = aRoomInfo.disabledFeatures.indexOf('annotations') === -1;
         }
         return aRoomInfo;
       });
@@ -683,7 +683,7 @@
       EndCallController.init({addEventListener: function() {}}, 'NOT_AVAILABLE');
     }).
     then(getRoomParams).
-    then(function (aParams) {
+    then(function(aParams) {
         if (isSafari) {
             return aParams;
         }
@@ -709,7 +709,7 @@
       }
       return loadAnnotations.then(function() { return aParams; });
   }).
-  then(function (aParams) {
+  then(function(aParams) {
       Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
       Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
 
