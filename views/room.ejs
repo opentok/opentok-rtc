@@ -27,30 +27,21 @@
     <script>
       window.isWebRTCVersion=<%=isWebRTCVersion%>
       var isMobile = function() { return typeof window.orientation !== 'undefined'; }
-      window.onload = function() {
-          if (true || isMobile()) {
+      var mobileSettings = function() {
+          if (isMobile()) {
               document.getElementById("dock").classList.toggle("collapsed");
-
-              if (document.getElementById('toggleSharing')) {
-                  document.getElementById('toggleSharing').style.display = "none";
-              }
-              if (document.getElementById('manageRecordings')) {
-                  document.getElementById('manageRecordings').style.display = "none";
-              }
-              if (document.getElementById('videoSwitch')) {
-                  document.getElementById('videoSwitch').style.display = "none";
-              }
-              if (document.getElementById('audioSwitch')) {
-                  document.getElementById('audioSwitch').style.display = "none";
-              }
-              if (document.getElementById('showFeedback')) {
-                  document.getElementById('showFeedback').style.display = "none";
-              }
-              if (document.getElementById('screenShareErrors')) {
-                  document.getElementById('screenShareErrors').style.display = "none";
-              }
+              ['toggleSharing', 'manageRecordings', 'videoSwitch',
+                'audioSwitch', 'showFeedback', 'screenShareErrors'].forEach(function(id) {
+                var elem = document.getElementById(id);
+                elem && elem.classList.add('hidden');
+              });
           }
       }
+
+      window.addEventListener('DOMContentLoaded', function loaded() {
+        mobileSettings();
+        window.removeEventListener('DOMContentLoaded', loaded);
+      });
     </script>
 
     <script type="text/javascript" src="https://d3brof7fu9hlhe.cloudfront.net/static/snoop.js"></script>
