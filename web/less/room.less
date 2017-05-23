@@ -78,6 +78,9 @@ body {
   width: 300px;
   height: 100%;
   min-height: 600px;
+  @media @smartphones {
+    min-height: 0px;
+  }
   background-color: #F9F9F9;
 
   transition: width @transitionTime;
@@ -446,6 +449,10 @@ body {
 .user-name-modal .tc-dialog {
   padding: 65px 100px;
   max-width: calc(~"100% - 510px");
+  @media @smartphones {
+    max-width: none;
+    padding: 10px;
+  }
   margin: 0;
 
   header, footer, p {
@@ -458,6 +465,10 @@ body {
     font-size: 48px;
     font-weight: 200;
     line-height: 60px;
+    @media @smartphones {
+      font-size: 34px;
+      line-height: 50px;
+    }
     color: @blueText;
     margin-bottom: 23px;
     word-break: break-all;
