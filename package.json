@@ -9,6 +9,7 @@
   },
   "scripts": {
     "start": "node server.js",
+    "dev": "concurrently \"npm run start\" \"grunt clientDev\"",
     "postinstall": "bower install && grunt clientBuild"
   },
   "repository": {
@@ -52,6 +53,7 @@
   "devDependencies": {
     "chai": "^3.3.0",
     "chai-as-promised": "^5.2.0",
+    "concurrently": "^3.4.0",
     "karma": "^0.13.10",
     "karma-chrome-launcher": "^0.2.0",
     "karma-firefox-launcher": "^0.1.6",

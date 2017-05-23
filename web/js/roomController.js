@@ -687,7 +687,7 @@
       EndCallController.init({addEventListener: function() {}}, 'NOT_AVAILABLE');
     }).
     then(getRoomParams).
-    then(function (aParams) {
+    then(function(aParams) {
         if (isSafari) {
             return aParams;
         }
@@ -713,7 +713,7 @@
       }
       return loadAnnotations.then(function() { return aParams; });
   }).
-  then(function (aParams) {
+  then(function(aParams) {
       Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
       Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
       RoomView.init(enableHangoutScroll, enableArchiveManager);
