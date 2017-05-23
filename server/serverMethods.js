@@ -110,16 +110,17 @@ function ServerMethods(aLogLevel, aModules) {
         var disabledFeatures =
           persistConfig[C.DISABLED_FEATURES] && persistConfig[C.DISABLED_FEATURES].replace(/, +/g, ',').split(',');
 
-        var disabledFirebase =
-          !persistConfig[C.RED_FB_DATA_URL] || !persistConfig[C.RED_FB_AUTH_SECRET] ||
-          (disabledFeatures || []).
-            some(aFeature => aFeature === 'archive' || aFeature === 'firebase');
-
         // Returns true if the string 'feature' is in the array of disabledFeatures
         var isDisabledFeature = feature => Array.isArray(disabledFeatures) && disabledFeatures.indexOf(feature) !== -1
 
-        disabledFirebase &&
-         logger.warn('initialConfig: Firebase not configured. Restricted Archive functionality');
+        var firebaseConfigured =
+          persistConfig[C.RED_FB_DATA_URL] && persistConfig[C.RED_FB_AUTH_SECRET]
+
+        var disabledArchiveManager = isDisabledFeature(C.FEATURES.ARCHIVE_MANAGER) || isDisabledFeature(C.FEATURES.ARCHIVING);
+
+        if (!firebaseConfigured && !disabledArchiveManager) {
+            logger.error('Firebase not configured. Please provide firebase credentials or disable archive_manager');
+        }
 
         // For this object we need to know if/when we're reconnecting so we can shutdown the
         // old instance.
@@ -149,7 +150,7 @@ function ServerMethods(aLogLevel, aModules) {
               iosAppId: iosAppId,
               iosUrlPrefix: iosUrlPrefix,
               isWebRTCVersion: isWebRTCVersion,
-              enabledFirebase: !disabledFirebase,
+              enabledFirebase: !disabledArchiveManager,
               disabledFeatures: disabledFeatures,
               isDisabledFeature: isDisabledFeature
             };
@@ -302,7 +303,6 @@ function ServerMethods(aLogLevel, aModules) {
                        (userName || C.DEFAULT_USER_NAME),
                features: C.FEATURES,
                isDisabledFeature: tbConfig.isDisabledFeature,
-               enabledFirebase: tbConfig.enabledFirebase,
              }, (err, html) => {
                if (err) {
                  logger.log('getRoom. error:', err);
@@ -401,7 +401,8 @@ function ServerMethods(aLogLevel, aModules) {
             enabledFirebase && fbArchives.baseURL + '/' + usableSessionInfo.sessionId || 'unknown',
           firebaseToken: fbUserToken || 'unknown',
           chromeExtId: tbConfig.chromeExtId,
-          disabledFeatures: tbConfig.disabledFeatures
+          features: C.FEATURES,
+          disabledFeatures: tbConfig.disabledFeatures,
         };
         answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId,
 

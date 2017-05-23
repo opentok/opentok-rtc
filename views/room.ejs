@@ -90,7 +90,7 @@
               <a id="startArchiving"><i data-icon="archive"></i><span>Start recording</span></a>
               <a id="stopArchiving"><i data-icon="archive_saving"></i><span class="duration"></span><span>Stop recording</span></a>
             </li>
-            <% if(enabledFirebase) { %>
+            <% if(!isDisabledFeature(features.ARCHIVE_MANAGER)) { %>
             <li id="manageRecordings">
               <a id="viewRecordings"><i data-icon="recordings"></i><span>Manage recordings (<span id="recordings">0</span>)</span></a>
             </li>

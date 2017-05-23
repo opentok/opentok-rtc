@@ -81,7 +81,9 @@ E.DISABLED_FEATURES = 'disabled_features';
 E.FEATURES = {
     FEEDBACK: 'feedback',
     SCREENSHARING: 'screensharing',
-    ARCHIVING: 'archiving'
+    ARCHIVING: 'archiving',
+    ARCHIVE_MANAGER: 'archive_manager',
+    ANNOTATIONS: 'annotations'
 }
 
 E.REDIS_KEYS = [

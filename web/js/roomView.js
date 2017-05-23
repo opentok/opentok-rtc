@@ -13,7 +13,7 @@
   var audioSwitch;
   var startChatElem;
   var unreadCountElem;
-  var enabledFirebase;
+  var enableArchiveManager;
 
   var START_SHARING = 'Share your screen';
   var STOP_SHARING = 'Stop sharing your screen';
@@ -268,7 +268,7 @@
         cronograph.start(duration);
       };
 
-      if (!enabledFirebase) {
+      if (!enableArchiveManager) {
           cronograph.init();
           return start(null);
       }
@@ -455,8 +455,8 @@
     });
   };
 
-  var init = function(enableHangoutScroll, aEnabledFirebase) {
-    enabledFirebase = aEnabledFirebase;
+  var init = function(enableHangoutScroll, aEnableArchiveManager) {
+    enableArchiveManager = aEnableArchiveManager;
     initHTMLElements();
     addHandlers();
     // Due to security issues, flash cannot access the clipboard unless the

@@ -3,9 +3,9 @@
 
   var model = null;
 
-  function init(firebaseUrl, firebaseToken, sessionId) {
+  function init(enableArchiveManager, firebaseUrl, firebaseToken, sessionId) {
       var dependenciesLoaded;
-      if (firebaseUrl !== 'unknown') {
+      if (enableArchiveManager) {
         dependenciesLoaded = LazyLoader.dependencyLoad([
                 '/js/models/firebase.js',
                 '/js/recordingsView.js'
