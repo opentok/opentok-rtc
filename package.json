@@ -8,7 +8,7 @@
     "npm": "2.14.x"
   },
   "scripts": {
-    "start": "node server.js",
+    "start": "node server.js & grunt clientDev",
     "postinstall": "bower install && grunt clientBuild"
   },
   "repository": {

@@ -68,23 +68,16 @@ Next, set up the dependencies for the server:
 $ npm install
 ```
 
-Finally, set up the client side dependencies and prepare the assets:
-
-```sh
-$ bower install
-$ grunt
-```
-
 ## Running
 
-Start the application by running:
+In a development environment, start the application by running:
 
 ```sh
-$ node server
+$ npm start
 ```
+This will start the node server on port `8123` and start watching `.less` files for changes.
 
-This will start the application on port `8123` by default.
-
+For production environments use `node server`.
 To specify a custom port number, use the `-p` flag when calling `node server`, e.g., to run the application on port `8080`:
 
 ```sh
