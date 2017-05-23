@@ -400,7 +400,8 @@ function ServerMethods(aLogLevel, aModules) {
           firebaseURL:
             enabledFirebase && fbArchives.baseURL + '/' + usableSessionInfo.sessionId || 'unknown',
           firebaseToken: fbUserToken || 'unknown',
-          chromeExtId: tbConfig.chromeExtId
+          chromeExtId: tbConfig.chromeExtId,
+          disabledFeatures: tbConfig.disabledFeatures
         };
         answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId,
 
