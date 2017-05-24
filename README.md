@@ -156,9 +156,9 @@ redis-cli set disabled_features "annotations, archiving, feedback"
 ```
 
 The following features can be disabled:
-- `annotations` disable annotations in screensharing. Only meaningful if `screensharing` enabled.
-- `archiving` disable archiving (recording)
-- `archive_manager` disable archive manager. Only meaningful if `archiving` enabled (manage recordings, requires firebase to be configured)
+- `annotations` disable annotations in screensharing. Only meaningful if `screensharing` is not disabled.
+- `archiving` disable archiving (start/stop recording)
+- `archive_manager` disable archive manager. Only meaningful if `archiving` is not disabled (manage recordings, requires firebase to be configured)
 - `feedback` disable feedback form
 - `screensharing` disable screensharing
 
