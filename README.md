@@ -141,16 +141,26 @@ These are the detailed configuration options that can be set using `redis-cli`:
 
 Web client allows to be configured in some of its features. You can disable feature by adding them to `DISABLED_FEATURES` environment variable or by setting `disabled_features` key in redis.
 
-If you want to have the client with all the features enabled you should execute
+If you leave this unset, the default configuration will be used:
+```
+//default "feedback, screensharing, archiving"
+```
+To enable all features set:
 ```
 redis-cli set disabled_features none
 ```
 
-On the other hand, if you want to disable some of them, set the redis key to their values sepparated by commas like this example:
+To set your custom config set the variable to a *complete* list of disabled features separated by commas:
+```
+redis-cli set disabled_features "annotations, archiving, feedback"
+```
 
-```
-redis-cli set disabled_features annotations, archiving
-```
+The following features can be disabled:
+- `annotations` disable annotations in screensharing. Only meaningful if `screensharing` enabled.
+- `archiving` disable archiving (recording)
+- `archive_manager` disable archive manager. Only meaningful if `archiving` enabled (manage recordings, requires firebase to be configured)
+- `feedback` disable feedback form
+- `screensharing` disable screensharing
 
 ### Additional configuration
 
