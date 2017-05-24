@@ -23,14 +23,12 @@
       "required": "true"
     },
     "FB_DATA_URL": {
-      "description": "URL of the Firebase app used to store the archive information. Go to https://firebase.com to get a valid URL. If you leave the default value, archiving will not work correctly.",
-      "value": "https://ot-archiving.firebaseIO.com/sessions/",
-      "required": "true"
+      "description": "URL of the Firebase app used to store the archive information. Go to https://firebase.com to get a valid URL.",
+      "required": "false"
     },
     "FB_AUTH_SECRET": {
-      "description": "Firebase Auth secret for the database. Go to https://firebase.com to get a valid URL and secret. If you leave the default value, archiving will not work correctly.",
-      "value": "yoursecretgoeshere",
-      "required": "true"
+      "description": "Firebase Auth secret for the database. Go to https://firebase.com to get a valid URL and secret.",
+      "required": "false"
     }
   },
   "addons": [
