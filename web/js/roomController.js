@@ -12,7 +12,7 @@
   var _disabledAllVideos = false;
   var enableAnnotations = true;
   var enableHangoutScroll = false;
-  var enableArchiveManager;
+  var enableArchiveManager = false;
 
   var setPublisherReady;
   var publisherReady = new Promise(function(resolve, reject) {

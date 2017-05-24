@@ -14,7 +14,7 @@
                   init(firebaseUrl, firebaseToken);
                });
       } else {
-        dependenciesLoaded = Promise.resolve(null);
+        dependenciesLoaded = Promise.resolve();
       }
 
       return dependenciesLoaded.then(function(aModel) {
