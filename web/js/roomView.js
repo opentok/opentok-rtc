@@ -13,6 +13,7 @@
   var audioSwitch;
   var startChatElem;
   var unreadCountElem;
+  var enableArchiveManager;
 
   var START_SHARING = 'Share your screen';
   var STOP_SHARING = 'Stop sharing your screen';
@@ -267,6 +268,11 @@
         cronograph.start(duration);
       };
 
+      if (!enableArchiveManager) {
+          cronograph.init();
+          return start(null);
+      }
+
       var onModel = function(model) {
         var archives = FirebaseModel.archives;
         var archiveId = data.id;
@@ -449,7 +455,8 @@
     });
   };
 
-  var init = function(enableHangoutScroll) {
+  var init = function(enableHangoutScroll, aEnableArchiveManager) {
+    enableArchiveManager = aEnableArchiveManager;
     initHTMLElements();
     addHandlers();
     // Due to security issues, flash cannot access the clipboard unless the
