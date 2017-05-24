@@ -74,6 +74,7 @@ function ServerMethods(aLogLevel, aModules) {
       aOldPromise.then(aObject => aObject.shutdown());
   }
 
+
   function _initialTBConfig() {
     // This will hold the configuration read from Redis
     return serverPersistence.updateCache().
@@ -114,6 +115,9 @@ function ServerMethods(aLogLevel, aModules) {
           (disabledFeatures || []).
             some(aFeature => aFeature === 'archive' || aFeature === 'firebase');
 
+        // Returns true if the string 'feature' is in the array of disabledFeatures
+        var isDisabledFeature = feature => Array.isArray(disabledFeatures) && disabledFeatures.indexOf(feature) !== -1
+
         disabledFirebase &&
          logger.warn('initialConfig: Firebase not configured. Restricted Archive functionality');
 
@@ -126,6 +130,7 @@ function ServerMethods(aLogLevel, aModules) {
                                 persistConfig[C.RED_FB_AUTH_SECRET],
                                 persistConfig[C.RED_EMPTY_ROOM_MAX_LIFETIME], aLogLevel);
         _shutdownOldInstance(oldFirebaseArchivesPromise, firebaseArchivesPromise);
+
         return firebaseArchivesPromise.
           then(firebaseArchives => {
             return {
@@ -145,7 +150,8 @@ function ServerMethods(aLogLevel, aModules) {
               iosUrlPrefix: iosUrlPrefix,
               isWebRTCVersion: isWebRTCVersion,
               enabledFirebase: !disabledFirebase,
-              disabledFeatures: disabledFeatures
+              disabledFeatures: disabledFeatures,
+              isDisabledFeature: isDisabledFeature
             };
           });
       });
@@ -157,6 +163,7 @@ function ServerMethods(aLogLevel, aModules) {
       aNext();
     });
   }
+
 
   function iframingOptions(aReq, aRes, aNext) {
     // By default, and the fallback also in case of misconfiguration is 'never'
@@ -293,7 +300,8 @@ function ServerMethods(aLogLevel, aModules) {
                // or whatever other thing that should be before the roomName
                iosURL: tbConfig.iosUrlPrefix + aReq.params.roomName + '?userName=' +
                        (userName || C.DEFAULT_USER_NAME),
-               disabledFeatures: tbConfig.disabledFeatures
+               features: C.FEATURES,
+               isDisabledFeature: tbConfig.isDisabledFeature,
              }, (err, html) => {
                if (err) {
                  logger.log('getRoom. error:', err);
@@ -391,7 +399,8 @@ function ServerMethods(aLogLevel, aModules) {
           firebaseURL:
             enabledFirebase && fbArchives.baseURL + '/' + usableSessionInfo.sessionId || 'unknown',
           firebaseToken: fbUserToken || 'unknown',
-          chromeExtId: tbConfig.chromeExtId
+          chromeExtId: tbConfig.chromeExtId,
+          disabledFeatures: tbConfig.disabledFeatures
         };
         answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId,
 
