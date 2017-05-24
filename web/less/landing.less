@@ -18,6 +18,31 @@ body {
 
   header {
     padding-bottom: 25px;
+    @media @smartphones {
+      padding-bottom: 0px;
+    }
+  }
+
+  .extendedheader {
+    text-align: center;
+
+    @media @smartphonesLandscape {
+      text-align: justify;
+      width: 100%;
+      padding: 50px 0 0 90px;
+
+      header {
+        float: left;
+      }
+      img {
+        width: 50%;
+      }
+
+      h1 {
+        line-height: 0px;
+        margin: 25px 0;
+      }
+    }
   }
 
   h1, h2, h3 {
@@ -27,6 +52,9 @@ body {
 
   h1 {
     font-size: 48px;
+    @media @smartphones {
+      font-size: 36px;
+    }
     font-weight: 200;
     line-height: 60px;
     color: @blueText;
@@ -35,12 +63,18 @@ body {
 
   h2 {
     font-size: 20px;
+    @media @smartphones {
+      font-size: 14px;
+    }
     font-weight: 400;
     margin: 6px 0;
   }
 
   h3 {
     font-size: 14px;
+    @media @smartphones {
+      font-size: 12px;
+    }
     margin: 5px 0;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -50,6 +84,9 @@ body {
   form {
     width: 100%;
     margin: 20px 0 40px 0;
+    @media @smartphonesLandscape {
+      margin: 7px 0 40px 0;
+    }
     text-align: center;
 
     p {
@@ -74,6 +111,9 @@ body {
 
     .error-room {
       margin: 0 356px 0 0;
+      @media @smartphones {
+        margin: 0 100px 0 0;
+      }
     }
 
     &.error {
@@ -90,16 +130,32 @@ body {
     .tb.btn {
       font-family: "AvantGardeGothicITCW01B 731069", arial;
       font-size: 16px;
+      @media @smartphones {
+        font-size: 14px;
+      }
       font-weight: normal;
       line-height: 50px;
       border-radius: 0;
       height: 50px;
     }
 
+    .textinput {
+      @media @smartphones {
+        font-size: 14px;
+      }
+      @media @smartphonesLandscape {
+        font-size: 14px;
+        padding: 8px 10px;
+      }
+    }
+
     .contract {
       text-align: left;
       position: relative;
       left: 50%;
+      @media @smartphones {
+        left: 40%;
+      }
 
       & > p {
         width: auto;
@@ -126,6 +182,9 @@ body {
           display: inline-block;
           pointer-events: auto;
           font-size: 15px;
+          @media @smartphones {
+            font-size: 12px;
+          }
           padding-right: 10px;
           color: #5F6062;
         }
