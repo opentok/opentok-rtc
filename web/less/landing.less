@@ -25,6 +25,7 @@ body {
 
   .extended-header {
     text-align: center;
+    padding-top: 30px;
 
     @media @smartphonesLandscape {
       text-align: justify;
@@ -84,6 +85,9 @@ body {
   form {
     width: 100%;
     margin: 20px 0 40px 0;
+    @media @smartphones {
+      margin: 5px 0 40px 0;
+    }
     @media @smartphonesLandscape {
       margin: 7px 0 40px 0;
     }
@@ -99,6 +103,14 @@ body {
       font-size: 14px;
       color: #C40D49;
       opacity: 0;
+
+      @media @smartphones {
+        font-size: 12px;
+      }
+
+      @media @smartphonesLandscape {
+        font-size: 9px;
+      }
     }
 
     .error-terms, .error-adult {
@@ -154,7 +166,13 @@ body {
       position: relative;
       left: 50%;
       @media @smartphones {
-        left: 40%;
+        left: 0%;
+        padding: 0 50px 0 50px;
+      }
+
+      @media @smartphonesLandscape {
+        left: 0%;
+        padding: 0 20px 0 20px;
       }
 
       & > p {
@@ -162,12 +180,23 @@ body {
         display: inline-block;
         text-align: left;
         transform: translateX(-25%);
+
+        @media @smartphones {
+          transform: translateX(0%);
+          width: 100%;
+        }
       }
 
       label.checkbox {
         &:first-child {
           padding-top: 0;
           padding-bottom: 0;
+        }
+
+        @media @smartphones {
+          &:first-child {
+            padding: 0;
+          }
         }
 
         input:checked ~ span:after {
@@ -182,10 +211,16 @@ body {
           display: inline-block;
           pointer-events: auto;
           font-size: 15px;
+          padding-right: 10px;
+
           @media @smartphones {
             font-size: 12px;
           }
-          padding-right: 10px;
+
+          @media @smartphonesLandscape {
+            font-size: 7px;
+          }
+
           color: #5F6062;
         }
 
@@ -199,6 +234,15 @@ body {
   p {
     font-size: 16px;
     line-height: 24px;
+    @media @smartphones {
+      font-size: 12px;
+      line-height: 20px;
+    }
+
+    @media @smartphonesLandscape {
+      font-size: 12px;
+      line-height: 12px;
+    }
     margin: 0;
     padding: 0;
   }
