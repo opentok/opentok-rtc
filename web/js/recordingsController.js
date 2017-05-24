@@ -3,21 +3,27 @@
 
   var model = null;
 
-  function init(firebaseUrl, firebaseToken, sessionId) {
-    return LazyLoader.dependencyLoad([
-      '/js/models/firebase.js',
-      '/js/recordingsView.js'
-    ]).then(function() {
-      FirebaseModel.
-        init(firebaseUrl, firebaseToken).
-        then(function(aModel) {
-          model = aModel;
-          Utils.sendEvent('recordings-model-ready', null, exports);
-          addListeners();
-          RecordingsView.init(model);
-          EndCallController.init(model, sessionId);
-        });
-    });
+  function init(enableArchiveManager, firebaseUrl, firebaseToken, sessionId) {
+      var dependenciesLoaded;
+      if (enableArchiveManager) {
+        dependenciesLoaded = LazyLoader.dependencyLoad([
+                '/js/models/firebase.js',
+                '/js/recordingsView.js'
+              ]).then(function() {
+                return FirebaseModel.
+                  init(firebaseUrl, firebaseToken);
+               });
+      } else {
+        dependenciesLoaded = Promise.resolve();
+      }
+
+      return dependenciesLoaded.then(function(aModel) {
+        model = aModel;
+        Utils.sendEvent('recordings-model-ready', null, exports);
+        addListeners();
+        aModel && RecordingsView.init(model);
+        EndCallController.init(model, sessionId);
+      });
   }
 
   function onDeleteArchive(data) {

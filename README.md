@@ -120,25 +120,27 @@ These are the detailed configuration options that can be set using `redis-cli`:
 ### Web client configuration
 
 Web client allows to be configured in some of its features. You can disable feature by adding them to `DISABLED_FEATURES` environment variable or by setting `disabled_features` key in redis.
-
-If you want to have the client with all the features enabled you should execute
-
+If you leave this unset, the default configuration will be used:
+```
+//default "feedback, screensharing, archiving"
+```
+To enable all features set:
 ```
 redis-cli set disabled_features none
 ```
 
-On the other hand, if you want to disable some of them, set the redis key to their values separated
-by commas, like this:
-
+To set your custom config set the variable to a *complete* list of disabled features separated by commas:
 ```
-redis-cli set disabled_features annotations,archiving
+redis-cli set disabled_features "annotations, archiving, feedback"
 ```
 
 You can disable the following features:
 
-* `feedback' -- The "Give Demo Feedback" form.
-* `screensharing` -- Screen sharing.
-* `archiving` -- Archiving (recording).
+- `annotations` --  Annotations in Screen Sharing. Only meaningful if `screensharing` is not disabled.
+- `archiving` -- Archiving (Recording)
+- `archive_manager` -- Archive Manager. Only meaningful if `archiving` is not disabled (Manage Recordings, requires firebase to be configured)
+- `feedback` -- The "Give Demo Feedback" form.
+- `screensharing` -- Screen sharing.
 
 ### Additional configuration options
 
@@ -147,7 +149,7 @@ You can disable the following features:
    enable screen sharing in Chrome. See [Screen sharing](#screen-sharing).
 
 * `allow_iframing` (Optional, default value: 'never'): Controls the server-side restriction on
-   allowing content to load inside an iframe. The allowed values are:
+   allowing content to load inside an iframe. The allowed values are:>>>>>>> master
 
    - 'always': Allow iframing unconditionally (note that rtcApp.js should also be changed
      to reflect this, this option only changes what the server allows)

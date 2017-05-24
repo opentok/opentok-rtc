@@ -12,6 +12,7 @@
   var _disabledAllVideos = false;
   var enableAnnotations = true;
   var enableHangoutScroll = false;
+  var enableArchiveManager = false;
 
   var setPublisherReady;
   var publisherReady = new Promise(function(resolve, reject) {
@@ -640,14 +641,17 @@
       then(function(aRoomInfo) {
         if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId &&
               aRoomInfo.apiKey && aRoomInfo.username &&
-              aRoomInfo.firebaseToken && aRoomInfo.firebaseURL)) {
+              aRoomInfo.firebaseToken && aRoomInfo.firebaseURL &&
+              aRoomInfo.features && aRoomInfo.disabledFeatures)) {
           debug.error('Error getRoomParams [', aRoomInfo,
                       '] without correct response');
           throw new Error('Error getting room parameters');
         }
         aRoomInfo.roomName = aRoomParams.roomName;
         if (Array.isArray(aRoomInfo.disabledFeatures)) {
-            enableAnnotations = aRoomInfo.disabledFeatures.indexOf('annotations') === -1;
+            enableAnnotations = aRoomInfo.disabledFeatures.indexOf(aRoomInfo.features.ANNOTATIONS) === -1;
+            enableArchiveManager = (aRoomInfo.disabledFeatures.indexOf(aRoomInfo.features.ARCHIVING) === -1 &&
+                   aRoomInfo.disabledFeatures.indexOf(aRoomInfo.features.ARCHIVE_MANAGER) === -1);
         }
         return aRoomInfo;
       });
@@ -712,8 +716,8 @@
   then(function(aParams) {
       Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
       Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
+      RoomView.init(enableHangoutScroll, enableArchiveManager);
 
-      RoomView.init(enableHangoutScroll);
       if (isSafari) {
         debug.log('Launching Electron app');
         document.location.href = 'teladoc://' + btoa(JSON.stringify(aParams));
@@ -773,7 +777,7 @@
           });
         }).
         then(function() {
-          RecordingsController.init(aParams.firebaseURL, aParams.firebaseToken, aParams.sessionId);
+          RecordingsController.init(enableArchiveManager, aParams.firebaseURL, aParams.firebaseToken, aParams.sessionId);
           ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
           FeedbackController.init(otHelper);
           Utils.sendEvent('roomController:controllersReady');

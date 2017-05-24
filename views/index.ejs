@@ -24,21 +24,26 @@
   <body class="forbidden">
     <section class="main">
       <section>
+
+<% if (!isWebRTCVersion) { %>
         <header>
           <img src="images/opentok-logo.png" alt="opentok transparent logo">
         </header>
-<% if (!isWebRTCVersion) { %>
         <h1>The OpenTok Platform Demo</h1>
-
 <% } else { %>
-         <h1>WebRTC Demo</h1>
+         <span class="extended-header">
+           <header>
+             <img src="images/opentok-logo.png" alt="opentok transparent logo">
+           </header>
+           <h1>WebRTC Demo</h1>
+         </span>
          <h2>Built by TokBox on the OpenTok Platform</h2>
          <h3>This WebRTC Demo enables group video conferencing, text chat, screen sharing, and more</h3>
 <% } %>
         <form>
           <p>
-            <input id="room" class="required" placeholder="Type the name of the meeting">
-            <input id="user" placeholder="Type your name">
+            <input id="room" class="text-input required" placeholder="Type the name of the meeting">
+            <input id="user" class="text-input" placeholder="Type your name">
             <p class="error-room error-text">Please enter a meeting name</p>
           </p>
 <% if (isWebRTCVersion) { %>
