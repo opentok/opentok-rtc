@@ -77,6 +77,9 @@ E.DEFAULT_INDEX_PAGE = 'default_index_page';
 // Comma separated list of disabled features/paths. Default value is all features enabled
 E.DISABLED_FEATURES = 'disabled_features';
 
+// Type of the session "routed" (mantis) or "relayed" (p2p)
+E.SESSION_MEDIA_TYPE = 'session_media_type';
+
 // ENUM for ensuring correct strings used when checking disabled features.
 E.FEATURES = {
     FEEDBACK: 'feedback',
@@ -104,4 +107,5 @@ E.REDIS_KEYS = [
   { key: E.IOS_URL_PREFIX, defaultValue: env.IOS_URL_PREFIX || '' },
   { key: E.DEFAULT_INDEX_PAGE, defaultValue: env.DEFAULT_INDEX_PAGE || undefined },
   { key: E.DISABLED_FEATURES, defaultValue: env.DISABLED_FEATURES || "feedback, screensharing, archiving" },
+  { key: E.SESSION_MEDIA_TYPE, defaultValue: env.SESSION_MEDIA_TYPE || "routed" },
 ];

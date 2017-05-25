@@ -94,6 +94,8 @@ function ServerMethods(aLogLevel, aModules) {
         var iosAppId = persistConfig[C.IOS_APP_ID];
         var iosUrlPrefix = persistConfig[C.IOS_URL_PREFIX];
 
+        var sessionMediaType = persistConfig[C.SESSION_MEDIA_TYPE];
+
         // This isn't strictly necessary... but since we're using promises all over the place, it
         // makes sense. The _P are just a promisified version of the methods. We could have
         // overwritten the original methods but this way we make it explicit. That's also why we're
@@ -152,7 +154,8 @@ function ServerMethods(aLogLevel, aModules) {
               isWebRTCVersion: isWebRTCVersion,
               enabledFirebase: !disabledArchiveManager,
               disabledFeatures: disabledFeatures,
-              isDisabledFeature: isDisabledFeature
+              isDisabledFeature: isDisabledFeature,
+              sessionMediaType: sessionMediaType
             };
           });
       });
@@ -203,7 +206,8 @@ function ServerMethods(aLogLevel, aModules) {
       getKey(C.RED_ROOM_PREFIX + roomName).
       then(_getUsableSessionInfo.bind(tbConfig.otInstance,
                                       tbConfig.maxSessionAgeMs,
-                                      tbConfig.archiveAlways)).
+                                      tbConfig.archiveAlways,
+                                      tbConfig.sessionMediaType)).
       then(usableSessionInfo => {
         serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, C.RED_ROOM_PREFIX + roomName,
                                    JSON.stringify(usableSessionInfo));
@@ -316,7 +320,7 @@ function ServerMethods(aLogLevel, aModules) {
   // Given a sessionInfo (which might be empty or non usable) returns a promise than will fullfill
   // to an usable sessionInfo. This function cannot be invoked directly, it has
   // to be bound so 'this' is a valid Opentok instance!
-  function _getUsableSessionInfo(aMaxSessionAge, aArchiveAlways, aSessionInfo) {
+  function _getUsableSessionInfo(aMaxSessionAge, aArchiveAlways, aSessionMediaType, aSessionInfo) {
     aSessionInfo = aSessionInfo && JSON.parse(aSessionInfo);
     return new Promise((resolve) => {
       var minLastUsage = Date.now() - aMaxSessionAge;
@@ -327,7 +331,12 @@ function ServerMethods(aLogLevel, aModules) {
 
       if (!aSessionInfo || aSessionInfo.lastUsage <= minLastUsage) {
         // We need to create a new session...
-        var sessionOptions = { mediaMode: 'routed' };
+        var sessionMediaType = 'routed';
+        if (aSessionMediaType === 'relayed') {
+          sessionMediaType = aSessionMediaType;
+        }
+        logger.log("Creating session with type: " + sessionMediaType);
+        var sessionOptions = { mediaMode: sessionMediaType };
         if (aArchiveAlways) {
           sessionOptions.archiveMode = 'always';
         }
@@ -378,7 +387,7 @@ function ServerMethods(aLogLevel, aModules) {
     serverPersistence.
       getKey(C.RED_ROOM_PREFIX + roomName).
       then(_getUsableSessionInfo.bind(tbConfig.otInstance, tbConfig.maxSessionAgeMs,
-                                      tbConfig.archiveAlways)).
+                                      tbConfig.archiveAlways, tbConfig.sessionMediaType)).
       then(usableSessionInfo => {
         // Update the database. We could do this on getUsable...
         serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, C.RED_ROOM_PREFIX + roomName,
