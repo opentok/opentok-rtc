@@ -657,16 +657,13 @@
       });
   }
 
-  var isSafari = Utils.isSafari();
-
   var modules = [
     '/js/components/htmlElems.js',
     '/js/helpers/resolutionAlgorithms.js'
   ];
-  if (!isSafari) {
-    modules.push('/js/helpers/OTHelper.js');
-  }
+
   modules.push(
+    '/js/helpers/OTHelper.js',
     '/js/itemsHandler.js',
     '/js/layoutView.js',
     '/js/layouts.js',
@@ -687,12 +684,6 @@
       EndCallController.init({addEventListener: function() {}}, 'NOT_AVAILABLE');
     }).
     then(getRoomParams).
-    then(function(aParams) {
-        if (isSafari) {
-            return aParams;
-        }
-        return Promise.resolve(aParams);
-    }).
     then(getRoomInfo).
     then(function (aParams) {
       var loadAnnotations = Promise.resolve();
@@ -717,13 +708,6 @@
       Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
       Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
       RoomView.init(enableHangoutScroll, enableArchiveManager);
-
-      if (isSafari) {
-        debug.log('Launching Electron app');
-        document.location.href = 'teladoc://' + btoa(JSON.stringify(aParams));
-        Utils.sendEvent('roomController:externalAppLaunched');
-        return;
-      }
       roomName = aParams.roomName;
       userName = aParams.username ?
                   (aParams.username.length > 1000 ?
