@@ -10,7 +10,7 @@
 
   var layouts;
 
-  var HANGOUT_BY_DEFAULT = 'hangout_vertical';
+  var HANGOUT_BY_DEFAULT = 'grid';
 
   function isOnGoing(layout) {
     return Object.getPrototypeOf(currentLayout) === layout.prototype;
@@ -104,15 +104,7 @@
   }
 
   function calculateCandidateLayout() {
-    var candidateLayout = null;
-
-    if (getTotal() > 2) {
-      candidateLayout = GRP_LAYOUTS[userLayout] ? layouts[userLayout] : Grid;
-    } else {
-      candidateLayout = F2F_LAYOUTS[userLayout] ? layouts[userLayout] : Float;
-    }
-
-    return candidateLayout;
+    return GRP_LAYOUTS[userLayout] ? layouts[userLayout] : Grid;
   }
 
   var F2F_LAYOUTS = {
