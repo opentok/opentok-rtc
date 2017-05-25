@@ -439,19 +439,12 @@
 
   var addClipboardFeature = function() {
     var input = document.querySelector('.bubble[for="addToCall"] input');
-    var linkToShare = document.querySelector('#addToCall');
-    input.value = getURLtoShare();
-    linkToShare.data('clipboardText', input.value);
-    var zc = new ZeroClipboard(linkToShare);
-    var config = ZeroClipboard.config();
-    var swfObject = document.getElementById(config.swfObjectId);
-    var myHoverClass = 'my-zeroclipboard-is-hover';
-    swfObject && swfObject.addEventListener('mouseenter', function(evt) {
-      linkToShare.classList.add(myHoverClass);
-      swfObject.addEventListener('mouseleave', function onMouseLeave() {
-        swfObject.removeEventListener('mouseleave', onMouseLeave);
-        linkToShare.classList.remove(myHoverClass);
-      });
+    var urlToShare = getURLtoShare();
+    input.value = urlToShare;
+    var clipboard = new Clipboard(document.querySelector('#addToCall'), {
+        text: function() {
+            return urlToShare;
+        }
     });
   };
 
@@ -459,11 +452,6 @@
     enableArchiveManager = aEnableArchiveManager;
     initHTMLElements();
     addHandlers();
-    // Due to security issues, flash cannot access the clipboard unless the
-    // action originates from a click with a flash object.
-    // That means that we need to have ZeroClipboard loaded and the URL
-    // will be copied once users click on link to share the URL.
-    // Programmatically, setText() wouldn't work.
     addClipboardFeature();
     LayoutManager.init('.streams', enableHangoutScroll);
   };
