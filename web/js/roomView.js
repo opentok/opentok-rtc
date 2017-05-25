@@ -361,6 +361,9 @@
         case 'chooseLayout':
           BubbleFactory.get('chooseLayout').toggle();
           break;
+        case 'buttonContact':
+          BubbleFactory.get('buttonContact').toggle();
+          break;
         case 'startArchiving':
         case 'stopArchiving':
           Utils.sendEvent('roomView:' + elem.id);

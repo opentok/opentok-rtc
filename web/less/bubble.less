@@ -25,6 +25,10 @@
     }
   }
 
+  .bubble-content.compact {
+    padding: 14px;
+  }
+
   .bubble-content:before, div:after {
     content: '';
     position: absolute;
@@ -56,6 +60,10 @@
 
 .bubble.visible {
   display: block;
+}
+
+.bubble.compact {
+  padding: 5px;
 }
 
 [for="addToCall"] {
@@ -267,5 +275,36 @@
       margin-top: 10px;
       border: 0;
     }
+  }
+}
+
+[for="buttonContact"] {
+  a {
+    display: inline-block;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: auto 100%;
+    width: 100%;
+    height: 100%;
+    color: #4f4f4f;
+    text-decoration: none;
+    font-family: "Muli", arial;
+    font-size: 14px;
+  }
+
+  a:visited {
+    color: #4f4f4f;
+  }
+
+  p {
+    text-align: center;
+  }
+
+  hr {
+    background-color: #ddd;
+    width: 100%;
+    height: 0.5px;
+    opacity: 0.8;
+    border : 0;
   }
 }

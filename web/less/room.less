@@ -52,6 +52,18 @@ body {
     h2, h3 {
       transform: translateY(5px);
     }
+
+    .header-room-name {
+      @media @smartphones {
+        height: 20px;
+        margin: 0px;
+
+
+        span {
+          font-size: 14px;
+        }
+      }
+    }
   }
 
   .menu {
@@ -551,6 +563,9 @@ footer.main {
   position: fixed;
   bottom: 0;
   right: 60px;
+  @media @smartphones {
+    right: 10px;
+  }
   z-index: 1001;
   width: 300px;
   color: #9b9c9b;
@@ -581,4 +596,8 @@ footer.main {
 
 .main {
   width: 100%
+}
+
+.centered {
+  text-align: center;
 }

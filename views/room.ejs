@@ -28,23 +28,29 @@
       window.isWebRTCVersion=<%=isWebRTCVersion%>
       var isMobile = function() { return typeof window.orientation !== 'undefined'; }
 
-      var mobileSettings = function() {
-        document.getElementById("dock").classList.add("collapsed");
+      var getIdsToHide = function(mobile) {
+        if (mobile) {
+          return ['toggleSharing', 'manageRecordings', 'videoSwitchItem',
+            'audioSwitchItem', 'showFeedback', 'screenShareErrors', 'buttonDocumentation',
+            'buttonTalkToSales'];
+        } else {
+          return ['buttonContactItem'];
+        }
+      }
 
-        var ids = ['toggleSharing', 'manageRecordings', 'videoSwitch',
-          'audioSwitch', 'showFeedback', 'screenShareErrors'];
-
-        ids.forEach(function(id) {
+      var hideItems = function(items) {
+        items.forEach(function(id) {
           var elem = document.getElementById(id);
           elem && elem.classList.add('hidden');
         });
-      };
+      }
 
       window.addEventListener('DOMContentLoaded', function loaded() {
         window.removeEventListener('DOMContentLoaded', loaded);
         if (isMobile()) {
-            mobileSettings();
+            document.getElementById("dock").classList.add("collapsed");
         }
+        hideItems(getIdsToHide(isMobile()));
       });
     </script>
 
@@ -69,7 +75,7 @@
           <span></span>
           <span></span>
         </div>
-        <h1>
+        <h1 class="header-room-name">
           <span id="roomName"><%= roomName %></span>
         </h1>
         <hr>
@@ -121,20 +127,23 @@
               <a id="audioSwitch"><i data-icon="audioSwitch"></i><span>Mute all participants</span></a>
             </li>
             <% } else { %>
-            <li class="tooltip" tooltip="Stop receiving video">
+            <li id="videoSwitchItem" class="tooltip" tooltip="Stop receiving video">
               <a id="videoSwitch"><i data-icon="videoSwitch"></i><span>Stop receiving video</span></a>
             </li>
-            <li class="tooltip" tooltip="Mute all participants">
+            <li id="audioSwitchItem" class="tooltip" tooltip="Mute all participants">
               <a id="audioSwitch"><i data-icon="audioSwitch"></i><span>Mute all participants</span></a>
             </li>
             <li>
               <a id="endCall" class="danger"><i data-icon="end"></i><span>End meeting</span></a>
             </li>
-            <li class="bottom tooltip" tooltip="See Documentation">
+            <li id="buttonDocumentation" class="bottom tooltip" tooltip="See Documentation">
               <a href="https://tokbox.com/developer/" target="_blank" class="button see-documentation"><span>See Documentation</span></a>
             </li>
-            <li class="tooltip" tooltip="Talk to Sales">
+            <li id="buttonTalkToSales" class="tooltip" tooltip="Talk to Sales">
               <a href="https://tokbox.com/contact/sales" target="_blank" class="button talk-to-sales"><span>Talk to Sales</span></a>
+            </li>
+            <li id="buttonContactItem" class="bottom tooltip centered">
+              <a id="buttonContact"><i data-icon="dots"></i><span></span></a>
             </li>
             <% } %>
           </ul>
@@ -218,7 +227,14 @@
           </ul>
         </div>
       </section>
-    </section>
+
+      <section for="buttonContact" class="bubble compact">
+        <div class="bubble-content compact">
+          <p><a href="https://tokbox.com/developer/" target="_blank" class="button see-documentation"><span>See Documentation</span></a></p>
+          <hr/>
+          <p><a href="https://tokbox.com/contact/sales" target="_blank" class="button talk-to-sales"><span>Talk to Sales</span></a></p>
+        </div>
+      </section>
 
     <section id="chat">
       <form class="dialog-chat" id="chatForm">
