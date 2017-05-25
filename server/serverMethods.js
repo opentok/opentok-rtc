@@ -86,9 +86,9 @@ function ServerMethods(aLogLevel, aModules) {
         var templatingSecret = config.get('templating_secret');
         var apiKey = config.get('OpenTok.api_key');
         var apiSecret = config.get('OpenTok.api_secret');
-        var archivePollingTO = config.get('features.archiving.polling_initial_timeout');
+        var archivePollingTO = parseInt(config.get('features.archiving.polling_initial_timeout'));
         var archivePollingTOMultiplier =
-            config.get('features.archiving.polling_timeout_multiplier');
+            parseFloat(config.get('features.archiving.polling_timeout_multiplier'));
         var otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret);
 
         var allowIframing = config.get('allow_Iframing');
@@ -105,7 +105,7 @@ function ServerMethods(aLogLevel, aModules) {
         ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'deleteArchive'].
           forEach(method => otInstance[method + '_P'] = promisify(otInstance[method]));
 
-        var maxSessionAge = config.get('OpenTok.max_session_age');
+        var maxSessionAge = parseInt(config.get('OpenTok.max_session_age'));
         var maxSessionAgeMs = maxSessionAge * 24 * 60 * 60 * 1000;
         var chromeExtId = config.get('features.screensharing.chrome_extension_id');
 
@@ -114,11 +114,15 @@ function ServerMethods(aLogLevel, aModules) {
         var firebaseConfigured =
           config.get('Firebase.data_url') && config.get('Firebase.auth_secret');
 
-        var enableArchiving = config.get('features.archiving.enabled');
-        var enableArchiveManager = enableArchiving && config.get('features.archiving.archive_manager.enabled');
-        var enableScreensharing = config.get('features.screensharing.enabled');
-        var enableAnnotations = enableScreensharing && config.get('features.screensharing.annotations.enabled');
-        var enableFeedback = config.get('features.feedback.enabled');
+        // json config will be boolean but if environment override will be string
+        var parseBool = (input) => (input === true || input === 'true');
+
+        var enableArchiving = parseBool(config.get('features.archiving.enabled'));
+        var enableArchiveManager = enableArchiving && parseBool(config.get('features.archiving.archive_manager.enabled'));
+        var enableScreensharing = parseBool(config.get('features.screensharing.enabled'));
+        var enableAnnotations = enableScreensharing && parseBool(config.get('features.screensharing.annotations.enabled'));
+        var enableFeedback = parseBool(config.get('features.feedback.enabled'));
+        debugger;
 
         if (!firebaseConfigured && enableArchiveManager) {
             logger.error('Firebase not configured. Please provide firebase credentials or disable archive_manager');
