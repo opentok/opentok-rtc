@@ -26,16 +26,16 @@ First, create the app:
 $ heroku create
 ```
 
-Now you will have to set the following environment variables on your heroku instance. Replace `<key>` with your OpenTok API key and `<secret>` with the corresponding API secret in this command:
+Now you will have to set the following environment variables on your heroku instance. Replace `<key>` and `<secret>` with your OpenTok API key and the corresponding API secret:
 
 ```sh
-$ heroku config:set TB_API_KEY=<yourkey> TB_API_SECRET=<yoursecret>
+$ heroku config:set TB_API_KEY=<key> TB_API_SECRET=<secret>
 ```
 
 If you want to use archiving, set up Firebase configuration. Replace `<appurl>` with your Firebase application URL and `<appsecret>` with the secret for that Firebase app in this command:
 
 ```sh
-$ heroku config:set FB_DATA_URL=<yourfburl> FB_AUTH_SECRET=<yourfb_secret>
+$ heroku config:set FB_DATA_URL=<appurl> FB_AUTH_SECRET=<appsecret>
 ```
 
 You will need to choose a redis addon. These two are currently supported,
@@ -43,15 +43,17 @@ You will need to choose a redis addon. These two are currently supported,
  - Redis-to-go: https://elements.heroku.com/addons/redistogo
 
 
- We have used heroku-redis which can be set up like this:
+The app uses heroku-redis, which you can set up like this:
+
 ```sh
 heroku plugins:install heroku-redis
 heroku addons:create heroku-redis:hobby-dev
 ```
-You can deploy your code using git: https://devcenter.heroku.com/articles/git#deploying-code
 
-Additionally you can also modify all the other configuration options described previously using
-environment variables:
+You can deploy your code using git: https://devcenter.heroku.com/articles/git#deploying-code.
+
+Additionally you can also modify all the other configuration options described in the main
+README.md file, using environment variables:
 
 - `tb_archive_polling_initial_timeout` => ARCHIVE_TIMEOUT
 - `tb_archive_polling_multiplier` => TIMEOUT_MULTIPLIER

@@ -3,7 +3,9 @@
 # OpenTokRTC v2
 [![Build Status](https://travis-ci.com/opentok/OpenTokRTC-V2.svg?token=qPpN1jG8Wftsn1cafKif&branch=master)](https://travis-ci.com/opentok/OpenTokRTC-V2)
 
-OpenTokRTC is your private web-based video conferencing solution. It is based on TokBox's OpenTok platform and uses OpenTok's SDKs and API. You can deploy OpenTokRTC on your servers to get your own Google Hangouts alternative running on WebRTC.
+OpenTokRTC is your private web-based video conferencing solution. It is based on the TokBox
+[OpenTok platform](https://tokbox.com/developer/) and uses the OpenTok SDKs and API. You can deploy
+OpenTokRTC on your servers to get your own Google Hangouts alternative running on WebRTC.
 
 This repository contains a NodeJS server and a web client application.
 
@@ -14,10 +16,8 @@ This repository contains a NodeJS server and a web client application.
   - [Setting up](#setting-up)
 - [Running](#running)
 - [Configuration options](#configuration-options)
-- [Screensharing](#screensharing)
+- [Screen sharing](#screen-sharing)
 - [Troubleshooting](#troubleshooting)
-
----
 
 ## Installation
 If you want to install OpenTokRTC on your own server, read on. If you want to deploy OpenTokRTC to Heroku, see [`INSTALL-heroku.md`](INSTALL-heroku.md).
@@ -28,7 +28,6 @@ You will need these dependencies installed on your machine:
 
 - [NodeJS v4+](https://nodejs.org): This version of OpenTokRTC is tested with NodeJS v4 LTS.
 - [Redis](https://redis.io): A `redis` server running on `localhost`. Redis is used for storing configuration and session data.
-- [Bower](https://bower.io): Used for packaging web client dependencies.
 - [Grunt](http://gruntjs.com): Used for bundling assets and running tests.
 
 You will also need these API subscriptions:
@@ -46,7 +45,9 @@ First, change directory to where you have downloaded OpenTokRTC:
 $ cd <path-to-OpenTokRTC>
 ```
 
-Ensure that Redis server is running on `localhost`. Once it is up, set these configuration options for TokBox. Replace `<key>` with your OpenTok API key and `<secret>` with the corresponding API secret in these commands:
+Ensure that Redis server is running on `localhost` (run `redis-server`). Once it is up, set the
+following OpenTok configuration options for the app. Replace `<key>` and `<secret>` with your
+OpenTok API key and the corresponding API secret:
 
 ```sh
 $ redis-cli set tb_api_key <key>
@@ -90,26 +91,6 @@ Additionally, you can start the application as a daemon by passing `-d` flag, wh
 $ node server -d
 ```
 
-### Detailed usage information
-
-```text
-$ node server -h
-Usage: node server
-
-  -h, --help            Displays this help
-  -d, --daemon          Starts as a daemon
-  -u, --user=ARG        UID (name or number) to fork to after binding the port
-  -p, --serverPort=ARG  Server listening port
-  -s, --staticPath=ARG  Directory that holds the static files
-  -C, --certDir=ARG     Directory that holds the cert.pem and key.pem files
-  -S, --secure          Starts as a secure server (HTTPS)
-```
-For example:
-
-```sh
-$ node server -p 8080 -s ./web
-```
-
 ## Configuration options
 
 These are the detailed configuration options that can be set using `redis-cli`:
@@ -118,12 +99,11 @@ These are the detailed configuration options that can be set using `redis-cli`:
 
 - `tb_api_key` (Required): Your OpenTok API key.
 - `tb_api_secret` (Required): Your OpenTok API Secret.
-- `tb_archive_polling_initial_timeout` (Optional, default value: 5000): Timeout (in milliseconds) for
-   polling for archive status change updates. Set this to zero to disable polling. This is the
-   initial timeout (timeout for the first poll).
-- `tb_archive_polling_multiplier` (Optional, default value: 1.5) : Timeout multiplier. After the first
-   poll (if it fails) the next ones will apply this multiplier successively. Set to a lower number
-   to poll more often.
+- `tb_archive_polling_initial_timeout` (Optional, default value: 5000): The initial polling timeout
+   (in milliseconds) for archive status change updates. Set this to 0 to disable polling.
+- `tb_archive_polling_multiplier` (Optional, default value: 1.5) : Timeout multiplier. If the first
+   archive status update polling fails, subsequent polling intervals will apply this multiplier
+   successively. Set to a lower number to poll more often.
 
 ### Firebase configuration
 
@@ -140,7 +120,6 @@ These are the detailed configuration options that can be set using `redis-cli`:
 ### Web client configuration
 
 Web client allows to be configured in some of its features. You can disable feature by adding them to `DISABLED_FEATURES` environment variable or by setting `disabled_features` key in redis.
-
 If you leave this unset, the default configuration will be used:
 ```
 //default "feedback, screensharing, archiving"
@@ -155,28 +134,35 @@ To set your custom config set the variable to a *complete* list of disabled feat
 redis-cli set disabled_features "annotations, archiving, feedback"
 ```
 
-The following features can be disabled:
-- `annotations` disable annotations in screensharing. Only meaningful if `screensharing` is not disabled.
-- `archiving` disable archiving (start/stop recording)
-- `archive_manager` disable archive manager. Only meaningful if `archiving` is not disabled (manage recordings, requires firebase to be configured)
-- `feedback` disable feedback form
-- `screensharing` disable screensharing
+You can disable the following features:
 
-### Additional configuration
+- `annotations` --  Annotations in Screen Sharing. Only meaningful if `screensharing` is not disabled.
+- `archiving` -- Archiving (Recording)
+- `archive_manager` -- Archive Manager. Only meaningful if `archiving` is not disabled (Manage Recordings, requires firebase to be configured)
+- `feedback` -- The "Give Demo Feedback" form.
+- `screensharing` -- Screen sharing.
 
-- `chrome_extension_id` (Optional, default value: 'undefined'): Chrome AddOn extension Id for sharing
-   screen. Note that while the default value allows the server to run it doesn't actually allow
-   screen sharing in chrome. For help configuring the screensharing extension see [Screensharing](#screensharing).
-- `allow_iframing` (Optional, default value: 'never'): Controls the server-side restriction on
-   allowing to load content inside an iframe. The allowed values are:
+### Additional configuration options
+
+* `chrome_extension_id` (Optional, default value: 'undefined'): Chrome AddOn extension ID for
+   screen sharing. Note that while the default value allows the server to run, it doesn't actually
+   enable screen sharing in Chrome. See [Screen sharing](#screen-sharing).
+
+* `allow_iframing` (Optional, default value: 'never'): Controls the server-side restriction on
+   allowing content to load inside an iframe. The allowed values are:>>>>>>> master
+
    - 'always': Allow iframing unconditionally (note that rtcApp.js should also be changed
-               to reflect this, this option only changes what the server allows)
-   - 'never': Set X-Frame-Options to 'DENY' (so deny from everyone)
-   - 'sameorigin': Set X-Frame-Options to 'SAMEORIGIN'
-   - We don't allow restricting it to some URIs because it doesn't work on Chrome
-- `valid_referers` (Optiona, default value: '[]'): List (JSONified array) of the hosts that can hot
-   link to URLs. This same server is always allowed to hot-link
+     to reflect this, this option only changes what the server allows)
 
+   - 'never': Set X-Frame-Options to 'DENY' (Deny loading content in any iframe)
+
+   - 'sameorigin': Set X-Frame-Options to 'SAMEORIGIN' (Only allow iframe content to be loaded
+     from pages in the same origin)
+
+   We don't allow restricting iframe loading to specific URIs because it doesn't work on Chrome
+
+* `valid_referers` (Optional, default value: '[]'): List (JSONified array) of the hosts that can
+   hot link to URLs. This same server is always allowed to hot-link.
 
 ### Firebase security measure
 
@@ -211,37 +197,64 @@ If you want to ensure that the archive list is kept secure (as in only the actua
 Replace 'sessions' with the root where you want to store the archive data (the actual URL that you set as `fb_data_url` configuration parameter.
 
 
-## Screensharing
-The screen sharing extension included in this repository is for Chrome.
-You can read the tokbox general guide for screen sharing on different browsers in the [tokbox developer center](https://tokbox.com/developer/guides/screen-sharing/js/).
+## Screen sharing
 
-### Chrome Screensharing Extension
+The screen-sharing-extension-chrome directory includes sample files for developing a
+Chrome extension for enabling screen-sharing for this app. See the
+[OpenTok screen sharing developer guide](https://tokbox.com/developer/guides/screen-sharing/js/)
+for more information.
+
 Follow these steps to use the chrome extension included in this repository.
+
 1. Edit the `manifest.json` file:
 
-    Most importantly, ensure that `matches` is set to your own domains only, (when developing in local you can use ```"matches": ["http://localhost/*"]```).
+    * Set the `matches` property to match only your web domains. (When developing in
+      the localhost environment, you can use ```"matches": ["http://localhost/*"]```).
 
-    You will also want to change the `name` and `author` settings, and replace the icon files (logo16.png, logo48.png, logo128.png, and logo128transparent.png) with your own website logos. You should change the `version` setting with each new version of your extension. And you may want to change the `description`. For more information, see the [Chrome extension manifest documentation](https://developer.chrome.com/extensions/manifest).
+    * Change the `name` and `author` settings
+
+    * Replace the icon files (logo16.png, logo48.png, logo128.png, and logo128transparent.png)
+    with your own website logos.
+
+    * Change the `version` setting with each new version of your extension.
+
+    * You may want to change the `description`.
+
+    For more information, see the [Chrome extension manifest
+    documentation](https://developer.chrome.com/extensions/manifest).
 
 2. Load the extension into Chrome:
 
-    Open [chrome://extensions](chrome://extensions) and drag the screen-sharing-extension-chrome directory onto the page, or click 'Load unpacked extension...'. For more information see [Chrome's documentation on loading unpacked
+    Open [chrome://extensions](chrome://extensions) and drag the screen-sharing-extension-chrome
+    directory onto the page, or click 'Load unpacked extension...'. For more information see
+    [Chrome's documentation on loading unpacked
     extensions](https://developer.chrome.com/extensions/getstarted#unpacked).
 
 3. Add the `extensionId` to redis as `chrome_extension_id`:
 
- You can get the ID of the extension in the [chrome://extensions](chrome://extensions) page. (It looks like `ffngmcfincpecmcgfdpacbdbdlfeeokh`.)
- Set the value in redis e.g.
+   You can get the ID of the extension in the [chrome://extensions](chrome://extensions) page.
+   (It looks like `ffngmcfincpecmcgfdpacbdbdlfeeokh`.)
+   Set the value in redis -- for example:
+
     ```
-    redis-cli set chrome_extension_id ffngmcfincpecmcgfdpacbdbdlfeeokh```
+    redis-cli set chrome_extension_id ffngmcfincpecmcgfdpacbdbdlfeeokh
+    ```
 
-
-For more information and how to use your extension in production see  [opentok/screensharing-extensions](https://github.com/opentok/screensharing-extensions/blob/master/chrome/ScreenSharing/README.md#customizing-the-extension-for-your-website).
+For more information and how to use your extension in production see the documentation at the
+[opentok/screensharing-extensions](https://github.com/opentok/screensharing-extensions/blob/master/chrome/ScreenSharing/README.md#customizing-the-extension-for-your-website)
+repo on GitHub.
 
 ## Troubleshooting
 
-Issue: "ServerPersistence: Timeout while connecting to the Persistence Provider! Is Redis running?"<br>
-Answer: Ensure Redis server is running on localhost and restart OpenTokRTC.
+**"ServerPersistence: Timeout while connecting to the Persistence Provider! Is Redis running?**
 
-Issue: OpenTokRTC does not work on when served over `http`.<br>
-Answer: Browser security policies require HTTPS for WebRTC. You will need to set up OpenTokRTC to serve over HTTPS. You can set up a [secure reverse-proxy](https://www.nginx.com/resources/admin-guide/nginx-https-upstreams/) to your OpenTokRTC port using nginx. For details, read [this post](https://tokbox.com/blog/the-impact-of-googles-new-chrome-security-policy-on-webrtc/).
+Ensure Redis server is running on localhost (run `redis-server` in the command line)
+and restart OpenTokRTC.
+
+*** OpenTokRTC does not work on when served over HTTP.***
+
+Browser security policies require HTTPS for WebRTC video communications. You will need to set up
+the app to be served over HTTPS. You can set up a
+[secure reverse-proxy](https://www.nginx.com/resources/admin-guide/nginx-https-upstreams/)
+to your OpenTokRTC port using nginx. For details, read
+[this post](https://tokbox.com/blog/the-impact-of-googles-new-chrome-security-policy-on-webrtc/).
