@@ -1,0 +1,39 @@
+{
+	"OpenTok": {
+		"api_key": "TB_API_KEY",
+		"api_secret": "TB_API_SECRET",
+		"max_session_age": "TB_MAX_SESSION_AGE",
+		"empty_room_max_lifetime": "EMPTY_ROOM_LIFETIME"
+	},
+	"Firebase": {
+		"data_url": "FB_DATA_URL",
+		"auth_secret": "FB_AUTH_SECRET"
+	},
+	"features": {
+		"archiving": {
+			"enabled": "ENABLE_ARCHIVING",
+			"archive_always": "ARCHIVE_ALWAYS",
+			"polling_initial_timeout": "ARCHIVE_TIMEOUT",
+			"polling_timeout_multiplier": "ARCHIVE_TIMEOUT",
+			"archive_manager": {
+				"enabled": "ENABLE_ARCHIVE_MANAGER"
+			}
+		},
+		"feedback": {
+			"enabled": "ENABLE_FEEDBACK"
+		},
+		"screensharing": {
+			"enabled": "ENABLE_SCREENSHARING",
+			"chrome_extension_id": "CHROME_EXTENSION_ID",
+			"annotations": {
+				"enabled": "ENABLE_ANNOTATIONS"
+			}
+		}
+	},
+	"allow_Iframing": "ALLOW_IFRAMING",
+	"default_template": "DEFAULT_TEMPLATE",
+	"templating_secret": "TEMPLATING_SECRET",
+	"IOS_app_id": "IOS_APP_ID",
+	"IOS_url_prefix": "IOS_URL_PREFIX",
+	"default_index_page": "DEFAULT_INDEX_PAGE"
+}
