@@ -1,0 +1,41 @@
+{
+	"OpenTok": {
+		"api_key": "",
+		"api_secret": "",
+		"max_session_age": 2,
+		"empty_room_max_lifetime": 3
+	},
+	"Firebase": {
+		"data_url": null,
+		"auth_secret": null
+	},
+	"features": {
+		"archiving": {
+			"enabled": true,
+			"archive_always": false,
+			"polling_initial_timeout": 5000,
+			"polling_timeout_multiplier": 1.5,
+			"archive_manager": {
+				"enabled": false
+			}
+		},
+		"feedback": {
+			"enabled": false
+		},
+		"screensharing": {
+			"enabled": false,
+			"chrome_extension_id": null,
+			"annotations": {
+				"enabled": true
+			}
+		}
+	},
+	"allow_Iframing": "never",
+	"default_template": "room",
+	"templating_secret": null,
+	"IOS_app_id": null,
+	"IOS_url_prefix": "",
+	"default_index_page": null,
+	"default_user_name": "Anonymous User",
+    "redis_room_prefix": "otrtc_room__"
+}

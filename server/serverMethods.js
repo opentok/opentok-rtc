@@ -18,7 +18,8 @@ function ServerMethods(aLogLevel, aModules) {
   var env = process.env;
 
   var Utils = SwaggerBP.Utils;
-  var C = require('./serverConstants');
+  var config = require('config');
+
   var Logger = Utils.MultiLevelLogger;
   var promisify = Utils.promisify;
 
@@ -30,14 +31,16 @@ function ServerMethods(aLogLevel, aModules) {
     FirebaseArchives.Firebase = aModules.Firebase;
   }
 
+
   var logger = new Logger('ServerMethods', aLogLevel);
   var ServerPersistence = SwaggerBP.ServerPersistence;
   var connectionString =
     (aModules && aModules.params && aModules.params.persistenceConfig) ||
     env.REDIS_URL || env.REDISTOGO_URL || '';
   var serverPersistence =
-    new ServerPersistence(C.REDIS_KEYS, connectionString, aLogLevel, aModules);
+    new ServerPersistence([], connectionString, aLogLevel, aModules);
 
+  var redis_room_prefix = config.get('redis_room_prefix');
   // Opentok API instance, which will be configured only after tbConfigPromise
   // is resolved
   var tbConfigPromise;
@@ -79,20 +82,20 @@ function ServerMethods(aLogLevel, aModules) {
     // This will hold the configuration read from Redis
     return serverPersistence.updateCache().
       then(persistConfig => {
-        var defaultTemplate = persistConfig[C.DEFAULT_TEMPLATE];
-        var templatingSecret = persistConfig[C.TEMPLATING_SECRET];
-        var apiKey = persistConfig[C.RED_TB_API_KEY];
-        var apiSecret = persistConfig[C.RED_TB_API_SECRET];
-        var archivePollingTO = parseInt(persistConfig[C.RED_TB_ARCHIVE_POLLING_INITIAL_TIMEOUT]);
+        var defaultTemplate = config.get('default_template');
+        var templatingSecret = config.get('templating_secret');
+        var apiKey = config.get('OpenTok.api_key');
+        var apiSecret = config.get('OpenTok.api_secret');
+        var archivePollingTO = config.get('features.archiving.polling_initial_timeout');
         var archivePollingTOMultiplier =
-          parseFloat(persistConfig[C.RED_TB_ARCHIVE_POLLING_TIMEOUT_MULTIPLIER]);
+            config.get('features.archiving.polling_timeout_multiplier');
         var otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret);
 
-        var allowIframing = persistConfig[C.RED_ALLOW_IFRAMING];
-        var archiveAlways = persistConfig[C.ARCHIVE_ALWAYS] == 'true' ? true : false;
+        var allowIframing = config.get('allow_Iframing');
+        var archiveAlways = config.get('features.archiving.archive_always');
 
-        var iosAppId = persistConfig[C.IOS_APP_ID];
-        var iosUrlPrefix = persistConfig[C.IOS_URL_PREFIX];
+        var iosAppId = config.get('IOS_app_id');
+        var iosUrlPrefix = config.get('IOS_url_prefix');
 
         // This isn't strictly necessary... but since we're using promises all over the place, it
         // makes sense. The _P are just a promisified version of the methods. We could have
@@ -102,34 +105,34 @@ function ServerMethods(aLogLevel, aModules) {
         ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'deleteArchive'].
           forEach(method => otInstance[method + '_P'] = promisify(otInstance[method]));
 
-        var maxSessionAge = parseInt(persistConfig[C.RED_TB_MAX_SESSION_AGE]);
+        var maxSessionAge = config.get('OpenTok.max_session_age');
         var maxSessionAgeMs = maxSessionAge * 24 * 60 * 60 * 1000;
-        var chromeExtId = persistConfig[C.RED_CHROME_EXTENSION_ID];
+        var chromeExtId = config.get('features.screensharing.chrome_extension_id');
 
-        var isWebRTCVersion = persistConfig[C.DEFAULT_INDEX_PAGE] === 'opentokrtc';
-        var disabledFeatures =
-          persistConfig[C.DISABLED_FEATURES] && persistConfig[C.DISABLED_FEATURES].replace(/, +/g, ',').split(',');
-
-        // Returns true if the string 'feature' is in the array of disabledFeatures
-        var isDisabledFeature = feature => Array.isArray(disabledFeatures) && disabledFeatures.indexOf(feature) !== -1
+        var isWebRTCVersion = config.get('default_index_page') === 'opentokrtc';
 
         var firebaseConfigured =
-          persistConfig[C.RED_FB_DATA_URL] && persistConfig[C.RED_FB_AUTH_SECRET]
+          config.get('Firebase.data_url') && config.get('Firebase.auth_secret');
 
-        var disabledArchiveManager = isDisabledFeature(C.FEATURES.ARCHIVE_MANAGER) || isDisabledFeature(C.FEATURES.ARCHIVING);
+        var enableArchiving = config.get('features.archiving.enabled');
+        var enableArchiveManager = enableArchiving && config.get('features.archiving.archive_manager.enabled');
+        var enableScreensharing = config.get('features.screensharing.enabled');
+        var enableAnnotations = enableScreensharing && config.get('features.screensharing.annotations.enabled');
+        var enableFeedback = config.get('features.feedback.enabled');
 
-        if (!firebaseConfigured && !disabledArchiveManager) {
+        if (!firebaseConfigured && enableArchiveManager) {
             logger.error('Firebase not configured. Please provide firebase credentials or disable archive_manager');
         }
+
 
         // For this object we need to know if/when we're reconnecting so we can shutdown the
         // old instance.
         var oldFirebaseArchivesPromise = Utils.CachifiedObject.getCached(FirebaseArchives);
 
         var firebaseArchivesPromise =
-          Utils.CachifiedObject(FirebaseArchives, persistConfig[C.RED_FB_DATA_URL],
-                                persistConfig[C.RED_FB_AUTH_SECRET],
-                                persistConfig[C.RED_EMPTY_ROOM_MAX_LIFETIME], aLogLevel);
+          Utils.CachifiedObject(FirebaseArchives, config.get('Firebase.data_url'),
+                                config.get('Firebase.auth_secret'),
+                                config.get('OpenTok.empty_room_max_lifetime'), aLogLevel);
         _shutdownOldInstance(oldFirebaseArchivesPromise, firebaseArchivesPromise);
 
         return firebaseArchivesPromise.
@@ -150,9 +153,11 @@ function ServerMethods(aLogLevel, aModules) {
               iosAppId: iosAppId,
               iosUrlPrefix: iosUrlPrefix,
               isWebRTCVersion: isWebRTCVersion,
-              enabledFirebase: !disabledArchiveManager,
-              disabledFeatures: disabledFeatures,
-              isDisabledFeature: isDisabledFeature
+              enableArchiving: enableArchiving,
+              enableArchiveManager: enableArchiveManager,
+              enableScreensharing: enableScreensharing,
+              enableAnnotations: enableAnnotations,
+              enableFeedback: enableFeedback,
             };
           });
       });
@@ -200,12 +205,12 @@ function ServerMethods(aLogLevel, aModules) {
     var tbConfig = aReq.tbConfig;
     var roomName = aReq.params.roomName.toLowerCase();
     serverPersistence.
-      getKey(C.RED_ROOM_PREFIX + roomName).
+      getKey(redis_room_prefix + roomName).
       then(_getUsableSessionInfo.bind(tbConfig.otInstance,
                                       tbConfig.maxSessionAgeMs,
                                       tbConfig.archiveAlways)).
       then(usableSessionInfo => {
-        serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, C.RED_ROOM_PREFIX + roomName,
+        serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, redis_room_prefix + roomName,
                                    JSON.stringify(usableSessionInfo));
         var sessionId = usableSessionInfo.sessionId;
         tbConfig.otInstance.listArchives_P({ offset: 0, count: 1000 }).
@@ -292,7 +297,7 @@ function ServerMethods(aLogLevel, aModules) {
       render((template ? template : tbConfig.defaultTemplate) + '.ejs',
              {
                isWebRTCVersion: tbConfig.isWebRTCVersion,
-               userName: userName || C.DEFAULT_USER_NAME,
+               userName: userName || config.get('default_user_name'),
                roomName: aReq.params.roomName,
                chromeExtensionId: tbConfig.chromeExtId,
                iosAppId: tbConfig.iosAppId,
@@ -300,9 +305,12 @@ function ServerMethods(aLogLevel, aModules) {
                // https://opentokdemo.tokbox.com/room/
                // or whatever other thing that should be before the roomName
                iosURL: tbConfig.iosUrlPrefix + aReq.params.roomName + '?userName=' +
-                       (userName || C.DEFAULT_USER_NAME),
-               features: C.FEATURES,
-               isDisabledFeature: tbConfig.isDisabledFeature,
+                       (userName || config.get('default_user_name')),
+               enableArchiving: tbConfig.enableArchiving,
+               enableArchiveManager: tbConfig.enableArchiveManager,
+               enableScreensharing: tbConfig.enableScreensharing,
+               enableAnnotation: tbConfig.enableAnnotation,
+               enableFeedback: tbConfig.enableFeedback,
              }, (err, html) => {
                if (err) {
                  logger.log('getRoom. error:', err);
@@ -368,25 +376,25 @@ function ServerMethods(aLogLevel, aModules) {
     var fbArchives = tbConfig.fbArchives;
     var roomName = aReq.params.roomName.toLowerCase();
     var userName =
-      (aReq.query && aReq.query.userName) || C.DEFAULT_USER_NAME + _numAnonymousUsers++;
+      (aReq.query && aReq.query.userName) || config.get('default_user_name') + _numAnonymousUsers++;
     logger.log('getRoomInfo serving ' + aReq.path, 'roomName: ', roomName, 'userName: ', userName);
 
-    var enabledFirebase = tbConfig.enabledFirebase;
+    var enableArchiveManager = tbConfig.enableArchiveManager;
     // We have to check if we have a session id stored already on the persistence provider (and if
     // it's not too old).
     // Note that we do not persist tokens.
     serverPersistence.
-      getKey(C.RED_ROOM_PREFIX + roomName).
+      getKey(redis_room_prefix + roomName).
       then(_getUsableSessionInfo.bind(tbConfig.otInstance, tbConfig.maxSessionAgeMs,
                                       tbConfig.archiveAlways)).
       then(usableSessionInfo => {
         // Update the database. We could do this on getUsable...
-        serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, C.RED_ROOM_PREFIX + roomName,
+        serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, redis_room_prefix + roomName,
                                    JSON.stringify(usableSessionInfo));
 
         // We have to create an authentication token for the new user...
         var fbUserToken =
-          enabledFirebase && fbArchives.createUserToken(usableSessionInfo.sessionId, userName);
+          enableArchiveManager && fbArchives.createUserToken(usableSessionInfo.sessionId, userName);
 
         // and finally, answer...
         var answer = {
@@ -398,11 +406,11 @@ function ServerMethods(aLogLevel, aModules) {
                   }),
           username: userName,
           firebaseURL:
-            enabledFirebase && fbArchives.baseURL + '/' + usableSessionInfo.sessionId || 'unknown',
+            enableArchiveManager && fbArchives.baseURL + '/' + usableSessionInfo.sessionId || 'unknown',
           firebaseToken: fbUserToken || 'unknown',
           chromeExtId: tbConfig.chromeExtId,
-          features: C.FEATURES,
-          disabledFeatures: tbConfig.disabledFeatures,
+          enableArchiveManager: tbConfig.enableArchiveManager,
+          enableAnnotation: tbConfig.enableAnnotation
         };
         answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId,
 
@@ -487,7 +495,7 @@ function ServerMethods(aLogLevel, aModules) {
     // API makes it simpler for the client app, since it only needs the room name to stop an
     // in-progress recording. So we can just get the sessionInfo from the serverPersistence.
     serverPersistence.
-      getKey(C.RED_ROOM_PREFIX + roomName).
+      getKey(redis_room_prefix + roomName).
       then(_getUpdatedArchiveInfo.bind(undefined, tbConfig, operation)).
       then(sessionInfo => {
         var now = new Date();
@@ -511,7 +519,7 @@ function ServerMethods(aLogLevel, aModules) {
         return archiveOp().then(aArchive => {
           sessionInfo.inProgressArchiveId = aArchive.status === 'started' ? aArchive.id : undefined;
           // Update the internal database
-          serverPersistence.setKey(C.RED_ROOM_PREFIX + roomName, JSON.stringify(sessionInfo));
+          serverPersistence.setKey(redis_room_prefix + roomName, JSON.stringify(sessionInfo));
 
           // We need to update the external database also. We have a conundrum here, though.
           // At this point, if the operation requested was stopping an active recording, the
