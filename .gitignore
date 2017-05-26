@@ -8,6 +8,7 @@ logs
 # test libraries that should be fetched by bower
 test/lib
 
+
 # Runtime data
 pids
 *.pid
@@ -37,3 +38,8 @@ build/Release
 **/bower_components
 resultsRest.txt
 resultsUnit.txt
+
+# node-config
+config/
+!config/default.json
+!config/custom-environment-variables.json
