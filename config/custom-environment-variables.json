@@ -14,7 +14,7 @@
 			"enabled": "ENABLE_ARCHIVING",
 			"archive_always": "ARCHIVE_ALWAYS",
 			"polling_initial_timeout": "ARCHIVE_TIMEOUT",
-			"polling_timeout_multiplier": "ARCHIVE_TIMEOUT",
+			"polling_timeout_multiplier": "TIMEOUT_MULTIPLIER",
 			"archive_manager": {
 				"enabled": "ENABLE_ARCHIVE_MANAGER"
 			}
