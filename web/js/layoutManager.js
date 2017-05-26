@@ -48,6 +48,9 @@
     Utils.addEventsHandlers('layoutMenuView:', handlers, global);
     Utils.addEventsHandlers('layoutView:', handlers, global);
     Utils.addEventsHandlers('hangout:', handlers, global);
+
+    window.addEventListener('resize', rearrange);
+
     return enableHangoutScroll ? LazyLoader.load([
       '/js/layoutViewport.js', '/css/hangoutScroll.css'
       ]).then(function() {
@@ -104,7 +107,18 @@
   }
 
   function calculateCandidateLayout() {
-    return GRP_LAYOUTS[userLayout] ? layouts[userLayout] : Grid;
+    if (getTotal() == 4) {
+      return Grid;
+    }
+    if (screen.width > screen.height ||
+      Math.abs(window.orientation) == 90) {
+      // Landscape
+      userLayout = 'f2f_vertical';
+    } else {
+      userLayout = 'f2f_horizontal';
+    }
+
+    return layouts[userLayout];
   }
 
   var F2F_LAYOUTS = {
@@ -131,7 +145,6 @@
 
   function rearrange(item) {
     var candidateLayout = calculateCandidateLayout();
-
     if (!currentLayout || !isOnGoing(candidateLayout)) {
       currentLayout && currentLayout.destroy();
       currentLayout = new candidateLayout(container, items, item);
