@@ -40,7 +40,7 @@ function ServerMethods(aLogLevel, aModules) {
   var serverPersistence =
     new ServerPersistence([], connectionString, aLogLevel, aModules);
 
-  var redis_room_prefix = config.get('redis_room_prefix');
+  var redisRoomPrefix = config.get('redis_room_prefix');
   // Opentok API instance, which will be configured only after tbConfigPromise
   // is resolved
   var tbConfigPromise;
@@ -209,12 +209,12 @@ function ServerMethods(aLogLevel, aModules) {
     var tbConfig = aReq.tbConfig;
     var roomName = aReq.params.roomName.toLowerCase();
     serverPersistence.
-      getKey(redis_room_prefix + roomName).
+      getKey(redisRoomPrefix + roomName).
       then(_getUsableSessionInfo.bind(tbConfig.otInstance,
                                       tbConfig.maxSessionAgeMs,
                                       tbConfig.archiveAlways)).
       then(usableSessionInfo => {
-        serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, redis_room_prefix + roomName,
+        serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, redisRoomPrefix + roomName,
                                    JSON.stringify(usableSessionInfo));
         var sessionId = usableSessionInfo.sessionId;
         tbConfig.otInstance.listArchives_P({ offset: 0, count: 1000 }).
@@ -388,12 +388,12 @@ function ServerMethods(aLogLevel, aModules) {
     // it's not too old).
     // Note that we do not persist tokens.
     serverPersistence.
-      getKey(redis_room_prefix + roomName).
+      getKey(redisRoomPrefix + roomName).
       then(_getUsableSessionInfo.bind(tbConfig.otInstance, tbConfig.maxSessionAgeMs,
                                       tbConfig.archiveAlways)).
       then(usableSessionInfo => {
         // Update the database. We could do this on getUsable...
-        serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, redis_room_prefix + roomName,
+        serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, redisRoomPrefix + roomName,
                                    JSON.stringify(usableSessionInfo));
 
         // We have to create an authentication token for the new user...
@@ -499,7 +499,7 @@ function ServerMethods(aLogLevel, aModules) {
     // API makes it simpler for the client app, since it only needs the room name to stop an
     // in-progress recording. So we can just get the sessionInfo from the serverPersistence.
     serverPersistence.
-      getKey(redis_room_prefix + roomName).
+      getKey(redisRoomPrefix + roomName).
       then(_getUpdatedArchiveInfo.bind(undefined, tbConfig, operation)).
       then(sessionInfo => {
         var now = new Date();
@@ -523,7 +523,7 @@ function ServerMethods(aLogLevel, aModules) {
         return archiveOp().then(aArchive => {
           sessionInfo.inProgressArchiveId = aArchive.status === 'started' ? aArchive.id : undefined;
           // Update the internal database
-          serverPersistence.setKey(redis_room_prefix + roomName, JSON.stringify(sessionInfo));
+          serverPersistence.setKey(redisRoomPrefix + roomName, JSON.stringify(sessionInfo));
 
           // We need to update the external database also. We have a conundrum here, though.
           // At this point, if the operation requested was stopping an active recording, the
