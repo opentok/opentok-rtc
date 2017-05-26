@@ -1,7 +1,7 @@
 {
 	"OpenTok": {
-		"api_key": "",
-		"api_secret": "",
+		"api_key": [],
+		"api_secret": [],
 		"max_session_age": 2,
 		"empty_room_max_lifetime": 3
 	},
