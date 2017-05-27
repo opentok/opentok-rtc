@@ -375,8 +375,7 @@
         case 'endCall':
           showConfirm(MODAL_TXTS.endCall).then(function(endCall) {
             if (endCall) {
-              RoomView.participantsNumber = 0;
-              Utils.sendEvent('roomView:endCall');
+              window.location.href = '/done';
             }
           });
           break;

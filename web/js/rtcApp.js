@@ -10,6 +10,12 @@
         'RoomController'
       ]
     },
+    '/done': {
+      mainView: 'DoneController',
+      dependencies: [
+        'DoneController'
+      ]
+    },
     '/': {
       mainView: 'LandingController',
       dependencies: [
@@ -69,7 +75,8 @@ this.addEventListener('load', function startApp() {
       '/shared/js/utils.js',
       '/js/helpers/requests.js',
       '/js/roomController.js',
-      '/js/landingController.js'
+      '/js/landingController.js',
+      '/js/doneController.js'
     ]).then(function() {
       RTCApp.init();
     });

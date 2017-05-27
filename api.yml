@@ -199,6 +199,17 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/ErrorInfo'
+  '/done':
+    get:
+      summary: Gets the configured meeting ended page.
+      x-implemented-in: getDone
+      produces:
+        - 'text/html'
+      description: >-
+        Returns a customized root page when the /done is accessed.
+      responses:
+        '200':
+          description: The HTML for the page
   '/archive/{archiveId}':
     get:
       summary: Gets and returns a temporary archive URL.
