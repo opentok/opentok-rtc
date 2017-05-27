@@ -65,6 +65,11 @@
           <button id="enter" class="btn tb btn-primary btn-arrow btn-next btn-padding">Create Meeting</button>
           <p class="error-title error-text">Please fill in required information</p>
         </form>
+<% if (!isWebRTCVersion) { %>
+        <div class="safari-plug">
+          <a href="https://opentokdemo.tokbox.com/safari">Try the WebRTC Demo for Safari.</a>
+        </div>
+<% } %>
       </section>
     </section>
 
