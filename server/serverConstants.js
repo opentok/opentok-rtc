@@ -12,7 +12,7 @@ function throwError(message) {
 }
 
 try {
-    var config_file = env.OTDEMO_CONFIG_FILE_PATH || './config.json'
+    var config_file = env.OTDEMO_CONFIG_FILE_PATH || '..config/config.json'
     config = require(config_file)
 } catch (e) {
     console.log('No config.json file found.')
