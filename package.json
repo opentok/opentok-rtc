@@ -24,7 +24,6 @@
   "homepage": "https://github.com/AntonioMA/openTokRTCV2/",
   "dependencies": {
     "bower": "^1.6.5",
-    "config": "^1.26.1",
     "cors": "^2.7.1",
     "daemon": "^1.1.0",
     "ejs": "^1.0.0",
@@ -46,6 +45,7 @@
     "grunt-karma": "^0.12.1",
     "grunt-mocha-test": "^0.12.7",
     "ioredis": "^1.7.6",
+    "lodash": "^4.17.4",
     "opentok": "^2.3.0",
     "pattern-library-v2": "git+https://bc9fa338c1a7d921029ac5b64f72815d59389715:x-oauth-basic@github.com/opentok/pattern-library-v2.git",
     "swagger-boilerplate": "^0.0.8",

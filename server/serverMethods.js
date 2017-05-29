@@ -18,7 +18,7 @@ function ServerMethods(aLogLevel, aModules) {
   var env = process.env;
 
   var Utils = SwaggerBP.Utils;
-  var config = require('config');
+  var C = require('./serverConstants');
 
   var Logger = Utils.MultiLevelLogger;
   var promisify = Utils.promisify;
@@ -40,7 +40,7 @@ function ServerMethods(aLogLevel, aModules) {
   var serverPersistence =
     new ServerPersistence([], connectionString, aLogLevel, aModules);
 
-  var redisRoomPrefix = config.get('redis_room_prefix');
+  var redisRoomPrefix = C.REDIS_ROOM_PREFIX;
   // Opentok API instance, which will be configured only after tbConfigPromise
   // is resolved
   var tbConfigPromise;
@@ -80,20 +80,20 @@ function ServerMethods(aLogLevel, aModules) {
 
   function _initialTBConfig() {
     // This will hold the configuration read from Redis
-    var defaultTemplate = config.get('default_template');
-    var templatingSecret = config.get('templating_secret');
-    var apiKey = config.get('OpenTok.api_key');
-    var apiSecret = config.get('OpenTok.api_secret');
-    var archivePollingTO = parseInt(config.get('features.archiving.polling_initial_timeout'));
+    var defaultTemplate = C.DEFAULT_TEMPLATE;
+    var templatingSecret = C.TEMPLATING_SECRET;
+    var apiKey = C.OPENTOK_API_KEY;
+    var apiSecret = C.OPENTOK_API_SECRET;
+    var archivePollingTO = C.ARCHIVE_POLLING_INITIAL_TIMEOUT;
     var archivePollingTOMultiplier =
-        parseFloat(config.get('features.archiving.polling_timeout_multiplier'));
+        C.ARCHIVE_POLLING_TIMEOUT_MULTIPLIER;
     var otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret);
 
-    var allowIframing = config.get('allow_Iframing');
-    var archiveAlways = config.get('features.archiving.archive_always');
+    var allowIframing = C.ALLOW_IFRAMING;
+    var archiveAlways = C.ARCHIVE_ALWAYS;
 
-    var iosAppId = config.get('IOS_app_id');
-    var iosUrlPrefix = config.get('IOS_url_prefix');
+    var iosAppId = C.IOS_APP_ID;
+    var iosUrlPrefix = C.IOS_URL_PREFIX;
 
     // This isn't strictly necessary... but since we're using promises all over the place, it
     // makes sense. The _P are just a promisified version of the methods. We could have
@@ -103,24 +103,20 @@ function ServerMethods(aLogLevel, aModules) {
     ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'deleteArchive'].
       forEach(method => otInstance[method + '_P'] = promisify(otInstance[method]));
 
-    var maxSessionAge = parseInt(config.get('OpenTok.max_session_age'));
+    var maxSessionAge = C.OPENTOK_MAX_SESSION_AGE;
     var maxSessionAgeMs = maxSessionAge * 24 * 60 * 60 * 1000;
-    var chromeExtId = config.get('features.screensharing.chrome_extension_id');
+    var chromeExtId = C.CHROME_EXTENSION_ID;
 
-    var isWebRTCVersion = config.get('default_index_page') === 'opentokrtc';
+    var isWebRTCVersion = C.DEFAULT_INDEX_PAGE === 'opentokrtc';
 
     var firebaseConfigured =
-      config.get('Firebase.data_url') && config.get('Firebase.auth_secret');
+      C.FIREBASE_DATA_URL && C.FIREBASE_AUTH_SECRET;
 
-    // json config will be boolean but if environment override will be string
-    var parseBool = (input) => (input === true || input === 'true');
-
-    var enableArchiving = parseBool(config.get('features.archiving.enabled'));
-    var enableArchiveManager = enableArchiving && parseBool(config.get('features.archiving.archive_manager.enabled'));
-    var enableScreensharing = parseBool(config.get('features.screensharing.enabled'));
-    var enableAnnotations = enableScreensharing && parseBool(config.get('features.screensharing.annotations.enabled'));
-    var enableFeedback = parseBool(config.get('features.feedback.enabled'));
-    debugger;
+    var enableArchiving = C.ENABLE_ARCHIVING;
+    var enableArchiveManager = enableArchiving && C.ENABLE_ARCHIVE_MANAGER;
+    var enableScreensharing = C.ENABLE_SCREENSHARING;
+    var enableAnnotations = enableScreensharing && C.ENABLE_ANNOTATIONS;
+    var enableFeedback = C.ENABLE_FEEDBACK;
 
     if (!firebaseConfigured && enableArchiveManager) {
         logger.error('Firebase not configured. Please provide firebase credentials or disable archive_manager');
@@ -132,9 +128,9 @@ function ServerMethods(aLogLevel, aModules) {
     var oldFirebaseArchivesPromise = Utils.CachifiedObject.getCached(FirebaseArchives);
 
     var firebaseArchivesPromise =
-      Utils.CachifiedObject(FirebaseArchives, config.get('Firebase.data_url'),
-                            config.get('Firebase.auth_secret'),
-                            config.get('OpenTok.empty_room_max_lifetime'), aLogLevel);
+      Utils.CachifiedObject(FirebaseArchives, C.FIREBASE_DATA_URL,
+                            C.FIREBASE_AUTH_SECRET,
+                            C.EMPTY_ROOM_LIFETIME, aLogLevel);
     _shutdownOldInstance(oldFirebaseArchivesPromise, firebaseArchivesPromise);
 
     return firebaseArchivesPromise.
@@ -293,12 +289,11 @@ function ServerMethods(aLogLevel, aModules) {
     aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
     aRes.set('Pragma', 'no-cache');
     aRes.set('Expires', 0);
-
     aRes.
       render((template ? template : tbConfig.defaultTemplate) + '.ejs',
              {
                isWebRTCVersion: tbConfig.isWebRTCVersion,
-               userName: userName || config.get('default_user_name'),
+               userName: userName || C.DEFAULT_USER_NAME,
                roomName: aReq.params.roomName,
                chromeExtensionId: tbConfig.chromeExtId,
                iosAppId: tbConfig.iosAppId,
@@ -306,7 +301,7 @@ function ServerMethods(aLogLevel, aModules) {
                // https://opentokdemo.tokbox.com/room/
                // or whatever other thing that should be before the roomName
                iosURL: tbConfig.iosUrlPrefix + aReq.params.roomName + '?userName=' +
-                       (userName || config.get('default_user_name')),
+                       (userName || C.DEFAULT_USER_NAME),
                enableArchiving: tbConfig.enableArchiving,
                enableArchiveManager: tbConfig.enableArchiveManager,
                enableScreensharing: tbConfig.enableScreensharing,
@@ -377,7 +372,7 @@ function ServerMethods(aLogLevel, aModules) {
     var fbArchives = tbConfig.fbArchives;
     var roomName = aReq.params.roomName.toLowerCase();
     var userName =
-      (aReq.query && aReq.query.userName) || config.get('default_user_name') + _numAnonymousUsers++;
+      (aReq.query && aReq.query.userName) || C.DEFAULT_USER_NAME + _numAnonymousUsers++;
     logger.log('getRoomInfo serving ' + aReq.path, 'roomName: ', roomName, 'userName: ', userName);
 
     var enableArchiveManager = tbConfig.enableArchiveManager;
@@ -396,7 +391,6 @@ function ServerMethods(aLogLevel, aModules) {
         // We have to create an authentication token for the new user...
         var fbUserToken =
           enableArchiveManager && fbArchives.createUserToken(usableSessionInfo.sessionId, userName);
-
         // and finally, answer...
         var answer = {
           apiKey: tbConfig.apiKey,
@@ -411,7 +405,7 @@ function ServerMethods(aLogLevel, aModules) {
           firebaseToken: fbUserToken || 'unknown',
           chromeExtId: tbConfig.chromeExtId,
           enableArchiveManager: tbConfig.enableArchiveManager,
-          enableAnnotation: tbConfig.enableAnnotation
+          enableAnnotation: tbConfig.enableAnnotations
         };
         answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId,
 
