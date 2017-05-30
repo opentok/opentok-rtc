@@ -40,7 +40,7 @@ exports.readConfigJson = () => {
           }
           throw e;
       }
-      fs.readFile(require.resolve(configPath), (err, data) => {
+      fs.readFile(configPath, (err, data) => {
         if (err)
             reject(err)
         resolve(new ConfigLoader(JSON.parse(data)));
