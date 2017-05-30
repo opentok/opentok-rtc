@@ -12,10 +12,16 @@ function throwError(message) {
 }
 
 try {
-    var config_file = env.OTDEMO_CONFIG_FILE_PATH || '..config/config.json'
+    var config_file = env.OTDEMO_CONFIG_FILE_PATH || '../config/config.json'
     config = require(config_file)
 } catch (e) {
-    console.log('No config.json file found.')
+    // Config is not mandatory. If MODULE_NOT_FOUND log and continue.
+    // Otherwise throw error for user to see (e.g. JSON parsing error)
+    if (e.code === 'MODULE_NOT_FOUND') {
+        console.log("No json config file found.")
+    } else {
+        throw e
+    }
     config = {}
 }
 
