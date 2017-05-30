@@ -16,9 +16,9 @@ function ServerMethods(aLogLevel, aModules) {
   var ErrorInfo = SwaggerBP.ErrorInfo;
 
   var env = process.env;
-
   var Utils = SwaggerBP.Utils;
   var C = require('./serverConstants');
+  var configLoader = require('./configLoader');
 
   var Logger = Utils.MultiLevelLogger;
   var promisify = Utils.promisify;
@@ -79,85 +79,88 @@ function ServerMethods(aLogLevel, aModules) {
 
 
   function _initialTBConfig() {
-    // This will hold the configuration read from Redis
-    var defaultTemplate = C.DEFAULT_TEMPLATE;
-    var templatingSecret = C.TEMPLATING_SECRET;
-    var apiKey = C.OPENTOK_API_KEY;
-    var apiSecret = C.OPENTOK_API_SECRET;
-    var archivePollingTO = C.ARCHIVE_POLLING_INITIAL_TIMEOUT;
-    var archivePollingTOMultiplier =
-        C.ARCHIVE_POLLING_TIMEOUT_MULTIPLIER;
-    var otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret);
+      return configLoader.readConfigJson().then(config => {
+              // This will hold the configuration read from Redis
+            var defaultTemplate = config.get(C.DEFAULT_TEMPLATE);
+            var templatingSecret = config.get(C.TEMPLATING_SECRET);
+            var apiKey = config.get(C.OPENTOK_API_KEY);
+            var apiSecret = config.get(C.OPENTOK_API_SECRET);
+            var archivePollingTO = config.get(C.ARCHIVE_POLLING_INITIAL_TIMEOUT);
+            var archivePollingTOMultiplier =
+                config.get(C.ARCHIVE_POLLING_TIMEOUT_MULTIPLIER);
+            var otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret);
 
-    var allowIframing = C.ALLOW_IFRAMING;
-    var archiveAlways = C.ARCHIVE_ALWAYS;
+            var allowIframing = config.get(C.ALLOW_IFRAMING);
+            var archiveAlways = config.get(C.ARCHIVE_ALWAYS);
 
-    var iosAppId = C.IOS_APP_ID;
-    var iosUrlPrefix = C.IOS_URL_PREFIX;
+            var iosAppId = config.get(C.IOS_APP_ID);
+            var iosUrlPrefix = config.get(C.IOS_URL_PREFIX);
 
-    // This isn't strictly necessary... but since we're using promises all over the place, it
-    // makes sense. The _P are just a promisified version of the methods. We could have
-    // overwritten the original methods but this way we make it explicit. That's also why we're
-    // breaking camelCase here, to make it patent to the reader that those aren't standard
-    // methods of the API.
-    ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'deleteArchive'].
-      forEach(method => otInstance[method + '_P'] = promisify(otInstance[method]));
+            // This isn't strictly necessary... but since we're using promises all over the place, it
+            // makes sense. The _P are just a promisified version of the methods. We could have
+            // overwritten the original methods but this way we make it explicit. That's also why we're
+            // breaking camelCase here, to make it patent to the reader that those aren't standard
+            // methods of the API.
+            ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'deleteArchive'].
+              forEach(method => otInstance[method + '_P'] = promisify(otInstance[method]));
 
-    var maxSessionAge = C.OPENTOK_MAX_SESSION_AGE;
-    var maxSessionAgeMs = maxSessionAge * 24 * 60 * 60 * 1000;
-    var chromeExtId = C.CHROME_EXTENSION_ID;
+            var maxSessionAge = config.get(C.OPENTOK_MAX_SESSION_AGE);
+            var maxSessionAgeMs = maxSessionAge * 24 * 60 * 60 * 1000;
+            var chromeExtId = config.get(C.CHROME_EXTENSION_ID);
 
-    var isWebRTCVersion = C.DEFAULT_INDEX_PAGE === 'opentokrtc';
+            var isWebRTCVersion = config.get(C.DEFAULT_INDEX_PAGE) === 'opentokrtc';
 
-    var firebaseConfigured =
-      C.FIREBASE_DATA_URL && C.FIREBASE_AUTH_SECRET;
+            var firebaseConfigured =
+              config.get(C.FIREBASE_DATA_URL) && config.get(C.FIREBASE_AUTH_SECRET);
 
-    var enableArchiving = C.ENABLE_ARCHIVING;
-    var enableArchiveManager = enableArchiving && C.ENABLE_ARCHIVE_MANAGER;
-    var enableScreensharing = C.ENABLE_SCREENSHARING;
-    var enableAnnotations = enableScreensharing && C.ENABLE_ANNOTATIONS;
-    var enableFeedback = C.ENABLE_FEEDBACK;
+            var enableArchiving = config.get(C.ENABLE_ARCHIVING, config);
+            var enableArchiveManager = enableArchiving && config.get(C.ENABLE_ARCHIVE_MANAGER);
+            var enableScreensharing = config.get(C.ENABLE_SCREENSHARING);
+            var enableAnnotations = enableScreensharing && config.get(C.ENABLE_ANNOTATIONS);
+            var enableFeedback = config.get(C.ENABLE_FEEDBACK);
 
-    if (!firebaseConfigured && enableArchiveManager) {
-        logger.error('Firebase not configured. Please provide firebase credentials or disable archive_manager');
-    }
+            if (!firebaseConfigured && enableArchiveManager) {
+                logger.error('Firebase not configured. Please provide firebase credentials or disable archive_manager');
+            }
 
 
-    // For this object we need to know if/when we're reconnecting so we can shutdown the
-    // old instance.
-    var oldFirebaseArchivesPromise = Utils.CachifiedObject.getCached(FirebaseArchives);
+            // For this object we need to know if/when we're reconnecting so we can shutdown the
+            // old instance.
+            var oldFirebaseArchivesPromise = Utils.CachifiedObject.getCached(FirebaseArchives);
 
-    var firebaseArchivesPromise =
-      Utils.CachifiedObject(FirebaseArchives, C.FIREBASE_DATA_URL,
-                            C.FIREBASE_AUTH_SECRET,
-                            C.EMPTY_ROOM_LIFETIME, aLogLevel);
-    _shutdownOldInstance(oldFirebaseArchivesPromise, firebaseArchivesPromise);
+            var firebaseArchivesPromise =
+              Utils.CachifiedObject(FirebaseArchives, config.get(C.FIREBASE_DATA_URL),
+                                    config.get(C.FIREBASE_AUTH_SECRET),
+                                    config.get(C.EMPTY_ROOM_LIFETIME), aLogLevel);
+            _shutdownOldInstance(oldFirebaseArchivesPromise, firebaseArchivesPromise);
 
-    return firebaseArchivesPromise.
-      then(firebaseArchives => {
-        return {
-          otInstance: otInstance,
-          apiKey: apiKey,
-          apiSecret: apiSecret,
-          archivePollingTO: archivePollingTO,
-          archivePollingTOMultiplier: archivePollingTOMultiplier,
-          maxSessionAgeMs: maxSessionAgeMs,
-          fbArchives: firebaseArchives,
-          allowIframing: allowIframing,
-          chromeExtId: chromeExtId,
-          defaultTemplate: defaultTemplate,
-          templatingSecret: templatingSecret,
-          archiveAlways: archiveAlways,
-          iosAppId: iosAppId,
-          iosUrlPrefix: iosUrlPrefix,
-          isWebRTCVersion: isWebRTCVersion,
-          enableArchiving: enableArchiving,
-          enableArchiveManager: enableArchiveManager,
-          enableScreensharing: enableScreensharing,
-          enableAnnotations: enableAnnotations,
-          enableFeedback: enableFeedback,
-        };
-      });
+            return firebaseArchivesPromise.
+              then(firebaseArchives => {
+                return {
+                  otInstance: otInstance,
+                  apiKey: apiKey,
+                  apiSecret: apiSecret,
+                  archivePollingTO: archivePollingTO,
+                  archivePollingTOMultiplier: archivePollingTOMultiplier,
+                  maxSessionAgeMs: maxSessionAgeMs,
+                  fbArchives: firebaseArchives,
+                  allowIframing: allowIframing,
+                  chromeExtId: chromeExtId,
+                  defaultTemplate: defaultTemplate,
+                  templatingSecret: templatingSecret,
+                  archiveAlways: archiveAlways,
+                  iosAppId: iosAppId,
+                  iosUrlPrefix: iosUrlPrefix,
+                  isWebRTCVersion: isWebRTCVersion,
+                  enableArchiving: enableArchiving,
+                  enableArchiveManager: enableArchiveManager,
+                  enableScreensharing: enableScreensharing,
+                  enableAnnotations: enableAnnotations,
+                  enableFeedback: enableFeedback,
+                };
+              });
+
+          })
   }
 
   function configReady(aReq, aRes, aNext) {
