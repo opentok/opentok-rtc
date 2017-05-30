@@ -754,10 +754,32 @@
           return otHelper.publish(publisherElement, publisherOptions, {}).then(function() {
             setPublisherReady();
           }).catch(function(errInfo) {
-            if (errInfo.error.name === 'OT_CHROME_MICROPHONE_ACQUISITION_ERROR') {
-              Utils.sendEvent('roomController:chromePublisherError');
-              otHelper.disconnect();
+            switch (errInfo.error.name) {
+              case 'OT_CHROME_MICROPHONE_ACQUISITION_ERROR':
+                Utils.sendEvent('roomController:chromePublisherError');
+                break;
+              case 'OT_USER_MEDIA_ACCESS_DENIED':
+                switch (Utils.browserName()) {
+                  case 'chrome':
+                    Utils.sendEvent('roomController:cameraDeniedErrorChrome');
+                    break;
+                  case 'firefox':
+                    Utils.sendEvent('roomController:cameraDeniedErrorFirefox');
+                    break;
+                  case 'ie':
+                    Utils.sendEvent('roomController:cameraDeniedErrorIE');
+                    break;
+                  case 'safari':
+                    // Currently, this error does not occur in Safari.
+                    break;
+                  default:
+                    // Ignore other browsers.
+                }
+                break;
+              default:
+                // Ignore other errors.
             }
+            otHelper.disconnect();
           });
         }).
         then(function() {

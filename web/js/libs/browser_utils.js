@@ -183,6 +183,24 @@
         checkObject(!window['safari'] || safari.pushNotification);
   }
 
+  function isFirefox() {
+    return navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+  }
+
+  function isChrome() {
+    var userAgent = 'userAgent' in navigator && navigator.userAgent.toLowerCase() || '';
+    var vendor = 'vendor' in navigator && navigator.vendor.toLowerCase() || '';
+    return /chrome|chromium/i.test(userAgent) && /google inc/.test(vendor);
+  }
+
+  function browserName() {
+    if (isChrome()) return 'chrome';
+    if (isFirefox()) return 'firefox';
+    if (isIE()) return 'ie';
+    if (isSafari()) return 'safari';
+    return 'unknown';
+  }
+
   var Utils = {
     isSafari: isSafari,
     getCurrentTime: getCurrentTime,
@@ -208,14 +226,12 @@
     parseSearch: parseSearch,
     generateSearchStr: generateSearchStr,
     decodeStr: decodeStr,
-    isChrome: function() {
-      var userAgent = 'userAgent' in navigator && navigator.userAgent.toLowerCase() || '';
-      var vendor = 'vendor' in navigator && navigator.vendor.toLowerCase() || '';
-      return /chrome|chromium/i.test(userAgent) && /google inc/.test(vendor);
-    },
+    isChrome: isChrome,
     setDisabled: setDisabled,
     getLabelText: getLabelText,
-    isIE: isIE
+    isFirefox: isFirefox,
+    isIE: isIE,
+    browserName: browserName
   };
 
   // Just replacing global.utils might not be safe... let's just expand it...

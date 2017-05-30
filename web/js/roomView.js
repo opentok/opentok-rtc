@@ -74,6 +74,24 @@
       detail: 'Failed to acquire microphone. This is a known Chrome bug. Please completely quit ' +
               'and restart your browser.',
       button: 'Reload'
+    },
+    cameraDeniedErrorChrome: {
+      head: 'Camera and microphone access required',
+      detail: 'Click the camera icon in the address bar and allow this site to access your '
+        + 'camera and microphone. Then reload the page.',
+      button: 'Reload'
+    },
+    cameraDeniedErrorFirefox: {
+      head: 'Camera and microphone access required',
+      detail: 'Click the camera or microphone icon in the address bar and delete the permission '
+        + 'settings that block the use of the camera and microphone. Then reload the page and '
+        + 'allow this site to use the camera and microphone.',
+      button: 'Reload'
+    },
+    cameraDeniedErrorIE: {
+      head: 'Camera and microphone access required',
+      detail: 'Reload this page. Then grant the site access to your camera and microphone.',
+      button: 'Reload'
     }
   };
 
@@ -183,6 +201,21 @@
     },
     'chromePublisherError': function(evt) {
       showConfirm(MODAL_TXTS.chromePublisherError).then(function() {
+        document.location.reload();
+      });
+    },
+    'cameraDeniedErrorChrome': function(evt) {
+      showConfirm(MODAL_TXTS.cameraDeniedErrorChrome).then(function() {
+        document.location.reload();
+      })
+    },
+    'cameraDeniedErrorFirefox': function(evt) {
+      showConfirm(MODAL_TXTS.cameraDeniedErrorFirefox).then(function() {
+        document.location.reload();
+      })
+    },
+    'cameraDeniedErrorIE': function(evt) {
+      showConfirm(MODAL_TXTS.cameraDeniedErrorIE).then(function() {
         document.location.reload();
       });
     }
