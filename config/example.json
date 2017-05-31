@@ -1,21 +1,16 @@
 {
 	"OpenTok": {
-		"apiKey": [],
-		"apiSecret": [],
-		"maxSessionAge": 2,
+		"apiKey": "key",
+		"apiSecret": "secret",
 	},
 	"Firebase": {
-		"dataUrl": null,
-		"authSecret": null
+		"dataUrl": "url",
+		"authSecret": "secret"
 	},
 	"Archiving": {
 		"enabled": true,
-		"archiveAlways": false,
-		"pollingInitialTimeout": 5000,
-		"pollingTimeoutMultiplier": 1.5,
 		"archiveManager": {
 			"enabled": false,
-            "emptyRoomMaxLifetime": 3
 		}
 	},
 	"Feedback": {
@@ -28,10 +23,4 @@
 			"enabled": true
 		}
 	},
-	"allowIframing": "never",
-	"defaultTemplate": "room",
-	"templatingSecret": null,
-	"IOSAppId": null,
-	"IOSUrlPrefix": "",
-	"defaultPageIndex": null,
 }
