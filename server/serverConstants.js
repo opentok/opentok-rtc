@@ -1,4 +1,5 @@
 // Just to have all the useful constants on a single place.
+'use strict';
 
 var E = module.exports;
 

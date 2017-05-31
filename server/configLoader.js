@@ -1,3 +1,4 @@
+'use strict';
 var _ = require('lodash');
 var Utils = require('swagger-boilerplate').Utils;
 
