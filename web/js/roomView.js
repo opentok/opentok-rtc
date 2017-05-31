@@ -61,7 +61,7 @@
       head: 'Exit the Meeting',
       detail: 'You are going to exit the OpenTok Meeting Room. The call will continue with the ' +
               'remaining participants.',
-      button: 'End meeting'
+      button: 'Exit meeting'
     },
     sessionDisconnected: {
       head: 'Session disconected',
