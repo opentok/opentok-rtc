@@ -447,6 +447,10 @@
           } else {
             setSwitchStatus(false, true, audioSwitch, 'roomView:muteAllSwitch');
           }
+          break;
+        case 'flipCamera':
+          Utils.sendEvent('roomView:flipCamera');
+          break;
       }
     });
 

@@ -32,7 +32,7 @@
         if (mobile) {
           return ['toggleSharing', 'manageRecordings', 'videoSwitchItem',
             'audioSwitchItem', 'showFeedback', 'screenShareErrors', 'buttonDocumentation',
-            'buttonTalkToSales'];
+            'buttonTalkToSales', 'chooseLayoutItem'];
         } else {
           return ['buttonContactItem'];
         }
@@ -106,7 +106,7 @@
             </li>
             <% } %>
             <% } %>
-            <li>
+            <li id="chooseLayoutItem">
               <a id="chooseLayout"><i data-icon="layouts"></i><span>Change layout</span></a>
             </li>
             <li id="toggleChat">
@@ -138,6 +138,9 @@
             </li>
             <li id="buttonTalkToSales" class="tooltip" tooltip="Talk to Sales">
               <a href="https://tokbox.com/contact/sales" target="_blank" class="button talk-to-sales"><span>Talk to Sales</span></a>
+            </li>
+            <li id="flipCameraItem" class="tooltip" tooltip="Flip camera">
+              <a id="flipCamera">Flip</a>
             </li>
             <li id="buttonContactItem" class="tooltip">
               <a id="buttonContact"><i data-icon="dots"></i><span></span></a>

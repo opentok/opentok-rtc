@@ -378,6 +378,14 @@
       subscribeTo(aStream, 'Audio', value);
     }
 
+    function cyclePublisherCamera() {
+      return new Promise(function(resolve, reject) {
+        publisherReady().then(function(aPublisher) {
+          aPublisher._.demoOnlyCycleVideo().then(resolve).catch(reject);
+        });
+      });
+    }
+
     var _screenShare;
 
     const FAKE_OTK_ANALYTICS = global.OTKAnalytics ||
@@ -532,6 +540,7 @@
       toggleSubscribersVideo: toggleSubscribersVideo,
       togglePublisherAudio: togglePublisherAudio,
       togglePublisherVideo: togglePublisherVideo,
+      cyclePublisherCamera: cyclePublisherCamera,
       shareScreen: shareScreen,
       stopShareScreen: stopShareScreen,
       get isPublisherReady() {

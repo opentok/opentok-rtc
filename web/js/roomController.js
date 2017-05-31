@@ -352,6 +352,9 @@
       _sharedStatus.roomMuted = roomMuted;
       setAudioStatus(roomMuted);
       sendSignalMuteAll(roomMuted, false);
+    },
+    'flipCamera': function(evt) {
+      otHelper.cyclePublisherCamera().then(console.log).catch(console.log);
     }
   };
 
