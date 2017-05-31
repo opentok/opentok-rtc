@@ -107,7 +107,8 @@
   }
 
   function calculateCandidateLayout() {
-    if (getTotal() == 4) {
+    if (getTotal() >= 4
+    || (getTotal() == 3 && screen.width > 768)) {
       return Grid;
     }
     if (screen.width > screen.height ||
