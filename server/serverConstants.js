@@ -1,16 +1,12 @@
 // Just to have all the useful constants on a single place.
 
-'use strict';
-
 var E = module.exports;
-var env = process.env;
 
 // json config will be boolean but if environment override will be string
-function parseBool(input){
-    return (input === true || input === 'true');
+function parseBool(input) {
+  return input === true ||
+  (typeof input === 'string' && input.toLowerCase() === 'true');
 }
-
-const PREFIX = 'OTRTC__';
 
 E.DEFAULT_JSON_CONFIG_PATH = '../config/config.json';
 
@@ -26,9 +22,9 @@ E.REDIS_ROOM_PREFIX = 'otrtc_room__';
 
 E.REDIS_ROOM_MATCHES = E.REDIS_ROOM_PREFIX + '*';
 
-E.OPENTOK_API_KEY = { envVar: 'TB_API_KEY', jsonPath: 'OpenTok.apiKey', required: true}
+E.OPENTOK_API_KEY = { envVar: 'TB_API_KEY', jsonPath: 'OpenTok.apiKey', required: true };
 
-E.OPENTOK_API_SECRET = { envVar: 'TB_API_SECRET', jsonPath: 'OpenTok.apiSecret', required: true};
+E.OPENTOK_API_SECRET = { envVar: 'TB_API_SECRET', jsonPath: 'OpenTok.apiSecret', required: true };
 
 E.FIREBASE_DATA_URL = { envVar: 'FB_DATA_URL', jsonPath: 'Firebase.dataUrl' };
 
@@ -45,7 +41,7 @@ E.ARCHIVE_ALWAYS = { envVar: 'ARCHIVE_ALWAYS', jsonPath: 'Archiving.archiveAlway
 
 // Timeout (in milliseconds) for polling for archive status change updates. Set this to zero
 // to disable polling. This is the initial timeout (timeout for the first poll).
-E.ARCHIVE_POLLING_INITIAL_TIMEOUT = { envVar: 'ARCHIVE_TIMEOUT', jsonPath: 'Archiving.pollingInitialTimeout', defaultValue:  5000, parser: parseInt };
+E.ARCHIVE_POLLING_INITIAL_TIMEOUT = { envVar: 'ARCHIVE_TIMEOUT', jsonPath: 'Archiving.pollingInitialTimeout', defaultValue: 5000, parser: parseInt };
 
 // Timeout multiplier. After the first poll (if it fails) the next one will apply this multiplier
 // successively. Set to a lower number to poll often.
@@ -82,7 +78,7 @@ E.DEFAULT_TEMPLATE = { envVar: 'DEFAULT_TEMPLATE', jsonPath: 'defaultTemplate', 
 
 E.TEMPLATING_SECRET = { envVar: 'TEMPLATING_SECRET', jsonPath: 'templatingSecret' };
 
-E.IOS_APP_ID =  { envVar: 'IOS_APP_ID', jsonPath: 'IOSAppId' };
+E.IOS_APP_ID = { envVar: 'IOS_APP_ID', jsonPath: 'IOSAppId' };
 
 E.IOS_URL_PREFIX = { envVar: 'IOS_URL_PREFIX', jsonPath: 'IOSUrlPrefix', defaultValue: '' };
 
