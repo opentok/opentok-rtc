@@ -264,7 +264,9 @@ function ServerMethods(aLogLevel, aModules) {
   function getRoot(aReq, aRes) {
     aRes.
       render('index.ejs', {
-        isWebRTCVersion: aReq.tbConfig.isWebRTCVersion
+        isWebRTCVersion: aReq.tbConfig.isWebRTCVersion,
+        features: C.FEATURES,
+        isDisabledFeature: aReq.tbConfig.isDisabledFeature,
       }, (err, html) => {
         if (err) {
           logger.error('getRoot. error: ', err);

@@ -38,7 +38,11 @@
 <% } else { %>
         <h1>WebRTC Demo</h1>
         <h2>Built by TokBox on the OpenTok Platform</h2>
-        <h3>This WebRTC Demo enables group video conferencing, text chat, screen sharing, and more</h3>
+        <h3>This WebRTC Demo enables group video conferencing, text chat,
+          <% if (!isDisabledFeature(features.SCREENSHARING)) { %>
+            screen sharing,
+          <% } %>
+          and more.</h3>
 <% } %>
         <form>
           <p>
@@ -46,7 +50,7 @@
             <input id="user" class="text-input" placeholder="Type your name">
             <p class="error-room error-text">Please enter a meeting name</p>
           </p>
-          <button id="enter" class="btn tb btn-primary btn-arrow btn-next btn-padding">Create Meeting</button>
+          <button id="enter" class="btn tb btn-primary btn-arrow btn-next btn-padding">Join Meeting</button>
         </form>
       </section>
     </section>
