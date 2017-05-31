@@ -79,6 +79,7 @@
       head: 'Camera and microphone access required',
       detail: 'Click the camera icon in the address bar and allow this site to access your '
         + 'camera and microphone. Then reload the page.',
+      image: '/images/browsers/chrome-camera-permissions@2x.png',
       button: 'Reload'
     },
     cameraDeniedErrorFirefox: {
@@ -86,6 +87,7 @@
       detail: 'Click the camera or microphone icon in the address bar and delete the permission '
         + 'settings that block the use of the camera and microphone. Then reload the page and '
         + 'allow this site to use the camera and microphone.',
+      image: '/images/browsers/firefox-camera-permissions@2x.png',
       button: 'Reload'
     },
     cameraDeniedErrorIE: {
@@ -353,6 +355,10 @@
     function loadModalText() {
       ui.querySelector(' header .msg').textContent = txt.head;
       ui.querySelector(' p.detail').innerHTML = txt.detail;
+      if (txt.image) {
+        ui.querySelector('img').src = txt.image;
+        ui.querySelector('img').style.display = 'block';
+      }
       ui.querySelector(' footer button.accept').textContent = txt.button;
     }
 
