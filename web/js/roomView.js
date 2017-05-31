@@ -74,6 +74,26 @@
       detail: 'Failed to acquire microphone. This is a known Chrome bug. Please completely quit ' +
               'and restart your browser.',
       button: 'Reload'
+    },
+    cameraDeniedErrorChrome: {
+      head: 'Camera and microphone access required',
+      detail: 'Click the camera icon in the address bar and allow this site to access your '
+        + 'camera and microphone. Then reload the page.',
+      image: '/images/browsers/chrome-camera-permissions@2x.png',
+      button: 'Reload'
+    },
+    cameraDeniedErrorFirefox: {
+      head: 'Camera and microphone access required',
+      detail: 'Click the camera or microphone icon in the address bar and delete the permission '
+        + 'settings that block the use of the camera and microphone. Then reload the page and '
+        + 'allow this site to use the camera and microphone.',
+      image: '/images/browsers/firefox-camera-permissions@2x.png',
+      button: 'Reload'
+    },
+    cameraDeniedErrorIE: {
+      head: 'Camera and microphone access required',
+      detail: 'Reload this page. Then grant the site access to your camera and microphone.',
+      button: 'Reload'
     }
   };
 
@@ -185,6 +205,27 @@
       showConfirm(MODAL_TXTS.chromePublisherError).then(function() {
         document.location.reload();
       });
+    },
+    'cameraDeniedError': function(evt) {
+      var modalTxtError;
+      switch (evt.detail.browserName) {
+        case 'chrome':
+          modalTxtError = MODAL_TXTS.cameraDeniedErrorChrome;
+          break;
+        case 'firefox':
+          modalTxtError = MODAL_TXTS.cameraDeniedErrorFirefox;
+          break;
+        case 'ie':
+          modalTxtError = MODAL_TXTS.cameraDeniedErrorIE;
+          break;
+        default:
+          // No error for other browsers
+      }
+      if (modalTxtError) {
+        showConfirm(modalTxtError).then(function() {
+          document.location.reload();
+        });
+      }
     }
   };
 
@@ -314,6 +355,10 @@
     function loadModalText() {
       ui.querySelector(' header .msg').textContent = txt.head;
       ui.querySelector(' p.detail').innerHTML = txt.detail;
+      if (txt.image) {
+        ui.querySelector('img').src = txt.image;
+        ui.querySelector('img').style.display = 'block';
+      }
       ui.querySelector(' footer button.accept').textContent = txt.button;
     }
 
