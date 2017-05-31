@@ -1,21 +1,21 @@
 {
 	"OpenTok": {
-		"api_key": [],
-		"api_secret": [],
-		"max_session_age": 2,
+		"apiKey": [],
+		"apiSecret": [],
+		"maxSessionAge": 2,
 	},
 	"Firebase": {
-		"data_url": null,
-		"auth_secret": null
+		"dataUrl": null,
+		"authSecret": null
 	},
 	"Archiving": {
 		"enabled": true,
-		"archive_always": false,
-		"polling_initial_timeout": 5000,
-		"polling_timeout_multiplier": 1.5,
-		"archive_manager": {
+		"archiveAlways": false,
+		"pollingInitialTimeout": 5000,
+		"pollingTimeoutMultiplier": 1.5,
+		"archiveManager": {
 			"enabled": false,
-            "empty_room_max_lifetime": 3
+            "emptyRoomMaxLifetime": 3
 		}
 	},
 	"Feedback": {
@@ -23,17 +23,15 @@
 	},
 	"Screensharing": {
 		"enabled": false,
-		"chrome_extension_id": null,
+		"chromeExtensionId": null,
 		"annotations": {
 			"enabled": true
 		}
 	},
-	"allow_iframing": "never",
-	"default_template": "room",
-	"templating_secret": null,
-	"IOS_app_id": null,
-	"IOS_url_prefix": "",
-	"default_index_page": null,
-	"default_user_name": "Anonymous User",
-    "redis_room_prefix": "otrtc_room__"
+	"allowIframing": "never",
+	"defaultTemplate": "room",
+	"templatingSecret": null,
+	"IOSAppId": null,
+	"IOSUrlPrefix": "",
+	"defaultPageIndex": null,
 }
