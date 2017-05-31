@@ -759,23 +759,8 @@
                 Utils.sendEvent('roomController:chromePublisherError');
                 break;
               case 'OT_USER_MEDIA_ACCESS_DENIED':
-                switch (Utils.browserName()) {
-                  case 'chrome':
-                    Utils.sendEvent('roomController:cameraDeniedErrorChrome');
-                    break;
-                  case 'firefox':
-                    Utils.sendEvent('roomController:cameraDeniedErrorFirefox');
-                    break;
-                  case 'ie':
-                    Utils.sendEvent('roomController:cameraDeniedErrorIE');
-                    break;
-                  case 'safari':
-                    // Currently, this error does not occur in Safari.
-                    break;
-                  default:
-                    // Ignore other browsers.
-                }
-                break;
+                Utils.sendEvent('roomController:cameraDeniedError',
+                  {browserName: Utils.browserName()});
               default:
                 // Ignore other errors.
             }

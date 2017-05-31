@@ -204,20 +204,26 @@
         document.location.reload();
       });
     },
-    'cameraDeniedErrorChrome': function(evt) {
-      showConfirm(MODAL_TXTS.cameraDeniedErrorChrome).then(function() {
-        document.location.reload();
-      })
-    },
-    'cameraDeniedErrorFirefox': function(evt) {
-      showConfirm(MODAL_TXTS.cameraDeniedErrorFirefox).then(function() {
-        document.location.reload();
-      })
-    },
-    'cameraDeniedErrorIE': function(evt) {
-      showConfirm(MODAL_TXTS.cameraDeniedErrorIE).then(function() {
-        document.location.reload();
-      });
+    'cameraDeniedError': function(evt) {
+      var modalTxtError;
+      switch (evt.detail.browserName) {
+        case 'chrome':
+          modalTxtError = MODAL_TXTS.cameraDeniedErrorChrome;
+          break;
+        case 'firefox':
+          modalTxtError = MODAL_TXTS.cameraDeniedErrorFirefox;
+          break;
+        case 'ie':
+          modalTxtError = MODAL_TXTS.cameraDeniedErrorIE;
+          break;
+        default:
+          // No error for other browsers
+      }
+      if (modalTxtError) {
+        showConfirm(modalTxtError).then(function() {
+          document.location.reload();
+        });
+      }
     }
   };
 
