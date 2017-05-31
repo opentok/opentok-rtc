@@ -2,10 +2,16 @@
 
 var fs = require('fs')
 var _ = require('lodash');
+var Utils = require('swagger-boilerplate').Utils;
+
+var Logger = Utils.MultiLevelLogger;
+var readFile = Utils.promisify(require('fs').readFile);
+const defaultJsonConfigPath = require('./serverConstants').DEFAULT_JSON_CONFIG_PATH;
+
 var env = process.env;
 var exports = module.exports = {};
 
-class ConfigLoader {
+class Config {
     constructor(aConfigJson) {
         this.configJson = aConfigJson;
     }
@@ -27,23 +33,15 @@ class ConfigLoader {
 }
 
 // Promise wrapper around reading config file.
-// Returns a ConfigLoader instance
+// Returns a Config instance
 exports.readConfigJson = () => {
-    var configPath = env.OTDEMO_CONFIG_FILE_PATH || '../config/config.json'
+    var configPath = env.OTDEMO_CONFIG_FILE_PATH || defaultJsonConfigPath
     return new Promise((resolve, reject) => {
-      try {
+       try {
           configPath = require.resolve(configPath);
-      } catch (e) {
-          if (e.code === 'MODULE_NOT_FOUND'){
-            console.log(`Config file ${configPath} not found.`);
-            resolve(new ConfigLoader());
-          }
-          throw e;
-      }
-      fs.readFile(configPath, (err, data) => {
-        if (err)
-            reject(err)
-        resolve(new ConfigLoader(JSON.parse(data)));
-      });
-  })
+          readFile(configPath).then(resolve);
+       } catch (e) {
+          (e.code === 'MODULE_NOT_FOUND' && (resolve('{}') || true)) || reject(e);
+       }
+   }).then(data => new Config(JSON.parse(data)));
 }

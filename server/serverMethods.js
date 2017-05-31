@@ -40,7 +40,8 @@ function ServerMethods(aLogLevel, aModules) {
   var serverPersistence =
     new ServerPersistence([], connectionString, aLogLevel, aModules);
 
-  var redisRoomPrefix = C.REDIS_ROOM_PREFIX;
+  const redisRoomPrefix = C.REDIS_ROOM_PREFIX;
+
   // Opentok API instance, which will be configured only after tbConfigPromise
   // is resolved
   var tbConfigPromise;

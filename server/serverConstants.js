@@ -4,7 +4,6 @@
 
 var E = module.exports;
 var env = process.env;
-let config;
 
 // json config will be boolean but if environment override will be string
 function parseBool(input){
@@ -12,6 +11,8 @@ function parseBool(input){
 }
 
 const PREFIX = 'OTRTC__';
+
+E.DEFAULT_JSON_CONFIG_PATH = '../config/config.json';
 
 E.DEFAULT_USER_NAME = 'Anonymous User';
 
