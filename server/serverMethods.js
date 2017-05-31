@@ -316,6 +316,21 @@ function ServerMethods(aLogLevel, aModules) {
                }
              });
   }
+  // Returns the call complete page
+  function getDone(aReq, aRes) {
+    aRes.
+      render('done.ejs', {
+        isWebRTCVersion: aReq.tbConfig.isWebRTCVersion
+      }, (err, html) => {
+        if (err) {
+          logger.error('getDone. error: ', err);
+          aRes.status(500).send(new ErrorInfo(500, 'Invalid Template'));
+        } else {
+          aRes.send(html);
+        }
+      }
+    );
+  }
 
   // Given a sessionInfo (which might be empty or non usable) returns a promise than will fullfill
   // to an usable sessionInfo. This function cannot be invoked directly, it has
@@ -634,6 +649,7 @@ function ServerMethods(aLogLevel, aModules) {
     getRoom: getRoom,
     getRoomInfo: getRoomInfo,
     postRoomArchive: postRoomArchive,
+    getDone: getDone,
     postUpdateArchiveInfo: postUpdateArchiveInfo,
     getArchive: getArchive,
     deleteArchive: deleteArchive,
