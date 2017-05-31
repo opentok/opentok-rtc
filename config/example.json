@@ -1,26 +1,26 @@
 {
-	"OpenTok": {
-		"apiKey": "key",
-		"apiSecret": "secret",
-	},
-	"Firebase": {
-		"dataUrl": "url",
-		"authSecret": "secret"
-	},
-	"Archiving": {
-		"enabled": true,
-		"archiveManager": {
-			"enabled": false,
-		}
-	},
-	"Feedback": {
-		"enabled": false
-	},
-	"Screensharing": {
-		"enabled": false,
-		"chromeExtensionId": null,
-		"annotations": {
-			"enabled": true
-		}
-	},
+   "OpenTok":{
+      "apiKey":"key",
+      "apiSecret":"secret"
+   },
+   "Firebase":{
+      "dataUrl":"url",
+      "authSecret":"secret"
+   },
+   "Archiving":{
+      "enabled":true,
+      "archiveManager":{
+         "enabled":false
+      }
+   },
+   "Feedback":{
+      "enabled":false
+   },
+   "Screensharing":{
+      "enabled":false,
+      "chromeExtensionId":null,
+      "annotations":{
+         "enabled":true
+      }
+   }
 }
