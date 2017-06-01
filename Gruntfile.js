@@ -8,7 +8,6 @@ module.exports = function(grunt) {
     'grunt-contrib-clean',
 //    'grunt-contrib-compress',
 //    'grunt-contrib-connect',
-    'grunt-contrib-copy',
     'grunt-contrib-less',
     'grunt-contrib-watch',
     'grunt-mocha-test', // Server side test runner
@@ -133,27 +132,6 @@ module.exports = function(grunt) {
         tasks: ['serverTest']
       }
     },
-
-    copy: {
-      main: {
-        files: [
-          {
-            expand: true,
-            cwd: 'node_modules/pattern-library-v2/out/images/icons',
-            src: ['**/*'],
-            dest: 'web/images/icons/'
-          },
-
-          {
-            expand: true,
-            cwd: 'node_modules/pattern-library-v2/out/css',
-            src: ['**/*'],
-            dest: 'web/css/'
-          }
-        ],
-      }
-    },
-
   });
 
   // On watch events, if the changed file is a test file then configure mochaTest to only
@@ -166,18 +144,12 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('copyPatternLibrary', 'Copy pattern library', [
-    'copy'
-  ]);
-
   grunt.registerTask('clientBuild', 'Build css files', [
-    'copyPatternLibrary',
     'less',
     'autoprefixer'
   ]);
 
   grunt.registerTask('clientDev', 'Watch for changes on less files', [
-    'copyPatternLibrary',
     'clientBuild',
     'watch'
   ]);

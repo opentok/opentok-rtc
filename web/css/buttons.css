@@ -1,0 +1,147 @@
+.tb.btn {
+  font-family: 'Muli', arial;
+  font-weight: 600;
+  display: inline-block;
+  text-align: center;
+  line-height: 40px;
+  transition: all 0.5s ease-out;
+  font-size: 13px;
+  border-radius: 4px;
+  height: 40px;
+  border: 0;
+  padding: 0 30px;
+  box-sizing: border-box;
+}
+.tb.btn:hover {
+  text-decoration: none;
+  cursor: pointer;
+}
+.tb.btn.btn-lg-p {
+  padding: 0 50px;
+}
+.tb.btn.btn-sm-p {
+  padding: 0 20px;
+}
+.tb.btn.btn-sm {
+  font-size: 11px;
+  line-height: 36px;
+  height: 36px;
+}
+.tb.btn.btn-primary {
+  background-color: #0099cc;
+  box-shadow: 0 0 0 1px #0099cc;
+  color: #fff;
+}
+.tb.btn.btn-primary:hover {
+  background-color: #0099cc;
+  box-shadow: 0 0 0 2px #0099cc;
+}
+.tb.btn.btn-secondary {
+  background-color: #fff;
+  color: #0099cb;
+}
+.tb.btn.btn-secondary:hover {
+  background-color: #fff;
+}
+.tb.btn.btn-primary.btn-arrow.btn-next:after {
+  display: inline-block;
+  content: "";
+  background-image: url("/images/icons/ctaarrow_white@2x.png");
+  background-size: 9px 16px;
+  width: 9px;
+  height: 16px;
+  vertical-align: middle;
+  transition: all 0.5s ease-out;
+  margin-left: 15px;
+}
+.tb.btn.btn-primary.btn-arrow.btn-prev:before {
+  display: inline-block;
+  content: "";
+  background-image: url("/images/icons/ctaarrow_white@2x.png");
+  background-size: 9px 16px;
+  width: 9px;
+  height: 16px;
+  vertical-align: middle;
+  transition: all 0.5s ease-out;
+  -webkit-transform: rotate(180deg);
+      -ms-transform: rotate(180deg);
+          transform: rotate(180deg);
+  margin-right: 15px;
+}
+.tb.btn.btn-primary.btn-arrow.small:after {
+  margin-left: 10px;
+}
+.tb.btn.btn-primary.btn-arrow.btn-next:hover:after {
+  background-size: 9px 16px;
+  -webkit-transform: translate(3px, 0px);
+      -ms-transform: translate(3px, 0px);
+          transform: translate(3px, 0px);
+}
+.tb.btn.btn-primary.btn-arrow.btn-prev:hover:before {
+  background-size: 9px 16px;
+  -webkit-transform: translate(-3px, 0px) rotate(180deg);
+      -ms-transform: translate(-3px, 0px) rotate(180deg);
+          transform: translate(-3px, 0px) rotate(180deg);
+}
+.tb.btn.btn-secondary.btn-arrow.btn-next:after {
+  display: inline-block;
+  content: "";
+  background-image: url("/images/icons/ctaarrow-blue@2x.png");
+  background-size: 9px 16px;
+  width: 9px;
+  height: 16px;
+  vertical-align: middle;
+  transition: all 0.5s ease-out;
+  margin-left: 15px;
+}
+.tb.btn.btn-secondary.btn-arrow.btn-prev:before {
+  display: inline-block;
+  content: "";
+  background-image: url("/images/icons/ctaarrow-blue@2x.png");
+  background-size: 9px 16px;
+  width: 9px;
+  height: 16px;
+  vertical-align: middle;
+  transition: all 0.5s ease-out;
+  -webkit-transform: rotate(180deg);
+      -ms-transform: rotate(180deg);
+          transform: rotate(180deg);
+  margin-right: 15px;
+}
+.tb.btn.btn-secondary.btn-arrow.btn-next:hover:after {
+  background-size: 9px 16px;
+  -webkit-transform: translate(3px, 0px);
+      -ms-transform: translate(3px, 0px);
+          transform: translate(3px, 0px);
+}
+.tb.btn.btn-secondary.btn-arrow.btn-prev:hover:before {
+  background-size: 9px 16px;
+  -webkit-transform: translate(-3px, 0px) rotate(180deg);
+      -ms-transform: translate(-3px, 0px) rotate(180deg);
+          transform: translate(-3px, 0px) rotate(180deg);
+}
+.tb.btn.btn-positive {
+  background-color: #1ba71b;
+  box-shadow: 0 0 0 1px #1ba71b;
+  color: #fff;
+}
+.tb.btn.btn-positive:hover {
+  background-color: #1ba71b;
+  box-shadow: 0 0 0 2px #1ba71b;
+}
+.tb.btn.btn-negative {
+  background-color: #d0021b;
+  box-shadow: 0 0 0 1px #d0021b;
+  color: #fff;
+}
+.tb.btn.btn-negative:hover {
+  background-color: #d0021b;
+  box-shadow: 0 0 0 2px #d0021b;
+}
+.tb.btn[disabled] {
+  background-color: #e4e8e9;
+  color: #95a4ab;
+  pointer-events: none;
+  box-shadow: none;
+  transition: none;
+}
