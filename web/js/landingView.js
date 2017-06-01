@@ -43,7 +43,7 @@
           ui.addEventListener('click', function onClicked(evt) {
             var classList = evt.target.classList;
             var hasAccepted = classList.contains('accept');
-            if (evt.target.id !== 'switchAlerts' && !hasAccepted && !classList.contains('close')) {
+            if (!hasAccepted && !classList.contains('close')) {
               return;
             }
             evt.stopImmediatePropagation();
