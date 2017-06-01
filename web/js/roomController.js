@@ -641,18 +641,14 @@
       then(function(aRoomInfo) {
         if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId &&
               aRoomInfo.apiKey && aRoomInfo.username &&
-              aRoomInfo.firebaseToken && aRoomInfo.firebaseURL &&
-              aRoomInfo.features && aRoomInfo.disabledFeatures)) {
+              aRoomInfo.firebaseToken && aRoomInfo.firebaseURL)) {
           debug.error('Error getRoomParams [', aRoomInfo,
                       '] without correct response');
           throw new Error('Error getting room parameters');
         }
         aRoomInfo.roomName = aRoomParams.roomName;
-        if (Array.isArray(aRoomInfo.disabledFeatures)) {
-            enableAnnotations = aRoomInfo.disabledFeatures.indexOf(aRoomInfo.features.ANNOTATIONS) === -1;
-            enableArchiveManager = (aRoomInfo.disabledFeatures.indexOf(aRoomInfo.features.ARCHIVING) === -1 &&
-                   aRoomInfo.disabledFeatures.indexOf(aRoomInfo.features.ARCHIVE_MANAGER) === -1);
-        }
+        enableAnnotations = aRoomInfo.enableAnnotation;
+        enableArchiveManager = aRoomInfo.enableArchiveManager;
         return aRoomInfo;
       });
   }

@@ -32,10 +32,10 @@ Now you will have to set the following environment variables on your heroku inst
 $ heroku config:set TB_API_KEY=<key> TB_API_SECRET=<secret>
 ```
 
-If you want to use archiving, set up Firebase configuration. Replace `<appurl>` with your Firebase application URL and `<appsecret>` with the secret for that Firebase app in this command:
+If you want to use Archive Management (In app playback and download of recordings), set up Firebase configuration. Replace `<appurl>` with your Firebase application URL and `<appsecret>` with the secret for that Firebase app in this command:
 
 ```sh
-$ heroku config:set FB_DATA_URL=<appurl> FB_AUTH_SECRET=<appsecret>
+$ heroku config:set FB_DATA_URL=<appurl> FB_AUTH_SECRET=<appsecret> ENABLE_ARCHIVE_MANAGER=true
 ```
 
 You will need to choose a redis addon. These two are currently supported,

@@ -16,9 +16,10 @@ function ServerMethods(aLogLevel, aModules) {
   var ErrorInfo = SwaggerBP.ErrorInfo;
 
   var env = process.env;
-
   var Utils = SwaggerBP.Utils;
   var C = require('./serverConstants');
+  var configLoader = require('./configLoader');
+
   var Logger = Utils.MultiLevelLogger;
   var promisify = Utils.promisify;
 
@@ -30,13 +31,16 @@ function ServerMethods(aLogLevel, aModules) {
     FirebaseArchives.Firebase = aModules.Firebase;
   }
 
+
   var logger = new Logger('ServerMethods', aLogLevel);
   var ServerPersistence = SwaggerBP.ServerPersistence;
   var connectionString =
     (aModules && aModules.params && aModules.params.persistenceConfig) ||
     env.REDIS_URL || env.REDISTOGO_URL || '';
   var serverPersistence =
-    new ServerPersistence(C.REDIS_KEYS, connectionString, aLogLevel, aModules);
+    new ServerPersistence([], connectionString, aLogLevel, aModules);
+
+  const redisRoomPrefix = C.REDIS_ROOM_PREFIX;
 
   // Opentok API instance, which will be configured only after tbConfigPromise
   // is resolved
@@ -76,86 +80,88 @@ function ServerMethods(aLogLevel, aModules) {
 
 
   function _initialTBConfig() {
-    // This will hold the configuration read from Redis
-    return serverPersistence.updateCache().
-      then(persistConfig => {
-        var defaultTemplate = persistConfig[C.DEFAULT_TEMPLATE];
-        var templatingSecret = persistConfig[C.TEMPLATING_SECRET];
-        var apiKey = persistConfig[C.RED_TB_API_KEY];
-        var apiSecret = persistConfig[C.RED_TB_API_SECRET];
-        var archivePollingTO = parseInt(persistConfig[C.RED_TB_ARCHIVE_POLLING_INITIAL_TIMEOUT]);
-        var archivePollingTOMultiplier =
-          parseFloat(persistConfig[C.RED_TB_ARCHIVE_POLLING_TIMEOUT_MULTIPLIER]);
-        var otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret);
+      return configLoader.readConfigJson().then(config => {
+              // This will hold the configuration read from Redis
+            var defaultTemplate = config.get(C.DEFAULT_TEMPLATE);
+            var templatingSecret = config.get(C.TEMPLATING_SECRET);
+            var apiKey = config.get(C.OPENTOK_API_KEY);
+            var apiSecret = config.get(C.OPENTOK_API_SECRET);
+            var archivePollingTO = config.get(C.ARCHIVE_POLLING_INITIAL_TIMEOUT);
+            var archivePollingTOMultiplier =
+                config.get(C.ARCHIVE_POLLING_TIMEOUT_MULTIPLIER);
+            var otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret);
 
-        var allowIframing = persistConfig[C.RED_ALLOW_IFRAMING];
-        var archiveAlways = persistConfig[C.ARCHIVE_ALWAYS] == 'true' ? true : false;
+            var allowIframing = config.get(C.ALLOW_IFRAMING);
+            var archiveAlways = config.get(C.ARCHIVE_ALWAYS);
 
-        var iosAppId = persistConfig[C.IOS_APP_ID];
-        var iosUrlPrefix = persistConfig[C.IOS_URL_PREFIX];
+            var iosAppId = config.get(C.IOS_APP_ID);
+            var iosUrlPrefix = config.get(C.IOS_URL_PREFIX);
 
-        // This isn't strictly necessary... but since we're using promises all over the place, it
-        // makes sense. The _P are just a promisified version of the methods. We could have
-        // overwritten the original methods but this way we make it explicit. That's also why we're
-        // breaking camelCase here, to make it patent to the reader that those aren't standard
-        // methods of the API.
-        ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'deleteArchive'].
-          forEach(method => otInstance[method + '_P'] = promisify(otInstance[method]));
+            // This isn't strictly necessary... but since we're using promises all over the place, it
+            // makes sense. The _P are just a promisified version of the methods. We could have
+            // overwritten the original methods but this way we make it explicit. That's also why we're
+            // breaking camelCase here, to make it patent to the reader that those aren't standard
+            // methods of the API.
+            ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'deleteArchive'].
+              forEach(method => otInstance[method + '_P'] = promisify(otInstance[method]));
 
-        var maxSessionAge = parseInt(persistConfig[C.RED_TB_MAX_SESSION_AGE]);
-        var maxSessionAgeMs = maxSessionAge * 24 * 60 * 60 * 1000;
-        var chromeExtId = persistConfig[C.RED_CHROME_EXTENSION_ID];
+            var maxSessionAge = config.get(C.OPENTOK_MAX_SESSION_AGE);
+            var maxSessionAgeMs = maxSessionAge * 24 * 60 * 60 * 1000;
+            var chromeExtId = config.get(C.CHROME_EXTENSION_ID);
 
-        var isWebRTCVersion = persistConfig[C.DEFAULT_INDEX_PAGE] === 'opentokrtc';
-        var disabledFeatures =
-          persistConfig[C.DISABLED_FEATURES] && persistConfig[C.DISABLED_FEATURES].replace(/, +/g, ',').split(',');
+            var isWebRTCVersion = config.get(C.DEFAULT_INDEX_PAGE) === 'opentokrtc';
 
-        // Returns true if the string 'feature' is in the array of disabledFeatures
-        var isDisabledFeature = feature => Array.isArray(disabledFeatures) && disabledFeatures.indexOf(feature) !== -1
+            var firebaseConfigured =
+              config.get(C.FIREBASE_DATA_URL) && config.get(C.FIREBASE_AUTH_SECRET);
 
-        var firebaseConfigured =
-          persistConfig[C.RED_FB_DATA_URL] && persistConfig[C.RED_FB_AUTH_SECRET]
+            var enableArchiving = config.get(C.ENABLE_ARCHIVING, config);
+            var enableArchiveManager = enableArchiving && config.get(C.ENABLE_ARCHIVE_MANAGER);
+            var enableScreensharing = config.get(C.ENABLE_SCREENSHARING);
+            var enableAnnotations = enableScreensharing && config.get(C.ENABLE_ANNOTATIONS);
+            var enableFeedback = config.get(C.ENABLE_FEEDBACK);
 
-        var disabledArchiveManager = isDisabledFeature(C.FEATURES.ARCHIVE_MANAGER) || isDisabledFeature(C.FEATURES.ARCHIVING);
+            if (!firebaseConfigured && enableArchiveManager) {
+                logger.error('Firebase not configured. Please provide firebase credentials or disable archive_manager');
+            }
 
-        if (!firebaseConfigured && !disabledArchiveManager) {
-            logger.error('Firebase not configured. Please provide firebase credentials or disable archive_manager');
-        }
 
-        // For this object we need to know if/when we're reconnecting so we can shutdown the
-        // old instance.
-        var oldFirebaseArchivesPromise = Utils.CachifiedObject.getCached(FirebaseArchives);
+            // For this object we need to know if/when we're reconnecting so we can shutdown the
+            // old instance.
+            var oldFirebaseArchivesPromise = Utils.CachifiedObject.getCached(FirebaseArchives);
 
-        var firebaseArchivesPromise =
-          Utils.CachifiedObject(FirebaseArchives, persistConfig[C.RED_FB_DATA_URL],
-                                persistConfig[C.RED_FB_AUTH_SECRET],
-                                persistConfig[C.RED_EMPTY_ROOM_MAX_LIFETIME], aLogLevel);
-        _shutdownOldInstance(oldFirebaseArchivesPromise, firebaseArchivesPromise);
+            var firebaseArchivesPromise =
+              Utils.CachifiedObject(FirebaseArchives, config.get(C.FIREBASE_DATA_URL),
+                                    config.get(C.FIREBASE_AUTH_SECRET),
+                                    config.get(C.EMPTY_ROOM_LIFETIME), aLogLevel);
+            _shutdownOldInstance(oldFirebaseArchivesPromise, firebaseArchivesPromise);
 
-        return firebaseArchivesPromise.
-          then(firebaseArchives => {
-            return {
-              otInstance: otInstance,
-              apiKey: apiKey,
-              apiSecret: apiSecret,
-              archivePollingTO: archivePollingTO,
-              archivePollingTOMultiplier: archivePollingTOMultiplier,
-              maxSessionAgeMs: maxSessionAgeMs,
-              fbArchives: firebaseArchives,
-              allowIframing: allowIframing,
-              chromeExtId: chromeExtId,
-              defaultTemplate: defaultTemplate,
-              templatingSecret: templatingSecret,
-              archiveAlways: archiveAlways,
-              iosAppId: iosAppId,
-              iosUrlPrefix: iosUrlPrefix,
-              isWebRTCVersion: isWebRTCVersion,
-              enabledFirebase: !disabledArchiveManager,
-              disabledFeatures: disabledFeatures,
-              isDisabledFeature: isDisabledFeature
-            };
-          });
-      });
+            return firebaseArchivesPromise.
+              then(firebaseArchives => {
+                return {
+                  otInstance: otInstance,
+                  apiKey: apiKey,
+                  apiSecret: apiSecret,
+                  archivePollingTO: archivePollingTO,
+                  archivePollingTOMultiplier: archivePollingTOMultiplier,
+                  maxSessionAgeMs: maxSessionAgeMs,
+                  fbArchives: firebaseArchives,
+                  allowIframing: allowIframing,
+                  chromeExtId: chromeExtId,
+                  defaultTemplate: defaultTemplate,
+                  templatingSecret: templatingSecret,
+                  archiveAlways: archiveAlways,
+                  iosAppId: iosAppId,
+                  iosUrlPrefix: iosUrlPrefix,
+                  isWebRTCVersion: isWebRTCVersion,
+                  enableArchiving: enableArchiving,
+                  enableArchiveManager: enableArchiveManager,
+                  enableScreensharing: enableScreensharing,
+                  enableAnnotations: enableAnnotations,
+                  enableFeedback: enableFeedback,
+                };
+              });
+
+          })
   }
 
   function configReady(aReq, aRes, aNext) {
@@ -200,12 +206,12 @@ function ServerMethods(aLogLevel, aModules) {
     var tbConfig = aReq.tbConfig;
     var roomName = aReq.params.roomName.toLowerCase();
     serverPersistence.
-      getKey(C.RED_ROOM_PREFIX + roomName).
+      getKey(redisRoomPrefix + roomName).
       then(_getUsableSessionInfo.bind(tbConfig.otInstance,
                                       tbConfig.maxSessionAgeMs,
                                       tbConfig.archiveAlways)).
       then(usableSessionInfo => {
-        serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, C.RED_ROOM_PREFIX + roomName,
+        serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, redisRoomPrefix + roomName,
                                    JSON.stringify(usableSessionInfo));
         var sessionId = usableSessionInfo.sessionId;
         tbConfig.otInstance.listArchives_P({ offset: 0, count: 1000 }).
@@ -287,7 +293,6 @@ function ServerMethods(aLogLevel, aModules) {
     aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
     aRes.set('Pragma', 'no-cache');
     aRes.set('Expires', 0);
-
     aRes.
       render((template ? template : tbConfig.defaultTemplate) + '.ejs',
              {
@@ -301,8 +306,11 @@ function ServerMethods(aLogLevel, aModules) {
                // or whatever other thing that should be before the roomName
                iosURL: tbConfig.iosUrlPrefix + aReq.params.roomName + '?userName=' +
                        (userName || C.DEFAULT_USER_NAME),
-               features: C.FEATURES,
-               isDisabledFeature: tbConfig.isDisabledFeature,
+               enableArchiving: tbConfig.enableArchiving,
+               enableArchiveManager: tbConfig.enableArchiveManager,
+               enableScreensharing: tbConfig.enableScreensharing,
+               enableAnnotation: tbConfig.enableAnnotation,
+               enableFeedback: tbConfig.enableFeedback,
              }, (err, html) => {
                if (err) {
                  logger.log('getRoom. error:', err);
@@ -371,23 +379,22 @@ function ServerMethods(aLogLevel, aModules) {
       (aReq.query && aReq.query.userName) || C.DEFAULT_USER_NAME + _numAnonymousUsers++;
     logger.log('getRoomInfo serving ' + aReq.path, 'roomName: ', roomName, 'userName: ', userName);
 
-    var enabledFirebase = tbConfig.enabledFirebase;
+    var enableArchiveManager = tbConfig.enableArchiveManager;
     // We have to check if we have a session id stored already on the persistence provider (and if
     // it's not too old).
     // Note that we do not persist tokens.
     serverPersistence.
-      getKey(C.RED_ROOM_PREFIX + roomName).
+      getKey(redisRoomPrefix + roomName).
       then(_getUsableSessionInfo.bind(tbConfig.otInstance, tbConfig.maxSessionAgeMs,
                                       tbConfig.archiveAlways)).
       then(usableSessionInfo => {
         // Update the database. We could do this on getUsable...
-        serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, C.RED_ROOM_PREFIX + roomName,
+        serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, redisRoomPrefix + roomName,
                                    JSON.stringify(usableSessionInfo));
 
         // We have to create an authentication token for the new user...
         var fbUserToken =
-          enabledFirebase && fbArchives.createUserToken(usableSessionInfo.sessionId, userName);
-
+          enableArchiveManager && fbArchives.createUserToken(usableSessionInfo.sessionId, userName);
         // and finally, answer...
         var answer = {
           apiKey: tbConfig.apiKey,
@@ -398,11 +405,11 @@ function ServerMethods(aLogLevel, aModules) {
                   }),
           username: userName,
           firebaseURL:
-            enabledFirebase && fbArchives.baseURL + '/' + usableSessionInfo.sessionId || 'unknown',
+            enableArchiveManager && fbArchives.baseURL + '/' + usableSessionInfo.sessionId || 'unknown',
           firebaseToken: fbUserToken || 'unknown',
           chromeExtId: tbConfig.chromeExtId,
-          features: C.FEATURES,
-          disabledFeatures: tbConfig.disabledFeatures,
+          enableArchiveManager: tbConfig.enableArchiveManager,
+          enableAnnotation: tbConfig.enableAnnotations
         };
         answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId,
 
@@ -487,7 +494,7 @@ function ServerMethods(aLogLevel, aModules) {
     // API makes it simpler for the client app, since it only needs the room name to stop an
     // in-progress recording. So we can just get the sessionInfo from the serverPersistence.
     serverPersistence.
-      getKey(C.RED_ROOM_PREFIX + roomName).
+      getKey(redisRoomPrefix + roomName).
       then(_getUpdatedArchiveInfo.bind(undefined, tbConfig, operation)).
       then(sessionInfo => {
         var now = new Date();
@@ -511,7 +518,7 @@ function ServerMethods(aLogLevel, aModules) {
         return archiveOp().then(aArchive => {
           sessionInfo.inProgressArchiveId = aArchive.status === 'started' ? aArchive.id : undefined;
           // Update the internal database
-          serverPersistence.setKey(C.RED_ROOM_PREFIX + roomName, JSON.stringify(sessionInfo));
+          serverPersistence.setKey(redisRoomPrefix + roomName, JSON.stringify(sessionInfo));
 
           // We need to update the external database also. We have a conundrum here, though.
           // At this point, if the operation requested was stopping an active recording, the
