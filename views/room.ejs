@@ -49,6 +49,7 @@
         window.removeEventListener('DOMContentLoaded', loaded);
         if (isMobile()) {
             document.getElementById("dock").classList.add("collapsed");
+            document.getElementById('flipCameraItem').style.display = 'block';
         }
         hideItems(getIdsToHide(isMobile()));
       });
@@ -132,9 +133,8 @@
             </li>
             <li>
               <a id="endCall" class="danger"><i data-icon="end"></i><span>Exit meeting</span></a>
-            </li>
-            <li id="flipCameraItem" class="tooltip" tooltip="Flip camera">
-              <a id="flipCamera">Flip</a>
+            <li id="flipCameraItem" class="tooltip" tooltip="Switch camera">
+              <a id="flipCamera"><i data-icon="flipCamera"></i><span>Switch camera</span></a>
             </li>
             <li id="buttonDocumentation" class="bottom tooltip" tooltip="See Documentation">
               <a href="https://tokbox.com/developer/" target="_blank" class="button see-documentation"><span>See Documentation</span></a>
