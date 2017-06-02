@@ -60,8 +60,11 @@
 
   var eventHandlers = {
     'EndCallController:endCall': function(evt) {
-      _model.addEventListener('value', render);
-      render(_model.archives);
+      if (_model) {
+        _model.addEventListener('value', render);
+        render(_model.archives);
+      }
+      render();
     }
   };
 
