@@ -28,21 +28,35 @@
       window.isWebRTCVersion=<%=isWebRTCVersion%>
       var isMobile = function() { return typeof window.orientation !== 'undefined'; }
 
-      var getIdsToHide = function(mobile) {
-        if (mobile) {
-          return ['toggleSharing', 'manageRecordings', 'videoSwitchItem',
-            'audioSwitchItem', 'showFeedback', 'screenShareErrors', 'buttonDocumentation',
-            'buttonTalkToSales', 'chooseLayoutItem'];
-        } else {
-          return ['buttonContactItem'];
-        }
+      var commonIdsToHide = ['toggleSharing', 'manageRecordings', 'videoSwitchItem',
+        'audioSwitchItem', 'showFeedback', 'screenShareErrors', 'chooseLayoutItem'];
+
+      var hiddenWhenCollapsed = ['buttonDocumentation', 'buttonTalkToSales'];
+      var hiddenWhenExpanded = ['buttonContactItem'];
+
+      var isMenuCollapsed = function() {
+        return screen.width < 770;
+         // Consider iPad portrait (768) not width enough to show the menu expanded
       }
 
-      var hideItems = function(items) {
+      var showItems = function(items, show) {
         items.forEach(function(id) {
           var elem = document.getElementById(id);
-          elem && elem.classList.add('hidden');
+          !show && elem && elem.classList.add('hidden');
+          show && elem && elem.classList.remove('hidden');
         });
+      }
+
+      var onResize = function() {
+        var menuCollapsed = isMenuCollapsed();
+        if (menuCollapsed){
+          document.getElementById("dock").classList.add("collapsed");
+        } else {
+          document.getElementById("dock").classList.remove("collapsed");
+        }
+
+        showItems(hiddenWhenCollapsed, !menuCollapsed);
+        showItems(hiddenWhenExpanded, menuCollapsed);
       }
 
       window.addEventListener('DOMContentLoaded', function loaded() {
@@ -52,8 +66,11 @@
             // We are disabling the Switch Camera button until the new browser supports it:
             // document.getElementById('flipCameraItem').style.display = 'block';
         }
-        hideItems(getIdsToHide(isMobile()));
+        showItems(commonIdsToHide, false);
+        onResize();
       });
+
+      window.addEventListener('resize', onResize);
     </script>
 
     <script type="text/javascript" src="https://d3brof7fu9hlhe.cloudfront.net/static/snoop.js"></script>

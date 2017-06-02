@@ -149,8 +149,11 @@ body {
       position: relative;
       word-break: break-all;
       overflow: hidden;
-      font-family: "AvantGardeGothicITCW01X", arial;
-      font-size: 24px;
+      font-family: @muliRegularFont;
+      font-size: 20px;
+      @media @smartphones {
+        font-size: 17px;
+      }
       font-weight: 100;
       line-height: 28px;
       margin: 12px 0 0px 0;
