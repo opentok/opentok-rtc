@@ -399,6 +399,9 @@
       switch (elem.id) {
         case 'addToCall':
           BubbleFactory.get('addToCall').toggle();
+          setTimeout(function() {
+            BubbleFactory.get('addToCall').toggle();
+          }, 3000);
           break;
         case 'viewRecordings':
           BubbleFactory.get('viewRecordings').toggle();
@@ -489,12 +492,9 @@
   };
 
   var addClipboardFeature = function() {
-    var input = document.querySelector('.bubble[for="addToCall"] input');
-    var urlToShare = getURLtoShare();
-    input.value = urlToShare;
     var clipboard = new Clipboard(document.querySelector('#addToCall'), {
         text: function() {
-            return urlToShare;
+            return getURLtoShare();
         }
     });
   };
