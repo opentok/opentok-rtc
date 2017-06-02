@@ -148,6 +148,7 @@
   global.LayoutManager = {
     init: init,
     append: append,
+    rearrange: rearrange,
     remove: remove,
     removeAll: removeAll,
     getItemById: getItemById

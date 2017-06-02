@@ -479,6 +479,15 @@
     Utils.addEventsHandlers('chat:', chatEvents);
     Utils.addEventsHandlers('chatView:', chatViews);
     Utils.addEventsHandlers('hangout:', hangoutEvents);
+
+    var dockElement = document.getElementById('dock');
+    dockElement.addEventListener(transEndEventName, function(event) {
+      // Rearrange the video layout when the dock changes width:
+      if (event.propertyName === 'width') {
+        LayoutManager.rearrange();
+      };
+    });
+
   };
 
   function toggleScreenSharing(evt) {
