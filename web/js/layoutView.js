@@ -27,6 +27,11 @@
       controls.classList.add('controls');
       this.appendControlElems(id, type, controls, options.controlElems, 'i');
       this.appendAdditionalUI(id, item, type, options.name);
+      this.container.addEventListener('touchend', function() {
+        var buttons = controls.querySelector('.buttons');
+        var currentOpacity = buttons.style.opacity;
+        buttons.style.opacity = buttons.style.opacity == 0 ? 1 : 0;
+      });
       // Streams go inside <span> because of OpenTok overrides <li> styles if this
       // one would be the container.
       HTMLElems.createElementAt(item, 'span').classList.add('opentok-stream-container');
