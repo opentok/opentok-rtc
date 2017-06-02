@@ -1,5 +1,17 @@
 'use strict';
 
+var MeetLayout = function(container, items, type) {
+  var listContainer = container.querySelector('ul');
+  container.style.padding = 0;
+  listContainer.style.position = 'relative';
+  var layout = initLayoutContainer(listContainer, {
+    animate: true
+  });
+  this.rearrange = function() {
+    layout.layout();
+  };
+}
+
 var LayoutBase = function(container, items, type) {
   this.items = items;
   this.container = container;
