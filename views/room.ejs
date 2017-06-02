@@ -35,7 +35,8 @@
       var expandedHidden = ['buttonDocumentation', 'buttonTalkToSales'];
 
       var isMenuCollapsed = function() {
-        return screen.width < 768;
+        return screen.width < 770;
+         // Consider iPad portrait (768) not width enough to show the menu expanded
       }
 
       var showItems = function(items, show) {
