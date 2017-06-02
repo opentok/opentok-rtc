@@ -708,6 +708,13 @@
       return loadAnnotations.then(function() { return aParams; });
   }).
   then(function(aParams) {
+    return LazyLoader.load([
+      '/bower_components/opentok-layout-js/opentok-layout.js'
+    ]).then(function() {
+      return aParams;
+    });
+  }).
+  then(function(aParams) {
       Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
       Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
       RoomView.init(enableHangoutScroll, enableArchiveManager);

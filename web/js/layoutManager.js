@@ -40,7 +40,8 @@
       'f2f_horizontal': F2FHorizontal,
       'f2f_vertical': F2FVertical,
       'hangout_horizontal': HangoutHorizontal,
-      'hangout_vertical': HangoutVertical
+      'hangout_vertical': HangoutVertical,
+      'meet': MeetLayout
     };
     container = document.querySelector(selector);
     LayoutView.init(container);
@@ -107,19 +108,7 @@
   }
 
   function calculateCandidateLayout() {
-    if (getTotal() >= 4
-    || (getTotal() == 3 && screen.width > 768)) {
-      return Grid;
-    }
-    if (screen.width > screen.height ||
-      Math.abs(window.orientation) == 90) {
-      // Landscape
-      userLayout = 'f2f_vertical';
-    } else {
-      userLayout = 'f2f_horizontal';
-    }
-
-    return layouts[userLayout];
+    return layouts['meet'];
   }
 
   var F2F_LAYOUTS = {

@@ -1,6 +1,7 @@
 {
   "name": "opentokrtc-v2",
   "dependencies": {
-    "theme": "tef-components/theme#0.2.68"
+    "theme": "tef-components/theme#0.2.68",
+    "opentok-layout-js": "~0.5.1"
   }
 }
