@@ -34,6 +34,10 @@
   };
 
   var showContract = function() {
+    document.activeElement.blur();
+    document.querySelectorAll('input').forEach(function(element) {
+      element.blur();
+    });
     var selector = '.tc-modal.contract';
     var ui = document.querySelector(selector);
 

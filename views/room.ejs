@@ -49,7 +49,8 @@
         window.removeEventListener('DOMContentLoaded', loaded);
         if (isMobile()) {
             document.getElementById("dock").classList.add("collapsed");
-            document.getElementById('flipCameraItem').style.display = 'block';
+            // We are disabling the Switch Camera button until the new browser supports it:
+            // document.getElementById('flipCameraItem').style.display = 'block';
         }
         hideItems(getIdsToHide(isMobile()));
       });
@@ -134,7 +135,7 @@
             <li>
               <a id="endCall" class="danger"><i data-icon="end"></i><span>Exit meeting</span></a>
             </li>
-            <li id="flipCameraItem" class="tooltip" tooltip="Switch camera">
+            <li id="flipCameraItem">
               <a id="flipCamera"><i data-icon="flipCamera"></i><span>Switch camera</span></a>
             </li>
             <li id="buttonDocumentation" class="bottom tooltip" tooltip="See Documentation">
@@ -199,7 +200,6 @@
         <div class="bubble-content">
           <p class="title">Meeting link has been copied <span class="check-mark">&#10003;</span></p>
           <p>Share link to add others to the meeting</p>
-          <input class="block" onclick="this.select();">
         </div>
       </section>
 
