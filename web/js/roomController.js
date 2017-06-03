@@ -35,7 +35,7 @@
     width:'100%',
     height: '100%',
     showControls: true,
-    resolution: '1280x720',
+    resolution: isWebRTCVersion ? '1280x720' : '640x480',
     style: {
       audioLevelDisplayMode: 'auto',
       buttonDisplayMode: 'off',
