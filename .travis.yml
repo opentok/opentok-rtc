@@ -1,10 +1,15 @@
 language: node_js
 services:
   - redis-server
+install:
+  - npm install;
+    npm install travis-github-lint-status;
 before_script:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
   - redis-cli set tb_api_secret 123
   - redis-cli set tb_api_key 123
+script:
+  - ./node_modules/travis-github-lint-status/index.js
 addons:
   firefox: "latest"
