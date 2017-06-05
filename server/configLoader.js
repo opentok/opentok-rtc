@@ -1,8 +1,8 @@
 'use strict';
+
 var _ = require('lodash');
 var Utils = require('swagger-boilerplate').Utils;
 
-var Logger = Utils.MultiLevelLogger;
 var readFile = Utils.promisify(require('fs').readFile);
 const defaultJsonConfigPath = require('./serverConstants').DEFAULT_JSON_CONFIG_PATH;
 
