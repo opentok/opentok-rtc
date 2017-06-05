@@ -27,10 +27,16 @@
       controls.classList.add('controls');
       this.appendControlElems(id, type, controls, options.controlElems, 'i');
       this.appendAdditionalUI(id, item, type, options.name);
+      var buttons = controls.querySelector('.buttons');
       this.container.addEventListener('touchend', function() {
-        var buttons = controls.querySelector('.buttons');
         var currentOpacity = buttons.style.opacity;
         buttons.style.opacity = buttons.style.opacity == 0 ? 1 : 0;
+      });
+      this.container.addEventListener('mouseover', function() {
+        buttons.style.opacity = 1;
+      });
+      this.container.addEventListener('mouseout', function() {
+        buttons.style.opacity = 0;
       });
       // Streams go inside <span> because of OpenTok overrides <li> styles if this
       // one would be the container.
