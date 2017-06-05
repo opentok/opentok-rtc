@@ -17,8 +17,15 @@
     "no-var": "off",
     "vars-on-top": "off",
     "no-underscore-dangle": "off",
-    "no-unused-expressions": ["error", {"allowShortCircuit": true}],
+    "no-unused-expressions": ["error", { "allowShortCircuit": true, "allowTernary": true }],
     "prefer-template": "off",
-    "strict": ["error", "global"]
+    "no-multi-assign": "off",
+    "strict": ["error", "global"],
+    "no-param-reassign": "off",
+    "no-shadow": "off",
+    "no-plusplus": "off",
+    "func-names": ["error", "never"],
+    "no-use-before-define": "off",
+    "default-case": "off"
   }
 }
