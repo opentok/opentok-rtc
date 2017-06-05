@@ -10,6 +10,9 @@ before_script:
   - redis-cli set tb_api_secret 123
   - redis-cli set tb_api_key 123
 script:
-  - ./node_modules/travis-github-lint-status/index.js
+  - eval $CMD
+env:
+  - CMD="./node_modules/travis-github-lint-status/index.js"
+  - CMD="npm run test"
 addons:
   firefox: "latest"
