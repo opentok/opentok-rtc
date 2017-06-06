@@ -19,7 +19,6 @@
     setPublisherReady = resolve;
   });
 
-  var MAIN_PAGE = '/index.html'; // eslint-disable-line no-unused-vars
   var STATUS_KEY = 'room';
   var _sharedStatus = {
     roomMuted: false
@@ -139,7 +138,6 @@
       subscriberStreams[streamId] && subscriberStreams[streamId].subscriberPromise;
 
     subscriberPromise.then(function(subscriber) {
-      // //////////////////////////////////////////////////// REMOVE THIS BEFORE SHIPPING!
       if (debugPreferredResolution) {
         // If the user requested debugging this, we're going to export all the information through
         // window so he can examine the values.
@@ -163,7 +161,6 @@
             });
         };
       }
-      // //////////////////////////////////////////////////// REMOVE THIS BEFORE SHIPPING!
 
       var parent = elem.parentNode;
 
@@ -719,12 +716,9 @@
       return;
     }
     roomName = aParams.roomName;
-    userName = aParams.username ? // eslint-disable-line no-nested-ternary
-                  (aParams.username.length > 1000 ?
-                   aParams.username.substring(0, 1000) :
-                   aParams.username) :
-                  '';
-      // This kinda sucks, but it's the easiest way to leave the 'context' thing work as it does now
+    userName = aParams.username ? aParams.username.substring(0, 1000) : '';
+
+    // This kinda sucks, but it's the easiest way to leave the 'context' thing work as it does now
     otHelper = new exports.OTHelper(aParams);
     exports.otHelper = otHelper;
 

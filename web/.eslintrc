@@ -20,5 +20,6 @@
     "no-use-before-define": "off",
     "one-var": "off",
     "default-case": "off",
+    "no-multi-assign": "off",
   }
 }

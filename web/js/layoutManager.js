@@ -138,11 +138,11 @@
   }
 
   function rearrange(item) {
-    var candidateLayout = calculateCandidateLayout();
+    var CandidateLayout = calculateCandidateLayout();
 
-    if (!currentLayout || !isOnGoing(candidateLayout)) {
+    if (!currentLayout || !isOnGoing(CandidateLayout)) {
       currentLayout && currentLayout.destroy();
-      currentLayout = new candidateLayout(container, items, item); // eslint-disable-line new-cap
+      currentLayout = new CandidateLayout(container, items, item);
       Utils.sendEvent('layoutManager:layoutChanged');
     }
 

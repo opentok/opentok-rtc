@@ -67,7 +67,7 @@
         container.removeEventListener(transEndEventName, onEnd);
         document.body.removeEventListener('click', onClick);
         setVisible(false);
-        chatShown = chatHidden = null; // eslint-disable-line no-multi-assign
+        chatShown = chatHidden = null;
         Utils.sendEvent('chat:hidden');
         resolve();
       });

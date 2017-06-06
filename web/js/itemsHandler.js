@@ -73,9 +73,8 @@
       }
     }
   };
-
   function init(container, items) {
-    var handler = new Handler(container, items); // eslint-disable-line no-unused-vars
+    return new Handler(container, items);
   }
 
   global.ItemsHandler = {

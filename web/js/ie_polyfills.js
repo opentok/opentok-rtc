@@ -152,16 +152,17 @@
           return this;
         },
         get: function(key) {
-          var entry;
-          return (entry = key[this.name]) && // eslint-disable-line no-cond-assign
-                  entry[0] === key ?
-                  entry[1] : undefined;
+          var entry = key[this.name];
+          if (entry && entry[0] === key) {
+            return entry[1];
+          }
+          return undefined;
         },
         delete: function(key) {
           var entry = key[this.name];
           if (!entry) return false;
           var hasValue = entry[0] === key;
-          entry[0] = entry[1] = undefined; // eslint-disable-line no-multi-assign
+          entry[0] = entry[1] = undefined;
           return hasValue;
         },
         has: function(key) {

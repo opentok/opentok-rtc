@@ -57,7 +57,7 @@
   };
 
   var navigateToRoom = function() {
-    var base = window.location.href.replace(/([^\/]+)\.[^\/]+$/, ''); // eslint-disable-line no-useless-escape
+    var base = window.location.href.replace(/([^/]+)\.[^/]+$/, '');
     var url = base.concat('room/', room.value);
     var userName = document.getElementById('user').value.trim();
     if (userName) {

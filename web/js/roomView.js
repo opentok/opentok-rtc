@@ -3,7 +3,6 @@
 
   // HTML elements for the view
   var dock;
-  var screen; // eslint-disable-line no-unused-vars
   var handler;
   var roomNameElem;
   var participantsNumberElem;
@@ -193,7 +192,6 @@
 
   function initHTMLElements() {
     dock = document.getElementById('dock');
-    screen = document.getElementById('screen');
     handler = dock.querySelector('#handler');
 
     roomNameElem = dock.querySelector('#roomName');
@@ -211,10 +209,6 @@
     var title = dock.querySelector('.info h1');
     title.style.height = title.clientHeight + 'px';
   }
-
-  var transEndEventName = // eslint-disable-line no-unused-vars
-    ('WebkitTransition' in document.documentElement.style) ?
-     'webkitTransitionEnd' : 'transitionend';
 
   function createStreamView(streamId, type, controlBtns, name) {
     return LayoutManager.append(streamId, type, controlBtns, name);

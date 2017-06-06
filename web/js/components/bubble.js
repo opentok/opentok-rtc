@@ -118,7 +118,7 @@
           container.addEventListener(transEndEventName, bubble._onHidden);
           container.addEventListener(transEndEventName, function onEnd() {
             container.removeEventListener(transEndEventName, onEnd);
-            bubble.bubbleShown = bubble.bubbleHidden = null; // eslint-disable-line no-multi-assign
+            bubble.bubbleShown = bubble.bubbleHidden = null;
             resolve();
           });
 
@@ -170,7 +170,7 @@
       var instance = bubbles[id];
 
       if (!instance) {
-        instance = bubbles[id] = new Bubble(id); // eslint-disable-line no-multi-assign
+        instance = bubbles[id] = new Bubble(id);
       }
 
       return instance;

@@ -5,7 +5,6 @@
   var _chromeExtId;
   var _isSharing;
   var _hasPendingOperation = false;
-  var _userName; // eslint-disable-line no-unused-vars
   var NAME_SUFFIX = '\'s screen';
   var DEFAULT_NAME = 'Unknown';
   var otHelper;
@@ -103,7 +102,6 @@
       Utils.addEventsHandlers('roomView:', roomViewEvents, globals);
       Utils.addEventsHandlers('screenShareView:', screenShareViewEvents, globals);
       _isSharing = false;
-      _userName = aUserName;
       screenPublisherOptions.name = (aUserName || DEFAULT_NAME) + NAME_SUFFIX;
       _chromeExtId = aChromeExtId;
       aChromeExtId && aChromeExtId !== 'undefined' &&

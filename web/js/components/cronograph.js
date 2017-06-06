@@ -44,14 +44,14 @@
      */
     start: function(from) {
       if (counterTimer !== null) {
-        return;
+        return this;
       }
       counter = Math.max(from || 0, 0);
       counterTimer = setInterval(function() {
         ++counter;
         paint();
       }, 1000);
-      return this; // eslint-disable-line consistent-return
+      return this;
     },
 
     stop: function() {
