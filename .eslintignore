@@ -2,3 +2,4 @@
 
 /web/js/vendor/*
 /web/bower_components/*
+/web/js/helpers/*
