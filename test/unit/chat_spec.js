@@ -1,43 +1,42 @@
 var expect = chai.expect;
 
-describe('Chat', function() {
-
+describe('Chat', () => {
   function getContainer() {
     return document.getElementById('chat');
   }
 
-  before(function() {
+  before(() => {
     window.document.body.innerHTML = window.__html__['test/unit/chat_spec.html'];
   });
 
-  it('should exist', function() {
+  it('should exist', () => {
     expect(Chat).to.exist;
   });
 
-  describe('#init()', function() {
-    it('should export a init function', function() {
+  describe('#init()', () => {
+    it('should export a init function', () => {
       expect(Chat.init).to.exist;
       expect(Chat.init).to.be.a('function');
       Chat.init();
     });
   });
 
-  describe('#collapse()', function() {
-    it('should collapse the chat', function() {
+  describe('#collapse()', () => {
+    it('should collapse the chat', () => {
       Chat.collapse();
       expect(getContainer().classList.contains('collapsed')).to.be.true;
     });
   });
 
-  describe('#expand()', function() {
-    it('should expand the chat', function() {
+  describe('#expand()', () => {
+    it('should expand the chat', () => {
       Chat.expand();
       expect(getContainer().classList.contains('collapsed')).to.be.false;
     });
   });
 
-  describe('#isCollapsed()', function() {
-    it('should return true when chat is collapsed otherwise false', function() {
+  describe('#isCollapsed()', () => {
+    it('should return true when chat is collapsed otherwise false', () => {
       Chat.collapse();
       expect(Chat.isCollapsed()).to.be.true;
       Chat.expand();
@@ -45,13 +44,12 @@ describe('Chat', function() {
     });
   });
 
-  describe('#visible', function() {
-    it('should return true when chat is visible otherwise false', function() {
+  describe('#visible', () => {
+    it('should return true when chat is visible otherwise false', () => {
       getContainer().classList.add('visible');
       expect(Chat.visible).to.be.true;
       getContainer().classList.remove('visible');
       expect(Chat.visible).to.be.false;
     });
   });
-
 });

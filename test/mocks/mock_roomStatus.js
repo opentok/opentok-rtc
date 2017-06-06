@@ -1,20 +1,19 @@
-!function(exports) {
+!(function (exports) {
   'use strict';
 
   var realRoomStatus = null;
 
   var MockRoomStatus = {
-    _install: function() {
+    _install() {
       realRoomStatus = exports.RoomStatus;
       exports.RoomStatus = MockRoomStatus;
     },
-    _restore: function() {
+    _restore() {
       exports.RoomStatus = realRoomStatus;
     },
-    set: function() {},
-    get: function() {}
+    set() {},
+    get() {},
   };
 
   exports.MockRoomStatus = MockRoomStatus;
-
-}(this);
+}(this));

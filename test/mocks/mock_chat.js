@@ -1,4 +1,4 @@
-!function(exports) {
+!(function (exports) {
   'use strict';
 
   var realChat = null;
@@ -7,15 +7,15 @@
   var MockChat = {
     _isVisible: true,
     _isCollapsed: true,
-    _install: function() {
+    _install() {
       depth++;
-      if (depth > 1 ) {
+      if (depth > 1) {
         return; // Do nothing...
       }
       realChat = exports.Chat;
       exports.Chat = MockChat;
     },
-    _restore: function() {
+    _restore() {
       depth--;
       if (depth > 0) {
         return;
@@ -25,20 +25,19 @@
     get visible() {
       return this._isVisible;
     },
-    show: function() {
+    show() {
       return Promise.resolve();
     },
-    hide: function() {
+    hide() {
       return Promise.resolve();
     },
-    isCollapsed: function() {
+    isCollapsed() {
       return this._isCollapsed;
     },
-    expand: function() {},
-    collapse: function() {},
-    init: function() {}
+    expand() {},
+    collapse() {},
+    init() {},
   };
 
   exports.MockChat = MockChat;
-
-}(this);
+}(this));
