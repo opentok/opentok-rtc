@@ -1,4 +1,4 @@
-!function(exports) {
+!(function(exports) {
   'use strict';
 
   var isTouch = 'ontouchstart' in exports;
@@ -7,9 +7,9 @@
   var touchend = isTouch ? 'touchend' : 'mouseup';
 
   var getTouch = (function getTouchWrapper() {
-    return isTouch ? function(e) { return e.touches[0] } :
-                     function(e) { return e };
-  })();
+    return isTouch ? function(e) { return e.touches[0]; } :
+                     function(e) { return e; };
+  }());
 
   var DragDetector = function(element) {
     this.element = element;
@@ -68,7 +68,7 @@
           break;
 
         case touchmove:
-          var touch = getTouch(evt);
+          var touch = getTouch(evt); // eslint-disable-line no-redeclare
           if (Math.abs(touch.pageX - this.startX) > DragDetector.CLICK_THRESHOLD ||
               Math.abs(touch.pageY - this.startY) > DragDetector.CLICK_THRESHOLD) {
             this.sendEvent();
@@ -183,5 +183,4 @@
   };
 
   exports.Draggable = Draggable;
-
-}(this);
+}(this));

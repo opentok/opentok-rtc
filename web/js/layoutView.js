@@ -1,4 +1,4 @@
-!function(global) {
+!(function(global) {
   'use strict';
 
   var LayoutRenderer = function(container) {
@@ -21,7 +21,7 @@
       var item = HTMLElems.createElementAt(this.container, 'li', {
         'data-id': id,
         'data-streamType': type,
-        'class': 'stream'
+        class: 'stream'
       }, null, type === 'publisher' ? null : this.container.firstChild);
       var controls = HTMLElems.createElementAt(item, 'div');
       controls.classList.add('controls');
@@ -42,7 +42,7 @@
       nameElem.textContent = name;
 
       if (type === 'publisher') {
-        HTMLElems.createElementAt(item, 'i', {'data-icon': 'record'});
+        HTMLElems.createElementAt(item, 'i', { 'data-icon': 'record' });
       }
 
       HTMLElems.createElementAt(item, 'div', {
@@ -103,5 +103,4 @@
       renderer.removeAll.apply(renderer);
     }
   };
-
-}(this);
+}(this));

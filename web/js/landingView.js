@@ -1,7 +1,8 @@
-!function(global) {
+!(function(global) {
   'use strict';
 
-  var room, enterButton;
+  var room,
+    enterButton;
 
   var init = function() {
     enterButton = document.getElementById('enter');
@@ -37,8 +38,8 @@
     var selector = '.tc-modal.contract';
     var ui = document.querySelector(selector);
 
-    return Modal.show(selector).
-      then(function() {
+    return Modal.show(selector)
+      .then(function() {
         return new Promise(function(resolve, reject) {
           ui.addEventListener('click', function onClicked(evt) {
             var classList = evt.target.classList;
@@ -53,10 +54,10 @@
           });
         });
       });
-  }
+  };
 
   var navigateToRoom = function() {
-    var base = window.location.href.replace(/([^\/]+)\.[^\/]+$/, '');
+    var base = window.location.href.replace(/([^\/]+)\.[^\/]+$/, ''); // eslint-disable-line no-useless-escape
     var url = base.concat('room/', room.value);
     var userName = document.getElementById('user').value.trim();
     if (userName) {
@@ -64,7 +65,7 @@
     }
     resetForm();
     window.location.href = url;
-  }
+  };
 
   var addHandlers = function() {
     enterButton.addEventListener('click', function onEnterClicked(event) {
@@ -97,5 +98,4 @@
   global.LandingView = {
     init: init
   };
-
-}(this);
+}(this));

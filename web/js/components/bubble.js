@@ -32,7 +32,7 @@
  *
  */
 
-!function(global) {
+!(function(global) {
   'use strict';
 
   var transEndEventName =
@@ -88,21 +88,21 @@
 
       this.bubbleShown =
         this.bubbleShown || new Promise(function(resolve, reject) {
-        var container = bubble.container;
+          var container = bubble.container;
 
-        container.removeEventListener(transEndEventName, bubble._onHidden);
-        container.addEventListener(transEndEventName, bubble._onShown);
-        container.addEventListener(transEndEventName, function onEnd() {
-          container.removeEventListener(transEndEventName, onEnd);
-          resolve();
+          container.removeEventListener(transEndEventName, bubble._onHidden);
+          container.addEventListener(transEndEventName, bubble._onShown);
+          container.addEventListener(transEndEventName, function onEnd() {
+            container.removeEventListener(transEndEventName, onEnd);
+            resolve();
+          });
+
+          bubble._takePlace();
+          bubble._visible = true;
+          setTimeout(function() {
+            container.classList.add('show');
+          }, 50); // Give the chance to paint the UI element before fading in
         });
-
-        bubble._takePlace();
-        bubble._visible = true;
-        setTimeout(function() {
-          container.classList.add('show');
-        }, 50); // Give the chance to paint the UI element before fading in
-      });
 
       return this.bubbleShown;
     },
@@ -112,20 +112,20 @@
 
       this.bubbleHidden =
         this.bubbleHidden || new Promise(function(resolve, reject) {
-        var container = bubble.container;
+          var container = bubble.container;
 
-        container.removeEventListener(transEndEventName, bubble._onShown);
-        container.addEventListener(transEndEventName, bubble._onHidden);
-        container.addEventListener(transEndEventName, function onEnd() {
-          container.removeEventListener(transEndEventName, onEnd);
-          bubble.bubbleShown = bubble.bubbleHidden = null;
-          resolve();
+          container.removeEventListener(transEndEventName, bubble._onShown);
+          container.addEventListener(transEndEventName, bubble._onHidden);
+          container.addEventListener(transEndEventName, function onEnd() {
+            container.removeEventListener(transEndEventName, onEnd);
+            bubble.bubbleShown = bubble.bubbleHidden = null; // eslint-disable-line no-multi-assign
+            resolve();
+          });
+
+          setTimeout(function() {
+            container.classList.remove('show');
+          }, 50); // Give the chance to paint the UI element before fading out
         });
-
-        setTimeout(function() {
-          container.classList.remove('show');
-        }, 50); // Give the chance to paint the UI element before fading out
-      });
 
       return this.bubbleHidden;
     },
@@ -170,11 +170,10 @@
       var instance = bubbles[id];
 
       if (!instance) {
-        instance = bubbles[id] = new Bubble(id);
+        instance = bubbles[id] = new Bubble(id); // eslint-disable-line no-multi-assign
       }
 
       return instance;
     }
   };
-
-}(this);
+}(this));

@@ -1,6 +1,5 @@
 /* global window, safari, LazyLoader, Draggable */
-!function(exports) {
-
+!(function(exports) {
   'use strict';
 
   var getCurrentTime = function() {
@@ -26,7 +25,7 @@
     return time.join('');
   };
 
-  var inspectObject = function(obj){
+  var inspectObject = function(obj) {
     var str = '';
     Object.keys(obj).forEach(function(elto) {
       str += '\n' + elto + ':' + JSON.stringify(obj[elto]);
@@ -55,7 +54,9 @@
   };
 
   var setTransform = function(style, transform) {
+    /* eslint-disable no-multi-assign */
     style.MozTransform = style.webkitTransform = style.msTransform = style.transform = transform;
+    /* eslint-enable no-multi-assign */
   };
 
 
@@ -80,9 +81,9 @@
   // more than once on the search
   var parseSearch = function(aSearchStr) {
     aSearchStr = decodeStr(aSearchStr);
-    return aSearchStr.slice(1).split('&').
-      map(function(aParam) { return aParam.split(/=(.+)?/); }).
-      reduce(function(aObject, aCurrentValue) {
+    return aSearchStr.slice(1).split('&')
+      .map(function(aParam) { return aParam.split(/=(.+)?/); })
+      .reduce(function(aObject, aCurrentValue) {
         var parName = aCurrentValue[0];
         aObject.params[parName] = _addValue(aObject.params[parName], aCurrentValue[1] || null);
         return aObject;
@@ -99,8 +100,8 @@
   // Aux function to generate a search str from an object with
   // key: value or key: [value1,value2] structure.
   function generateSearchStr(aObject) {
-    return Object.keys(aObject).
-      reduce(function(aPrevious, aParam, aIndex) {
+    return Object.keys(aObject)
+      .reduce(function(aPrevious, aParam, aIndex) {
         var value = aObject[aParam];
         value = Array.isArray(value) ? value : [value];
         value.forEach(function(aSingleValue, aValueIndex) {
@@ -109,8 +110,8 @@
           aSingleValue && aPrevious.push('=', aSingleValue);
         });
         return aPrevious;
-      }, ['?']).
-      join('');
+      }, ['?'])
+      .join('');
   }
 
   function decodeStr(str) {
@@ -167,20 +168,20 @@
     time.indexOf(':') === 1 && (prefix = '0');
 
     var label = [prefix, time, ' - ', archive.recordingUser, '\'s Archive (',
-                 toPrettyDuration(archive.duration), 's)'];
+      toPrettyDuration(archive.duration), 's)'];
 
     return label.join('');
   }
 
   function isIE() {
-    var userAgent = 'userAgent' in navigator && navigator.userAgent.toLowerCase() || '';
-    return /msie/.test(userAgent) || userAgent.indexOf("trident/") !== -1;
+    var userAgent = 'userAgent' in navigator && (navigator.userAgent.toLowerCase() || '');
+    return /msie/.test(userAgent) || userAgent.indexOf('trident/') !== -1;
   }
 
   function isSafari() {
-    var checkObject = function (p) { return p.toString() === "[object SafariRemoteNotification]"; };
-      return /constructor/i.test(window.HTMLElement) ||
-        checkObject(!window['safari'] || safari.pushNotification);
+    var checkObject = function(p) { return p.toString() === '[object SafariRemoteNotification]'; };
+    return /constructor/i.test(window.HTMLElement) ||
+        checkObject(!window.safari || safari.pushNotification);
   }
 
   var Utils = {
@@ -209,8 +210,8 @@
     generateSearchStr: generateSearchStr,
     decodeStr: decodeStr,
     isChrome: function() {
-      var userAgent = 'userAgent' in navigator && navigator.userAgent.toLowerCase() || '';
-      var vendor = 'vendor' in navigator && navigator.vendor.toLowerCase() || '';
+      var userAgent = 'userAgent' in navigator && (navigator.userAgent.toLowerCase() || '');
+      var vendor = 'vendor' in navigator && (navigator.vendor.toLowerCase() || '');
       return /chrome|chromium/i.test(userAgent) && /google inc/.test(vendor);
     },
     setDisabled: setDisabled,
@@ -220,8 +221,7 @@
 
   // Just replacing global.utils might not be safe... let's just expand it...
   exports.Utils = exports.Utils || {};
-  Object.keys(Utils).forEach(function (utilComponent) {
+  Object.keys(Utils).forEach(function(utilComponent) {
     exports.Utils[utilComponent] = Utils[utilComponent];
   });
-
-}(this);
+}(this));

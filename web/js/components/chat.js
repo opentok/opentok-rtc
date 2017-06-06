@@ -1,4 +1,4 @@
-!function(global) {
+!(function(global) {
   'use strict';
 
   var transEndEventName =
@@ -6,8 +6,8 @@
      'webkitTransitionEnd' : 'transitionend';
 
   var container = null,
-      chatShown = null,
-      chatHidden = null;
+    chatShown = null,
+    chatHidden = null;
 
   function init() {
     container = document.querySelector('#chat');
@@ -67,7 +67,7 @@
         container.removeEventListener(transEndEventName, onEnd);
         document.body.removeEventListener('click', onClick);
         setVisible(false);
-        chatShown = chatHidden = null;
+        chatShown = chatHidden = null; // eslint-disable-line no-multi-assign
         Utils.sendEvent('chat:hidden');
         resolve();
       });
@@ -90,5 +90,4 @@
       return container && container.classList.contains('visible');
     }
   };
-
-}(this);
+}(this));

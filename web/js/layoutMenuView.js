@@ -1,4 +1,4 @@
-!function(exports) {
+!(function(exports) {
   'use strict';
 
   var menu = null;
@@ -36,5 +36,4 @@
   exports.LayoutMenuView = {
     init: init
   };
-
-}(this);
+}(this));

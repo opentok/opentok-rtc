@@ -1,4 +1,4 @@
-!function(global) {
+!(function(global) {
   'use strict';
 
   var transEndEventName =
@@ -31,7 +31,6 @@
   }
 
   function show(selector, preShowCb) {
-
     var screenFree;
     if (!_modalShown) {
       screenFree = Promise.resolve();
@@ -79,5 +78,4 @@
     show: show,
     hide: hide
   };
-
-}(this);
+}(this));

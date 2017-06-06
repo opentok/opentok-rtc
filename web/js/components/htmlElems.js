@@ -1,5 +1,4 @@
-!function(exports) {
-
+!(function(exports) {
   'use strict';
 
   Element.prototype.data = function(name, value) {
@@ -12,12 +11,10 @@
     if (arguments.length === 2) {
       if (value === null || typeof value === 'undefined') {
         return this.removeAttribute('data-' + dashed);
-      } else {
-        return this.setAttribute('data-' + dashed, value);
       }
-    } else {
-      return this.getAttribute('data-' + dashed);
+      return this.setAttribute('data-' + dashed, value);
     }
+    return this.getAttribute('data-' + dashed);
   };
 
   function replaceText(aElem, aText) {
@@ -37,8 +34,8 @@
     var elem = document.createElement(aType);
 
     // Add all the requested attributes
-    if (aAttrs){
-      for (var i in aAttrs) {
+    if (aAttrs) {
+      for (var i in aAttrs) { // eslint-disable-line no-restricted-syntax
         if (i.startsWith('data-')) {
           var dataElem = i.replace('data-', '');
           elem.data(dataElem, aAttrs[i]);
@@ -76,15 +73,14 @@
     tagName = tagName.toUpperCase();
     if (el.tagName === tagName) {
       return el;
-    } else {
-      while (el.parentNode) {
-        el = el.parentNode;
-        if (el.tagName === tagName) {
-          return el;
-        }
-      }
-      return null;
     }
+    while (el.parentNode) {
+      el = el.parentNode;
+      if (el.tagName === tagName) {
+        return el;
+      }
+    }
+    return null;
   }
 
   function addHandlerArchive(selector) {
@@ -125,12 +121,11 @@
           element && element.classList.toggle('flush-this-element-please');
         });
       };
-    } else {
-      return function() {
-
-      };
     }
-  })();
+    return function() {
+
+    };
+  }());
 
   exports.HTMLElems = {
     addText: addText,
@@ -145,5 +140,4 @@
     addHandlerArchive: addHandlerArchive,
     flush: flush
   };
-
-}(this);
+}(this));

@@ -76,7 +76,7 @@ Float.prototype = Object.create(LayoutBase.prototype, {
   publisher: {
     configurable: false,
     get: function() {
-      return this.items['publisher'];
+      return this.items.publisher;
     }
   }
 });
@@ -176,7 +176,7 @@ Hangout.getAttributeName = function(type) {
 Hangout.getItemType = function(item) {
   var type = null;
 
-  switch(item.data('streamType')) {
+  switch (item.data('streamType')) {
     case 'camera':
     case 'publisher':
       type = 'camera';
@@ -285,7 +285,7 @@ Hangout.prototype.handlers = {
   'layoutManager:itemAdded': function(evt) {
     var item = evt.detail.item;
     // New screen shared goes to stage if there is not another screen shared there
-    if (Hangout.getItemType(item) === 'screen' && !this.stageIds['screen']) {
+    if (Hangout.getItemType(item) === 'screen' && !this.stageIds.screen) {
       this.putItemOnStage(item).updateTotalOnStage();
     }
   }

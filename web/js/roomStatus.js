@@ -1,4 +1,4 @@
-!function(exports) {
+!(function(exports) {
   'use strict';
 
   var TIME_RESEND_STATUS = 60000;
@@ -55,7 +55,7 @@
                            TIME_RESEND_STATUS);
       _connectedAfterMe[connectionId] = intervalResendStatus;
     }
-  };
+  }
 
   var _statusHandlers = {
     'signal:status': function(evt) {
@@ -69,18 +69,18 @@
     'signal:statusACK': function(evt) {
       cancelPendingSend(evt.from.connectionId);
     },
-    'connectionCreated': function(evt) {
+    connectionCreated: function(evt) {
       // Dispatched when an new client (including your own) has connected to the
       // session, and for every client in the session when you first connect
       // Session object also dispatches a sessionConnected evt when your local
       // client connects
-        evt.connection.data && proccessNewConnection(evt);
+      evt.connection.data && proccessNewConnection(evt);
     },
-    'sessionConnected': function(evt) {
+    sessionConnected: function(evt) {
       _myCreationTime = evt.target.connection.creationTime;
       otHelper = this;
     },
-    'connectionDestroyed': function(evt) {
+    connectionDestroyed: function(evt) {
       // If connection destroyed belongs to someone older than me,
       // subtract one from connected early than me
       // no matters who, it only care the number of them,
@@ -103,7 +103,7 @@
   function init(aGlobalHandlers, aEntries) {
     _entries = aEntries || {};
     return addHandlers(aGlobalHandlers);
-  };
+  }
 
   exports.RoomStatus = {
     set: function set(key, value) {
@@ -117,5 +117,4 @@
     },
     init: init
   };
-
-}(this);
+}(this));

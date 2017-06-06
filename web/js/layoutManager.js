@@ -1,5 +1,5 @@
 
-!function(global) {
+!(function(global) {
   'use strict';
 
   var userLayout = null;
@@ -17,17 +17,17 @@
   }
 
   var handlers = {
-    'layout': function(evt) {
+    layout: function(evt) {
       userLayout = evt.detail.type;
       rearrange();
     },
-    'itemSelected': function(evt) {
+    itemSelected: function(evt) {
       if (isGroup() && isOnGoing(Grid)) {
         userLayout = HANGOUT_BY_DEFAULT;
         rearrange(evt.detail.item);
       }
     },
-    'emptyStage': function(evt) {
+    emptyStage: function(evt) {
       userLayout = 'grid';
       rearrange();
     }
@@ -35,12 +35,12 @@
 
   function init(selector, enableHangoutScroll) {
     layouts = {
-      'grid': Grid,
-      'float': Float,
-      'f2f_horizontal': F2FHorizontal,
-      'f2f_vertical': F2FVertical,
-      'hangout_horizontal': HangoutHorizontal,
-      'hangout_vertical': HangoutVertical
+      grid: Grid,
+      float: Float,
+      f2f_horizontal: F2FHorizontal,
+      f2f_vertical: F2FVertical,
+      hangout_horizontal: HangoutHorizontal,
+      hangout_vertical: HangoutVertical
     };
     container = document.querySelector(selector);
     LayoutView.init(container);
@@ -50,9 +50,9 @@
     Utils.addEventsHandlers('hangout:', handlers, global);
     return enableHangoutScroll ? LazyLoader.load([
       '/js/layoutViewport.js', '/css/hangoutScroll.css'
-      ]).then(function() {
-        LayoutViewport.init(container.querySelector('.tc-list ul'), '.stream');
-      }) : Promise.resolve();
+    ]).then(function() {
+      LayoutViewport.init(container.querySelector('.tc-list ul'), '.stream');
+    }) : Promise.resolve();
   }
 
   function isHangoutRequired(item) {
@@ -142,7 +142,7 @@
 
     if (!currentLayout || !isOnGoing(candidateLayout)) {
       currentLayout && currentLayout.destroy();
-      currentLayout = new candidateLayout(container, items, item);
+      currentLayout = new candidateLayout(container, items, item); // eslint-disable-line new-cap
       Utils.sendEvent('layoutManager:layoutChanged');
     }
 
@@ -157,5 +157,4 @@
     removeAll: removeAll,
     getItemById: getItemById
   };
-
-}(this);
+}(this));

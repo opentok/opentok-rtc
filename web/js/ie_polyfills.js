@@ -1,8 +1,10 @@
+/* eslint-disable no-extend-native */
+/* eslint-disable no-bitwise */
+
 // This file adds what we've detected that's missing in IE and we've used inadvertently. We've
 // tried to be as vanilla as possible (except for promises) but sometimes surprising things fall
 // between the cracks
-
-!function(global) {
+!(function(global) {
   // String doesn't have startsWith
   if (!String.prototype.startsWith) {
     String.prototype.startsWith = function(substr) {
@@ -12,14 +14,14 @@
 
   if (!String.prototype.endsWith) {
     String.prototype.endsWith = function(searchString, position) {
-        var subjectString = this.toString();
-        if (typeof position !== 'number' || !isFinite(position) ||
+      var subjectString = this.toString();
+      if (typeof position !== 'number' || !isFinite(position) ||
             Math.floor(position) !== position || position > subjectString.length) {
-          position = subjectString.length;
-        }
-        position -= searchString.length;
-        var lastIndex = subjectString.indexOf(searchString, position);
-        return lastIndex !== -1 && lastIndex === position;
+        position = subjectString.length;
+      }
+      position -= searchString.length;
+      var lastIndex = subjectString.indexOf(searchString, position);
+      return lastIndex !== -1 && lastIndex === position;
     };
   }
 
@@ -43,7 +45,7 @@
     global._ieCustomEvent = global.CustomEvent;
     global.CustomEvent = function(eventName, initDict) {
       var evt = document.createEvent('CustomEvent');
-      var detail = initDict && initDict.detail || undefined;
+      var detail = (initDict && initDict.detail) || undefined;
       evt.initCustomEvent(eventName, true, true, detail);
       return evt;
     };
@@ -125,7 +127,7 @@
 
             return time.join('');
           }
-        }
+        };
       }
     };
   }
@@ -142,22 +144,24 @@
       WeakMap.prototype = {
         set: function(key, value) {
           var entry = key[this.name];
-          if (entry && entry[0] === key)
+          if (entry && entry[0] === key) {
             entry[1] = value;
-          else
-            defineProperty(key, this.name, {value: [key, value], writable: true});
+          } else {
+            defineProperty(key, this.name, { value: [key, value], writable: true });
+          }
           return this;
         },
         get: function(key) {
           var entry;
-          return (entry = key[this.name]) && entry[0] === key ?
-              entry[1] : undefined;
+          return (entry = key[this.name]) && // eslint-disable-line no-cond-assign
+                  entry[0] === key ?
+                  entry[1] : undefined;
         },
         delete: function(key) {
           var entry = key[this.name];
           if (!entry) return false;
           var hasValue = entry[0] === key;
-          entry[0] = entry[1] = undefined;
+          entry[0] = entry[1] = undefined; // eslint-disable-line no-multi-assign
           return hasValue;
         },
         has: function(key) {
@@ -168,7 +172,6 @@
       };
 
       window.WeakMap = WeakMap;
-    })();
+    }());
   }
-
-}(this);
+}(this));

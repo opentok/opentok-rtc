@@ -1,4 +1,4 @@
-!function(exports) {
+!(function(exports) {
   'use strict';
 
   var cronographElement;
@@ -51,7 +51,7 @@
         ++counter;
         paint();
       }, 1000);
-      return this;
+      return this; // eslint-disable-line consistent-return
     },
 
     stop: function() {
@@ -64,5 +64,4 @@
   };
 
   exports.Cronograph = Cronograph;
-
-}(this);
+}(this));

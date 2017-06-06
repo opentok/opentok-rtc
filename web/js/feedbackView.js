@@ -1,7 +1,11 @@
-!function(global) {
+!(function(global) {
   'use strict';
 
-  var showFeedback, sendButton, audioScore, videoScore, otherInfo;
+  var showFeedback,
+    sendButton,
+    audioScore,
+    videoScore,
+    otherInfo;
 
   var feedbackReportSelector = '.feedback-report';
 
@@ -28,7 +32,7 @@
   };
 
   var addHandlers = function() {
-    sendButton.addEventListener('click', function onSendClicked(event) {
+    sendButton.addEventListener('click', function(event) {
       event.preventDefault();
 
       Utils.sendEvent('feedbackView:sendFeedback', {
@@ -49,5 +53,4 @@
   global.FeedbackView = {
     init: init
   };
-
-}(this);
+}(this));
