@@ -63,8 +63,8 @@
         window.removeEventListener('DOMContentLoaded', loaded);
         if (isMobile()) {
             document.getElementById("dock").classList.add("collapsed");
-            // We are disabling the Switch Camera button until the new browser supports it:
-            // document.getElementById('flipCameraItem').style.display = 'block';
+            // We may want to comment this out if it is broken in the new browser:
+            document.getElementById('flipCameraItem').style.display = 'block';
         }
         showItems(commonIdsToHide, false);
         onResize();
