@@ -63,8 +63,9 @@
       if (_model) {
         _model.addEventListener('value', render);
         render(_model.archives);
+      } else {
+        render();
       }
-      render();
     }
   };
 
