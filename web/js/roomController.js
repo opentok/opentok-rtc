@@ -1,7 +1,7 @@
 /* global Utils, Request, RoomStatus, RoomView, LayoutManager, Modal, LazyLoader,
           EndCallController, ChatController, LayoutMenuController, RecordingsController,
           ScreenShareController, FeedbackController */
-!function(exports) {
+!(function(exports) {
   'use strict';
 
   var debug =
@@ -19,8 +19,7 @@
     setPublisherReady = resolve;
   });
 
-  var MAIN_PAGE = '/index.html';
-  var STATUS_KEY= 'room';
+  var STATUS_KEY = 'room';
   var _sharedStatus = {
     roomMuted: false
   };
@@ -32,7 +31,7 @@
 
   var publisherOptions = {
     insertMode: 'append',
-    width:'100%',
+    width: '100%',
     height: '100%',
     showControls: true,
     resolution: '1280x720',
@@ -46,7 +45,7 @@
   };
 
   var subscriberOptions = {
-    'camera': {
+    camera: {
       height: '100%',
       width: '100%',
       inserMode: 'append',
@@ -59,7 +58,7 @@
         showArchiveStatus: false
       }
     },
-    'screen': {
+    screen: {
       height: '100%',
       width: '100%',
       inserMode: 'append',
@@ -139,7 +138,6 @@
       subscriberStreams[streamId] && subscriberStreams[streamId].subscriberPromise;
 
     subscriberPromise.then(function(subscriber) {
-      ////////////////////////////////////////////////////// REMOVE THIS BEFORE SHIPPING!
       if (debugPreferredResolution) {
         // If the user requested debugging this, we're going to export all the information through
         // window so he can examine the values.
@@ -148,22 +146,21 @@
         window.subscriber = window.subscriber || {};
         window.subscriber[streamId] = subscriber;
         window.dumpResolutionInfo = window.dumpResolutionInfo || function() {
-          Object.keys(window.subscriber).
-            forEach(function(aSub) {
+          Object.keys(window.subscriber)
+            .forEach(function(aSub) {
               var sub = window.subscriber[aSub];
               var stream = sub && sub.stream;
               var vd = stream && stream.videoDimensions;
-              var streamPref = stream && stream.getPreferredResolution() ||
-                                 {width: 'NA', height: 'NA'};
-              stream && console.log(
-                "StreamId:", aSub, 'Real:', sub.videoWidth(), 'x', sub.videoHeight(),
+              var streamPref = (stream && stream.getPreferredResolution()) ||
+                                 { width: 'NA', height: 'NA' };
+              stream && console.log( // eslint-disable-line no-console
+                'StreamId:', aSub, 'Real:', sub.videoWidth(), 'x', sub.videoHeight(),
                 'Stream.getPreferredResolution:', streamPref.width, 'x', streamPref.height,
                 'Stream.VDimension:', vd.width, 'x', vd.height
               );
             });
         };
       }
-      ////////////////////////////////////////////////////// REMOVE THIS BEFORE SHIPPING!
 
       var parent = elem.parentNode;
 
@@ -201,14 +198,14 @@
       operation: operation
     };
 
-    Request.sendArchivingOperation(data).
-      then(function(response) {
+    Request.sendArchivingOperation(data)
+      .then(function(response) {
         debug.log(response);
       });
   };
 
   var roomStatusHandlers = {
-    'updatedRemotely': function(evt) {
+    updatedRemotely: function(evt) {
       publisherReady.then(function() {
         _sharedStatus = RoomStatus.get(STATUS_KEY);
         var roomMuted = _sharedStatus.roomMuted;
@@ -245,16 +242,16 @@
   }
 
   var viewEventHandlers = {
-    'endCall': function() {
+    endCall: function() {
       otHelper.disconnect();
     },
-    'startArchiving': function(evt) {
+    startArchiving: function(evt) {
       sendArchivingOperation((evt.detail && evt.detail.operation) || 'startComposite');
     },
-    'stopArchiving': function(evt) {
+    stopArchiving: function(evt) {
       sendArchivingOperation('stop');
     },
-    'streamVisibilityChange': function(evt) {
+    streamVisibilityChange: function(evt) {
       var getStatus = function(info) {
         var status = null;
 
@@ -273,10 +270,10 @@
       if (streamId !== 'publisher') {
         var stream = subscriberStreams[streamId];
         stream && otHelper.toggleSubscribersVideo(stream.stream,
-                     getStatus(stream.buttons['video']));
+                     getStatus(stream.buttons.video));
       }
     },
-    'buttonClick': function(evt) {
+    buttonClick: function(evt) {
       var streamId = evt.detail.streamId;
       var streamType = evt.detail.streamType;
       var name = evt.detail.name;
@@ -321,7 +318,7 @@
 
       args.push(newStatus);
 
-      if (!disableAll || disableAll && switchStatus !== newStatus) {
+      if (!disableAll || (disableAll && (switchStatus !== newStatus))) {
         var obj = exports[buttonInfo.context];
         obj[buttonInfo.action].apply(obj, args);
         // if stream button clicked and isn't a screen
@@ -344,10 +341,10 @@
         }
       }
     },
-    'videoSwitch': function(evt) {
+    videoSwitch: function(evt) {
       changeSubscriberStatus('video', evt.detail.status);
     },
-    'muteAllSwitch': function(evt) {
+    muteAllSwitch: function(evt) {
       var roomMuted = evt.detail.status;
       _sharedStatus.roomMuted = roomMuted;
       setAudioStatus(roomMuted);
@@ -385,20 +382,20 @@
   };
 
   var _subscriberHandlers = {
-    'videoDisabled': function(evt) {
+    videoDisabled: function(evt) {
       evt.reason === 'subscribeToVideo' && sendStatus(evt, 'video');
       sendVideoEvent(evt.target.stream);
     },
-    'videoEnabled': function(evt) {
+    videoEnabled: function(evt) {
       evt.reason === 'subscribeToVideo' && sendStatus(evt, 'video', true);
       sendVideoEvent(evt.target.stream);
     },
-    'disconnected': function(evt) {
+    disconnected: function(evt) {
       Utils.sendEvent('roomController:disconnected', {
         id: evt.target.stream.streamId
       });
     },
-    'connected': function(evt) {
+    connected: function(evt) {
       Utils.sendEvent('roomController:connected', {
         id: evt.target.stream.streamId
       });
@@ -406,19 +403,19 @@
   };
 
   var _allHandlers = {
-    'connectionCreated': function(evt) {
+    connectionCreated: function(evt) {
       RoomView.participantsNumber = ++numUsrsInRoom;
       debug.log('New participant, total:', numUsrsInRoom,
                 'user:', (evt.connection.data ?
-                          JSON.parse(evt.connection.data).userName: 'unknown'));
+                          JSON.parse(evt.connection.data).userName : 'unknown'));
     },
-    'connectionDestroyed': function(evt) {
+    connectionDestroyed: function(evt) {
       RoomView.participantsNumber = --numUsrsInRoom;
       debug.log('a participant left, total:', numUsrsInRoom,
                 'user:', (evt.connection.data ?
-                          JSON.parse(evt.connection.data).userName: 'unknown'));
+                          JSON.parse(evt.connection.data).userName : 'unknown'));
     },
-    'sessionDisconnected': function(evt) {
+    sessionDisconnected: function(evt) {
       // The client has disconnected from the session.
       // This event may be dispatched asynchronously in response to a successful
       // call to the disconnect() method of the Session object.
@@ -428,7 +425,7 @@
       Utils.sendEvent('roomController:sessionDisconnected');
       subscriberStreams = {};
     },
-    'streamCreated': function(evt) {
+    streamCreated: function(evt) {
       publisherReady.then(function() {
         // A new stream, published by another client, has been created on this
         // session. For streams published by your own client, the Publisher object
@@ -464,10 +461,10 @@
         // We want to observe the container where the actual suscriber will live
         var subsContainer = LayoutManager.getItemById(streamId);
         subsContainer && _mutationObserver &&
-          _mutationObserver.observe(subsContainer, {attributes: true});
+          _mutationObserver.observe(subsContainer, { attributes: true });
         subscriberStreams[streamId].subscriberPromise =
-          otHelper.subscribe(evt.stream, subsDOMElem, subOptions, {}, enableAnnotations).
-          then(function(subscriber) {
+          otHelper.subscribe(evt.stream, subsDOMElem, subOptions, {}, enableAnnotations)
+          .then(function(subscriber) {
             if (streamVideoType === 'screen') {
               enableAnnotations && Utils.sendEvent('roomController:annotationStarted');
               return subscriber;
@@ -486,7 +483,7 @@
           });
       });
     },
-    'streamDestroyed': function(evt) {
+    streamDestroyed: function(evt) {
       // A stream from another client has stopped publishing to the session.
       // The default behavior is that all Subscriber objects that are subscribed
       // to the stream are unsubscribed and removed from the HTML DOM. Each
@@ -505,7 +502,7 @@
       RoomView.deleteStreamView(stream.streamId);
       subscriberStreams[stream.streamId] = null;
     },
-    'streamPropertyChanged': function(evt) {
+    streamPropertyChanged: function(evt) {
       if (otHelper.publisherId !== evt.stream.id) {
         return;
       }
@@ -517,14 +514,14 @@
         sendStatus(evt, 'audio', evt.newValue);
       }
     },
-    'archiveStarted': function(evt) {
+    archiveStarted: function(evt) {
       // Dispatched when an archive recording of the session starts
       Utils.sendEvent('archiving', {
         status: 'started',
         id: evt.id
       });
     },
-    'archiveStopped': function(evt) {
+    archiveStopped: function(evt) {
       // Dispatched when an archive recording of the session stops
       Utils.sendEvent('archiving', { status: 'stopped' });
     },
@@ -546,12 +543,10 @@
         if (muteAllSwitch) {
           setAudioStatus(muteAllSwitch);
           Utils.sendEvent('roomController:roomMuted', { isJoining: false });
+        } else if (onlyChangeSwitch) {
+          setNewAudioStatus();
         } else {
-          if (onlyChangeSwitch) {
-            setNewAudioStatus();
-          } else {
-            RoomView.showConfirmChangeMicStatus(muteAllSwitch).then(setNewAudioStatus);
-          }
+          RoomView.showConfirmChangeMicStatus(muteAllSwitch).then(setNewAudioStatus);
         }
       }
     }
@@ -568,8 +563,8 @@
         enterButton.addEventListener('click', function onClicked(event) {
           event.preventDefault();
           enterButton.removeEventListener('click', onClicked);
-          return Modal.hide(selector).
-            then(function() {
+          return Modal.hide(selector)
+            .then(function() {
               resolve(document.querySelector(selector + ' input').value.trim());
             });
         });
@@ -583,7 +578,7 @@
 
     try {
       referrerURL = new URL(document.referrer);
-    } catch(ex) {
+    } catch (ex) { // eslint no-empty: ["error":{ "allowEmptyCatch": true }]
 
     }
 
@@ -592,7 +587,7 @@
 
   function getRoomParams() {
     if (!exports.RoomController) {
-      throw new Error("Room Controller is not defined. Missing script tag?");
+      throw new Error('Room Controller is not defined. Missing script tag?');
     }
 
     // pathName should be /room/<roomName>[?username=<userName>]
@@ -627,18 +622,17 @@
 
     if (usrId || (window.location.origin === getReferrerURL().origin)) {
       return Promise.resolve(info);
-    } else {
-      return showUserNamePrompt(roomName).then(function(userName) {
-        info.username = userName;
-        return info;
-      });
     }
+    return showUserNamePrompt(roomName).then(function(userName) {
+      info.username = userName;
+      return info;
+    });
   }
 
   function getRoomInfo(aRoomParams) {
-    return Request.
-      getRoomInfo(aRoomParams).
-      then(function(aRoomInfo) {
+    return Request
+      .getRoomInfo(aRoomParams)
+      .then(function(aRoomInfo) {
         if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId &&
               aRoomInfo.apiKey && aRoomInfo.username &&
               aRoomInfo.firebaseToken && aRoomInfo.firebaseURL)) {
@@ -678,29 +672,30 @@
   );
 
   var init = function() {
-    LazyLoader.load(modules).
-    then(function() {
-      EndCallController.init({addEventListener: function() {}}, 'NOT_AVAILABLE');
-    }).
-    then(getRoomParams).
-    then(function(aParams) {
-        if (isSafari) {
-            return aParams;
-        }
-        return Promise.resolve(aParams);
-    }).
-    then(getRoomInfo).
-    then(function (aParams) {
+    LazyLoader.load(modules)
+    .then(function() {
+      EndCallController.init({ addEventListener: function() {} }, 'NOT_AVAILABLE');
+    })
+    .then(getRoomParams)
+    .then(function(aParams) {
+      if (isSafari) {
+        return aParams;
+      }
+      return Promise.resolve(aParams);
+    })
+    .then(getRoomInfo)
+    .then(function(aParams) {
       var loadAnnotations = Promise.resolve();
       if (enableAnnotations) {
         exports.OTKAnalytics = exports.OTKAnalytics ||
-          function() { return {
-          addSessionInfo: function() {},
-          logEvent: function(a,b) {
-            console.log(a,b);
-          }
+          function() {
+            return {
+              addSessionInfo: function() {},
+              logEvent: function(a, b) {
+                console.log(a, b); // eslint-disable-line no-console
+              }
+            };
           };
-        };
         loadAnnotations = LazyLoader.load([
           'https://code.jquery.com/jquery-3.1.0.min.js',
           'https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js',
@@ -708,42 +703,39 @@
         ]);
       }
       return loadAnnotations.then(function() { return aParams; });
-  }).
-  then(function(aParams) {
-      Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
-      Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
-      RoomView.init(enableHangoutScroll, enableArchiveManager);
+    })
+  .then(function(aParams) {
+    Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
+    Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
+    RoomView.init(enableHangoutScroll, enableArchiveManager);
 
-      if (isSafari) {
-        debug.log('Launching Electron app');
-        document.location.href = 'teladoc://' + btoa(JSON.stringify(aParams));
-        Utils.sendEvent('roomController:externalAppLaunched');
-        return;
-      }
-      roomName = aParams.roomName;
-      userName = aParams.username ?
-                  (aParams.username.length > 1000 ?
-                   aParams.username.substring(0, 1000) :
-                   aParams.username) :
-                  '';
-      // This kinda sucks, but it's the easiest way to leave the 'context' thing work as it does now
-      otHelper = new exports.OTHelper(aParams);
-      exports.otHelper = otHelper;
+    if (isSafari) {
+      debug.log('Launching Electron app');
+      document.location.href = 'teladoc://' + btoa(JSON.stringify(aParams));
+      Utils.sendEvent('roomController:externalAppLaunched');
+      return;
+    }
+    roomName = aParams.roomName;
+    userName = aParams.username ? aParams.username.substring(0, 1000) : '';
 
-      var connect = otHelper.connect.bind(otHelper);
+    // This kinda sucks, but it's the easiest way to leave the 'context' thing work as it does now
+    otHelper = new exports.OTHelper(aParams);
+    exports.otHelper = otHelper;
+
+    var connect = otHelper.connect.bind(otHelper);
 
       // Room's name is set by server, we don't need to do this, but
       // perphaps it would be convenient
       // RoomView.roomName = aParams.roomName;
-      RoomView.participantsNumber = 0;
+    RoomView.participantsNumber = 0;
 
-      _allHandlers = RoomStatus.init(_allHandlers, { room: _sharedStatus });
+    _allHandlers = RoomStatus.init(_allHandlers, { room: _sharedStatus });
 
-      ChatController.
-        init(aParams.roomName, userName, _allHandlers).
-        then(connect).
-        then(LayoutMenuController.init).
-        then(function() {
+    ChatController
+        .init(aParams.roomName, userName, _allHandlers)
+        .then(connect)
+        .then(LayoutMenuController.init)
+        .then(function() {
           var publisherElement = RoomView.createStreamView('publisher', {
             name: userName,
             type: 'publisher',
@@ -771,17 +763,18 @@
               otHelper.disconnect();
             }
           });
-        }).
-        then(function() {
-          RecordingsController.init(enableArchiveManager, aParams.firebaseURL, aParams.firebaseToken, aParams.sessionId);
+        })
+        .then(function() {
+          RecordingsController.init(enableArchiveManager, aParams.firebaseURL,
+                                    aParams.firebaseToken, aParams.sessionId);
           ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
           FeedbackController.init(otHelper);
           Utils.sendEvent('roomController:controllersReady');
-        }).
-        catch(function(error) {
+        })
+        .catch(function(error) {
           debug.error('Error Connecting to room. ' + error.message);
         });
-    });
+  });
   };
 
   var RoomController = {
@@ -789,5 +782,4 @@
   };
 
   exports.RoomController = RoomController;
-
-}(this);
+}(this));

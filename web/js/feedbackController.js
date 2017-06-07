@@ -1,4 +1,4 @@
-!function(global) {
+!(function(global) {
   'use strict';
 
   var debug =
@@ -6,7 +6,7 @@
   var otHelper;
 
   var eventHandlers = {
-    'sendFeedback': function(evt) {
+    sendFeedback: function(evt) {
       var report = evt.detail;
       var loggedEvent = {
         action: 'SessionQuality',
@@ -25,7 +25,7 @@
   var init = function(aOTHelper) {
     return LazyLoader.load([
       '/js/feedbackView.js'
-    ]).then(function () {
+    ]).then(function() {
       otHelper = aOTHelper;
       Utils.addEventsHandlers('feedbackView:', eventHandlers, global);
       FeedbackView.init();
@@ -35,5 +35,4 @@
   global.FeedbackController = {
     init: init
   };
-
-}(this);
+}(this));

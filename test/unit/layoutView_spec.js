@@ -2,50 +2,49 @@ var assert = chai.assert;
 var expect = chai.expect;
 var should = chai.should();
 
-describe('LayoutView', function() {
-
+describe('LayoutView', () => {
   var instance;
 
   var controls = {
     video: {
       eventFiredName: 'roomView:buttonClick',
       dataIcon: 'video',
-      eventName: 'click'
+      eventName: 'click',
     },
     audio: {
       eventFiredName: 'roomView:buttonClick',
       dataIcon: 'audio',
-      eventName: 'click'
-    }
+      eventName: 'click',
+    },
   };
 
   var options = {
     name: 'xxx',
     type: 'yyy',
-    controlElems: controls
+    controlElems: controls,
   };
 
   function getContainer() {
     return document.getElementById('myContainer');
   }
 
-  before(function() {
+  before(() => {
     window.document.body.innerHTML = window.__html__['test/unit/layoutView_spec.html'];
   });
 
-  describe('#init', function() {
-    it('should export a init function', function() {
+  describe('#init', () => {
+    it('should export a init function', () => {
       expect(LayoutView.init).to.exist;
       expect(LayoutView.init).to.be.a('function');
     });
 
-    it('should be initialized', function() {
+    it('should be initialized', () => {
       LayoutView.init(getContainer());
     });
   });
 
-  describe('#append', function() {
-    it('should add items', function() {
+  describe('#append', () => {
+    it('should add items', () => {
       var list = getContainer().querySelector('ul');
       var length = list.children.length;
 
@@ -54,7 +53,7 @@ describe('LayoutView', function() {
       var item = LayoutView.append(id, {
         name: options.name,
         type: options.type,
-        controlElems: {}
+        controlElems: {},
       });
 
       expect(item.dataset.id).to.equal(id);
@@ -72,7 +71,7 @@ describe('LayoutView', function() {
       expect(dblclickAreaElement).to.exist;
     });
 
-    it('should add items with controls', function() {
+    it('should add items with controls', () => {
       var list = getContainer().querySelector('ul');
 
       var id = Math.random() + '';
@@ -94,23 +93,22 @@ describe('LayoutView', function() {
       expect(audio.parentNode.classList.contains('enabled')).to.be.true;
     });
 
-    it('should add publisher with record icon', function() {
+    it('should add publisher with record icon', () => {
       var list = getContainer().querySelector('ul');
 
       var item = LayoutView.append(Math.random() + '', {
         name: options.name,
         type: 'publisher',
-        controlElems: {}
+        controlElems: {},
       });
 
       var record = item.querySelector('[data-icon="record"]');
       expect(record).to.exist;
     });
-
   });
 
-  describe('#remove', function() {
-    it('should delete items', function() {
+  describe('#remove', () => {
+    it('should delete items', () => {
       var list = getContainer().querySelector('ul');
       var length = list.children.length;
       var item = LayoutView.append(Math.random() + '', options);
@@ -119,5 +117,4 @@ describe('LayoutView', function() {
       expect(list.children.length).to.be.equal(length);
     });
   });
-
 });

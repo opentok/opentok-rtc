@@ -2,11 +2,14 @@ var assert = chai.assert;
 var expect = chai.expect;
 var should = chai.should();
 
-describe('FeedbackView', function() {
+describe('FeedbackView', () => {
+  var showFeedback,
+    sendButton,
+    audioScore,
+    videoScore,
+    otherInfo;
 
-  var showFeedback, sendButton, audioScore, videoScore, otherInfo;
-
-  before(function() {
+  before(() => {
     window.document.body.innerHTML = window.__html__['test/unit/feedbackView_spec.html'];
     showFeedback = document.querySelector('#showFeedback');
     sendButton = document.querySelector('.feedback-report .send-feedback');
@@ -15,12 +18,12 @@ describe('FeedbackView', function() {
     otherInfo = document.querySelector('.feedback-report .other-info');
   });
 
-  it('should exist', function() {
+  it('should exist', () => {
     expect(FeedbackView).to.exist;
   });
 
-  describe('#init()', function() {
-    it('should export an init function', function() {
+  describe('#init()', () => {
+    it('should export an init function', () => {
       expect(FeedbackView.init).to.exist;
       expect(FeedbackView.init).to.be.a('function');
       FeedbackView.init();
@@ -28,8 +31,8 @@ describe('FeedbackView', function() {
     });
   });
 
-  describe('#feedback form', function() {
-    it('should be shown when button is clicked', sinon.test(function() {
+  describe('#feedback form', () => {
+    it('should be shown when button is clicked', sinon.test(function () {
       this.spy(Modal, 'show');
       otherInfo.value = 'other info';
       showFeedback.click();
@@ -37,7 +40,7 @@ describe('FeedbackView', function() {
       expect(otherInfo.value).to.equals('');
     }));
 
-    it('should send event when it is submitted', sinon.test(function() {
+    it('should send event when it is submitted', sinon.test(function () {
       this.spy(Modal, 'hide');
       this.stub(Utils, 'sendEvent');
 
@@ -51,10 +54,8 @@ describe('FeedbackView', function() {
       expect(Utils.sendEvent.getCall(0).args[1]).to.be.deep.equal({
         audioScore: audioScore.options[audioScore.selectedIndex].value,
         videoScore: videoScore.options[videoScore.selectedIndex].value,
-        description: otherInfo.value
+        description: otherInfo.value,
       });
-
     }));
   });
-
 });

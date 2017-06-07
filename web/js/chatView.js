@@ -1,4 +1,4 @@
-!function(exports) {
+!(function(exports) {
   'use strict';
 
   var usrId;
@@ -25,10 +25,9 @@
       return Chat.show().then(function() {
         scrollTo();
       });
-    } else {
-      removeHandlers();
-      return Chat.hide();
     }
+    removeHandlers();
+    return Chat.hide();
   }
 
   var eventHandlers;
@@ -72,7 +71,7 @@
       event && event.couldBeChanged && (event.name = aEvt.name);
     });
     Utils.addHandlers(eventHandlers);
-  };
+  }
 
   function initHTMLElements() {
     var chatWndElem = document.getElementById('chat');
@@ -109,9 +108,8 @@
     if (keycode === 13) {
       onSendClicked(evt);
       return false;
-    } else {
-      return true;
     }
+    return true;
   }.bind(undefined, chatMsgInput);
 
   var onSubmit = function(evt) {
@@ -178,13 +176,13 @@
     var item = HTMLElems.createElementAt(chatContent, 'li');
 
     var info = HTMLElems.createElementAt(item, 'p');
-    if ((data.sender || data.userName) === usrId ) {
+    if ((data.sender || data.userName) === usrId) {
       info.classList.add('yourself');
     }
     var time = data.time.toLowerCase();
     HTMLElems.createElementAt(info, 'span', null, time).classList.add('time');
-    HTMLElems.createElementAt(info, 'span', null, data.sender || data.userName).
-              classList.add('sender');
+    HTMLElems.createElementAt(info, 'span', null, data.sender || data.userName)
+              .classList.add('sender');
 
     insertText(info, data.text);
 
@@ -213,5 +211,4 @@
   };
 
   exports.ChatView = ChatView;
-
-}(this);
+}(this));

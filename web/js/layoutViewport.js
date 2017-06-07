@@ -1,7 +1,10 @@
-!function(exports) {
+!(function(exports) {
   'use strict';
 
-  var container, itemSelector, scrollTimer, delay = 100;
+  var container,
+    itemSelector,
+    scrollTimer,
+    delay = 100;
 
   function visitItems() {
     var items = container.querySelectorAll(itemSelector);
@@ -74,5 +77,4 @@
   exports.LayoutViewport = {
     init: init
   };
-
-}(this);
+}(this));

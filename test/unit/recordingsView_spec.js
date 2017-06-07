@@ -2,30 +2,29 @@ var assert = chai.assert;
 var expect = chai.expect;
 var should = chai.should();
 
-describe('RecordingsView', function() {
-
+describe('RecordingsView', () => {
   var model = {
     _listeners: {},
     _archives: {},
-    _fire: function(data) {
+    _fire(data) {
       this._archives = data;
       this._listeners.value[0].method(data);
     },
-    addEventListener: function(type, fc) {
+    addEventListener(type, fc) {
       if (!(type in this._listeners)) {
         this._listeners[type] = [];
       }
       this._listeners[type].push({
         method: fc,
-        context: undefined
+        context: undefined,
       });
     },
-    init: function() {
+    init() {
       return Promise.resolve();
     },
     get archives() {
       return this._archives;
-    }
+    },
   };
 
   var now = Date.now();
@@ -37,7 +36,7 @@ describe('RecordingsView', function() {
       recordingUser: 'aUser1',
       status: 'stopped',
       duration: 1,
-      createdAt: now
+      createdAt: now,
     },
     two: {
       id: '2',
@@ -45,7 +44,7 @@ describe('RecordingsView', function() {
       recordingUser: 'aUser2',
       status: 'started',
       duration: 50,
-      createdAt: now - 1000
+      createdAt: now - 1000,
     },
     three: {
       id: '3',
@@ -53,14 +52,14 @@ describe('RecordingsView', function() {
       recordingUser: 'aUser3',
       status: 'available',
       duration: 459,
-      createdAt: now - 2000
-    }
+      createdAt: now - 2000,
+    },
   };
 
   var container = null;
   var bubble = null;
 
-  before(function() {
+  before(() => {
     model._listeners = {};
     window.document.body.innerHTML =
       window.__html__['test/unit/recordingsView_spec.html'];
@@ -68,17 +67,17 @@ describe('RecordingsView', function() {
     container = document.querySelector('.videos.tc-list ul');
   });
 
-  afterEach(function() {
+  afterEach(() => {
     container.innerHTML = '';
   });
 
-  describe('#init', function() {
-    it('should exist', function() {
+  describe('#init', () => {
+    it('should exist', () => {
       expect(RecordingsView.init).to.exist;
       expect(RecordingsView.init).to.be.a('function');
     });
 
-    it('should be initialized properly with only a listener for onvalue event', function() {
+    it('should be initialized properly with only a listener for onvalue event', () => {
       expect(bubble.dataset.recordings).to.equal('loading');
       RecordingsView.init(model);
       var keys = Object.keys(model._listeners);
@@ -88,7 +87,7 @@ describe('RecordingsView', function() {
       expect(document.body.dataset.downloadAvailable).to.be.equal(Utils.isChrome().toString());
     });
 
-    it('should render archives', function() {
+    it('should render archives', () => {
       expect(container.children.length).to.equal(0);
       expect(bubble.dataset.recordings).to.equal('0');
       RecordingsView.init(model);
@@ -120,12 +119,12 @@ describe('RecordingsView', function() {
       }
     });
 
-    it('should delete archives', sinon.test(function(done) {
+    it('should delete archives', sinon.test(function (done) {
       RecordingsView.init(model);
       model._fire(archives);
       var id = archives.one.id;
 
-      this.stub(window, 'dispatchEvent', function(event) {
+      this.stub(window, 'dispatchEvent', (event) => {
         expect(event.type).to.equal('archive');
         expect(event.detail.id).to.equal(id);
         expect(event.detail.action).to.equal('delete');

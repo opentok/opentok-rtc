@@ -1,4 +1,4 @@
-!function(exports) {
+!(function(exports) {
   'use strict';
 
   var archives = null;
@@ -25,7 +25,7 @@
             // We should get called here only if we lose permission...
             // which should only happen if the branch is erased.
             var handlers = listeners.value;
-            console.error('Lost connection to Firebase. Reason: ', err);
+            console.error('Lost connection to Firebase. Reason: ', err); // eslint-disable-line no-console
             var archiveValues = Promise.resolve({});
             handlers && handlers.forEach(function(aHandler) {
               archiveValues.then(aHandler.method.bind(aHandler.context));
@@ -76,7 +76,7 @@
       }
     }
     return false;
-  };
+  }
 
   var FirebaseModel = {
     addEventListener: addEventListener,
@@ -88,5 +88,4 @@
   };
 
   exports.FirebaseModel = FirebaseModel;
-
-}(this);
+}(this));

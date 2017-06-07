@@ -1,10 +1,11 @@
 var chai = require('chai');
+var request = require('supertest');
+
 var expect = chai.expect;
 
-var request = require('supertest');
 const TEST_LOG_LEVEL = 0;
 
-describe('OpenTokRTC server', function() {
+describe('OpenTokRTC server', () => {
   'use strict';
 
   var app, MockOpentok;
@@ -13,8 +14,7 @@ describe('OpenTokRTC server', function() {
   // that and generate the test cases automatically. At the moment
   // it's more work than doing it manually though, so not worth it.
 
-  before(function(done) {
-
+  before((done) => {
     MockOpentok = require('../mocks/mock_opentok.js');
     process.env.TEMPLATING_SECRET = '123456';
 
@@ -22,7 +22,7 @@ describe('OpenTokRTC server', function() {
     // have their own unit tests. We're only avoiding using it at all.
     var mocks = {
       Opentok: MockOpentok,
-      Firebase: require('../mocks/mock_firebase')
+      Firebase: require('../mocks/mock_firebase'),
     };
 
     // Note that this actually executes on the level where the Grunt file is
@@ -33,22 +33,22 @@ describe('OpenTokRTC server', function() {
          apiFile => new Promise((resolve, reject) => {
            try {
              YAML.load(apiFile, resolve);
-           } catch(e) {
+           } catch (e) {
              reject(e);
            }
          });
-      loadYAML("./api.yml").then(apiSpec => {
-          app = (require('swagger-boilerplate').App)({
-            modulePath: __dirname + '/../../server/',
-            staticPath: '../../web',
-            apiDef: apiSpec,
-            logLevel: TEST_LOG_LEVEL
-          }, mocks);
-          done();
-      });
+    loadYAML('./api.yml').then((apiSpec) => {
+      app = (require('swagger-boilerplate').App)({
+        modulePath: __dirname + '/../../server/', // eslint-disable-line no-path-concat
+        staticPath: '../../web',
+        apiDef: apiSpec,
+        logLevel: TEST_LOG_LEVEL,
+      }, mocks);
+      done();
     });
+  });
 
-  after(function() {
+  after(() => {
     MockOpentok.restoreInstances();
   });
 
@@ -57,7 +57,7 @@ describe('OpenTokRTC server', function() {
   // it manually.
   function checkForAttributes(aAttributes, aRes) {
     var aObject = aRes.body;
-    for (var i = 0, l = aAttributes.length; i < l ; i++) {
+    for (var i = 0, l = aAttributes.length; i < l; i++) {
       if (!aObject[aAttributes[i]]) {
         throw new Error('Missing required attribute: ' + aAttributes[i] +
                         ' in ' + JSON.stringify(aObject));
@@ -72,16 +72,16 @@ describe('OpenTokRTC server', function() {
   const ArchiveURL = ['archiveId'];
   const ReturnError = ['code', 'message'];
 
-  it('GET /room/:roomName/info', function(done) {
-    request(app).
-      get('/room/unitTestRoom/info').
-      set('Accept', 'application/json').
-      expect('Content-Type', new RegExp('application/json')).
-      expect(checkForAttributes.bind(undefined, RoomInfo)).
-      expect(200, done);
+  it('GET /room/:roomName/info', (done) => {
+    request(app)
+      .get('/room/unitTestRoom/info')
+      .set('Accept', 'application/json')
+      .expect('Content-Type', new RegExp('application/json'))
+      .expect(checkForAttributes.bind(undefined, RoomInfo))
+      .expect(200, done);
   });
 
-  it('GET /room/:roomName/info, roomName should ignore caps', function(done) {
+  it('GET /room/:roomName/info, roomName should ignore caps', (done) => {
     function getInfo(aRoomName) {
       return new Promise((resolve) => {
         var sessionId;
@@ -89,128 +89,128 @@ describe('OpenTokRTC server', function() {
           sessionId = aRes && aRes.body && aRes.body.sessionId;
         }
         var solve = () => resolve(sessionId);
-        request(app).
-          get('/room/' + aRoomName + '/info').
-          set('Accept', 'application/json').
-          expect('Content-Type', new RegExp('application/json')).
-          expect(checkForAttributes.bind(undefined, RoomInfo)).
-          expect(getSessionId).
-          expect(200, solve);
+        request(app)
+          .get('/room/' + aRoomName + '/info')
+          .set('Accept', 'application/json')
+          .expect('Content-Type', new RegExp('application/json'))
+          .expect(checkForAttributes.bind(undefined, RoomInfo))
+          .expect(getSessionId)
+          .expect(200, solve);
       });
     }
-    Promise.all([ getInfo('UNITTESTROOM'), getInfo('unitTestRoom') ]).
-      then(aResults => {
+    Promise.all([getInfo('UNITTESTROOM'), getInfo('unitTestRoom')])
+      .then((aResults) => {
         expect(aResults[0]).to.be.equal(aResults[1]);
         done();
       });
   });
 
-  it('GET /room/:roomName/info?userName=xxxYYY', function(done) {
-    request(app).
-      get('/room/unitTestRoom/info?userName=xxxYYY').
-      set('Accept', 'application/json').
-      expect('Content-Type', new RegExp('application/json')).
-      expect(checkForAttributes.bind(undefined, RoomInfo)).
-      expect(function(aRes) {
+  it('GET /room/:roomName/info?userName=xxxYYY', (done) => {
+    request(app)
+      .get('/room/unitTestRoom/info?userName=xxxYYY')
+      .set('Accept', 'application/json')
+      .expect('Content-Type', new RegExp('application/json'))
+      .expect(checkForAttributes.bind(undefined, RoomInfo))
+      .expect((aRes) => {
         if (aRes.body.username !== 'xxxYYY') {
           throw new Error('The response username should coincide with the passed one');
         }
-      }).
-      expect(200, done);
+      })
+      .expect(200, done);
   });
 
   // To-Do: This is a very basic test that only tests that we get something. Replace this with
   // something useful
-  it('GET /room/:roomName', function(done) {
-    request(app).
-      get('/room/roomName').
-      set('Accept', 'text/html').
-      expect('Content-Type', new RegExp('text/html')).
-      expect(200, done);
+  it('GET /room/:roomName', (done) => {
+    request(app)
+      .get('/room/roomName')
+      .set('Accept', 'text/html')
+      .expect('Content-Type', new RegExp('text/html'))
+      .expect(200, done);
   });
 
-  it('GET /room/:roomName?template=room', function(done) {
-    request(app).
-      get('/room/roomName?template=room').
-      set('Accept', 'text/html').
-      expect('Content-Type', new RegExp('text/html')).
-      expect(200, done);
+  it('GET /room/:roomName?template=room', (done) => {
+    request(app)
+      .get('/room/roomName?template=room')
+      .set('Accept', 'text/html')
+      .expect('Content-Type', new RegExp('text/html'))
+      .expect(200, done);
   });
 
-  it('GET /room/:roomName?template=unknownTemplate without auth, return default', function(done) {
-    request(app).
-      get('/room/roomName?template=unknownTemplate').
-      set('Accept', 'text/html').
-      expect('Content-Type', new RegExp('text/html')).
-      expect(200, done);
+  it('GET /room/:roomName?template=unknownTemplate without auth, return default', (done) => {
+    request(app)
+      .get('/room/roomName?template=unknownTemplate')
+      .set('Accept', 'text/html')
+      .expect('Content-Type', new RegExp('text/html'))
+      .expect(200, done);
   });
 
   it('GET /room/:roomName?template=unknownTemplate&template_auth=1234 invalid auth',
-    function(done) {
-    request(app).
-      get('/room/roomName?template=unknownTemplate&template_auth=1234').
-      set('Accept', 'text/html').
-      expect('Content-Type', new RegExp('text/html')).
-      expect(200, done);
-  });
+    (done) => {
+      request(app)
+      .get('/room/roomName?template=unknownTemplate&template_auth=1234')
+      .set('Accept', 'text/html')
+      .expect('Content-Type', new RegExp('text/html'))
+      .expect(200, done);
+    });
 
   it('GET /room/:roomName?template=unknownTemplate&template_auth=123456 valid auth',
-    function(done) {
-    request(app).
-      get('/room/roomName?template=unknownTemplate&template_auth=123456').
-      set('Accept', 'application/json').
-      expect('Content-Type', new RegExp('application/json')).
-      expect(checkForAttributes.bind(undefined, ReturnError)).
-      expect(400, done);
+    (done) => {
+      request(app)
+      .get('/room/roomName?template=unknownTemplate&template_auth=123456')
+      .set('Accept', 'application/json')
+      .expect('Content-Type', new RegExp('application/json'))
+      .expect(checkForAttributes.bind(undefined, ReturnError))
+      .expect(400, done);
+    });
+
+  it('POST /room/:roomName/archive should allow composite archiving', (done) => {
+    request(app)
+      .post('/room/unitTestRoom/archive')
+      .send('userName=xxxYYY&operation=startComposite')
+      .expect(checkForAttributes.bind(undefined, ArchiveInfo))
+      .expect(200, done);
   });
 
-  it('POST /room/:roomName/archive should allow composite archiving', function(done) {
-    request(app).
-      post('/room/unitTestRoom/archive').
-      send('userName=xxxYYY&operation=startComposite').
-      expect(checkForAttributes.bind(undefined, ArchiveInfo)).
-      expect(200, done);
+  it('POST /room/:roomName/archive should allow stopping the archive', (done) => {
+    request(app)
+      .post('/room/unitTestRoom/archive')
+      .send('userName=xxxYYY&operation=stop')
+      .expect(checkForAttributes.bind(undefined, ArchiveInfo))
+      .expect(200, done);
   });
 
-  it('POST /room/:roomName/archive should allow stopping the archive', function(done) {
-    request(app).
-      post('/room/unitTestRoom/archive').
-      send('userName=xxxYYY&operation=stop').
-      expect(checkForAttributes.bind(undefined, ArchiveInfo)).
-      expect(200, done);
-  });
-
-  it('POST /room/:roomName/archive should allow individual archiving', function(done) {
-    request(app).
-      post('/room/unitTestRoom/archive').
-      send('userName=xxxYYY&operation=startIndividual').
-      expect(checkForAttributes.bind(undefined, ArchiveInfo)).
-      expect(200, done);
+  it('POST /room/:roomName/archive should allow individual archiving', (done) => {
+    request(app)
+      .post('/room/unitTestRoom/archive')
+      .send('userName=xxxYYY&operation=startIndividual')
+      .expect(checkForAttributes.bind(undefined, ArchiveInfo))
+      .expect(200, done);
   });
 
   // Temporary tests, TBD later
-  it('GET /archive/:archiveId', function(done) {
-    request(app).
-      get('/archive/12345').
-      expect(405, done);
+  it('GET /archive/:archiveId', (done) => {
+    request(app)
+      .get('/archive/12345')
+      .expect(405, done);
   });
 
-  it('DELETE /archive/:archiveId', function(done) {
-    request(app).
-      delete('/archive/12345').
-      expect(405, done);
+  it('DELETE /archive/:archiveId', (done) => {
+    request(app)
+      .delete('/archive/12345')
+      .expect(405, done);
   });
 
   // This test looks stupid but... updateArchiveInfo should return 200 always.
-  it('POST /updateArchiveInfo', function(done) {
-    request(app).
-      post('/updateArchiveInfo').
-      expect(200, done);
+  it('POST /updateArchiveInfo', (done) => {
+    request(app)
+      .post('/updateArchiveInfo')
+      .expect(200, done);
   });
 
-  it('GET /room/:roomName/archive should return 404 for not existing archive', function(done) {
-    request(app).
-      get('/room/'+ Math.random() +'/archive').
-      expect(404, done);
+  it('GET /room/:roomName/archive should return 404 for not existing archive', (done) => {
+    request(app)
+      .get('/room/' + Math.random() + '/archive')
+      .expect(404, done);
   });
 });

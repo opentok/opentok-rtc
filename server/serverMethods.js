@@ -8,24 +8,27 @@
 // redis-cli set tb_api_secret yoursecrethere
 // Once before trying to run this.
 // The second argument is only really needed for the unit tests.
+
+'use strict';
+
+var SwaggerBP = require('swagger-boilerplate');
+var C = require('./serverConstants');
+var configLoader = require('./configLoader');
+var FirebaseArchives = require('./firebaseArchives');
+
+
 function ServerMethods(aLogLevel, aModules) {
-  'use strict';
   aModules = aModules || {};
 
-  var SwaggerBP = require('swagger-boilerplate');
   var ErrorInfo = SwaggerBP.ErrorInfo;
 
   var env = process.env;
   var Utils = SwaggerBP.Utils;
-  var C = require('./serverConstants');
-  var configLoader = require('./configLoader');
 
   var Logger = Utils.MultiLevelLogger;
   var promisify = Utils.promisify;
 
-  var Opentok = aModules.Opentok || require('opentok');
-
-  var FirebaseArchives = require('./firebaseArchives');
+  var Opentok = aModules.Opentok || require('opentok');  // eslint-disable-line global-require
 
   if (aModules.Firebase) {
     FirebaseArchives.Firebase = aModules.Firebase;
@@ -57,12 +60,12 @@ function ServerMethods(aLogLevel, aModules) {
       var timeout = aTimeout;
       var pollArchive = function _pollArchive() {
         logger.log('Poll [', aArchiveId, ']: polling...');
-        aOtInstance.getArchive_P(aArchiveId).then(aArchive => {
+        aOtInstance.getArchive_P(aArchiveId).then((aArchive) => {
           if (aArchive.status === 'available' || aArchive.status === 'uploaded') {
             logger.log('Poll [', aArchiveId, ']: Resolving with', aArchive.status);
             resolve(aArchive);
           } else {
-            timeout = timeout * aTimeoutMultiplier;
+            timeout *= aTimeoutMultiplier;
             logger.log('Poll [', aArchiveId, ']: Retrying in', timeout);
             setTimeout(_pollArchive, timeout);
           }
@@ -80,92 +83,89 @@ function ServerMethods(aLogLevel, aModules) {
 
 
   function _initialTBConfig() {
-      return configLoader.readConfigJson().then(config => {
+    return configLoader.readConfigJson().then((config) => {
               // This will hold the configuration read from Redis
-            var defaultTemplate = config.get(C.DEFAULT_TEMPLATE);
-            var templatingSecret = config.get(C.TEMPLATING_SECRET);
-            var apiKey = config.get(C.OPENTOK_API_KEY);
-            var apiSecret = config.get(C.OPENTOK_API_SECRET);
-            var archivePollingTO = config.get(C.ARCHIVE_POLLING_INITIAL_TIMEOUT);
-            var archivePollingTOMultiplier =
+      var defaultTemplate = config.get(C.DEFAULT_TEMPLATE);
+      var templatingSecret = config.get(C.TEMPLATING_SECRET);
+      var apiKey = config.get(C.OPENTOK_API_KEY);
+      var apiSecret = config.get(C.OPENTOK_API_SECRET);
+      var archivePollingTO = config.get(C.ARCHIVE_POLLING_INITIAL_TIMEOUT);
+      var archivePollingTOMultiplier =
                 config.get(C.ARCHIVE_POLLING_TIMEOUT_MULTIPLIER);
-            var otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret);
+      var otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret);
 
-            var allowIframing = config.get(C.ALLOW_IFRAMING);
-            var archiveAlways = config.get(C.ARCHIVE_ALWAYS);
+      var allowIframing = config.get(C.ALLOW_IFRAMING);
+      var archiveAlways = config.get(C.ARCHIVE_ALWAYS);
 
-            var iosAppId = config.get(C.IOS_APP_ID);
-            var iosUrlPrefix = config.get(C.IOS_URL_PREFIX);
+      var iosAppId = config.get(C.IOS_APP_ID);
+      var iosUrlPrefix = config.get(C.IOS_URL_PREFIX);
 
-            // This isn't strictly necessary... but since we're using promises all over the place, it
-            // makes sense. The _P are just a promisified version of the methods. We could have
-            // overwritten the original methods but this way we make it explicit. That's also why we're
-            // breaking camelCase here, to make it patent to the reader that those aren't standard
-            // methods of the API.
-            ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'deleteArchive'].
-              forEach(method => otInstance[method + '_P'] = promisify(otInstance[method]));
+      // This isn't strictly necessary... but since we're using promises all over the place, it
+      // makes sense. The _P are just a promisified version of the methods. We could have
+      // overwritten the original methods but this way we make it explicit. That's also why we're
+      // breaking camelCase here, to make it patent to the reader that those aren't standard
+      // methods of the API.
+      ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'deleteArchive']
+              .forEach(method => otInstance[method + '_P'] = promisify(otInstance[method])); // eslint-disable-line no-return-assign
 
-            var maxSessionAge = config.get(C.OPENTOK_MAX_SESSION_AGE);
-            var maxSessionAgeMs = maxSessionAge * 24 * 60 * 60 * 1000;
-            var chromeExtId = config.get(C.CHROME_EXTENSION_ID);
+      var maxSessionAge = config.get(C.OPENTOK_MAX_SESSION_AGE);
+      var maxSessionAgeMs = maxSessionAge * 24 * 60 * 60 * 1000;
+      var chromeExtId = config.get(C.CHROME_EXTENSION_ID);
 
-            var isWebRTCVersion = config.get(C.DEFAULT_INDEX_PAGE) === 'opentokrtc';
+      var isWebRTCVersion = config.get(C.DEFAULT_INDEX_PAGE) === 'opentokrtc';
 
-            var firebaseConfigured =
+      var firebaseConfigured =
               config.get(C.FIREBASE_DATA_URL) && config.get(C.FIREBASE_AUTH_SECRET);
 
-            var enableArchiving = config.get(C.ENABLE_ARCHIVING, config);
-            var enableArchiveManager = enableArchiving && config.get(C.ENABLE_ARCHIVE_MANAGER);
-            var enableScreensharing = config.get(C.ENABLE_SCREENSHARING);
-            var enableAnnotations = enableScreensharing && config.get(C.ENABLE_ANNOTATIONS);
-            var enableFeedback = config.get(C.ENABLE_FEEDBACK);
+      var enableArchiving = config.get(C.ENABLE_ARCHIVING, config);
+      var enableArchiveManager = enableArchiving && config.get(C.ENABLE_ARCHIVE_MANAGER);
+      var enableScreensharing = config.get(C.ENABLE_SCREENSHARING);
+      var enableAnnotations = enableScreensharing && config.get(C.ENABLE_ANNOTATIONS);
+      var enableFeedback = config.get(C.ENABLE_FEEDBACK);
 
-            if (!firebaseConfigured && enableArchiveManager) {
-                logger.error('Firebase not configured. Please provide firebase credentials or disable archive_manager');
-            }
+      if (!firebaseConfigured && enableArchiveManager) {
+        logger.error('Firebase not configured. Please provide firebase credentials or disable archive_manager');
+      }
 
 
             // For this object we need to know if/when we're reconnecting so we can shutdown the
             // old instance.
-            var oldFirebaseArchivesPromise = Utils.CachifiedObject.getCached(FirebaseArchives);
+      var oldFirebaseArchivesPromise = Utils.CachifiedObject.getCached(FirebaseArchives);
 
-            var firebaseArchivesPromise =
+      var firebaseArchivesPromise =
               Utils.CachifiedObject(FirebaseArchives, config.get(C.FIREBASE_DATA_URL),
                                     config.get(C.FIREBASE_AUTH_SECRET),
                                     config.get(C.EMPTY_ROOM_LIFETIME), aLogLevel);
-            _shutdownOldInstance(oldFirebaseArchivesPromise, firebaseArchivesPromise);
+      _shutdownOldInstance(oldFirebaseArchivesPromise, firebaseArchivesPromise);
 
-            return firebaseArchivesPromise.
-              then(firebaseArchives => {
-                return {
-                  otInstance: otInstance,
-                  apiKey: apiKey,
-                  apiSecret: apiSecret,
-                  archivePollingTO: archivePollingTO,
-                  archivePollingTOMultiplier: archivePollingTOMultiplier,
-                  maxSessionAgeMs: maxSessionAgeMs,
-                  fbArchives: firebaseArchives,
-                  allowIframing: allowIframing,
-                  chromeExtId: chromeExtId,
-                  defaultTemplate: defaultTemplate,
-                  templatingSecret: templatingSecret,
-                  archiveAlways: archiveAlways,
-                  iosAppId: iosAppId,
-                  iosUrlPrefix: iosUrlPrefix,
-                  isWebRTCVersion: isWebRTCVersion,
-                  enableArchiving: enableArchiving,
-                  enableArchiveManager: enableArchiveManager,
-                  enableScreensharing: enableScreensharing,
-                  enableAnnotations: enableAnnotations,
-                  enableFeedback: enableFeedback,
-                };
-              });
-
-          })
+      return firebaseArchivesPromise
+              .then(firebaseArchives => ({
+                otInstance,
+                apiKey,
+                apiSecret,
+                archivePollingTO,
+                archivePollingTOMultiplier,
+                maxSessionAgeMs,
+                fbArchives: firebaseArchives,
+                allowIframing,
+                chromeExtId,
+                defaultTemplate,
+                templatingSecret,
+                archiveAlways,
+                iosAppId,
+                iosUrlPrefix,
+                isWebRTCVersion,
+                enableArchiving,
+                enableArchiveManager,
+                enableScreensharing,
+                enableAnnotations,
+                enableFeedback,
+              }));
+    });
   }
 
   function configReady(aReq, aRes, aNext) {
-    tbConfigPromise.then(tbConfig => {
+    tbConfigPromise.then((tbConfig) => {
       aReq.tbConfig = tbConfig;
       aNext();
     });
@@ -205,22 +205,21 @@ function ServerMethods(aLogLevel, aModules) {
     logger.log('getRoomArchive ' + aReq.path, 'roomName: ' + aReq.params.roomName);
     var tbConfig = aReq.tbConfig;
     var roomName = aReq.params.roomName.toLowerCase();
-    serverPersistence.
-      getKey(redisRoomPrefix + roomName).
-      then(_getUsableSessionInfo.bind(tbConfig.otInstance,
+    serverPersistence
+      .getKey(redisRoomPrefix + roomName)
+      .then(_getUsableSessionInfo.bind(tbConfig.otInstance,
                                       tbConfig.maxSessionAgeMs,
-                                      tbConfig.archiveAlways)).
-      then(usableSessionInfo => {
+                                      tbConfig.archiveAlways))
+      .then((usableSessionInfo) => {
         serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, redisRoomPrefix + roomName,
                                    JSON.stringify(usableSessionInfo));
         var sessionId = usableSessionInfo.sessionId;
-        tbConfig.otInstance.listArchives_P({ offset: 0, count: 1000 }).
-          then(aArchives => {
-            var archive = aArchives.reduce((aLastArch, aCurrArch) => {
-              return aCurrArch.sessionId === sessionId &&
-                     aCurrArch.createdAt > aLastArch.createdAt && aCurrArch ||
-                     aLastArch;
-            }, { createdAt: 0 });
+        tbConfig.otInstance.listArchives_P({ offset: 0, count: 1000 })
+          .then((aArchives) => {
+            var archive = aArchives.reduce((aLastArch, aCurrArch) =>
+              aCurrArch.sessionId === sessionId &&
+              aCurrArch.createdAt > aLastArch.createdAt &&
+              (aCurrArch || aLastArch), { createdAt: 0 });
 
             if (!archive.sessionId || !archive.url) {
               aRes.status(404).send(new ErrorInfo(404, 'Unknown archive'));
@@ -231,15 +230,15 @@ function ServerMethods(aLogLevel, aModules) {
 
               aRes.render('archivePreview.ejs', {
                 archiveName: archive.name,
-                archiveURL: archive.url
+                archiveURL: archive.url,
               });
             }
-          }).
-          catch(error => {
+          })
+          .catch((error) => {
             logger.log('getRoomArchive. Error:', error);
             aRes.status(400).send(error);
           });
-      }).catch(error => {
+      }).catch((error) => {
         logger.log('getRoomArchive. Error:', error);
         aRes.status(400).send(error);
       });
@@ -264,9 +263,9 @@ function ServerMethods(aLogLevel, aModules) {
 
   // Returns the personalized root page
   function getRoot(aReq, aRes) {
-    aRes.
-      render('index.ejs', {
-        isWebRTCVersion: aReq.tbConfig.isWebRTCVersion
+    aRes
+      .render('index.ejs', {
+        isWebRTCVersion: aReq.tbConfig.isWebRTCVersion,
       }, (err, html) => {
         if (err) {
           logger.error('getRoot. error: ', err);
@@ -274,8 +273,7 @@ function ServerMethods(aLogLevel, aModules) {
         } else {
           aRes.send(html);
         }
-      }
-    );
+      });
   }
 
   // Return the personalized HTML for a room.
@@ -293,32 +291,32 @@ function ServerMethods(aLogLevel, aModules) {
     aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
     aRes.set('Pragma', 'no-cache');
     aRes.set('Expires', 0);
-    aRes.
-      render((template ? template : tbConfig.defaultTemplate) + '.ejs',
-             {
-               isWebRTCVersion: tbConfig.isWebRTCVersion,
-               userName: userName || C.DEFAULT_USER_NAME,
-               roomName: aReq.params.roomName,
-               chromeExtensionId: tbConfig.chromeExtId,
-               iosAppId: tbConfig.iosAppId,
+    aRes
+      .render((template || tbConfig.defaultTemplate) + '.ejs',
+      {
+        isWebRTCVersion: tbConfig.isWebRTCVersion,
+        userName: userName || C.DEFAULT_USER_NAME,
+        roomName: aReq.params.roomName,
+        chromeExtensionId: tbConfig.chromeExtId,
+        iosAppId: tbConfig.iosAppId,
                // iosUrlPrefix should have something like:
                // https://opentokdemo.tokbox.com/room/
                // or whatever other thing that should be before the roomName
-               iosURL: tbConfig.iosUrlPrefix + aReq.params.roomName + '?userName=' +
+        iosURL: tbConfig.iosUrlPrefix + aReq.params.roomName + '?userName=' +
                        (userName || C.DEFAULT_USER_NAME),
-               enableArchiving: tbConfig.enableArchiving,
-               enableArchiveManager: tbConfig.enableArchiveManager,
-               enableScreensharing: tbConfig.enableScreensharing,
-               enableAnnotation: tbConfig.enableAnnotation,
-               enableFeedback: tbConfig.enableFeedback,
-             }, (err, html) => {
-               if (err) {
-                 logger.log('getRoom. error:', err);
-                 aRes.status(400).send(new ErrorInfo(400, 'Unknown template.'));
-               } else {
-                 aRes.send(html);
-               }
-             });
+        enableArchiving: tbConfig.enableArchiving,
+        enableArchiveManager: tbConfig.enableArchiveManager,
+        enableScreensharing: tbConfig.enableScreensharing,
+        enableAnnotation: tbConfig.enableAnnotation,
+        enableFeedback: tbConfig.enableFeedback,
+      }, (err, html) => {
+        if (err) {
+          logger.log('getRoom. error:', err);
+          aRes.status(400).send(new ErrorInfo(400, 'Unknown template.'));
+        } else {
+          aRes.send(html);
+        }
+      });
   }
 
   // Given a sessionInfo (which might be empty or non usable) returns a promise than will fullfill
@@ -339,12 +337,12 @@ function ServerMethods(aLogLevel, aModules) {
         if (aArchiveAlways) {
           sessionOptions.archiveMode = 'always';
         }
-        this.
-          createSession(sessionOptions, (error, session) => {
+        this
+          .createSession(sessionOptions, (error, session) => {
             resolve({
               sessionId: session.sessionId,
               lastUsage: Date.now(),
-              inProgressArchiveId: undefined
+              inProgressArchiveId: undefined,
             });
           });
       } else {
@@ -352,7 +350,7 @@ function ServerMethods(aLogLevel, aModules) {
         resolve({
           sessionId: aSessionInfo.sessionId,
           lastUsage: Date.now(),
-          inProgressArchiveId: aSessionInfo.inProgressArchiveId
+          inProgressArchiveId: aSessionInfo.inProgressArchiveId,
         });
       }
     });
@@ -383,11 +381,11 @@ function ServerMethods(aLogLevel, aModules) {
     // We have to check if we have a session id stored already on the persistence provider (and if
     // it's not too old).
     // Note that we do not persist tokens.
-    serverPersistence.
-      getKey(redisRoomPrefix + roomName).
-      then(_getUsableSessionInfo.bind(tbConfig.otInstance, tbConfig.maxSessionAgeMs,
-                                      tbConfig.archiveAlways)).
-      then(usableSessionInfo => {
+    serverPersistence
+      .getKey(redisRoomPrefix + roomName)
+      .then(_getUsableSessionInfo.bind(tbConfig.otInstance, tbConfig.maxSessionAgeMs,
+                                      tbConfig.archiveAlways))
+      .then((usableSessionInfo) => {
         // Update the database. We could do this on getUsable...
         serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, redisRoomPrefix + roomName,
                                    JSON.stringify(usableSessionInfo));
@@ -398,21 +396,20 @@ function ServerMethods(aLogLevel, aModules) {
         // and finally, answer...
         var answer = {
           apiKey: tbConfig.apiKey,
-          token: tbConfig.otInstance.
-                  generateToken(usableSessionInfo.sessionId, {
+          token: tbConfig.otInstance
+                  .generateToken(usableSessionInfo.sessionId, {
                     role: 'publisher',
-                    data: JSON.stringify({ userName: userName })
+                    data: JSON.stringify({ userName }),
                   }),
           username: userName,
           firebaseURL:
-            enableArchiveManager && fbArchives.baseURL + '/' + usableSessionInfo.sessionId || 'unknown',
+            (enableArchiveManager && fbArchives.baseURL + '/' + usableSessionInfo.sessionId) || 'unknown',
           firebaseToken: fbUserToken || 'unknown',
           chromeExtId: tbConfig.chromeExtId,
           enableArchiveManager: tbConfig.enableArchiveManager,
-          enableAnnotation: tbConfig.enableAnnotations
+          enableAnnotation: tbConfig.enableAnnotations,
         };
-        answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId,
-
+        answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId;
         aRes.send(answer);
       });
   }
@@ -437,16 +434,16 @@ function ServerMethods(aLogLevel, aModules) {
       // be sure
       logger.log('_getUpdatedArchiveInfo: Getting update info for archive: ',
                  aSessionInfo.inProgressArchiveId);
-      return aTbConfig.otInstance.
-        getArchive_P(aSessionInfo.inProgressArchiveId).
-        then(aArchiveInfo => {
+      return aTbConfig.otInstance
+        .getArchive_P(aSessionInfo.inProgressArchiveId)
+        .then((aArchiveInfo) => {
           if (aArchiveInfo.status === 'started') {
             throw new ErrorInfo(102, 'Recording already in progress');
           } else {
             aSessionInfo.inProgressArchiveId = undefined;
           }
           return aSessionInfo;
-        }).catch(e => {
+        }).catch((e) => {
           if (e.code === 102) {
             throw e;
           }
@@ -455,9 +452,9 @@ function ServerMethods(aLogLevel, aModules) {
           return aSessionInfo;
         });
     } else if (aOperation.startsWith('stop') && !aSessionInfo.inProgressArchiveId) {
-      return aTbConfig.otInstance.listArchives_P({ offset: 0, count: 100 }).
-        then(aArch => aArch.filter(aArchive => aArchive.sessionId === aSessionInfo.sessionId)).
-        then(aArchives => {
+      return aTbConfig.otInstance.listArchives_P({ offset: 0, count: 100 })
+        .then(aArch => aArch.filter(aArchive => aArchive.sessionId === aSessionInfo.sessionId))
+        .then((aArchives) => {
           var recordingInProgress = aArchives[0] && aArchives[0].status === 'started';
           if (recordingInProgress) {
             aSessionInfo.inProgressArchiveId = aArchives[0].id;
@@ -466,10 +463,9 @@ function ServerMethods(aLogLevel, aModules) {
           }
           return aSessionInfo;
         });
-    } else {
-      // We might still need to update the archive information but for now consider it's valid.
-      return aSessionInfo;
     }
+      // We might still need to update the archive information but for now consider it's valid.
+    return aSessionInfo;
   }
 
   // /room/:roomName/archive?userName=username&operation=startComposite|startIndividual|stop
@@ -493,18 +489,19 @@ function ServerMethods(aLogLevel, aModules) {
     // We could also keep track of the current archive ID on the client app. But the proposed
     // API makes it simpler for the client app, since it only needs the room name to stop an
     // in-progress recording. So we can just get the sessionInfo from the serverPersistence.
-    serverPersistence.
-      getKey(redisRoomPrefix + roomName).
-      then(_getUpdatedArchiveInfo.bind(undefined, tbConfig, operation)).
-      then(sessionInfo => {
+    serverPersistence
+      .getKey(redisRoomPrefix + roomName)
+      .then(_getUpdatedArchiveInfo.bind(undefined, tbConfig, operation))
+      .then((sessionInfo) => {
         var now = new Date();
         var archiveOptions = {
-          name: userName + ' ' +  now.toLocaleDateString() + ' ' + now.toLocaleTimeString()
+          name: userName + ' ' + now.toLocaleDateString() + ' ' + now.toLocaleTimeString(),
         };
         var archiveOp;
         switch (operation) {
           case 'startIndividual':
             archiveOptions.outputMode = 'individual';
+            break;
           case 'startComposite':
             logger.log('Binding archiveOp to startArchive with sessionId:', sessionInfo.sessionId);
             archiveOp =
@@ -515,7 +512,7 @@ function ServerMethods(aLogLevel, aModules) {
             break;
         }
         logger.log('postRoomArchive: Invoking archiveOp. SessionInfo', sessionInfo);
-        return archiveOp().then(aArchive => {
+        return archiveOp().then((aArchive) => {
           sessionInfo.inProgressArchiveId = aArchive.status === 'started' ? aArchive.id : undefined;
           // Update the internal database
           serverPersistence.setKey(redisRoomPrefix + roomName, JSON.stringify(sessionInfo));
@@ -532,22 +529,21 @@ function ServerMethods(aLogLevel, aModules) {
                                    tbConfig.archivePollingTOMultiplier)) ||
             Promise.resolve(aArchive);
 
-          readyToUpdateExternalDb.
-            then(aUpdatedArchive => {
+          readyToUpdateExternalDb
+            .then((aUpdatedArchive) => {
               aUpdatedArchive.localDownloadURL = '/archive/' + aArchive.id;
-              operation !== 'stop' ? aUpdatedArchive.recordingUser = userName : '';
+              operation !== 'stop' && (aUpdatedArchive.recordingUser = userName);
               tbConfig.fbArchives.updateArchive(sessionInfo.sessionId, aUpdatedArchive);
             });
 
           logger.log('postRoomArchive => Returning archive info: ', aArchive.id);
           aRes.send({
             archiveId: aArchive.id,
-            archiveType: aArchive.outputMode
+            archiveType: aArchive.outputMode,
           });
-
         });
-      }).
-      catch(error => {
+      })
+      .catch((error) => {
         logger.log('postRoomArchive. Sending error:', error);
         aRes.status(400).send(error);
       });
@@ -558,9 +554,9 @@ function ServerMethods(aLogLevel, aModules) {
     var generatePreview = (aReq.query && aReq.query.generatePreview !== undefined);
     logger.log('getAchive:', archiveId, generatePreview);
 
-    aReq.tbConfig.otInstance.
-      getArchive_P(archiveId).
-      then(aArchive => {
+    aReq.tbConfig.otInstance
+      .getArchive_P(archiveId)
+      .then((aArchive) => {
         if (!generatePreview) {
           aRes.redirect(301, aArchive.url);
           return;
@@ -572,10 +568,9 @@ function ServerMethods(aLogLevel, aModules) {
 
         aRes.render('archivePreview.ejs', {
           archiveName: aArchive.name,
-          archiveURL: aArchive.url
+          archiveURL: aArchive.url,
         });
-
-      }).catch(e => {
+      }).catch((e) => {
         logger.error('getArchive error:', e);
         aRes.status(405).send(e);
       });
@@ -586,18 +581,19 @@ function ServerMethods(aLogLevel, aModules) {
     logger.log('deleteArchive:', archiveId);
     var tbConfig = aReq.tbConfig;
     var otInstance = tbConfig.otInstance;
-    var sessionId, type;
-    otInstance.
-      getArchive_P(archiveId). // This is only needed so we can get the sesionId
-      then(aArchive => {
+    var sessionId;
+    var type;
+    otInstance
+      .getArchive_P(archiveId) // This is only needed so we can get the sesionId
+      .then((aArchive) => {
         sessionId = aArchive.sessionId;
         type = aArchive.outputMode;
         return archiveId;
-      }).
-      then(otInstance.deleteArchive_P).
-      then(() => tbConfig.fbArchives.removeArchive(sessionId, archiveId)).
-      then(() => aRes.send({ id: archiveId, type: type })).
-      catch(e => {
+      })
+      .then(otInstance.deleteArchive_P)
+      .then(() => tbConfig.fbArchives.removeArchive(sessionId, archiveId))
+      .then(() => aRes.send({ id: archiveId, type }))
+      .catch((e) => {
         logger.error('deleteArchive error:', e);
         aRes.status(405).send(e);
       });
@@ -623,22 +619,21 @@ function ServerMethods(aLogLevel, aModules) {
   }
 
   return {
-    logger: logger,
-    configReady: configReady,
-    iframingOptions: iframingOptions,
-    featureEnabled: featureEnabled,
-    loadConfig: loadConfig,
-    getRoot: getRoot,
-    getRoom: getRoom,
-    getRoomInfo: getRoomInfo,
-    postRoomArchive: postRoomArchive,
-    postUpdateArchiveInfo: postUpdateArchiveInfo,
-    getArchive: getArchive,
-    deleteArchive: deleteArchive,
-    getRoomArchive: getRoomArchive,
-    oldVersionCompat: oldVersionCompat
+    logger,
+    configReady,
+    iframingOptions,
+    featureEnabled,
+    loadConfig,
+    getRoot,
+    getRoom,
+    getRoomInfo,
+    postRoomArchive,
+    postUpdateArchiveInfo,
+    getArchive,
+    deleteArchive,
+    getRoomArchive,
+    oldVersionCompat,
   };
-
 }
 
 module.exports = ServerMethods;

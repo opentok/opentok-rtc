@@ -1,4 +1,4 @@
-!function(exports) {
+!(function(exports) {
   'use strict';
 
   var debug;
@@ -22,11 +22,11 @@
     var pathViews = Object.keys(_views);
     var numViews = pathViews.length;
     var path = exports.document.location.pathname;
-    for(var i = 0; i < numViews; i++) {
+    for (var i = 0; i < numViews; i++) {
       if (path.startsWith(pathViews[i]) &&
-        _views[pathViews[i]].
-          dependencies.
-          every(function(dependency) {
+        _views[pathViews[i]]
+          .dependencies
+          .every(function(dependency) {
             return !!exports[dependency];
           })) {
         return exports[_views[pathViews[i]].mainView];
@@ -44,13 +44,12 @@
     } else {
       debug.error('Couldn\'t find a view for ' + exports.document.location.pathname);
     }
-  };
+  }
 
   exports.RTCApp = {
     init: init
   };
-
-}(this);
+}(this));
 
 
 this.addEventListener('load', function startApp() {
@@ -76,9 +75,8 @@ this.addEventListener('load', function startApp() {
   }
 
 // Allow only https on production
-if (document.location.protocol === 'http:' &&
+  if (document.location.protocol === 'http:' &&
     document.location.hostname.indexOf('.tokbox.com') > 0) {
-  document.location.href = document.location.href.replace(new RegExp('^http:'), 'https:');
-}
-
+    document.location.href = document.location.href.replace(new RegExp('^http:'), 'https:');
+  }
 });

@@ -33,12 +33,14 @@
  });
 */
 
+'use strict';
+
 // We'll use Firebase to store the recorded archive information
 var Firebase = require('firebase');
+var SwaggerBP = require('swagger-boilerplate');
+var FirebaseTokenGenerator = require('firebase-token-generator');
 
 function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
-  'use strict';
-
   if (!aRootURL || !aSecret) {
     // Just return an object with the right signature and be done...
     return Promise.resolve({
@@ -48,13 +50,12 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
       createUserToken: () => Promise.resolve(),
       updateArchive: () => Promise.resolve(),
       removeArchive: () => Promise.resolve(),
-      shutdown: () => {}
+      shutdown: () => {},
     });
   }
 
   // Time is in minutes but we need it in ms.
   aCleanupTime = aCleanupTime * 60 * 1000;
-  var SwaggerBP =  require('swagger-boilerplate');
 
   var Utils = SwaggerBP.Utils;
   var Logger = Utils.MultiLevelLogger;
@@ -66,7 +67,6 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
   var logger = new Logger('FirebaseArchives', aLogLevel);
   var Firebase = FirebaseArchives.Firebase;
 
-  var FirebaseTokenGenerator = require('firebase-token-generator');
 
   // Connect and authenticate the firebase session
   var fbRootRef = new Firebase(aRootURL);
@@ -78,15 +78,15 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
       get baseURL() {
         return aRootURL;
       },
-      createUserToken: function(aSessionId, aUsername) {
+      createUserToken(aSessionId, aUsername) {
         return fbTokenGenerator.createToken({
           uid: aUsername + Math.random(),
           sessionId: aSessionId,
           role: 'user',
-          name: aUsername
+          name: aUsername,
         });
       },
-      updateArchive: function(aSessionId, aArchive) {
+      updateArchive(aSessionId, aArchive) {
         // We will do this in the background... it shouldn't be needed to stop answering till this
         // is done.
         return new Promise((resolve) => {
@@ -94,17 +94,17 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
           fbRootRef.child(aSessionId + '/archives/' + aArchive.id).update(rawArchive, resolve);
         });
       },
-      removeArchive: function(aSessionId, aArchiveId) {
+      removeArchive(aSessionId, aArchiveId) {
         return new Promise((resolve) => {
           fbRootRef.child(aSessionId + '/archives/' + aArchiveId).remove(resolve);
         });
       },
-      shutdown: function() {
+      shutdown() {
         fbRootRef.unauth();
-        Object.keys(_timers).forEach(sessionId => {
+        Object.keys(_timers).forEach((sessionId) => {
           clearTimeout(_timers[sessionId]);
         });
-      }
+      },
     };
   }
 
@@ -118,9 +118,9 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
     function hasNewChildren(aConnectionSnapshot) {
       var recentChilds = 0;
       var now = new Date().getTime();
-      aConnectionSnapshot.forEach(aConnData => {
+      aConnectionSnapshot.forEach((aConnData) => {
         (typeof aConnData.val() !== 'string') && (now - aConnData.val() < STALE_TIME)
-          && recentChilds ++;
+          && recentChilds++;
       });
       return !!recentChilds;
     }
@@ -158,35 +158,33 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
 
   fbRootRef.authWithCustomToken_P = promisify(fbRootRef.authWithCustomToken);
 
-  var authWithAdminToken = function() {
+  var authWithAdminToken = function () {
     logger.log('(Re)issuing admin token and (re)authenticating session.');
-    var serverToken = fbTokenGenerator.
-      createToken({ uid: 'SERVER', role: 'server', name: 'OpenTok RTC Server' },
+    var serverToken = fbTokenGenerator
+      .createToken({ uid: 'SERVER', role: 'server', name: 'OpenTok RTC Server' },
                   { admin: true });
-      return fbRootRef.
-        authWithCustomToken_P(serverToken);
+    return fbRootRef
+        .authWithCustomToken_P(serverToken);
   };
 
   // Refresh the authentication every 23 hours (tokens expire by default at 24 hours)
   setInterval(authWithAdminToken, 23 * 3600000);
 
-  return authWithAdminToken().
-    then(fbRootRef.on.bind(fbRootRef, 'child_added', _processSession)).
-    then(_getFbObject).
-    catch(err => {
+  return authWithAdminToken()
+    .then(fbRootRef.on.bind(fbRootRef, 'child_added', _processSession))
+    .then(_getFbObject)
+    .catch((err) => {
       logger.error('Error authenticating to Firebase: ', err);
       throw new Error(err);
     });
-
-
 }
 // So we can override the Firebase implementation (i.e. for tests)
 Object.defineProperty(FirebaseArchives, 'Firebase', {
-  set: function(aFirebaseImpl) {
+  set(aFirebaseImpl) {
     Firebase = aFirebaseImpl;
   },
-  get: function() {
+  get() {
     return Firebase;
-  }
+  },
 });
 module.exports = FirebaseArchives;

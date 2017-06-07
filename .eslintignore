@@ -1,0 +1,7 @@
+# /node_modules/* and /bower_components/* ignored by default
+
+/web/js/vendor/*
+/web/bower_components/*
+/web/js/helpers/*
+
+/test/lib/*

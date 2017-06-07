@@ -1,7 +1,6 @@
 var expect = chai.expect;
 
-describe('ScreenShareView', function() {
-
+describe('ScreenShareView', () => {
   var shareErrors;
   var screenShareLink;
   var installSectionError;
@@ -16,11 +15,11 @@ describe('ScreenShareView', function() {
     ScreenShareView.init();
 
     var resolveShow;
-    var showDone = new Promise(function(resolve, reject) {
+    var showDone = new Promise((resolve, reject) => {
       resolveShow = resolve;
     });
 
-    sinon.stub(Modal, 'show', function(selector, fcCb) {
+    sinon.stub(Modal, 'show', (selector, fcCb) => {
       fcCb && fcCb();
       resolveShow();
       return showDone;
@@ -32,7 +31,7 @@ describe('ScreenShareView', function() {
     // pretty, isn't it?
     window.dispatchEvent(event);
 
-    showDone.then(function() {
+    showDone.then(() => {
       expect(shareErrors.dataset.screenSharingType).to.be.equal(expectedResult);
 
       var span = shareErrors.querySelector('.errorDescription');
@@ -42,15 +41,13 @@ describe('ScreenShareView', function() {
     });
   }
 
-  before(function() {
-    window.LazyLoader = window.LazyLoader || { dependencyLoad: function() {} };
-    sinon.stub(LazyLoader, 'dependencyLoad', function(resources) {
-      return Promise.resolve();
-    });
+  before(() => {
+    window.LazyLoader = window.LazyLoader || { dependencyLoad() {} };
+    sinon.stub(LazyLoader, 'dependencyLoad', resources => Promise.resolve());
     window.MockOTHelper._install();
   });
 
-  beforeEach(function() {
+  beforeEach(() => {
     window.document.body.innerHTML = window.__html__['test/unit/screenShareView_spec.html'];
     shareErrors = getShareErrors();
     screenShareLink = shareErrors.querySelector('a');
@@ -59,34 +56,34 @@ describe('ScreenShareView', function() {
     extInstallationSuccessful = shareErrors.querySelector('#extInstallationSuccessful');
   });
 
-  after(function() {
+  after(() => {
     window.MockOTHelper._restore();
     LazyLoader.dependencyLoad.restore();
   });
 
-  it('should exist', function() {
+  it('should exist', () => {
     expect(ScreenShareView).to.exist;
   });
 
-  describe('#init', function() {
-    it('should exist and be a function', function() {
+  describe('#init', () => {
+    it('should exist and be a function', () => {
       expect(ScreenShareView.init).to.exist;
       expect(ScreenShareView.init).to.be.a('function');
     });
 
-    it('should initialized properly the object', function() {
+    it('should initialized properly the object', () => {
       ScreenShareView.init();
 
-      [installSectionError, txtSectionError, extInstallationSuccessful].forEach(function(elem) {
+      [installSectionError, txtSectionError, extInstallationSuccessful].forEach((elem) => {
         expect(elem).to.exist;
       });
     });
   });
 
-  it('should show message when user denied access', function(done) {
+  it('should show message when user denied access', (done) => {
     var err = {
       code: 1500,
-      message: 'Access Denied'
+      message: 'Access Denied',
     };
 
     var event = new CustomEvent('screenShareController:shareScreenError', { detail: err });
@@ -95,21 +92,21 @@ describe('ScreenShareView', function() {
   });
 
   it('should show a message when has error and is not userDenied or extensionNotInstalled',
-     function(done) {
-     var err = {
-       code: 'AAAA',
-       message: 'whatEver Error'
-     };
+     (done) => {
+       var err = {
+         code: 'AAAA',
+         message: 'whatEver Error',
+       };
 
-     var event = new CustomEvent('screenShareController:shareScreenError', { detail: err });
+       var event = new CustomEvent('screenShareController:shareScreenError', { detail: err });
 
-     testMsgError(event, err.message, 'error-sharing', done);
-  });
+       testMsgError(event, err.message, 'error-sharing', done);
+     });
 
-  it('should show install message when error is extNotInstalled', function(done) {
+  it('should show install message when error is extNotInstalled', (done) => {
     var err = {
       code: 'OT0001',
-      message: 'Install extension'
+      message: 'Install extension',
     };
 
     var event = new CustomEvent('screenShareController:shareScreenError', { detail: err });
@@ -117,9 +114,9 @@ describe('ScreenShareView', function() {
     testMsgError(event, '', 'error-installing', done);
   });
 
-  it('should show installation success', function(done) {
+  it('should show installation success', (done) => {
     var err = {
-      error: false
+      error: false,
     };
 
     var event = new CustomEvent('screenShareController:extInstallationResult', { detail: err });
@@ -127,10 +124,10 @@ describe('ScreenShareView', function() {
     testMsgError(event, '', 'successful-installation', done);
   });
 
-  it('should show installation success', function(done) {
+  it('should show installation success', (done) => {
     var err = {
       error: true,
-      message: 'Error message'
+      message: 'Error message',
     };
 
     var event = new CustomEvent('screenShareController:extInstallationResult', { detail: err });
@@ -138,10 +135,10 @@ describe('ScreenShareView', function() {
     testMsgError(event, err.message, 'error-sharing', done);
   });
 
-  it('should close the stream window once it has been destroyed', sinon.test(function(done) {
+  it('should close the stream window once it has been destroyed', sinon.test(function (done) {
     ScreenShareView.init();
 
-    this.stub(RoomView, 'deleteStreamView', function(id) {
+    this.stub(RoomView, 'deleteStreamView', (id) => {
       expect(id).to.be.equal('desktop');
       done();
     });
@@ -149,5 +146,4 @@ describe('ScreenShareView', function() {
     var event = new CustomEvent('screenShareController:destroyed');
     window.dispatchEvent(event);
   }));
-
 });

@@ -2,40 +2,36 @@ var assert = chai.assert;
 var expect = chai.expect;
 var should = chai.should();
 
-describe('EndCallController', function() {
-
-  before(function() {
-    window.LazyLoader = window.LazyLoader || { dependencyLoad: function() {} };
-    sinon.stub(LazyLoader, 'dependencyLoad', function(resources) {
-      return Promise.resolve();
-    });
+describe('EndCallController', () => {
+  before(() => {
+    window.LazyLoader = window.LazyLoader || { dependencyLoad() {} };
+    sinon.stub(LazyLoader, 'dependencyLoad', resources => Promise.resolve());
     window.MockOTHelper._install();
   });
 
-  after(function() {
+  after(() => {
     window.MockOTHelper._restore();
     LazyLoader.dependencyLoad.restore();
   });
 
-  describe('#init', function() {
-    it('should exist', function() {
+  describe('#init', () => {
+    it('should exist', () => {
       expect(EndCallController.init).to.exist;
       expect(EndCallController.init).to.be.a('function');
     });
 
-    it('should be initialized', sinon.test(function(done) {
-      this.stub(EndCallView, 'init', function() {});
+    it('should be initialized', sinon.test(function (done) {
+      this.stub(EndCallView, 'init', () => {});
 
-      EndCallController.init({}).then(function() {
+      EndCallController.init({}).then(() => {
         expect(EndCallView.init.called).to.be.true;
         done();
       });
-
     }));
   });
 
-  describe('#roomView:endCall event', function() {
-    it('should send endCall event', sinon.test(function() {
+  describe('#roomView:endCall event', () => {
+    it('should send endCall event', sinon.test(function () {
       this.spy(Utils, 'sendEvent');
 
       window.dispatchEvent(new CustomEvent('roomView:endCall'));

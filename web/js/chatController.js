@@ -61,7 +61,7 @@
  *
  */
 
-!function(exports) {
+!(function(exports) {
   'use strict';
 
   var _hasStatus;
@@ -84,7 +84,6 @@
   var eventsIn;
 
   var _historyChat;
-  var _usrId;
 
   var CONN_TEXT = '(has connected)';
   var DISCONN_TEXT = '(left the room)';
@@ -121,7 +120,7 @@
       _historyChat.push(data);
       Utils.sendEvent('chatController:incomingMessage', { data: data });
     },
-    'connectionCreated': function(evt) {
+    connectionCreated: function(evt) {
       // Dispatched when an new client (including your own) has connected to the
       // session, and for every client in the session when you first connect
       // Session object also dispatches a sessionConnected evt when your local
@@ -129,14 +128,14 @@
       var newUsrName = JSON.parse(evt.connection.data).userName;
       if (!this.isMyself(evt.connection)) {
         Utils.sendEvent('chatController:presenceEvent', {
-            userName: newUsrName,
-            text: CONN_TEXT
+          userName: newUsrName,
+          text: CONN_TEXT
         });
       } else {
         otHelper = this;
       }
     },
-    'connectionDestroyed': function(evt) {
+    connectionDestroyed: function(evt) {
       Utils.sendEvent('chatController:presenceEvent', {
         userName: JSON.parse(evt.connection.data).userName,
         text: DISCONN_TEXT
@@ -149,8 +148,8 @@
   */
   function sendMsg(evt) {
     var data = evt.detail;
-    return otHelper.sendSignal('chat', data).
-      then(function() {
+    return otHelper.sendSignal('chat', data)
+      .then(function() {
         Utils.sendEvent('chatController:messageDelivered');
       }).catch(function(error) {
         debug.error('Error sending [', data.text.value, '] to the group. ', error.message);
@@ -185,21 +184,20 @@
       '/js/chatView.js'
     ]).then(function() {
       eventsIn = {
-        'updatedRemotely': {
+        updatedRemotely: {
           name: 'roomStatus:updatedRemotely',
           handler: loadHistoryChat,
           couldBeChanged: true
         },
-        'outgoingMessage': {
+        outgoingMessage: {
           name: 'chatView:outgoingMessage',
           handler: sendMsg
         }
       };
       _historyChat = [];
       _hasStatus = (exports.RoomStatus !== undefined);
-      return ChatView.init(aUsrId, aRoomName, listenedEvts).
-        then(function() {
-          _usrId = aUsrId;
+      return ChatView.init(aUsrId, aRoomName, listenedEvts)
+        .then(function() {
           _hasStatus && RoomStatus.set(STATUS_KEY, _historyChat);
           addEventsHandlers(listenedEvts);
           return addOTHandlers(aGlobalHandlers);
@@ -210,5 +208,4 @@
   exports.ChatController = {
     init: init
   };
-
-}(this);
+}(this));

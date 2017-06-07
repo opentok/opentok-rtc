@@ -2,53 +2,52 @@ var assert = chai.assert;
 var expect = chai.expect;
 var should = chai.should();
 
-describe('Request', function() {
-
+describe('Request', () => {
   var setRequestHeader = sinon.FakeXMLHttpRequest.prototype.setRequestHeader;
 
-  before(function() {
+  before(() => {
     // overrideMimeType does not exist in FakeXMLHttpRequest
-    sinon.FakeXMLHttpRequest.prototype.overrideMimeType = function() {};
-    sinon.FakeXMLHttpRequest.prototype.setRequestHeader = function(header, value) {
+    sinon.FakeXMLHttpRequest.prototype.overrideMimeType = function () {};
+    sinon.FakeXMLHttpRequest.prototype.setRequestHeader = function (header, value) {
       // Refused to set unsafe header "Content-Length"
-      ('Content-Length' !== header) && setRequestHeader.apply(this, arguments);
+      (header !== 'Content-Length') && setRequestHeader.apply(this, arguments); // eslint-disable-line prefer-rest-params
     };
   });
 
-  after(function() {
+  after(() => {
     sinon.FakeXMLHttpRequest.prototype.setRequestHeader = setRequestHeader;
   });
 
-  beforeEach(function() {
+  beforeEach(function () {
     this.xhr = sinon.useFakeXMLHttpRequest();
 
     this.requests = [];
-    this.xhr.onCreate = function(xhr) {
+    this.xhr.onCreate = function (xhr) {
       this.requests.push(xhr);
     }.bind(this);
   });
 
-  afterEach(function() {
-      this.xhr.restore();
+  afterEach(function () {
+    this.xhr.restore();
   });
 
-  describe('#sendArchivingOperation', function() {
+  describe('#sendArchivingOperation', () => {
     var data = {
       roomName: 'pse',
-      userName: 'Michael'
+      userName: 'Michael',
     };
 
-    it('should exist and be a function', function() {
+    it('should exist and be a function', () => {
       expect(Request.sendArchivingOperation).to.exist;
       expect(Request.sendArchivingOperation).to.be.a('function');
     });
 
-    it('implements the client API for POST /room/:roomName/archive', function(done) {
+    it('implements the client API for POST /room/:roomName/archive', function (done) {
       var response = {
-        id: 'asdadnajfbq47fu4fgw7q8g4f'
+        id: 'asdadnajfbq47fu4fgw7q8g4f',
       };
 
-      Request.sendArchivingOperation(data).then(function(aResponse) {
+      Request.sendArchivingOperation(data).then((aResponse) => {
         expect(aResponse).to.deep.equal(response);
         done();
       });
@@ -60,8 +59,8 @@ describe('Request', function() {
       req.respond(200, { 'Content-Type': 'text/json' }, JSON.stringify(response));
     });
 
-    it('does not receive response when request fails', function(done) {
-      Request.sendArchivingOperation(data).catch(function(error) {
+    it('does not receive response when request fails', function (done) {
+      Request.sendArchivingOperation(data).catch((error) => {
         done();
       });
 
@@ -70,20 +69,20 @@ describe('Request', function() {
     });
   });
 
-  describe('#deleteArchive', function() {
+  describe('#deleteArchive', () => {
     var id = 'myId';
 
-    it('should exist and be a function', function() {
+    it('should exist and be a function', () => {
       expect(Request.deleteArchive).to.exist;
       expect(Request.deleteArchive).to.be.a('function');
     });
 
-    it('implements the client API for DELETE /archive/:id', function(done) {
+    it('implements the client API for DELETE /archive/:id', function (done) {
       var response = {
-        id: id
+        id,
       };
 
-      Request.deleteArchive(id).then(function(aResponse) {
+      Request.deleteArchive(id).then((aResponse) => {
         expect(aResponse).to.deep.equal(response);
         done();
       });
@@ -93,8 +92,8 @@ describe('Request', function() {
       req.respond(200, { 'Content-Type': 'text/json' }, JSON.stringify(response));
     });
 
-    it('does not receive response when request fails', function(done) {
-      Request.deleteArchive(id).catch(function(error) {
+    it('does not receive response when request fails', function (done) {
+      Request.deleteArchive(id).catch((error) => {
         expect(error).to.be.object;
         done();
       });
@@ -103,5 +102,4 @@ describe('Request', function() {
       req.respond(405);
     });
   });
-
 });

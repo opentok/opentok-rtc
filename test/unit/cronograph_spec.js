@@ -2,8 +2,7 @@ var assert = chai.assert;
 var expect = chai.expect;
 var should = chai.should();
 
-describe('Cronograph', function() {
-
+describe('Cronograph', () => {
   var startTime = '00:00';
 
   function getContainer() {
@@ -14,35 +13,35 @@ describe('Cronograph', function() {
     expect(getContainer().textContent).to.equal(time);
   }
 
-  before(function() {
+  before(() => {
     window.document.body.innerHTML = window.__html__['test/unit/cronograph_spec.html'];
   });
 
-  afterEach(function() {
+  afterEach(() => {
     Cronograph.stop().reset();
   });
 
-  describe('#init', function(){
-    it('should export a init function', function() {
+  describe('#init', () => {
+    it('should export a init function', () => {
       expect(Cronograph.init).to.exist;
       expect(Cronograph.init).to.be.a('function');
     });
 
-    it('should be initialized with 00:00', function() {
+    it('should be initialized with 00:00', () => {
       Cronograph.init();
       checkCounterUI(startTime);
     });
   });
 
-  describe('#start', function() {
-    it('initializes the cronograph', sinon.test(function() {
+  describe('#start', () => {
+    it('initializes the cronograph', sinon.test(() => {
       var clock = sinon.useFakeTimers();
 
       Cronograph.start();
 
-      var beautify = function(value) {
+      var beautify = function (value) {
         return (value < 10) ? ('0' + value) : value;
-      }
+      };
 
       var seconds = 2 * 60 * 60; // Simulating 2 hours of meeting
       for (var i = 1; i < seconds; i++) {
@@ -54,7 +53,7 @@ describe('Cronograph', function() {
       clock.restore();
     }));
 
-    it('initializes the cronograph from 33 seconds', sinon.test(function() {
+    it('initializes the cronograph from 33 seconds', sinon.test(() => {
       var clock = sinon.useFakeTimers();
 
       Cronograph.init();
@@ -67,7 +66,7 @@ describe('Cronograph', function() {
       clock.restore();
     }));
 
-    it('initializes the cronograph with negative seconds', sinon.test(function() {
+    it('initializes the cronograph with negative seconds', sinon.test(() => {
       var clock = sinon.useFakeTimers();
 
       Cronograph.init();
@@ -81,9 +80,9 @@ describe('Cronograph', function() {
     }));
   });
 
-  describe('#stop', function() {
-    it('freezes the cronograph', sinon.test(function() {
-      var exptectedTime = '00:20'
+  describe('#stop', () => {
+    it('freezes the cronograph', sinon.test(() => {
+      var exptectedTime = '00:20';
       var clock = sinon.useFakeTimers();
 
       Cronograph.start();
@@ -100,9 +99,9 @@ describe('Cronograph', function() {
     }));
   });
 
-  describe('#reset', function() {
-    it('sets the counter to 00:00', sinon.test(function() {
-      var exptectedTime = '00:20'
+  describe('#reset', () => {
+    it('sets the counter to 00:00', sinon.test(() => {
+      var exptectedTime = '00:20';
       var clock = sinon.useFakeTimers();
 
       Cronograph.start();
@@ -116,5 +115,4 @@ describe('Cronograph', function() {
       clock.restore();
     }));
   });
-
 });

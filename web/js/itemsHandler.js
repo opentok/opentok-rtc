@@ -1,4 +1,4 @@
-!function(global) {
+!(function(global) {
   'use strict';
 
   var Handler = function(container, items) {
@@ -6,8 +6,8 @@
       container.addEventListener(name, this);
     }, this);
     var events = ['roomController:video', 'roomController:audio', 'roomController:videoDisabled',
-                  'roomController:videoEnabled', 'roomController:disconnected',
-                  'roomController:connected'];
+      'roomController:videoEnabled', 'roomController:disconnected',
+      'roomController:connected'];
     events.forEach(function(name) {
       window.addEventListener(name, this);
     }, this);
@@ -38,7 +38,7 @@
           var detail = evt.detail;
           var item = this.items[detail.id];
           if (detail.reason === 'publishVideo' || detail.reason === 'publishAudio') {
-            item = this.items['publisher'];
+            item = this.items.publisher;
           }
 
           if (!item) {
@@ -57,7 +57,7 @@
 
         case 'roomController:connected':
         case 'roomController:disconnected':
-          var item = this.items[evt.detail.id];
+          var item = this.items[evt.detail.id]; // eslint-disable-line no-redeclare
           item && item.data('disconnected', evt.type === 'roomController:disconnected');
           break;
 
@@ -73,13 +73,11 @@
       }
     }
   };
-
   function init(container, items) {
-    var handler = new Handler(container, items);
+    return new Handler(container, items);
   }
 
   global.ItemsHandler = {
     init: init
   };
-
-}(this);
+}(this));

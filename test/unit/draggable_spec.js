@@ -2,13 +2,12 @@ var assert = chai.assert;
 var expect = chai.expect;
 var should = chai.should();
 
-describe('Draggable', function() {
-
+describe('Draggable', () => {
   var DRAG_TIMEOUT = Draggable.DRAG_TIMEOUT;
 
   var item = document.createElement('div');
 
-  afterEach(function() {
+  afterEach(() => {
     item.dataset.translatedX = item.dataset.translatedY = 0;
     Draggable.off(item);
   });
@@ -25,26 +24,26 @@ describe('Draggable', function() {
     (target || item).dispatchEvent(evt);
   }
 
-  describe('#on', function() {
-    it('should export an on function', function() {
+  describe('#on', () => {
+    it('should export an on function', () => {
       expect(Draggable.on).to.exist;
       expect(Draggable.on).to.be.a('function');
     });
 
-    it('should not translate the element initially', function() {
+    it('should not translate the element initially', () => {
       Draggable.on(item);
       checkTranslation(0, 0);
     });
 
-    it('should keep the previous position', function() {
+    it('should keep the previous position', () => {
       item.dataset.translatedX = item.dataset.translatedY = 10;
       Draggable.on(item);
       checkTranslation(10, 10);
     });
 
-    describe('#event dispatcher: DragDetector:dragstart', function() {
-      var checkHoldstartEvent = function(ctx, x, y, done) {
-        ctx.stub(window, 'CustomEvent', function(name, data) {
+    describe('#event dispatcher: DragDetector:dragstart', () => {
+      var checkHoldstartEvent = function (ctx, x, y, done) {
+        ctx.stub(window, 'CustomEvent', (name, data) => {
           expect(name).to.equal('DragDetector:dragstart');
           expect(data.detail.pageX).to.equal(x);
           expect(data.detail.pageY).to.equal(y);
@@ -53,62 +52,62 @@ describe('Draggable', function() {
       };
 
       it('should send the event after holding the element during ' + DRAG_TIMEOUT +
-         'ms', sinon.test(function(done) {
-        var clock = sinon.useFakeTimers();
-        var x = 2;
-        var y = 2;
+         'ms', sinon.test(function (done) {
+           var clock = sinon.useFakeTimers();
+           var x = 2;
+           var y = 2;
 
-        checkHoldstartEvent(this, x, y, function() {
-          clock.restore();
-          done();
-        });
+           checkHoldstartEvent(this, x, y, () => {
+             clock.restore();
+             done();
+           });
 
-        Draggable.on(item);
-        sendMouseEvent('mousedown', { x: x, y: y });
-        clock.tick(DRAG_TIMEOUT);
-      }));
+           Draggable.on(item);
+           sendMouseEvent('mousedown', { x, y });
+           clock.tick(DRAG_TIMEOUT);
+         }));
 
       it('should send the event if the cursor is moved more than ' + Draggable.CLICK_THRESHOLD +
-         'px', sinon.test(function(done) {
-        var clock = sinon.useFakeTimers();
-        var x = 2;
-        var y = 2;
+         'px', sinon.test(function (done) {
+           var clock = sinon.useFakeTimers();
+           var x = 2;
+           var y = 2;
 
-        checkHoldstartEvent(this, x, y, function() {
-          clock.restore();
-          done();
-        });
+           checkHoldstartEvent(this, x, y, () => {
+             clock.restore();
+             done();
+           });
 
-        Draggable.on(item);
-        sendMouseEvent('mousedown', { x: x, y: y });
-        clock.tick(50);
-        sendMouseEvent('mousemove', { x: x + Draggable.CLICK_THRESHOLD + 1, y: y });
-        clock.tick(DRAG_TIMEOUT - 50);
-      }));
+           Draggable.on(item);
+           sendMouseEvent('mousedown', { x, y });
+           clock.tick(50);
+           sendMouseEvent('mousemove', { x: x + Draggable.CLICK_THRESHOLD + 1, y });
+           clock.tick(DRAG_TIMEOUT - 50);
+         }));
 
-      it('should translate the element following mouse events', sinon.test(function() {
+      it('should translate the element following mouse events', sinon.test(() => {
         var clock = sinon.useFakeTimers();
         var x = 0;
         var y = 0;
 
         Draggable.on(item);
-        sendMouseEvent('mousedown', { x: x, y: y });
+        sendMouseEvent('mousedown', { x, y });
         clock.tick(DRAG_TIMEOUT);
         expect(item.classList.contains('dragging')).to.be.true;
         checkTranslation(0, 0);
 
-        sendMouseEvent('mousemove', { x: x + 1, y: y }, window);
+        sendMouseEvent('mousemove', { x: x + 1, y }, window);
         checkTranslation(1, 0);
 
-        sendMouseEvent('mousemove', { x: x, y: y + 1333}, window);
+        sendMouseEvent('mousemove', { x, y: y + 1333 }, window);
         checkTranslation(0, 1333);
 
-        sendMouseEvent('mousemove', { x: x - 4, y: y + 888}, window);
+        sendMouseEvent('mousemove', { x: x - 4, y: y + 888 }, window);
         checkTranslation(-4, 888);
       }));
 
       it('should set a class name while dragging and remove this after releasing the cursor',
-        sinon.test(function() {
+        sinon.test(() => {
           var clock = sinon.useFakeTimers();
           var x = 0;
           var y = 0;
@@ -116,11 +115,11 @@ describe('Draggable', function() {
           Draggable.on(item);
           expect(item.classList.contains('dragging')).to.be.false;
 
-          sendMouseEvent('mousedown', { x: x, y: y });
+          sendMouseEvent('mousedown', { x, y });
           clock.tick(DRAG_TIMEOUT);
           expect(item.classList.contains('dragging')).to.be.true;
 
-          sendMouseEvent('mouseup', { x: x, y: y }, window);
+          sendMouseEvent('mouseup', { x, y }, window);
           expect(item.classList.contains('dragging')).to.be.false;
         })
       );
