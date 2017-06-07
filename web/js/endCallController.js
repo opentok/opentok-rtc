@@ -1,4 +1,4 @@
-!function(exports) {
+!(function(exports) {
   'use strict';
 
   var endCall = function() {
@@ -22,5 +22,4 @@
   exports.EndCallController = {
     init: init
   };
-
-}(this);
+}(this));

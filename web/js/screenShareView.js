@@ -1,13 +1,13 @@
-!function(exports) {
+!(function(exports) {
   'use strict';
 
   var shareError;
   var _userName;
 
   var screenShareCtrlEvents = {
-    'shareScreenError': launchShareError,
-    'extInstallationResult': extInstallationResult,
-    'destroyed': destroyView
+    shareScreenError: launchShareError,
+    extInstallationResult: extInstallationResult,
+    destroyed: destroyView
   };
 
   function destroyView() {
@@ -24,7 +24,7 @@
       Utils.sendEvent('screenShareView:installExtension');
     });
     Utils.addEventsHandlers('screenShareController:', screenShareCtrlEvents, exports);
-  };
+  }
 
   function launchShareError(evt) {
     destroyView();
@@ -117,5 +117,4 @@
   exports.ScreenShareView = {
     init: init
   };
-
-}(this);
+}(this));

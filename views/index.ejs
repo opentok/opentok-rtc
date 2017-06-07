@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>OpenTok</title>
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <link rel="stylesheet" href="css/buttons.css" />
 <% if (isWebRTCVersion) { %>
@@ -17,28 +17,28 @@
 
     <script defer type="text/javascript" src="/js/vendor/es6-promise.min.js"></script>
     <script defer type="text/javascript" src="/js/ie_polyfills.js"></script>
+    <script defer type="text/javascript" src="/js/components/modal.js"></script>
     <script defer type="text/javascript" src="/js/vendor/lazy_loader.js"></script>
     <script defer type="text/javascript" src="/js/rtcApp.js"></script>
+
+    <script>
+      window.isWebRTCVersion=<%=isWebRTCVersion%>
+    </script>
   </head>
 
   <body class="forbidden">
     <section class="main">
       <section>
 
-<% if (!isWebRTCVersion) { %>
         <header>
           <img src="images/opentok-logo.png" alt="opentok transparent logo">
         </header>
+<% if (!isWebRTCVersion) { %>
         <h1>The OpenTok Platform Demo</h1>
 <% } else { %>
-         <span class="extended-header">
-           <header>
-             <img src="images/opentok-logo.png" alt="opentok transparent logo">
-           </header>
-           <h1>WebRTC Demo</h1>
-         </span>
-         <h2>Built by TokBox on the OpenTok Platform</h2>
-         <h3>This WebRTC Demo enables group video conferencing, text chat, screen sharing, and more</h3>
+        <h1>WebRTC Demo</h1>
+        <h2>Built by TokBox on the OpenTok Platform</h2>
+        <h3>This WebRTC Demo enables group video conferencing, text chat, screen sharing, and more</h3>
 <% } %>
         <form>
           <p>
@@ -46,24 +46,7 @@
             <input id="user" class="text-input" placeholder="Type your name">
             <p class="error-room error-text">Please enter a meeting name</p>
           </p>
-<% if (isWebRTCVersion) { %>
-           <div class="contract">
-             <p>
-               <label class="checkbox">
-                 <input id="terms" class="required" type="checkbox">
-                 <span>I accept the <a target="_blank" href="https://tokbox.com/support/tos">user agreement</a> and <a target="_blank" href="https://tokbox.com/support/privacy-policy">privacy policy</a></span>
-               </label><span class="error-terms error-text">You must agree to the terms of service</span>
-               <br/>
-               <label class="checkbox">
-                 <input id="adult" class="required" type="checkbox">
-                 <span>I am at least 18 years of old</span>
-               </label>
-               <span class="error-adult error-text">You must be at least 18 years of old</span>
-             </p>
-           </div>
-<% } %>
           <button id="enter" class="btn tb btn-primary btn-arrow btn-next btn-padding">Create Meeting</button>
-          <p class="error-title error-text">Please fill in required information</p>
         </form>
 <% if (!isWebRTCVersion) { %>
         <div class="safari-plug">
@@ -72,6 +55,21 @@
 <% } %>
       </section>
     </section>
+
+<% if (isWebRTCVersion) { %>
+    <section class="tc-modal contract">
+      <form class="tc-dialog">
+        <i data-icon="close_gray" class="close"></i>
+        <header>
+          <span>Terms of Use</span>
+        </header>
+        <p>By accepting our terms of use you acknoledge that you have read the <a target="_blank" href="https://tokbox.com/support/tos">user agreement</a>, and <a target="_blank" href="https://tokbox.com/support/privacy-policy">privacy policy</a>, and you are at least 18 years of age.</p>
+        <footer>
+          <button id="enter" class="btn tb btn-primary btn-arrow btn-next btn-padding accept">Accept and Continue</button>
+        </footer>
+      </form>
+    </section>
+<% } %>
 
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

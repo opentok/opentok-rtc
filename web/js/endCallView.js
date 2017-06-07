@@ -1,4 +1,4 @@
-!function(exports) {
+!(function(exports) {
   'use strict';
 
   var VIDEO_EXT = 'mp4';
@@ -13,7 +13,7 @@
   var addHandlers = function() {
     !exports.isWebRTCVersion && HTMLElems.addHandlerArchive(LIST_SELECTOR);
     var btn = document.getElementById('newCall');
-    btn && btn.addEventListener('click', function clicked(evt) {
+    btn && btn.addEventListener('click', function(evt) {
       evt.preventDefault();
       evt.stopImmediatePropagation();
       window.location = window.location.origin + MAIN_PAGE;
@@ -56,23 +56,25 @@
       document.body.innerHTML = aHTML;
       addHandlers();
     });
-  };
+  }
 
   var eventHandlers = {
     'EndCallController:endCall': function(evt) {
-      _model.addEventListener('value', render);
-      render(_model.archives);
+      if (_model) {
+        _model.addEventListener('value', render);
+        render(_model.archives);
+      }
+      render();
     }
   };
 
   var alreadyInitialized = false;
 
   exports.EJS = function(aTemplateOptions) {
-    var self = this;
     if (aTemplateOptions.url) {
       this._templatePromise =
-        exports.Request.sendXHR('GET', aTemplateOptions.url, null, null, 'text').
-          then(function(aTemplateSrc) {
+        exports.Request.sendXHR('GET', aTemplateOptions.url, null, null, 'text')
+          .then(function(aTemplateSrc) {
             return exports.ejs.compile(aTemplateSrc, { filename: aTemplateOptions.url });
           });
     } else {
@@ -100,5 +102,4 @@
   exports.EndCallView = {
     init: init
   };
-
-}(this);
+}(this));

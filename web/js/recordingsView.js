@@ -1,4 +1,4 @@
-!function(exports) {
+!(function(exports) {
   'use strict';
 
   var LIST_SELECTOR = '.videos.tc-list ul';
@@ -28,34 +28,34 @@
     };
 
     var total = 0;
-    Object.keys(archives).
-           sort(sortingDescending).
-           forEach(function(archiveId) {
-      var archive = archives[archiveId];
-      ++total;
-      var url = archive.localDownloadURL;
-      var item = HTMLElems.createElementAt(list, 'li');
+    Object.keys(archives)
+           .sort(sortingDescending)
+           .forEach(function(archiveId) {
+             var archive = archives[archiveId];
+             ++total;
+             var url = archive.localDownloadURL;
+             var item = HTMLElems.createElementAt(list, 'li');
 
-      item.data('status', archive.status);
+             item.data('status', archive.status);
 
-      HTMLElems.createElementAt(item, 'a', {
-        'target': '_blank',
-        'href': url + '?generatePreview'
-      }, Utils.getLabelText(archive)).classList.add('file');
+             HTMLElems.createElementAt(item, 'a', {
+               target: '_blank',
+               href: url + '?generatePreview'
+             }, Utils.getLabelText(archive)).classList.add('file');
 
-      HTMLElems.createElementAt(item, 'i', {
-        'data-id': archive.id,
-        'data-icon': 'delete',
-        'data-action': 'delete',
-        'data-username': archive.recordingUser
-      });
+             HTMLElems.createElementAt(item, 'i', {
+               'data-id': archive.id,
+               'data-icon': 'delete',
+               'data-action': 'delete',
+               'data-username': archive.recordingUser
+             });
 
-      HTMLElems.createElementAt(item, 'a', {
-        'data-icon': 'download',
-        'href': url,
-        'download': archive.name + '.' + VIDEO_EXTENSION
-      }).classList.add('download');
-    });
+             HTMLElems.createElementAt(item, 'a', {
+               'data-icon': 'download',
+               href: url,
+               download: archive.name + '.' + VIDEO_EXTENSION
+             }).classList.add('download');
+           });
 
     RoomView.recordingsNumber = total;
   }
@@ -74,5 +74,4 @@
   exports.RecordingsView = {
     init: init
   };
-
-}(this);
+}(this));

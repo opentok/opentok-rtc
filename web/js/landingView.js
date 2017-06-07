@@ -1,12 +1,11 @@
-!function(global) {
+!(function(global) {
   'use strict';
 
-  var room, terms, adult, enterButton;
+  var room,
+    enterButton;
 
   var init = function() {
     enterButton = document.getElementById('enter');
-    terms = document.getElementById('terms');
-    adult = document.getElementById('adult');
     room = document.getElementById('room');
     resetForm();
     addHandlers();
@@ -35,6 +34,39 @@
     });
   };
 
+  var showContract = function() {
+    var selector = '.tc-modal.contract';
+    var ui = document.querySelector(selector);
+
+    return Modal.show(selector)
+      .then(function() {
+        return new Promise(function(resolve, reject) {
+          ui.addEventListener('click', function onClicked(evt) {
+            var classList = evt.target.classList;
+            var hasAccepted = classList.contains('accept');
+            if (!hasAccepted && !classList.contains('close')) {
+              return;
+            }
+            evt.stopImmediatePropagation();
+            evt.preventDefault();
+            ui.removeEventListener('click', onClicked);
+            Modal.hide(selector).then(function() { resolve(hasAccepted); });
+          });
+        });
+      });
+  };
+
+  var navigateToRoom = function() {
+    var base = window.location.href.replace(/([^/]+)\.[^/]+$/, '');
+    var url = base.concat('room/', room.value);
+    var userName = document.getElementById('user').value.trim();
+    if (userName) {
+      url = url.concat('?userName=', userName);
+    }
+    resetForm();
+    window.location.href = url;
+  };
+
   var addHandlers = function() {
     enterButton.addEventListener('click', function onEnterClicked(event) {
       event.preventDefault();
@@ -48,19 +80,22 @@
 
       form.classList.remove('error');
       enterButton.removeEventListener('click', onEnterClicked);
-      var base = window.location.href.replace(/([^\/]+)\.[^\/]+$/, '');
-      var url = base.concat('room/', room.value);
-      var userName = document.getElementById('user').value.trim();
-      if (userName) {
-        url = url.concat('?userName=', userName);
+
+      if (isWebRTCVersion) {
+        showContract().then(function(accepted) {
+          if (accepted) {
+            navigateToRoom();
+          } else {
+            addHandlers();
+          }
+        });
+      } else {
+        navigateToRoom();
       }
-      resetForm();
-      window.location.href = url;
     });
   };
 
   global.LandingView = {
     init: init
   };
-
-}(this);
+}(this));

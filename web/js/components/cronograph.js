@@ -1,4 +1,4 @@
-!function(exports) {
+!(function(exports) {
   'use strict';
 
   var cronographElement;
@@ -44,7 +44,7 @@
      */
     start: function(from) {
       if (counterTimer !== null) {
-        return;
+        return this;
       }
       counter = Math.max(from || 0, 0);
       counterTimer = setInterval(function() {
@@ -64,5 +64,4 @@
   };
 
   exports.Cronograph = Cronograph;
-
-}(this);
+}(this));

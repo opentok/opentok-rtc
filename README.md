@@ -27,38 +27,50 @@ If you want to install OpenTokRTC on your own server, read on. If you want to de
 You will need these dependencies installed on your machine:
 
 - [NodeJS v4+](https://nodejs.org): This version of OpenTokRTC is tested with NodeJS v4 LTS.
-- [Redis](https://redis.io): A `redis` server running on `localhost`. Redis is used for storing configuration and session data.
+- [Redis](https://redis.io): A `redis` server running on `localhost`. Redis is used for storing session data.
 - [Grunt](http://gruntjs.com): Used for bundling assets and running tests.
 
 You will also need these API subscriptions:
 
 - [OpenTok](https://tokbox.com): An OpenTok API key and secret. You can obtain these by signing up with [TokBox](https://tokbox.com).
-- [Firebase](https://firebase.google.com)(Optional): A Firebase app and secret. Firebase is used for storing archives of video conferences. You will need this only if you want to enable archiving (recording) of conference rooms.
+- [Firebase](https://firebase.google.com) (Optional): A Firebase app and secret. Firebase is used for storing archive data of video conferences. You will need this only if you want to enable Archive Management (In app playback and download of recordings) of conference rooms.
 
 ### Setting up
 
-Once all the dependencies are in place, you will need to set some configuration options in your local Redis server using `redis-cli` and install the applications dependencies.
+Once all the dependencies are in place, you will need to set some configuration options and install the applications dependencies.
 
-First, change directory to where you have downloaded OpenTokRTC:
+First, change directory to where you have downloaded OpenTokRTC.
+Then create create the file `config.json` in the `config` folder.
 
 ```sh
 $ cd <path-to-OpenTokRTC>
+$ touch config/config.json
 ```
 
-Ensure that Redis server is running on `localhost` (run `redis-server`). Once it is up, set the
-following OpenTok configuration options for the app. Replace `<key>` and `<secret>` with your
-OpenTok API key and the corresponding API secret:
+Copy and paste the OpenTok config, Replacing `<key>` and `<secret>` with your OpenTok API key and the corresponding API secret:
 
-```sh
-$ redis-cli set tb_api_key <key>
-$ redis-cli set tb_api_secret <secret>
+```js
+{
+    "OpenTok": {
+        "apiKey": "<key>"
+        "apiSecret": "<secret>"
+    }
+}
 ```
 
-If you want to use archiving, set up Firebase configuration. Replace `<appurl>` with your Firebase application URL and `<appsecret>` with the secret for that Firebase app in these commands:
+If you want to use archive management, set up Firebase configuration. Copy and paste the following json after the OpenTok configuration (but still within outer {}) and replace `<appurl>` with your Firebase application URL and `<appsecret>` with the secret for that Firebase app:
 
-```sh
-$ redis-cli set fb_data_url <appurl>
-$ redis-cli set fb_auth_secret <appsecret>
+```js
+,   
+"Firebase": {
+    "dataUrl": "<appurl>",
+    "authSecret": "<appsecret>"
+}
+"Archiving": {
+    "archiveManager": {
+        "enabled": true
+    }
+}
 ```
 
 For more configuration options, see [detailed configuration options](#configuration-options) below:
@@ -71,6 +83,7 @@ $ npm install
 
 ## Running
 
+Ensure that Redis server is running on `localhost` (run `redis-server`).
 In a development environment, you can start the application by running:
 
 ```sh
@@ -93,63 +106,95 @@ $ node server -d
 
 ## Configuration options
 
-These are the detailed configuration options that can be set using `redis-cli`:
+Configuration can be done using the config JSON file, or environment variables which overwrite any JSON value read. The default JSON file is `config/config.json`. This path can be overwritten using the Environment Variable `DEFAULT_JSON_CONFIG_PATH`.
+These are the detailed configuration options:
 
-### TokBox configuration
+### OpenTok configuration
 
-- `tb_api_key` (Required): Your OpenTok API key.
-- `tb_api_secret` (Required): Your OpenTok API Secret.
-- `tb_archive_polling_initial_timeout` (Optional, default value: 5000): The initial polling timeout
-   (in milliseconds) for archive status change updates. Set this to 0 to disable polling.
-- `tb_archive_polling_multiplier` (Optional, default value: 1.5) : Timeout multiplier. If the first
-   archive status update polling fails, subsequent polling intervals will apply this multiplier
-   successively. Set to a lower number to poll more often.
-
-### Firebase configuration
-
-- `fb_data_url` (Required): Firebase data URL. This should be the root of the archives section of
-   your Firebase app URL, which isn't necessarily the root of the app.
-- `fb_auth_secret` (Required): Firebase secret to generate auth tokens.
-- `tb_max_session_age` (Optional, default value 2):  Sessions should not live forever. So we'll store
+Environment Variable Names and Description:
+- `TB_API_KEY` (Required): Your OpenTok API key.
+- `TB_API_SECRET` (Required): Your OpenTok API Secret.
+- `TB_MAX_SESSION_AGE` (Optional, default value 2):  Sessions should not live forever. So we'll store
    the last time a session was used and if when we fetch it from Redis we determine it's older than
    this max age (in days). This is the key where that value (in days) should be stored.
    By default, sessions live two days.
-- `tb_max_history_lifetime` (Optional, default value 3): Maximum time, in minutes,  an empty room
-  will keep it's history (of recordings) alive.
 
+JSON example:
+```js
+"OpenTok": {
+	"apiKey": "<key>",
+	"apiSecret": "<secret>",
+	"maxSessionAge": 2,
+},
+   ```
+
+
+### Firebase configuration
+
+- `FB_DATA_URL`: Firebase data URL. This should be the root of the archives section of your Firebase app URL, which isn't necessarily the root of the app.
+- `FB_AUTH_SECRET`: Firebase secret to generate auth tokens.
+
+```js
+"Firebase": {
+    "dataUrl": "<appurl>",
+    "authSecret": "<appsecret>"
+}
+```
 ### Web client configuration
 
-Web client allows to be configured in some of its features. You can disable feature by adding them to `DISABLED_FEATURES` environment variable or by setting `disabled_features` key in redis.
-If you leave this unset, the default configuration will be used:
-```
-//default "feedback, screensharing, archiving"
-```
-To enable all features set:
-```
-redis-cli set disabled_features none
+Web client allows to be configured in some of its features. You can enable or disable using their `enabled` field in JSON or `ENABLE_<FEATURE>` environment variable.
+
+#### Archiving
+- `ENABLE_ARCHIVING`:(Optional, default value: true) Enable Archiving (Recording)
+- `ARCHIVE_ALWAYS`:(Optional, default value: false) Record all sessions.
+- `ARCHIVE_TIMEOUT`: (Optional, default value: 5000): The initial polling timeout (in milliseconds) for archive status change updates. Set this to 0 to disable polling.
+- `TIMEOUT_MULTIPLIER` (Optional, default value: 1.5) : Timeout multiplier. If the first archive status update polling fails, subsequent polling intervals will apply this multiplier
+   successively. Set to a lower number to poll more often.
+
+##### Archive Manager
+- `ENABLE_ARCHIVE_MANAGER`: (Optional, default value: false) Enable Archive Manager. Only meaningful if `archiving` is not disabled (Manage Recordings, requires firebase to be configured)
+- `EMPTY_ROOM_LIFETIME`: (Optional, default value 3): Maximum time, in minutes,  an empty room
+
+```js
+"Archiving": {
+    "enabled": true,
+    "archiveAlways": false,
+    "pollingInitialTimeout": 5000,
+    "pollingTimeoutMultiplier": 1.5,
+    "archiveManager": {
+        "enabled": false,
+        "emptyRoomMaxLifetime": 3
+    }
+},
 ```
 
-To set your custom config set the variable to a *complete* list of disabled features separated by commas:
-```
-redis-cli set disabled_features "annotations, archiving, feedback"
-```
+#### Screensharing
+- `ENABLE_SCREENSHARING`:(Optional, default value: false) Enable Screen sharing.
+- `CHROME_EXTENSION_ID` (Optional, default value: 'null'): Chrome AddOn extension ID for screen sharing. Note that while the default value allows the server to run, doesn't actually enable screen sharing in Chrome. See [Screen sharing](#screen-sharing).
+- `ENABLE_ANNOTATIONS`: (Optional, default value: true) Enable Annotations in Screen Sharing. Only meaningful if `screensharing` is not disabled.
 
-You can disable the following features:
-
-- `annotations` --  Annotations in Screen Sharing. Only meaningful if `screensharing` is not disabled.
-- `archiving` -- Archiving (Recording)
-- `archive_manager` -- Archive Manager. Only meaningful if `archiving` is not disabled (Manage Recordings, requires firebase to be configured)
-- `feedback` -- The "Give Demo Feedback" form.
-- `screensharing` -- Screen sharing.
+```js
+"Screensharing": {
+    "enabled": false,
+    "chromeExtensionId": null,
+    "annotations": {
+        "enabled": true
+    }
+}
+```
+#### Feedback
+ `ENABLE_FEEDBACK`: Enable the "Give Demo Feedback" form.
+ ```js
+ "Feedback": {
+     "enabled": false
+ },
+ ```
 
 ### Additional configuration options
 
-* `chrome_extension_id` (Optional, default value: 'undefined'): Chrome AddOn extension ID for
-   screen sharing. Note that while the default value allows the server to run, it doesn't actually
-   enable screen sharing in Chrome. See [Screen sharing](#screen-sharing).
 
-* `allow_iframing` (Optional, default value: 'never'): Controls the server-side restriction on
-   allowing content to load inside an iframe. The allowed values are:>>>>>>> master
+* `ALLOW_IFRAMING` (Optional, default value: 'never'): Controls the server-side restriction on
+   allowing content to load inside an iframe. The allowed values are:
 
    - 'always': Allow iframing unconditionally (note that rtcApp.js should also be changed
      to reflect this, this option only changes what the server allows)
@@ -160,9 +205,6 @@ You can disable the following features:
      from pages in the same origin)
 
    We don't allow restricting iframe loading to specific URIs because it doesn't work on Chrome
-
-* `valid_referers` (Optional, default value: '[]'): List (JSONified array) of the hosts that can
-   hot link to URLs. This same server is always allowed to hot-link.
 
 ### Firebase security measure
 
@@ -230,15 +272,12 @@ Follow these steps to use the chrome extension included in this repository.
     [Chrome's documentation on loading unpacked
     extensions](https://developer.chrome.com/extensions/getstarted#unpacked).
 
-3. Add the `extensionId` to redis as `chrome_extension_id`:
+3. Add the `extensionId` to application configuration:
 
    You can get the ID of the extension in the [chrome://extensions](chrome://extensions) page.
-   (It looks like `ffngmcfincpecmcgfdpacbdbdlfeeokh`.)
-   Set the value in redis -- for example:
+   (It looks like `ffngmcfincpecmcgfdpacbdbdlfeeokh`).
+   Add the value to the configuration, see [Configuration Options: Screen sharing](#Screensharing)
 
-    ```
-    redis-cli set chrome_extension_id ffngmcfincpecmcgfdpacbdbdlfeeokh
-    ```
 
 For more information and how to use your extension in production see the documentation at the
 [opentok/screensharing-extensions](https://github.com/opentok/screensharing-extensions/blob/master/chrome/ScreenSharing/README.md#customizing-the-extension-for-your-website)

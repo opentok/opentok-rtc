@@ -1,8 +1,11 @@
 // Components
 @import '../bower_components/utils/reset.less';
 @import '../bower_components/utils/mixins.less';
+@import '../bower_components/modals/modals.less';
 
 @import 'base.less';
+@import 'icons.less';
+@import 'buttons.less';
 
 body {
   background-color: #FFF;
@@ -23,35 +26,14 @@ body {
     }
   }
 
-  .extended-header {
-    text-align: center;
-    padding-top: 30px;
-
-    @media @smartphonesLandscape {
-      text-align: justify;
-      width: 100%;
-      padding: 50px 0 0 90px;
-
-      header {
-        float: left;
-      }
-      img {
-        width: 50%;
-      }
-
-      h1 {
-        line-height: 0px;
-        margin: 25px 0;
-      }
-    }
-  }
-
   h1, h2, h3 {
-    font-family: "AvantGardeGothicITCW01X", arial;
+    font-family: @muliRegularFont, arial;
     padding: 0;
+    text-align: center;
   }
 
   h1 {
+    font-family: @muliRegularFont, arial;
     font-size: 48px;
     @media @smartphones {
       font-size: 36px;
@@ -69,6 +51,7 @@ body {
     }
     font-weight: 400;
     margin: 6px 0;
+    color: @grey4;
   }
 
   h3 {
@@ -78,8 +61,8 @@ body {
     }
     margin: 5px 0;
     font-weight: 600;
-    letter-spacing: 0.1em;
-    color: #95a4ab;
+    color: @grey3;
+    padding: 10px;
   }
 
   form {
@@ -140,7 +123,7 @@ body {
     }
 
     .tb.btn {
-      font-family: "AvantGardeGothicITCW01B 731069", arial;
+      font-family: @muliRegularFont, arial;
       font-size: 16px;
       @media @smartphones {
         font-size: 14px;
@@ -160,75 +143,10 @@ body {
         padding: 8px 10px;
       }
     }
+  }
 
-    .contract {
-      text-align: left;
-      position: relative;
-      left: 50%;
-      @media @smartphones {
-        left: 0%;
-        padding: 0 50px 0 50px;
-      }
-
-      @media @smartphonesLandscape {
-        left: 0%;
-        padding: 0 20px 0 20px;
-      }
-
-      & > p {
-        width: auto;
-        display: inline-block;
-        text-align: left;
-        transform: translateX(-25%);
-
-        @media @smartphones {
-          transform: translateX(0%);
-          width: 100%;
-        }
-      }
-
-      label.checkbox {
-        &:first-child {
-          padding-top: 0;
-          padding-bottom: 0;
-        }
-
-        @media @smartphones {
-          &:first-child {
-            padding: 0;
-          }
-        }
-
-        input:checked ~ span:after {
-          border: 1px solid @blueText;
-        }
-
-        a {
-          color: inherit;
-        }
-
-        span {
-          display: inline-block;
-          pointer-events: auto;
-          font-size: 15px;
-          padding-right: 10px;
-
-          @media @smartphones {
-            font-size: 12px;
-          }
-
-          @media @smartphonesLandscape {
-            font-size: 7px;
-          }
-
-          color: #5F6062;
-        }
-
-        span:after {
-          border-radius: 0;
-        }
-      }
-    }
+  .safari-plug a {
+    color: @blueText;
   }
 
   .safari-plug a {
@@ -263,4 +181,37 @@ body {
     text-decoration: none;
   }
 
+}
+
+.tc-modal.contract {
+  header {
+    font-size: 24px;
+    @media @smartphones {
+      font-size: 20px;
+    }
+    color: @blueText;
+    padding-bottom: 10px;
+  }
+
+  p {
+    font-family: "Muli", arial;
+    color: @text;
+    font-weight: 300;
+    font-size: 16px;
+
+    @media @smartphones {
+      font-size: 12px;
+    }
+
+    a {
+      color: @blueText;
+      text-decoration: none;
+      font-weight: 600;
+    }
+  }
+
+  .btn {
+    font-size: 14px;
+    margin: 0px;
+  }
 }

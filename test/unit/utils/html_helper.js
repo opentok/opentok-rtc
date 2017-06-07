@@ -1,7 +1,6 @@
 'use strict';
 
-(function(global) {
-
+(function (global) {
   var requestedFragments = {};
 
   var requestedJS = {};
@@ -42,5 +41,4 @@
     typeof callback === 'function' && script.addEventListener('load', callback);
     document.head.appendChild(script);
   };
-
 }(this));

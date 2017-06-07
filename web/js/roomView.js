@@ -1,9 +1,8 @@
-!function(exports) {
+!(function(exports) {
   'use strict';
 
   // HTML elements for the view
   var dock;
-  var screen;
   var handler;
   var roomNameElem;
   var participantsNumberElem;
@@ -14,9 +13,6 @@
   var startChatElem;
   var unreadCountElem;
   var enableArchiveManager;
-
-  var START_SHARING = 'Share your screen';
-  var STOP_SHARING = 'Stop sharing your screen';
 
   var _unreadMsg = 0;
   var _chatHasBeenShown = false;
@@ -103,7 +99,7 @@
   }
 
   var chatViews = {
-    'unreadMessage': function(evt) {
+    unreadMessage: function(evt) {
       setUnreadMessages(_unreadMsg + 1);
       if (!_chatHasBeenShown) {
         setChatStatus(true);
@@ -112,7 +108,7 @@
   };
 
   var chatEvents = {
-    'hidden': function(evt) {
+    hidden: function(evt) {
       document.body.data('chatStatus', 'hidden');
       setUnreadMessages(0);
       HTMLElems.flush('#toggleChat');
@@ -120,39 +116,37 @@
   };
 
   var hangoutEvents = {
-    'screenOnStage': function(event) {
+    screenOnStage: function(event) {
       var status = event.detail.status;
       if (status === 'on') {
         dock.data('previouslyCollapsed', dock.classList.contains('collapsed'));
         dock.classList.add('collapsed');
-      } else {
-        if (dock.data('previouslyCollapsed') !== null) {
-          dock.data('previouslyCollapsed') === 'true' ? dock.classList.add('collapsed') :
+      } else if (dock.data('previouslyCollapsed') !== null) {
+        dock.data('previouslyCollapsed') === 'true' ? dock.classList.add('collapsed') :
                                                         dock.classList.remove('collapsed');
-          dock.data('previouslyCollapsed', null);
-        }
+        dock.data('previouslyCollapsed', null);
       }
     }
   };
 
   var screenShareCtrEvents = {
-    'changeScreenShareStatus': toggleScreenSharing,
-    'destroyed': toggleScreenSharing.bind(undefined, NOT_SHARING),
-    'annotationStarted': function(evt) {
+    changeScreenShareStatus: toggleScreenSharing,
+    destroyed: toggleScreenSharing.bind(undefined, NOT_SHARING),
+    annotationStarted: function(evt) {
       document.body.data('annotationVisible', 'true');
     },
-    'annotationEnded': function(evt) {
+    annotationEnded: function(evt) {
       document.body.data('annotationVisible', 'false');
     }
   };
 
   var roomControllerEvents = {
-    'externalAppLaunched': function(evt) {
+    externalAppLaunched: function(evt) {
       showConfirm(MODAL_TXTS.externalApp).then(function() {
         document.body.innerHTML = '<html></html>';
       });
     },
-    'userChangeStatus': function(evt) {
+    userChangeStatus: function(evt) {
       // If user changed the status we need to reset the switch
       if (evt.detail.name === 'video') {
         setSwitchStatus(false, false, videoSwitch, 'roomView:videoSwitch');
@@ -160,28 +154,28 @@
         setSwitchStatus(false, false, audioSwitch, 'roomView:muteAllSwitch');
       }
     },
-    'roomMuted': function(evt) {
+    roomMuted: function(evt) {
       var isJoining = evt.detail.isJoining;
       setAudioSwitchRemotely(true);
       showConfirm(isJoining ? MODAL_TXTS.join : MODAL_TXTS.muteRemotely);
     },
-    'sessionDisconnected': function(evt) {
+    sessionDisconnected: function(evt) {
       RoomView.participantsNumber = 0;
       LayoutManager.removeAll();
     },
-    'controllersReady': function() {
+    controllersReady: function() {
       var elements = dock.querySelectorAll('.menu [disabled]');
       Array.prototype.forEach.call(elements, function(element) {
         Utils.setDisabled(element, false);
       });
     },
-    'annotationStarted': function(evt) {
+    annotationStarted: function(evt) {
       document.body.data('annotationVisible', 'true');
     },
-    'annotationEnded': function(evt) {
+    annotationEnded: function(evt) {
       document.body.data('annotationVisible', 'false');
     },
-    'chromePublisherError': function(evt) {
+    chromePublisherError: function(evt) {
       showConfirm(MODAL_TXTS.chromePublisherError).then(function() {
         document.location.reload();
       });
@@ -198,7 +192,6 @@
 
   function initHTMLElements() {
     dock = document.getElementById('dock');
-    screen = document.getElementById('screen');
     handler = dock.querySelector('#handler');
 
     roomNameElem = dock.querySelector('#roomName');
@@ -216,10 +209,6 @@
     var title = dock.querySelector('.info h1');
     title.style.height = title.clientHeight + 'px';
   }
-
-  var transEndEventName =
-    ('WebkitTransition' in document.documentElement.style) ?
-     'webkitTransitionEnd' : 'transitionend';
 
   function createStreamView(streamId, type, controlBtns, name) {
     return LayoutManager.append(streamId, type, controlBtns, name);
@@ -250,18 +239,17 @@
   function getCronograph() {
     if (cronograph) {
       return Promise.resolve(cronograph);
-    } else {
-      return LazyLoader.dependencyLoad([
-        '/js/components/cronograph.js'
-      ]).then(function() {
-        cronograph = Cronograph;
-        return cronograph;
-      });
     }
+    return LazyLoader.dependencyLoad([
+      '/js/components/cronograph.js'
+    ]).then(function() {
+      cronograph = Cronograph;
+      return cronograph;
+    });
   }
 
   function onStartArchiving(data) {
-    getCronograph().then(function(cronograph) {
+    getCronograph().then(function(cronograph) { // eslint-disable-line consistent-return
       var start = function(archive) {
         var duration = 0;
         archive && (duration = Math.round((Date.now() - archive.createdAt) / 1000));
@@ -269,11 +257,11 @@
       };
 
       if (!enableArchiveManager) {
-          cronograph.init();
-          return start(null);
+        cronograph.init();
+        return start(null);
       }
 
-      var onModel = function(model) {
+      var onModel = function(model) { // eslint-disable-line consistent-return
         var archives = FirebaseModel.archives;
         var archiveId = data.id;
 
@@ -317,8 +305,8 @@
       ui.querySelector(' footer button.accept').textContent = txt.button;
     }
 
-    return Modal.show(selector, loadModalText).
-      then(function() {
+    return Modal.show(selector, loadModalText)
+      .then(function() {
         return new Promise(function(resolve, reject) {
           ui.addEventListener('click', function onClicked(evt) {
             var classList = evt.target.classList;
@@ -441,10 +429,10 @@
     var input = document.querySelector('.bubble[for="addToCall"] input');
     var urlToShare = getURLtoShare();
     input.value = urlToShare;
-    var clipboard = new Clipboard(document.querySelector('#addToCall'), {
-        text: function() {
-            return urlToShare;
-        }
+    var clipboard = new Clipboard(document.querySelector('#addToCall'), { // eslint-disable-line no-unused-vars
+      text: function() {
+        return urlToShare;
+      }
     });
   };
 
@@ -479,5 +467,4 @@
     setAudioSwitchRemotely: setAudioSwitchRemotely,
     showConfirmChangeMicStatus: showConfirmChangeMicStatus
   };
-
-}(this);
+}(this));

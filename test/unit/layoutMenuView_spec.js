@@ -2,36 +2,33 @@ var assert = chai.assert;
 var expect = chai.expect;
 var should = chai.should();
 
-describe('LayoutMenuView', function() {
-
-  before(function() {
+describe('LayoutMenuView', () => {
+  before(() => {
     window.document.body.innerHTML = window.__html__['test/unit/layoutMenuView_spec.html'];
   });
 
-  it('should exist', function() {
+  it('should exist', () => {
     expect(LayoutMenuView).to.exist;
   });
 
-  describe('#init', function() {
-    it('should export a init function', function() {
+  describe('#init', () => {
+    it('should export a init function', () => {
       expect(LayoutMenuView.init).to.exist;
       expect(LayoutMenuView.init).to.be.a('function');
     });
 
-    it('should be initialized', function() {
+    it('should be initialized', () => {
       LayoutMenuView.init();
     });
   });
 
-  describe('#event handlers: click', function() {
-    it('should set the correct layout when grid is selected', sinon.test(function(done) {
+  describe('#event handlers: click', () => {
+    it('should set the correct layout when grid is selected', sinon.test(function (done) {
       var myLayoutGrid = {};
 
-      this.stub(BubbleFactory, 'get', function() {
-        return { toggle: function() {} }
-      });
+      this.stub(BubbleFactory, 'get', () => ({ toggle() {} }));
 
-      this.stub(window, 'CustomEvent', function(name, data) {
+      this.stub(window, 'CustomEvent', (name, data) => {
         expect(name).to.be.equal('layoutMenuView:layout');
         expect(data.detail.type).to.be.equal('grid');
         done();
@@ -41,34 +38,33 @@ describe('LayoutMenuView', function() {
     }));
   });
 
-  describe('#event handlers: layoutManager:availableLayouts', function() {
+  describe('#event handlers: layoutManager:availableLayouts', () => {
     var checkOptions = function (layouts) {
       window.dispatchEvent(new CustomEvent('layoutManager:availableLayouts', {
         detail: {
-          layouts: layouts
-        }
+          layouts,
+        },
       }));
 
-      Array.prototype.map.call(document.querySelectorAll('ul a'), function(elem) {
+      Array.prototype.map.call(document.querySelectorAll('ul a'), (elem) => {
         var layoutType = elem.dataset.layoutType;
         var isAvailable = !!layouts[layoutType];
         expect(elem.disabled).to.be.equal(!isAvailable);
       });
-    }
+    };
 
-    it('should disable all layouts for groups', function() {
+    it('should disable all layouts for groups', () => {
       checkOptions({
         float: true,
         f2f_horizontal: true,
-        f2f_vertical: true
+        f2f_vertical: true,
       });
     });
 
-    it('should enable grid layout', function() {
+    it('should enable grid layout', () => {
       checkOptions({
-        grid: true
+        grid: true,
       });
     });
   });
-
 });

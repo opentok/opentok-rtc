@@ -2,67 +2,62 @@ var assert = chai.assert;
 var expect = chai.expect;
 var should = chai.should();
 
-describe('FeedbackController', function() {
-
+describe('FeedbackController', () => {
   var realLazyLoader = null;
   var realOT = null;
   var fakeOTHelper = {
     session: {
       id: 'abcd1234',
       connection: {
-        id: 'connectionIdID'
-      }
+        id: 'connectionIdID',
+      },
     },
-    publisherId: 'somePublisherId'
+    publisherId: 'somePublisherId',
   };
 
-  before(function() {
+  before(() => {
     realLazyLoader = window.LazyLoader;
-    window.LazyLoader = { load: function() {} };
+    window.LazyLoader = { load() {} };
     realOT = window.OT;
     window.OT = {
       analytics: {
-        logEvent: function() {}
-      }
+        logEvent() {},
+      },
     };
-    sinon.stub(LazyLoader, 'load', function(resources) {
-      return Promise.resolve();
-    });
+    sinon.stub(LazyLoader, 'load', resources => Promise.resolve());
   });
 
-  after(function() {
+  after(() => {
     window.LazyLoader.load.restore();
     window.LazyLoader = realLazyLoader;
     window.OT = realOT;
   });
 
-  describe('#init', function() {
-    it('should exist', function() {
+  describe('#init', () => {
+    it('should exist', () => {
       expect(FeedbackController.init).to.exist;
       expect(FeedbackController.init).to.be.a('function');
     });
 
-    it('should be initialized', sinon.test(function(done) {
-      this.stub(FeedbackView, 'init', function() {});
+    it('should be initialized', sinon.test(function (done) {
+      this.stub(FeedbackView, 'init', () => {});
 
-      FeedbackController.init(fakeOTHelper).then(function() {
+      FeedbackController.init(fakeOTHelper).then(() => {
         expect(FeedbackView.init.called).to.be.true;
         done();
       });
-
     }));
   });
 
-  describe('#feedbackView:sendFeedback event', function() {
-    it('should send feedback event', sinon.test(function() {
-
-      var logEventStub = this.stub(window.OT.analytics, 'logEvent', function(aLoggedEvent) {});
+  describe('#feedbackView:sendFeedback event', () => {
+    it('should send feedback event', sinon.test(function () {
+      var logEventStub = this.stub(window.OT.analytics, 'logEvent', (aLoggedEvent) => {});
       var report = {
         audioScore: 1,
         videoScore: 2,
-        description: 'description'
+        description: 'description',
       };
-      window.dispatchEvent(new CustomEvent('feedbackView:sendFeedback', { detail : report }));
+      window.dispatchEvent(new CustomEvent('feedbackView:sendFeedback', { detail: report }));
       expect(logEventStub.calledOnce).to.be.true;
       expect(logEventStub.calledWith({
         action: 'SessionQuality',
@@ -71,9 +66,8 @@ describe('FeedbackController', function() {
         publisherId: fakeOTHelper.publisherId,
         audioScore: report.audioScore,
         videoScore: report.videoScore,
-        description: report.description
+        description: report.description,
       })).to.be.true;
-
     }));
   });
 });
