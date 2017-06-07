@@ -501,7 +501,7 @@ function ServerMethods(aLogLevel, aModules) {
         switch (operation) {
           case 'startIndividual':
             archiveOptions.outputMode = 'individual';
-            break;
+            // falls through
           case 'startComposite':
             logger.log('Binding archiveOp to startArchive with sessionId:', sessionInfo.sessionId);
             archiveOp =
