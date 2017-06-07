@@ -9,6 +9,9 @@
     room = document.getElementById('room');
     resetForm();
     addHandlers();
+    if (window.location.hostname.indexOf('opentokrtc.com') === 0) {
+      document.querySelector('.safari-plug').style.display = 'block';
+    }
   };
 
   var isValid = function() {
