@@ -296,7 +296,7 @@
       _solvePublisherPromise = resolve;
     });
 
-    function publish(aDOMElement, aProperties, aHandlers) {
+    function initPublisher(aDOMElement, aProperties) {
       var self = this;
       _publishOptions = null;
       var propCopy = {};
@@ -304,36 +304,41 @@
         propCopy[aKey] = aProperties[aKey];
       });
       return new Promise(function(resolve, reject) {
-        function processError(error) {
-          _publishOptions = {
-            elem: aDOMElement,
-            properties: propCopy,
-            handlers: aHandlers
-          };
-          _publisher = null;
-          reject({ error: error, publisherPromise: _publisherPromise });
-        }
-
-        _publisher = OT.initPublisher(aDOMElement, aProperties, function(error) {
+        _publisher = OT.initPublisher(aDOMElement, aProperties, function (error) {
           if (error) {
-            processError({
-              name: error.name,
-              message: 'Error initializing publisher. ' + error.message
-            });
-           return;
+            const wrappedError = new Error('Error initializing publisher. ' + error.message);
+            wrappedError.name = error.name;
+            _publishOptions = {
+              elem: aDOMElement,
+              properties: propCopy
+            };
+            _publisher = null;
+            reject(wrappedError);
+            return;
           }
-          _session.publish(_publisher, function(error) {
-            if (error) {
-              processError(error);
-            } else {
-              _publisherInitialized = true;
-              Object.keys(aHandlers).forEach(function(name) {
-                _publisher.on(name, aHandlers[name].bind(self));
-              });
-              _solvePublisherPromise(_publisher);
-              resolve(_publisher);
-            }
-          });
+
+          resolve(_publisher);
+        });
+      });
+    }
+
+    function publish(aHandlers) {
+      var self = this;
+      return new Promise(function(resolve, reject) {
+        _session.publish(_publisher, function(error) {
+          if (error) {
+            _publishOptions = {
+              handlers: aHandlers
+            };
+            reject(error);
+          } else {
+            _publisherInitialized = true;
+            Object.keys(aHandlers).forEach(function(name) {
+              _publisher.on(name, aHandlers[name].bind(self));
+            });
+            _solvePublisherPromise(_publisher);
+            resolve(_publisher);
+          }
         });
       });
     }
@@ -347,7 +352,7 @@
     }
 
     function retryPublish() {
-      return publish(_publishOptions.elem, _publishOptions.properties, _publishOptions.handlers);
+      return publish(_publishOptions.handlers);
     }
 
     function publisherReady() {
@@ -534,6 +539,7 @@
       },
       connect: connect,
       off: off,
+      initPublisher: initPublisher,
       publish: publish,
       subscribe: subscribe,
       toggleSubscribersAudio: toggleSubscribersAudio,

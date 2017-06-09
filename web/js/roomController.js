@@ -728,8 +728,6 @@
       otHelper = new exports.OTHelper(aParams);
       exports.otHelper = otHelper;
 
-      var connect = otHelper.connect.bind(otHelper);
-
       // Room's name is set by server, we don't need to do this, but
       // perphaps it would be convenient
       // RoomView.roomName = aParams.roomName;
@@ -737,11 +735,12 @@
 
       _allHandlers = RoomStatus.init(_allHandlers, { room: _sharedStatus });
 
-      ChatController.
-        init(aParams.roomName, userName, _allHandlers).
-        then(connect).
-        then(LayoutMenuController.init).
-        then(function() {
+      Promise.all([
+        ChatController.init(aParams.roomName, userName, _allHandlers),
+        LayoutMenuController.init()
+      ]).
+        then(function (chatInitAndLMCInit) {
+          var aHandlers = chatInitAndLMCInit[0];
           var publisherElement = RoomView.createStreamView('publisher', {
             name: userName,
             type: 'publisher',
@@ -761,21 +760,30 @@
             publisherOptions.publishAudio = false;
           }
           publisherOptions.name = userName;
-          return otHelper.publish(publisherElement, publisherOptions, {}).then(function() {
-            setPublisherReady();
-          }).catch(function(errInfo) {
-            switch (errInfo.error.name) {
-              case 'OT_CHROME_MICROPHONE_ACQUISITION_ERROR':
+          var initPublisher = otHelper.initPublisher(publisherElement, publisherOptions)
+            .catch(function (publishError) {
+              if (publishError.name === 'OT_CHROME_MICROPHONE_ACQUISITION_ERROR') {
                 Utils.sendEvent('roomController:chromePublisherError');
-                break;
-              case 'OT_USER_MEDIA_ACCESS_DENIED':
-                Utils.sendEvent('roomController:cameraDeniedError',
-                  {browserName: Utils.browserName()});
-              default:
-                // Ignore other errors.
-            }
-            otHelper.disconnect();
-          });
+                otHelper.disconnect();
+              }
+              switch (publishError.name) {
+                case 'OT_CHROME_MICROPHONE_ACQUISITION_ERROR':
+                  Utils.sendEvent('roomController:chromePublisherError');
+                  break;
+                case 'OT_USER_MEDIA_ACCESS_DENIED':
+                  Utils.sendEvent('roomController:cameraDeniedError',
+                    {browserName: Utils.browserName()});
+                default:
+                  // Ignore other errors.
+              }
+              otHelper.disconnect();
+            });
+          
+          var sessionConnect = otHelper.connect(aHandlers);
+          
+          return Promise.all([sessionConnect, initPublisher])
+            .then(function() { return otHelper.publish({}); })
+            .then(function() { setPublisherReady(); });
         }).
         then(function() {
           RecordingsController.init(enableArchiveManager, aParams.firebaseURL, aParams.firebaseToken, aParams.sessionId);
