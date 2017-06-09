@@ -142,6 +142,10 @@ You can disable the following features:
 - `feedback` -- The "Give Demo Feedback" form.
 - `screensharing` -- Screen sharing.
 
+You can also set `default_index_page` to change the UI, based on the server environment.
+Set this to `opentokrtc` for the site hosted at https://opentokrtc.com/. Set this to `safaridemo`
+for the site hosted at https://safari.opentokrtc.com/.
+
 ### Additional configuration options
 
 * `chrome_extension_id` (Optional, default value: 'undefined'): Chrome AddOn extension ID for

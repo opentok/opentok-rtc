@@ -108,7 +108,9 @@ function ServerMethods(aLogLevel, aModules) {
         var maxSessionAgeMs = maxSessionAge * 24 * 60 * 60 * 1000;
         var chromeExtId = persistConfig[C.RED_CHROME_EXTENSION_ID];
 
-        var isWebRTCVersion = persistConfig[C.DEFAULT_INDEX_PAGE] === 'opentokrtc';
+        var isWebRTCVersion = (persistConfig[C.DEFAULT_INDEX_PAGE] === 'opentokrtc') ||
+          (persistConfig[C.DEFAULT_INDEX_PAGE] === 'safaridemo');
+        var isSafariDemo = persistConfig[C.DEFAULT_INDEX_PAGE] === 'safaridemo';
         var disabledFeatures =
           persistConfig[C.DISABLED_FEATURES] && persistConfig[C.DISABLED_FEATURES].replace(/, +/g, ',').split(',');
 
@@ -152,6 +154,7 @@ function ServerMethods(aLogLevel, aModules) {
               iosAppId: iosAppId,
               iosUrlPrefix: iosUrlPrefix,
               isWebRTCVersion: isWebRTCVersion,
+              isSafariDemo: isSafariDemo,
               enabledFirebase: !disabledArchiveManager,
               disabledFeatures: disabledFeatures,
               isDisabledFeature: isDisabledFeature,
@@ -265,6 +268,7 @@ function ServerMethods(aLogLevel, aModules) {
     aRes.
       render('index.ejs', {
         isWebRTCVersion: aReq.tbConfig.isWebRTCVersion,
+        isSafariDemo: aReq.tbConfig.isSafariDemo,
         features: C.FEATURES,
         isDisabledFeature: aReq.tbConfig.isDisabledFeature,
       }, (err, html) => {

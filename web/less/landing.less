@@ -63,8 +63,25 @@ body {
     font-weight: 600;
     color: @grey3;
     padding: 10px;
+    max-width: 600px;
+    strong {
+      color: #000;
+    }
+    a {
+      color: @blueText;
+    }
   }
 
+  h3.disclaimer {
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+  @media (max-width: 500px) {
+    img.logo {
+      height: 50px;
+    }
+  }
   form {
     width: 100%;
     margin: 20px 0 40px 0;

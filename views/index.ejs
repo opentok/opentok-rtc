@@ -31,10 +31,18 @@
       <section>
 
         <header>
-          <img src="images/opentok-logo.png" alt="opentok transparent logo">
+          <img src="images/opentok-logo.png" alt="opentok transparent logo" class="logo">
         </header>
 <% if (!isWebRTCVersion) { %>
         <h1>The OpenTok Platform Demo</h1>
+<% } else if (isSafariDemo) { %>
+        <h1>WebRTC Demo</h1>
+        <h2>Built using the OpenTok platform with support for Safari 11, Chrome, and Firefox</h2>
+        <h3>This WebRTC Demo enables group video conferencing, text chat,
+          <% if (!isDisabledFeature(features.SCREENSHARING)) { %>
+            screen sharing,
+          <% } %>
+          and more.</h3>
 <% } else { %>
         <h1>WebRTC Demo</h1>
         <h2>Built by TokBox on the OpenTok Platform</h2>
@@ -52,6 +60,15 @@
           </p>
           <button id="enter" class="btn tb btn-primary btn-arrow btn-next btn-padding">Join Meeting</button>
         </form>
+      <% if (isSafariDemo) { %>
+        <h3 class="disclaimer">
+          <strong>Important:</strong> Safari compatibility is limited to only Safari 11. To get Safari 11, you can download the
+          <a href="https://developer.apple.com/safari/download/">Safari Technology Preview</a>,
+          <a href="https://developer.apple.com/download/">Mac OS 10.13</a>, or
+          <a href="https://developer.apple.com/download/">iOS 11</a>. See more documentation at
+          <a href="https://tokbox.com/developer/beta/safari/">tokbox.com</a>.
+        </h3>
+      <% } %>
       </section>
     </section>
 
@@ -62,7 +79,7 @@
         <header>
           <span>Terms of Use</span>
         </header>
-        <p>By accepting our terms of use you acknoledge that you have read the <a target="_blank" href="https://tokbox.com/support/tos">user agreement</a>, and <a target="_blank" href="https://tokbox.com/support/privacy-policy">privacy policy</a>, and you are at least 18 years of age.</p>
+        <p>By accepting our terms of use you acknowledge that you have read the <a target="_blank" href="https://tokbox.com/support/tos">user agreement</a>, and <a target="_blank" href="https://tokbox.com/support/privacy-policy">privacy policy</a>, and you are at least 18 years of age.</p>
         <footer>
           <button id="enter" class="btn tb btn-primary btn-arrow btn-next btn-padding accept">Accept and Continue</button>
         </footer>
