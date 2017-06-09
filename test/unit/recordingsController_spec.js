@@ -34,9 +34,11 @@ describe('RecordingsController', () => {
           this.stub(FirebaseModel, 'init', (valA, valB) => {
             expect(valA).to.be.equal('valueA');
             expect(valB).to.be.equal('valueB');
-            return Promise.resolve();
+            var model = {};
+            return Promise.resolve(model);
           });
-          RecordingsController.init('valueA', 'valueB');
+          var enableArchiveManager = true;
+          RecordingsController.init(enableArchiveManager, 'valueA', 'valueB');
         }));
   });
 });

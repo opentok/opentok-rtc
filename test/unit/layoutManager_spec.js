@@ -24,7 +24,7 @@ describe('LayoutManager', () => {
       return li;
     }
     sinon.stub(LayoutView, 'init');
-    sinon.stub(LayoutView, 'append', (id) => { id === 'desktop' ? desktop : getLayoutElement(); });
+    sinon.stub(LayoutView, 'append', (id) => { return id === 'desktop' ? desktop : getLayoutElement(); }); // eslint-disable-line arrow-body-style
     sinon.stub(LayoutView, 'remove');
     sinon.stub(ItemsHandler, 'init');
     sinon.stub(LazyLoader, 'dependencyLoad', () => Promise.resolve());
