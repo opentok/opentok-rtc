@@ -709,12 +709,6 @@
     Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
     RoomView.init(enableHangoutScroll, enableArchiveManager);
 
-    if (isSafari) {
-      debug.log('Launching Electron app');
-      document.location.href = 'teladoc://' + btoa(JSON.stringify(aParams));
-      Utils.sendEvent('roomController:externalAppLaunched');
-      return;
-    }
     roomName = aParams.roomName;
     userName = aParams.username ? aParams.username.substring(0, 1000) : '';
 
