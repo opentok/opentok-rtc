@@ -647,16 +647,10 @@
       });
   }
 
-  var isSafari = Utils.isSafari();
-
   var modules = [
     '/js/components/htmlElems.js',
-    '/js/helpers/resolutionAlgorithms.js'
-  ];
-  if (!isSafari) {
-    modules.push('/js/helpers/OTHelper.js');
-  }
-  modules.push(
+    '/js/helpers/resolutionAlgorithms.js',
+    '/js/helpers/OTHelper.js',
     '/js/itemsHandler.js',
     '/js/layoutView.js',
     '/js/layouts.js',
@@ -669,7 +663,7 @@
     '/js/layoutMenuController.js',
     '/js/screenShareController.js',
     '/js/feedbackController.js'
-  );
+  ];
 
   var init = function() {
     LazyLoader.load(modules)
@@ -678,9 +672,6 @@
     })
     .then(getRoomParams)
     .then(function(aParams) {
-      if (isSafari) {
-        return aParams;
-      }
       return Promise.resolve(aParams);
     })
     .then(getRoomInfo)
