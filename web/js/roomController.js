@@ -35,7 +35,7 @@
     width:'100%',
     height: '100%',
     showControls: true,
-    resolution: isWebRTCVersion ? '1280x720' : '640x480',
+    resolution: isSafariDemo ? '640x480' : '1280x720',
     style: {
       audioLevelDisplayMode: 'auto',
       buttonDisplayMode: 'off',

@@ -302,6 +302,7 @@ function ServerMethods(aLogLevel, aModules) {
       render((template ? template : tbConfig.defaultTemplate) + '.ejs',
              {
                isWebRTCVersion: tbConfig.isWebRTCVersion,
+               isSafariDemo: aReq.tbConfig.isSafariDemo,
                userName: userName || C.DEFAULT_USER_NAME,
                roomName: aReq.params.roomName,
                chromeExtensionId: tbConfig.chromeExtId,
