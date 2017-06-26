@@ -15,10 +15,17 @@ This repository contains a NodeJS server and a web client application.
   - [Requirements](#requirements)
   - [Setting up](#setting-up)
 - [Running](#running)
+  - [Detailed usage information](#detailed-usage-information)
 - [Configuration options](#configuration-options)
-- [Screen sharing](#screen-sharing)
+  - [OpenTok configuration](#opentok-configuration)
+  - [Firebase configuration](#firebase-configuration)
+  - [Screen sharing](#screen-sharing)
+  - [Web client configuration](#web-client-configuration)
+  - [Additional configuration options](#additional-configuration-options)
 - [Customizing UI](#customizing-ui)
 - [Troubleshooting](#troubleshooting)
+
+---
 
 ## Installation
 
@@ -209,7 +216,7 @@ If you want to ensure that the archive list is kept secure (as in only the actua
 
 **Note:** Replace `"sessions"` in the configuration above with the root where you want to store the archive data (the actual URL that you set as `fb_data_url` configuration parameter.) For example, to use this security measure, you will need to your Firebase data URL (`Firebase.dataUrl`) in the configuration as `https://xxxx.firebaseio.com/sessions` where `xxxx` is the unique ID of your Firebase project.
 
-## Screen sharing
+### Screen sharing
 
 The screen-sharing-extension-chrome directory includes sample files for developing a
 Chrome extension for enabling screen-sharing for this app. See the
@@ -283,7 +290,8 @@ Web client allows to be configured in some of its features. You can enable or di
 },
 ```
 
-#### Screensharing
+#### Screensharing configuration
+
 - `ENABLE_SCREENSHARING`:(Optional, default value: false) Enable Screen sharing.
 - `CHROME_EXTENSION_ID` (Optional, default value: 'null'): Chrome AddOn extension ID for screen sharing. Note that while the default value allows the server to run, doesn't actually enable screen sharing in Chrome. See [Screen sharing](#screen-sharing).
 - `ENABLE_ANNOTATIONS`: (Optional, default value: true) Enable Annotations in Screen Sharing. Only meaningful if `screensharing` is not disabled.
@@ -301,6 +309,7 @@ Web client allows to be configured in some of its features. You can enable or di
 To know more about how screensharing works in OpenTok, see the [guide on screensharing](tokbox.com/developer/guides/screen-sharing/).
 
 #### Feedback
+
  `ENABLE_FEEDBACK`: Enable the "Give Demo Feedback" form.
 
  ```json
@@ -310,7 +319,6 @@ To know more about how screensharing works in OpenTok, see the [guide on screens
  ```
 
 ### Additional configuration options
-
 
 * `ALLOW_IFRAMING` (Optional, default value: 'never'): Controls the server-side restriction on
    allowing content to load inside an iframe. The allowed values are:
