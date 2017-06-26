@@ -7,7 +7,7 @@ OpenTokRTC is your private web-based video conferencing solution. It is based on
 [OpenTok platform](https://tokbox.com/developer/) and uses the OpenTok SDKs and API. You can deploy
 OpenTokRTC on your servers to get your own Google Hangouts alternative running on WebRTC.
 
-This repository contains a NodeJS server and a web client application.
+This repository contains a Node.js server and a web client application.
 
 ## Table of Contents
 
@@ -253,8 +253,7 @@ Follow these steps to use the chrome extension included in this repository.
 
    You can get the ID of the extension in the [chrome://extensions](chrome://extensions) page.
    (It looks like `ffngmcfincpecmcgfdpacbdbdlfeeokh`).
-   Add the value to the configuration, see [Configuration Options: Screen sharing](#Screensharing)
-
+   Add the value to the configuration, see [Configuration Options: Screen sharing](#screen-sharing).
 
 For more information and how to use your extension in production see the documentation at the
 [opentok/screensharing-extensions](https://github.com/opentok/screensharing-extensions/blob/master/chrome/ScreenSharing/README.md#customizing-the-extension-for-your-website)
@@ -290,11 +289,11 @@ Web client allows to be configured in some of its features. You can enable or di
 },
 ```
 
-#### Screensharing configuration
+#### Screen sharing configuration
 
-- `ENABLE_SCREENSHARING`:(Optional, default value: false) Enable Screen sharing.
-- `CHROME_EXTENSION_ID` (Optional, default value: 'null'): Chrome AddOn extension ID for screen sharing. Note that while the default value allows the server to run, doesn't actually enable screen sharing in Chrome. See [Screen sharing](#screen-sharing).
-- `ENABLE_ANNOTATIONS`: (Optional, default value: true) Enable Annotations in Screen Sharing. Only meaningful if `screensharing` is not disabled.
+- `ENABLE_SCREENSHARING`:(Optional, default value: false) Whether to enable screen sharing.
+- `CHROME_EXTENSION_ID` (Optional, default value: 'null'): The Chrome AddOn extension ID for screen sharing. Note that while the default value allows the server to run, it doesn't actually enable screen sharing in Chrome. See [Screen sharing](#screen-sharing).
+- `ENABLE_ANNOTATIONS`: (Optional, default value: true) Whether to enable annotations in screen sharing. This is only meaningful if screen sharing is not disabled.
 
 ```json
 "Screensharing": {
@@ -306,7 +305,8 @@ Web client allows to be configured in some of its features. You can enable or di
 }
 ```
 
-To know more about how screensharing works in OpenTok, see the [guide on screensharing](tokbox.com/developer/guides/screen-sharing/).
+To know more about how screen sharing works in OpenTok, see the [guide on screen
+sharing](tokbox.com/developer/guides/screen-sharing/).
 
 #### Feedback
 
