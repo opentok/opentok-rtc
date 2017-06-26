@@ -1,11 +1,11 @@
 {
    "OpenTok":{
-      "apiKey":"key",
-      "apiSecret":"secret"
+      "apiKey": "<key>",
+      "apiSecret": "<secret>"
    },
    "Firebase":{
-      "dataUrl":"url",
-      "authSecret":"secret"
+      "dataUrl":"<firebase_url>",
+      "authSecret":"<firebase_secret>"
    },
    "Archiving":{
       "enabled":true,

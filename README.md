@@ -17,9 +17,11 @@ This repository contains a NodeJS server and a web client application.
 - [Running](#running)
 - [Configuration options](#configuration-options)
 - [Screen sharing](#screen-sharing)
+- [Customizing UI](#customizing-ui)
 - [Troubleshooting](#troubleshooting)
 
 ## Installation
+
 If you want to install OpenTokRTC on your own server, read on. If you want to deploy OpenTokRTC to Heroku, see [`INSTALL-heroku.md`](INSTALL-heroku.md).
 
 ### Requirements
@@ -27,7 +29,8 @@ If you want to install OpenTokRTC on your own server, read on. If you want to de
 You will need these dependencies installed on your machine:
 
 - [NodeJS v4+](https://nodejs.org): This version of OpenTokRTC is tested with NodeJS v4 LTS.
-- [Redis](https://redis.io): A `redis` server running on `localhost`. Redis is used for storing session data.
+- [Redis](https://redis.io): A `redis` server running on `localhost`. Redis is used for storing configuration and session data.
+- [Bower](https://bower.io): Used for packaging web client dependencies.
 - [Grunt](http://gruntjs.com): Used for bundling assets and running tests.
 
 You will also need these API subscriptions:
@@ -39,15 +42,16 @@ You will also need these API subscriptions:
 
 Once all the dependencies are in place, you will need to set some configuration options and install the applications dependencies.
 
-First, change directory to where you have downloaded OpenTokRTC.
-Then create create the file `config.json` in the `config` folder.
+First, change directory to where you have downloaded OpenTokRTC. Then create create the file `config.json` in the `config` folder. You can copy `config/example.json` to `config/config.json`
 
 ```sh
 $ cd <path-to-OpenTokRTC>
-$ touch config/config.json
+$ cp config/example.json config/config.json
 ```
 
-Copy and paste the OpenTok config, Replacing `<key>` and `<secret>` with your OpenTok API key and the corresponding API secret:
+### Edit configuration file
+
+Edit `config/config.json` and replace `<key>` and `<secret>` with your OpenTok API key and the corresponding API secret:
 
 ```js
 {
@@ -58,17 +62,19 @@ Copy and paste the OpenTok config, Replacing `<key>` and `<secret>` with your Op
 }
 ```
 
-If you want to use archive management, set up Firebase configuration. Copy and paste the following json after the OpenTok configuration (but still within outer {}) and replace `<appurl>` with your Firebase application URL and `<appsecret>` with the secret for that Firebase app:
+If you want to use archive management, set up Firebase configuration. To do these, edit the configuration sections for `"Firebase"` and `"Archiving"`. Replace `<firebase_url>` with a Firebase database URL and `<firebase_secret>` with a corresponding database secret. Also mark `Archiving` and `archivingManager` as enabled. For more information on how to obtain Firebase credentials, see [Firebase configuration](#firebase-configuration) section below:
 
 ```js
-,   
-"Firebase": {
-    "dataUrl": "<appurl>",
-    "authSecret": "<appsecret>"
-}
-"Archiving": {
-    "archiveManager": {
-        "enabled": true
+{
+    "Firebase": {
+        "dataUrl": "<firebase_url>",
+        "authSecret": "<firebase_secret>"
+    },
+    "Archiving": {
+        "enabled": true,
+        "archiveManager": {
+            "enabled": true
+        }
     }
 }
 ```
@@ -81,17 +87,18 @@ Next, set up the dependencies for the server:
 $ npm install
 ```
 
+Note: You will need to run these commands as a non-root user, else `bower` will refuse to execute.
+
 ## Running
 
-Ensure that Redis server is running on `localhost` (run `redis-server`).
-In a development environment, you can start the application by running:
+Ensure that Redis server is running on `localhost` (run `redis-server`). Start the application in foreground by running:
 
 ```sh
-$ npm run dev
+$ node server
 ```
-This will start the node server on port `8123` and start watching `.less` files for changes.
 
-For production environments, use `node server`.
+This will start the application on port `8123` by default.
+
 To specify a custom port number, use the `-p` flag when calling `node server`, e.g., to run the application on port `8080`:
 
 ```sh
@@ -102,6 +109,21 @@ Additionally, you can start the application as a daemon by passing `-d` flag, wh
 
 ```sh
 $ node server -d
+```
+
+### Detailed usage information
+
+```text
+$ node server -h
+Usage: node server
+
+  -h, --help            Displays this help
+  -d, --daemon          Starts as a daemon
+  -u, --user=ARG        UID (name or number) to fork to after binding the port
+  -p, --serverPort=ARG  Server listening port
+  -s, --staticPath=ARG  Directory that holds the static files
+  -C, --certDir=ARG     Directory that holds the serverCert.pem and serverKey.pem files
+  -S, --secure          Starts as a secure server (HTTPS)
 ```
 
 ## Configuration options
@@ -120,93 +142,42 @@ Environment Variable Names and Description:
    By default, sessions live two days.
 
 JSON example:
-```js
+
+```json
 "OpenTok": {
 	"apiKey": "<key>",
 	"apiSecret": "<secret>",
 	"maxSessionAge": 2,
-},
-   ```
-
+}
+```
 
 ### Firebase configuration
 
-- `FB_DATA_URL`: Firebase data URL. This should be the root of the archives section of your Firebase app URL, which isn't necessarily the root of the app.
-- `FB_AUTH_SECRET`: Firebase secret to generate auth tokens.
+This application needs you to specify a Firebase database URL and a database secret. Here is how you can obtain both.
 
-```js
+Go to [Firebase console](https://console.firebase.google.com/), create a new project or choose an existing project. Once there, follow these steps:
+
+- **Firebase database URL:** Click on `Database` link on the left. Copy the URL you see under the `Data` tab. The URL is in the format `https://xxxx.firebaseio.com/` where `xxxx` is the unique ID of your Firebase project.
+
+  **Note**: For the security rule mentioned in the [Firebase security measure](#firebase-security-measure) section to work, you will need to set the Firebase database URL in this application configuration as `https://xxxx.firebaseio.com/sessions`.
+
+- **Firebase database secret:** Click on the `Settings` (cog) icon and go to `Project Settings` > `Service Accounts` > `Database Secrets`. Click on the `Show` button for the secret and copy it.
+
+Then set the following values in `config/config.json`, replacing `<firebase_url>` with the Firebase database URL and `<firebase_secret>` with the Firebase database secret:
+
+```json
 "Firebase": {
-    "dataUrl": "<appurl>",
-    "authSecret": "<appsecret>"
+    "dataUrl": "<firebase_url>",
+    "authSecret": "<firebase_secret>"
 }
 ```
-### Web client configuration
 
-Web client allows to be configured in some of its features. You can enable or disable using their `enabled` field in JSON or `ENABLE_<FEATURE>` environment variable.
+You can also set the values using these environment variables:
 
-#### Archiving
-- `ENABLE_ARCHIVING`:(Optional, default value: true) Enable Archiving (Recording)
-- `ARCHIVE_ALWAYS`:(Optional, default value: false) Record all sessions.
-- `ARCHIVE_TIMEOUT`: (Optional, default value: 5000): The initial polling timeout (in milliseconds) for archive status change updates. Set this to 0 to disable polling.
-- `TIMEOUT_MULTIPLIER` (Optional, default value: 1.5) : Timeout multiplier. If the first archive status update polling fails, subsequent polling intervals will apply this multiplier
-   successively. Set to a lower number to poll more often.
+- `FB_DATA_URL`: Firebase database URL.
+- `FB_AUTH_SECRET`: Firebase database secret.
 
-##### Archive Manager
-- `ENABLE_ARCHIVE_MANAGER`: (Optional, default value: false) Enable Archive Manager. Only meaningful if `archiving` is not disabled (Manage Recordings, requires firebase to be configured)
-- `EMPTY_ROOM_LIFETIME`: (Optional, default value 3): Maximum time, in minutes,  an empty room
-
-```js
-"Archiving": {
-    "enabled": true,
-    "archiveAlways": false,
-    "pollingInitialTimeout": 5000,
-    "pollingTimeoutMultiplier": 1.5,
-    "archiveManager": {
-        "enabled": false,
-        "emptyRoomMaxLifetime": 3
-    }
-},
-```
-
-#### Screensharing
-- `ENABLE_SCREENSHARING`:(Optional, default value: false) Enable Screen sharing.
-- `CHROME_EXTENSION_ID` (Optional, default value: 'null'): Chrome AddOn extension ID for screen sharing. Note that while the default value allows the server to run, doesn't actually enable screen sharing in Chrome. See [Screen sharing](#screen-sharing).
-- `ENABLE_ANNOTATIONS`: (Optional, default value: true) Enable Annotations in Screen Sharing. Only meaningful if `screensharing` is not disabled.
-
-```js
-"Screensharing": {
-    "enabled": false,
-    "chromeExtensionId": null,
-    "annotations": {
-        "enabled": true
-    }
-}
-```
-#### Feedback
- `ENABLE_FEEDBACK`: Enable the "Give Demo Feedback" form.
- ```js
- "Feedback": {
-     "enabled": false
- },
- ```
-
-### Additional configuration options
-
-
-* `ALLOW_IFRAMING` (Optional, default value: 'never'): Controls the server-side restriction on
-   allowing content to load inside an iframe. The allowed values are:
-
-   - 'always': Allow iframing unconditionally (note that rtcApp.js should also be changed
-     to reflect this, this option only changes what the server allows)
-
-   - 'never': Set X-Frame-Options to 'DENY' (Deny loading content in any iframe)
-
-   - 'sameorigin': Set X-Frame-Options to 'SAMEORIGIN' (Only allow iframe content to be loaded
-     from pages in the same origin)
-
-   We don't allow restricting iframe loading to specific URIs because it doesn't work on Chrome
-
-### Firebase security measure
+#### Firebase security measure
 
 If you want to ensure that the archive list is kept secure (as in only the actual people using a room can see it, and nobody can see the list of archives of other rooms) then you will need to configure additional security parameters to your Firebase application. To do this, log in to Firebase and set this security rule in the "Security & Rules" section:
 
@@ -236,8 +207,7 @@ If you want to ensure that the archive list is kept secure (as in only the actua
 }
 ```
 
-Replace 'sessions' with the root where you want to store the archive data (the actual URL that you set as `fb_data_url` configuration parameter.
-
+**Note:** Replace `"sessions"` in the configuration above with the root where you want to store the archive data (the actual URL that you set as `fb_data_url` configuration parameter.) For example, to use this security measure, you will need to your Firebase data URL (`Firebase.dataUrl`) in the configuration as `https://xxxx.firebaseio.com/sessions` where `xxxx` is the unique ID of your Firebase project.
 
 ## Screen sharing
 
@@ -283,6 +253,82 @@ For more information and how to use your extension in production see the documen
 [opentok/screensharing-extensions](https://github.com/opentok/screensharing-extensions/blob/master/chrome/ScreenSharing/README.md#customizing-the-extension-for-your-website)
 repo on GitHub.
 
+### Web client configuration
+
+Web client allows to be configured in some of its features. You can enable or disable using their `enabled` field in JSON or `ENABLE_<FEATURE>` environment variable.
+
+#### Archiving
+
+- `ENABLE_ARCHIVING`:(Optional, default value: true) Enable Archiving (Recording)
+- `ARCHIVE_ALWAYS`:(Optional, default value: false) Record all sessions.
+- `ARCHIVE_TIMEOUT`: (Optional, default value: 5000): The initial polling timeout (in milliseconds) for archive status change updates. Set this to 0 to disable polling.
+- `TIMEOUT_MULTIPLIER` (Optional, default value: 1.5) : Timeout multiplier. If the first archive status update polling fails, subsequent polling intervals will apply this multiplier
+   successively. Set to a lower number to poll more often.
+
+##### Archive Manager
+
+- `ENABLE_ARCHIVE_MANAGER`: (Optional, default value: false) Enable Archive Manager. Only meaningful if `archiving` is not disabled (Manage Recordings, requires firebase to be configured)
+- `EMPTY_ROOM_LIFETIME`: (Optional, default value 3): Maximum time, in minutes,  an empty room
+
+```json
+"Archiving": {
+    "enabled": true,
+    "archiveAlways": false,
+    "pollingInitialTimeout": 5000,
+    "pollingTimeoutMultiplier": 1.5,
+    "archiveManager": {
+        "enabled": false,
+        "emptyRoomMaxLifetime": 3
+    }
+},
+```
+
+#### Screensharing
+- `ENABLE_SCREENSHARING`:(Optional, default value: false) Enable Screen sharing.
+- `CHROME_EXTENSION_ID` (Optional, default value: 'null'): Chrome AddOn extension ID for screen sharing. Note that while the default value allows the server to run, doesn't actually enable screen sharing in Chrome. See [Screen sharing](#screen-sharing).
+- `ENABLE_ANNOTATIONS`: (Optional, default value: true) Enable Annotations in Screen Sharing. Only meaningful if `screensharing` is not disabled.
+
+```json
+"Screensharing": {
+    "enabled": false,
+    "chromeExtensionId": null,
+    "annotations": {
+        "enabled": true
+    }
+}
+```
+
+To know more about how screensharing works in OpenTok, see the [guide on screensharing](tokbox.com/developer/guides/screen-sharing/).
+
+#### Feedback
+ `ENABLE_FEEDBACK`: Enable the "Give Demo Feedback" form.
+
+ ```json
+ "Feedback": {
+     "enabled": false
+ },
+ ```
+
+### Additional configuration options
+
+
+* `ALLOW_IFRAMING` (Optional, default value: 'never'): Controls the server-side restriction on
+   allowing content to load inside an iframe. The allowed values are:
+
+   - 'always': Allow iframing unconditionally (note that rtcApp.js should also be changed
+     to reflect this, this option only changes what the server allows)
+
+   - 'never': Set X-Frame-Options to 'DENY' (Deny loading content in any iframe)
+
+   - 'sameorigin': Set X-Frame-Options to 'SAMEORIGIN' (Only allow iframe content to be loaded
+     from pages in the same origin)
+
+   We don't allow restricting iframe loading to specific URIs because it doesn't work on Chrome
+
+## Customizing UI
+
+For information on how to customize OpenTokRTC's UI, see [CUSTOMIZING-UI.md](CUSTOMIZING-UI.md).
+
 ## Troubleshooting
 
 **"ServerPersistence: Timeout while connecting to the Persistence Provider! Is Redis running?**
@@ -290,10 +336,25 @@ repo on GitHub.
 Ensure Redis server is running on localhost (run `redis-server` in the command line)
 and restart OpenTokRTC.
 
-*** OpenTokRTC does not work on when served over HTTP.***
+**OpenTokRTC does not work on when served over HTTP.**
 
 Browser security policies require HTTPS for WebRTC video communications. You will need to set up
 the app to be served over HTTPS. You can set up a
 [secure reverse-proxy](https://www.nginx.com/resources/admin-guide/nginx-https-upstreams/)
 to your OpenTokRTC port using nginx. For details, read
 [this post](https://tokbox.com/blog/the-impact-of-googles-new-chrome-security-policy-on-webrtc/).
+
+**UI looks broken**
+
+UI assets are compiled as part of the build process when installing application dependencies using `npm install`. If the web application UI still looks broken, run the following commands in the root directory of the application:
+
+```
+$ bower install
+$ grunt clientBuild
+```
+
+We recommend that you run the application as a non-root user. Howerver, if you are running the application as the `root` user, you will additionally need to tell `bower` to allow root user to install dependencies, else bower will refuse to work:
+
+```
+$ bower install --allow-root
+```
