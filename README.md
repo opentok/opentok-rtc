@@ -52,7 +52,7 @@ Copy and paste the OpenTok config, Replacing `<key>` and `<secret>` with your Op
 ```js
 {
     "OpenTok": {
-        "apiKey": "<key>"
+        "apiKey": "<key>",
         "apiSecret": "<secret>"
     }
 }
