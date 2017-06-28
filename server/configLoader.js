@@ -5,6 +5,7 @@ var Utils = require('swagger-boilerplate').Utils;
 
 var readFile = Utils.promisify(require('fs').readFile);
 const defaultJsonConfigPath = require('./serverConstants').DEFAULT_JSON_CONFIG_PATH;
+const firebaseCredentialPath = require('./serverConstants').FIREBASE_CREDENTIAL_PATH;
 
 var env = process.env;
 var exports = module.exports = {};
@@ -29,6 +30,17 @@ class Config {
       value = aParam.parser(value);
     }
     return value;
+  }
+
+  firebaseCredential() {
+    var cred = null;
+    try {
+      // eslint-disable-next-line global-require, import/no-dynamic-require
+      cred = require(this.get(firebaseCredentialPath));
+    } catch (e) {
+      cred = null;
+    }
+    return cred;
   }
 }
 

@@ -114,8 +114,12 @@ function ServerMethods(aLogLevel, aModules) {
 
       var isWebRTCVersion = config.get(C.DEFAULT_INDEX_PAGE) === 'opentokrtc';
 
+      var firebaseAPIKey = config.get(C.FIREBASE_API_KEY);
+
+      var firebaseCredential = config.firebaseCredential();
+
       var firebaseConfigured =
-              config.get(C.FIREBASE_DATA_URL) && config.get(C.FIREBASE_AUTH_SECRET);
+              config.get(C.FIREBASE_DATA_URL) && firebaseCredential !== null;
 
       var enableArchiving = config.get(C.ENABLE_ARCHIVING, config);
       var enableArchiveManager = enableArchiving && config.get(C.ENABLE_ARCHIVE_MANAGER);
@@ -134,7 +138,8 @@ function ServerMethods(aLogLevel, aModules) {
 
       var firebaseArchivesPromise =
               Utils.CachifiedObject(FirebaseArchives, config.get(C.FIREBASE_DATA_URL),
-                                    config.get(C.FIREBASE_AUTH_SECRET),
+                                    // config.get(C.FIREBASE_AUTH_SECRET),
+                                    firebaseCredential,
                                     config.get(C.EMPTY_ROOM_LIFETIME), aLogLevel);
       _shutdownOldInstance(oldFirebaseArchivesPromise, firebaseArchivesPromise);
 
@@ -147,6 +152,7 @@ function ServerMethods(aLogLevel, aModules) {
                 archivePollingTOMultiplier,
                 maxSessionAgeMs,
                 fbArchives: firebaseArchives,
+                firebaseAPIKey,
                 allowIframing,
                 chromeExtId,
                 defaultTemplate,
@@ -390,27 +396,39 @@ function ServerMethods(aLogLevel, aModules) {
         serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, redisRoomPrefix + roomName,
                                    JSON.stringify(usableSessionInfo));
 
-        // We have to create an authentication token for the new user...
-        var fbUserToken =
-          enableArchiveManager && fbArchives.createUserToken(usableSessionInfo.sessionId, userName);
-        // and finally, answer...
-        var answer = {
-          apiKey: tbConfig.apiKey,
-          token: tbConfig.otInstance
-                  .generateToken(usableSessionInfo.sessionId, {
-                    role: 'publisher',
-                    data: JSON.stringify({ userName }),
-                  }),
-          username: userName,
-          firebaseURL:
-            (enableArchiveManager && fbArchives.baseURL + '/' + usableSessionInfo.sessionId) || 'unknown',
-          firebaseToken: fbUserToken || 'unknown',
-          chromeExtId: tbConfig.chromeExtId,
-          enableArchiveManager: tbConfig.enableArchiveManager,
-          enableAnnotation: tbConfig.enableAnnotations,
-        };
-        answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId;
-        aRes.send(answer);
+        function _answerSend(fbUserToken) {
+          // and finally, answer...
+          var answer = {
+            apiKey: tbConfig.apiKey,
+            token: tbConfig.otInstance
+                    .generateToken(usableSessionInfo.sessionId, {
+                      role: 'publisher',
+                      data: JSON.stringify({ userName }),
+                    }),
+            username: userName,
+            firebase: !enableArchiveManager ? null : {
+              apiKey: tbConfig.firebaseAPIKey,
+              databaseURL: fbArchives.baseURL || 'unknown',
+              databaseRef: usableSessionInfo.sessionId,
+              token: fbUserToken || 'unknown',
+            },
+            chromeExtId: tbConfig.chromeExtId,
+            enableArchiveManager: tbConfig.enableArchiveManager,
+            enableAnnotation: tbConfig.enableAnnotations,
+          };
+          answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId;
+          aRes.send(answer);
+        }
+
+        // Create firebase custom token for client if archive manager is enabled.
+        // Else, send null Firebase token
+        if (enableArchiveManager) {
+          fbArchives.createUserToken(usableSessionInfo.sessionId, userName)
+            .then(token => _answerSend(token))
+            .catch(e => logger.error('createUserToken error', e));
+        } else {
+          _answerSend(null);
+        }
       });
   }
 
