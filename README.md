@@ -179,35 +179,26 @@ You can also set the values using these environment variables:
 
 #### Firebase security measure
 
-If you want to ensure that the archive list is kept secure (as in only the actual people using a room can see it, and nobody can see the list of archives of other rooms) then you will need to configure additional security parameters to your Firebase application. To do this, log in to Firebase and set this security rule in the "Security & Rules" section:
-
+If you want to ensure that the archive list is kept secure (as in only the actual people using a room can see it, and nobody can see the list of archives of other rooms) then you will need to configure additional security parameters to your Firebase application. To do this, log in to Firebase console, go to your project, then in `Database` > `Rules` set these rules and hit `Publish`:
 
 ```js
 {
     "rules": {
-        ".read": false,
-        ".write": false,
-        "sessions": {
-          ".read": "auth != null && auth.role == 'server'",
-          ".write": "auth != null && auth.role == 'server'",
-          "$sessionId": {
+        ".read": "auth != null && auth.role == 'server'",
+        ".write": "auth != null && auth.role == 'server'",
+        "$sessionId": {
             ".read": "auth != null && (auth.role == 'server' || auth.sessionId == $sessionId)",
             ".write": "auth != null && auth.role == 'server'",
-            "archives": {
-            },
+            "archives": {},
             "connections": {
-              ".read": "auth != null && auth.role == 'server'",
-              ".write": "auth != null && (auth.role == 'server' || auth.sessionId == $sessionId)",
-              "$connectionId": {
-              }
+                ".read": "auth != null && auth.role == 'server'",
+                ".write": "auth != null && (auth.role == 'server' || auth.sessionId == $sessionId)",
+                "$connectionId": {}
             }
-          }
         }
     }
 }
 ```
-
-**Note:** Replace `"sessions"` in the configuration above with the root where you want to store the archive data (the actual URL that you set as `fb_data_url` configuration parameter.) For example, to use this security measure, you will need to your Firebase data URL (`Firebase.dataUrl`) in the configuration as `https://xxxx.firebaseio.com/sessions` where `xxxx` is the unique ID of your Firebase project.
 
 ### Screen sharing
 
