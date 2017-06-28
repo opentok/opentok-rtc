@@ -4,8 +4,8 @@
       "apiSecret":"secret"
    },
    "Firebase":{
-      "dataUrl":"url",
-      "authSecret":"secret"
+      "apiKey":"fb_api_key",
+      "dataUrl":"url"
    },
    "Archiving":{
       "enabled":true,

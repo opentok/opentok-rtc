@@ -28,9 +28,13 @@ E.OPENTOK_API_KEY = { envVar: 'TB_API_KEY', jsonPath: 'OpenTok.apiKey', required
 
 E.OPENTOK_API_SECRET = { envVar: 'TB_API_SECRET', jsonPath: 'OpenTok.apiSecret', required: true };
 
+E.FIREBASE_API_KEY = { envVar: 'FB_API_KEY', jsonPath: 'Firebase.apiKey' };
+
 E.FIREBASE_DATA_URL = { envVar: 'FB_DATA_URL', jsonPath: 'Firebase.dataUrl' };
 
 E.FIREBASE_AUTH_SECRET = { envVar: 'FB_AUTH_SECRET', jsonPath: 'Firebase.authSecret' };
+
+E.FIREBASE_CREDENTIAL_PATH = { envVar: 'FB_CREDENTIAL_PATH', jsonPath: 'Firebase.credentialPath', defaultValue: '../config/firebase.json' };
 
 // Sessions should not live forever. So we'll store the last time a session was used and if when
 // we fetch it from Redis we determine it's older than this max age (in days). This is the key
