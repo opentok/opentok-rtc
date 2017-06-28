@@ -18,16 +18,14 @@ button:
 
 If you prefer to deploy to Heroku manually instead, follow the procedure described next.
 
-### Configuration options
-
 Heroku will prompt you to add your OpenTok API key and OpenTok API secret, which you can obtain at the [TokBox Dashboard](https://tokbox.com/account).
 
 You have to set the following environment variables on your Heroku instance:
 
 - `TB_API_KEY`: Your Opentok api key.
 - `TB_API_SECRET`: Your Opentok api secret.
-- `FB_DATA_URL`: A Firebase database URL to store the archive list for each room. If you don't want to use this functionality, use any value (like http://localhost for example)
-- `FB_AUTH_SECRET`: The authentication secret for the previous URL. If you don't want to use this functionality, pass any value.
+- `FB_DATA_URL`: (Optional) A Firebase database URL to store the archive list for each room. If you don't want to use this functionality, use any value (like http://localhost for example)
+- `FB_AUTH_SECRET`: (Optional) The authentication secret for the previous URL. If you don't want to use this functionality, pass any value.
 
 ## Manual Installation using Heroku CLI
 

@@ -15,7 +15,6 @@ This repository contains a Node.js server and a web client application.
   - [Requirements](#requirements)
   - [Setting up](#setting-up)
 - [Running](#running)
-  - [Detailed usage information](#detailed-usage-information)
 - [Configuration options](#configuration-options)
   - [OpenTok configuration](#opentok-configuration)
   - [Firebase configuration](#firebase-configuration)
@@ -36,14 +35,13 @@ If you want to install OpenTokRTC on your own server, read on. If you want to de
 You will need these dependencies installed on your machine:
 
 - [NodeJS v4+](https://nodejs.org): This version of OpenTokRTC is tested with NodeJS v4 LTS.
-- [Redis](https://redis.io): A `redis` server running on `localhost`. Redis is used for storing configuration and session data.
-- [Bower](https://bower.io): Used for packaging web client dependencies.
-- [Grunt](http://gruntjs.com): Used for bundling assets and running tests.
+- [Redis](https://redis.io): A `redis` server running on `localhost`.
+- [Grunt](http://gruntjs.com): Used for bundling assets and running tests. You can install the Grunt CLI globally by running: `# npm i -g grunt-cli`.
 
 You will also need these API subscriptions:
 
 - [OpenTok](https://tokbox.com): An OpenTok API key and secret. You can obtain these by signing up with [TokBox](https://tokbox.com).
-- [Firebase](https://firebase.google.com) (Optional): A Firebase app and secret. Firebase is used for storing archive data of video conferences. You will need this only if you want to enable Archive Management (In app playback and download of recordings) of conference rooms.
+- [Firebase](https://firebase.google.com) (Optional): A Firebase app and secret. Firebase is used for storing archive data of video conferences. You will need this only if you want to enable Archive Management (In-app playback and download of recordings) of conference rooms.
 
 ### Setting up
 
@@ -118,20 +116,15 @@ Additionally, you can start the application as a daemon by passing `-d` flag, wh
 $ node server -d
 ```
 
-### Detailed usage information
+To start the server with HTTPS enabled, pass `-S` flag to launch a secure server along with `-C <dir>` flag to specify a directory that holds SSL certificate files. To quickly start a secure server, run:
 
-```text
-$ node server -h
-Usage: node server
-
-  -h, --help            Displays this help
-  -d, --daemon          Starts as a daemon
-  -u, --user=ARG        UID (name or number) to fork to after binding the port
-  -p, --serverPort=ARG  Server listening port
-  -s, --staticPath=ARG  Directory that holds the static files
-  -C, --certDir=ARG     Directory that holds the serverCert.pem and serverKey.pem files
-  -S, --secure          Starts as a secure server (HTTPS)
+```sh
+$ node server -S -C sampleCerts
 ```
+
+The server expects SSL certificate file to be named  `serverCert.pem` and SSL private key file to be named `serverKey.pem`. There is a pre-generated, self-signed SSL certificate pair in the `./sampleCerts` directory.
+
+For detailed information on available options, run `$ node server -h`.
 
 ## Configuration options
 
