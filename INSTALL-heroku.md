@@ -12,9 +12,7 @@ You will need a validated Heroku account (with the ability to use free add-ons).
 To easily deploy this repository to Heroku, sign up for a Heroku account and click this
 button:
 
-<a href="https://heroku.com/deploy?template=https://github.com/opentok/OpenTokRTC-V2" target="_blank">
-  <img src="https://www.herokucdn.com/deploy/button.png" alt="Deploy">
-</a>
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/opentok/OpenTokRTC-V2)
 
 If you prefer to deploy to Heroku manually instead, follow the procedure described next.
 
@@ -24,8 +22,11 @@ You have to set the following environment variables on your Heroku instance:
 
 - `TB_API_KEY`: Your Opentok api key.
 - `TB_API_SECRET`: Your Opentok api secret.
-- `FB_DATA_URL`: (Optional) A Firebase database URL to store the archive list for each room. If you don't want to use this functionality, use any value (like http://localhost for example)
-- `FB_AUTH_SECRET`: (Optional) The authentication secret for the previous URL. If you don't want to use this functionality, pass any value.
+
+The following environment are optional and required only if you enable Archive Manager.
+
+- `FB_DATA_URL`: (Optional) A Firebase database URL to store the archive list for each room.
+- `FB_AUTH_SECRET`: (Optional) The authentication secret for the previous URL.
 
 ## Manual Installation using Heroku CLI
 
