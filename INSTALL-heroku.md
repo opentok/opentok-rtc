@@ -23,10 +23,15 @@ You have to set the following environment variables on your Heroku instance:
 - `TB_API_KEY`: Your Opentok api key.
 - `TB_API_SECRET`: Your Opentok api secret.
 
-The following environment are optional and required only if you enable Archive Manager.
+The following environment variables are optional and required only if you enable Archive Manager.
 
+- `ENABLE_ARCHIVING`: (Optional) Whether to enable or disable archiving. Set to `false` to disable. Default: `true`
+- `ENABLE_ARCHIVE_MANAGER`: (Optional) Whether to enable or disable archiving manager to store and retrieve archive information. Set to `true` to enable. Default: `false`. If enabled, needs following Firebase configuration.
+- `FB_API_KEY`: (Optional) Firebase web API key.
 - `FB_DATA_URL`: (Optional) A Firebase database URL to store the archive list for each room.
-- `FB_AUTH_SECRET`: (Optional) The authentication secret for the previous URL.
+- `FB_CREDENTIAL`: (Optional) Content of Firebase service account private key.
+- `FB_IOS_APP_ID`: (Optional) Firebase iOS app ID. This is the value of `GOOGLE_APP_ID` key in Firebase's iOS configuration (`.plist`) file.
+- `FB_IOS_SENDER_ID`: (Optional) Firebase iOS sender ID. This is the value of `GCM_SENDER_ID` key in Firebase's iOS configuration (`.plist`) file.
 
 ## Manual Installation using Heroku CLI
 
@@ -44,10 +49,14 @@ Now you will have to set the following environment variables on your heroku inst
 $ heroku config:set TB_API_KEY=<key> TB_API_SECRET=<secret>
 ```
 
-If you want to use Archive Management (In app playback and download of recordings), set up Firebase configuration. Replace `<appurl>` with your Firebase application URL and `<appsecret>` with the secret for that Firebase app in this command:
+If you want to use Archive Management (In app playback and download of recordings), set up Firebase configuration. Replace the following in the commands that follow:
+- `<fb-apikey>` with your Firebase application's web API key
+- `<fburl>` with your Firebase application's database URL
+- `<credential-file>` with the path to the private key for your Firebase application's service account
 
 ```sh
-$ heroku config:set FB_DATA_URL=<appurl> FB_AUTH_SECRET=<appsecret> ENABLE_ARCHIVE_MANAGER=true
+$ CREDENTIAL=$(cat <credential-file>)
+$ heroku config:set FB_API_KEY="<fb-apikey>" FB_DATA_URL="<fburl>" FB_CREDENTIAL="$CREDENTIAL" ENABLE_ARCHIVE=true ENABLE_ARCHIVE_MANAGER=true
 ```
 
 You will need to choose a redis addon. These two are currently supported,
