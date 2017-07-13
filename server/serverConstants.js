@@ -28,13 +28,30 @@ E.OPENTOK_API_KEY = { envVar: 'TB_API_KEY', jsonPath: 'OpenTok.apiKey', required
 
 E.OPENTOK_API_SECRET = { envVar: 'TB_API_SECRET', jsonPath: 'OpenTok.apiSecret', required: true };
 
+// Firebase API Key
 E.FIREBASE_API_KEY = { envVar: 'FB_API_KEY', jsonPath: 'Firebase.apiKey' };
 
+// Firebase database URL
 E.FIREBASE_DATA_URL = { envVar: 'FB_DATA_URL', jsonPath: 'Firebase.dataUrl' };
 
-E.FIREBASE_AUTH_SECRET = { envVar: 'FB_AUTH_SECRET', jsonPath: 'Firebase.authSecret' };
+// Content of Firebase service account credential JSON file. Useful for Heroku.
+E.FIREBASE_CREDENTIAL = { envVar: 'FB_CREDENTIAL', jsonPath: 'Firebase.credential' };
 
-E.FIREBASE_CREDENTIAL_PATH = { envVar: 'FB_CREDENTIAL_PATH', jsonPath: 'Firebase.credentialPath', defaultValue: '../config/firebase.json' };
+// Path to Firebase service account credential JSON file. Relative to `./config/` directory.
+E.FIREBASE_CREDENTIAL_PATH = { envVar: 'FB_CREDENTIAL_PATH', jsonPath: 'Firebase.credentialPath' };
+
+// Firebase iOS app ID. Value of "GOOGLE_APP_ID" key in Firebase's .plist file for iOS.
+E.FIREBASE_IOS_APP_ID = { envVar: 'FB_IOS_APP_ID', jsonPath: 'Firebase.ios.app_id' };
+
+// Firebase iOS sender ID. Value of "GCM_SENDER_ID" key in Firebase's .plist file for iOS.
+E.FIREBASE_IOS_SENDER_ID = { envVar: 'FB_IOS_SENDER_ID', jsonPath: 'Firebase.ios.sender_id' };
+
+// Content of Firebase Android `.json` config file. Useful for Heroku.
+E.FIREBASE_ANDROID_CONFIG = { envVar: 'FB_ANDROID_CONFIG', jsonPath: 'Firebase.android.config' };
+
+// Path to a Firebase Android `.json` config file. Relative to `./config/` directory.
+E.FIREBASE_ANDROID_CONFIG_PATH = { envVar: 'FB_ANDROID_CONFIG_PATH', jsonPath: 'Firebase.android.configPath' };
+
 
 // Sessions should not live forever. So we'll store the last time a session was used and if when
 // we fetch it from Redis we determine it's older than this max age (in days). This is the key

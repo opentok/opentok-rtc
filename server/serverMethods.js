@@ -114,12 +114,7 @@ function ServerMethods(aLogLevel, aModules) {
 
       var isWebRTCVersion = config.get(C.DEFAULT_INDEX_PAGE) === 'opentokrtc';
 
-      var firebaseAPIKey = config.get(C.FIREBASE_API_KEY);
-
-      var firebaseCredential = config.firebaseCredential();
-
-      var firebaseConfigured =
-              config.get(C.FIREBASE_DATA_URL) && firebaseCredential !== null;
+      var firebaseConfig = config.configJson.Firebase;
 
       var enableArchiving = config.get(C.ENABLE_ARCHIVING, config);
       var enableArchiveManager = enableArchiving && config.get(C.ENABLE_ARCHIVE_MANAGER);
@@ -127,20 +122,19 @@ function ServerMethods(aLogLevel, aModules) {
       var enableAnnotations = enableScreensharing && config.get(C.ENABLE_ANNOTATIONS);
       var enableFeedback = config.get(C.ENABLE_FEEDBACK);
 
-      if (!firebaseConfigured && enableArchiveManager) {
+      if (firebaseConfig === null && enableArchiveManager) {
         logger.error('Firebase not configured. Please provide firebase credentials or disable archive_manager');
       }
 
-
-            // For this object we need to know if/when we're reconnecting so we can shutdown the
-            // old instance.
+      // For this object we need to know if/when we're reconnecting so we can shutdown the
+      // old instance.
       var oldFirebaseArchivesPromise = Utils.CachifiedObject.getCached(FirebaseArchives);
 
       var firebaseArchivesPromise =
-              Utils.CachifiedObject(FirebaseArchives, config.get(C.FIREBASE_DATA_URL),
-                                    // config.get(C.FIREBASE_AUTH_SECRET),
-                                    firebaseCredential,
-                                    config.get(C.EMPTY_ROOM_LIFETIME), aLogLevel);
+              Utils.CachifiedObject(FirebaseArchives,
+                                    firebaseConfig,
+                                    config.get(C.EMPTY_ROOM_LIFETIME),
+                                    aLogLevel);
       _shutdownOldInstance(oldFirebaseArchivesPromise, firebaseArchivesPromise);
 
       return firebaseArchivesPromise
@@ -152,7 +146,7 @@ function ServerMethods(aLogLevel, aModules) {
                 archivePollingTOMultiplier,
                 maxSessionAgeMs,
                 fbArchives: firebaseArchives,
-                firebaseAPIKey,
+                firebaseConfig,
                 allowIframing,
                 chromeExtId,
                 defaultTemplate,
@@ -384,6 +378,7 @@ function ServerMethods(aLogLevel, aModules) {
     logger.log('getRoomInfo serving ' + aReq.path, 'roomName: ', roomName, 'userName: ', userName);
 
     var enableArchiveManager = tbConfig.enableArchiveManager;
+
     // We have to check if we have a session id stored already on the persistence provider (and if
     // it's not too old).
     // Note that we do not persist tokens.
@@ -407,10 +402,13 @@ function ServerMethods(aLogLevel, aModules) {
                     }),
             username: userName,
             firebase: !enableArchiveManager ? null : {
-              apiKey: tbConfig.firebaseAPIKey,
+              apiKey: tbConfig.firebaseConfig.apiKey,
               databaseURL: fbArchives.baseURL || 'unknown',
               databaseRef: usableSessionInfo.sessionId,
               token: fbUserToken || 'unknown',
+              ios_config: tbConfig.firebaseConfig.ios,
+              // Uncomment the next line when Android app is being built
+              // android_config: tbConfig.firebaseConfig.android,
             },
             chromeExtId: tbConfig.chromeExtId,
             enableArchiveManager: tbConfig.enableArchiveManager,

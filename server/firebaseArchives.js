@@ -39,8 +39,8 @@
 var Firebase = require('firebase-admin');
 var SwaggerBP = require('swagger-boilerplate');
 
-function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
-  if (!aRootURL || !aSecret) {
+function FirebaseArchives(config, aCleanupTime, aLogLevel) {
+  if (config == null) {
     // Just return an object with the right signature and be done...
     return Promise.resolve({
       get baseURL() {
@@ -66,8 +66,8 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
   var Firebase = FirebaseArchives.Firebase;
 
   Firebase.initializeApp({
-    credential: Firebase.credential.cert(aSecret),
-    databaseURL: aRootURL,
+    credential: Firebase.credential.cert(config.credential),
+    databaseURL: config.dataUrl,
     databaseAuthVariableOverride: {
       role: 'server',
     },
@@ -82,7 +82,7 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
     // All done, just return an usable object... this will resolve te promise.
     return {
       get baseURL() {
-        return aRootURL;
+        return config.dataUrl;
       },
       createUserToken(aSessionId, aUsername) {
         return fbAdminAuth.createCustomToken(aUsername + Math.random(), {

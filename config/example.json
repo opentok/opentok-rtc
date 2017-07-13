@@ -1,26 +1,31 @@
 {
-   "OpenTok":{
-      "apiKey":"key",
-      "apiSecret":"secret"
+   "OpenTok": {
+      "apiKey": "<key>",
+      "apiSecret": "<secret>"
    },
-   "Firebase":{
-      "apiKey":"fb_api_key",
-      "dataUrl":"url"
-   },
-   "Archiving":{
-      "enabled":true,
-      "archiveManager":{
-         "enabled":false
+   "Firebase": {
+      "apiKey": "<firebase_api_key>",
+      "dataUrl": "<firebase_database_url>",
+      "credentialPath": null,
+      "ios": {
+          "app_id": null,
+          "sender_id": null
       }
    },
-   "Feedback":{
-      "enabled":false
+   "Archiving": {
+      "enabled": true,
+      "archiveManager": {
+         "enabled": false
+      }
    },
-   "Screensharing":{
-      "enabled":false,
-      "chromeExtensionId":null,
-      "annotations":{
-         "enabled":true
+   "Feedback": {
+      "enabled": false
+   },
+   "Screensharing": {
+      "enabled": false,
+      "chromeExtensionId": null,
+      "annotations": {
+         "enabled": true
       }
    }
 }
