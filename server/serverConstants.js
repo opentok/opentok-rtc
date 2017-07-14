@@ -41,10 +41,10 @@ E.FIREBASE_CREDENTIAL = { envVar: 'FB_CREDENTIAL', jsonPath: 'Firebase.credentia
 E.FIREBASE_CREDENTIAL_PATH = { envVar: 'FB_CREDENTIAL_PATH', jsonPath: 'Firebase.credentialPath' };
 
 // Firebase iOS app ID. Value of "GOOGLE_APP_ID" key in Firebase's .plist file for iOS.
-E.FIREBASE_IOS_APP_ID = { envVar: 'FB_IOS_APP_ID', jsonPath: 'Firebase.ios.app_id' };
+E.FIREBASE_IOS_APP_ID = { envVar: 'FB_IOS_APP_ID', jsonPath: 'Firebase.ios.appId' };
 
 // Firebase iOS sender ID. Value of "GCM_SENDER_ID" key in Firebase's .plist file for iOS.
-E.FIREBASE_IOS_SENDER_ID = { envVar: 'FB_IOS_SENDER_ID', jsonPath: 'Firebase.ios.sender_id' };
+E.FIREBASE_IOS_SENDER_ID = { envVar: 'FB_IOS_SENDER_ID', jsonPath: 'Firebase.ios.senderId' };
 
 // Content of Firebase Android `.json` config file. Useful for Heroku.
 E.FIREBASE_ANDROID_CONFIG = { envVar: 'FB_ANDROID_CONFIG', jsonPath: 'Firebase.android.config' };

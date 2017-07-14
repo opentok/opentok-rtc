@@ -53,8 +53,8 @@ class Config {
       return this;
     }
     fbConfig.ios = {
-      app_id: this.get(C.FIREBASE_IOS_APP_ID),
-      sender_id: this.get(C.FIREBASE_IOS_SENDER_ID),
+      appId: this.get(C.FIREBASE_IOS_APP_ID),
+      senderId: this.get(C.FIREBASE_IOS_SENDER_ID),
     };
     if (this.get(C.FIREBASE_ANDROID_CONFIG || this.get(C.FIREBASE_ANDROID_CONFIG_PATH))) {
       var androidConfig = this.get(C.FIREBASE_ANDROID_CONFIG);

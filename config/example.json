@@ -8,8 +8,8 @@
       "dataUrl": "<firebase_database_url>",
       "credentialPath": null,
       "ios": {
-          "app_id": null,
-          "sender_id": null
+          "appId": null,
+          "senderId": null
       }
    },
    "Archiving": {

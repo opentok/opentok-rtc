@@ -406,9 +406,9 @@ function ServerMethods(aLogLevel, aModules) {
               databaseURL: fbArchives.baseURL || 'unknown',
               databaseRef: usableSessionInfo.sessionId,
               token: fbUserToken || 'unknown',
-              ios_config: tbConfig.firebaseConfig.ios,
+              ios: tbConfig.firebaseConfig.ios,
               // Uncomment the next line when Android app is being built
-              // android_config: tbConfig.firebaseConfig.android,
+              // android: tbConfig.firebaseConfig.android,
             },
             chromeExtId: tbConfig.chromeExtId,
             enableArchiveManager: tbConfig.enableArchiveManager,

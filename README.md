@@ -187,8 +187,8 @@ If you want to use OpenTokRTC's iOS app, you will need to [setup a new iOS app i
 ```json
 "Firebase": {
     "ios": {
-        "app_id": "<place value of GOOGLE_APP_ID>",
-        "sender_id": "<place value of GCM_SENDER_ID>"
+        "appId": "<place value of GOOGLE_APP_ID>",
+        "senderId": "<place value of GCM_SENDER_ID>"
     }
 }
 ```
