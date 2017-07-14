@@ -44,3 +44,6 @@ resultsUnit.txt
 # node-config
 config/
 !config/example.json
+
+# Ignore binary dump file
+dump.rdb

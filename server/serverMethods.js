@@ -114,8 +114,7 @@ function ServerMethods(aLogLevel, aModules) {
 
       var isWebRTCVersion = config.get(C.DEFAULT_INDEX_PAGE) === 'opentokrtc';
 
-      var firebaseConfigured =
-              config.get(C.FIREBASE_DATA_URL) && config.get(C.FIREBASE_AUTH_SECRET);
+      var firebaseConfig = config.configJson.Firebase;
 
       var enableArchiving = config.get(C.ENABLE_ARCHIVING, config);
       var enableArchiveManager = enableArchiving && config.get(C.ENABLE_ARCHIVE_MANAGER);
@@ -123,19 +122,19 @@ function ServerMethods(aLogLevel, aModules) {
       var enableAnnotations = enableScreensharing && config.get(C.ENABLE_ANNOTATIONS);
       var enableFeedback = config.get(C.ENABLE_FEEDBACK);
 
-      if (!firebaseConfigured && enableArchiveManager) {
+      if (firebaseConfig === null && enableArchiveManager) {
         logger.error('Firebase not configured. Please provide firebase credentials or disable archive_manager');
       }
 
-
-            // For this object we need to know if/when we're reconnecting so we can shutdown the
-            // old instance.
+      // For this object we need to know if/when we're reconnecting so we can shutdown the
+      // old instance.
       var oldFirebaseArchivesPromise = Utils.CachifiedObject.getCached(FirebaseArchives);
 
       var firebaseArchivesPromise =
-              Utils.CachifiedObject(FirebaseArchives, config.get(C.FIREBASE_DATA_URL),
-                                    config.get(C.FIREBASE_AUTH_SECRET),
-                                    config.get(C.EMPTY_ROOM_LIFETIME), aLogLevel);
+              Utils.CachifiedObject(FirebaseArchives,
+                                    firebaseConfig,
+                                    config.get(C.EMPTY_ROOM_LIFETIME),
+                                    aLogLevel);
       _shutdownOldInstance(oldFirebaseArchivesPromise, firebaseArchivesPromise);
 
       return firebaseArchivesPromise
@@ -147,6 +146,7 @@ function ServerMethods(aLogLevel, aModules) {
                 archivePollingTOMultiplier,
                 maxSessionAgeMs,
                 fbArchives: firebaseArchives,
+                firebaseConfig,
                 allowIframing,
                 chromeExtId,
                 defaultTemplate,
@@ -378,6 +378,7 @@ function ServerMethods(aLogLevel, aModules) {
     logger.log('getRoomInfo serving ' + aReq.path, 'roomName: ', roomName, 'userName: ', userName);
 
     var enableArchiveManager = tbConfig.enableArchiveManager;
+
     // We have to check if we have a session id stored already on the persistence provider (and if
     // it's not too old).
     // Note that we do not persist tokens.
@@ -390,27 +391,42 @@ function ServerMethods(aLogLevel, aModules) {
         serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, redisRoomPrefix + roomName,
                                    JSON.stringify(usableSessionInfo));
 
-        // We have to create an authentication token for the new user...
-        var fbUserToken =
-          enableArchiveManager && fbArchives.createUserToken(usableSessionInfo.sessionId, userName);
-        // and finally, answer...
-        var answer = {
-          apiKey: tbConfig.apiKey,
-          token: tbConfig.otInstance
-                  .generateToken(usableSessionInfo.sessionId, {
-                    role: 'publisher',
-                    data: JSON.stringify({ userName }),
-                  }),
-          username: userName,
-          firebaseURL:
-            (enableArchiveManager && fbArchives.baseURL + '/' + usableSessionInfo.sessionId) || 'unknown',
-          firebaseToken: fbUserToken || 'unknown',
-          chromeExtId: tbConfig.chromeExtId,
-          enableArchiveManager: tbConfig.enableArchiveManager,
-          enableAnnotation: tbConfig.enableAnnotations,
-        };
-        answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId;
-        aRes.send(answer);
+        function _answerSend(fbUserToken) {
+          // and finally, answer...
+          var answer = {
+            apiKey: tbConfig.apiKey,
+            token: tbConfig.otInstance
+                    .generateToken(usableSessionInfo.sessionId, {
+                      role: 'publisher',
+                      data: JSON.stringify({ userName }),
+                    }),
+            username: userName,
+            firebase: !enableArchiveManager ? null : {
+              apiKey: tbConfig.firebaseConfig.apiKey,
+              databaseURL: fbArchives.baseURL || 'unknown',
+              databaseRef: usableSessionInfo.sessionId,
+              token: fbUserToken || 'unknown',
+              ios: tbConfig.firebaseConfig.ios,
+              // Uncomment the next line when Android app is being built
+              // android: tbConfig.firebaseConfig.android,
+            },
+            chromeExtId: tbConfig.chromeExtId,
+            enableArchiveManager: tbConfig.enableArchiveManager,
+            enableAnnotation: tbConfig.enableAnnotations,
+          };
+          answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId;
+          aRes.send(answer);
+        }
+
+        // Create firebase custom token for client if archive manager is enabled.
+        // Else, send null Firebase token
+        if (enableArchiveManager) {
+          fbArchives.createUserToken(usableSessionInfo.sessionId, userName)
+            .then(token => _answerSend(token))
+            .catch(e => logger.error('createUserToken error', e));
+        } else {
+          _answerSend(null);
+        }
       });
   }
 

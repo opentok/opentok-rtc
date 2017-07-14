@@ -1,39 +1,58 @@
+/* global Utils */
+
 !(function(exports) {
   'use strict';
 
   var archives = null;
   var listeners = {};
 
-  function init(aUrl, aToken) {
+  var debug = new Utils.MultiLevelLogger('firebase.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
+
+  function init(fbConfig) {
     var self = this;
     return LazyLoader.dependencyLoad([
-      'https://cdn.firebase.com/js/client/2.3.1/firebase.js'
+      'https://www.gstatic.com/firebasejs/4.1.2/firebase.js'
     ]).then(function() {
       return new Promise(function(resolve, reject) {
-        // url points to the session root
-        var sessionRef = new Firebase(aUrl);
-        sessionRef.authWithCustomToken(aToken, function() {
-          var archivesRef = sessionRef.child('archives');
-          archivesRef.on('value', function updateArchiveHistory(snapshot) {
-            var handlers = listeners.value;
-            archives = snapshot.val();
-            var archiveValues = Promise.resolve(archives || {});
-            handlers && handlers.forEach(function(aHandler) {
-              archiveValues.then(aHandler.method.bind(aHandler.context));
-            });
-          }, function onCancel(err) {
-            // We should get called here only if we lose permission...
-            // which should only happen if the branch is erased.
-            var handlers = listeners.value;
-            console.error('Lost connection to Firebase. Reason: ', err); // eslint-disable-line no-console
-            var archiveValues = Promise.resolve({});
-            handlers && handlers.forEach(function(aHandler) {
-              archiveValues.then(aHandler.method.bind(aHandler.context));
-            });
+        firebase.initializeApp({ apiKey: fbConfig.apiKey, databaseURL: fbConfig.databaseURL });
+        firebase.auth().signInWithCustomToken(fbConfig.token)
+          .then(function() {
+            // url points to the session root
+            var sessionRef = firebase.database().ref(fbConfig.databaseRef);
+            var archivesRef = sessionRef.child('archives');
+
+            function updateArchiveHistory(snapshot) {
+              var handlers = listeners.value;
+              archives = snapshot.val();
+              var archiveValues = Promise.resolve(archives || {});
+              handlers && handlers.forEach(function(aHandler) {
+                archiveValues.then(aHandler.method.bind(aHandler.context));
+              });
+            }
+
+            function onCancel(err) {
+              // We should get called here only if we lose permission...
+              // which should only happen if the branch is erased.
+              var handlers = listeners.value;
+              debug.error('Lost connection to Firebase. Reason: ', err); // eslint-disable-line no-console
+              var archiveValues = Promise.resolve({});
+              handlers && handlers.forEach(function(aHandler) {
+                archiveValues.then(aHandler.method.bind(aHandler.context));
+              });
+            }
+
+            archivesRef.on('value', updateArchiveHistory, onCancel);
+
+            sessionRef.child('connections').push(new Date().getTime()).onDisconnect().remove();
+
+            debug.log('Firebase connection successful');
+
+            resolve(self);
+          })
+          .catch(function(e) {
+            debug.error('Firebase auth failed', e);
+            reject('Firebase auth failed', e);
           });
-          sessionRef.child('connections').push(new Date().getTime()).onDisconnect().remove();
-          resolve(self);
-        });
       });
     });
   }

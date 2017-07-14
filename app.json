@@ -16,19 +16,41 @@
   "env": {
     "TB_API_KEY": {
       "description": "OpenTok API key: Login to the Tokbox Dashboard (https://dashboard.tokbox.com/keys) to get this value.",
-      "required": "true"
+      "required": true
     },
     "TB_API_SECRET": {
       "description": "OpenTok API secret: Login to the Tokbox Dashboard (https://dashboard.tokbox.com/keys) to get this value.",
-      "required": "true"
+      "required": true
+    },
+    "ENABLE_ARCHIVING": {
+      "description": "Set to 'false' if you want to disable archiving.",
+      "value": "true",
+      "required": false
+    },
+    "ENABLE_ARCHIVE_MANAGER": {
+      "description": "Set to 'true' if you want to enable archiving manager, used to store archiving information. If set to 'true', need Firebase access credentials to be put in following fields.",
+      "value": "false",
+      "required": false
+    },
+    "FB_API_KEY": {
+      "description": "Firebase API key",
+      "required": false
     },
     "FB_DATA_URL": {
-      "description": "URL of the Firebase app used to store the archive information. Go to https://firebase.com to get a valid URL.",
-      "required": "false"
+      "description": "URL of the Firebase app's database used to store the archive information. Go to https://firebase.com to get a valid URL.",
+      "required": false
     },
-    "FB_AUTH_SECRET": {
-      "description": "Firebase Auth secret for the database. Go to https://firebase.com to get a valid URL and secret.",
-      "required": "false"
+    "FB_CREDENTIAL": {
+      "description": "Content of private key for your Firebase application's service account",
+      "required": false
+    },
+    "FB_IOS_APP_ID": {
+      "description": "Firebase iOS app ID. This is the value of 'GOOGLE_APP_ID' key in Firebase's iOS configuration (.plist) file.",
+      "required": false
+    },
+    "FB_IOS_SENDER_ID": {
+      "description": "Firebase iOS sender ID. This is the value of 'GCM_SENDER_ID' key in Firebase's iOS configuration (.plist) file.",
+      "required": false
     }
   },
   "addons": [

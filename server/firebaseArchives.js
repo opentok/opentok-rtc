@@ -36,12 +36,11 @@
 'use strict';
 
 // We'll use Firebase to store the recorded archive information
-var Firebase = require('firebase');
+var Firebase = require('firebase-admin');
 var SwaggerBP = require('swagger-boilerplate');
-var FirebaseTokenGenerator = require('firebase-token-generator');
 
-function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
-  if (!aRootURL || !aSecret) {
+function FirebaseArchives(config, aCleanupTime, aLogLevel) {
+  if (config == null) {
     // Just return an object with the right signature and be done...
     return Promise.resolve({
       get baseURL() {
@@ -59,7 +58,6 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
 
   var Utils = SwaggerBP.Utils;
   var Logger = Utils.MultiLevelLogger;
-  var promisify = Utils.promisify;
 
   // This will hold the current timers on empty rooms...
   var _timers = { };
@@ -67,20 +65,27 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
   var logger = new Logger('FirebaseArchives', aLogLevel);
   var Firebase = FirebaseArchives.Firebase;
 
+  Firebase.initializeApp({
+    credential: Firebase.credential.cert(config.credential),
+    databaseURL: config.dataUrl,
+    databaseAuthVariableOverride: {
+      role: 'server',
+    },
+  });
 
-  // Connect and authenticate the firebase session
-  var fbRootRef = new Firebase(aRootURL);
-  var fbTokenGenerator = new FirebaseTokenGenerator(aSecret);
+  var fbAdminAuth = Firebase.auth();
+
+  var fbRootRef = Firebase.database().ref();
+
 
   function _getFbObject() {
     // All done, just return an usable object... this will resolve te promise.
     return {
       get baseURL() {
-        return aRootURL;
+        return config.dataUrl;
       },
       createUserToken(aSessionId, aUsername) {
-        return fbTokenGenerator.createToken({
-          uid: aUsername + Math.random(),
+        return fbAdminAuth.createCustomToken(aUsername + Math.random(), {
           sessionId: aSessionId,
           role: 'user',
           name: aUsername,
@@ -125,8 +130,8 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
       return !!recentChilds;
     }
 
-    var connRef = aConnectionSnapshot.ref();
-    var sessionId = connRef.parent().key();
+    var connRef = aConnectionSnapshot.ref;
+    var sessionId = connRef.parent.key;
     logger.log('_checkConnectionsNumber: Found a change on', sessionId);
     if (!aConnectionSnapshot.exists() || !aConnectionSnapshot.hasChildren() ||
         !hasNewChildren(aConnectionSnapshot)) {
@@ -149,29 +154,31 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
   }
 
   function _processSession(aDataSnapshot) {
-    var sessionId = aDataSnapshot.key();
+    var sessionId = aDataSnapshot.key;
     logger.log('_processSession: Found sessionId: ', sessionId);
     // We only care about the connections here.
     // Funnily enough this works even if the connections key doesn't exist.
-    aDataSnapshot.ref().child('connections').on('value', _checkConnectionsNumber);
+    aDataSnapshot.ref.child('connections').on('value', _checkConnectionsNumber);
   }
 
-  fbRootRef.authWithCustomToken_P = promisify(fbRootRef.authWithCustomToken);
+  function _cancelProcessSession(data) {
+    logger.log('_processSession cancelled', data);
+  }
 
   var authWithAdminToken = function () {
     logger.log('(Re)issuing admin token and (re)authenticating session.');
-    var serverToken = fbTokenGenerator
-      .createToken({ uid: 'SERVER', role: 'server', name: 'OpenTok RTC Server' },
-                  { admin: true });
-    return fbRootRef
-        .authWithCustomToken_P(serverToken);
+    return fbAdminAuth.createCustomToken('SERVER', {
+      role: 'server',
+      name: 'OpenTok RTC Server',
+    });
   };
 
   // Refresh the authentication every 23 hours (tokens expire by default at 24 hours)
   setInterval(authWithAdminToken, 23 * 3600000);
 
+  fbRootRef.on('child_added', _processSession, _cancelProcessSession);
+
   return authWithAdminToken()
-    .then(fbRootRef.on.bind(fbRootRef, 'child_added', _processSession))
     .then(_getFbObject)
     .catch((err) => {
       logger.error('Error authenticating to Firebase: ', err);

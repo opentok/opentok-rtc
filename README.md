@@ -67,13 +67,14 @@ Edit `config/config.json` and replace `<key>` and `<secret>` with your OpenTok A
 }
 ```
 
-If you want to use archive management, set up Firebase configuration. To do these, edit the configuration sections for `"Firebase"` and `"Archiving"`. Replace `<firebase_url>` with a Firebase database URL and `<firebase_secret>` with a corresponding database secret. Also mark `Archiving` and `archivingManager` as enabled. For more information on how to obtain Firebase credentials, see [Firebase configuration](#firebase-configuration) section below:
+If you want to use archive management, set up Firebase configuration. To do these, edit the configuration sections for `"Firebase"` and `"Archiving"` and mark `Archiving` and `archivingManager` as enabled. For more information on how to obtain and set up Firebase credentials, see [Firebase configuration](#firebase-configuration) section below:
 
 ```js
 {
     "Firebase": {
+        "apiKey": "<firebase_apikey>",
         "dataUrl": "<firebase_url>",
-        "authSecret": "<firebase_secret>"
+        "credentialFile": "<firebase_credential_file>"
     },
     "Archiving": {
         "enabled": true,
@@ -153,29 +154,51 @@ JSON example:
 
 ### Firebase configuration
 
-This application needs you to specify a Firebase database URL and a database secret. Here is how you can obtain both.
+If you enable Archive Manager, you will need to add Firebase credentials. OpenTokRTC uses Firebase to store and retrieve archive information. Here is how you can obtain the relevant configurations:
 
 Go to [Firebase console](https://console.firebase.google.com/), create a new project or choose an existing project. Once there, follow these steps:
 
+- **Firebase API key:** Click on the `Settings` (cog) icon and go to `Project Settings` > `General`. Copy the value of `Web API Key`.
+
 - **Firebase database URL:** Click on `Database` link on the left. Copy the URL you see under the `Data` tab. The URL is in the format `https://xxxx.firebaseio.com/` where `xxxx` is the unique ID of your Firebase project.
 
-  **Note**: For the security rule mentioned in the [Firebase security measure](#firebase-security-measure) section to work, you will need to set the Firebase database URL in this application configuration as `https://xxxx.firebaseio.com/sessions`.
+- **Firebase service account credential:** Click on the `Settings` (cog) icon and go to `Project Settings` > `Service Accounts`. Click on the `Generate new private key` button and download the file. Place the downloaded file in the `./config/` directory.
 
-- **Firebase database secret:** Click on the `Settings` (cog) icon and go to `Project Settings` > `Service Accounts` > `Database Secrets`. Click on the `Show` button for the secret and copy it.
-
-Then set the following values in `config/config.json`, replacing `<firebase_url>` with the Firebase database URL and `<firebase_secret>` with the Firebase database secret:
+Then set the following values in `config/config.json`, replacing `<firebase_apiKey>` with Firebase API key, `<firebase_url>` with the Firebase database URL and `<firebase_credential_file>` with name of the downloaded service account credential file you placed in the `./config/` directory:
 
 ```json
 "Firebase": {
+    "apiKey": "<firebase_apiKey>",
     "dataUrl": "<firebase_url>",
-    "authSecret": "<firebase_secret>"
+    "credentialPath": "<firebase_credential_file>"
 }
 ```
 
-You can also set the values using these environment variables:
+You can also set the configuration values mentioned above using these environment variables:
 
+- `FB_API_KEY`: Firebase API key
 - `FB_DATA_URL`: Firebase database URL.
-- `FB_AUTH_SECRET`: Firebase database secret.
+- `FB_CREDENTIAL_PATH`: Firebase database secret.
+
+*Note:* If needed, if you can supply the content of the service account credential file, instead of mentioning path to the file. You can can add content of the credential file as the value of either the `Firebase.credential` property of `./config/config.json`, or as the `FB_CREDENTIAL` environment variable. This is useful for automated environments like Heroku where you would prefer to set all configuration values as environment variables.
+
+#### Firebase iOS app configuration
+
+If you want to use OpenTokRTC's iOS app, you will need to [setup a new iOS app in Firebase](https://firebase.google.com/docs/ios/setup) and download the `GoogleService-info.plist` file for that app. Open the downloaded file. You will need two values of two keys from that file, `GCM_SENDER_ID` and `GOOGLE_APP_ID`. Once you have these two values, add/update the following values in `./config/config.json`:
+
+```json
+"Firebase": {
+    "ios": {
+        "appId": "<place value of GOOGLE_APP_ID>",
+        "senderId": "<place value of GCM_SENDER_ID>"
+    }
+}
+```
+
+You can also set the configuration values mentioned above using these enviroment variables:
+
+- `FB_IOS_APP_ID`: Value of `GOOGLE_APP_ID`
+- `FB_IOS_SENDER_ID`: Value of `GCM_SENDER_ID`
 
 #### Firebase security measure
 
