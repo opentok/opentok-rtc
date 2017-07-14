@@ -180,6 +180,8 @@ You can also set the configuration values mentioned above using these environmen
 - `FB_DATA_URL`: Firebase database URL.
 - `FB_CREDENTIAL_PATH`: Firebase database secret.
 
+*Note:* If needed, if you can supply the content of the service account credential file, instead of mentioning path to the file. You can can add content of the credential file as the value of either the `Firebase.credential` property of `./config/config.json`, or as the `FB_CREDENTIAL` environment variable. This is useful for automated environments like Heroku where you would prefer to set all configuration values as environment variables.
+
 #### Firebase iOS app configuration
 
 If you want to use OpenTokRTC's iOS app, you will need to [setup a new iOS app in Firebase](https://firebase.google.com/docs/ios/setup) and download the `GoogleService-info.plist` file for that app. Open the downloaded file. You will need two values of two keys from that file, `GCM_SENDER_ID` and `GOOGLE_APP_ID`. Once you have these two values, add/update the following values in `./config/config.json`:
