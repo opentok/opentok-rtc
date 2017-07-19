@@ -85,3 +85,15 @@ E.IOS_APP_ID = { envVar: 'IOS_APP_ID', jsonPath: 'IOSAppId' };
 E.IOS_URL_PREFIX = { envVar: 'IOS_URL_PREFIX', jsonPath: 'IOSUrlPrefix', defaultValue: '' };
 
 E.DEFAULT_INDEX_PAGE = { envVar: 'DEFAULT_INDEX_PAGE', jsonPath: 'defaultPageIndex', defaultValue: undefined };
+
+E.INDEX_MAIN_TITLE = { envVar: 'INDEX_MAIN_TITLE', jsonPath: 'ui.index.mainTitle', defaultValue: undefined };
+
+E.INDEX_CONFIRMATION_DB_TEXT = { envVar: 'INDEX_CONFIRMATION_DB_TEXT', jsonPath: 'ui.index.confirmationDbText', defaultValue: undefined };
+
+E.ROOM_CSS = { envVar: 'ROOM_CSS', jsonPath: 'ui.room.css', defaultValue: "/css/room.opentok.css" };
+
+E.ROOM_CUSTOM_MENU_ITEMS = { envVar: 'ROOM_CUSTOM_MENU_ITEMS', jsonPath: 'ui.room.customMenuItems', defaultValue: undefined };
+
+E.END_CALL_HEADER_TEXT = { envVar: 'END_CALL_HEADER_TEXT', jsonPath: 'ui.endCall.headerText', defaultValue: undefined };
+
+E.END_CALL_SHOW_TB_LINKS = { envVar: 'END_CALL_SHOW_TB_LINKS', jsonPath: 'ui.endCall.showTbLinks', defaultValue: false, parser: parseBool };

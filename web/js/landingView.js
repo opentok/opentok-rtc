@@ -84,7 +84,7 @@
       form.classList.remove('error');
       enterButton.removeEventListener('click', onEnterClicked);
 
-      if (isWebRTCVersion) {
+      if (hasConfirmationDb) {
         showContract().then(function(accepted) {
           if (accepted) {
             navigateToRoom();
