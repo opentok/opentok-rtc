@@ -125,7 +125,11 @@
       // session, and for every client in the session when you first connect
       // Session object also dispatches a sessionConnected evt when your local
       // client connects
-      var newUsrName = JSON.parse(evt.connection.data).userName;
+      var parsed = JSON.parse(evt.connection.data);
+      var newUsrName = '';
+      if (parsed) {
+        newUsrName = parsed.userName;
+      }
       if (!this.isMyself(evt.connection)) {
         Utils.sendEvent('chatController:presenceEvent', {
           userName: newUsrName,
@@ -136,8 +140,13 @@
       }
     },
     connectionDestroyed: function(evt) {
+      var parsed = JSON.parse(evt.connection.data);
+      var userName = '';
+      if (parsed) {
+        userName = parsed.userName;
+      }
       Utils.sendEvent('chatController:presenceEvent', {
-        userName: JSON.parse(evt.connection.data).userName,
+        userName: userName,
         text: DISCONN_TEXT
       });
     }
