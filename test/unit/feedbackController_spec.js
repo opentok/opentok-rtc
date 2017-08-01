@@ -7,6 +7,7 @@ describe('FeedbackController', () => {
   var realOT = null;
   var fakeOTHelper = {
     session: {
+      apiKey: '123456',
       id: 'abcd1234',
       connection: {
         id: 'connectionIdID',
@@ -20,6 +21,7 @@ describe('FeedbackController', () => {
     window.LazyLoader = { load() {} };
     realOT = window.OT;
     window.OT = {
+      reportIssue() {},
       analytics: {
         logEvent() {},
       },
@@ -61,6 +63,7 @@ describe('FeedbackController', () => {
       expect(logEventStub.calledOnce).to.be.true;
       expect(logEventStub.calledWith({
         action: 'SessionQuality',
+        partnerId: fakeOTHelper.session.apiKey,
         sessionId: fakeOTHelper.session.id,
         connectionId: fakeOTHelper.session.connection.id,
         publisherId: fakeOTHelper.publisherId,
@@ -68,6 +71,14 @@ describe('FeedbackController', () => {
         videoScore: report.videoScore,
         description: report.description,
       })).to.be.true;
+    }));
+  });
+
+  describe('#feedbackView:reportIssue event', () => {
+    it('should send reportIssue event', sinon.test(function () {
+      var reportIssueStub = sinon.stub(window.OT, 'reportIssue');
+      window.dispatchEvent(new CustomEvent('feedbackView:reportIssue'));
+      expect(reportIssueStub.calledOnce).to.be.true;
     }));
   });
 });

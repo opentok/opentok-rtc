@@ -8,6 +8,11 @@ describe('FeedbackView', () => {
     audioScore,
     videoScore,
     otherInfo;
+  var fakeOTHelper = {
+    session: {
+      apiKey: '123456'
+    }
+  };
 
   before(() => {
     window.document.body.innerHTML = window.__html__['test/unit/feedbackView_spec.html'];
@@ -16,6 +21,7 @@ describe('FeedbackView', () => {
     audioScore = document.querySelector('.feedback-report .audio-score');
     videoScore = document.querySelector('.feedback-report .video-score');
     otherInfo = document.querySelector('.feedback-report .other-info');
+    reportIssueButton = document.querySelector('.feedback-report .report-issue');
   });
 
   it('should exist', () => {
@@ -26,7 +32,7 @@ describe('FeedbackView', () => {
     it('should export an init function', () => {
       expect(FeedbackView.init).to.exist;
       expect(FeedbackView.init).to.be.a('function');
-      FeedbackView.init();
+      FeedbackView.init(fakeOTHelper);
       expect(otherInfo.value).to.equals('');
     });
   });
@@ -40,7 +46,7 @@ describe('FeedbackView', () => {
       expect(otherInfo.value).to.equals('');
     }));
 
-    it('should send event when it is submitted', sinon.test(function () {
+    it('should send event when send button is submitted', sinon.test(function () {
       this.spy(Modal, 'hide');
       this.stub(Utils, 'sendEvent');
 
@@ -56,6 +62,19 @@ describe('FeedbackView', () => {
         videoScore: videoScore.options[videoScore.selectedIndex].value,
         description: otherInfo.value,
       });
+    }));
+
+    it('should send event when reportIssue button is submitted', sinon.test(function () {
+      this.spy(Modal, 'hide');
+      this.stub(Utils, 'sendEvent');
+
+      otherInfo.value = 'further info';
+      reportIssueButton.click();
+
+      expect(Modal.hide.calledOnce).to.be.true;
+
+      expect(Utils.sendEvent.calledOnce).to.be.true;
+      expect(Utils.sendEvent.getCall(0).args[0]).to.be.equal('feedbackView:reportIssue');
     }));
   });
 });
