@@ -75,7 +75,7 @@ describe('FeedbackController', () => {
   });
 
   describe('#feedbackView:reportIssue event', () => {
-    it('should send reportIssue event', sinon.test(function () {
+    it('should send reportIssue event', sinon.test(() => {
       var reportIssueStub = sinon.stub(window.OT, 'reportIssue');
       window.dispatchEvent(new CustomEvent('feedbackView:reportIssue'));
       expect(reportIssueStub.calledOnce).to.be.true;
