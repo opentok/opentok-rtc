@@ -11,7 +11,7 @@
   var _sessionId;
 
   var addHandlers = function() {
-    !exports.isWebRTCVersion && HTMLElems.addHandlerArchive(LIST_SELECTOR);
+    !exports.endCallShowTbLinks && HTMLElems.addHandlerArchive(LIST_SELECTOR);
     var btn = document.getElementById('newCall');
     btn && btn.addEventListener('click', function(evt) {
       evt.preventDefault();
@@ -50,7 +50,8 @@
     });
     data.numArchives = data.archives.length;
     data.sessionId = _sessionId;
-    data.isWebRTCVersion = exports.isWebRTCVersion;
+    data.endCallHeaderText = exports.endCallHeaderText;
+    data.endCallShowTbLinks = exports.endCallShowTbLinks;
 
     _template.render(data).then(function(aHTML) {
       document.body.innerHTML = aHTML;

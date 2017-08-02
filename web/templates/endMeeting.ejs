@@ -1,13 +1,13 @@
 <section class="endMeeting">
   <header>
     <img src="/images/opentok-logo.png" alt="opentok transparent logo">
-    <% if(!isWebRTCVersion) { %>
-    <p>Thank you for using OpenTok Platform Demo</p>
+    <% if(endCallHeaderText) { %>
+    <p class="bold"><%- endCallHeaderText %></p>
     <% } else { %>
-    <p class="bold">Thank you for trying TokBox’s WebRTC Demo</p>
+    <p class="bold">Thank you for using the OpenTok Platform Demo.</p>
     <% } %>
   </header>
-  <% if(!isWebRTCVersion) { %>
+  <% if(!endCallShowTbLinks) { %>
   <button id="newCall" class="btn btn-blue btn-padding-large ctaarrow-white">Start a new meeting</button>
   <section  class="archives" data-recordings="<%=numArchives%>">
     <div class="content">

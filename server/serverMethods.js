@@ -112,8 +112,6 @@ function ServerMethods(aLogLevel, aModules) {
       var maxSessionAgeMs = maxSessionAge * 24 * 60 * 60 * 1000;
       var chromeExtId = config.get(C.CHROME_EXTENSION_ID);
 
-      var isWebRTCVersion = config.get(C.DEFAULT_INDEX_PAGE) === 'opentokrtc';
-
       var firebaseConfigured =
               config.get(C.FIREBASE_DATA_URL) && config.get(C.FIREBASE_AUTH_SECRET);
 
@@ -122,6 +120,12 @@ function ServerMethods(aLogLevel, aModules) {
       var enableScreensharing = config.get(C.ENABLE_SCREENSHARING);
       var enableAnnotations = enableScreensharing && config.get(C.ENABLE_ANNOTATIONS);
       var enableFeedback = config.get(C.ENABLE_FEEDBACK);
+      var indexMainTitle = config.get(C.INDEX_MAIN_TITLE, config);
+      var indexConfirmationDbText = config.get(C.INDEX_CONFIRMATION_DB_TEXT, config);
+      var roomCSS = config.get(C.ROOM_CSS, config);
+      var roomCustomMenuItems = config.get(C.ROOM_CUSTOM_MENU_ITEMS, config);
+      var endCallHeaderText = config.get(C.END_CALL_HEADER_TEXT, config);
+      var endCallShowTbLinks = config.get(C.END_CALL_SHOW_TB_LINKS, config);
 
       if (!firebaseConfigured && enableArchiveManager) {
         logger.error('Firebase not configured. Please provide firebase credentials or disable archive_manager');
@@ -154,7 +158,12 @@ function ServerMethods(aLogLevel, aModules) {
                 archiveAlways,
                 iosAppId,
                 iosUrlPrefix,
-                isWebRTCVersion,
+                indexMainTitle,
+                indexConfirmationDbText,
+                roomCSS,
+                roomCustomMenuItems,
+                endCallHeaderText,
+                endCallShowTbLinks,
                 enableArchiving,
                 enableArchiveManager,
                 enableScreensharing,
@@ -265,7 +274,8 @@ function ServerMethods(aLogLevel, aModules) {
   function getRoot(aReq, aRes) {
     aRes
       .render('index.ejs', {
-        isWebRTCVersion: aReq.tbConfig.isWebRTCVersion,
+        indexMainTitle: aReq.tbConfig.indexMainTitle,
+        indexConfirmationDbText: aReq.tbConfig.indexConfirmationDbText,
       }, (err, html) => {
         if (err) {
           logger.error('getRoot. error: ', err);
@@ -294,7 +304,6 @@ function ServerMethods(aLogLevel, aModules) {
     aRes
       .render((template || tbConfig.defaultTemplate) + '.ejs',
       {
-        isWebRTCVersion: tbConfig.isWebRTCVersion,
         userName: userName || C.DEFAULT_USER_NAME,
         roomName: aReq.params.roomName,
         chromeExtensionId: tbConfig.chromeExtId,
@@ -304,6 +313,10 @@ function ServerMethods(aLogLevel, aModules) {
                // or whatever other thing that should be before the roomName
         iosURL: tbConfig.iosUrlPrefix + aReq.params.roomName + '?userName=' +
                        (userName || C.DEFAULT_USER_NAME),
+        roomCSS: aReq.tbConfig.roomCSS,
+        roomCustomMenuItems: aReq.tbConfig.roomCustomMenuItems,
+        endCallHeaderText: aReq.tbConfig.endCallHeaderText,
+        endCallShowTbLinks: aReq.tbConfig.endCallShowTbLinks,
         enableArchiving: tbConfig.enableArchiving,
         enableArchiveManager: tbConfig.enableArchiveManager,
         enableScreensharing: tbConfig.enableScreensharing,
@@ -606,10 +619,6 @@ function ServerMethods(aLogLevel, aModules) {
   }
 
   function oldVersionCompat(aReq, aRes, aNext) {
-    if (!aReq.tbConfig.isWebRTCVersion) {
-      aNext();
-      return;
-    }
     var matches = aReq.path.match(/^\/([^/]+)\.json$/);
     if (matches) {
       aReq.url = '/room/' + matches[1] + '/info';

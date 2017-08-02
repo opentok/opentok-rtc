@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <link rel="stylesheet" href="css/buttons.css" />
-<% if (isWebRTCVersion) { %>
+<% if (indexConfirmationDbText) { %>
     <link rel="stylesheet" href="css/checkboxes.css" />
 <% } %>
     <link rel="stylesheet" href="css/landing.opentok.css">
@@ -22,7 +22,7 @@
     <script defer type="text/javascript" src="/js/rtcApp.js"></script>
 
     <script>
-      window.isWebRTCVersion=<%=isWebRTCVersion%>
+      window.hasConfirmationDb = '<%=indexConfirmationDbText%>';
     </script>
   </head>
 
@@ -33,8 +33,8 @@
         <header>
           <img src="images/opentok-logo.png" alt="opentok transparent logo">
         </header>
-<% if (!isWebRTCVersion) { %>
-        <h1>The OpenTok Platform Demo</h1>
+<% if (indexMainTitle) { %>
+        <%- indexMainTitle %>
 <% } else { %>
         <h1>WebRTC Demo</h1>
         <h2>Built by TokBox on the OpenTok Platform</h2>
@@ -54,14 +54,14 @@
       </section>
     </section>
 
-<% if (isWebRTCVersion) { %>
+<% if (indexConfirmationDbText) { %>
     <section class="tc-modal contract">
       <form class="tc-dialog">
         <i data-icon="close_gray" class="close"></i>
         <header>
           <span>Terms of Use</span>
         </header>
-        <p>By accepting our terms of use you acknoledge that you have read the <a target="_blank" href="https://tokbox.com/support/tos">user agreement</a>, and <a target="_blank" href="https://tokbox.com/support/privacy-policy">privacy policy</a>, and you are at least 18 years of age.</p>
+        <p><%- indexConfirmationDbText %></p>
         <footer>
           <button id="enter" class="btn tb btn-primary btn-arrow btn-next btn-padding accept">Accept and Continue</button>
         </footer>
