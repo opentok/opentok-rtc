@@ -552,10 +552,16 @@
     }
   };
 
-  function showUserNamePrompt(roomName) {
+  function showCallSettingsPrompt(roomName, username) {
     var selector = '.user-name-modal';
     function loadModalText() {
       document.querySelector(selector + ' header .room-name').textContent = roomName;
+      if (username) {
+        document.getElementById('enter-name-prompt').style.display = 'none';
+        var userNameInputElement= document.getElementById('user-name-input');
+        userNameInputElement.value = username;
+        userNameInputElement.setAttribute('readonly', true)
+      }
     }
     return Modal.show(selector, loadModalText).then(function() {
       return new Promise(function(resolve, reject) {
@@ -565,7 +571,13 @@
           enterButton.removeEventListener('click', onClicked);
           return Modal.hide(selector)
             .then(function() {
-              resolve(document.querySelector(selector + ' input').value.trim());
+              publisherOptions.publishAudio = publisherButtons.audio.enabled =
+                document.getElementById('initialAudioSwitch').classList.value === 'activated';
+              publisherOptions.publishVideo = publisherButtons.video.enabled =
+                document.getElementById('initialVideoSwitch').classList.value === 'activated';
+              resolve({
+                username: document.querySelector(selector + ' input').value.trim(),
+              });
             });
         });
         document.querySelector(selector + ' input.username').focus();
@@ -615,16 +627,8 @@
     debugPreferredResolution = params.getFirstValue('debugPreferredResolution');
     enableHangoutScroll = params.getFirstValue('enableHangoutScroll') !== undefined;
 
-    var info = {
-      username: usrId,
-      roomName: roomName
-    };
-
-    if (usrId || (window.location.origin === getReferrerURL().origin)) {
-      return Promise.resolve(info);
-    }
-    return showUserNamePrompt(roomName).then(function(userName) {
-      info.username = userName;
+    return showCallSettingsPrompt(roomName, usrId).then(function(info) {
+      info.roomName = roomName;
       return info;
     });
   }
@@ -641,6 +645,8 @@
           throw new Error('Error getting room parameters');
         }
         aRoomInfo.roomName = aRoomParams.roomName;
+        aRoomInfo.publishAudio = aRoomParams.publishAudio;
+        aRoomInfo.publishVideo = aRoomParams.publishVideo;
         enableAnnotations = aRoomInfo.enableAnnotation;
         enableArchiveManager = aRoomInfo.enableArchiveManager;
         return aRoomInfo;

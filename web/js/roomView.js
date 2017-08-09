@@ -10,6 +10,8 @@
   var recordingsNumberElem;
   var videoSwitch;
   var audioSwitch;
+  var initialVideoSwitch;
+  var initialAudioSwitch;
   var startChatElem;
   var unreadCountElem;
   var enableArchiveManager;
@@ -199,6 +201,36 @@
     var title = dock.querySelector('.info h1');
     title.style.height = title.clientHeight + 'px';
   }
+
+  var publishSettings = document.querySelector('.publish-settings');
+
+  publishSettings.addEventListener('click', function(e) {
+    var initialVideoSwitch = document.querySelector('#initialVideoSwitch');
+    var initialAudioSwitch = document.querySelector('#initialAudioSwitch');
+    var elem = e.target;
+    elem.blur();
+    // pointer-events is not working on IE so we can receive as target a child
+    elem = HTMLElems.getAncestorByTagName(elem, 'a');
+    if (!elem) {
+      return;
+    }
+    switch (elem.id) {
+      case 'initialAudioSwitch':
+        if (!initialAudioSwitch.classList.contains('activated')) {
+          setSwitchStatus(true, true, initialAudioSwitch, 'roomView:initialAudioSwitch');
+        } else {
+          setSwitchStatus(false, true, initialAudioSwitch, 'roomView:initialAudioSwitch');
+        }
+        break;
+      case 'initialVideoSwitch':
+        if (!initialVideoSwitch.classList.contains('activated')) {
+          setSwitchStatus(true, true, initialVideoSwitch, 'roomView:initialVideoSwitch');
+        } else {
+          setSwitchStatus(false, true, initialVideoSwitch, 'roomView:initialVideoSwitch');
+        }
+        break;
+    }
+  });
 
   function createStreamView(streamId, type, controlBtns, name) {
     return LayoutManager.append(streamId, type, controlBtns, name);

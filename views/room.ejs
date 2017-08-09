@@ -23,6 +23,7 @@
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/<%=chromeExtensionId%>">
     <link rel="stylesheet" href="https://assets.tokbox.com/solutions/css/style.css">
     <link rel="stylesheet" href="/css/annotation.opentok.css">
+    <link rel="stylesheet" href="css/checkboxes.css" />
 
     <script>
       window.isWebRTCVersion=<%=isWebRTCVersion%>
@@ -243,8 +244,20 @@
         <header>
           <span>Welcome to</span> <span class="room-name"></span>
         </header>
-        <p>Please enter your name to join this conversation.</p>
-        <input class="block username" placeholder="Enter your name">
+        <p id="enter-name-prompt">Please enter your name to join this conversation.</p>
+        <input id="user-name-input" class="block username" placeholder="Enter your name">
+        <div class="publish-settings">
+          <div>
+            <a id="initialVideoSwitch" class="activated">
+              <span>Video</span><i data-icon="videoSwitch"></i>
+            </a>
+          </div>
+          <div>
+            <a id="initialAudioSwitch" class="activated">
+              <span>Audio</span><i data-icon="audioSwitch"></i>
+            </a>
+          </div>
+        </div>
         <footer>
           <button id="enter" class="btn btn-blue btn-padding-large ctaarrow-white">Join Meeting</button>
         </footer>

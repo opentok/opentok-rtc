@@ -70,7 +70,9 @@
         var wrapper = HTMLElems.createElementAt(controls, 'div');
         // IE does not support adding multiple classes
         wrapper.classList.add(controlName + '-action');
-        wrapper.classList.add('enabled');
+        if (control.enabled) {
+          wrapper.classList.add('enabled');
+        }
         HTMLElems.createElementAt(wrapper, 'i', options);
       });
     },

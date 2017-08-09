@@ -299,3 +299,18 @@
     background-image: url("/images/icons/switch_on.svg");
   }
 }
+
+#initialVideoSwitch, #initialAudioSwitch {
+  [data-icon="videoSwitch"], [data-icon="audioSwitch"] {
+    background-image: url("/images/icons/switch_off_blue.svg");
+    width: 51px;
+    height: 30.4px;
+    vertical-align: text-bottom;
+  }
+}
+
+#initialVideoSwitch.activated, #initialAudioSwitch.activated {
+  [data-icon="videoSwitch"], [data-icon="audioSwitch"] {
+    background-image: url("/images/icons/switch_on_blue.svg");
+  }
+}
