@@ -288,10 +288,9 @@
         buttonInfo = publisherButtons[name];
         newStatus = !buttonInfo.enabled;
         // There are a couple of possible race conditions that would end on us not changing
-        // the status on the publisher (because it's already on that state) but where we should
-        // update the UI to reflect the correct state.
+        // the status on the publisher (because it's already on that state).
         if (!otHelper.isPublisherReady || otHelper.publisherHas(name) === newStatus) {
-          sendStatus({ stream: { streamId: 'publisher' } }, name, newStatus);
+          return;
         }
       } else {
         var stream = subscriberStreams[streamId];
@@ -572,9 +571,9 @@
           return Modal.hide(selector)
             .then(function() {
               publisherOptions.publishAudio = publisherButtons.audio.enabled =
-                document.getElementById('initialAudioSwitch').classList.value === 'activated';
+                document.getElementById('initialAudioSwitch').classList.contains('activated');
               publisherOptions.publishVideo = publisherButtons.video.enabled =
-                document.getElementById('initialVideoSwitch').classList.value === 'activated';
+                document.getElementById('initialVideoSwitch').classList.contains('activated');
               resolve({
                 username: document.querySelector(selector + ' input').value.trim(),
               });
