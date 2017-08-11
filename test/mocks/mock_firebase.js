@@ -78,9 +78,7 @@
     this.auth = function () {
       return {
         createCustomToken: () => Promise.resolve('fakeToken'),
-        signInWithCustomToken: (f) => {
-          return Promise.resolve();
-        }
+        signInWithCustomToken: f => Promise.resolve()
       };
     };
   };
