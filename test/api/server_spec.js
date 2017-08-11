@@ -67,7 +67,7 @@ describe('OpenTokRTC server', () => {
   }
 
   // Objects that can be returned:
-  const RoomInfo = ['sessionId', 'apiKey', 'token', 'username'];
+  const RoomInfo = ['sessionId', 'apiKey', 'token', 'username', 'firebase'];
   const ArchiveInfo = ['archiveId', 'archiveType'];
   const ArchiveURL = ['archiveId'];
   const ReturnError = ['code', 'message'];

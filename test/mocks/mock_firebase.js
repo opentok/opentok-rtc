@@ -2,7 +2,9 @@
 !(function (global) {
   'use strict';
 
-  var MockRef = function (parent) {
+  var references = {};
+
+  var MockRef = function (namespace, parent) {
     var _events = {
       value: [],
       child_added: []
@@ -20,8 +22,12 @@
 
     this.key = Date.now().toString() + Math.round(Math.random() * 10000);
 
-    this.child = function () {
-      return new MockRef(this);
+    this.child = function (namespace) {
+      if (!references[namespace]) {
+        references[namespace] = new MockRef(namespace, this);
+      }
+
+      return references[namespace];
     };
 
     this.on = function (evt, fn) {
@@ -33,7 +39,15 @@
       return this;
     };
 
-    this.set = function () {
+    this.set = function (data) {
+      var snapshot = {
+        val: () => data
+      };
+      trigger('value', snapshot);
+      return this;
+    };
+
+    this.onDisconnect = function () {
       return this;
     };
 
@@ -63,40 +77,29 @@
   MockFirebase.initializeApp = function () {
     this.auth = function () {
       return {
-        createCustomToken: () => Promise.resolve('fakeToken')
+        createCustomToken: () => Promise.resolve('fakeToken'),
+        signInWithCustomToken: (f) => {
+          return Promise.resolve();
+        }
       };
     };
   };
 
   MockFirebase.database = function () {
     return {
-      ref: () => new MockRef()
+      ref: (namespace) => {
+        namespace = namespace || '/';
+        if (!references[namespace]) {
+          references[namespace] = new MockRef(namespace, null);
+        }
+        return references[namespace];
+      }
     };
   };
-
-  // function MockCachedFirebase(aURL) {
-  //   'use strict';
-
-  //   var mock = MockCachedFirebase.references[aURL];
-  //   if (!mock) {
-  //     mock = MockFirebase.initializeApp({
-  //       credential: MockFirebase.credential.cert(config.credential),
-  //       databaseURL: config.dataUrl,
-  //       databaseAuthVariableOverride: {
-  //         role: 'server',
-  //       },
-  //     });
-  //   }
-  //   return mock;
-  // }
-
-  // This will come handy for tests...
-  // MockCachedFirebase.references = {};
 
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = MockFirebase;
   } else {
-    // global.MockCachedFirebase = MockCachedFirebase;
     global.MockFirebase = MockFirebase;
   }
 }(this));

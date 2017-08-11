@@ -5,19 +5,20 @@ var should = chai.should();
 describe('FirebaseModel', () => {
   var roomName = 'pse';
   var baseURL = 'https://opentok-recordings.firebaseio.com/';
+  var fakeApiKey = 'foo';
 
   // To test this we need ../mocks/mock_firebase.js and of course mockfirebase.js to be included.
   // If that's included correctly then window.MockCachedFirebase will be defined
   before(() => {
-    window._Firebase = window.Firebase;
-    window.Firebase = window.MockCachedFirebase;
+    window._firebase = window.firebase;
+    window.firebase = window.MockFirebase;
     window.LazyLoader = window.LazyLoader || { dependencyLoad() {} };
     sinon.stub(LazyLoader, 'dependencyLoad', resources => Promise.resolve());
   });
 
   after(() => {
-    window.Firebase = window._Firebase;
-    window._Firebase = undefined;
+    window.firebase = window._firebase;
+    window._firebase = undefined;
     LazyLoader.dependencyLoad.restore();
   });
 
@@ -33,20 +34,11 @@ describe('FirebaseModel', () => {
 
 
     it('should return a promise, and it should fulfill', (done) => {
-      initPromise = FirebaseModel.init(baseURL, 'fakeToken');
-      expect(initPromise.then).to.be.a('function');
-      initPromise.then(() => {
-        done();
-      });
-    });
-
-    it('should create a connection object on the session', () => {
-      var reference = window.Firebase.references[baseURL];
-      expect(reference).to.exist;
-      var sessionObject = window.Firebase.references[baseURL].getData();
-      expect(sessionObject.connections).to.exist;
-      var keys = Object.keys(sessionObject.connections);
-      expect(keys.length).to.be.at.least(1);
+      FirebaseModel.init({ apiKey: fakeApiKey, databaseUrl: baseURL, token: 'fakeToken' })
+        .then(() => {
+          done();
+        })
+        .catch(done);
     });
   });
 
@@ -65,10 +57,10 @@ describe('FirebaseModel', () => {
     });
 
     it('should invoke the set functions when the data changes', (done) => {
-      var ref = window.Firebase.references[baseURL];
+      var ref = window.firebase.database().ref();
       var archives = {
         archid1: { att1: 'value1', att2: 'value2' },
-        archid1: { att1: 'value1', att2: 'value2' }, // eslint-disable-line no-dupe-keys
+        // archid1: { att1: 'value1', att2: 'value2' }, // eslint-disable-line no-dupe-keys
       };
       var numHandlersCalled = 0;
       var handlersSet = 3;

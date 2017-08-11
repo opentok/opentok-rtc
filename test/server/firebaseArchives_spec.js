@@ -115,7 +115,7 @@ describe('FirebaseArchives', () => {
     describe('# updateArchive', () => {
       it('should be able to add elements', (done) => {
         _utInstance.then((fArchive) => {
-          var u = fArchive.updateArchive(testSession, testArchive).then(() => {
+          fArchive.updateArchive(testSession, testArchive).then(() => {
             done();
           })
           .catch(done);
