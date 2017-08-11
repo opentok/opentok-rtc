@@ -2,64 +2,101 @@
 !(function (global) {
   'use strict';
 
-  var hasRequire = typeof require !== 'undefined';
-  var MockFirebase = hasRequire ? require('mockfirebase').MockFirebase : global.MockFirebase;
-
-  // This isn't implemented on mockfirebase. We should probably do a PR there,
-  // but in the mean time...
-  MockFirebase.prototype._cachedDisconnectOps = [];
-
-  MockFirebase.prototype.onDisconnect = function () {
-    var pendingOp = {
-      remove() {
-        this.shouldRemove = true;
-      },
+  var MockRef = function (parent) {
+    var _events = {
+      value: [],
+      child_added: []
     };
-    this._cachedDisconnectOps.push(pendingOp);
-    return pendingOp;
+
+    var _data = {};
+
+    var trigger = function (evt, value) {
+      _events[evt].forEach((e) => {
+        e.apply(null, [value]);
+      });
+    };
+
+    this.parent = parent;
+
+    this.key = Date.now().toString() + Math.round(Math.random() * 10000);
+
+    this.child = function () {
+      return new MockRef(this);
+    };
+
+    this.on = function (evt, fn) {
+      _events[evt].push(fn);
+    };
+
+    this.push = function () {
+      this.key = Date.now().toString() + Math.round(Math.random() * 10000);
+      return this;
+    };
+
+    this.set = function () {
+      return this;
+    };
+
+    this.update = function (data, callback) {
+      if (typeof callback === 'function') {
+        callback.apply(null);
+      }
+      return this;
+    };
+
+    this.remove = function (callback) {
+      if (typeof callback === 'function') {
+        callback.apply(null);
+      }
+      return this;
+    };
+
+    this.unauth = () => {};
   };
 
-  MockFirebase.prototype.execOnDisconnects = function () {
-    var op;
-    while ((op = this._cachedDisconnectOps.shift())) { // eslint-disable-line no-cond-assign
-      op.shouldRemove && this.remove();
-    }
+  var MockFirebase = {};
+
+  MockFirebase.credential = {
+    cert: () => 'fakeCredential'
   };
 
-  function MockCachedFirebase(aURL) {
-    'use strict';
-
-    var mock = MockCachedFirebase.references[aURL];
-    if (!mock) {
-      mock = new MockFirebase(aURL);
-      mock._authWithCustomTokenOrig = mock.authWithCustomToken;
-      mock.authWithCustomToken = function (aToken, aCallback) {
-        mock._authWithCustomTokenOrig(aToken, aCallback);
-        // We're not even using this... :/
-        /* eslint-disable no-mixed-operators */
-        mock.changeAuthState({
-          uid: 'theUid',
-          provider: 'github',
-          token: 'theToken',
-          expires: Math.floor(new Date() / 1000) + 24 * 60 * 60, // expire in 24 hours
-          auth: {
-            myAuthProperty: true,
-          },
-        });
-        /* eslint-enable no-mixed-operators */
+  MockFirebase.initializeApp = function () {
+    this.auth = function () {
+      return {
+        createCustomToken: () => Promise.resolve('fakeToken')
       };
-      mock = mock.autoFlush(true);
-      MockCachedFirebase.references[aURL] = mock;
-    }
-    return mock;
-  }
+    };
+  };
+
+  MockFirebase.database = function () {
+    return {
+      ref: () => new MockRef()
+    };
+  };
+
+  // function MockCachedFirebase(aURL) {
+  //   'use strict';
+
+  //   var mock = MockCachedFirebase.references[aURL];
+  //   if (!mock) {
+  //     mock = MockFirebase.initializeApp({
+  //       credential: MockFirebase.credential.cert(config.credential),
+  //       databaseURL: config.dataUrl,
+  //       databaseAuthVariableOverride: {
+  //         role: 'server',
+  //       },
+  //     });
+  //   }
+  //   return mock;
+  // }
 
   // This will come handy for tests...
-  MockCachedFirebase.references = {};
+  // MockCachedFirebase.references = {};
 
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = MockCachedFirebase;
+    module.exports = MockFirebase;
   } else {
-    global.MockCachedFirebase = MockCachedFirebase;
+    // global.MockCachedFirebase = MockCachedFirebase;
+    global.MockFirebase = MockFirebase;
   }
 }(this));
