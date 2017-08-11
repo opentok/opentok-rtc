@@ -5,7 +5,8 @@
     sendButton,
     audioScore,
     videoScore,
-    otherInfo;
+    otherInfo,
+    reportButton;
 
   var feedbackReportSelector = '.feedback-report';
 
@@ -24,6 +25,7 @@
     audioScore = document.querySelector('.feedback-report .audio-score');
     videoScore = document.querySelector('.feedback-report .video-score');
     otherInfo = document.querySelector('.feedback-report .other-info');
+    reportButton = document.querySelector('.feedback-report .report-issue');
     addHandlers();
   };
 
@@ -40,6 +42,14 @@
         videoScore: videoScore.options[videoScore.selectedIndex].value,
         description: otherInfo.value
       });
+
+      hideForm();
+    });
+
+    reportButton.addEventListener('click', function(event) {
+      event.preventDefault();
+
+      Utils.sendEvent('feedbackView:reportIssue');
 
       hideForm();
     });

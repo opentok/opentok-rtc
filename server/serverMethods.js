@@ -413,6 +413,7 @@ function ServerMethods(aLogLevel, aModules) {
             chromeExtId: tbConfig.chromeExtId,
             enableArchiveManager: tbConfig.enableArchiveManager,
             enableAnnotation: tbConfig.enableAnnotations,
+            enableArchiving: tbConfig.enableArchiving,
           };
           answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId;
           aRes.send(answer);
