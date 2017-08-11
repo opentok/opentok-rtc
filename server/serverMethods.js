@@ -401,7 +401,7 @@ function ServerMethods(aLogLevel, aModules) {
                       data: JSON.stringify({ userName }),
                     }),
             username: userName,
-            firebase: !enableArchiveManager ? null : {
+            firebase: !enableArchiveManager ? {} : {
               apiKey: tbConfig.firebaseConfig.apiKey,
               databaseURL: fbArchives.baseURL || 'unknown',
               databaseRef: usableSessionInfo.sessionId,
