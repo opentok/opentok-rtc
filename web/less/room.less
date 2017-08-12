@@ -432,14 +432,26 @@ body {
   max-width: 280px;
 }
 
+.user-name-modal {
+  background-color: black;
+  background-image: url(/images/background.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  transition: none;
+  padding: 0;
+}
 .user-name-modal .tc-dialog {
-  padding: 65px 100px;
-  max-width: calc(~"100% - 510px");
+  float: right;
+  margin-right: 41px;
+  padding: 20px;
   @media @smartphones {
     max-width: none;
     padding: 10px;
   }
-  margin: 0;
+  width: 360px;
+  background: rgba(0,0,0,0.3);
+  transform: translateY(0);
+  color: white;
 
   header, footer, p {
     margin: 0;
@@ -463,11 +475,11 @@ body {
   p {
     font-family: @muliRegularFont, arial;
     font-size: 16px;
-    color: #5f6062;
+    color: white;
   }
 
   .username {
-    margin: 40px 0 20px;
+    height: 10px;
   }
 
   .btn {
@@ -477,12 +489,62 @@ body {
   }
   .publish-settings {
     margin-bottom: 20px;
+    padding: 20px;
     span {
       margin-right: 20px;
     }
   }
+  #video-preview {
+    width: 360px;
+    height: 264px;
+    border-radius: 10px;
+    background-color: #222;
+  }
+  #video-settings, #audio-settings {
+    img {
+      float: left;
+      margin-right: 13px
+    }
+    span {
+      float: left;
+    }
+    a {
+      float: right;
+    }
+  }
+  #audio-settings {
+    border-top: #434d5a 1px solid;
+    padding-top: 17px;
+    clear: both;
+  }
 }
 
+#enter-name-prompt {
+  margin-top: 20px;
+  float: right;
+  border-bottom: #788492 1px solid;
+  width: 221.5px;
+  #name-heading {
+    font-size: 30px;
+    margin: 0 0 26px;
+  }
+  input {
+    background: none;
+    border: none;
+    width: 140px;
+    color: white;
+  }
+  input:focus {
+    outline: none !important;
+    border: none;
+    background: none;
+  }
+  span {
+    color: #b6bfc8;
+    font-size: 12px;
+    color: #b6bfc8;
+  }
+}
 .feedback-report .tc-dialog {
   max-width: none;
 

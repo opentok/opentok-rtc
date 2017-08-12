@@ -554,7 +554,8 @@
   function showCallSettingsPrompt(roomName, username) {
     var selector = '.user-name-modal';
     function loadModalText() {
-      document.querySelector(selector + ' header .room-name').textContent = roomName;
+      document.querySelector(selector + ' button .room-name').textContent = roomName;
+
       if (username) {
         document.getElementById('enter-name-prompt').style.display = 'none';
         var userNameInputElement= document.getElementById('user-name-input');
@@ -708,7 +709,7 @@
     roomName = aParams.roomName;
     userName = aParams.username ? aParams.username.substring(0, 1000) : '';
 
-    // This kinda sucks, but it's the easiest way to leave the 'context' thing work as it does now
+    // This is the easiest way to leave the 'context' thing work as it does now
     otHelper = new exports.OTHelper(aParams);
     exports.otHelper = otHelper;
 

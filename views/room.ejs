@@ -23,7 +23,7 @@
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/<%=chromeExtensionId%>">
     <link rel="stylesheet" href="https://assets.tokbox.com/solutions/css/style.css">
     <link rel="stylesheet" href="/css/annotation.opentok.css">
-    <link rel="stylesheet" href="css/checkboxes.css" />
+    <link rel="stylesheet" href="/css/checkboxes.css" />
 
     <script>
       window.isWebRTCVersion=<%=isWebRTCVersion%>
@@ -241,27 +241,51 @@
 
     <section class="tc-modal user-name-modal">
       <form class="tc-dialog">
-        <header>
-          <span>Welcome to</span> <span class="room-name"></span>
-        </header>
-        <p id="enter-name-prompt">Please enter your name to join this conversation.</p>
-        <input id="user-name-input" class="block username" placeholder="Enter your name">
+        <div id="video-preview"></div>
         <div class="publish-settings">
-          <div>
+          <div id="video-settings">
+            <img src="/images/icons/video-icon.svg" />
+            <span>Video</span>
             <a id="initialVideoSwitch" class="activated">
-              <span>Video</span><i data-icon="videoSwitch"></i>
+              <i data-icon="videoSwitch"></i>
             </a>
           </div>
-          <div>
-            <a id="initialAudioSwitch" class="activated">
-              <span>Audio</span><i data-icon="audioSwitch"></i>
+          <div id="audio-settings">
+            <img src="/images/icons/mic-icon.svg" />
+            <span>Audio</span>
+            <svg style="height:5px; width:89px">
+              <style>
+                rect {
+                  fill: #505050;
+                  height: 5px;
+                  width: 89px;
+                }
+                #audioMeterLevel {
+                  fill: #10a9dc;
+                }
+              </style>
+              <rect id="audioMeterBackground">
+              </rect>
+              <rect id="audioMeterLevel"></rect> 
+            </svg>
+                        <a id="initialAudioSwitch" class="activated">
+              <i data-icon="audioSwitch"></i>
             </a>
           </div>
         </div>
         <footer>
-          <button id="enter" class="btn btn-blue btn-padding-large ctaarrow-white">Join Meeting</button>
+          <button id="enter" class="btn btn-blue btn-padding-large">
+            Join “<span class="room-name"></span>”
+          </button>
         </footer>
       </form>
+      <div id="enter-name-prompt">
+        <p id="name-heading">Team Check-in</p>
+        <div>
+          <input id="user-name-input" class="block username" placeholder="Your Name">
+          <span>Optional</span>
+        </div>
+      </div>
     </section>
 
     <section class="tc-modal feedback-report">

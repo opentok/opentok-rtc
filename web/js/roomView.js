@@ -201,6 +201,12 @@
     var title = dock.querySelector('.info h1');
     title.style.height = title.clientHeight + 'px';
   }
+  
+  var setVolumeMeterLevel = function(level) {
+    var meterLevel = document.getElementById('audioMeterLevel');
+    var meterWidth = document.getElementById('audioMeterBackground');
+    meterLevel.style.width = (level * 89) + 'px';
+  }
 
   var publishSettings = document.querySelector('.publish-settings');
 
@@ -468,6 +474,7 @@
 
   exports.RoomView = {
     init: init,
+    setVolumeMeterLevel: setVolumeMeterLevel,
 
     set roomName(value) {
       HTMLElems.addText(roomNameElem, value);
