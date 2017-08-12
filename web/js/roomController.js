@@ -556,6 +556,27 @@
     function loadModalText() {
       document.querySelector(selector + ' button .room-name').textContent = roomName;
 
+      otHelper = new exports.OTHelper({});
+      exports.otHelper = otHelper;
+
+      otHelper.initPublisher('video-preview',
+        {width:'100%', height:'100%', insertMode: 'append', showControls: false}
+      ).then(function(publisher) {
+        var movingAvg = null;
+        publisher.on('audioLevelUpdated', function(event) {
+          if (movingAvg === null || movingAvg <= event.audioLevel) {
+            movingAvg = event.audioLevel;
+          } else {
+            movingAvg = 0.8 * movingAvg + 0.2 * event.audioLevel;
+          }
+
+          // 1.5 scaling to map the -30 - 0 dBm range to [0,1]
+          var logLevel = (Math.log(movingAvg) / Math.LN10) / 1.5 + 1;
+          logLevel = Math.min(Math.max(logLevel, 0), 1);
+          RoomView.setVolumeMeterLevel(logLevel)
+        });
+      })
+
       if (username) {
         document.getElementById('enter-name-prompt').style.display = 'none';
         var userNameInputElement= document.getElementById('user-name-input');
@@ -597,7 +618,7 @@
     return referrerURL;
   }
 
-  function getRoomParams() {
+  function getRoomParams(aParams) {
     if (!exports.RoomController) {
       throw new Error('Room Controller is not defined. Missing script tag?');
     }
@@ -709,11 +730,13 @@
     roomName = aParams.roomName;
     userName = aParams.username ? aParams.username.substring(0, 1000) : '';
 
-    // This is the easiest way to leave the 'context' thing work as it does now
-    otHelper = new exports.OTHelper(aParams);
-    exports.otHelper = otHelper;
+    var sessionInfo = {
+      apiKey: aParams.apiKey,
+      sessionId: aParams.sessionId,
+      token: aParams.token,
+    }
 
-    var connect = otHelper.connect.bind(otHelper);
+    var connect = otHelper.connect.bind(otHelper, sessionInfo);
 
       // Room's name is set by server, we don't need to do this, but
       // perphaps it would be convenient
