@@ -443,6 +443,7 @@ body {
 .user-name-modal .tc-dialog {
   float: right;
   margin-right: 41px;
+  margin-top: 46px;
   padding: 20px;
   @media @smartphones {
     max-width: none;
@@ -486,6 +487,7 @@ body {
     font-size: 16px;
     height: 50px;
     line-height: 50px;
+    border-radius: 4px;
   }
   .publish-settings {
     margin-bottom: 20px;
@@ -497,8 +499,11 @@ body {
   #video-preview {
     width: 360px;
     height: 264px;
-    border-radius: 10px;
     background-color: #222;
+    border-radius: 12px;
+    .OT_publisher .OT_widget-container {
+      border-radius: 12px;
+    }
   }
   #video-settings, #audio-settings {
     img {
@@ -520,7 +525,7 @@ body {
 }
 
 #enter-name-prompt {
-  margin-top: 20px;
+  margin-top: 46px;
   float: right;
   border-bottom: #788492 1px solid;
   width: 221.5px;

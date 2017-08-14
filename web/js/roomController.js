@@ -14,6 +14,8 @@
   var enableHangoutScroll = false;
   var enableArchiveManager = false;
 
+  var previewPublisher;
+
   var setPublisherReady;
   var publisherReady = new Promise(function(resolve, reject) {
     setPublisherReady = resolve;
@@ -351,6 +353,15 @@
     }
   };
 
+  var videoPreviewEventHandlers = {
+    initialAudioSwitch: function(evt) {
+      previewPublisher.publishAudio(evt.detail.status)
+    },
+    initialVideoSwitch: function(evt) {
+      previewPublisher.publishVideo(evt.detail.status)
+    }
+  }
+
   var setAudioStatus = function(switchStatus) {
     otHelper.isPublisherReady && viewEventHandlers.buttonClick({
       detail: {
@@ -562,6 +573,9 @@
       otHelper.initPublisher('video-preview',
         {width:'100%', height:'100%', insertMode: 'append', showControls: false}
       ).then(function(publisher) {
+        previewPublisher = publisher;
+        console.log(previewPublisher)
+        Utils.addEventsHandlers('roomView:', videoPreviewEventHandlers, exports);
         var movingAvg = null;
         publisher.on('audioLevelUpdated', function(event) {
           if (movingAvg === null || movingAvg <= event.audioLevel) {
@@ -586,10 +600,10 @@
     }
     return Modal.show(selector, loadModalText).then(function() {
       return new Promise(function(resolve, reject) {
-        var enterButton = document.querySelector(selector + ' button');
-        enterButton.addEventListener('click', function onClicked(event) {
+        document.querySelector('.user-name-modal #enter').disabled = false;
+        document.querySelector('.user-name-modal .tc-dialog').addEventListener('submit',
+          function(event) {
           event.preventDefault();
-          enterButton.removeEventListener('click', onClicked);
           return Modal.hide(selector)
             .then(function() {
               publisherOptions.publishAudio = publisherButtons.audio.enabled =
@@ -698,9 +712,6 @@
       EndCallController.init({ addEventListener: function() {} }, 'NOT_AVAILABLE');
     })
     .then(getRoomParams)
-    .then(function(aParams) {
-      return Promise.resolve(aParams);
-    })
     .then(getRoomInfo)
     .then(function(aParams) {
       var loadAnnotations = Promise.resolve();
