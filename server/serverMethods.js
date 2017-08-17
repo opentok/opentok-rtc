@@ -20,6 +20,7 @@ var plivo = require('plivo');
 var sipUsername;
 var sipUri;
 var sipPassword;
+var dialedNumbers = [];
 
 function ServerMethods(aLogLevel, aModules) {
   aModules = aModules || {};
@@ -615,14 +616,18 @@ function ServerMethods(aLogLevel, aModules) {
   function postRoomDial(aReq, aRes) {
     var tbConfig = aReq.tbConfig;
     var roomName = aReq.params.roomName.toLowerCase();
-    logger.log('roomName: ', roomName);
     var tbConfig = aReq.tbConfig;
     var body = aReq.body;
-    logger.log('postRoomDial: ', aReq.body);
     if (!body || !body.phoneNumber) {
       logger.log('postRoomDial => missing body parameter: ', aReq.body);
       aRes.status(400).send(new ErrorInfo(100, 'Missing required parameter'));
       return;
+    }
+    var phoneNumber = body.phoneNumber;
+    if (dialedNumbers.indexOf(phoneNumber) > -1) {
+      return;
+    } else {
+      dialedNumbers.push(phoneNumber);
     }
     var otInstance = tbConfig.otInstance;
 
@@ -630,17 +635,15 @@ function ServerMethods(aLogLevel, aModules) {
       .getKey(redisRoomPrefix + roomName)
       .then((sessionInfo) => {
         const sessionId = JSON.parse(sessionInfo).sessionId;
-        var phoneNumber = body.phoneNumber;
-        phoneNumber = '14153784248';
-        logger.log('phoneNumber', phoneNumber);
-        logger.log('sessionId', sessionId);
         const token = tbConfig.otInstance.generateToken(sessionId, {
           role: 'publisher',
           data: '{"sip":true, "role":"client", "name":"' + phoneNumber + '"}'
         });
         var options = {
+          // Plivo accepts custom headers that start with 'X-PH'
           headers: {
-            'X-FOO': 'BAR'
+            'X-PH-ROOMNAME': roomName,
+            'X-PH-DIALOUT-NUMBER': phoneNumber
           },
           auth: {
             username: sipUsername,
@@ -649,29 +652,30 @@ function ServerMethods(aLogLevel, aModules) {
           secure: true
         }
         const sipCall = tbConfig.otInstance.dial_P(sessionId, token, sipUri, options)
-          .then(function(sipCallData) {
-            logger.log('sipCall: ', sipCallData);
-          new Promise((resolve, reject) => {
-              var r = plivo.Response();
-              var fromNumber = '14155550123';
-              console.log('SIP Call from:', from_number, 'to:', phoneNumber);
-              var params = {
-                  'callerId' : fromNumber
-              }
-              var d = r.addDial(params);
-              console.log ("r.toXML(): ", r.toXML());
-              d.addNumber(forwarding_number)
-                .then(() => {
-                  aRes.send(sipCallData);
-                  resolve(r.toXML());
-                })
-                .catch(() => {
-                  aRes.status(400).send(new ErrorInfo(400, 'An error ocurred while forwarding SIP Call'));
-                  reject({ error: 'An error ocurred while forwarding SIP Call' });
-                });      
-         });
-       });
+          .then((sipCallData) => {
+            aRes.send(sipCallData);
+          })
+          .catch((error) => {
+            aRes.status(400).send(new ErrorInfo(400, 'An error ocurred while forwarding SIP Call'));
+          });
      });
+  }
+
+  // /forward
+  // Returns Plivo call-forwarding XML:
+  // { callStatus, callUUId, fromPhone }
+  function getForward(aReq, aRes) {
+    var plivoResponse = plivo.Response();
+    var fromNumber = '14155550123';
+    var phoneNumber = aReq.query['X-PH-DIALOUT-NUMBER'];
+    logger.log('SIP Call from:', fromNumber, 'to:', phoneNumber);
+    var params = {
+        'callerId' : fromNumber
+    }
+    plivoResponse.addDial(params)
+      .addNumber(phoneNumber)
+    console.log ("d.toXML(): ", plivoResponse.toXML());
+    aRes.send(plivoResponse.toXML());
   }
 
   function loadConfig() {
@@ -703,11 +707,12 @@ function ServerMethods(aLogLevel, aModules) {
     getRoom,
     getRoomInfo,
     postRoomArchive,
-    postRoomDial,
     postUpdateArchiveInfo,
     getArchive,
     deleteArchive,
     getRoomArchive,
+    postRoomDial,
+    getForward,
     oldVersionCompat,
   };
 }
