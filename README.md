@@ -19,9 +19,10 @@ This repository contains a Node.js server and a web client application.
   - [OpenTok configuration](#opentok-configuration)
   - [Firebase configuration](#firebase-configuration)
   - [Screen sharing](#screen-sharing)
+  - [Phone dial-out](#phone-dial-out)
   - [Web client configuration](#web-client-configuration)
   - [Additional configuration options](#additional-configuration-options)
-- [Customizing UI](#customizing-ui)
+- [Customizing the UI](#customizing-the-ui)
 - [Troubleshooting](#troubleshooting)
 
 ---
@@ -243,6 +244,55 @@ For more information and how to use your extension in production see the documen
 [opentok/screensharing-extensions](https://github.com/opentok/screensharing-extensions/blob/master/chrome/ScreenSharing/README.md#customizing-the-extension-for-your-website)
 repo on GitHub.
 
+### Phone dial-out
+
+The app can dial out and add a phone-based end user to the OpenTok session, using the OpenTok
+[SIP API](https://tokbox.com/developer/rest/#sip_call). This app uses
+[Plivo](https://www.plivo.com/) as the SIP application that connects
+to OpenTok. (You can also use the OpenTok SIP API to connect to other SIP endpoints.)
+
+To enable this feature:
+
+1. Sign up for a [Plivo](https://www.plivo.com/) account.
+
+2. Create a new Plivo [application](https://manage.plivo.com/app/). Make the following application
+   settings:
+
+   * *Application Name* -- Specify a unique identifying name. (This will only be used by your
+     server code.)
+
+   * *Answer URL* -- Add the public address for the /forward endpoint of your OpenTok demo server.
+     This is the webhook callback URL that Plivo calls when a call starts. (In response, the OpenTok
+     Demo server responds with XML that includes the phone number to dial. You must run OpenTok
+     Demo on a publicly available URL -- you cannot test the dial-out code using localhost.
+
+   * *Answer Method* -- Set this to GET.
+
+4. Create a new Plivo [endpoint](https://manage.plivo.com/endpoint/). Assign it a username and
+   password, and assign the endpoint to the Plivo application you created.
+
+3. Edit config/config.json file in this application, and add the following properties:
+
+  * `sipUri` -- Set this to a URL of the following form
+     
+         sip:your-endpoint-username@phone.plivo.com
+
+     Replace `your-endpoint-username` with the username for the Plivo endpoint you created.
+     See https://manage.plivo.com/endpoint/.
+
+  * `sipUsername` -- Set this to the username for the Plivo endpoint you created.
+
+  * `sipPassword` -- Set this to the password for the Plivo app you created.
+
+  For example, the new lines in the config.json file should look like this:
+
+       "sipUri" : "sip:yourapp145617992434@phone.plivo.com",
+       "sipUsername" : "yourapp145617992434@phone.plivo.com",
+       "sipPassword" : "sip:yourpassword",
+
+You can also add these settings as `SIP_URL`, `SIP_USERNAME`, and `SIP_PASSWORD` environment
+variables (instead of config.json settings).
+
 ### Web client configuration
 
 Web client allows to be configured in some of its features. You can enable or disable using their `enabled` field in JSON or `ENABLE_<FEATURE>` environment variable.
@@ -302,6 +352,10 @@ sharing](tokbox.com/developer/guides/screen-sharing/).
  },
  ```
 
+ #### SIP connection
+
+  See the [Phone dial-out](#phone-dial-out) section.
+
 ### Additional configuration options
 
 * `ALLOW_IFRAMING` (Optional, default value: 'never'): Controls the server-side restriction on
@@ -315,9 +369,9 @@ sharing](tokbox.com/developer/guides/screen-sharing/).
    - 'sameorigin': Set X-Frame-Options to 'SAMEORIGIN' (Only allow iframe content to be loaded
      from pages in the same origin)
 
-   We don't allow restricting iframe loading to specific URIs because it doesn't work on Chrome
+   We don't allow restricting iframe loading to specific URIs because it doesn't work on Chrome.
 
-## Customizing UI
+## Customizing the UI
 
 For information on how to customize OpenTokRTC's UI, see [CUSTOMIZING-UI.md](CUSTOMIZING-UI.md).
 
@@ -345,7 +399,7 @@ $ bower install
 $ grunt clientBuild
 ```
 
-We recommend that you run the application as a non-root user. Howerver, if you are running the application as the `root` user, you will additionally need to tell `bower` to allow root user to install dependencies, else bower will refuse to work:
+We recommend that you run the application as a non-root user. However, if you are running the application as the `root` user, you will additionally need to tell `bower` to allow root user to install dependencies, else bower will refuse to work:
 
 ```
 $ bower install --allow-root
