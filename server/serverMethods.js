@@ -15,7 +15,11 @@ var SwaggerBP = require('swagger-boilerplate');
 var C = require('./serverConstants');
 var configLoader = require('./configLoader');
 var FirebaseArchives = require('./firebaseArchives');
+var plivo = require('plivo');
 
+var sipUsername;
+var sipUri;
+var sipPassword;
 
 function ServerMethods(aLogLevel, aModules) {
   aModules = aModules || {};
@@ -89,6 +93,7 @@ function ServerMethods(aLogLevel, aModules) {
       var templatingSecret = config.get(C.TEMPLATING_SECRET);
       var apiKey = config.get(C.OPENTOK_API_KEY);
       var apiSecret = config.get(C.OPENTOK_API_SECRET);
+      logger.log('apiSecret', apiSecret);
       var archivePollingTO = config.get(C.ARCHIVE_POLLING_INITIAL_TIMEOUT);
       var archivePollingTOMultiplier =
                 config.get(C.ARCHIVE_POLLING_TIMEOUT_MULTIPLIER);
@@ -100,12 +105,16 @@ function ServerMethods(aLogLevel, aModules) {
       var iosAppId = config.get(C.IOS_APP_ID);
       var iosUrlPrefix = config.get(C.IOS_URL_PREFIX);
 
+      sipUri = config.get(C.SIP_URI);
+      sipUsername = config.get(C.SIP_USERNAME);
+      sipPassword = config.get(C.SIP_PASSWORD);
+  
       // This isn't strictly necessary... but since we're using promises all over the place, it
       // makes sense. The _P are just a promisified version of the methods. We could have
       // overwritten the original methods but this way we make it explicit. That's also why we're
       // breaking camelCase here, to make it patent to the reader that those aren't standard
       // methods of the API.
-      ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'deleteArchive']
+      ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'deleteArchive', 'dial']
               .forEach(method => otInstance[method + '_P'] = promisify(otInstance[method])); // eslint-disable-line no-return-assign
 
       var maxSessionAge = config.get(C.OPENTOK_MAX_SESSION_AGE);
@@ -600,6 +609,71 @@ function ServerMethods(aLogLevel, aModules) {
       });
   }
 
+  // /room/:roomName/dial
+  // Returns DialInfo:
+  // { number: string, status: string }
+  function postRoomDial(aReq, aRes) {
+    var tbConfig = aReq.tbConfig;
+    var roomName = aReq.params.roomName.toLowerCase();
+    logger.log('roomName: ', roomName);
+    var tbConfig = aReq.tbConfig;
+    var body = aReq.body;
+    logger.log('postRoomDial: ', aReq.body);
+    if (!body || !body.phoneNumber) {
+      logger.log('postRoomDial => missing body parameter: ', aReq.body);
+      aRes.status(400).send(new ErrorInfo(100, 'Missing required parameter'));
+      return;
+    }
+    var otInstance = tbConfig.otInstance;
+
+    serverPersistence
+      .getKey(redisRoomPrefix + roomName)
+      .then((sessionInfo) => {
+        const sessionId = JSON.parse(sessionInfo).sessionId;
+        var phoneNumber = body.phoneNumber;
+        phoneNumber = '14153784248';
+        logger.log('phoneNumber', phoneNumber);
+        logger.log('sessionId', sessionId);
+        const token = tbConfig.otInstance.generateToken(sessionId, {
+          role: 'publisher',
+          data: '{"sip":true, "role":"client", "name":"' + phoneNumber + '"}'
+        });
+        var options = {
+          headers: {
+            'X-FOO': 'BAR'
+          },
+          auth: {
+            username: sipUsername,
+            password: sipPassword
+          },
+          secure: true
+        }
+        const sipCall = tbConfig.otInstance.dial_P(sessionId, token, sipUri, options)
+          .then(function(sipCallData) {
+            logger.log('sipCall: ', sipCallData);
+          new Promise((resolve, reject) => {
+              var r = plivo.Response();
+              var fromNumber = '14155550123';
+              console.log('SIP Call from:', from_number, 'to:', phoneNumber);
+              var params = {
+                  'callerId' : fromNumber
+              }
+              var d = r.addDial(params);
+              console.log ("r.toXML(): ", r.toXML());
+              d.addNumber(forwarding_number)
+                .then(() => {
+                  aRes.send(sipCallData);
+                  resolve(r.toXML());
+                })
+                .catch(() => {
+                  aRes.status(400).send(new ErrorInfo(400, 'An error ocurred while forwarding SIP Call'));
+                  reject({ error: 'An error ocurred while forwarding SIP Call' });
+                });      
+         });
+       });
+     });
+  }
+
   function loadConfig() {
     tbConfigPromise = _initialTBConfig();
     return tbConfigPromise;
@@ -629,6 +703,7 @@ function ServerMethods(aLogLevel, aModules) {
     getRoom,
     getRoomInfo,
     postRoomArchive,
+    postRoomDial,
     postUpdateArchiveInfo,
     getArchive,
     deleteArchive,

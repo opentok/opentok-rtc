@@ -85,3 +85,9 @@ E.IOS_APP_ID = { envVar: 'IOS_APP_ID', jsonPath: 'IOSAppId' };
 E.IOS_URL_PREFIX = { envVar: 'IOS_URL_PREFIX', jsonPath: 'IOSUrlPrefix', defaultValue: '' };
 
 E.DEFAULT_INDEX_PAGE = { envVar: 'DEFAULT_INDEX_PAGE', jsonPath: 'defaultPageIndex', defaultValue: undefined };
+
+E.SIP_URI = { envVar: 'SIP_URI', jsonPath: 'sipUri', defaultValue: '' };
+
+E.SIP_USERNAME = { envVar: 'SIP_USERNAME', jsonPath: 'sipUsername', defaultValue: '' };
+
+E.SIP_PASSWORD = { envVar: 'SIP_PASSWORD', jsonPath: 'sipPassword', defaultValue: '' };

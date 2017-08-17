@@ -204,6 +204,18 @@
       });
   };
 
+  var dialOut = function(phoneNumber) {
+    var data = {
+      phoneNumber: phoneNumber
+    };
+    debug.log('dialOut', data);
+
+    Request.dialOut(roomName, data)
+      .then(function(response) {
+        debug.log('dialOut', response);
+      });
+  };
+
   var roomStatusHandlers = {
     updatedRemotely: function(evt) {
       publisherReady.then(function() {
@@ -349,6 +361,13 @@
       _sharedStatus.roomMuted = roomMuted;
       setAudioStatus(roomMuted);
       sendSignalMuteAll(roomMuted, false);
+    },
+    dialOut: function(evt) {
+      if (evt.detail.phoneNumber) {
+        var phoneNumber = evt.detail.phoneNumber.replace(/\D/g, '');
+        console.log('dialing out to', phoneNumber);
+        dialOut(phoneNumber);
+      }
     }
   };
 

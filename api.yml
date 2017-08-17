@@ -199,6 +199,37 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/ErrorInfo'
+  '/room/{roomName}/dial':
+    post:
+      summary: Starts a SIP dial-out call
+      x-implemented-in: postRoomDial
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      description: Starts dialing a phone via a SIP gatway.
+      tags:
+        - Dial
+      parameters:
+        - name: roomName
+          in: path
+          description: Name of the room.
+          required: true
+          type: string
+        - name: number
+          in: body
+          description: The phone number to dial.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Information about the SIP call
+          schema:
+            $ref: '#/definitions/DialInfo'
+        '400':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/ErrorInfo'
   '/archive/{archiveId}':
     get:
       summary: Gets and returns a temporary archive URL.
@@ -290,6 +321,15 @@ definitions:
         type: string
   ArchiveURL:
     type: string
+  DialInfo:
+    type: object
+    properties:
+      id:
+        type: string
+      connectionId:
+        type: string
+      streamId:
+        type: string
   ErrorInfo:
     type: object
     properties:
