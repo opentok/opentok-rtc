@@ -273,22 +273,24 @@ To enable this feature:
 
 3. Edit config/config.json file in this application, and add the following properties:
 
-  * `sipUri` -- Set this to a URL of the following form
+  * `SIP.uri` -- Set this to a URL of the following form
      
-         sip:your-endpoint-username@phone.plivo.com
+         "sip:your-endpoint-username@phone.plivo.com"
 
      Replace `your-endpoint-username` with the username for the Plivo endpoint you created.
      See https://manage.plivo.com/endpoint/.
 
-  * `sipUsername` -- Set this to the username for the Plivo endpoint you created.
+  * `SIP.username` -- Set this to the username for the Plivo endpoint you created.
 
-  * `sipPassword` -- Set this to the password for the Plivo app you created.
+  * `SIP.password` -- Set this to the password for the Plivo app you created.
 
   For example, the new lines in the config.json file should look like this:
 
-       "sipUri" : "sip:yourapp145617992434@phone.plivo.com",
-       "sipUsername" : "yourapp145617992434@phone.plivo.com",
-       "sipPassword" : "sip:yourpassword",
+       "SIP": {
+         "sipUri" : "sip:yourapp145617992434@phone.plivo.com",
+         "sipUsername" : "yourapp145617992434@phone.plivo.com",
+         "sipPassword" : "sip:yourpassword"
+       }
 
 You can also add these settings as `SIP_URL`, `SIP_USERNAME`, and `SIP_PASSWORD` environment
 variables (instead of config.json settings).
