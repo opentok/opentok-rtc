@@ -263,10 +263,18 @@ To enable this feature:
 
    * *Answer URL* -- Add the public address for the /forward endpoint of your OpenTok demo server.
      This is the webhook callback URL that Plivo calls when a call starts. (In response, the OpenTok
-     Demo server responds with XML that includes the phone number to dial. You must run OpenTok
-     Demo on a publicly available URL -- you cannot test the dial-out code using localhost.
+     Demo server responds with XML that includes the phone number to dial.) You must run OpenTok
+     Demo on a publicly available URL -- you cannot test the dial-out code using localhost. For
+     example, set this URL to `https://yourappdomain.com/forward`.
 
    * *Answer Method* -- Set this to GET.
+
+   * *Hangup URL* -- Add the public address for the /hang-up endpoint of your OpenTok demo server.
+     This is the webhook callback URL that Plivo calls when a call ends. You must run OpenTok
+     Demo on a publicly available URL -- you cannot test the dial-out code using localhost. For
+     example, set this URL to `https://yourappdomain.com/hang-up`.
+
+   * *Hangup Method* -- Set this to GET.
 
 4. Create a new Plivo [endpoint](https://manage.plivo.com/endpoint/). Assign it a username and
    password, and assign the endpoint to the Plivo application you created.
