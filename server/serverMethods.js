@@ -319,6 +319,7 @@ function ServerMethods(aLogLevel, aModules) {
         enableScreensharing: tbConfig.enableScreensharing,
         enableAnnotation: tbConfig.enableAnnotation,
         enableFeedback: tbConfig.enableFeedback,
+        hasSip: Boolean(sipUri),
       }, (err, html) => {
         if (err) {
           logger.log('getRoom. error:', err);

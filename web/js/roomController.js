@@ -220,7 +220,7 @@
     var data = {
       phoneNumber: phoneNumber
     };
-    Request.dialOut(roomName, data));
+    Request.dialOut(roomName, data);
   };
 
   var roomStatusHandlers = {

@@ -334,7 +334,8 @@
           BubbleFactory.get('addToCall').toggle();
           break;
         case 'dialOut':
-          BubbleFactory.get('dialOut').toggle();
+          BubbleFactory.get('dialOut').show();
+          document.getElementById('dialOutNumber').focus();
           break;
         case 'viewRecordings':
           BubbleFactory.get('viewRecordings').toggle();
@@ -381,14 +382,15 @@
             setSwitchStatus(false, true, audioSwitch, 'roomView:muteAllSwitch');
           }
       }
+    });
 
-      var dialOutBtn = document.getElementById('dialOutBtn');
-      dialOutBtn.addEventListener('click', function() {
-        Utils.sendEvent('roomView:dialOut', {
-          phoneNumber: document.getElementById('dialOutNumber').value
-        });
-        BubbleFactory.get('dialOut').hide();
+    var dialOutBtn = document.getElementById('dialOutBtn');
+    dialOutBtn.addEventListener('click', function(event) {
+      event.preventDefault();
+      Utils.sendEvent('roomView:dialOut', {
+        phoneNumber: document.getElementById('dialOutNumber').value
       });
+      BubbleFactory.get('dialOut').hide();
     });
 
     exports.addEventListener('archiving', function(e) {
