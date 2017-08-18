@@ -77,7 +77,6 @@
   }
 
   function dialOut(roomName, data) {
-    console.log('data', data)
     return sendXHR('POST', server + '/room/' + roomName + '/dial',
                     JSON.stringify(data), 'application/json');
   }

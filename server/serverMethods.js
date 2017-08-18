@@ -667,16 +667,21 @@ function ServerMethods(aLogLevel, aModules) {
   // { callStatus, callUUId, fromPhone }
   function getForward(aReq, aRes) {
     var plivoResponse = plivo.Response();
-    var fromNumber = '14155550123';
     var phoneNumber = aReq.query['X-PH-DIALOUT-NUMBER'];
-    logger.log('SIP Call from:', fromNumber, 'to:', phoneNumber);
-    var params = {
-        'callerId' : fromNumber
-    }
-    plivoResponse.addDial(params)
+    logger.log('SIP Call to:', phoneNumber, String(phoneNumber));
+    plivoResponse.addDial()
       .addNumber(phoneNumber)
     console.log ("d.toXML(): ", plivoResponse.toXML());
     aRes.send(plivoResponse.toXML());
+  }
+
+  // /hang-up
+  // Indicates a phone call on the SIP gateway has ended
+  function getHangUp(aReq, aRes) {
+    var phoneNumber = aReq.query['X-PH-DIALOUT-NUMBER'];
+    if (dialedNumbers.indexOf(phoneNumber) > -1) {
+      dialedNumbers.splice(dialedNumbers.indexOf(phoneNumber), 1);
+    }
   }
 
   function loadConfig() {
@@ -714,6 +719,7 @@ function ServerMethods(aLogLevel, aModules) {
     getRoomArchive,
     postRoomDial,
     getForward,
+    getHangUp,
     oldVersionCompat,
   };
 }
