@@ -364,7 +364,7 @@
     },
     retest: function(evt) {
       RoomView.startPrecallTestMeter();
-      otNetworkTest.startNetworkTest(previewPublisher, previewOptions, function(error, result) {
+      otNetworkTest.startNetworkTest(function(error, result) {
         if (error) {
           console.error('Network Test error', error);
         } else {
