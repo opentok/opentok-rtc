@@ -592,8 +592,8 @@
           token: window.testToken
         };
         RoomView.startPrecallTestMeter();
-        otNetworkTest = new OTNetworkTest();
-        otNetworkTest.startNetworkTest(previewPublisher, previewOptions, function(error, result) {
+        otNetworkTest = new OTNetworkTest(previewPublisher, previewOptions);
+        otNetworkTest.startNetworkTest(function(error, result) {
           RoomView.displayNetworkTestResults(result);
         });
         Utils.addEventsHandlers('roomView:', videoPreviewEventHandlers, exports);

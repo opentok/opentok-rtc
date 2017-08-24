@@ -1,12 +1,12 @@
 /* OpenTok network test - see https://github.com/opentok/opentok-network-test */
 
-var OTNetworkTest = function() {
+var OTNetworkTest = function(publisher, options) {
   var TEST_TIMEOUT_MS = 15000; // 15 seconds
 
   var subscriberEl = document.createElement('div');
 
   var session;
-  var publisher;
+  var publisher = publisher;
   var subscriber;
 
   testStreamingCapability = function(subscriber, callback) {
@@ -14,7 +14,7 @@ var OTNetworkTest = function() {
       // If we tried to set video constraints, but no video data was found
       if (!results.video) {
         var audioSupported = results.audio.bitsPerSecond > 25000 &&
-            results.audio.packetLossRatioPerSecond < 0.05;
+            results.audio.packetLossRatio < 0.05;
 
         if (audioSupported) {
           return callback(false, {
@@ -36,9 +36,9 @@ var OTNetworkTest = function() {
       }
 
       var audioVideoSupported = results.video.bitsPerSecond > 250000 &&
-        results.video.packetLossRatioPerSecond < 0.03 &&
+        results.video.packetLossRatio < 0.03 &&
         results.audio.bitsPerSecond > 25000 &&
-        results.audio.packetLossRatioPerSecond < 0.05;
+        results.audio.packetLossRatio < 0.05;
 
       if (audioVideoSupported) {
         return callback(false, {
@@ -49,7 +49,7 @@ var OTNetworkTest = function() {
         });
       }
 
-      if (results.audio.packetLossRatioPerSecond < 0.05) {
+      if (results.audio.packetLossRatio > 0.05) {
         return callback(false, {
           text: 'Your bandwidth can support audio only',
           icon: 'precall-warning',
@@ -63,7 +63,7 @@ var OTNetworkTest = function() {
 
       performQualityTest({subscriber: subscriber, timeout: 5000}, function(error, results) {
         var audioSupported = results.audio.bitsPerSecond > 25000 &&
-            results.audio.packetLossRatioPerSecond < 0.05;
+            results.audio.packetLossRatio < 0.05;
 
         if (audioSupported) {
           return callback(false, {
@@ -84,7 +84,7 @@ var OTNetworkTest = function() {
     });
   };
 
-  this.startNetworkTest = function(publisher, options, callback) {
+  this.startNetworkTest = function(callback) {
     var callbacks = {
       onInitPublisher: function onInitPublisher(error) {
         if (error) {
@@ -204,7 +204,7 @@ var OTNetworkTest = function() {
         bitsPerSecond: (sum(pluck(statsBuffer, type), 'bytesReceived') * 8) / seconds,
         packetsLostPerSecond: sum(pluck(statsBuffer, type), 'packetsLost') / seconds
       };
-      stats[type].packetLossRatioPerSecond = (
+      stats[type].packetLossRatio = (
         stats[type].packetsLostPerSecond / stats[type].packetsPerSecond
       );
     });
