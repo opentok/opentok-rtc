@@ -231,9 +231,9 @@
     document.getElementById('pre-call-description').innerText = results.text;
     document.getElementById('precall-icon').setAttribute('data-icon', results.icon);
     document.getElementById('precall-audio-packet-loss').innerText =
-      Math.round(results.audio.packetLossRatio) + '% packet loss';
+      Math.round(100 * results.audio.packetLossRatio) + '% packet loss';
     document.getElementById('precall-video-packet-loss').innerText =
-      Math.round(results.video.packetLossRatio) + '% packet loss';
+      Math.round(100 * results.video.packetLossRatio) + '% packet loss';
   }
 
   var publishSettings = document.querySelector('.publish-settings');
