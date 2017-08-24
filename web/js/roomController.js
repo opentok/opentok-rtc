@@ -8,6 +8,7 @@
     new Utils.MultiLevelLogger('roomController.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
 
   var otHelper;
+  var otNetworkTest;
   var numUsrsInRoom = 0;
   var _disabledAllVideos = false;
   var enableAnnotations = true;
@@ -15,6 +16,7 @@
   var enableArchiveManager = false;
 
   var previewPublisher;
+  var previewOptions;
 
   var setPublisherReady;
   var publisherReady = new Promise(function(resolve, reject) {
@@ -359,6 +361,16 @@
     },
     initialVideoSwitch: function(evt) {
       previewPublisher.publishVideo(evt.detail.status)
+    },
+    retest: function(evt) {
+      RoomView.startPrecallTestMeter();
+      otNetworkTest.startNetworkTest(previewPublisher, previewOptions, function(error, result) {
+        if (error) {
+          console.error('Network Test error', error);
+        } else {
+          RoomView.displayNetworkTestResults(result);
+        }
+      });
     }
   }
 
@@ -574,7 +586,16 @@
         {width:'100%', height:'100%', insertMode: 'append', showControls: false}
       ).then(function(publisher) {
         previewPublisher = publisher;
-        console.log(previewPublisher)
+        previewOptions = {
+          apiKey: window.apiKey,
+          sessionId: window.testSessionId,
+          token: window.testToken
+        };
+        RoomView.startPrecallTestMeter();
+        otNetworkTest = new OTNetworkTest();
+        otNetworkTest.startNetworkTest(previewPublisher, previewOptions, function(error, result) {
+          RoomView.displayNetworkTestResults(result);
+        });
         Utils.addEventsHandlers('roomView:', videoPreviewEventHandlers, exports);
         var movingAvg = null;
         publisher.on('audioLevelUpdated', function(event) {
@@ -587,7 +608,7 @@
           // 1.5 scaling to map the -30 - 0 dBm range to [0,1]
           var logLevel = (Math.log(movingAvg) / Math.LN10) / 1.5 + 1;
           logLevel = Math.min(Math.max(logLevel, 0), 1);
-          RoomView.setVolumeMeterLevel(logLevel)
+          RoomView.setVolumeMeterLevel(logLevel);
         });
       })
 
@@ -703,7 +724,8 @@
     '/js/endCallController.js',
     '/js/layoutMenuController.js',
     '/js/screenShareController.js',
-    '/js/feedbackController.js'
+    '/js/feedbackController.js',
+    '/js/vendor/opentok-network-test.js',
   ];
 
   var init = function() {

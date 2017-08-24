@@ -287,35 +287,45 @@ function ServerMethods(aLogLevel, aModules) {
       (tbConfig.templatingSecret === query.template_auth) && query.template;
     var userName = query && query.userName;
 
-    // We really don't want to cache this
-    aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
-    aRes.set('Pragma', 'no-cache');
-    aRes.set('Expires', 0);
-    aRes
-      .render((template || tbConfig.defaultTemplate) + '.ejs',
-      {
-        isWebRTCVersion: tbConfig.isWebRTCVersion,
-        userName: userName || C.DEFAULT_USER_NAME,
-        roomName: aReq.params.roomName,
-        chromeExtensionId: tbConfig.chromeExtId,
-        iosAppId: tbConfig.iosAppId,
-               // iosUrlPrefix should have something like:
-               // https://opentokdemo.tokbox.com/room/
-               // or whatever other thing that should be before the roomName
-        iosURL: tbConfig.iosUrlPrefix + aReq.params.roomName + '?userName=' +
-                       (userName || C.DEFAULT_USER_NAME),
-        enableArchiving: tbConfig.enableArchiving,
-        enableArchiveManager: tbConfig.enableArchiveManager,
-        enableScreensharing: tbConfig.enableScreensharing,
-        enableAnnotation: tbConfig.enableAnnotation,
-        enableFeedback: tbConfig.enableFeedback,
-      }, (err, html) => {
-        if (err) {
-          logger.log('getRoom. error:', err);
-          aRes.status(400).send(new ErrorInfo(400, 'Unknown template.'));
-        } else {
-          aRes.send(html);
-        }
+    // Create a session ID and token for the network test
+    tbConfig.otInstance.createSession({ mediaMode: 'routed' }, (error, testSession) => {
+
+        // We really don't want to cache this
+        aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+        aRes.set('Pragma', 'no-cache');
+        aRes.set('Expires', 0);
+        aRes
+          .render((template || tbConfig.defaultTemplate) + '.ejs',
+          {
+            isWebRTCVersion: tbConfig.isWebRTCVersion,
+            userName: userName || C.DEFAULT_USER_NAME,
+            roomName: aReq.params.roomName,
+            chromeExtensionId: tbConfig.chromeExtId,
+            iosAppId: tbConfig.iosAppId,
+                   // iosUrlPrefix should have something like:
+                   // https://opentokdemo.tokbox.com/room/
+                   // or whatever other thing that should be before the roomName
+            iosURL: tbConfig.iosUrlPrefix + aReq.params.roomName + '?userName=' +
+                           (userName || C.DEFAULT_USER_NAME),
+            enableArchiving: tbConfig.enableArchiving,
+            enableArchiveManager: tbConfig.enableArchiveManager,
+            enableScreensharing: tbConfig.enableScreensharing,
+            enableAnnotation: tbConfig.enableAnnotation,
+            enableFeedback: tbConfig.enableFeedback,
+            testSessionId: testSession.sessionId,
+            apiKey: tbConfig.apiKey,
+            testToken: tbConfig.otInstance
+                    .generateToken(testSession.sessionId, {
+                      role: 'publisher',
+                    }),
+          }, (err, html) => {
+            if (err) {
+              logger.log('getRoom. error:', err);
+              aRes.status(400).send(new ErrorInfo(400, 'Unknown template.'));
+            } else {
+              aRes.send(html);
+            }
+          });
       });
   }
 

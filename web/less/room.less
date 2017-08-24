@@ -517,18 +517,110 @@ body {
       float: right;
     }
   }
-  #audio-settings {
+  #audio-settings, #pre-call-test {
     border-top: #434d5a 1px solid;
     padding-top: 17px;
     clear: both;
   }
+  #pre-call-test {
+    span {
+      margin-right: 10px;
+    }
+  }
 }
 
-#enter-name-prompt {
+#precall-dialogs {
   margin-top: 46px;
   float: right;
-  border-bottom: #788492 1px solid;
   width: 221.5px;
+}
+
+#pre-call-test-results {
+  position: absolute;
+  display: none;
+  top: 42px;
+  width: 233px;
+  height: 420.4px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0px 0px 4px 4px black;
+  color: #494747;
+  font-size: 14px;
+  margin: 0 0 26px;
+  font-size: 14px;
+  padding: 35px;
+  p {
+    font-size: 14px;
+  }
+  #precall-close {
+    width: 19.1px;
+    height: 19.4px;
+    position: absolute;
+    right: 24px;
+    top: 24px;
+    cursor: pointer;
+  }
+  #precall-icon {
+    width: 46.6px;
+    height: 46.6px;
+    margin-top: 39.4px;
+  }
+  #pre-call-heading {
+    font-size: 16px;
+    color: #3fbe36;
+  }
+  #pre-call-description {
+    color: #414141;
+    padding-bottom: 21px;
+    border-bottom: gray solid 1px;
+  }
+  .media-heading {
+    font-size: 10px;
+    font-weight: 600;
+  }
+  #video-bitrate, #audio-bitrate {
+    font-size: 30px;
+    margin: 0;
+    font-weight: 600;
+    letter-spacing: -0.6px;
+    color: #494747;
+  }
+  .precall-media-results {
+    width: 50%;
+    position: absolute;
+  }
+  #precall-video-results {
+    left: 0;
+  }
+  #precall-audio-results {
+    right: 0;
+  }
+  .bitrate {
+    font-size: 10px;
+    color: #9b9b9b;
+  }
+  #precall-resolution, #precall-audio-packet-loss {
+    margin-top: 4px;
+    margin-bottom: 0;
+  }
+  #precall-framerate, #precall-video-packet-loss {
+    margin: 0;
+  }
+  #retest {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    left: 0;
+    box-shadow: inset 0 2px 2px 0 rgba(0, 0, 0, 0.2);
+    height: 47px;
+    padding-top: 28px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+  }
+}
+#enter-name-prompt {
+  border-bottom: #788492 1px solid;
   #name-heading {
     font-size: 30px;
     margin: 0 0 26px;

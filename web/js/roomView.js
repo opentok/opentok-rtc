@@ -208,6 +208,34 @@
     meterLevel.style.width = (level * 89) + 'px';
   }
 
+  var startPrecallTestMeter = function() {
+    var meterLevel = document.getElementById('precallTestMeterLevel');
+    var meterWidth = document.getElementById('precallTestMeterBackground');
+    meterLevel.style.width = 0;
+    var preCallTestProgress = 0;
+    var testMeterInterval = setInterval(function() {
+      preCallTestProgress++;
+      meterLevel.style.width = (preCallTestProgress * 89 / 15) + 'px';
+      if (preCallTestProgress === 15) {
+        clearInterval(testMeterInterval);
+      }
+    }, 1000)
+  }
+  
+  var displayNetworkTestResults = function(results) {
+    document.getElementById('pre-call-test-results').style.display = 'block';
+    document.getElementById('audio-bitrate').innerText =
+      Math.round(results.audio.bitsPerSecond / 1000);
+    document.getElementById('video-bitrate').innerText =
+      Math.round(results.video.bitsPerSecond / 1000);
+    document.getElementById('pre-call-description').innerText = results.text;
+    document.getElementById('precall-icon').setAttribute('data-icon', results.icon);
+    document.getElementById('precall-audio-packet-loss').innerText =
+      Math.round(results.audio.packetLossRatioPerSecond) + '% packet loss';
+    document.getElementById('precall-video-packet-loss').innerText =
+      Math.round(results.video.packetLossRatioPerSecond) + '% packet loss';
+  }
+
   var publishSettings = document.querySelector('.publish-settings');
 
   publishSettings.addEventListener('click', function(e) {
@@ -235,6 +263,22 @@
           setSwitchStatus(false, true, initialVideoSwitch, 'roomView:initialVideoSwitch');
         }
         break;
+    }
+  });
+
+  var preCallTestResults = document.getElementById('pre-call-test-results');
+
+  preCallTestResults.addEventListener('click', function(e) {
+    var elem = e.target;
+    switch (elem.id) {
+      case 'precall-close':
+        preCallTestResults.style.display = 'none';
+        break;
+      case 'retest':
+        preCallTestResults.style.display = 'none';
+        Utils.sendEvent('roomView:retest');
+        break;
+        
     }
   });
 
@@ -475,6 +519,8 @@
   exports.RoomView = {
     init: init,
     setVolumeMeterLevel: setVolumeMeterLevel,
+    startPrecallTestMeter: startPrecallTestMeter,
+    displayNetworkTestResults: displayNetworkTestResults,
 
     set roomName(value) {
       HTMLElems.addText(roomNameElem, value);
