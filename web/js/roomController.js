@@ -714,6 +714,7 @@
     '/js/components/htmlElems.js',
     '/js/helpers/resolutionAlgorithms.js',
     '/js/helpers/OTHelper.js',
+    '/js/helpers/opentok-network-test.js',
     '/js/itemsHandler.js',
     '/js/layoutView.js',
     '/js/layouts.js',
@@ -726,7 +727,6 @@
     '/js/layoutMenuController.js',
     '/js/screenShareController.js',
     '/js/feedbackController.js',
-    '/js/helpers/opentok-network-test.js',
   ];
 
   var init = function() {
