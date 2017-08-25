@@ -85,6 +85,7 @@ var OTNetworkTest = function(publisher, options) {
   };
 
   this.startNetworkTest = function(callback) {
+    publisher.publishVideo(true);
     var callbacks = {
       onInitPublisher: function onInitPublisher(error) {
         if (error) {

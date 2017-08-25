@@ -726,7 +726,7 @@
     '/js/layoutMenuController.js',
     '/js/screenShareController.js',
     '/js/feedbackController.js',
-    '/js/vendor/opentok-network-test.js',
+    '/js/helpers/opentok-network-test.js',
   ];
 
   var init = function() {
