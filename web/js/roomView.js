@@ -223,17 +223,41 @@
   }
   
   var displayNetworkTestResults = function(results) {
+    var packetLossStr;
     document.getElementById('pre-call-test-results').style.display = 'block';
     document.getElementById('audio-bitrate').innerText =
       Math.round(results.audio.bitsPerSecond / 1000);
-    document.getElementById('video-bitrate').innerText =
-      Math.round(results.video.bitsPerSecond / 1000);
+    if (results.video && results.text !== 'Your bandwidth can support audio only.') {
+      document.getElementById('video-bitrate').innerText =
+        Math.round(results.video.bitsPerSecond / 1000);
+        packetLossStr = isNaN(results.video.packetLossRatio) ? '' :
+          Math.round(100 * results.video.packetLossRatio) + '% packet loss';
+      document.getElementById('precall-video-packet-loss').innerText = packetLossStr;
+      document.getElementById('precall-audio-results').style.width = '50%';
+      document.getElementById('precall-audio-results').style.right = '0';
+      document.getElementById('precall-video-results').style.display = 'block';
+    } else {
+      document.getElementById('precall-audio-results').style.width = '100%';
+      document.getElementById('precall-audio-results').style['text-align'] = 'center';
+      document.getElementById('precall-video-results').style.display = 'none';
+    }
+    var precallHeading = document.getElementById('pre-call-heading');
+    switch(results.icon) {
+      case 'precall-tick':
+        precallHeading.style.color = '#3fbe36';
+        break;
+      case 'precall-warning':
+        precallHeading.style.color = '#ffcc33';
+        break;
+      case 'precall-error':
+        precallHeading.style.color = '#ff0000';
+        break;
+    }
     document.getElementById('pre-call-description').innerText = results.text;
     document.getElementById('precall-icon').setAttribute('data-icon', results.icon);
-    document.getElementById('precall-audio-packet-loss').innerText =
+    packetLossStr = isNaN(results.audio.packetLossRatio) ? '' :
       Math.round(100 * results.audio.packetLossRatio) + '% packet loss';
-    document.getElementById('precall-video-packet-loss').innerText =
-      Math.round(100 * results.video.packetLossRatio) + '% packet loss';
+    document.getElementById('precall-audio-packet-loss').innerText = packetLossStr;
   }
 
   var publishSettings = document.querySelector('.publish-settings');

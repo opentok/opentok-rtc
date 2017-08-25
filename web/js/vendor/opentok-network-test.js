@@ -51,7 +51,7 @@ var OTNetworkTest = function(publisher, options) {
 
       if (results.audio.packetLossRatio > 0.05) {
         return callback(false, {
-          text: 'Your bandwidth can support audio only',
+          text: 'Your bandwidth can support audio only.',
           icon: 'precall-warning',
           audio: results.audio,
           video: results.video
@@ -67,7 +67,7 @@ var OTNetworkTest = function(publisher, options) {
 
         if (audioSupported) {
           return callback(false, {
-            text: 'Your bandwidth can support audio only',
+            text: 'Your bandwidth can support audio only.',
             icon: 'precall-warning',
             audio: results.audio,
             video: results.video
@@ -75,7 +75,7 @@ var OTNetworkTest = function(publisher, options) {
         }
 
         return callback(false, {
-          text: 'Your bandwidth is too low for audio',
+          text: 'Your bandwidth is too low for video or audio.',
           icon: 'precall-error',
           audio: results.audio,
           video: results.video
@@ -88,7 +88,7 @@ var OTNetworkTest = function(publisher, options) {
     var callbacks = {
       onInitPublisher: function onInitPublisher(error) {
         if (error) {
-          console.error('Could not acquire your camera', error);
+          console.error('Could not acquire your camera and microphone.', error);
           return;
         }
 
@@ -97,7 +97,7 @@ var OTNetworkTest = function(publisher, options) {
       onPublish: function onPublish(error) {
         if (error) {
           // handle publishing errors here
-          console.error('Could not publish video', error);
+          console.error('Could not publish video.', error);
           return;
         }
 
@@ -118,7 +118,7 @@ var OTNetworkTest = function(publisher, options) {
 
       onSubscribe: function onSubscribe(error, subscriber) {
         if (error) {
-          console.error('Could not subscribe to video', error);
+          console.error('Could not subscribe to video.', error);
           return;
         }
 
@@ -130,7 +130,7 @@ var OTNetworkTest = function(publisher, options) {
 
       onConnect: function onConnect(error) {
         if (error) {
-          console.error('Could not connect to OpenTok', error);
+          console.error('Could not connect to OpenTok.', error);
         }
         session.publish(publisher, callbacks.onPublish);
       }

@@ -588,6 +588,7 @@
         previewPublisher = publisher;
         previewOptions = {
           apiKey: window.apiKey,
+          resolution: '1280x720',
           sessionId: window.testSessionId,
           token: window.testToken
         };
