@@ -531,6 +531,11 @@
       }
     });
   };
+  
+  var setRoomName = function(roomName) {
+    document.querySelector('.user-name-modal button .room-name').textContent = 'Join ' + roomName;
+    document.getElementById('name-heading').textContent = roomName;
+  }
 
   var init = function(enableHangoutScroll, aEnableArchiveManager) {
     enableArchiveManager = aEnableArchiveManager;
@@ -564,6 +569,7 @@
     createStreamView: createStreamView,
     deleteStreamView: deleteStreamView,
     setAudioSwitchRemotely: setAudioSwitchRemotely,
-    showConfirmChangeMicStatus: showConfirmChangeMicStatus
+    showConfirmChangeMicStatus: showConfirmChangeMicStatus,
+    setRoomName: setRoomName
   };
 }(this));

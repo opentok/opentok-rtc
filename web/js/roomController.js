@@ -577,7 +577,7 @@
   function showCallSettingsPrompt(roomName, username) {
     var selector = '.user-name-modal';
     function loadModalText() {
-      document.querySelector(selector + ' button .room-name').textContent = roomName;
+      RoomView.setRoomName(roomName);
 
       otHelper = new exports.OTHelper({});
       exports.otHelper = otHelper;
