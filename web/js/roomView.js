@@ -305,6 +305,11 @@
         
     }
   });
+  
+  var hidePrecall = function() {
+    document.getElementById('video-preview').style.visibility = 'hidden';
+    document.getElementById('dock').style.visibility = 'visible';
+  }
 
   function createStreamView(streamId, type, controlBtns, name) {
     return LayoutManager.append(streamId, type, controlBtns, name);
@@ -540,6 +545,7 @@
   var init = function(enableHangoutScroll, aEnableArchiveManager) {
     enableArchiveManager = aEnableArchiveManager;
     initHTMLElements();
+    dock.style.visibility = 'visible';
     addHandlers();
     addClipboardFeature();
     LayoutManager.init('.streams', enableHangoutScroll);
@@ -550,6 +556,7 @@
     setVolumeMeterLevel: setVolumeMeterLevel,
     startPrecallTestMeter: startPrecallTestMeter,
     displayNetworkTestResults: displayNetworkTestResults,
+    hidePrecall: hidePrecall,
 
     set roomName(value) {
       HTMLElems.addText(roomNameElem, value);

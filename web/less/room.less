@@ -82,6 +82,7 @@ body {
     min-height: 0px;
   }
   background-color: #F9F9F9;
+  visibility: hidden;
 
   transition: width @transitionTime;
 
@@ -439,7 +440,15 @@ body {
   background-size: cover;
   transition: none;
   padding: 0;
+  #logo {
+    position: absolute;
+    top: 40px;
+    left: 20px;
+    width: 135px;
+    height: 37px;
+  }
 }
+
 .user-name-modal .tc-dialog {
   float: right;
   margin-right: 41px;

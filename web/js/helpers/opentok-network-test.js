@@ -12,6 +12,7 @@
     var session;
     var publisher = publisher;
     var subscriber;
+    var bandwidthCalculator;
 
     var testStreamingCapability = function(subscriber, callback) {
       performQualityTest({subscriber: subscriber, timeout: TEST_TIMEOUT_MS}, function(error, results) {
@@ -169,6 +170,12 @@
       session = OT.initSession(options.apiKey, options.sessionId);
       session.connect(options.token, callbacks.onConnect);
     };
+    
+    this.stopTest = function() {
+      bandwidthCalculator.stop();
+      session.disconnect();
+      publisher.destroy();
+    }
 
     // Helpers
 
@@ -325,7 +332,7 @@
       var testTimeout;
       var currentStats;
 
-      var bandwidthCalculator = bandwidthCalculatorObj({
+      bandwidthCalculator = bandwidthCalculatorObj({
         subscriber: config.subscriber
       });
 

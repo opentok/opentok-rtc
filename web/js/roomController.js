@@ -626,6 +626,8 @@
         document.querySelector('.user-name-modal .tc-dialog').addEventListener('submit',
           function(event) {
           event.preventDefault();
+          RoomView.hidePrecall();
+          otNetworkTest.stopTest();
           return Modal.hide(selector)
             .then(function() {
               publisherOptions.publishAudio = publisherButtons.audio.enabled =
