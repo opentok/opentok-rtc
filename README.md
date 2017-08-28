@@ -281,7 +281,9 @@ To enable this feature:
 
 3. Edit config/config.json file in this application, and add the following properties:
 
-  * `SIP.uri` -- Set this to a URL of the following form
+  * `SIP.enabled` -- Set this to `true`.
+
+  * `SIP.uri` -- Set this to a URL of the following form:
      
          "sip:your-endpoint-username@phone.plivo.com"
 

@@ -86,6 +86,8 @@ E.IOS_URL_PREFIX = { envVar: 'IOS_URL_PREFIX', jsonPath: 'IOSUrlPrefix', default
 
 E.DEFAULT_INDEX_PAGE = { envVar: 'DEFAULT_INDEX_PAGE', jsonPath: 'defaultPageIndex', defaultValue: undefined };
 
+E.SIP_ENABLED = { envVar: 'SIP_ENABLED', jsonPath: 'SIP.enabled', defaultValue: false };
+
 E.SIP_URI = { envVar: 'SIP_URI', jsonPath: 'SIP.uri', defaultValue: '' };
 
 E.SIP_USERNAME = { envVar: 'SIP_USERNAME', jsonPath: 'SIP.username', defaultValue: '' };

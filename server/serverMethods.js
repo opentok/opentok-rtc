@@ -17,10 +17,7 @@ var configLoader = require('./configLoader');
 var FirebaseArchives = require('./firebaseArchives');
 var plivo = require('plivo');
 
-var sipUsername;
-var sipUri;
-var sipPassword;
-var dialedNumbers = [];
+var dialedNumbersInfo = {}; // Maps dialed SIP numbers to OpenTok session IDs and connection IDs
 
 function ServerMethods(aLogLevel, aModules) {
   aModules = aModules || {};
@@ -106,9 +103,10 @@ function ServerMethods(aLogLevel, aModules) {
       var iosAppId = config.get(C.IOS_APP_ID);
       var iosUrlPrefix = config.get(C.IOS_URL_PREFIX);
 
-      sipUri = config.get(C.SIP_URI);
-      sipUsername = config.get(C.SIP_USERNAME);
-      sipPassword = config.get(C.SIP_PASSWORD);
+      var enableSip = config.get(C.SIP_ENABLED);
+      var sipUri = config.get(C.SIP_URI);
+      var sipUsername = config.get(C.SIP_USERNAME);
+      var sipPassword = config.get(C.SIP_PASSWORD);
   
       // This isn't strictly necessary... but since we're using promises all over the place, it
       // makes sense. The _P are just a promisified version of the methods. We could have
@@ -170,6 +168,10 @@ function ServerMethods(aLogLevel, aModules) {
                 enableScreensharing,
                 enableAnnotations,
                 enableFeedback,
+                enableSip,
+                sipUri,
+                sipUsername,
+                sipPassword,
               }));
     });
   }
@@ -319,7 +321,7 @@ function ServerMethods(aLogLevel, aModules) {
         enableScreensharing: tbConfig.enableScreensharing,
         enableAnnotation: tbConfig.enableAnnotation,
         enableFeedback: tbConfig.enableFeedback,
-        hasSip: Boolean(sipUri),
+        hasSip: tbConfig.enableSip,
       }, (err, html) => {
         if (err) {
           logger.log('getRoom. error:', err);
@@ -625,10 +627,8 @@ function ServerMethods(aLogLevel, aModules) {
       return;
     }
     var phoneNumber = body.phoneNumber;
-    if (dialedNumbers.indexOf(phoneNumber) > -1) {
+    if (dialedNumbersInfo[phoneNumber]) {
       return;
-    } else {
-      dialedNumbers.push(phoneNumber);
     }
     var otInstance = tbConfig.otInstance;
 
@@ -647,16 +647,20 @@ function ServerMethods(aLogLevel, aModules) {
             'X-PH-DIALOUT-NUMBER': phoneNumber
           },
           auth: {
-            username: sipUsername,
-            password: sipPassword
+            username: tbConfig.sipUsername,
+            password: tbConfig.sipPassword
           },
           secure: true
         }
-        const sipCall = tbConfig.otInstance.dial_P(sessionId, token, sipUri, options)
+        const sipCall = tbConfig.otInstance.dial_P(sessionId, token, tbConfig.sipUri, options)
           .then((sipCallData) => {
+            dialedNumbersInfo[phoneNumber] = {}
+            dialedNumbersInfo[phoneNumber].sessionId = sipCallData.sessionId;
+            dialedNumbersInfo[phoneNumber].connectionId = sipCallData.connectionId;
             aRes.send(sipCallData);
           })
           .catch((error) => {
+            logger.log('postRoomDial error', error)
             aRes.status(400).send(new ErrorInfo(400, 'An error ocurred while forwarding SIP Call'));
           });
      });
@@ -668,10 +672,8 @@ function ServerMethods(aLogLevel, aModules) {
   function getForward(aReq, aRes) {
     var plivoResponse = plivo.Response();
     var phoneNumber = aReq.query['X-PH-DIALOUT-NUMBER'];
-    logger.log('SIP Call to:', phoneNumber, String(phoneNumber));
     plivoResponse.addDial()
       .addNumber(phoneNumber)
-    console.log ("d.toXML(): ", plivoResponse.toXML());
     aRes.send(plivoResponse.toXML());
   }
 
@@ -679,9 +681,13 @@ function ServerMethods(aLogLevel, aModules) {
   // Indicates a phone call on the SIP gateway has ended
   function getHangUp(aReq, aRes) {
     var phoneNumber = aReq.query['X-PH-DIALOUT-NUMBER'];
-    if (dialedNumbers.indexOf(phoneNumber) > -1) {
-      dialedNumbers.splice(dialedNumbers.indexOf(phoneNumber), 1);
+    var tbConfig = aReq.tbConfig;
+    logger.log('getHangUp', aReq.query, dialedNumbersInfo)
+    if (dialedNumbersInfo[phoneNumber]) {
+      tbConfig.otInstance.forceDisconnect(dialedNumbersInfo[phoneNumber].sessionId,
+        dialedNumbersInfo[phoneNumber].connectionId, function() {});
     }
+    delete dialedNumbersInfo[phoneNumber];
   }
 
   function loadConfig() {
