@@ -187,7 +187,7 @@
         </div>
         <div>
           <button id="addToCall">
-            Invite
+            <i data-icon="add"></i>
           </button>
           <p>Invite</p>
         </div>
@@ -199,7 +199,7 @@
         </div>
         <div>
           <button id="annotate">
-            Annotate
+            <i data-icon="annotate"></i>
           </button>
           <p>Annotate</p>
         </div>
@@ -241,14 +241,6 @@
     </section>
 
     <section class="bubbles">
-
-      <section for="addToCall" class="bubble">
-        <div class="bubble-content">
-          <p class="title">Meeting link has been copied <span class="check-mark">&#10003;</span></p>
-          <p>Share link to add others to the meeting</p>
-          <input class="block" onclick="this.select();">
-        </div>
-      </section>
 
       <section for="viewRecordings" class="bubble" data-recordings="loading">
         <div class="bubble-content">
@@ -363,6 +355,21 @@
           <button class="btn btn-blue btn-padding ctaarrow-white delete-archive">Delete</button>
         </footer>
       </form>
+    </section>
+
+    <section class="tc-modal add-to-call-modal">
+      <div class="tc-dialog">
+        <p class="title">Meeting link has been copied <span class="check-mark">&#10003;</span></p>
+        <p>Share link to add others to the meeting</p>
+        <input class="block" readonly id="current-url" onclick="this.select();">
+        <form id="dialOutForm">
+          <p class="title">Dial out</p>
+          <p>Enter the phone number:</p>
+          <input id="dialOutNumber" class="block" onclick="this.select();" 
+            placeholder="1-415-555-0123">
+          <button id="dialOutBtn" class="btn btn-blue btn-padding ctaarrow-white">Dial</button>
+        </form>
+      </div>
     </section>
 
     <section id="switchAlerts" class="tc-modal switch-alert-modal">

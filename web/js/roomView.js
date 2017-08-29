@@ -328,7 +328,7 @@
       elem = HTMLElems.getAncestorByTagName(elem, 'button');
       switch (elem.id) {
         case 'addToCall':
-          BubbleFactory.get('addToCall').toggle();
+          Utils.sendEvent('roomView:addToCall');
           break;
         case 'toggle-publisher-video':
           Utils.sendEvent('roomView:togglePublisherVideo');
@@ -432,7 +432,7 @@
   };
 
   var addClipboardFeature = function() {
-    var input = document.querySelector('.bubble[for="addToCall"] input');
+    var input = document.getElementById('current-url');
     var urlToShare = getURLtoShare();
     input.value = urlToShare;
     var clipboard = new Clipboard(document.querySelector('#addToCall'), { // eslint-disable-line no-unused-vars
