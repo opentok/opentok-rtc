@@ -394,7 +394,7 @@ body {
   }
 }
 
-.top-banner {
+#top-banner {
   height: 98px;
   object-fit: contain;
   background-color: #293840;
@@ -418,6 +418,11 @@ body {
     height: 100%;
     padding-left: 30px;
     .room-info {
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 0.5;
+      letter-spacing: 1.1px;
+      color: #7a8b93;
       .room-name {
         font-size: 22px;
       }
@@ -433,6 +438,8 @@ body {
 
 .call-controls {
   position: absolute;
+  display: table;
+  table-layout: fixed;
   bottom: 0;
   right: 0;
   left: 0;
@@ -444,19 +451,32 @@ body {
   background-repeat: no-repeat;
   padding: 0 40px;
   div {
-    width: 14.28%;
-    margin-top: 10px;
-    float: left;
+    display: table-cell;
+    padding-top: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    color: #c0c0c0;
     button {
       background-image: url('/images/icons/inactive-circle.svg');
       width: 54.2px;
       height: 54.2px;
+      vertical-align: top;
       background-color: transparent;
       border: none;
       cursor: pointer;
+      color: white;
+      i {
+        vertical-align: middle;
+      }
     }
-    button#hang-up {
+    button#endCall {
       background-image: url('/images/icons/red-circle.svg');
+    }
+    p {
+      margin-top: 10px;
+      margin-bottom: 0;
+      line-height: 0;
     }
   }
 }

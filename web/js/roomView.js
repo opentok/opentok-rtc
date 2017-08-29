@@ -3,6 +3,7 @@
 
   // HTML elements for the view
   var dock;
+  var banner;
   var handler;
   var roomNameElem;
   var participantsNumberElem;
@@ -182,10 +183,11 @@
 
   function initHTMLElements() {
     dock = document.getElementById('dock');
+    banner = document.getElementById('top-banner');
     handler = dock.querySelector('#handler');
 
     roomNameElem = dock.querySelector('#roomName');
-    participantsNumberElem = dock.querySelectorAll('.participants');
+    participantsNumberElem = banner.querySelectorAll('.participants');
     participantsStrElem = dock.querySelector('.participantsStr');
     recordingsNumberElem = dock.querySelector('#recordings');
     videoSwitch = dock.querySelector('#videoSwitch');
@@ -319,6 +321,35 @@
       dock.data('previouslyCollapsed', null);
     });
 
+    var controls = document.querySelector('.call-controls');
+
+    controls.addEventListener('click', function(e) {
+      var elem = e.target;
+      elem = HTMLElems.getAncestorByTagName(elem, 'button');
+      switch (elem.id) {
+        case 'addToCall':
+          BubbleFactory.get('addToCall').toggle();
+          break;
+        case 'toggle-publisher-video':
+          Utils.sendEvent('roomView:togglePublisherVideo');
+          break;
+        case 'toggle-publisher-audio':
+          Utils.sendEvent('roomView:togglePublisherAudio');
+          break;
+        case 'toggleChat':
+          setChatStatus(true);
+          break;
+        case 'endCall':
+          showConfirm(MODAL_TXTS.endCall).then(function(endCall) {
+            if (endCall) {
+              RoomView.participantsNumber = 0;
+              Utils.sendEvent('roomView:endCall');
+            }
+          });
+          break;
+      };
+    });
+
     var menu = document.querySelector('.menu ul');
 
     menu.addEventListener('click', function(e) {
@@ -330,9 +361,6 @@
         return;
       }
       switch (elem.id) {
-        case 'addToCall':
-          BubbleFactory.get('addToCall').toggle();
-          break;
         case 'viewRecordings':
           BubbleFactory.get('viewRecordings').toggle();
           break;
@@ -342,18 +370,6 @@
         case 'startArchiving':
         case 'stopArchiving':
           Utils.sendEvent('roomView:' + elem.id);
-          break;
-        case 'startChat':
-        case 'stopChat':
-          setChatStatus(elem.id === 'startChat');
-          break;
-        case 'endCall':
-          showConfirm(MODAL_TXTS.endCall).then(function(endCall) {
-            if (endCall) {
-              RoomView.participantsNumber = 0;
-              Utils.sendEvent('roomView:endCall');
-            }
-          });
           break;
         case 'startSharingDesktop':
         case 'stopSharingDesktop':

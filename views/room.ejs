@@ -82,7 +82,7 @@
         <div class="tc-list">
           <ul>
             <li>
-              <a id="addToCall"><i data-icon="add"></i><span>Add participants</span></a>
+              <a id="addToCallOld"><i data-icon="add"></i><span>Add participants</span></a>
             </li>
             <% if(!isWebRTCVersion) { %>
             <% if(enableArchiving) { %>
@@ -147,14 +147,14 @@
       <% } %>
     </section>
 
-    <div class="top-banner">
+    <div id="top-banner">
       <div class="icon-container">
         <i data-icon="tokbox_logo"></i>
       </div>
       <div class="center-container">
         <div class="room-info">
           <p class="room-name">Team Check-in</p>
-          <i data-icon="participants"></i> / 3
+          <i data-icon="participants"></i><span class="participants">3<span>
         </div>
       </div>
       <div class="right-container">
@@ -168,37 +168,46 @@
       </div>
       <div class="call-controls">
         <div>
-          <button id="hang-up">
+          <button id="endCall">
             <i data-icon="end_call"></i>
           </button>
+          <p>Leave Call</p>
         </div>
         <div>
           <button id="toggle-publisher-video">
-            <i data-icon="video_icon"></i>
+            <i data-icon="video_icon" data-event-name="roomView:buttonClick" data-action="video" data-stream-id="publisher" data-stream-type="publisher"></i>
           </button>
+          <p>Your Video</p>
         </div>
         <div>
           <button id="toggle-publisher-audio">
             <i data-icon="mic"></i>
           </button>
+          <p>Your Mic</p>
         </div>
         <div>
-          <button id="invite">
+          <button id="addToCall">
+            Invite
           </button>
+          <p>Invite</p>
         </div>
         <div>
           <button id="screen-share">
             <i data-icon="screenshare"></i>
           </button>
+          <p>Share Screen</p>
         </div>
         <div>
           <button id="annotate">
+            Annotate
           </button>
+          <p>Annotate</p>
         </div>
         <div>
-          <button id="message">
+          <button id="toggleChat">
             <i data-icon="message"></i>
           </button>
+          <p>Message</p>
         <div>
       </div>
     </section>
