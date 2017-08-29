@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="55" height="68" viewBox="0 0 55 68">
+    <defs>
+        <path id="a" d="M0 6.411h6.157V.255H0z"/>
+        <path id="c" d="M6.113 6.061V.297H.35v5.764z"/>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <path stroke="#FFF" stroke-linejoin="round" stroke-width="2" d="M17 36.928h19.244"/>
+        <g transform="translate(17 28.492)">
+            <mask id="b" fill="#fff">
+                <use xlink:href="#a"/>
+            </mask>
+            <path fill="#FFF" d="M.011 5.886a.428.428 0 0 0 .514.514l5.528-1.296a.432.432 0 0 0 .104-.04L1.347.255a.422.422 0 0 0-.04.104L.012 5.886z" mask="url(#b)"/>
+        </g>
+        <path fill="#FFF" d="M35.082 21.657l.605-.604-4.836-4.836-.604.604zM23.775 32.965L34.478 22.26l-4.836-4.835-10.703 10.703z"/>
+        <g transform="translate(31.105 14.387)">
+            <mask id="d" fill="#fff">
+                <use xlink:href="#c"/>
+            </mask>
+            <path fill="#FFF" d="M5.186 6.061l.303-.302a2.139 2.139 0 0 0 0-3.022L3.675.923A2.124 2.124 0 0 0 2.164.297C1.593.297 1.057.52.653.923l-.303.302 4.836 4.836z" mask="url(#d)"/>
+        </g>
+        <text fill="#C0C0C0" font-family="OpenSans-Semibold, Open Sans" font-size="11" font-weight="500" transform="translate(-11 1)">
+            <tspan x="13.339" y="66">Annotate</tspan>
+        </text>
+        <g stroke="#10A9DC" stroke-width="2" transform="translate(1 1)">
+            <ellipse cx="26.107" cy="26.097" rx="26.107" ry="26.097"/>
+        </g>
+    </g>
+</svg>

@@ -394,6 +394,77 @@ body {
   }
 }
 
+.top-banner {
+  height: 98px;
+  object-fit: contain;
+  background-color: #293840;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  .icon-container {
+    float: left;
+    width: 269px;
+    height: 100%;
+    text-align: center;
+    border-right: 1px solid #455b66;
+    i {
+      margin-top: 31px;
+    }
+  }
+  .center-container {
+    float: left;
+    height: 100%;
+    padding-left: 30px;
+    .room-info {
+      .room-name {
+        font-size: 22px;
+      }
+    }
+  }
+  .right-container {
+    float: right;
+    width: 114px;
+    height: 100%;
+    border-left: 1px solid #455b66;
+  }
+}
+
+.call-controls {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  height: 86px;
+  width: 520px;
+  margin: auto;
+  z-index: 1001;
+  background-image: url(/images/call-controls-bg.svg);
+  background-repeat: no-repeat;
+  padding: 0 40px;
+  div {
+    width: 14.28%;
+    margin-top: 10px;
+    float: left;
+    button {
+      background-image: url('/images/icons/inactive-circle.svg');
+      width: 54.2px;
+      height: 54.2px;
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+    }
+    button#hang-up {
+      background-image: url('/images/icons/red-circle.svg');
+    }
+  }
+}
+
+#dock {
+  display: none;
+}
+
 [data-desktop-status="sharing"] {
   #dock .menu {
     #startSharingDesktop {
