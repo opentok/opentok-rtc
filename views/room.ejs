@@ -84,11 +84,6 @@
             <li>
               <a id="addToCall"><i data-icon="add"></i><span>Add participants</span></a>
             </li>
-            <% if(hasSip) { %>
-            <li>
-              <a id="dialOut" disabled><i data-icon="add"></i><span>Dial out</span></a>
-            </li>
-            <% } %>
             <% if(!isWebRTCVersion) { %>
             <% if(enableArchiving) { %>
             <li id="toggleArchiving" disabled>
@@ -195,17 +190,14 @@
           <p class="title">Meeting link has been copied <span class="check-mark">&#10003;</span></p>
           <p>Share link to add others to the meeting</p>
           <input class="block" onclick="this.select();">
-        </div>
-      </section>
-
-      <section for="dialOut" class="bubble">
-        <div class="bubble-content">
+          <% if(hasSip) { %>
           <form id="dialOutForm">
             <p class="title">Dial out</p>
             <p>Enter the phone number:</p>
             <input id="dialOutNumber" class="block" onclick="this.select();" placeholder="1-415-555-0123">
             <button id="dialOutBtn" class="btn btn-blue btn-padding ctaarrow-white">Dial</button>
           </form>
+          <% } %>
         </div>
       </section>
 

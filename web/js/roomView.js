@@ -390,7 +390,7 @@
       Utils.sendEvent('roomView:dialOut', {
         phoneNumber: document.getElementById('dialOutNumber').value
       });
-      BubbleFactory.get('dialOut').hide();
+      BubbleFactory.get('addToCall').hide();
     });
 
     exports.addEventListener('archiving', function(e) {
