@@ -208,6 +208,11 @@
     LayoutManager.remove(id);
   }
 
+  function deleteVideoButton(id) {
+    document.querySelector('li[data-id="' + id + '"] .controls .buttons .video-action')
+      .style.display = 'none'
+  }
+
   function setSwitchStatus(status, bubbleUp, domElem, evtName) {
     var oldStatus = domElem.classList.contains('activated');
     var newStatus;
@@ -454,6 +459,7 @@
 
     createStreamView: createStreamView,
     deleteStreamView: deleteStreamView,
+    deleteVideoButton: deleteVideoButton,
     setAudioSwitchRemotely: setAudioSwitchRemotely,
     showConfirmChangeMicStatus: showConfirmChangeMicStatus
   };

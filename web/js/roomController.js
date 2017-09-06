@@ -59,6 +59,19 @@
         showArchiveStatus: false
       }
     },
+    noVideo: {
+      height: '100%',
+      width: '100%',
+      inserMode: 'append',
+      showControls: true,
+      style: {
+        audioLevelDisplayMode: 'auto',
+        buttonDisplayMode: 'off',
+        nameDisplayMode: 'off',
+        videoDisabledDisplayMode: 'auto',
+        showArchiveStatus: false
+      }
+    },
     screen: {
       height: '100%',
       width: '100%',
@@ -433,12 +446,7 @@
         // dispatches a streamCreated event. For a code example and more details,
         // see StreamEvent.
         var stream = evt.stream;
-        var streamVideoType = stream.videoType;
-
-        if (!(streamVideoType === 'camera' || streamVideoType === 'screen')) {
-          debug.error('Stream not contemplated: ' + stream.videoType);
-          return;
-        }
+        var streamVideoType = stream.videoType || 'noVideo';
 
         var streamId = stream.streamId;
         subscriberStreams[streamId] = {
@@ -456,6 +464,10 @@
           type: stream.videoType,
           controlElems: subscriberStreams[streamId].buttons
         });
+
+        if (streamVideoType === 'noVideo') {
+          RoomView.deleteVideoButton(streamId);
+        }
 
         subOptions.subscribeToVideo = !enterWithVideoDisabled;
 
@@ -709,6 +721,7 @@
     exports.otHelper = otHelper;
 
     var connect = otHelper.connect.bind(otHelper, _allHandlers);
+    var publish = otHelper.publish.bind(otHelper);
 
       // Room's name is set by server, we don't need to do this, but
       // perphaps it would be convenient
@@ -757,10 +770,11 @@
           });
         })
         .then(connect)
-        .then(function() {
-          otHelper.publish();
-        })
-        .then(function() {
+        .then(publish)
+        .then(function(publisher) {
+          if (!publisher.stream.videoType) {
+            RoomView.deleteVideoButton('publisher')
+          }
           RecordingsController.init(enableArchiveManager, aParams.firebaseURL,
                                     aParams.firebaseToken, aParams.sessionId);
           ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
