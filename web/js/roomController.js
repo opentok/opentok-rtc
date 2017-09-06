@@ -28,6 +28,7 @@
   var roomName = null;
   var resolutionAlgorithm = null;
   var debugPreferredResolution = null;
+  var allHandlers = null;
 
   var publisherOptions = {
     insertMode: 'append',
@@ -707,7 +708,7 @@
     otHelper = new exports.OTHelper(aParams);
     exports.otHelper = otHelper;
 
-    var connect = otHelper.connect.bind(otHelper);
+    var connect = otHelper.connect.bind(otHelper, _allHandlers);
 
       // Room's name is set by server, we don't need to do this, but
       // perphaps it would be convenient
@@ -718,7 +719,9 @@
 
     ChatController
         .init(aParams.roomName, userName, _allHandlers)
-        .then(connect)
+        .then(function(_allHandlers) {
+          allHandlers = _allHandlers;
+        })
         .then(LayoutMenuController.init)
         .then(function() {
           var publisherElement = RoomView.createStreamView('publisher', {
@@ -740,14 +743,22 @@
             publisherOptions.publishAudio = false;
           }
           publisherOptions.name = userName;
-          return otHelper.publish(publisherElement, publisherOptions, {}).then(function() {
-            setPublisherReady();
-          }).catch(function(errInfo) {
-            if (errInfo.error.name === 'OT_CHROME_MICROPHONE_ACQUISITION_ERROR') {
-              Utils.sendEvent('roomController:chromePublisherError');
-              otHelper.disconnect();
-            }
+          return new Promise(function(resolve, reject) {
+            otHelper.initPublisher(publisherElement, publisherOptions, {}).then(function() {
+              setPublisherReady();
+              resolve();
+            }).catch(function(errInfo) {
+              if (errInfo.error.name === 'OT_CHROME_MICROPHONE_ACQUISITION_ERROR') {
+                Utils.sendEvent('roomController:chromePublisherError');
+              }
+              RoomView.deleteStreamView('publisher');
+              reject()
+            });
           });
+        })
+        .then(connect)
+        .then(function() {
+          otHelper.publish();
         })
         .then(function() {
           RecordingsController.init(enableArchiveManager, aParams.firebaseURL,

@@ -257,10 +257,10 @@
       if (!Array.isArray(aHandlers)) {
         aHandlers = [aHandlers];
       }
-      return otLoaded.then(function() {
-        return new Promise(function(resolve, reject) {
+      return new Promise(function(resolve, reject) {
+        return otLoaded.then(function() {
           if (!(apiKey && sessionId && token)) {
-            return reject({
+            reject({
               message: 'Invalid parameters received. ' +
                 'ApiKey, sessionId and Token are mandatory'
             });
@@ -271,13 +271,13 @@
 
           aHandlers && _setHandlers(self, self.session, aHandlers);
 
-          return _session.connect(token, function(error) {
-            if (error) {
-              reject(error);
-            } else {
-              self.sendSignal = sendSignal.bind(_session);
-              resolve(_session);
-            }
+            _session.connect(token, function(error) {
+              if (error) {
+                reject(error);
+              } else {
+                self.sendSignal = sendSignal.bind(_session);
+                resolve(_session);
+             }
           });
         });
       });
@@ -296,7 +296,8 @@
       _solvePublisherPromise = resolve;
     });
 
-    function publish(aDOMElement, aProperties, aHandlers) {
+    function initPublisher(aDOMElement, aProperties, aHandlers) {
+      console.log('aDOMElement', aDOMElement)
       var self = this;
       _publishOptions = null;
       var propCopy = {};
@@ -310,7 +311,6 @@
             properties: propCopy,
             handlers: aHandlers
           };
-          _publisher = null;
           reject({ error: error, publisherPromise: _publisherPromise });
         }
 
@@ -320,20 +320,29 @@
               name: error.name,
               message: 'Error initializing publisher. ' + error.message
             });
-           return;
+            _publisher.destroy();
+            aDOMElement.parent.style.display = 'none';
+            reject(error);
+          } else {
+            Object.keys(aHandlers).forEach(function(name) {
+              _publisher.on(name, aHandlers[name].bind(self));
+            });
+            resolve(_publisher);
           }
-          _session.publish(_publisher, function(error) {
-            if (error) {
-              processError(error);
-            } else {
-              _publisherInitialized = true;
-              Object.keys(aHandlers).forEach(function(name) {
-                _publisher.on(name, aHandlers[name].bind(self));
-              });
-              _solvePublisherPromise(_publisher);
-              resolve(_publisher);
-            }
-          });
+        });
+      });
+    }
+
+    function publish() {
+      return new Promise(function(resolve, reject) {
+        _session.publish(_publisher, function(error) {
+          if (error) {
+            reject({ error: error, publisherPromise: _publisherPromise });
+          } else {
+            _publisherInitialized = true;
+            _solvePublisherPromise(publisher);
+            resolve(publisher);
+          }
         });
       });
     }
@@ -526,6 +535,7 @@
       },
       connect: connect,
       off: off,
+      initPublisher: initPublisher,
       publish: publish,
       subscribe: subscribe,
       toggleSubscribersAudio: toggleSubscribersAudio,
