@@ -11,7 +11,8 @@
     "start": "node server.js",
     "dev": "concurrently \"npm run start\" \"grunt clientDev\"",
     "postinstall": "bower install && grunt clientBuild",
-    "test": "grunt test"
+    "test": "grunt test",
+    "lint": "./node_modules/eslint/bin/eslint.js web/js/"
   },
   "repository": {
     "type": "git",

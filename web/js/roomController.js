@@ -760,7 +760,7 @@
                 Utils.sendEvent('roomController:chromePublisherError');
               }
               RoomView.deleteStreamView('publisher');
-              reject()
+              reject();
             });
           });
         })
@@ -769,13 +769,13 @@
             ChatController.setHelper(otHelper);
             otHelper.connect(_allHandlers).then(function() {
               resolve();
-            })
+            });
           });
         })
         .then(publish)
         .then(function(publisher) {
           if (!publisher.stream.videoType) {
-            RoomView.deleteVideoButton('publisher')
+            RoomView.deleteVideoButton('publisher');
           }
           RecordingsController.init(enableArchiveManager, aParams.firebaseURL,
                                     aParams.firebaseToken, aParams.sessionId);

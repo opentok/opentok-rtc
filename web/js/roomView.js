@@ -210,7 +210,7 @@
 
   function deleteVideoButton(id) {
     document.querySelector('li[data-id="' + id + '"] .controls .buttons .video-action')
-      .style.display = 'none'
+      .style.display = 'none';
   }
 
   function setSwitchStatus(status, bubbleUp, domElem, evtName) {

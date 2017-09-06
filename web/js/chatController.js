@@ -202,13 +202,13 @@
         });
     });
   }
-  
+
   function setHelper(helper) {
     otHelper = helper;
   }
 
   exports.ChatController = {
     init: init,
-    setHelper: setHelper,
+    setHelper: setHelper
   };
 }(this));
