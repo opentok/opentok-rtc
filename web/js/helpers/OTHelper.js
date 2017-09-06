@@ -340,8 +340,8 @@
             reject({ error: error, publisherPromise: _publisherPromise });
           } else {
             _publisherInitialized = true;
-            _solvePublisherPromise(publisher);
-            resolve(publisher);
+            _solvePublisherPromise(_publisher);
+            resolve(_publisher);
           }
         });
       });
