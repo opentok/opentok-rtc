@@ -25,6 +25,7 @@ describe('ChatController', () => {
     sinon.stub(ChatView, 'init', () => Promise.resolve());
     window.MockRoomStatus._install();
     window.MockOTHelper._install();
+    ChatController.setHelper(window.MockOTHelper);
   });
 
   after(() => {

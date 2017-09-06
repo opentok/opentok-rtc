@@ -28,7 +28,6 @@
   var roomName = null;
   var resolutionAlgorithm = null;
   var debugPreferredResolution = null;
-  var allHandlers = null;
 
   var publisherOptions = {
     insertMode: 'append',
@@ -720,7 +719,6 @@
     otHelper = new exports.OTHelper(aParams);
     exports.otHelper = otHelper;
 
-    var connect = otHelper.connect.bind(otHelper, _allHandlers);
     var publish = otHelper.publish.bind(otHelper);
 
       // Room's name is set by server, we don't need to do this, but
@@ -732,9 +730,6 @@
 
     ChatController
         .init(aParams.roomName, userName, _allHandlers)
-        .then(function(_allHandlers) {
-          allHandlers = _allHandlers;
-        })
         .then(LayoutMenuController.init)
         .then(function() {
           var publisherElement = RoomView.createStreamView('publisher', {
@@ -769,7 +764,14 @@
             });
           });
         })
-        .then(connect)
+        .then(function() {
+          return new Promise(function(resolve) {
+            ChatController.setHelper(otHelper);
+            otHelper.connect(_allHandlers).then(function() {
+              resolve();
+            })
+          });
+        })
         .then(publish)
         .then(function(publisher) {
           if (!publisher.stream.videoType) {

@@ -131,8 +131,6 @@
           userName: newUsrName,
           text: CONN_TEXT
         });
-      } else {
-        otHelper = this;
       }
     },
     connectionDestroyed: function(evt) {
@@ -204,8 +202,13 @@
         });
     });
   }
+  
+  function setHelper(helper) {
+    otHelper = helper;
+  }
 
   exports.ChatController = {
-    init: init
+    init: init,
+    setHelper: setHelper,
   };
 }(this));
