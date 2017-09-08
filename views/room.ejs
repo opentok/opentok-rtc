@@ -189,13 +189,13 @@
           <p>Leave Call</p>
         </div>
         <div>
-          <button id="toggle-publisher-video">
+          <button id="toggle-publisher-video" class="selected" disabled>
             <i data-icon="video_icon" data-event-name="roomView:buttonClick" data-action="video" data-stream-id="publisher" data-stream-type="publisher"></i>
           </button>
           <p>Your Video</p>
         </div>
         <div>
-          <button id="toggle-publisher-audio">
+          <button id="toggle-publisher-audio" disabled>
             <i data-icon="mic"></i>
           </button>
           <p>Your Mic</p>
@@ -206,6 +206,7 @@
           </button>
           <p>Invite</p>
         </div>
+        <% if (true) { %>
         <div>
           <button id="screen-share">
             <i data-icon="screenshare"></i>
@@ -218,6 +219,7 @@
           </button>
           <p>Annotate</p>
         </div>
+        <% } %>
         <div>
           <button id="toggleChat">
             <i data-icon="message"></i>

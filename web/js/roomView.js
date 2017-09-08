@@ -5,6 +5,8 @@
   var dock;
   var handler;
   var roomNameElem;
+  var togglePublisherVideoElem;
+  var togglePublisherAudioElem;
   var participantsStrElem;
   var recordingsNumberElem;
   var videoSwitch;
@@ -181,7 +183,6 @@
 
   function initHTMLElements() {
     dock = document.getElementById('top-banner');
-    banner = document.getElementById('top-banner');
     handler = dock;
 
     roomNameElem = dock.querySelector('#roomName');
@@ -191,6 +192,8 @@
     audioSwitch = dock.querySelector('#audioSwitch');
     startChatElem = dock.querySelector('#startChat');
     unreadCountElem = dock.querySelector('#unreadCount');
+    togglePublisherAudioElem = document.getElementById('toggle-publisher-audio');
+    togglePublisherVideoElem = document.getElementById('toggle-publisher-video');
 
     // The title takes two lines maximum when the dock is expanded. When the title takes
     // one line with expanded mode, it ends taking two lines while is collapsing because the witdh
@@ -205,6 +208,13 @@
 
   function deleteStreamView(id) {
     LayoutManager.remove(id);
+  }
+
+  function showPublisherButtons() {
+    togglePublisherVideoElem.disabled = false;
+    togglePublisherAudioElem.disabled = false;
+    togglePublisherVideoElem.classList.add('activated');
+    togglePublisherAudioElem.classList.add('activated');
   }
 
   function setSwitchStatus(status, bubbleUp, domElem, evtName) {
@@ -328,10 +338,29 @@
           Utils.sendEvent('roomView:addToCall');
           break;
         case 'toggle-publisher-video':
-          Utils.sendEvent('roomView:togglePublisherVideo');
+          var hasVideo;
+          if (elem.classList.contains('activated')) {
+            elem.classList.remove('activated');
+            hasVideo = false;
+          } else {
+            elem.classList.add('activated');
+            hasVideo = true;
+          }
+          Utils.sendEvent('roomView:togglePublisherVideo', { hasVideo: hasVideo });
           break;
         case 'toggle-publisher-audio':
-          Utils.sendEvent('roomView:togglePublisherAudio');
+          var hasAudio;
+          if (elem.classList.contains('activated')) {
+            elem.classList.remove('activated');
+            hasAudio = false;
+          } else {
+            elem.classList.add('activated');
+            hasAudio = true;
+          }
+          Utils.sendEvent('roomView:togglePublisherAudio', { hasAudio: hasAudio });
+          break;
+        case 'screen-share':
+          Utils.sendEvent('roomView:shareScreen');
           break;
         case 'toggleChat':
           setChatStatus(true);
@@ -367,10 +396,6 @@
         case 'startArchiving':
         case 'stopArchiving':
           Utils.sendEvent('roomView:' + elem.id);
-          break;
-        case 'startSharingDesktop':
-        case 'stopSharingDesktop':
-          Utils.sendEvent('roomView:shareScreen');
           break;
         case 'videoSwitch':
           if (!videoSwitch.classList.contains('activated')) {
@@ -462,6 +487,7 @@
       recordingsNumberElem && (recordingsNumberElem.textContent = value);
     },
 
+    showPublisherButtons: showPublisherButtons,
     createStreamView: createStreamView,
     deleteStreamView: deleteStreamView,
     setAudioSwitchRemotely: setAudioSwitchRemotely,

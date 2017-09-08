@@ -354,21 +354,15 @@
       showAddToCallModal();
     },
     togglePublisherAudio: function(evt) {
-      var newStatus = false;
-      // There are a couple of possible race conditions that would end on us not changing
-      // the status on the publisher (because it's already on that state) but where we should
-      // update the UI to reflect the correct state.
+      var newStatus = evt.detail.hasAudio;
       if (!otHelper.isPublisherReady || otHelper.publisherHas('audio') !== newStatus) {
-        sendStatus({ stream: { streamId: 'publisher' } }, 'audio', newStatus);
+        otHelper.togglePublisherAudio(newStatus);
       }
     },
     togglePublisherVideo: function(evt) {
-      var newStatus = false;
-      // There are a couple of possible race conditions that would end on us not changing
-      // the status on the publisher (because it's already on that state) but where we should
-      // update the UI to reflect the correct state.
+      var newStatus = evt.detail.hasVideo;
       if (!otHelper.isPublisherReady || otHelper.publisherHas('video') !== newStatus) {
-        sendStatus({ stream: { streamId: 'publisher' } }, 'video', newStatus);
+        otHelper.togglePublisherVideo(newStatus);
       }
     }
   };
@@ -683,7 +677,7 @@
           throw new Error('Error getting room parameters');
         }
         aRoomInfo.roomName = aRoomParams.roomName;
-        enableAnnotations = aRoomInfo.enableAnnotation;
+        enableAnnotations = true; //aRoomInfo.enableAnnotation;
         enableArchiveManager = aRoomInfo.enableArchiveManager;
         return aRoomInfo;
       });
@@ -765,8 +759,7 @@
         .then(function() {
           var publisherElement = RoomView.createStreamView('publisher', {
             name: userName,
-            type: 'publisher',
-            controlElems: publisherButtons
+            type: 'publisher'
           });
           // If we have all audios disabled, we need to set the button status
           // and don't publish audio
@@ -784,6 +777,7 @@
           publisherOptions.name = userName;
           return otHelper.publish(publisherElement, publisherOptions, {}).then(function() {
             setPublisherReady();
+            RoomView.showPublisherButtons();
           }).catch(function(errInfo) {
             if (errInfo.error.name === 'OT_CHROME_MICROPHONE_ACQUISITION_ERROR') {
               Utils.sendEvent('roomController:chromePublisherError');
