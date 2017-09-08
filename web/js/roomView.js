@@ -6,7 +6,6 @@
   var banner;
   var handler;
   var roomNameElem;
-  var participantsNumberElem;
   var participantsStrElem;
   var recordingsNumberElem;
   var videoSwitch;
@@ -119,7 +118,7 @@
         dock.classList.add('collapsed');
       } else if (dock.data('previouslyCollapsed') !== null) {
         dock.data('previouslyCollapsed') === 'true' ? dock.classList.add('collapsed') :
-                                                        dock.classList.remove('collapsed');
+          dock.classList.remove('collapsed');
         dock.data('previouslyCollapsed', null);
       }
     }
@@ -182,13 +181,12 @@
   }
 
   function initHTMLElements() {
-    dock = document.getElementById('dock');
+    dock = document.getElementById('top-banner');
     banner = document.getElementById('top-banner');
-    handler = dock.querySelector('#handler');
+    handler = dock;
 
     roomNameElem = dock.querySelector('#roomName');
-    participantsNumberElem = banner.querySelectorAll('.participants');
-    participantsStrElem = dock.querySelector('.participantsStr');
+    participantsStrElem = document.getElementById('participantsStr');
     recordingsNumberElem = dock.querySelector('#recordings');
     videoSwitch = dock.querySelector('#videoSwitch');
     audioSwitch = dock.querySelector('#audioSwitch');
@@ -198,8 +196,8 @@
     // The title takes two lines maximum when the dock is expanded. When the title takes
     // one line with expanded mode, it ends taking two lines while is collapsing because the witdh
     // is reduced, so we have to fix the height to avoid this ugly effect during transition.
-    var title = dock.querySelector('.info h1');
-    title.style.height = title.clientHeight + 'px';
+    // var title = dock.querySelector('.info h1');
+    // title.style.height = title.clientHeight + 'px';
   }
 
   function createStreamView(streamId, type, controlBtns, name) {
@@ -347,10 +345,10 @@
             }
           });
           break;
-      };
+      }
     });
 
-    var menu = document.querySelector('.menu ul');
+    var menu = document.getElementById('top-banner');
 
     menu.addEventListener('click', function(e) {
       var elem = e.target;
@@ -365,7 +363,7 @@
           BubbleFactory.get('viewRecordings').toggle();
           break;
         case 'chooseLayout':
-          BubbleFactory.get('chooseLayout').toggle();
+          BubbleFactory.get('chooseLayout', 'top-right').toggle();
           break;
         case 'startArchiving':
         case 'stopArchiving':
@@ -458,10 +456,7 @@
     },
 
     set participantsNumber(value) {
-      for (var i = 0, l = participantsNumberElem.length; i < l; i++) {
-        HTMLElems.replaceText(participantsNumberElem[i], value);
-      }
-      HTMLElems.replaceText(participantsStrElem, value === 1 ? 'participant' : 'participants');
+      HTMLElems.replaceText(participantsStrElem, value);
     },
 
     set recordingsNumber(value) {

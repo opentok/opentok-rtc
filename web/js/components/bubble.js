@@ -37,7 +37,7 @@
 
   var transEndEventName =
     ('WebkitTransition' in document.documentElement.style) ?
-     'webkitTransitionEnd' : 'transitionend';
+      'webkitTransitionEnd' : 'transitionend';
 
   var HORIZONTAL_OFFSET = 10;
 
@@ -71,7 +71,8 @@
    *
    * @param {String} Id of the element which is associated with the bubble
    */
-  var Bubble = function(id) {
+  var Bubble = function(id, position) {
+    this.position = position;
     this.container = document.querySelector('.bubble[for="' + id + '"]');
     this.associatedWith = document.getElementById(id);
     this._onHidden = this._onHidden.bind(this);
@@ -155,8 +156,13 @@
       var y = rectObject.top - rectObject.height;
 
       var container = this.container;
-      container.style.left = x + 'px';
-      container.style.top = y + 'px';
+      if (this.position && this.position === 'top-right') {
+        container.style.right = '20px';
+        container.style.top = '120px';
+      } else {
+        container.style.left = x + 'px';
+        container.style.top = y + 'px';
+      }
     }
   };
 
@@ -166,11 +172,11 @@
      *
      * @param {String} Id of the element which is associated with the bubble
      */
-    get: function(id) {
+    get: function(id, position) {
       var instance = bubbles[id];
 
       if (!instance) {
-        instance = bubbles[id] = new Bubble(id);
+        instance = bubbles[id] = new Bubble(id, position);
       }
 
       return instance;

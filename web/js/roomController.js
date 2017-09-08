@@ -573,12 +573,14 @@
     }
   };
 
+  function displayRoomName(roomName) {
+    document.querySelector('.user-name-modal header .room-name').textContent = roomName;
+    document.querySelector('.room-info .room-name').textContent = roomName;
+  }
+
   function showUserNamePrompt(roomName) {
     var selector = '.user-name-modal';
-    function loadModalText() {
-      document.querySelector(selector + ' header .room-name').textContent = roomName;
-    }
-    return Modal.show(selector, loadModalText).then(function() {
+    return Modal.show(selector).then(function() {
       return new Promise(function(resolve, reject) {
         var enterButton = document.querySelector(selector + ' button');
         enterButton.addEventListener('click', function onClicked(event) {
@@ -657,6 +659,8 @@
       username: usrId,
       roomName: roomName
     };
+
+    displayRoomName(roomName);
 
     if (usrId || (window.location.origin === getReferrerURL().origin)) {
       return Promise.resolve(info);

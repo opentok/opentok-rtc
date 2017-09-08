@@ -425,6 +425,12 @@ body {
       color: #7a8b93;
       .room-name {
         font-size: 22px;
+        text-overflow: ellipsis;
+        width: 300px;
+        height: 24px;
+        overflow: hidden;
+        white-space: nowrap;
+        line-height: 22px;
       }
     }
   }
@@ -438,7 +444,7 @@ body {
     }
   }
   .videoSwitch, .audioSwitch {
-    margin-top: 36px;
+    margin: 36px 48px 0 0;
     span {
       margin-left: 12px;
       vertical-align: top;
@@ -450,6 +456,18 @@ body {
   .layout-container {
     width: 114px;
     border-left: 1px solid #455b66;
+    text-align: center;
+    #layout-icon {
+      margin-top: 22px;
+      height: 22px;
+      float: none;
+    }
+    #layout-label {
+      margin-top: 8px;
+      float: none;
+      font-size: 12px;
+      color: #c0c0c0;
+    }
   }
 }
 
