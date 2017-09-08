@@ -363,7 +363,7 @@
           BubbleFactory.get('viewRecordings').toggle();
           break;
         case 'chooseLayout':
-          BubbleFactory.get('chooseLayout', 'top-right').toggle();
+          BubbleFactory.get('chooseLayout').toggle();
           break;
         case 'startArchiving':
         case 'stopArchiving':

@@ -40,6 +40,7 @@
       'webkitTransitionEnd' : 'transitionend';
 
   var HORIZONTAL_OFFSET = 10;
+  var VERTICAL_OFFSET = 73;
 
   var bubbles = {};
 
@@ -71,9 +72,9 @@
    *
    * @param {String} Id of the element which is associated with the bubble
    */
-  var Bubble = function(id, position) {
-    this.position = position;
+  var Bubble = function(id) {
     this.container = document.querySelector('.bubble[for="' + id + '"]');
+    this.topArrow = this.container.querySelector('.top-arrow');
     this.associatedWith = document.getElementById(id);
     this._onHidden = this._onHidden.bind(this);
 
@@ -152,16 +153,13 @@
 
     _takePlace: function() {
       var rectObject = this.associatedWith.getBoundingClientRect();
-      var x = rectObject.right + HORIZONTAL_OFFSET;
-      var y = rectObject.top - rectObject.height;
-
       var container = this.container;
-      if (this.position && this.position === 'top-right') {
-        container.style.right = '20px';
-        container.style.top = '120px';
+      if (this.topArrow) {
+        container.style.right = (window.innerWidth - rectObject.right - 20) + 'px';
+        container.style.top = rectObject.bottom + VERTICAL_OFFSET + 'px';
       } else {
-        container.style.left = x + 'px';
-        container.style.top = y + 'px';
+        container.style.left = rectObject.right + HORIZONTAL_OFFSET + 'px';
+        container.style.top = (rectObject.top - rectObject.height) + 'px';
       }
     }
   };
@@ -172,11 +170,11 @@
      *
      * @param {String} Id of the element which is associated with the bubble
      */
-    get: function(id, position) {
+    get: function(id) {
       var instance = bubbles[id];
 
       if (!instance) {
-        instance = bubbles[id] = new Bubble(id, position);
+        instance = bubbles[id] = new Bubble(id);
       }
 
       return instance;
