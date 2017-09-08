@@ -3,7 +3,6 @@
 
   // HTML elements for the view
   var dock;
-  var banner;
   var handler;
   var roomNameElem;
   var participantsStrElem;

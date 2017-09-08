@@ -351,14 +351,14 @@
       sendSignalMuteAll(roomMuted, false);
     },
     addToCall: function() {
-      showAddToCallModal()
+      showAddToCallModal();
     },
     togglePublisherAudio: function(evt) {
       var newStatus = false;
       // There are a couple of possible race conditions that would end on us not changing
       // the status on the publisher (because it's already on that state) but where we should
       // update the UI to reflect the correct state.
-      if (!otHelper.isPublisherReady || otHelper.publisherHas('audio') != newStatus) {
+      if (!otHelper.isPublisherReady || otHelper.publisherHas('audio') !== newStatus) {
         sendStatus({ stream: { streamId: 'publisher' } }, 'audio', newStatus);
       }
     },
@@ -367,7 +367,7 @@
       // There are a couple of possible race conditions that would end on us not changing
       // the status on the publisher (because it's already on that state) but where we should
       // update the UI to reflect the correct state.
-      if (!otHelper.isPublisherReady || otHelper.publisherHas('video') != newStatus) {
+      if (!otHelper.isPublisherReady || otHelper.publisherHas('video') !== newStatus) {
         sendStatus({ stream: { streamId: 'publisher' } }, 'video', newStatus);
       }
     }
