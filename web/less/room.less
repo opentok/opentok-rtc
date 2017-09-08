@@ -430,8 +430,25 @@ body {
   }
   .right-container {
     float: right;
-    width: 114px;
     height: 100%;
+    div {
+      position:relative;
+      height: 100%;
+      float: left;
+    }
+  }
+  .videoSwitch, .audioSwitch {
+    margin-top: 36px;
+    span {
+      margin-left: 12px;
+      vertical-align: top;
+      line-height: 24px;
+      font-size: 12px;
+      color: #c0c0c0;
+    }
+  }
+  .layout-container {
+    width: 114px;
     border-left: 1px solid #455b66;
   }
 }
