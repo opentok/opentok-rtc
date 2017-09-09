@@ -121,6 +121,7 @@
     evt.preventDefault();
     evt.stopImmediatePropagation();
     _visibilityChanging = setVisibility(false);
+    Utils.sendEvent('chatView:hidden');
   };
 
   var onToggle = function(evt) {

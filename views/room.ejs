@@ -107,10 +107,10 @@
             <li>
               <a id="chooseLayoutOld"><i data-icon="layouts"></i><span>Change layout</span></a>
             </li>
-            <li id="toggleChat">
-              <a id="startChat" data-unread-messages="0"><i data-icon="chat"></i><span>Open text chat<span id="unreadMsg">(<span id="unreadCount">0</span>)</span></span></a>
+            <!--li id="toggleChat">
+              <a id="startChat" data-unread-messages="0"><i data-icon="chat"></i><span>Open text chat></a>
               <a id="stopChat"><i data-icon="chat"></i><span>Close text chat</span></a>
-            </li>
+            </li-->
             <% if(!isWebRTCVersion) { %>
             <li>
               <a id="endCall" class="danger"><i data-icon="end"></i><span>End meeting</span></a>
@@ -223,10 +223,12 @@
         -->
         <% } %>
         <div>
-          <button id="toggleChat">
+          <button id="message-btn">
             <i data-icon="message"></i>
           </button>
-          <p>Message</p>
+          <p>Message
+            <span id="unreadMsg">(<span id="unreadCount">0</span>)</span></span>
+          </p>
         <div>
       </div>
     </section>

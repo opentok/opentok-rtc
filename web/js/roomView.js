@@ -7,6 +7,7 @@
   var roomNameElem;
   var togglePublisherVideoElem;
   var togglePublisherAudioElem;
+  var messageButtonElem;
   var participantsStrElem;
   var recordingsNumberElem;
   var videoSwitch;
@@ -77,18 +78,18 @@
 
   function setUnreadMessages(count) {
     _unreadMsg = count;
+    // document.getElementById('unreadMsg').style.display = count === 0 ? 'none' : 'block';
     unreadCountElem.textContent = count;
-    startChatElem.data('unreadMessages', count);
-    HTMLElems.flush(startChatElem);
+    // HTMLElems.flush(unreadCountElem.parentElement);
   }
 
   function setChatStatus(visible) {
     if (visible) {
       _chatHasBeenShown = true;
       setUnreadMessages(0);
-      document.body.data('chatStatus', 'visible');
+      messageButtonElem.classList.add('activated');
     } else {
-      document.body.data('chatStatus', 'hidden');
+      messageButtonElem.classList.remove('activated');
     }
     Utils.sendEvent('roomView:chatVisibility', visible);
     HTMLElems.flush('#toggleChat');
@@ -106,6 +107,7 @@
   var chatEvents = {
     hidden: function(evt) {
       document.body.data('chatStatus', 'hidden');
+      messageButtonElem.classList.remove('activated');
       setUnreadMessages(0);
       HTMLElems.flush('#toggleChat');
     }
@@ -190,10 +192,11 @@
     recordingsNumberElem = dock.querySelector('#recordings');
     videoSwitch = dock.querySelector('#videoSwitch');
     audioSwitch = dock.querySelector('#audioSwitch');
-    startChatElem = dock.querySelector('#startChat');
-    unreadCountElem = dock.querySelector('#unreadCount');
+    startChatElem = document.getElementById('startChat');
+    unreadCountElem = document.getElementById('unreadCount');
     togglePublisherAudioElem = document.getElementById('toggle-publisher-audio');
     togglePublisherVideoElem = document.getElementById('toggle-publisher-video');
+    messageButtonElem = document.getElementById('message-btn');
 
     // The title takes two lines maximum when the dock is expanded. When the title takes
     // one line with expanded mode, it ends taking two lines while is collapsing because the witdh
@@ -362,8 +365,8 @@
         case 'screen-share':
           Utils.sendEvent('roomView:shareScreen');
           break;
-        case 'toggleChat':
-          setChatStatus(true);
+        case 'message-btn':
+          setChatStatus(!messageButtonElem.classList.contains('activated'));
           break;
         case 'endCall':
           showConfirm(MODAL_TXTS.endCall).then(function(endCall) {
