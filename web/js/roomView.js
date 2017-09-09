@@ -10,8 +10,6 @@
   var recordingsNumberElem;
   var videoSwitch;
   var audioSwitch;
-  var initialVideoSwitch;
-  var initialAudioSwitch;
   var startChatElem;
   var unreadCountElem;
   var enableArchiveManager;
@@ -201,27 +199,25 @@
     var title = dock.querySelector('.info h1');
     title.style.height = title.clientHeight + 'px';
   }
-  
+
   var setVolumeMeterLevel = function(level) {
     var meterLevel = document.getElementById('audioMeterLevel');
-    var meterWidth = document.getElementById('audioMeterBackground');
     meterLevel.style.width = (level * 89) + 'px';
-  }
+  };
 
   var startPrecallTestMeter = function() {
     var meterLevel = document.getElementById('precallTestMeterLevel');
-    var meterWidth = document.getElementById('precallTestMeterBackground');
     meterLevel.style.width = 0;
     var preCallTestProgress = 0;
     var testMeterInterval = setInterval(function() {
       preCallTestProgress++;
-      meterLevel.style.width = (preCallTestProgress * 89 / 15) + 'px';
+      meterLevel.style.width = ((preCallTestProgress * 89) / 15) + 'px';
       if (preCallTestProgress === 15) {
         clearInterval(testMeterInterval);
       }
-    }, 1000)
-  }
-  
+    }, 1000);
+  };
+
   var displayNetworkTestResults = function(results) {
     var packetLossStr;
     document.getElementById('pre-call-test-results').style.display = 'block';
@@ -230,8 +226,8 @@
     if (results.video && results.text !== 'Your bandwidth can support audio only.') {
       document.getElementById('video-bitrate').innerText =
         Math.round(results.video.bitsPerSecond / 1000);
-        packetLossStr = isNaN(results.video.packetLossRatio) ? '' :
-          Math.round(100 * results.video.packetLossRatio) + '% packet loss';
+      packetLossStr = isNaN(results.video.packetLossRatio) ? '' :
+        Math.round(100 * results.video.packetLossRatio) + '% packet loss';
       document.getElementById('precall-video-packet-loss').innerText = packetLossStr;
       document.getElementById('precall-audio-results').style.width = '50%';
       document.getElementById('precall-audio-results').style.right = '0';
@@ -242,7 +238,7 @@
       document.getElementById('precall-video-results').style.display = 'none';
     }
     var precallHeading = document.getElementById('pre-call-heading');
-    switch(results.icon) {
+    switch (results.icon) {
       case 'precall-tick':
         precallHeading.style.color = '#3fbe36';
         break;
@@ -258,7 +254,7 @@
     packetLossStr = isNaN(results.audio.packetLossRatio) ? '' :
       Math.round(100 * results.audio.packetLossRatio) + '% packet loss';
     document.getElementById('precall-audio-packet-loss').innerText = packetLossStr;
-  }
+  };
 
   var publishSettings = document.querySelector('.publish-settings');
 
@@ -302,14 +298,13 @@
         preCallTestResults.style.display = 'none';
         Utils.sendEvent('roomView:retest');
         break;
-        
     }
   });
-  
+
   var hidePrecall = function() {
     document.getElementById('video-preview').style.visibility = 'hidden';
     document.getElementById('dock').style.visibility = 'visible';
-  }
+  };
 
   function createStreamView(streamId, type, controlBtns, name) {
     return LayoutManager.append(streamId, type, controlBtns, name);
@@ -536,11 +531,11 @@
       }
     });
   };
-  
+
   var setRoomName = function(roomName) {
     document.querySelector('.user-name-modal button .room-name').textContent = 'Join ' + roomName;
     document.getElementById('name-heading').textContent = roomName;
-  }
+  };
 
   var init = function(enableHangoutScroll, aEnableArchiveManager) {
     enableArchiveManager = aEnableArchiveManager;

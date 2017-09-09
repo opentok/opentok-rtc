@@ -357,22 +357,20 @@
 
   var videoPreviewEventHandlers = {
     initialAudioSwitch: function(evt) {
-      previewPublisher.publishAudio(evt.detail.status)
+      previewPublisher.publishAudio(evt.detail.status);
     },
     initialVideoSwitch: function(evt) {
-      previewPublisher.publishVideo(evt.detail.status)
+      previewPublisher.publishVideo(evt.detail.status);
     },
     retest: function(evt) {
       RoomView.startPrecallTestMeter();
       otNetworkTest.startNetworkTest(function(error, result) {
-        if (error) {
-          console.error('Network Test error', error);
-        } else {
+        if (!error) {
           RoomView.displayNetworkTestResults(result);
         }
       });
     }
-  }
+  };
 
   var setAudioStatus = function(switchStatus) {
     otHelper.isPublisherReady && viewEventHandlers.buttonClick({
@@ -583,7 +581,7 @@
       exports.otHelper = otHelper;
 
       otHelper.initPublisher('video-preview',
-        {width:'100%', height:'100%', insertMode: 'append', showControls: false}
+        { width: '100%', height: '100%', insertMode: 'append', showControls: false }
       ).then(function(publisher) {
         previewPublisher = publisher;
         previewOptions = {
@@ -603,21 +601,21 @@
           if (movingAvg === null || movingAvg <= event.audioLevel) {
             movingAvg = event.audioLevel;
           } else {
-            movingAvg = 0.8 * movingAvg + 0.2 * event.audioLevel;
+            movingAvg = (0.8 * movingAvg) + (0.2 * event.audioLevel);
           }
 
           // 1.5 scaling to map the -30 - 0 dBm range to [0,1]
-          var logLevel = (Math.log(movingAvg) / Math.LN10) / 1.5 + 1;
+          var logLevel = ((Math.log(movingAvg) / Math.LN10) / 1.5) + 1;
           logLevel = Math.min(Math.max(logLevel, 0), 1);
           RoomView.setVolumeMeterLevel(logLevel);
         });
-      })
+      });
 
       if (username) {
         document.getElementById('enter-name-prompt').style.display = 'none';
-        var userNameInputElement= document.getElementById('user-name-input');
+        var userNameInputElement = document.getElementById('user-name-input');
         userNameInputElement.value = username;
-        userNameInputElement.setAttribute('readonly', true)
+        userNameInputElement.setAttribute('readonly', true);
       }
     }
     return Modal.show(selector, loadModalText).then(function() {
@@ -625,35 +623,23 @@
         document.querySelector('.user-name-modal #enter').disabled = false;
         document.querySelector('.user-name-modal .tc-dialog').addEventListener('submit',
           function(event) {
-          event.preventDefault();
-          RoomView.hidePrecall();
-          otNetworkTest.stopTest();
-          return Modal.hide(selector)
-            .then(function() {
-              publisherOptions.publishAudio = publisherButtons.audio.enabled =
-                document.getElementById('initialAudioSwitch').classList.contains('activated');
-              publisherOptions.publishVideo = publisherButtons.video.enabled =
-                document.getElementById('initialVideoSwitch').classList.contains('activated');
-              resolve({
-                username: document.querySelector(selector + ' input').value.trim(),
+            event.preventDefault();
+            RoomView.hidePrecall();
+            otNetworkTest.stopTest();
+            return Modal.hide(selector)
+              .then(function() {
+                publisherOptions.publishAudio = publisherButtons.audio.enabled =
+                  document.getElementById('initialAudioSwitch').classList.contains('activated');
+                publisherOptions.publishVideo = publisherButtons.video.enabled =
+                  document.getElementById('initialVideoSwitch').classList.contains('activated');
+                resolve({
+                  username: document.querySelector(selector + ' input').value.trim()
+                });
               });
-            });
-        });
+          });
         document.querySelector(selector + ' input.username').focus();
       });
     });
-  }
-
-  function getReferrerURL() {
-    var referrerURL = '';
-
-    try {
-      referrerURL = new URL(document.referrer);
-    } catch (ex) { // eslint no-empty: ["error":{ "allowEmptyCatch": true }]
-
-    }
-
-    return referrerURL;
   }
 
   function getRoomParams(aParams) {
@@ -728,7 +714,7 @@
     '/js/endCallController.js',
     '/js/layoutMenuController.js',
     '/js/screenShareController.js',
-    '/js/feedbackController.js',
+    '/js/feedbackController.js'
   ];
 
   var init = function() {
@@ -769,8 +755,8 @@
     var sessionInfo = {
       apiKey: aParams.apiKey,
       sessionId: aParams.sessionId,
-      token: aParams.token,
-    }
+      token: aParams.token
+    };
 
     var connect = otHelper.connect.bind(otHelper, sessionInfo);
 
