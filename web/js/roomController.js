@@ -677,7 +677,7 @@
           throw new Error('Error getting room parameters');
         }
         aRoomInfo.roomName = aRoomParams.roomName;
-        enableAnnotations = true; //aRoomInfo.enableAnnotation;
+        enableAnnotations = aRoomInfo.enableAnnotation;
         enableArchiveManager = aRoomInfo.enableArchiveManager;
         return aRoomInfo;
       });
