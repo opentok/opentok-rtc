@@ -704,7 +704,7 @@ function ServerMethods(aLogLevel, aModules) {
 
   // /hang-up
   // Indicates a phone call on the SIP gateway has ended
-  function getHangUp(aReq, aRes) {
+  function getHangUp(aReq) {
     var phoneNumber = aReq.query['X-PH-DIALOUT-NUMBER'];
     var tbConfig = aReq.tbConfig;
     logger.log('getHangUp', aReq.query, dialedNumbersInfo);
