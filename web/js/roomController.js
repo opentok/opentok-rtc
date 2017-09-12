@@ -13,6 +13,7 @@
   var enableAnnotations = true;
   var enableHangoutScroll = false;
   var enableArchiveManager = false;
+  var enableSip = false;
 
   var setPublisherReady;
   var publisherReady = new Promise(function(resolve, reject) {
@@ -28,6 +29,7 @@
   var roomName = null;
   var resolutionAlgorithm = null;
   var debugPreferredResolution = null;
+  var googleAuth = null;
 
   var publisherOptions = {
     insertMode: 'append',
@@ -217,8 +219,11 @@
   };
 
   var dialOut = function(phoneNumber) {
+    var user = googleAuth.currentUser.get();
+    var googleIdToken = user.getAuthResponse().id_token;
     var data = {
-      phoneNumber: phoneNumber
+      phoneNumber: phoneNumber,
+      googleIdToken: googleIdToken
     };
     Request.dialOut(roomName, data);
   };
@@ -372,7 +377,13 @@
     dialOut: function(evt) {
       if (evt.detail.phoneNumber) {
         var phoneNumber = evt.detail.phoneNumber.replace(/\D/g, '');
-        dialOut(phoneNumber);
+        if (googleAuth.isSignedIn.get() !== true) {
+          googleAuth.signIn().then(function(response) {
+            dialOut(phoneNumber);
+          });
+        } else {
+          dialOut(phoneNumber);
+        }
       }
     }
   };
@@ -470,18 +481,19 @@
         var enterWithVideoDisabled = streamVideoType === 'camera' && _disabledAllVideos;
 
         _sharedStatus = RoomStatus.get(STATUS_KEY);
-        
+
         var streamName = stream.name;
         if (!streamName) {
           try {
             // SIP calls add the name to the connection data
             streamName = JSON.parse(stream.connection.data).name;
-          } catch(error){
+          } catch (error) {
             streamName = '';
           }
         }
 
-console.log(streamName)
+
+        console.log(streamName);
         var subsDOMElem = RoomView.createStreamView(streamId, {
           name: streamName,
           type: stream.videoType,
@@ -675,6 +687,7 @@ console.log(streamName)
         aRoomInfo.roomName = aRoomParams.roomName;
         enableAnnotations = aRoomInfo.enableAnnotation;
         enableArchiveManager = aRoomInfo.enableArchiveManager;
+        enableSip = aRoomInfo.enableSip;
         return aRoomInfo;
       });
   }
@@ -694,7 +707,8 @@ console.log(streamName)
     '/js/endCallController.js',
     '/js/layoutMenuController.js',
     '/js/screenShareController.js',
-    '/js/feedbackController.js'
+    '/js/feedbackController.js',
+    '/js/googleAuth.js'
   ];
 
   var init = function() {
@@ -730,7 +744,7 @@ console.log(streamName)
   .then(function(aParams) {
     Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
     Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
-    RoomView.init(enableHangoutScroll, enableArchiveManager);
+    RoomView.init(enableHangoutScroll, enableArchiveManager, enableSip);
 
     roomName = aParams.roomName;
     userName = aParams.username ? aParams.username.substring(0, 1000) : '';
@@ -747,6 +761,12 @@ console.log(streamName)
     RoomView.participantsNumber = 0;
 
     _allHandlers = RoomStatus.init(_allHandlers, { room: _sharedStatus });
+
+    if (enableSip) {
+      GoogleAuth.init(aParams.googleId, aParams.googleHostedDomain, function(aGoogleAuth) {
+        googleAuth = aGoogleAuth;
+      });
+    }
 
     ChatController
         .init(aParams.roomName, userName, _allHandlers)

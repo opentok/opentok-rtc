@@ -222,7 +222,7 @@ paths:
           in: query
           description: >-
             If the parameter is present (the value is irrelevant) the server
-            should generate and return an HTML page that embeds the video 
+            should generate and return an HTML page that embeds the video
             instead of returning the video directly.
           required: false
           type: string
@@ -279,9 +279,14 @@ paths:
           description: Name of the room.
           required: true
           type: string
-        - name: number
+        - name: phoneNumber
           in: body
           description: The phone number to dial.
+          required: true
+          type: string
+        - name: googleIdToken
+          in: body
+          description: Authenticated google user token to be verified before call.
           required: true
           type: string
       responses:
@@ -293,6 +298,10 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/ErrorInfo'
+        '401':
+          description: Unauthorized, problem with authentication credentials.
+        '403':
+          description: Forbidden. Operation not valid for user token with this domain.
   '/forward':
     get:
       summary: Call answer webhook for the SIP service
