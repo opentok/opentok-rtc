@@ -21,6 +21,7 @@ E.DEFAULT_USER_NAME = 'Anonymous User';
 // (and in fact it would be more robust if we didn't!) because we can just call listArchives
 // to get that, it's more efficient if we cache it locally.
 E.REDIS_ROOM_PREFIX = 'otrtc_room__';
+E.REDIS_PHONE_PREFIX = 'otrtc_phone_';
 
 E.REDIS_ROOM_MATCHES = E.REDIS_ROOM_PREFIX + '*';
 

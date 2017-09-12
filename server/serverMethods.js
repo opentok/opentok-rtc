@@ -19,8 +19,6 @@ var plivo = require('plivo');
 var GoogleAuth = require('google-auth-library');
 
 
-var dialedNumbersInfo = {}; // Maps dialed SIP numbers to OpenTok session IDs and connection IDs
-
 function ServerMethods(aLogLevel, aModules) {
   aModules = aModules || {};
 
@@ -48,6 +46,7 @@ function ServerMethods(aLogLevel, aModules) {
     new ServerPersistence([], connectionString, aLogLevel, aModules);
 
   const redisRoomPrefix = C.REDIS_ROOM_PREFIX;
+  const redisPhonePrefix = C.REDIS_PHONE_PREFIX;
 
   // Opentok API instance, which will be configured only after tbConfigPromise
   // is resolved
@@ -647,12 +646,14 @@ function ServerMethods(aLogLevel, aModules) {
           return aRes.status(403).send(new ErrorInfo(403, 'Forbidden: Authentication Domain Invalid'));
         }
         var phoneNumber = body.phoneNumber;
-        if (dialedNumbersInfo[phoneNumber]) {
-          return aRes.status(400).send(new ErrorInfo(400, 'That number has already been dialed'));
-        }
-        var otInstance = tbConfig.otInstance;
+        return serverPersistence.getKey(redisPhonePrefix + phoneNumber)
+        .then((numberInfo) => {
+          if (numberInfo !== null) {
+            return aRes.status(400).send(new ErrorInfo(400, 'That number has already been dialed'));
+          }
+          var otInstance = tbConfig.otInstance;
 
-        return serverPersistence
+          return serverPersistence
           .getKey(redisRoomPrefix + roomName, true)
           .then((sessionInfo) => {
             const sessionId = sessionInfo.sessionId;
@@ -674,9 +675,11 @@ function ServerMethods(aLogLevel, aModules) {
             };
             otInstance.dial_P(sessionId, token, tbConfig.sipUri, options)
               .then((sipCallData) => {
-                dialedNumbersInfo[phoneNumber] = {};
-                dialedNumbersInfo[phoneNumber].sessionId = sipCallData.sessionId;
-                dialedNumbersInfo[phoneNumber].connectionId = sipCallData.connectionId;
+                var dialedNumberInfo = {};
+                dialedNumberInfo.sessionId = sipCallData.sessionId;
+                dialedNumberInfo.connectionId = sipCallData.connectionId;
+                serverPersistence.setKey(redisPhonePrefix + phoneNumber,
+                                         JSON.stringify(dialedNumberInfo));
                 return aRes.send(sipCallData);
               })
               .catch((error) => {
@@ -684,6 +687,7 @@ function ServerMethods(aLogLevel, aModules) {
                 return aRes.status(400).send(new ErrorInfo(400, 'An error ocurred while forwarding SIP Call'));
               });
           });
+        });
       })
       .catch((err) => {
         logger.log('postRoomDial => authentication error: ', err);
@@ -707,12 +711,14 @@ function ServerMethods(aLogLevel, aModules) {
   function getHangUp(aReq) {
     var phoneNumber = aReq.query['X-PH-DIALOUT-NUMBER'];
     var tbConfig = aReq.tbConfig;
-    logger.log('getHangUp', aReq.query, dialedNumbersInfo);
-    if (dialedNumbersInfo[phoneNumber]) {
-      tbConfig.otInstance.forceDisconnect(dialedNumbersInfo[phoneNumber].sessionId,
-        dialedNumbersInfo[phoneNumber].connectionId, () => {});
-    }
-    delete dialedNumbersInfo[phoneNumber];
+    serverPersistence.getKey(redisPhonePrefix + phoneNumber, true)
+      .then((dialedNumberInfo) => {
+        logger.log('getHangUp', aReq.query, dialedNumberInfo);
+        if (dialedNumberInfo !== null) {
+          tbConfig.otInstance.forceDisconnect(dialedNumberInfo.sessionId);
+          serverPersistence.delKey(redisPhonePrefix + phoneNumber);
+        }
+      });
   }
 
   function loadConfig() {
