@@ -1,6 +1,6 @@
 /* global Chat, TextProcessor */
 
-!(function(exports) {
+!(function (exports) {
   'use strict';
 
   var usrId;
@@ -16,7 +16,7 @@
   var _visibilityChanging = Promise.resolve();
 
   function isVisible() {
-    return _visibilityChanging.then(function() {
+    return _visibilityChanging.then(function () {
       return Chat.visible;
     });
   }
@@ -24,7 +24,7 @@
   function setVisibility(isVisible) {
     if (isVisible) {
       addHandlers();
-      return Chat.show().then(function() {
+      return Chat.show().then(function () {
         scrollTo();
       });
     }
@@ -38,10 +38,10 @@
     eventHandlers = {
       incomingMessage: {
         name: 'chatController:incomingMessage',
-        handler: function(evt) {
+        handler: function (evt) {
           var data = evt.detail.data;
           insertChatLine(data);
-          isVisible().then(function(visible) {
+          isVisible().then(function (visible) {
             if (!visible) {
               Utils.sendEvent('chatView:unreadMessage', { data: data });
             }
@@ -50,25 +50,25 @@
       },
       presenceEvent: {
         name: 'chatController:presenceEvent',
-        handler: function(evt) {
+        handler: function (evt) {
           insertChatEvent(evt.detail);
         }
       },
       messageDelivered: {
         name: 'chatController:messageDelivered',
-        handler: function(evt) {
+        handler: function () {
           chatMsgInput.value = '';
         }
       },
       chatVisibility: {
         name: 'roomView:chatVisibility',
-        handler: function(evt) {
+        handler: function (evt) {
           _visibilityChanging = setVisibility(evt.detail);
         },
         couldBeChanged: true
       }
     };
-    Array.isArray(configuredEvts) && configuredEvts.forEach(function(aEvt) {
+    Array.isArray(configuredEvts) && configuredEvts.forEach(function (aEvt) {
       var event = eventHandlers[aEvt.type];
       event && event.couldBeChanged && (event.name = aEvt.name);
     });
@@ -86,7 +86,7 @@
     chatForm = chatWndElem.querySelector('#chatForm');
   }
 
-  var onSendClicked = function(evt) {
+  var onSendClicked = function (evt) {
     evt.preventDefault();
     if (!chatMsgInput.value.trim().length) {
       return;
@@ -98,7 +98,7 @@
     });
   };
 
-  var onKeyPress = function(myfield, evt) {
+  var onKeyPress = function (myfield, evt) {
     var keycode;
     if (window.vent) {
       keycode = window.event.keyCode;
@@ -114,22 +114,22 @@
     return true;
   }.bind(undefined, chatMsgInput);
 
-  var onSubmit = function(evt) {
+  var onSubmit = function (evt) {
     evt.preventDefault();
     return false;
   };
 
-  var onClose = function(evt) {
+  var onClose = function (evt) {
     evt.preventDefault();
     evt.stopImmediatePropagation();
     _visibilityChanging = setVisibility(false);
   };
 
-  var onToggle = function(evt) {
+  var onToggle = function () {
     Chat.isCollapsed() ? Chat.expand() : Chat.collapse();
   };
 
-  var onDrop = function(evt) {
+  var onDrop = function (evt) {
     evt.preventDefault();
     evt.stopPropagation();
     return false;
@@ -162,7 +162,7 @@
   function insertText(elemRoot, text) {
     var txtElems = TextProcessor.parse(text);
     var targetElem = HTMLElems.createElementAt(elemRoot, 'p');
-    txtElems.forEach(function(node) {
+    txtElems.forEach(function (node) {
       switch (node.type) {
         case TextProcessor.TYPE.URL:
           HTMLElems.createElementAt(targetElem, 'a',
@@ -200,7 +200,7 @@
     return LazyLoader.dependencyLoad([
       '/js/helpers/textProcessor.js',
       '/js/components/chat.js'
-    ]).then(function() {
+    ]).then(function () {
       initHTMLElements();
       usrId = aUsrId;
       Chat.init();

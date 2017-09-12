@@ -1,6 +1,6 @@
 /* global OT, FeedbackView */
 
-!(function(global) {
+!(function (global) {
   'use strict';
 
   var debug =
@@ -8,7 +8,7 @@
   var otHelper;
 
   var eventHandlers = {
-    sendFeedback: function(evt) {
+    sendFeedback: function (evt) {
       var report = evt.detail;
       var loggedEvent = {
         action: 'SessionQuality',
@@ -23,7 +23,7 @@
       debug.log('feedbackView:sendFeedback', loggedEvent);
       OT.analytics.logEvent(loggedEvent);
     },
-    reportIssue: function() {
+    reportIssue: function () {
       var loggedEvent = {
         action: 'ReportIssue',
         partnerId: otHelper.session.apiKey,
@@ -31,7 +31,7 @@
         connectionId: otHelper.session.connection.id,
         publisherId: otHelper.publisherId
       };
-      OT.reportIssue(function(error, reportId) {
+      OT.reportIssue(function (error, reportId) {
         if (error) {
           debug.error('feedbackView:reportIssue', loggedEvent);
         } else {
@@ -42,10 +42,10 @@
     }
   };
 
-  var init = function(aOTHelper) {
+  var init = function (aOTHelper) {
     return LazyLoader.load([
       '/js/feedbackView.js'
-    ]).then(function() {
+    ]).then(function () {
       otHelper = aOTHelper;
       Utils.addEventsHandlers('feedbackView:', eventHandlers, global);
       FeedbackView.init();

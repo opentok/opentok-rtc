@@ -1,6 +1,6 @@
 /* global RoomView, OTHelper, chrome, ScreenShareView */
 
-!(function(globals) {
+!(function (globals) {
   'use strict';
 
   var debug;
@@ -26,7 +26,7 @@
   };
 
   var streamHandlers = {
-    destroyed: function(evt) {
+    destroyed: function () {
       _isSharing = false;
       Utils.sendEvent('screenShareController:destroyed');
       enableAnnotations && Utils.sendEvent('screenShareController:annotationEnded');
@@ -34,7 +34,7 @@
   };
 
   var roomViewEvents = {
-    shareScreen: function(evt) {
+    shareScreen: function () {
       if (_hasPendingOperation) {
         return;
       }
@@ -52,14 +52,14 @@
         _hasPendingOperation = true;
         otHelper.shareScreen(desktopElement, screenPublisherOptions, streamHandlers,
                              enableAnnotations)
-          .then(function() {
+          .then(function () {
             _isSharing = true;
             _hasPendingOperation = false;
             Utils.sendEvent('screenShareController:changeScreenShareStatus',
                             { isSharing: _isSharing });
             enableAnnotations && Utils.sendEvent('screenShareController:annotationStarted');
           })
-          .catch(function(error) {
+          .catch(function (error) {
             _hasPendingOperation = false;
             if (error.code === OTHelper.screenShareErrorCodes.accessDenied) {
               RoomView.deleteStreamView('desktop');
@@ -73,13 +73,13 @@
   };
 
   var screenShareViewEvents = {
-    installExtension: function(evt) {
+    installExtension: function () {
       try {
         chrome.webstore.install('https://chrome.google.com/webstore/detail/' + _chromeExtId,
-          function() {
+          function () {
             Utils.sendEvent('screenShareController:extInstallationResult',
                             { error: false });
-          }, function(err) {
+          }, function (err) {
             Utils.sendEvent('screenShareController:extInstallationResult',
                             { error: true, message: err });
           });
@@ -95,7 +95,7 @@
   function init(aUserName, aChromeExtId, aOTHelper, aEnableAnnotations) {
     return LazyLoader.dependencyLoad([
       '/js/screenShareView.js'
-    ]).then(function() {
+    ]).then(function () {
       enableAnnotations = aEnableAnnotations;
       otHelper = aOTHelper;
       debug = new Utils.MultiLevelLogger('screenShareController.js',

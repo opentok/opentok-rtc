@@ -1,6 +1,6 @@
 /* global Modal */
 
-!(function(global) {
+!(function (global) {
   'use strict';
 
   var showFeedback,
@@ -21,7 +21,7 @@
     return Modal.hide(feedbackReportSelector);
   }
 
-  var init = function() {
+  var init = function () {
     showFeedback = document.querySelector('#showFeedback');
     sendButton = document.querySelector('.feedback-report .send-feedback');
     audioScore = document.querySelector('.feedback-report .audio-score');
@@ -31,12 +31,12 @@
     addHandlers();
   };
 
-  var resetForm = function() {
+  var resetForm = function () {
     otherInfo.value = '';
   };
 
-  var addHandlers = function() {
-    sendButton.addEventListener('click', function(event) {
+  var addHandlers = function () {
+    sendButton.addEventListener('click', function (event) {
       event.preventDefault();
 
       Utils.sendEvent('feedbackView:sendFeedback', {
@@ -48,7 +48,7 @@
       hideForm();
     });
 
-    reportButton.addEventListener('click', function(event) {
+    reportButton.addEventListener('click', function (event) {
       event.preventDefault();
 
       Utils.sendEvent('feedbackView:reportIssue');

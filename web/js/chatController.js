@@ -63,7 +63,7 @@
  *
  */
 
-!(function(exports) {
+!(function (exports) {
   'use strict';
 
   var _hasStatus;
@@ -110,7 +110,7 @@
   var otHelper;
 
   var _chatHandlers = {
-    'signal:chat': function(evt) {
+    'signal:chat': function (evt) {
       // A signal of the specified type was received from the session. The
       // SignalEvent class defines this event object. It includes the following
       // properties:
@@ -122,7 +122,7 @@
       _historyChat.push(data);
       Utils.sendEvent('chatController:incomingMessage', { data: data });
     },
-    connectionCreated: function(evt) {
+    connectionCreated: function (evt) {
       // Dispatched when an new client (including your own) has connected to the
       // session, and for every client in the session when you first connect
       // Session object also dispatches a sessionConnected evt when your local
@@ -137,7 +137,7 @@
         otHelper = this;
       }
     },
-    connectionDestroyed: function(evt) {
+    connectionDestroyed: function (evt) {
       Utils.sendEvent('chatController:presenceEvent', {
         userName: JSON.parse(evt.connection.data).userName,
         text: DISCONN_TEXT
@@ -151,9 +151,9 @@
   function sendMsg(evt) {
     var data = evt.detail;
     return otHelper.sendSignal('chat', data)
-      .then(function() {
+      .then(function () {
         Utils.sendEvent('chatController:messageDelivered');
-      }).catch(function(error) {
+      }).catch(function (error) {
         debug.error('Error sending [', data.text.value, '] to the group. ', error.message);
       });
   }
@@ -174,7 +174,7 @@
    * with the new name for the event and it exists here change its name
    */
   function addEventsHandlers(aEvents) {
-    Array.isArray(aEvents) && aEvents.forEach(function(aEvt) {
+    Array.isArray(aEvents) && aEvents.forEach(function (aEvt) {
       var event = eventsIn[aEvt.type];
       event && event.couldBeChanged && (event.name = aEvt.name);
     });
@@ -184,7 +184,7 @@
   function init(aRoomName, aUsrId, aGlobalHandlers, listenedEvts) {
     return LazyLoader.dependencyLoad([
       '/js/chatView.js'
-    ]).then(function() {
+    ]).then(function () {
       eventsIn = {
         updatedRemotely: {
           name: 'roomStatus:updatedRemotely',
@@ -199,7 +199,7 @@
       _historyChat = [];
       _hasStatus = (exports.RoomStatus !== undefined);
       return ChatView.init(aUsrId, aRoomName, listenedEvts)
-        .then(function() {
+        .then(function () {
           _hasStatus && RoomStatus.set(STATUS_KEY, _historyChat);
           addEventsHandlers(listenedEvts);
           return addOTHandlers(aGlobalHandlers);

@@ -1,12 +1,12 @@
 /* global LayoutMenuView */
 
-!(function(global) {
+!(function (global) {
   'use strict';
 
-  var init = function() {
+  var init = function () {
     return LazyLoader.dependencyLoad([
       '/js/layoutMenuView.js'
-    ]).then(function() {
+    ]).then(function () {
       return LayoutMenuView.init();
     });
   };

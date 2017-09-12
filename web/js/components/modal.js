@@ -1,6 +1,6 @@
 /* global Modal */
 
-!(function(global) {
+!(function (global) {
   'use strict';
 
   var transEndEventName =
@@ -37,13 +37,13 @@
     if (!_modalShown) {
       screenFree = Promise.resolve();
     } else {
-      screenFree = new Promise(function(resolve, reject) {
+      screenFree = new Promise(function (resolve) {
         _queuedModals.push(resolve);
       });
     }
 
-    return screenFree.then(function() {
-      return new Promise(function(resolve, reject) {
+    return screenFree.then(function () {
+      return new Promise(function (resolve) {
         _modalShown = true;
         preShowCb && preShowCb();
         var modal = document.querySelector(selector);
@@ -59,7 +59,7 @@
   }
 
   function hide(selector) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve) {
       var modal = document.querySelector(selector);
 
       modal.addEventListener(transEndEventName, function onTransitionend() {
@@ -69,7 +69,7 @@
       });
       removeCloseHandler(selector);
       modal.classList.remove('show');
-    }).then(function() {
+    }).then(function () {
       _modalShown = false;
       var nextScreen = _queuedModals.shift();
       nextScreen && nextScreen();

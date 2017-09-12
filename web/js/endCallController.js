@@ -1,9 +1,9 @@
 /* global EndCallView */
 
-!(function(exports) {
+!(function (exports) {
   'use strict';
 
-  var endCall = function() {
+  var endCall = function () {
     Utils.sendEvent('EndCallController:endCall');
   };
 
@@ -11,11 +11,11 @@
     'roomView:endCall': endCall
   };
 
-  var init = function(model, sessionId) {
+  var init = function (model, sessionId) {
     return LazyLoader.dependencyLoad([
       '/js/vendor/ejs_production.js',
       '/js/endCallView.js'
-    ]).then(function() {
+    ]).then(function () {
       EndCallView.init(model, sessionId);
       Utils.addEventsHandlers('', eventHandlers);
     });
