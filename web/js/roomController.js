@@ -8,11 +8,15 @@
     new Utils.MultiLevelLogger('roomController.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
 
   var otHelper;
+  var otNetworkTest;
   var numUsrsInRoom = 0;
   var _disabledAllVideos = false;
   var enableAnnotations = true;
   var enableHangoutScroll = false;
   var enableArchiveManager = false;
+
+  var previewPublisher;
+  var previewOptions;
 
   var setPublisherReady;
   var publisherReady = new Promise(function(resolve, reject) {
@@ -288,10 +292,9 @@
         buttonInfo = publisherButtons[name];
         newStatus = !buttonInfo.enabled;
         // There are a couple of possible race conditions that would end on us not changing
-        // the status on the publisher (because it's already on that state) but where we should
-        // update the UI to reflect the correct state.
+        // the status on the publisher (because it's already on that state).
         if (!otHelper.isPublisherReady || otHelper.publisherHas(name) === newStatus) {
-          sendStatus({ stream: { streamId: 'publisher' } }, name, newStatus);
+          return;
         }
       } else {
         var stream = subscriberStreams[streamId];
@@ -349,6 +352,23 @@
       _sharedStatus.roomMuted = roomMuted;
       setAudioStatus(roomMuted);
       sendSignalMuteAll(roomMuted, false);
+    }
+  };
+
+  var videoPreviewEventHandlers = {
+    initialAudioSwitch: function(evt) {
+      previewPublisher.publishAudio(evt.detail.status);
+    },
+    initialVideoSwitch: function(evt) {
+      previewPublisher.publishVideo(evt.detail.status);
+    },
+    retest: function(evt) {
+      RoomView.startPrecallTestMeter();
+      otNetworkTest.startNetworkTest(function(error, result) {
+        if (!error) {
+          RoomView.displayNetworkTestResults(result);
+        }
+      });
     }
   };
 
@@ -552,40 +572,77 @@
     }
   };
 
-  function showUserNamePrompt(roomName) {
+  function showCallSettingsPrompt(roomName, username) {
     var selector = '.user-name-modal';
     function loadModalText() {
-      document.querySelector(selector + ' header .room-name').textContent = roomName;
+      RoomView.setRoomName(roomName);
+
+      otHelper = new exports.OTHelper({});
+      exports.otHelper = otHelper;
+
+      otHelper.initPublisher('video-preview',
+        { width: '100%', height: '100%', insertMode: 'append', showControls: false }
+      ).then(function(publisher) {
+        previewPublisher = publisher;
+        previewOptions = {
+          apiKey: window.apiKey,
+          resolution: '1280x720',
+          sessionId: window.testSessionId,
+          token: window.testToken
+        };
+        RoomView.startPrecallTestMeter();
+        otNetworkTest = new OTNetworkTest(previewPublisher, previewOptions);
+        otNetworkTest.startNetworkTest(function(error, result) {
+          RoomView.displayNetworkTestResults(result);
+        });
+        Utils.addEventsHandlers('roomView:', videoPreviewEventHandlers, exports);
+        var movingAvg = null;
+        publisher.on('audioLevelUpdated', function(event) {
+          if (movingAvg === null || movingAvg <= event.audioLevel) {
+            movingAvg = event.audioLevel;
+          } else {
+            movingAvg = (0.8 * movingAvg) + (0.2 * event.audioLevel);
+          }
+
+          // 1.5 scaling to map the -30 - 0 dBm range to [0,1]
+          var logLevel = ((Math.log(movingAvg) / Math.LN10) / 1.5) + 1;
+          logLevel = Math.min(Math.max(logLevel, 0), 1);
+          RoomView.setVolumeMeterLevel(logLevel);
+        });
+      });
+
+      if (username) {
+        document.getElementById('enter-name-prompt').style.display = 'none';
+        var userNameInputElement = document.getElementById('user-name-input');
+        userNameInputElement.value = username;
+        userNameInputElement.setAttribute('readonly', true);
+      }
     }
     return Modal.show(selector, loadModalText).then(function() {
       return new Promise(function(resolve, reject) {
-        var enterButton = document.querySelector(selector + ' button');
-        enterButton.addEventListener('click', function onClicked(event) {
-          event.preventDefault();
-          enterButton.removeEventListener('click', onClicked);
-          return Modal.hide(selector)
-            .then(function() {
-              resolve(document.querySelector(selector + ' input').value.trim());
-            });
-        });
+        document.querySelector('.user-name-modal #enter').disabled = false;
+        document.querySelector('.user-name-modal .tc-dialog').addEventListener('submit',
+          function(event) {
+            event.preventDefault();
+            RoomView.hidePrecall();
+            otNetworkTest.stopTest();
+            return Modal.hide(selector)
+              .then(function() {
+                publisherOptions.publishAudio = publisherButtons.audio.enabled =
+                  document.getElementById('initialAudioSwitch').classList.contains('activated');
+                publisherOptions.publishVideo = publisherButtons.video.enabled =
+                  document.getElementById('initialVideoSwitch').classList.contains('activated');
+                resolve({
+                  username: document.querySelector(selector + ' input').value.trim()
+                });
+              });
+          });
         document.querySelector(selector + ' input.username').focus();
       });
     });
   }
 
-  function getReferrerURL() {
-    var referrerURL = '';
-
-    try {
-      referrerURL = new URL(document.referrer);
-    } catch (ex) { // eslint no-empty: ["error":{ "allowEmptyCatch": true }]
-
-    }
-
-    return referrerURL;
-  }
-
-  function getRoomParams() {
+  function getRoomParams(aParams) {
     if (!exports.RoomController) {
       throw new Error('Room Controller is not defined. Missing script tag?');
     }
@@ -615,16 +672,8 @@
     debugPreferredResolution = params.getFirstValue('debugPreferredResolution');
     enableHangoutScroll = params.getFirstValue('enableHangoutScroll') !== undefined;
 
-    var info = {
-      username: usrId,
-      roomName: roomName
-    };
-
-    if (usrId || (window.location.origin === getReferrerURL().origin)) {
-      return Promise.resolve(info);
-    }
-    return showUserNamePrompt(roomName).then(function(userName) {
-      info.username = userName;
+    return showCallSettingsPrompt(roomName, usrId).then(function(info) {
+      info.roomName = roomName;
       return info;
     });
   }
@@ -641,6 +690,8 @@
           throw new Error('Error getting room parameters');
         }
         aRoomInfo.roomName = aRoomParams.roomName;
+        aRoomInfo.publishAudio = aRoomParams.publishAudio;
+        aRoomInfo.publishVideo = aRoomParams.publishVideo;
         enableAnnotations = aRoomInfo.enableAnnotation;
         enableArchiveManager = aRoomInfo.enableArchiveManager;
         return aRoomInfo;
@@ -651,6 +702,7 @@
     '/js/components/htmlElems.js',
     '/js/helpers/resolutionAlgorithms.js',
     '/js/helpers/OTHelper.js',
+    '/js/helpers/opentok-network-test.js',
     '/js/itemsHandler.js',
     '/js/layoutView.js',
     '/js/layouts.js',
@@ -671,9 +723,6 @@
       EndCallController.init({ addEventListener: function() {} }, 'NOT_AVAILABLE');
     })
     .then(getRoomParams)
-    .then(function(aParams) {
-      return Promise.resolve(aParams);
-    })
     .then(getRoomInfo)
     .then(function(aParams) {
       var loadAnnotations = Promise.resolve();
@@ -703,11 +752,13 @@
     roomName = aParams.roomName;
     userName = aParams.username ? aParams.username.substring(0, 1000) : '';
 
-    // This kinda sucks, but it's the easiest way to leave the 'context' thing work as it does now
-    otHelper = new exports.OTHelper(aParams);
-    exports.otHelper = otHelper;
+    var sessionInfo = {
+      apiKey: aParams.apiKey,
+      sessionId: aParams.sessionId,
+      token: aParams.token
+    };
 
-    var connect = otHelper.connect.bind(otHelper);
+    var connect = otHelper.connect.bind(otHelper, sessionInfo);
 
       // Room's name is set by server, we don't need to do this, but
       // perphaps it would be convenient

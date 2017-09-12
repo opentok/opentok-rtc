@@ -18,6 +18,22 @@
   background-image: url("/images/icons/close_gray.svg");
 }
 
+[data-icon="close-box"] {
+  background-image: url("/images/icons/close-box.svg");
+}
+
+[data-icon="precall-tick"] {
+  background-image: url("/images/icons/precall/tick.svg");
+}
+
+[data-icon="precall-warning"] {
+  background-image: url("/images/icons/precall/warning.svg");
+}
+
+[data-icon="precall-error"] {
+  background-image: url("/images/icons/precall/error.svg");
+}
+
 [data-icon="record"] {
   background-image: url("/images/icons/record.svg");
 }
@@ -297,5 +313,20 @@
 #audioSwitch.activated {
   [data-icon="videoSwitch"], [data-icon="audioSwitch"] {
     background-image: url("/images/icons/switch_on.svg");
+  }
+}
+
+#initialVideoSwitch, #initialAudioSwitch {
+  [data-icon="videoSwitch"], [data-icon="audioSwitch"] {
+    background-image: url("/images/icons/switch_off_blue.svg");
+    width: 51px;
+    height: 30.4px;
+    vertical-align: text-bottom;
+  }
+}
+
+#initialVideoSwitch.activated, #initialAudioSwitch.activated {
+  [data-icon="videoSwitch"], [data-icon="audioSwitch"] {
+    background-image: url("/images/icons/switch_on_blue.svg");
   }
 }

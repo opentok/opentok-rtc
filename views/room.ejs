@@ -23,9 +23,13 @@
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/<%=chromeExtensionId%>">
     <link rel="stylesheet" href="https://assets.tokbox.com/solutions/css/style.css">
     <link rel="stylesheet" href="/css/annotation.opentok.css">
+    <link rel="stylesheet" href="/css/checkboxes.css" />
 
     <script>
-      window.isWebRTCVersion=<%=isWebRTCVersion%>
+      window.isWebRTCVersion=<%=isWebRTCVersion%>;
+      window.testSessionId='<%=testSessionId%>';
+      window.apiKey='<%=apiKey%>';
+      window.testToken='<%=testToken%>';
       var isMobile = function() { return typeof window.orientation !== 'undefined'; }
 
       var mobileSettings = function() {
@@ -239,16 +243,114 @@
     </section>
 
     <section class="tc-modal user-name-modal">
+      <img id="logo" src="/images/tokbox-logo.svg" alt="opentok transparent logo">
+
       <form class="tc-dialog">
-        <header>
-          <span>Welcome to</span> <span class="room-name"></span>
-        </header>
-        <p>Please enter your name to join this conversation.</p>
-        <input class="block username" placeholder="Enter your name">
+        <div id="video-preview"></div>
+        <div class="publish-settings">
+          <div id="video-settings">
+            <img src="/images/icons/video-icon.svg" />
+            <span>Video</span>
+            <a id="initialVideoSwitch" class="activated">
+              <i data-icon="videoSwitch"></i>
+            </a>
+          </div>
+          <div id="audio-settings">
+            <img src="/images/icons/mic-icon.svg" />
+            <span>Audio</span>
+            <svg style="height:5px; width:89px">
+              <style>
+                rect {
+                  fill: #505050;
+                  height: 5px;
+                  width: 89px;
+                }
+                #audioMeterLevel {
+                  fill: #10a9dc;
+                }
+              </style>
+              <rect id="audioMeterBackground">
+              </rect>
+              <rect id="audioMeterLevel"></rect> 
+            </svg>
+                        <a id="initialAudioSwitch" class="activated">
+              <i data-icon="audioSwitch"></i>
+            </a>
+          </div>
+          <div id="pre-call-test">
+            <img src="/images/icons/connectivity-icon.svg" />
+            <span>Connectivity test (in progress)</span>
+            <svg style="height:5px; width:89px">
+              <style>
+                rect {
+                  fill: #505050;
+                  height: 5px;
+                  width: 0;
+                }
+                #precallTestMeterLevel {
+                  fill: #10a9dc;
+                }
+              </style>
+              <rect id="precallTestMeterBackground">
+              </rect>
+              <rect id="precallTestMeterLevel"></rect> 
+            </svg>
+          </div>
+        </div>
         <footer>
-          <button id="enter" class="btn btn-blue btn-padding-large ctaarrow-white">Join Meeting</button>
+          <button id="enter" class="btn btn-blue btn-padding" disabled>
+            <span class="room-name"></span>
+          </button>
         </footer>
       </form>
+      <div id="precall-dialogs">
+        <div id="enter-name-prompt">
+          <p id="name-heading" class='room-name'></p>
+          <div>
+            <input id="user-name-input" class="block username" placeholder="Your Name">
+            <span>Optional</span>
+          </div>
+        </div>
+        <div id="pre-call-test-results">
+          <i data-icon="close-box" id="precall-close"></i>
+          <i data-icon="precall-tick" id="precall-icon"></i>
+          <p id="pre-call-heading">Precall Test Results</p>
+          <p id="pre-call-description">
+            You can expect a great experience on your video call!
+          </p>
+          <div id="precall-video-results" class="precall-media-results">
+            <p class="media-heading">
+              VIDEO QUALITY
+            </p>
+            <p class="bitrate">
+              <span id="video-bitrate">730</span> Kbps
+            </p>
+            <p id="precall-resolution">
+              1280x720
+            </p>
+            <p id="precall-framerate">
+              15fps
+            </p>
+            <p id="precall-video-packet-loss">
+              0% packet loss
+            </p>
+          </div>
+          <div id="precall-audio-results" class="precall-media-results">
+            <p class="media-heading">
+              AUDIO QUALITY
+            </p>
+            <p class="bitrate">
+              <span id="audio-bitrate">40</span> Kbps
+            </p>
+            <p id="precall-audio-packet-loss">
+              0% packet loss
+            </p>
+          </div>
+          <div id="retest">
+            Re-test
+          </div>
+        </div>
+    </div>
     </section>
 
     <section class="tc-modal feedback-report">
