@@ -1,3 +1,6 @@
+/* global RoomView, Cronograph, FirebaseModel, RecordingsController, Modal,
+BubbleFactory, Clipboard */
+
 !(function(exports) {
   'use strict';
 

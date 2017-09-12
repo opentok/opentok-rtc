@@ -1,3 +1,5 @@
+/* global RoomView, OTHelper, chrome, ScreenShareView */
+
 !(function(globals) {
   'use strict';
 

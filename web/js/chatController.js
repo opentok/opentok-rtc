@@ -1,3 +1,5 @@
+/* global ChatView, RoomStatus */
+
 /**
  * CHAT COMPONENT
  * They are formed by chatController.js chatView.js, chat.js and textProcessor.js

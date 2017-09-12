@@ -1,3 +1,5 @@
+/* global OT, FeedbackView */
+
 !(function(global) {
   'use strict';
 

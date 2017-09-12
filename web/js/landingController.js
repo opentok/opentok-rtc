@@ -1,3 +1,5 @@
+/* global LandingView */
+
 !(function(global) {
   'use strict';
 

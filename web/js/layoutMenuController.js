@@ -1,3 +1,5 @@
+/* global LayoutMenuView */
+
 !(function(global) {
   'use strict';
 

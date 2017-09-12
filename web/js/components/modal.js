@@ -1,3 +1,5 @@
+/* global Modal */
+
 !(function(global) {
   'use strict';
 

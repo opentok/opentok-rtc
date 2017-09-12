@@ -1,3 +1,5 @@
+/* global RTCApp */
+
 !(function(exports) {
   'use strict';
 

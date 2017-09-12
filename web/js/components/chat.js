@@ -1,3 +1,5 @@
+/* global Chat */
+
 !(function(global) {
   'use strict';
 

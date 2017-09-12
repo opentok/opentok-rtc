@@ -1,6 +1,7 @@
 /* global Utils, Request, RoomStatus, RoomView, LayoutManager, Modal, LazyLoader,
-          EndCallController, ChatController, LayoutMenuController, RecordingsController,
-          ScreenShareController, FeedbackController */
+EndCallController, ChatController, LayoutMenuController, RecordingsController,
+ScreenShareController, FeedbackController */
+
 !(function(exports) {
   'use strict';
 

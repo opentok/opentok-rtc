@@ -1,3 +1,5 @@
+/* global Modal, FirebaseModel, EndCallController */
+
 !(function(exports) {
   'use strict';
 

@@ -1,3 +1,5 @@
+/* global RoomView */
+
 !(function(exports) {
   'use strict';
 

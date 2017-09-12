@@ -1,3 +1,5 @@
+/* global EndCallView */
+
 !(function(exports) {
   'use strict';
 

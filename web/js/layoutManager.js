@@ -1,3 +1,5 @@
+/* global Grid, Float, F2FHorizontal, F2FVertical, HangoutHorizontal, HangoutVertical, LayoutView,
+LayoutViewport, ItemsHandler */
 
 !(function(global) {
   'use strict';

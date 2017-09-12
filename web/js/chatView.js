@@ -1,3 +1,5 @@
+/* global Chat, TextProcessor */
+
 !(function(exports) {
   'use strict';
 

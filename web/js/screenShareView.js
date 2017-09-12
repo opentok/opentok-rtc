@@ -1,3 +1,5 @@
+/* global RoomView, OTHelper, Modal */
+
 !(function(exports) {
   'use strict';
 

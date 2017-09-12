@@ -1,3 +1,5 @@
+/* global BubbleFactory */
+
 !(function(exports) {
   'use strict';
 

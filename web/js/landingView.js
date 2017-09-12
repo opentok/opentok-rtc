@@ -1,3 +1,5 @@
+/* global Modal, isWebRTCVersion */
+
 !(function(global) {
   'use strict';
 
