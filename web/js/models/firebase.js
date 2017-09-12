@@ -1,3 +1,5 @@
+/* globals Firebase */
+
 !(function (exports) {
   'use strict';
 

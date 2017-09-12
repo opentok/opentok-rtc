@@ -2,12 +2,9 @@
 // Copy this file, and add rule overrides as needed.
 {
   "globals": {
-      "Firebase": false,
       "HTMLElems": false,
-      "LayoutManager": false,
       "LazyLoader": false,
       "Promise": false,
-      "RecordingsView": false,
       "Utils": false
   },
   "extends": "airbnb/legacy",

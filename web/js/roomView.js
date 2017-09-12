@@ -1,5 +1,5 @@
 /* global RoomView, Cronograph, FirebaseModel, RecordingsController, Modal,
-BubbleFactory, Clipboard */
+BubbleFactory, Clipboard, LayoutManager */
 
 !(function (exports) {
   'use strict';
