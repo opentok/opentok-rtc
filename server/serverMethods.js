@@ -691,7 +691,7 @@ function ServerMethods(aLogLevel, aModules) {
       })
       .catch((err) => {
         logger.log('postRoomDial => authentication error: ', err);
-        aRes.status(401).send(new ErrorInfo(401, 'Authentication Error'));
+        return aRes.status(401).send(new ErrorInfo(401, 'Authentication Error'));
       });
   }
 
