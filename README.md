@@ -20,6 +20,7 @@ This repository contains a Node.js server and a web client application.
   - [Firebase configuration](#firebase-configuration)
   - [Screen sharing](#screen-sharing)
   - [Phone dial-out](#phone-dial-out)
+  - [Google Authentication for Phone dial-out](#google-authentication-for-phone-dial-out)
   - [Web client configuration](#web-client-configuration)
   - [Additional configuration options](#additional-configuration-options)
 - [Customizing the UI](#customizing-the-ui)
@@ -284,7 +285,7 @@ To enable this feature:
   * `SIP.enabled` -- Set this to `true`.
 
   * `SIP.uri` -- Set this to a URL of the following form:
-     
+
          "sip:your-endpoint-username@phone.plivo.com"
 
      Replace `your-endpoint-username` with the username for the Plivo endpoint you created.
@@ -294,16 +295,41 @@ To enable this feature:
 
   * `SIP.password` -- Set this to the password for the Plivo app you created.
 
-  For example, the new lines in the config.json file should look like this:
+  * `SIP.requireGoogleAuth` -- See [Google Authentication for Phone dial-out](#google-authentication-for-phone-dial-out) for instructions on how to limit this functionality to users authenticated by their google account.
 
+  For example, the new lines in the config.json file should look like this:
+```json
        "SIP": {
          "sipUri" : "sip:yourapp145617992434@phone.plivo.com",
          "sipUsername" : "yourapp145617992434@phone.plivo.com",
-         "sipPassword" : "sip:yourpassword"
+         "sipPassword" : "sip:yourpassword",
+         "requireGoogleAuth": false
        }
+```
+You can also add these settings as `SIP_ENABLED`, `SIP_URL`, `SIP_USERNAME`, `SIP_PASSWORD` and `SIP_REQUIRE_GOOGLE_AUTH` environment variables (instead of config.json settings).
 
-You can also add these settings as `SIP_URL`, `SIP_USERNAME`, and `SIP_PASSWORD` environment
-variables (instead of config.json settings).
+#### Google Authentication for Phone dial-out
+
+You can limit the ability to place outgoing calls to those authenticated by google.
+To enable this feature:
+
+1. Create a Google API Console Project and client ID following the steps detailed here: https://developers.google.com/identity/sign-in/web/devconsole-project
+
+2. Edit the config/config.json file in this applciation, and add the following properties:
+
+  * `Google.clientId` -- Set this to your client ID.
+  * `Google.hostedDomain` -- If you wish to limit sign in to accounts associated with a hosted domain, set the domain here.
+  * `Sip.requireGoogleAuth` -- `true` to require auth for SIP dial-out as detailed in [Phone dial-out](#phone-dial-out).
+
+  For example, the new lines in the config.json file should look like this:
+ ```json
+   "Google": {
+     "clientId": "yourClientId.apps.googleusercontent.com>",
+     "hostedDomain": "yourhosteddomain.com"
+   }
+ ```
+
+ You can also add these as `GOOGLE_CLIENT_ID` and `GOOGLE_HOSTED_DOMAIN` environment variables instead of config.json setings.
 
 ### Web client configuration
 
