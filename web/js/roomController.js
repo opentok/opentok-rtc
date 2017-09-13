@@ -14,6 +14,8 @@
   var enableHangoutScroll = false;
   var enableArchiveManager = false;
   var enableSip = false;
+  var requireGoogleAuth = false; // For SIP dial-out
+  var googleAuth = null;
 
   var setPublisherReady;
   var publisherReady = new Promise(function(resolve, reject) {
@@ -29,7 +31,6 @@
   var roomName = null;
   var resolutionAlgorithm = null;
   var debugPreferredResolution = null;
-  var googleAuth = null;
 
   var publisherOptions = {
     insertMode: 'append',
@@ -219,8 +220,14 @@
   };
 
   var dialOut = function(phoneNumber) {
-    var user = googleAuth.currentUser.get();
-    var googleIdToken = user.getAuthResponse().id_token;
+    var googleIdToken;
+    if (requireGoogleAuth) {
+      var user = googleAuth.currentUser.get();
+      googleIdToken = user.getAuthResponse().id_token;
+    } else {
+      googleIdToken = '';
+    }
+
     var data = {
       phoneNumber: phoneNumber,
       googleIdToken: googleIdToken
@@ -377,7 +384,7 @@
     dialOut: function(evt) {
       if (evt.detail.phoneNumber) {
         var phoneNumber = evt.detail.phoneNumber.replace(/\D/g, '');
-        if (googleAuth.isSignedIn.get() !== true) {
+        if (requireGoogleAuth && (googleAuth.isSignedIn.get() !== true)) {
           googleAuth.signIn().then(function(response) {
             dialOut(phoneNumber);
           });
@@ -760,7 +767,7 @@
 
     _allHandlers = RoomStatus.init(_allHandlers, { room: _sharedStatus });
 
-    if (enableSip) {
+    if (enableSip && requireGoogleAuth) {
       GoogleAuth.init(aParams.googleId, aParams.googleHostedDomain, function(aGoogleAuth) {
         googleAuth = aGoogleAuth;
       });

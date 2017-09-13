@@ -16,7 +16,7 @@ var C = require('./serverConstants');
 var configLoader = require('./configLoader');
 var FirebaseArchives = require('./firebaseArchives');
 var plivo = require('plivo');
-var GoogleAuth = require('google-auth-library');
+var GoogleAuth = require('./googleAuthStrategies');
 
 
 function ServerMethods(aLogLevel, aModules) {
@@ -48,6 +48,7 @@ function ServerMethods(aLogLevel, aModules) {
   const redisRoomPrefix = C.REDIS_ROOM_PREFIX;
   const redisPhonePrefix = C.REDIS_PHONE_PREFIX;
 
+  var googleAuth;
   // Opentok API instance, which will be configured only after tbConfigPromise
   // is resolved
   var tbConfigPromise;
@@ -108,9 +109,14 @@ function ServerMethods(aLogLevel, aModules) {
       var sipUri = config.get(C.SIP_URI);
       var sipUsername = config.get(C.SIP_USERNAME);
       var sipPassword = config.get(C.SIP_PASSWORD);
+      var sipRequireGoogleAuth = config.get(C.SIP_REQUIRE_GOOGLE_AUTH);
       var googleId = config.get(C.GOOGLE_CLIENT_ID);
       var googleHostedDomain = config.get(C.GOOGLE_HOSTED_DOMAIN);
-
+      if (sipRequireGoogleAuth) {
+        googleAuth = new GoogleAuth.EnabledGoogleAuthStrategy(googleId, googleHostedDomain);
+      } else {
+        googleAuth = new GoogleAuth.DisabledGoogleAuthStategy();
+      }
       // This isn't strictly necessary... but since we're using promises all over the place, it
       // makes sense. The _P are just a promisified version of the methods. We could have
       // overwritten the original methods but this way we make it explicit. That's also why we're
@@ -175,6 +181,7 @@ function ServerMethods(aLogLevel, aModules) {
                 sipUri,
                 sipUsername,
                 sipPassword,
+                sipRequireGoogleAuth,
                 googleId,
                 googleHostedDomain,
               }));
@@ -428,6 +435,7 @@ function ServerMethods(aLogLevel, aModules) {
           enableAnnotation: tbConfig.enableAnnotations,
           enableArchiving: tbConfig.enableArchiving,
           enableSip: tbConfig.enableSip,
+          requireGoogleAuth: tbConfig.sipRequireGoogleAuth,
           googleId: tbConfig.googleId,
           googleHostedDomain: tbConfig.googleHostedDomain,
         };
@@ -628,25 +636,14 @@ function ServerMethods(aLogLevel, aModules) {
     var tbConfig = aReq.tbConfig;
     var roomName = aReq.params.roomName.toLowerCase();
     var body = aReq.body;
+    var phoneNumber = body.phoneNumber;
+    var token = body.googleIdToken;
     if (!body || !body.phoneNumber) {
       logger.log('postRoomDial => missing body parameter: ', aReq.body);
       return aRes.status(400).send(new ErrorInfo(400, 'Missing required parameter'));
     }
-
-    var auth = new GoogleAuth; // eslint-disable-line new-parens
-    var client = new auth.OAuth2(tbConfig.googleId, '', '');
-    var verifyIdTokenPromise = Utils.promisify(client.verifyIdToken, 1, client);
-
-    return verifyIdTokenPromise(body.googleIdToken, tbConfig.googleId)
-      .then((login) => {
-        var payload = login.getPayload();
-        var domain = payload.hd;
-        if (domain !== tbConfig.googleHostedDomain) {
-          logger.log('postRoomDial => authenticated token domain did not match config: ', domain);
-          return aRes.status(403).send(new ErrorInfo(403, 'Forbidden: Authentication Domain Invalid'));
-        }
-        var phoneNumber = body.phoneNumber;
-        return serverPersistence.getKey(redisPhonePrefix + phoneNumber)
+    return googleAuth.verifyIdToken(token).then(() =>
+       serverPersistence.getKey(redisPhonePrefix + phoneNumber)
         .then((numberInfo) => {
           if (numberInfo !== null) {
             return aRes.status(400).send(new ErrorInfo(400, 'That number has already been dialed'));
@@ -687,8 +684,7 @@ function ServerMethods(aLogLevel, aModules) {
                 return aRes.status(400).send(new ErrorInfo(400, 'An error ocurred while forwarding SIP Call'));
               });
           });
-        });
-      })
+        }))
       .catch((err) => {
         logger.log('postRoomDial => authentication error: ', err);
         return aRes.status(401).send(new ErrorInfo(401, 'Authentication Error'));

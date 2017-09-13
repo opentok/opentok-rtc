@@ -95,6 +95,8 @@ E.SIP_USERNAME = { envVar: 'SIP_USERNAME', jsonPath: 'SIP.username', defaultValu
 
 E.SIP_PASSWORD = { envVar: 'SIP_PASSWORD', jsonPath: 'SIP.password', defaultValue: '' };
 
+E.SIP_REQUIRE_GOOGLE_AUTH = { envVar: 'SIP_REQUIRE_GOOGLE_AUTH', jsonPath: 'SIP.requireGoogleAuth', defaultValue: false };
+
 E.GOOGLE_CLIENT_ID = { envVar: 'GOOGLE_CLIENT_ID', jsonPath: 'Google.clientId', defaultValue: '' };
 
 E.GOOGLE_HOSTED_DOMAIN = { envVar: 'GOOGLE_HOSTED_DOMAIN', jsonPath: 'Google.hostedDomain', defaultValue: '' };
