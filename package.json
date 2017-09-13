@@ -11,8 +11,7 @@
     "start": "node server.js",
     "dev": "concurrently \"npm run start\" \"grunt clientDev\"",
     "postinstall": "bower install && grunt clientBuild",
-    "test": "grunt test",
-    "test:report": "grunt test && bash <(curl -s https://codecov.io/bash)"
+    "test": "grunt test"
   },
   "repository": {
     "type": "git",
