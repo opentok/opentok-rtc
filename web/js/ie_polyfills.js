@@ -4,16 +4,16 @@
 // This file adds what we've detected that's missing in IE and we've used inadvertently. We've
 // tried to be as vanilla as possible (except for promises) but sometimes surprising things fall
 // between the cracks
-!(function(global) {
+!(function (global) {
   // String doesn't have startsWith
   if (!String.prototype.startsWith) {
-    String.prototype.startsWith = function(substr) {
+    String.prototype.startsWith = function (substr) {
       return this.indexOf(substr) === 0;
     };
   }
 
   if (!String.prototype.endsWith) {
-    String.prototype.endsWith = function(searchString, position) {
+    String.prototype.endsWith = function (searchString, position) {
       var subjectString = this.toString();
       if (typeof position !== 'number' || !isFinite(position) ||
             Math.floor(position) !== position || position > subjectString.length) {
@@ -43,7 +43,7 @@
   // external libraries that depend on CustomEvent in IE being what it is!
   if (typeof global.CustomEvent !== 'function') {
     global._ieCustomEvent = global.CustomEvent;
-    global.CustomEvent = function(eventName, initDict) {
+    global.CustomEvent = function (eventName, initDict) {
       var evt = document.createEvent('CustomEvent');
       var detail = (initDict && initDict.detail) || undefined;
       evt.initCustomEvent(eventName, true, true, detail);
@@ -53,7 +53,7 @@
 
   if (typeof global.URL !== 'function') {
     global._ieURL = global.URL;
-    global.URL = function(str) {
+    global.URL = function (str) {
       var parser = document.createElement('a');
       parser.href = str;
       if (!parser.hostname) {
@@ -70,7 +70,7 @@
   }
 
   if (!Array.prototype.find) {
-    Array.prototype.find = function(predicate) {
+    Array.prototype.find = function (predicate) {
       if (this === null) {
         throw new TypeError('Array.prototype.find called on null or undefined');
       }
@@ -94,9 +94,9 @@
 
   if (!global.Intl) {
     global.Intl = {
-      DateTimeFormat: function(locales, options) {
+      DateTimeFormat: function (locales, options) {
         return {
-          format: function(date) {
+          format: function (date) {
             var time = [];
             var suffix = '';
 
@@ -133,16 +133,16 @@
   }
 
   if (typeof WeakMap === 'undefined') {
-    (function() {
+    (function () {
       var defineProperty = Object.defineProperty;
       var counter = Date.now() % 1e9;
 
-      var WeakMap = function() {
+      var WeakMap = function () {
         this.name = '__st' + (Math.random() * 1e9 >>> 0) + (counter++ + '__');
       };
 
       WeakMap.prototype = {
-        set: function(key, value) {
+        set: function (key, value) {
           var entry = key[this.name];
           if (entry && entry[0] === key) {
             entry[1] = value;
@@ -151,21 +151,21 @@
           }
           return this;
         },
-        get: function(key) {
+        get: function (key) {
           var entry = key[this.name];
           if (entry && entry[0] === key) {
             return entry[1];
           }
           return undefined;
         },
-        delete: function(key) {
+        delete: function (key) {
           var entry = key[this.name];
           if (!entry) return false;
           var hasValue = entry[0] === key;
           entry[0] = entry[1] = undefined;
           return hasValue;
         },
-        has: function(key) {
+        has: function (key) {
           var entry = key[this.name];
           if (!entry) return false;
           return entry[0] === key;
