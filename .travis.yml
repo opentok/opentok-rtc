@@ -18,6 +18,6 @@ script:
   - eval $CMD
 env:
   - CMD="./node_modules/travis-github-lint-status/index.js"
-  - CMD="npm run test" TB_API_SECRET=123 TB_API_KEY=123
+  - CMD="npm run test" TB_API_SECRET=123 TB_API_KEY=123  && bash <(curl -s https://codecov.io/bash)
 addons:
-  firefox: "latest"
+  firefox: "54.0"
