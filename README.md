@@ -2,6 +2,7 @@
 
 # OpenTokRTC v2
 [![Build Status](https://travis-ci.com/opentok/OpenTokRTC-V2.svg?token=qPpN1jG8Wftsn1cafKif&branch=master)](https://travis-ci.com/opentok/OpenTokRTC-V2)
+[![codecov](https://codecov.io/gh/opentok/OpenTokRTC-V2/branch/master/graph/badge.svg)](https://codecov.io/gh/opentok/OpenTokRTC-V2/branch/master)
 
 OpenTokRTC is your private web-based video conferencing solution. It is based on the TokBox
 [OpenTok platform](https://tokbox.com/developer/) and uses the OpenTok SDKs and API. You can deploy
