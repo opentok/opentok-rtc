@@ -1,11 +1,13 @@
-!(function(exports) {
+/* global BubbleFactory */
+
+!(function (exports) {
   'use strict';
 
   var menu = null;
   var items = null;
 
-  var addHandlers = function() {
-    menu.addEventListener('click', function(evt) {
+  var addHandlers = function () {
+    menu.addEventListener('click', function (evt) {
       var type = evt.target.data('layoutType');
       if (type) {
         BubbleFactory.get('chooseLayout').toggle();
@@ -15,10 +17,10 @@
       }
     });
 
-    window.addEventListener('layoutManager:availableLayouts', function(evt) {
+    window.addEventListener('layoutManager:availableLayouts', function (evt) {
       var availableLayouts = evt.detail.layouts;
 
-      Array.prototype.map.call(items, function(elem) {
+      Array.prototype.map.call(items, function (elem) {
         var layoutType = elem.data('layoutType');
         var isAvailable = !!availableLayouts[layoutType];
         elem.disabled = !isAvailable;
@@ -27,7 +29,7 @@
     });
   };
 
-  var init = function() {
+  var init = function () {
     menu = document.querySelector('[for="chooseLayout"] ul');
     items = menu.querySelectorAll('a');
     addHandlers();

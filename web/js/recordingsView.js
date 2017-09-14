@@ -1,4 +1,6 @@
-!(function(exports) {
+/* global RoomView */
+
+!(function (exports) {
   'use strict';
 
   var LIST_SELECTOR = '.videos.tc-list ul';
@@ -20,7 +22,7 @@
 
     list.innerHTML = '';
 
-    var sortingDescending = function(a, b) {
+    var sortingDescending = function (a, b) {
       var tA = archives[a].createdAt;
       var tB = archives[b].createdAt;
 
@@ -30,7 +32,7 @@
     var total = 0;
     Object.keys(archives)
            .sort(sortingDescending)
-           .forEach(function(archiveId) {
+           .forEach(function (archiveId) {
              var archive = archives[archiveId];
              ++total;
              var url = archive.localDownloadURL;
@@ -60,11 +62,11 @@
     RoomView.recordingsNumber = total;
   }
 
-  var addHandlers = function() {
+  var addHandlers = function () {
     HTMLElems.addHandlerArchive(LIST_SELECTOR);
   };
 
-  var init = function(model) {
+  var init = function (model) {
     document.body.data('downloadAvailable', Utils.isChrome());
     model.addEventListener('value', render);
     render(model.archives);

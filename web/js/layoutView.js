@@ -1,7 +1,7 @@
-!(function(global) {
+!(function (global) {
   'use strict';
 
-  var LayoutRenderer = function(container) {
+  var LayoutRenderer = function (container) {
     this.container = container.querySelector('.tc-list ul');
   };
 
@@ -12,9 +12,9 @@
       controlElems: {}
     },
 
-    append: function(id, options) {
+    append: function (id, options) {
       options = options || {};
-      Object.keys(this.defaultOptions).forEach(function(option) {
+      Object.keys(this.defaultOptions).forEach(function (option) {
         options[option] = options[option] || this.defaultOptions[option];
       }, this);
       var type = options.type;
@@ -33,7 +33,7 @@
       return item;
     },
 
-    appendAdditionalUI: function(id, item, type, name) {
+    appendAdditionalUI: function (id, item, type, name) {
       var userInfoElem = HTMLElems.createElementAt(item, 'div');
       userInfoElem.classList.add('user-info');
 
@@ -50,7 +50,7 @@
       }).classList.add('dblclick_area');
     },
 
-    appendControlElems: function(id, type, main, controlElems, itemControlType) {
+    appendControlElems: function (id, type, main, controlElems) {
       if (!controlElems || !Object.keys(controlElems).length) {
         return;
       }
@@ -58,7 +58,7 @@
       var controls = HTMLElems.createElementAt(main, 'div');
       controls.classList.add('buttons');
 
-      Object.keys(controlElems).forEach(function(controlName) {
+      Object.keys(controlElems).forEach(function (controlName) {
         var control = controlElems[controlName];
         var options = {
           'data-icon': control.dataIcon,
@@ -77,11 +77,11 @@
       });
     },
 
-    remove: function(item) {
+    remove: function (item) {
       return this.container.removeChild(item);
     },
 
-    removeAll: function() {
+    removeAll: function () {
       this.container.innerHTML = '';
     }
   };
@@ -89,19 +89,19 @@
   var renderer = null;
 
   global.LayoutView = {
-    init: function(container) {
+    init: function (container) {
       renderer = new LayoutRenderer(container);
     },
 
-    append: function(id, options) {
+    append: function () {
       return renderer.append.apply(renderer, arguments);
     },
 
-    remove: function(item) {
+    remove: function () {
       return renderer.remove.apply(renderer, arguments);
     },
 
-    removeAll: function() {
+    removeAll: function () {
       renderer.removeAll.apply(renderer);
     }
   };

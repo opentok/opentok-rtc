@@ -1,7 +1,8 @@
 /* global Utils, Request, RoomStatus, RoomView, LayoutManager, Modal, LazyLoader,
-          EndCallController, ChatController, LayoutMenuController, RecordingsController,
-          ScreenShareController, FeedbackController */
-!(function(exports) {
+EndCallController, ChatController, LayoutMenuController, RecordingsController,
+ScreenShareController, FeedbackController, OTNetworkTest */
+
+!(function (exports) {
   'use strict';
 
   var debug =
@@ -19,7 +20,7 @@
   var previewOptions;
 
   var setPublisherReady;
-  var publisherReady = new Promise(function(resolve, reject) {
+  var publisherReady = new Promise(function (resolve) {
     setPublisherReady = resolve;
   });
 
@@ -76,7 +77,7 @@
     }
   };
 
-  var SubscriberButtons = function(streamVideType) {
+  var SubscriberButtons = function (streamVideType) {
     var isScreenSharing = streamVideType === 'screen';
 
     var buttons = {
@@ -131,7 +132,7 @@
   // observe changes on the elements that hold the subscribers.
   // Note that mutationObserver only works on IE11+, but that the previous alternative doesn't
   // work all that well either.
-  var processMutation = function(aMutation) {
+  var processMutation = function (aMutation) {
     var elem = aMutation.target;
     if ((aMutation.attributeName !== 'style' && aMutation.attributeName !== 'class') ||
         elem.data('streamType') !== 'camera') {
@@ -141,7 +142,7 @@
     var subscriberPromise =
       subscriberStreams[streamId] && subscriberStreams[streamId].subscriberPromise;
 
-    subscriberPromise.then(function(subscriber) {
+    subscriberPromise.then(function (subscriber) {
       if (debugPreferredResolution) {
         // If the user requested debugging this, we're going to export all the information through
         // window so he can examine the values.
@@ -149,9 +150,9 @@
         window.subscriberElem[streamId] = elem;
         window.subscriber = window.subscriber || {};
         window.subscriber[streamId] = subscriber;
-        window.dumpResolutionInfo = window.dumpResolutionInfo || function() {
+        window.dumpResolutionInfo = window.dumpResolutionInfo || function () {
           Object.keys(window.subscriber)
-            .forEach(function(aSub) {
+            .forEach(function (aSub) {
               var sub = window.subscriber[aSub];
               var stream = sub && sub.stream;
               var vd = stream && stream.videoDimensions;
@@ -181,11 +182,11 @@
     });
   };
   var _mutationObserver = exports.MutationObserver &&
-    new exports.MutationObserver(function(aMutations) {
+    new exports.MutationObserver(function (aMutations) {
       aMutations.forEach(processMutation);
     });
 
-  var sendVideoEvent = function(stream) {
+  var sendVideoEvent = function (stream) {
     if (!stream) {
       return;
     }
@@ -195,7 +196,7 @@
     });
   };
 
-  var sendArchivingOperation = function(operation) {
+  var sendArchivingOperation = function (operation) {
     var data = {
       userName: userName,
       roomName: roomName,
@@ -203,14 +204,14 @@
     };
 
     Request.sendArchivingOperation(data)
-      .then(function(response) {
+      .then(function (response) {
         debug.log(response);
       });
   };
 
   var roomStatusHandlers = {
-    updatedRemotely: function(evt) {
-      publisherReady.then(function() {
+    updatedRemotely: function () {
+      publisherReady.then(function () {
         _sharedStatus = RoomStatus.get(STATUS_KEY);
         var roomMuted = _sharedStatus.roomMuted;
         setAudioStatus(roomMuted);
@@ -219,10 +220,10 @@
     }
   };
 
-  var changeSubscriberStatus = function(name, status) {
+  var changeSubscriberStatus = function (name, status) {
     _disabledAllVideos = status;
 
-    Object.keys(subscriberStreams).forEach(function(aStreamId) {
+    Object.keys(subscriberStreams).forEach(function (aStreamId) {
       if (subscriberStreams[aStreamId] &&
           subscriberStreams[aStreamId].stream.videoType === 'camera') {
         pushSubscriberButton(aStreamId, name, status);
@@ -230,7 +231,7 @@
     });
   };
 
-  var pushSubscriberButton = function(streamId, name, status) {
+  var pushSubscriberButton = function (streamId, name, status) {
     viewEventHandlers.buttonClick({
       detail: {
         streamId: streamId,
@@ -246,17 +247,17 @@
   }
 
   var viewEventHandlers = {
-    endCall: function() {
+    endCall: function () {
       otHelper.disconnect();
     },
-    startArchiving: function(evt) {
+    startArchiving: function (evt) {
       sendArchivingOperation((evt.detail && evt.detail.operation) || 'startComposite');
     },
-    stopArchiving: function(evt) {
+    stopArchiving: function () {
       sendArchivingOperation('stop');
     },
-    streamVisibilityChange: function(evt) {
-      var getStatus = function(info) {
+    streamVisibilityChange: function (evt) {
+      var getStatus = function (info) {
         var status = null;
 
         if (evt.detail.value === 'hidden') {
@@ -277,7 +278,7 @@
                      getStatus(stream.buttons.video));
       }
     },
-    buttonClick: function(evt) {
+    buttonClick: function (evt) {
       var streamId = evt.detail.streamId;
       var streamType = evt.detail.streamType;
       var name = evt.detail.name;
@@ -344,10 +345,10 @@
         }
       }
     },
-    videoSwitch: function(evt) {
+    videoSwitch: function (evt) {
       changeSubscriberStatus('video', evt.detail.status);
     },
-    muteAllSwitch: function(evt) {
+    muteAllSwitch: function (evt) {
       var roomMuted = evt.detail.status;
       _sharedStatus.roomMuted = roomMuted;
       setAudioStatus(roomMuted);
@@ -356,15 +357,15 @@
   };
 
   var videoPreviewEventHandlers = {
-    initialAudioSwitch: function(evt) {
+    initialAudioSwitch: function (evt) {
       previewPublisher.publishAudio(evt.detail.status);
     },
-    initialVideoSwitch: function(evt) {
+    initialVideoSwitch: function (evt) {
       previewPublisher.publishVideo(evt.detail.status);
     },
-    retest: function(evt) {
+    retest: function () {
       RoomView.startPrecallTestMeter();
-      otNetworkTest.startNetworkTest(function(error, result) {
+      otNetworkTest.startNetworkTest(function (error, result) {
         if (!error) {
           RoomView.displayNetworkTestResults(result);
         }
@@ -372,7 +373,7 @@
     }
   };
 
-  var setAudioStatus = function(switchStatus) {
+  var setAudioStatus = function (switchStatus) {
     otHelper.isPublisherReady && viewEventHandlers.buttonClick({
       detail: {
         streamId: 'publisher',
@@ -383,7 +384,7 @@
     });
   };
 
-  var sendStatus = function(evt, control, enabled) {
+  var sendStatus = function (evt, control, enabled) {
     var stream = evt.stream || evt.target.stream;
     if (!stream) {
       return;
@@ -402,20 +403,20 @@
   };
 
   var _subscriberHandlers = {
-    videoDisabled: function(evt) {
+    videoDisabled: function (evt) {
       evt.reason === 'subscribeToVideo' && sendStatus(evt, 'video');
       sendVideoEvent(evt.target.stream);
     },
-    videoEnabled: function(evt) {
+    videoEnabled: function (evt) {
       evt.reason === 'subscribeToVideo' && sendStatus(evt, 'video', true);
       sendVideoEvent(evt.target.stream);
     },
-    disconnected: function(evt) {
+    disconnected: function (evt) {
       Utils.sendEvent('roomController:disconnected', {
         id: evt.target.stream.streamId
       });
     },
-    connected: function(evt) {
+    connected: function (evt) {
       Utils.sendEvent('roomController:connected', {
         id: evt.target.stream.streamId
       });
@@ -423,19 +424,19 @@
   };
 
   var _allHandlers = {
-    connectionCreated: function(evt) {
+    connectionCreated: function (evt) {
       RoomView.participantsNumber = ++numUsrsInRoom;
       debug.log('New participant, total:', numUsrsInRoom,
                 'user:', (evt.connection.data ?
                           JSON.parse(evt.connection.data).userName : 'unknown'));
     },
-    connectionDestroyed: function(evt) {
+    connectionDestroyed: function (evt) {
       RoomView.participantsNumber = --numUsrsInRoom;
       debug.log('a participant left, total:', numUsrsInRoom,
                 'user:', (evt.connection.data ?
                           JSON.parse(evt.connection.data).userName : 'unknown'));
     },
-    sessionDisconnected: function(evt) {
+    sessionDisconnected: function () {
       // The client has disconnected from the session.
       // This event may be dispatched asynchronously in response to a successful
       // call to the disconnect() method of the Session object.
@@ -445,8 +446,8 @@
       Utils.sendEvent('roomController:sessionDisconnected');
       subscriberStreams = {};
     },
-    streamCreated: function(evt) {
-      publisherReady.then(function() {
+    streamCreated: function (evt) {
+      publisherReady.then(function () {
         // A new stream, published by another client, has been created on this
         // session. For streams published by your own client, the Publisher object
         // dispatches a streamCreated event. For a code example and more details,
@@ -484,13 +485,13 @@
           _mutationObserver.observe(subsContainer, { attributes: true });
         subscriberStreams[streamId].subscriberPromise =
           otHelper.subscribe(evt.stream, subsDOMElem, subOptions, {}, enableAnnotations)
-          .then(function(subscriber) {
+          .then(function (subscriber) {
             if (streamVideoType === 'screen') {
               enableAnnotations && Utils.sendEvent('roomController:annotationStarted');
               return subscriber;
             }
 
-            Object.keys(_subscriberHandlers).forEach(function(name) {
+            Object.keys(_subscriberHandlers).forEach(function (name) {
               subscriber.on(name, _subscriberHandlers[name]);
             });
             if (enterWithVideoDisabled) {
@@ -498,12 +499,12 @@
             }
             sendVideoEvent(evt.stream);
             return subscriber;
-          }, function(error) {
+          }, function (error) {
             debug.error('Error susbscribing new participant. ' + error.message);
           });
       });
     },
-    streamDestroyed: function(evt) {
+    streamDestroyed: function (evt) {
       // A stream from another client has stopped publishing to the session.
       // The default behavior is that all Subscriber objects that are subscribed
       // to the stream are unsubscribed and removed from the HTML DOM. Each
@@ -522,7 +523,7 @@
       RoomView.deleteStreamView(stream.streamId);
       subscriberStreams[stream.streamId] = null;
     },
-    streamPropertyChanged: function(evt) {
+    streamPropertyChanged: function (evt) {
       if (otHelper.publisherId !== evt.stream.id) {
         return;
       }
@@ -534,23 +535,23 @@
         sendStatus(evt, 'audio', evt.newValue);
       }
     },
-    archiveStarted: function(evt) {
+    archiveStarted: function (evt) {
       // Dispatched when an archive recording of the session starts
       Utils.sendEvent('archiving', {
         status: 'started',
         id: evt.id
       });
     },
-    archiveStopped: function(evt) {
+    archiveStopped: function () {
       // Dispatched when an archive recording of the session stops
       Utils.sendEvent('archiving', { status: 'stopped' });
     },
-    'signal:muteAll': function(evt) {
+    'signal:muteAll': function (evt) {
       var statusData = JSON.parse(evt.data);
       var muteAllSwitch = statusData.status;
       var onlyChangeSwitch = statusData.onlyChangeSwitch;
 
-      var setNewAudioStatus = function(isMuted, onlySwitch) {
+      var setNewAudioStatus = function (isMuted, onlySwitch) {
         if (_sharedStatus.roomMuted !== isMuted) {
           return;
         }
@@ -582,7 +583,7 @@
 
       otHelper.initPublisher('video-preview',
         { width: '100%', height: '100%', insertMode: 'append', showControls: false }
-      ).then(function(publisher) {
+      ).then(function (publisher) {
         previewPublisher = publisher;
         previewOptions = {
           apiKey: window.apiKey,
@@ -592,12 +593,12 @@
         };
         RoomView.startPrecallTestMeter();
         otNetworkTest = new OTNetworkTest(previewPublisher, previewOptions);
-        otNetworkTest.startNetworkTest(function(error, result) {
+        otNetworkTest.startNetworkTest(function (error, result) {
           RoomView.displayNetworkTestResults(result);
         });
         Utils.addEventsHandlers('roomView:', videoPreviewEventHandlers, exports);
         var movingAvg = null;
-        publisher.on('audioLevelUpdated', function(event) {
+        publisher.on('audioLevelUpdated', function (event) {
           if (movingAvg === null || movingAvg <= event.audioLevel) {
             movingAvg = event.audioLevel;
           } else {
@@ -618,16 +619,16 @@
         userNameInputElement.setAttribute('readonly', true);
       }
     }
-    return Modal.show(selector, loadModalText).then(function() {
-      return new Promise(function(resolve, reject) {
+    return Modal.show(selector, loadModalText).then(function () {
+      return new Promise(function (resolve) {
         document.querySelector('.user-name-modal #enter').disabled = false;
         document.querySelector('.user-name-modal .tc-dialog').addEventListener('submit',
-          function(event) {
+          function (event) {
             event.preventDefault();
             RoomView.hidePrecall();
             otNetworkTest.stopTest();
             return Modal.hide(selector)
-              .then(function() {
+              .then(function () {
                 publisherOptions.publishAudio = publisherButtons.audio.enabled =
                   document.getElementById('initialAudioSwitch').classList.contains('activated');
                 publisherOptions.publishVideo = publisherButtons.video.enabled =
@@ -642,7 +643,7 @@
     });
   }
 
-  function getRoomParams(aParams) {
+  function getRoomParams() {
     if (!exports.RoomController) {
       throw new Error('Room Controller is not defined. Missing script tag?');
     }
@@ -672,7 +673,7 @@
     debugPreferredResolution = params.getFirstValue('debugPreferredResolution');
     enableHangoutScroll = params.getFirstValue('enableHangoutScroll') !== undefined;
 
-    return showCallSettingsPrompt(roomName, usrId).then(function(info) {
+    return showCallSettingsPrompt(roomName, usrId).then(function (info) {
       info.roomName = roomName;
       return info;
     });
@@ -681,7 +682,7 @@
   function getRoomInfo(aRoomParams) {
     return Request
       .getRoomInfo(aRoomParams)
-      .then(function(aRoomInfo) {
+      .then(function (aRoomInfo) {
         if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId &&
               aRoomInfo.apiKey && aRoomInfo.username &&
               aRoomInfo.firebaseToken && aRoomInfo.firebaseURL)) {
@@ -717,21 +718,21 @@
     '/js/feedbackController.js'
   ];
 
-  var init = function() {
+  var init = function () {
     LazyLoader.load(modules)
-    .then(function() {
-      EndCallController.init({ addEventListener: function() {} }, 'NOT_AVAILABLE');
+    .then(function () {
+      EndCallController.init({ addEventListener: function () {} }, 'NOT_AVAILABLE');
     })
     .then(getRoomParams)
     .then(getRoomInfo)
-    .then(function(aParams) {
+    .then(function (aParams) {
       var loadAnnotations = Promise.resolve();
       if (enableAnnotations) {
         exports.OTKAnalytics = exports.OTKAnalytics ||
-          function() {
+          function () {
             return {
-              addSessionInfo: function() {},
-              logEvent: function(a, b) {
+              addSessionInfo: function () {},
+              logEvent: function (a, b) {
                 console.log(a, b); // eslint-disable-line no-console
               }
             };
@@ -742,9 +743,9 @@
           '/js/vendor/opentok-annotation.js'
         ]);
       }
-      return loadAnnotations.then(function() { return aParams; });
+      return loadAnnotations.then(function () { return aParams; });
     })
-  .then(function(aParams) {
+  .then(function (aParams) {
     Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
     Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
     RoomView.init(enableHangoutScroll, enableArchiveManager);
@@ -771,7 +772,7 @@
         .init(aParams.roomName, userName, _allHandlers)
         .then(connect)
         .then(LayoutMenuController.init)
-        .then(function() {
+        .then(function () {
           var publisherElement = RoomView.createStreamView('publisher', {
             name: userName,
             type: 'publisher',
@@ -791,23 +792,23 @@
             publisherOptions.publishAudio = false;
           }
           publisherOptions.name = userName;
-          return otHelper.publish(publisherElement, publisherOptions, {}).then(function() {
+          return otHelper.publish(publisherElement, publisherOptions, {}).then(function () {
             setPublisherReady();
-          }).catch(function(errInfo) {
+          }).catch(function (errInfo) {
             if (errInfo.error.name === 'OT_CHROME_MICROPHONE_ACQUISITION_ERROR') {
               Utils.sendEvent('roomController:chromePublisherError');
               otHelper.disconnect();
             }
           });
         })
-        .then(function() {
+        .then(function () {
           RecordingsController.init(enableArchiveManager, aParams.firebaseURL,
                                     aParams.firebaseToken, aParams.sessionId);
           ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
           FeedbackController.init(otHelper);
           Utils.sendEvent('roomController:controllersReady');
         })
-        .catch(function(error) {
+        .catch(function (error) {
           debug.error('Error Connecting to room. ' + error.message);
         });
   });

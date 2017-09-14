@@ -1,4 +1,7 @@
-!(function(exports) {
+/* global RoomView, Cronograph, FirebaseModel, RecordingsController, Modal,
+BubbleFactory, Clipboard, LayoutManager */
+
+!(function (exports) {
   'use strict';
 
   // HTML elements for the view
@@ -94,7 +97,7 @@
   }
 
   var chatViews = {
-    unreadMessage: function(evt) {
+    unreadMessage: function () {
       setUnreadMessages(_unreadMsg + 1);
       if (!_chatHasBeenShown) {
         setChatStatus(true);
@@ -103,7 +106,7 @@
   };
 
   var chatEvents = {
-    hidden: function(evt) {
+    hidden: function () {
       document.body.data('chatStatus', 'hidden');
       setUnreadMessages(0);
       HTMLElems.flush('#toggleChat');
@@ -111,7 +114,7 @@
   };
 
   var hangoutEvents = {
-    screenOnStage: function(event) {
+    screenOnStage: function (event) {
       var status = event.detail.status;
       if (status === 'on') {
         dock.data('previouslyCollapsed', dock.classList.contains('collapsed'));
@@ -127,16 +130,16 @@
   var screenShareCtrEvents = {
     changeScreenShareStatus: toggleScreenSharing,
     destroyed: toggleScreenSharing.bind(undefined, NOT_SHARING),
-    annotationStarted: function(evt) {
+    annotationStarted: function () {
       document.body.data('annotationVisible', 'true');
     },
-    annotationEnded: function(evt) {
+    annotationEnded: function () {
       document.body.data('annotationVisible', 'false');
     }
   };
 
   var roomControllerEvents = {
-    userChangeStatus: function(evt) {
+    userChangeStatus: function (evt) {
       // If user changed the status we need to reset the switch
       if (evt.detail.name === 'video') {
         setSwitchStatus(false, false, videoSwitch, 'roomView:videoSwitch');
@@ -144,29 +147,29 @@
         setSwitchStatus(false, false, audioSwitch, 'roomView:muteAllSwitch');
       }
     },
-    roomMuted: function(evt) {
+    roomMuted: function (evt) {
       var isJoining = evt.detail.isJoining;
       setAudioSwitchRemotely(true);
       showConfirm(isJoining ? MODAL_TXTS.join : MODAL_TXTS.muteRemotely);
     },
-    sessionDisconnected: function(evt) {
+    sessionDisconnected: function () {
       RoomView.participantsNumber = 0;
       LayoutManager.removeAll();
     },
-    controllersReady: function() {
+    controllersReady: function () {
       var elements = dock.querySelectorAll('.menu [disabled]');
-      Array.prototype.forEach.call(elements, function(element) {
+      Array.prototype.forEach.call(elements, function (element) {
         Utils.setDisabled(element, false);
       });
     },
-    annotationStarted: function(evt) {
+    annotationStarted: function () {
       document.body.data('annotationVisible', 'true');
     },
-    annotationEnded: function(evt) {
+    annotationEnded: function () {
       document.body.data('annotationVisible', 'false');
     },
-    chromePublisherError: function(evt) {
-      showConfirm(MODAL_TXTS.chromePublisherError).then(function() {
+    chromePublisherError: function () {
+      showConfirm(MODAL_TXTS.chromePublisherError).then(function () {
         document.location.reload();
       });
     }
@@ -200,16 +203,16 @@
     title.style.height = title.clientHeight + 'px';
   }
 
-  var setVolumeMeterLevel = function(level) {
+  var setVolumeMeterLevel = function (level) {
     var meterLevel = document.getElementById('audioMeterLevel');
     meterLevel.style.width = (level * 89) + 'px';
   };
 
-  var startPrecallTestMeter = function() {
+  var startPrecallTestMeter = function () {
     var meterLevel = document.getElementById('precallTestMeterLevel');
     meterLevel.style.width = 0;
     var preCallTestProgress = 0;
-    var testMeterInterval = setInterval(function() {
+    var testMeterInterval = setInterval(function () {
       preCallTestProgress++;
       meterLevel.style.width = ((preCallTestProgress * 89) / 15) + 'px';
       if (preCallTestProgress === 15) {
@@ -218,7 +221,7 @@
     }, 1000);
   };
 
-  var displayNetworkTestResults = function(results) {
+  var displayNetworkTestResults = function (results) {
     var packetLossStr;
     document.getElementById('pre-call-test-results').style.display = 'block';
     document.getElementById('audio-bitrate').innerText =
@@ -258,7 +261,7 @@
 
   var publishSettings = document.querySelector('.publish-settings');
 
-  publishSettings.addEventListener('click', function(e) {
+  publishSettings.addEventListener('click', function (e) {
     var initialVideoSwitch = document.querySelector('#initialVideoSwitch');
     var initialAudioSwitch = document.querySelector('#initialAudioSwitch');
     var elem = e.target;
@@ -288,7 +291,7 @@
 
   var preCallTestResults = document.getElementById('pre-call-test-results');
 
-  preCallTestResults.addEventListener('click', function(e) {
+  preCallTestResults.addEventListener('click', function (e) {
     var elem = e.target;
     switch (elem.id) {
       case 'precall-close':
@@ -301,7 +304,7 @@
     }
   });
 
-  var hidePrecall = function() {
+  var hidePrecall = function () {
     document.getElementById('video-preview').style.visibility = 'hidden';
     document.getElementById('dock').style.visibility = 'visible';
   };
@@ -338,15 +341,15 @@
     }
     return LazyLoader.dependencyLoad([
       '/js/components/cronograph.js'
-    ]).then(function() {
+    ]).then(function () {
       cronograph = Cronograph;
       return cronograph;
     });
   }
 
   function onStartArchiving(data) {
-    getCronograph().then(function(cronograph) { // eslint-disable-line consistent-return
-      var start = function(archive) {
+    getCronograph().then(function (cronograph) { // eslint-disable-line consistent-return
+      var start = function (archive) {
         var duration = 0;
         archive && (duration = Math.round((Date.now() - archive.createdAt) / 1000));
         cronograph.start(duration);
@@ -357,7 +360,7 @@
         return start(null);
       }
 
-      var onModel = function(model) { // eslint-disable-line consistent-return
+      var onModel = function () { // eslint-disable-line consistent-return
         var archives = FirebaseModel.archives;
         var archiveId = data.id;
 
@@ -387,7 +390,7 @@
   }
 
   function onStopArchiving() {
-    getCronograph().then(function(cronograph) {
+    getCronograph().then(function (cronograph) {
       cronograph.reset();
     });
   }
@@ -402,8 +405,8 @@
     }
 
     return Modal.show(selector, loadModalText)
-      .then(function() {
-        return new Promise(function(resolve, reject) {
+      .then(function () {
+        return new Promise(function (resolve) {
           ui.addEventListener('click', function onClicked(evt) {
             var classList = evt.target.classList;
             var hasAccepted = classList.contains('accept');
@@ -413,21 +416,21 @@
             evt.stopImmediatePropagation();
             evt.preventDefault();
             ui.removeEventListener('click', onClicked);
-            Modal.hide(selector).then(function() { resolve(hasAccepted); });
+            Modal.hide(selector).then(function () { resolve(hasAccepted); });
           });
         });
       });
   }
 
-  var addHandlers = function() {
-    handler.addEventListener('click', function(e) {
+  var addHandlers = function () {
+    handler.addEventListener('click', function () {
       dock.classList.toggle('collapsed');
       dock.data('previouslyCollapsed', null);
     });
 
     var menu = document.querySelector('.menu ul');
 
-    menu.addEventListener('click', function(e) {
+    menu.addEventListener('click', function (e) {
       var elem = e.target;
       elem.blur();
       // pointer-events is not working on IE so we can receive as target a child
@@ -454,7 +457,7 @@
           setChatStatus(elem.id === 'startChat');
           break;
         case 'endCall':
-          showConfirm(MODAL_TXTS.endCall).then(function(endCall) {
+          showConfirm(MODAL_TXTS.endCall).then(function (endCall) {
             if (endCall) {
               RoomView.participantsNumber = 0;
               Utils.sendEvent('roomView:endCall');
@@ -467,7 +470,7 @@
           break;
         case 'videoSwitch':
           if (!videoSwitch.classList.contains('activated')) {
-            showConfirm(MODAL_TXTS.disabledVideos).then(function(shouldDisable) {
+            showConfirm(MODAL_TXTS.disabledVideos).then(function (shouldDisable) {
               shouldDisable && setSwitchStatus(true, true, videoSwitch, 'roomView:videoSwitch');
             });
           } else {
@@ -476,7 +479,7 @@
           break;
         case 'audioSwitch':
           if (!audioSwitch.classList.contains('activated')) {
-            showConfirm(MODAL_TXTS.mute).then(function(shouldDisable) {
+            showConfirm(MODAL_TXTS.mute).then(function (shouldDisable) {
               shouldDisable &&
                 setSwitchStatus(true, true, audioSwitch, 'roomView:muteAllSwitch');
             });
@@ -486,7 +489,7 @@
       }
     });
 
-    exports.addEventListener('archiving', function(e) {
+    exports.addEventListener('archiving', function (e) {
       var detail = e.detail;
 
       switch (detail.status) {
@@ -517,27 +520,27 @@
     HTMLElems.flush('#toggleSharing');
   }
 
-  var getURLtoShare = function() {
+  var getURLtoShare = function () {
     return window.location.origin + window.location.pathname;
   };
 
-  var addClipboardFeature = function() {
+  var addClipboardFeature = function () {
     var input = document.querySelector('.bubble[for="addToCall"] input');
     var urlToShare = getURLtoShare();
     input.value = urlToShare;
     var clipboard = new Clipboard(document.querySelector('#addToCall'), { // eslint-disable-line no-unused-vars
-      text: function() {
+      text: function () {
         return urlToShare;
       }
     });
   };
 
-  var setRoomName = function(roomName) {
+  var setRoomName = function (roomName) {
     document.querySelector('.user-name-modal button .room-name').textContent = 'Join ' + roomName;
     document.getElementById('name-heading').textContent = roomName;
   };
 
-  var init = function(enableHangoutScroll, aEnableArchiveManager) {
+  var init = function (enableHangoutScroll, aEnableArchiveManager) {
     enableArchiveManager = aEnableArchiveManager;
     initHTMLElements();
     dock.style.visibility = 'visible';
