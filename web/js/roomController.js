@@ -220,19 +220,31 @@
   };
 
   var dialOut = function(phoneNumber) {
-    var googleIdToken;
-    if (requireGoogleAuth) {
-      var user = googleAuth.currentUser.get();
-      googleIdToken = user.getAuthResponse().id_token;
-    } else {
-      googleIdToken = '';
-    }
+    var alreadyInCall = Object.keys(subscriberStreams)
+    .some(function(streamId) {
+      if (subscriberStreams[streamId]) {
+        var stream = subscriberStreams[streamId].stream;
+        return (stream.isSip && stream.name === phoneNumber);
+      }
+      return false;
+    });
 
-    var data = {
-      phoneNumber: phoneNumber,
-      googleIdToken: googleIdToken
-    };
-    Request.dialOut(roomName, data);
+    if (alreadyInCall) {
+      console.log('The number is already in this call: ' + phoneNumber); // eslint-disable-line no-console
+    } else {
+      var googleIdToken;
+      if (requireGoogleAuth) {
+        var user = googleAuth.currentUser.get();
+        googleIdToken = user.getAuthResponse().id_token;
+      } else {
+        googleIdToken = '';
+      }
+      var data = {
+        phoneNumber: phoneNumber,
+        googleIdToken: googleIdToken
+      };
+      Request.dialOut(roomName, data);
+    }
   };
 
   var roomStatusHandlers = {
@@ -478,7 +490,20 @@
         // SIP call streams have no video.
         var streamVideoType = stream.videoType || 'noVideo';
 
+        var connectionData;
+        try {
+          connectionData = JSON.parse(stream.connection.data);
+        } catch (error) {
+          connectionData = {};
+        }
+        // Add an isSip flag to stream object
+        stream.isSip = !!connectionData.sip;
+        if (!stream.name) {
+          stream.name = connectionData.name || '';
+        }
+
         var streamId = stream.streamId;
+
         subscriberStreams[streamId] = {
           stream: stream,
           buttons: new SubscriberButtons(streamVideoType)
@@ -489,18 +514,8 @@
 
         _sharedStatus = RoomStatus.get(STATUS_KEY);
 
-        var streamName = stream.name;
-        if (!streamName) {
-          try {
-            // SIP calls add the name to the connection data
-            streamName = JSON.parse(stream.connection.data).name;
-          } catch (error) {
-            streamName = '';
-          }
-        }
-
         var subsDOMElem = RoomView.createStreamView(streamId, {
-          name: streamName,
+          name: stream.name,
           type: stream.videoType,
           controlElems: subscriberStreams[streamId].buttons
         });
@@ -693,6 +708,7 @@
         enableAnnotations = aRoomInfo.enableAnnotation;
         enableArchiveManager = aRoomInfo.enableArchiveManager;
         enableSip = aRoomInfo.enableSip;
+        requireGoogleAuth = aRoomInfo.requireGoogleAuth;
         return aRoomInfo;
       });
   }
