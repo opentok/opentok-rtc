@@ -1,5 +1,5 @@
-/* global Utils, Request, RoomStatus, RoomView, LayoutManager, Modal, LazyLoader,
-EndCallController, ChatController, LayoutMenuController, OTHelper, PrecallController, PrecallView,
+/* global Utils, Request, RoomStatus, RoomView, LayoutManager, LazyLoader,
+EndCallController, ChatController, LayoutMenuController, OTHelper, PrecallController,
 RecordingsController, ScreenShareController, FeedbackController */
 
 !(function (exports) {
@@ -634,10 +634,7 @@ RecordingsController, ScreenShareController, FeedbackController */
       otHelper = new OTHelper({});
       exports.otHelper = otHelper;
       EndCallController.init({ addEventListener: function () {} }, 'NOT_AVAILABLE');
-      return PrecallController.init({
-        publisherButtons: publisherButtons,
-        otHelper: otHelper
-      });
+      return PrecallController.init({ otHelper: otHelper });
     })
     .then(getRoomParams)
     .then(getRoomInfo)

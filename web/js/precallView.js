@@ -92,7 +92,7 @@
     };
   };
 
-  var init = function (publisherButtons) {
+  var init = function () {
     return new Promise(function (resolve) {
       if (alreadyInitialized) {
         return resolve();
