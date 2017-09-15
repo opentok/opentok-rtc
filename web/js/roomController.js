@@ -666,6 +666,7 @@
   }
 
   function getRoomInfo(aRoomParams) {
+    RoomView.showRoom();
     return Request
       .getRoomInfo(aRoomParams)
       .then(function(aRoomInfo) {

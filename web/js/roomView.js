@@ -13,6 +13,8 @@
   var videoSwitch;
   var audioSwitch;
   var startChatElem;
+  var topBannerElem;
+  var screenElem;
   var unreadCountElem;
   var enableArchiveManager;
 
@@ -197,6 +199,8 @@
     togglePublisherAudioElem = document.getElementById('toggle-publisher-audio');
     togglePublisherVideoElem = document.getElementById('toggle-publisher-video');
     messageButtonElem = document.getElementById('message-btn');
+    topBannerElem = document.getElementById('top-banner');
+    screenElem = document.getElementById('screen');
 
     // The title takes two lines maximum when the dock is expanded. When the title takes
     // one line with expanded mode, it ends taking two lines while is collapsing because the witdh
@@ -211,6 +215,12 @@
 
   function deleteStreamView(id) {
     LayoutManager.remove(id);
+  }
+
+  function showRoom() {
+    initHTMLElements();
+    topBannerElem.style.visibility = 'visible';
+    screenElem.style.visibility = 'visible';
   }
 
   function showPublisherButtons() {
@@ -474,7 +484,6 @@
 
   var init = function(enableHangoutScroll, aEnableArchiveManager) {
     enableArchiveManager = aEnableArchiveManager;
-    initHTMLElements();
     addHandlers();
     addClipboardFeature();
     LayoutManager.init('.streams', enableHangoutScroll);
@@ -495,6 +504,7 @@
       recordingsNumberElem && (recordingsNumberElem.textContent = value);
     },
 
+    showRoom: showRoom,
     showPublisherButtons: showPublisherButtons,
     createStreamView: createStreamView,
     deleteStreamView: deleteStreamView,
