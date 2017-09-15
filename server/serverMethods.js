@@ -643,18 +643,11 @@ function ServerMethods(aLogLevel, aModules) {
       return aRes.status(400).send(new ErrorInfo(400, 'Missing required parameter'));
     }
     return googleAuth.verifyIdToken(token).then(() =>
-       serverPersistence.getKey(redisPhonePrefix + phoneNumber)
-        .then((numberInfo) => {
-          if (numberInfo !== null) {
-            return aRes.status(400).send(new ErrorInfo(400, 'That number has already been dialed'));
-          }
-          var otInstance = tbConfig.otInstance;
-
-          return serverPersistence
+          serverPersistence
           .getKey(redisRoomPrefix + roomName, true)
           .then((sessionInfo) => {
             const sessionId = sessionInfo.sessionId;
-            const token = otInstance.generateToken(sessionId, {
+            const token = tbConfig.otInstance.generateToken(sessionId, {
               role: 'publisher',
               data: '{"sip":true, "role":"client", "name":"' + phoneNumber + '"}',
             });
@@ -670,7 +663,7 @@ function ServerMethods(aLogLevel, aModules) {
               },
               secure: true,
             };
-            otInstance.dial_P(sessionId, token, tbConfig.sipUri, options)
+            tbConfig.otInstance.dial_P(sessionId, token, tbConfig.sipUri, options)
               .then((sipCallData) => {
                 var dialedNumberInfo = {};
                 dialedNumberInfo.sessionId = sipCallData.sessionId;
@@ -683,8 +676,7 @@ function ServerMethods(aLogLevel, aModules) {
                 logger.log('postRoomDial error', error);
                 return aRes.status(400).send(new ErrorInfo(400, 'An error ocurred while forwarding SIP Call'));
               });
-          });
-        }))
+          }))
       .catch((err) => {
         logger.log('postRoomDial => authentication error: ', err);
         return aRes.status(401).send(new ErrorInfo(401, 'Authentication Error'));
