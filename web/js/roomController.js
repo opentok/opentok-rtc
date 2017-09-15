@@ -1,6 +1,6 @@
 /* global Utils, Request, RoomStatus, RoomView, LayoutManager, Modal, LazyLoader,
-EndCallController, ChatController, LayoutMenuController, RecordingsController,
-ScreenShareController, FeedbackController, OTNetworkTest */
+EndCallController, ChatController, LayoutMenuController, OTHelper, PrecallController, PrecallView,
+RecordingsController, ScreenShareController, FeedbackController */
 
 !(function (exports) {
   'use strict';
@@ -9,15 +9,11 @@ ScreenShareController, FeedbackController, OTNetworkTest */
     new Utils.MultiLevelLogger('roomController.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
 
   var otHelper;
-  var otNetworkTest;
   var numUsrsInRoom = 0;
   var _disabledAllVideos = false;
   var enableAnnotations = true;
   var enableHangoutScroll = false;
   var enableArchiveManager = false;
-
-  var previewPublisher;
-  var previewOptions;
 
   var setPublisherReady;
   var publisherReady = new Promise(function (resolve) {
@@ -356,23 +352,6 @@ ScreenShareController, FeedbackController, OTNetworkTest */
     }
   };
 
-  var videoPreviewEventHandlers = {
-    initialAudioSwitch: function (evt) {
-      previewPublisher.publishAudio(evt.detail.status);
-    },
-    initialVideoSwitch: function (evt) {
-      previewPublisher.publishVideo(evt.detail.status);
-    },
-    retest: function () {
-      RoomView.startPrecallTestMeter();
-      otNetworkTest.startNetworkTest(function (error, result) {
-        if (!error) {
-          RoomView.displayNetworkTestResults(result);
-        }
-      });
-    }
-  };
-
   var setAudioStatus = function (switchStatus) {
     otHelper.isPublisherReady && viewEventHandlers.buttonClick({
       detail: {
@@ -573,76 +552,6 @@ ScreenShareController, FeedbackController, OTNetworkTest */
     }
   };
 
-  function showCallSettingsPrompt(roomName, username) {
-    var selector = '.user-name-modal';
-    function loadModalText() {
-      RoomView.setRoomName(roomName);
-
-      otHelper = new exports.OTHelper({});
-      exports.otHelper = otHelper;
-
-      otHelper.initPublisher('video-preview',
-        { width: '100%', height: '100%', insertMode: 'append', showControls: false }
-      ).then(function (publisher) {
-        previewPublisher = publisher;
-        previewOptions = {
-          apiKey: window.apiKey,
-          resolution: '1280x720',
-          sessionId: window.testSessionId,
-          token: window.testToken
-        };
-        RoomView.startPrecallTestMeter();
-        otNetworkTest = new OTNetworkTest(previewPublisher, previewOptions);
-        otNetworkTest.startNetworkTest(function (error, result) {
-          RoomView.displayNetworkTestResults(result);
-        });
-        Utils.addEventsHandlers('roomView:', videoPreviewEventHandlers, exports);
-        var movingAvg = null;
-        publisher.on('audioLevelUpdated', function (event) {
-          if (movingAvg === null || movingAvg <= event.audioLevel) {
-            movingAvg = event.audioLevel;
-          } else {
-            movingAvg = (0.8 * movingAvg) + (0.2 * event.audioLevel);
-          }
-
-          // 1.5 scaling to map the -30 - 0 dBm range to [0,1]
-          var logLevel = ((Math.log(movingAvg) / Math.LN10) / 1.5) + 1;
-          logLevel = Math.min(Math.max(logLevel, 0), 1);
-          RoomView.setVolumeMeterLevel(logLevel);
-        });
-      });
-
-      if (username) {
-        document.getElementById('enter-name-prompt').style.display = 'none';
-        var userNameInputElement = document.getElementById('user-name-input');
-        userNameInputElement.value = username;
-        userNameInputElement.setAttribute('readonly', true);
-      }
-    }
-    return Modal.show(selector, loadModalText).then(function () {
-      return new Promise(function (resolve) {
-        document.querySelector('.user-name-modal #enter').disabled = false;
-        document.querySelector('.user-name-modal .tc-dialog').addEventListener('submit',
-          function (event) {
-            event.preventDefault();
-            RoomView.hidePrecall();
-            otNetworkTest.stopTest();
-            return Modal.hide(selector)
-              .then(function () {
-                publisherOptions.publishAudio = publisherButtons.audio.enabled =
-                  document.getElementById('initialAudioSwitch').classList.contains('activated');
-                publisherOptions.publishVideo = publisherButtons.video.enabled =
-                  document.getElementById('initialVideoSwitch').classList.contains('activated');
-                resolve({
-                  username: document.querySelector(selector + ' input').value.trim()
-                });
-              });
-          });
-        document.querySelector(selector + ' input.username').focus();
-      });
-    });
-  }
-
   function getRoomParams() {
     if (!exports.RoomController) {
       throw new Error('Room Controller is not defined. Missing script tag?');
@@ -673,7 +582,7 @@ ScreenShareController, FeedbackController, OTNetworkTest */
     debugPreferredResolution = params.getFirstValue('debugPreferredResolution');
     enableHangoutScroll = params.getFirstValue('enableHangoutScroll') !== undefined;
 
-    return showCallSettingsPrompt(roomName, usrId).then(function (info) {
+    return PrecallController.showCallSettingsPrompt(roomName, usrId).then(function (info) {
       info.roomName = roomName;
       return info;
     });
@@ -713,6 +622,7 @@ ScreenShareController, FeedbackController, OTNetworkTest */
     '/js/chatController.js',
     '/js/recordingsController.js',
     '/js/endCallController.js',
+    '/js/precallController.js',
     '/js/layoutMenuController.js',
     '/js/screenShareController.js',
     '/js/feedbackController.js'
@@ -721,7 +631,13 @@ ScreenShareController, FeedbackController, OTNetworkTest */
   var init = function () {
     LazyLoader.load(modules)
     .then(function () {
+      otHelper = new OTHelper({});
+      exports.otHelper = otHelper;
       EndCallController.init({ addEventListener: function () {} }, 'NOT_AVAILABLE');
+      return PrecallController.init({
+        publisherButtons: publisherButtons,
+        otHelper: otHelper
+      });
     })
     .then(getRoomParams)
     .then(getRoomInfo)

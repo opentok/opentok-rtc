@@ -121,7 +121,7 @@ BubbleFactory, Clipboard, LayoutManager */
         dock.classList.add('collapsed');
       } else if (dock.data('previouslyCollapsed') !== null) {
         dock.data('previouslyCollapsed') === 'true' ? dock.classList.add('collapsed') :
-                                                        dock.classList.remove('collapsed');
+          dock.classList.remove('collapsed');
         dock.data('previouslyCollapsed', null);
       }
     }
@@ -202,112 +202,6 @@ BubbleFactory, Clipboard, LayoutManager */
     var title = dock.querySelector('.info h1');
     title.style.height = title.clientHeight + 'px';
   }
-
-  var setVolumeMeterLevel = function (level) {
-    var meterLevel = document.getElementById('audioMeterLevel');
-    meterLevel.style.width = (level * 89) + 'px';
-  };
-
-  var startPrecallTestMeter = function () {
-    var meterLevel = document.getElementById('precallTestMeterLevel');
-    meterLevel.style.width = 0;
-    var preCallTestProgress = 0;
-    var testMeterInterval = setInterval(function () {
-      preCallTestProgress++;
-      meterLevel.style.width = ((preCallTestProgress * 89) / 15) + 'px';
-      if (preCallTestProgress === 15) {
-        clearInterval(testMeterInterval);
-      }
-    }, 1000);
-  };
-
-  var displayNetworkTestResults = function (results) {
-    var packetLossStr;
-    document.getElementById('pre-call-test-results').style.display = 'block';
-    document.getElementById('audio-bitrate').innerText =
-      Math.round(results.audio.bitsPerSecond / 1000);
-    if (results.video && results.text !== 'Your bandwidth can support audio only.') {
-      document.getElementById('video-bitrate').innerText =
-        Math.round(results.video.bitsPerSecond / 1000);
-      packetLossStr = isNaN(results.video.packetLossRatio) ? '' :
-        Math.round(100 * results.video.packetLossRatio) + '% packet loss';
-      document.getElementById('precall-video-packet-loss').innerText = packetLossStr;
-      document.getElementById('precall-audio-results').style.width = '50%';
-      document.getElementById('precall-audio-results').style.right = '0';
-      document.getElementById('precall-video-results').style.display = 'block';
-    } else {
-      document.getElementById('precall-audio-results').style.width = '100%';
-      document.getElementById('precall-audio-results').style['text-align'] = 'center';
-      document.getElementById('precall-video-results').style.display = 'none';
-    }
-    var precallHeading = document.getElementById('pre-call-heading');
-    switch (results.icon) {
-      case 'precall-tick':
-        precallHeading.style.color = '#3fbe36';
-        break;
-      case 'precall-warning':
-        precallHeading.style.color = '#ffcc33';
-        break;
-      case 'precall-error':
-        precallHeading.style.color = '#ff0000';
-        break;
-    }
-    document.getElementById('pre-call-description').innerText = results.text;
-    document.getElementById('precall-icon').setAttribute('data-icon', results.icon);
-    packetLossStr = isNaN(results.audio.packetLossRatio) ? '' :
-      Math.round(100 * results.audio.packetLossRatio) + '% packet loss';
-    document.getElementById('precall-audio-packet-loss').innerText = packetLossStr;
-  };
-
-  var publishSettings = document.querySelector('.publish-settings');
-
-  publishSettings.addEventListener('click', function (e) {
-    var initialVideoSwitch = document.querySelector('#initialVideoSwitch');
-    var initialAudioSwitch = document.querySelector('#initialAudioSwitch');
-    var elem = e.target;
-    elem.blur();
-    // pointer-events is not working on IE so we can receive as target a child
-    elem = HTMLElems.getAncestorByTagName(elem, 'a');
-    if (!elem) {
-      return;
-    }
-    switch (elem.id) {
-      case 'initialAudioSwitch':
-        if (!initialAudioSwitch.classList.contains('activated')) {
-          setSwitchStatus(true, true, initialAudioSwitch, 'roomView:initialAudioSwitch');
-        } else {
-          setSwitchStatus(false, true, initialAudioSwitch, 'roomView:initialAudioSwitch');
-        }
-        break;
-      case 'initialVideoSwitch':
-        if (!initialVideoSwitch.classList.contains('activated')) {
-          setSwitchStatus(true, true, initialVideoSwitch, 'roomView:initialVideoSwitch');
-        } else {
-          setSwitchStatus(false, true, initialVideoSwitch, 'roomView:initialVideoSwitch');
-        }
-        break;
-    }
-  });
-
-  var preCallTestResults = document.getElementById('pre-call-test-results');
-
-  preCallTestResults.addEventListener('click', function (e) {
-    var elem = e.target;
-    switch (elem.id) {
-      case 'precall-close':
-        preCallTestResults.style.display = 'none';
-        break;
-      case 'retest':
-        preCallTestResults.style.display = 'none';
-        Utils.sendEvent('roomView:retest');
-        break;
-    }
-  });
-
-  var hidePrecall = function () {
-    document.getElementById('video-preview').style.visibility = 'hidden';
-    document.getElementById('dock').style.visibility = 'visible';
-  };
 
   function createStreamView(streamId, type, controlBtns, name) {
     return LayoutManager.append(streamId, type, controlBtns, name);
@@ -535,11 +429,6 @@ BubbleFactory, Clipboard, LayoutManager */
     });
   };
 
-  var setRoomName = function (roomName) {
-    document.querySelector('.user-name-modal button .room-name').textContent = 'Join ' + roomName;
-    document.getElementById('name-heading').textContent = roomName;
-  };
-
   var init = function (enableHangoutScroll, aEnableArchiveManager) {
     enableArchiveManager = aEnableArchiveManager;
     initHTMLElements();
@@ -551,10 +440,6 @@ BubbleFactory, Clipboard, LayoutManager */
 
   exports.RoomView = {
     init: init,
-    setVolumeMeterLevel: setVolumeMeterLevel,
-    startPrecallTestMeter: startPrecallTestMeter,
-    displayNetworkTestResults: displayNetworkTestResults,
-    hidePrecall: hidePrecall,
 
     set roomName(value) {
       HTMLElems.addText(roomNameElem, value);
@@ -574,7 +459,6 @@ BubbleFactory, Clipboard, LayoutManager */
     createStreamView: createStreamView,
     deleteStreamView: deleteStreamView,
     setAudioSwitchRemotely: setAudioSwitchRemotely,
-    showConfirmChangeMicStatus: showConfirmChangeMicStatus,
-    setRoomName: setRoomName
+    showConfirmChangeMicStatus: showConfirmChangeMicStatus
   };
 }(this));

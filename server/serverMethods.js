@@ -311,9 +311,9 @@ function ServerMethods(aLogLevel, aModules) {
           enableScreensharing: tbConfig.enableScreensharing,
           enableAnnotation: tbConfig.enableAnnotation,
           enableFeedback: tbConfig.enableFeedback,
-          testSessionId: testSession.sessionId,
+          precallSessionId: testSession.sessionId,
           apiKey: tbConfig.apiKey,
-          testToken: tbConfig.otInstance
+          precallToken: tbConfig.otInstance
                   .generateToken(testSession.sessionId, {
                     role: 'publisher',
                   }),
