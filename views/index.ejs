@@ -31,12 +31,14 @@
       <section>
 
         <header>
-          <img src="images/opentok-logo.png" alt="opentok transparent logo">
+          <% if (!isWebRTCVersion) { %>
+                  <h1>The OpenTok Platform Demo</h1>
+          <% } else { %>
+                  <h1>WebRTC Demo</h1>
+          <% } %>
+          <img src="images/tokbox-log.svg" alt="opentok transparent logo">
         </header>
-<% if (!isWebRTCVersion) { %>
-        <h1>The OpenTok Platform Demo</h1>
-<% } else { %>
-        <h1>WebRTC Demo</h1>
+<% if (isWebRTCVersion) { %>
         <h2>Built by TokBox on the OpenTok Platform</h2>
         <h3>This WebRTC Demo enables group video conferencing, text chat, screen sharing, and more</h3>
 <% } %>

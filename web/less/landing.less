@@ -11,6 +11,12 @@ body {
   background-color: #FFF;
   color: @text;
   overflow: hidden;
+  background-color: black;
+  background-image: url(/images/background.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  transition: none;
+  padding: 0;
 }
 
 .main {
@@ -20,10 +26,7 @@ body {
   height: 100%;
 
   header {
-    padding-bottom: 25px;
-    @media @smartphones {
-      padding-bottom: 0px;
-    }
+    padding-bottom: 181px;
   }
 
   h1, h2, h3 {
@@ -34,13 +37,11 @@ body {
 
   h1 {
     font-family: @muliRegularFont, arial;
-    font-size: 48px;
-    @media @smartphones {
-      font-size: 36px;
-    }
+    font-size: 14px;
+    color: #8794a2;
+    letter-spacing: 1px;
     font-weight: 200;
     line-height: 60px;
-    color: @blueText;
     margin: 10px 0;
   }
 
@@ -175,6 +176,16 @@ body {
     .flex-direction(column);
     .justify-content(center);
     .flex(1);
+    right: 2px;
+    position: absolute;
+    float: right;
+    margin-right: 41px;
+    margin-top: 46px;
+    padding: 20px;
+    width: 360px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   }
 
   a {
