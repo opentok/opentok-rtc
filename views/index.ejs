@@ -28,11 +28,11 @@
 
   <body class="forbidden">
     <section class="main">
-      <section>
+      <section id="main-content">
 
         <header>
           <% if (!isWebRTCVersion) { %>
-                  <h1>The OpenTok Platform Demo</h1>
+                  <h1>OpenTok Demo by</h1>
           <% } else { %>
                   <h1>WebRTC Demo</h1>
           <% } %>
@@ -43,17 +43,21 @@
         <h3>This WebRTC Demo enables group video conferencing, text chat, screen sharing, and more</h3>
 <% } %>
         <form>
-          <p>
+          <div>
             <input id="room" class="text-input required" placeholder="Type the name of the meeting">
+            <label>Meeting name</label>
+          </div>
+          <div>
             <input id="user" class="text-input" placeholder="Type your name">
-            <p class="error-room error-text">Please enter a meeting name</p>
-          </p>
-          <button id="enter" class="btn tb btn-primary btn-arrow btn-next btn-padding">Create Meeting</button>
+            <label>Your name</label>
+          </div>
+          <p class="error-room error-text">Please enter a meeting name</p>
         </form>
         <div class="safari-plug">
           <a href="https://safari.opentokrtc.com/">Try the WebRTC Demo for Safari.</a>
         </div>
       </section>
+      <button id="enter"></button>
     </section>
 
 <% if (isWebRTCVersion) { %>
