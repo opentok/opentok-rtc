@@ -32,7 +32,7 @@
  *
  */
 
-!(function(global) {
+!(function (global) {
   'use strict';
 
   var transEndEventName =
@@ -47,9 +47,9 @@
   /*
    * Closes all bubbles clicking outside them
    */
-  var onBodyClicked = function(evt) {
+  var onBodyClicked = function (evt) {
     document.body.removeEventListener('click', onBodyClicked);
-    Object.keys(bubbles).forEach(function(id) {
+    Object.keys(bubbles).forEach(function (id) {
       var bubble = bubbles[id];
       var target = evt.target;
       if (bubble.associatedWith !== target) {
@@ -63,7 +63,7 @@
     });
   };
 
-  var addGlobalHandlers = function() {
+  var addGlobalHandlers = function () {
     document.body.addEventListener('click', onBodyClicked);
   };
 
@@ -72,24 +72,24 @@
    *
    * @param {String} Id of the element which is associated with the bubble
    */
-  var Bubble = function(id) {
+  var Bubble = function (id) {
     this.container = document.querySelector('.bubble[for="' + id + '"]');
     this.topArrow = this.container.querySelector('.top-arrow');
     this.associatedWith = document.getElementById(id);
     this._onHidden = this._onHidden.bind(this);
 
     // Bubbles consumes 'click' events in order not to be closed automatically
-    this.container.addEventListener('click', function(e) {
+    this.container.addEventListener('click', function (e) {
       e.stopImmediatePropagation();
     });
   };
 
   Bubble.prototype = {
-    show: function() {
+    show: function () {
       var bubble = this;
 
       this.bubbleShown =
-        this.bubbleShown || new Promise(function(resolve, reject) {
+        this.bubbleShown || new Promise(function (resolve) {
           var container = bubble.container;
 
           container.removeEventListener(transEndEventName, bubble._onHidden);
@@ -101,7 +101,7 @@
 
           bubble._takePlace();
           bubble._visible = true;
-          setTimeout(function() {
+          setTimeout(function () {
             container.classList.add('show');
           }, 50); // Give the chance to paint the UI element before fading in
         });
@@ -109,11 +109,11 @@
       return this.bubbleShown;
     },
 
-    hide: function() {
+    hide: function () {
       var bubble = this;
 
       this.bubbleHidden =
-        this.bubbleHidden || new Promise(function(resolve, reject) {
+        this.bubbleHidden || new Promise(function (resolve) {
           var container = bubble.container;
 
           container.removeEventListener(transEndEventName, bubble._onShown);
@@ -124,7 +124,7 @@
             resolve();
           });
 
-          setTimeout(function() {
+          setTimeout(function () {
             container.classList.remove('show');
           }, 50); // Give the chance to paint the UI element before fading out
         });
@@ -132,16 +132,16 @@
       return this.bubbleHidden;
     },
 
-    toggle: function() {
+    toggle: function () {
       var bubble = this;
       return (bubble.bubbleShown) ? bubble.hide() : bubble.show();
     },
 
-    _onShown: function(e) {
+    _onShown: function () {
       addGlobalHandlers();
     },
 
-    _onHidden: function(e) {
+    _onHidden: function (e) {
       e.target.removeEventListener(transEndEventName, this._onHidden);
       this._visible = false;
     },
@@ -151,7 +151,7 @@
       value ? classList.add('visible') : classList.remove('visible');
     },
 
-    _takePlace: function() {
+    _takePlace: function () {
       var rectObject = this.associatedWith.getBoundingClientRect();
       var container = this.container;
       if (this.topArrow) {
@@ -170,7 +170,7 @@
      *
      * @param {String} Id of the element which is associated with the bubble
      */
-    get: function(id) {
+    get: function (id) {
       var instance = bubbles[id];
 
       if (!instance) {

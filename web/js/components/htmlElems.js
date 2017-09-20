@@ -1,7 +1,7 @@
-!(function(exports) {
+!(function (exports) {
   'use strict';
 
-  Element.prototype.data = function(name, value) {
+  Element.prototype.data = function (name, value) {
     if (!name) {
       return null;
     }
@@ -86,7 +86,7 @@
   function addHandlerArchive(selector) {
     var list = document.querySelector(selector);
 
-    list.addEventListener('click', function(evt) {
+    list.addEventListener('click', function (evt) {
       switch (evt.type) {
         case 'click':
           var elemClicked = evt.target;
@@ -114,15 +114,15 @@
       // While many attributes, when changed, cause a reflow this doesn't appear to be the case with
       // data-* attributes in Internet Explorer. Changing these will not immediately result in the
       // element being redrawn - we have to trigger out reflow manually.
-      return function(elements) {
+      return function (elements) {
         elements = Array.isArray(elements) ? elements : [elements];
-        elements.forEach(function(element) {
+        elements.forEach(function (element) {
           element = typeof element === 'string' ? document.querySelector(element) : element;
           element && element.classList.toggle('flush-this-element-please');
         });
       };
     }
-    return function() {
+    return function () {
 
     };
   }());
@@ -132,7 +132,7 @@
     replaceText: replaceText,
     createElement: createElement,
     createElementAt: createElementAt,
-    isAction: function(aElem) {
+    isAction: function (aElem) {
       return (aElem.data('action') !== null);
     },
     setEnabled: setEnabled,

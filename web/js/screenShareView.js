@@ -1,4 +1,6 @@
-!(function(exports) {
+/* global RoomView, OTHelper, Modal */
+
+!(function (exports) {
   'use strict';
 
   var shareError;
@@ -19,7 +21,7 @@
     shareError = document.querySelector('.screen-modal');
 
     var installLink = shareError.querySelector('#screenShareErrorInstall button');
-    installLink.addEventListener('click', function(evt) {
+    installLink.addEventListener('click', function () {
       hideShareScreenError();
       Utils.sendEvent('screenShareView:installExtension');
     });
@@ -67,12 +69,12 @@
     var btnCancel = shareError.querySelector('#scrShrLater');
     var btnReload = shareError.querySelector('#scrShrReload');
 
-    btnCancel.addEventListener('click', function btnCancelReload(evt) {
+    btnCancel.addEventListener('click', function btnCancelReload() {
       btnCancel.removeEventListener('click', btnCancelReload);
       hideShareScreenError();
     });
 
-    btnReload.addEventListener('click', function btnConfirmReload(evt) {
+    btnReload.addEventListener('click', function btnConfirmReload() {
       btnReload.removeEventListener('click', btnConfirmReload);
       var location = document.location;
       var href = location.href;
@@ -97,9 +99,9 @@
     hideShareScreenError();
   }
 
-  function hideShareScreenError(e) {
+  function hideShareScreenError() {
     shareError.removeEventListener('click', onClick);
-    Modal.hide('.screen-modal').then(function() {
+    Modal.hide('.screen-modal').then(function () {
       shareError.data('screenSharingType', null);
     });
   }
@@ -109,7 +111,7 @@
       preLoad && preLoad();
       shareError.data('screenSharingType', type);
     }
-    Modal.show('.screen-modal', loadModalText).then(function(e) {
+    Modal.show('.screen-modal', loadModalText).then(function () {
       shareError.addEventListener('click', onClick);
     });
   }

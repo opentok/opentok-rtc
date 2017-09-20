@@ -1,4 +1,6 @@
-!(function(exports) {
+/* global Modal, FirebaseModel, EndCallController, RecordingsView */
+
+!(function (exports) {
   'use strict';
 
   var model = null;
@@ -9,7 +11,7 @@
       dependenciesLoaded = LazyLoader.dependencyLoad([
         '/js/models/firebase.js',
         '/js/recordingsView.js'
-      ]).then(function() {
+      ]).then(function () {
         return FirebaseModel
                   .init(firebaseUrl, firebaseToken);
       });
@@ -17,7 +19,7 @@
       dependenciesLoaded = Promise.resolve();
     }
 
-    return dependenciesLoaded.then(function(aModel) {
+    return dependenciesLoaded.then(function (aModel) {
       model = aModel;
       Utils.sendEvent('recordings-model-ready', null, exports);
       addListeners();
@@ -30,23 +32,23 @@
     var previousStatus = data.status;
     data.status = 'deleting';
     Request.deleteArchive(data.id)
-      .then(function() {
+      .then(function () {
         Utils.sendEvent('RecordingsController:deleteArchive', { id: data.id });
       })
-      .catch(function(error) {
+      .catch(function () {
         // Archived couldn't be deleted from server...
         data.status = previousStatus;
       });
   }
 
   var handlers = {
-    delete: function(data) {
+    delete: function (data) {
       var selector = '.archive-delete-modal';
       function loadModalText() {
         document.querySelector(selector + ' .username').textContent = data.username;
       }
-      return Modal.show(selector, loadModalText).then(function() {
-        return new Promise(function(resolve, reject) {
+      return Modal.show(selector, loadModalText).then(function () {
+        return new Promise(function () {
           var ui = document.querySelector(selector);
           ui.addEventListener('click', function onClicked(evt) { // eslint-disable-line consistent-return
             var classList = evt.target.classList;
@@ -65,8 +67,8 @@
     }
   };
 
-  var addListeners = function() {
-    exports.addEventListener('archive', function(evt) {
+  var addListeners = function () {
+    exports.addEventListener('archive', function (evt) {
       var handler = handlers[evt.detail.action];
       handler && handler(evt.detail);
     });

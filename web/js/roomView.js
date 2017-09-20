@@ -1,4 +1,7 @@
-!(function(exports) {
+/* global RoomView, Cronograph, FirebaseModel, RecordingsController, Modal,
+BubbleFactory, Clipboard, LayoutManager */
+
+!(function (exports) {
   'use strict';
 
   // HTML elements for the view
@@ -104,7 +107,7 @@
   }
 
   var chatViews = {
-    unreadMessage: function(evt) {
+    unreadMessage: function () {
       setUnreadMessages(_unreadMsg + 1);
       if (!_chatHasBeenShown) {
         setChatStatus(true);
@@ -113,7 +116,7 @@
   };
 
   var chatEvents = {
-    hidden: function(evt) {
+    hidden: function () {
       document.body.data('chatStatus', 'hidden');
       messageButtonElem.classList.remove('activated');
       setUnreadMessages(0);
@@ -122,7 +125,7 @@
   };
 
   var hangoutEvents = {
-    screenOnStage: function(event) {
+    screenOnStage: function (event) {
       var status = event.detail.status;
       if (status === 'on') {
         dock.data('previouslyCollapsed', dock.classList.contains('collapsed'));
@@ -138,16 +141,16 @@
   var screenShareCtrEvents = {
     changeScreenShareStatus: toggleScreenSharing,
     destroyed: toggleScreenSharing.bind(undefined, NOT_SHARING),
-    annotationStarted: function(evt) {
+    annotationStarted: function () {
       document.body.data('annotationVisible', 'true');
     },
-    annotationEnded: function(evt) {
+    annotationEnded: function () {
       document.body.data('annotationVisible', 'false');
     }
   };
 
   var roomControllerEvents = {
-    userChangeStatus: function(evt) {
+    userChangeStatus: function (evt) {
       // If user changed the status we need to reset the switch
       if (evt.detail.name === 'video') {
         setSwitchStatus(false, false, videoSwitch, 'roomView:videoSwitch');
@@ -155,31 +158,31 @@
         setSwitchStatus(false, false, audioSwitch, 'roomView:muteAllSwitch');
       }
     },
-    roomMuted: function(evt) {
+    roomMuted: function (evt) {
       var isJoining = evt.detail.isJoining;
       setAudioSwitchRemotely(true);
       showConfirm(isJoining ? MODAL_TXTS.join : MODAL_TXTS.muteRemotely);
     },
-    sessionDisconnected: function(evt) {
+    sessionDisconnected: function () {
       RoomView.participantsNumber = 0;
       LayoutManager.removeAll();
     },
-    controllersReady: function() {
+    controllersReady: function () {
       var selectorStr = '#top-banner [disabled], .call-controls [disabled]'
         + ':not(#toggle-publisher-video):not(#toggle-publisher-audio)';
       var elements = document.querySelectorAll(selectorStr);
-      Array.prototype.forEach.call(elements, function(element) {
+      Array.prototype.forEach.call(elements, function (element) {
         Utils.setDisabled(element, false);
       });
     },
-    annotationStarted: function(evt) {
+    annotationStarted: function () {
       document.body.data('annotationVisible', 'true');
     },
-    annotationEnded: function(evt) {
+    annotationEnded: function () {
       document.body.data('annotationVisible', 'false');
     },
-    chromePublisherError: function(evt) {
-      showConfirm(MODAL_TXTS.chromePublisherError).then(function() {
+    chromePublisherError: function () {
+      showConfirm(MODAL_TXTS.chromePublisherError).then(function () {
         document.location.reload();
       });
     }
@@ -287,15 +290,15 @@
     }
     return LazyLoader.dependencyLoad([
       '/js/components/cronograph.js'
-    ]).then(function() {
+    ]).then(function () {
       cronograph = Cronograph;
       return cronograph;
     });
   }
 
   function onStartArchiving(data) {
-    getCronograph().then(function(cronograph) { // eslint-disable-line consistent-return
-      var start = function(archive) {
+    getCronograph().then(function (cronograph) { // eslint-disable-line consistent-return
+      var start = function (archive) {
         var duration = 0;
         archive && (duration = Math.round((Date.now() - archive.createdAt) / 1000));
         cronograph.start(duration);
@@ -310,7 +313,7 @@
         return start(null);
       }
 
-      var onModel = function(model) { // eslint-disable-line consistent-return
+      var onModel = function () { // eslint-disable-line consistent-return
         var archives = FirebaseModel.archives;
         var archiveId = data.id;
 
@@ -340,7 +343,7 @@
   }
 
   function onStopArchiving() {
-    getCronograph().then(function(cronograph) {
+    getCronograph().then(function (cronograph) {
       stopArchivingElem.style.display = 'none';
       recordingProgressElem.style.display = 'none';
       startArchivingElem.style.display = 'inline-block';
@@ -359,8 +362,8 @@
     }
 
     return Modal.show(selector, loadModalText)
-      .then(function() {
-        return new Promise(function(resolve, reject) {
+      .then(function () {
+        return new Promise(function (resolve) {
           ui.addEventListener('click', function onClicked(evt) {
             var classList = evt.target.classList;
             var hasAccepted = classList.contains('accept');
@@ -370,14 +373,14 @@
             evt.stopImmediatePropagation();
             evt.preventDefault();
             ui.removeEventListener('click', onClicked);
-            Modal.hide(selector).then(function() { resolve(hasAccepted); });
+            Modal.hide(selector).then(function () { resolve(hasAccepted); });
           });
         });
       });
   }
 
-  var addHandlers = function() {
-    handler.addEventListener('click', function(e) {
+  var addHandlers = function () {
+    handler.addEventListener('click', function () {
       dock.classList.toggle('collapsed');
       dock.data('previouslyCollapsed', null);
     });
@@ -430,7 +433,7 @@
 
     var menu = document.getElementById('top-banner');
 
-    menu.addEventListener('click', function(e) {
+    menu.addEventListener('click', function (e) {
       var elem = e.target;
       elem.blur();
       // pointer-events is not working on IE so we can receive as target a child
@@ -449,9 +452,25 @@
         case 'stopArchiving':
           Utils.sendEvent('roomView:' + elem.id);
           break;
+        case 'startChat':
+        case 'stopChat':
+          setChatStatus(elem.id === 'startChat');
+          break;
+        case 'endCall':
+          showConfirm(MODAL_TXTS.endCall).then(function (endCall) {
+            if (endCall) {
+              RoomView.participantsNumber = 0;
+              Utils.sendEvent('roomView:endCall');
+            }
+          });
+          break;
+        case 'startSharingDesktop':
+        case 'stopSharingDesktop':
+          Utils.sendEvent('roomView:shareScreen');
+          break;
         case 'videoSwitch':
           if (!videoSwitch.classList.contains('activated')) {
-            showConfirm(MODAL_TXTS.disabledVideos).then(function(shouldDisable) {
+            showConfirm(MODAL_TXTS.disabledVideos).then(function (shouldDisable) {
               shouldDisable && setSwitchStatus(true, true, videoSwitch, 'roomView:videoSwitch');
             });
           } else {
@@ -460,7 +479,7 @@
           break;
         case 'audioSwitch':
           if (!audioSwitch.classList.contains('activated')) {
-            showConfirm(MODAL_TXTS.mute).then(function(shouldDisable) {
+            showConfirm(MODAL_TXTS.mute).then(function (shouldDisable) {
               shouldDisable &&
                 setSwitchStatus(true, true, audioSwitch, 'roomView:muteAllSwitch');
             });
@@ -470,7 +489,7 @@
       }
     });
 
-    exports.addEventListener('archiving', function(e) {
+    exports.addEventListener('archiving', function (e) {
       var detail = e.detail;
 
       switch (detail.status) {
@@ -505,22 +524,22 @@
     HTMLElems.flush('#toggleSharing');
   }
 
-  var getURLtoShare = function() {
+  var getURLtoShare = function () {
     return window.location.origin + window.location.pathname;
   };
 
-  var addClipboardFeature = function() {
+  var addClipboardFeature = function () {
     var input = document.getElementById('current-url');
     var urlToShare = getURLtoShare();
     input.value = urlToShare;
     var clipboard = new Clipboard(document.querySelector('#addToCall'), { // eslint-disable-line no-unused-vars
-      text: function() {
+      text: function () {
         return urlToShare;
       }
     });
   };
 
-  var init = function(enableHangoutScroll, aEnableArchiveManager) {
+  var init = function (enableHangoutScroll, aEnableArchiveManager) {
     enableArchiveManager = aEnableArchiveManager;
     addHandlers();
     addClipboardFeature();
