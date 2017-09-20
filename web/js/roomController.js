@@ -576,6 +576,24 @@ ScreenShareController, FeedbackController */
     document.querySelector('.room-info .room-name').textContent = roomName;
   }
 
+  function showUserNamePrompt(roomName) {
+    var selector = '.user-name-modal';
+    return Modal.show(selector).then(function () {
+      return new Promise(function(resolve) {
+        var enterButton = document.querySelector(selector + ' button');
+        enterButton.addEventListener('click', function onClicked(event) {
+          event.preventDefault();
+          enterButton.removeEventListener('click', onClicked);
+          return Modal.hide(selector)
+            .then(function () {
+              resolve(document.querySelector(selector + ' input').value.trim());
+            });
+        });
+        document.querySelector(selector + ' input.username').focus();
+      });
+    });
+  }
+
   function showAddToCallModal() {
     var selector = '.add-to-call-modal';
     return Modal.show(selector).then(function () {
