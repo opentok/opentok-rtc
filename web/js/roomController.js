@@ -14,6 +14,8 @@
   var enableHangoutScroll = false;
   var enableArchiveManager = false;
   var enableSip = false;
+  var requireGoogleAuth = false; // For SIP dial-out
+  var googleAuth = null;
 
   var setPublisherReady;
   var publisherReady = new Promise(function(resolve, reject) {
@@ -29,7 +31,6 @@
   var roomName = null;
   var resolutionAlgorithm = null;
   var debugPreferredResolution = null;
-  var googleAuth = null;
 
   var publisherOptions = {
     insertMode: 'append',
@@ -219,13 +220,31 @@
   };
 
   var dialOut = function(phoneNumber) {
-    var user = googleAuth.currentUser.get();
-    var googleIdToken = user.getAuthResponse().id_token;
-    var data = {
-      phoneNumber: phoneNumber,
-      googleIdToken: googleIdToken
-    };
-    Request.dialOut(roomName, data);
+    var alreadyInCall = Object.keys(subscriberStreams)
+    .some(function(streamId) {
+      if (subscriberStreams[streamId]) {
+        var stream = subscriberStreams[streamId].stream;
+        return (stream.isSip && stream.name === phoneNumber);
+      }
+      return false;
+    });
+
+    if (alreadyInCall) {
+      console.log('The number is already in this call: ' + phoneNumber); // eslint-disable-line no-console
+    } else {
+      var googleIdToken;
+      if (requireGoogleAuth) {
+        var user = googleAuth.currentUser.get();
+        googleIdToken = user.getAuthResponse().id_token;
+      } else {
+        googleIdToken = '';
+      }
+      var data = {
+        phoneNumber: phoneNumber,
+        googleIdToken: googleIdToken
+      };
+      Request.dialOut(roomName, data);
+    }
   };
 
   var roomStatusHandlers = {
@@ -377,7 +396,7 @@
     dialOut: function(evt) {
       if (evt.detail.phoneNumber) {
         var phoneNumber = evt.detail.phoneNumber.replace(/\D/g, '');
-        if (googleAuth.isSignedIn.get() !== true) {
+        if (requireGoogleAuth && (googleAuth.isSignedIn.get() !== true)) {
           googleAuth.signIn().then(function(response) {
             dialOut(phoneNumber);
           });
@@ -471,7 +490,20 @@
         // SIP call streams have no video.
         var streamVideoType = stream.videoType || 'noVideo';
 
+        var connectionData;
+        try {
+          connectionData = JSON.parse(stream.connection.data);
+        } catch (error) {
+          connectionData = {};
+        }
+        // Add an isSip flag to stream object
+        stream.isSip = !!connectionData.sip;
+        if (!stream.name) {
+          stream.name = connectionData.name || '';
+        }
+
         var streamId = stream.streamId;
+
         subscriberStreams[streamId] = {
           stream: stream,
           buttons: new SubscriberButtons(streamVideoType)
@@ -482,18 +514,8 @@
 
         _sharedStatus = RoomStatus.get(STATUS_KEY);
 
-        var streamName = stream.name;
-        if (!streamName) {
-          try {
-            // SIP calls add the name to the connection data
-            streamName = JSON.parse(stream.connection.data).name;
-          } catch (error) {
-            streamName = '';
-          }
-        }
-
         var subsDOMElem = RoomView.createStreamView(streamId, {
-          name: streamName,
+          name: stream.name,
           type: stream.videoType,
           controlElems: subscriberStreams[streamId].buttons
         });
@@ -686,6 +708,7 @@
         enableAnnotations = aRoomInfo.enableAnnotation;
         enableArchiveManager = aRoomInfo.enableArchiveManager;
         enableSip = aRoomInfo.enableSip;
+        requireGoogleAuth = aRoomInfo.requireGoogleAuth;
         return aRoomInfo;
       });
   }
@@ -760,7 +783,7 @@
 
     _allHandlers = RoomStatus.init(_allHandlers, { room: _sharedStatus });
 
-    if (enableSip) {
+    if (enableSip && requireGoogleAuth) {
       GoogleAuth.init(aParams.googleId, aParams.googleHostedDomain, function(aGoogleAuth) {
         googleAuth = aGoogleAuth;
       });

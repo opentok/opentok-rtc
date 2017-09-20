@@ -21,6 +21,7 @@ E.DEFAULT_USER_NAME = 'Anonymous User';
 // (and in fact it would be more robust if we didn't!) because we can just call listArchives
 // to get that, it's more efficient if we cache it locally.
 E.REDIS_ROOM_PREFIX = 'otrtc_room__';
+E.REDIS_PHONE_PREFIX = 'otrtc_phone_';
 
 E.REDIS_ROOM_MATCHES = E.REDIS_ROOM_PREFIX + '*';
 
@@ -93,6 +94,8 @@ E.SIP_URI = { envVar: 'SIP_URI', jsonPath: 'SIP.uri', defaultValue: '' };
 E.SIP_USERNAME = { envVar: 'SIP_USERNAME', jsonPath: 'SIP.username', defaultValue: '' };
 
 E.SIP_PASSWORD = { envVar: 'SIP_PASSWORD', jsonPath: 'SIP.password', defaultValue: '' };
+
+E.SIP_REQUIRE_GOOGLE_AUTH = { envVar: 'SIP_REQUIRE_GOOGLE_AUTH', jsonPath: 'SIP.requireGoogleAuth', defaultValue: false };
 
 E.GOOGLE_CLIENT_ID = { envVar: 'GOOGLE_CLIENT_ID', jsonPath: 'Google.clientId', defaultValue: '' };
 
