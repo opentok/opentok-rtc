@@ -7,12 +7,15 @@
   var roomNameElem;
   var togglePublisherVideoElem;
   var togglePublisherAudioElem;
+  var startArchivingElem;
+  var stopArchivingElem;
+  var recordingProgressElem;
+  var manageRecordingsElem;
   var messageButtonElem;
   var participantsStrElem;
   var recordingsNumberElem;
   var videoSwitch;
   var audioSwitch;
-  var startChatElem;
   var topBannerElem;
   var screenElem;
   var unreadCountElem;
@@ -159,7 +162,9 @@
       LayoutManager.removeAll();
     },
     controllersReady: function() {
-      var elements = dock.querySelectorAll('.menu [disabled]');
+      var selectorStr = '#top-banner [disabled], .call-controls [disabled]'
+        + ':not(#toggle-publisher-video):not(#toggle-publisher-audio)';
+      var elements = document.querySelectorAll(selectorStr);
       Array.prototype.forEach.call(elements, function(element) {
         Utils.setDisabled(element, false);
       });
@@ -194,10 +199,13 @@
     recordingsNumberElem = dock.querySelector('#recordings');
     videoSwitch = dock.querySelector('#videoSwitch');
     audioSwitch = dock.querySelector('#audioSwitch');
-    startChatElem = document.getElementById('startChat');
     unreadCountElem = document.getElementById('unreadCount');
     togglePublisherAudioElem = document.getElementById('toggle-publisher-audio');
     togglePublisherVideoElem = document.getElementById('toggle-publisher-video');
+    startArchivingElem = document.getElementById('startArchiving');
+    stopArchivingElem = document.getElementById('stopArchiving');
+    recordingProgressElem = document.getElementById('recordingProgress');
+    manageRecordingsElem = document.getElementById('manageRecordings');
     messageButtonElem = document.getElementById('message-btn');
     topBannerElem = document.getElementById('top-banner');
     screenElem = document.getElementById('screen');
@@ -224,8 +232,8 @@
   }
 
   function showPublisherButtons() {
-    togglePublisherVideoElem.disabled = false;
-    togglePublisherAudioElem.disabled = false;
+    Utils.setDisabled(togglePublisherVideoElem, false);
+    Utils.setDisabled(togglePublisherAudioElem, false);
     togglePublisherVideoElem.classList.add('activated');
     togglePublisherAudioElem.classList.add('activated');
   }
@@ -266,6 +274,10 @@
         var duration = 0;
         archive && (duration = Math.round((Date.now() - archive.createdAt) / 1000));
         cronograph.start(duration);
+        recordingProgressElem.style.display = 'block';
+        startArchivingElem.style.display = 'none';
+        stopArchivingElem.style.display = 'block';
+        manageRecordingsElem.classList.add('recording');
       };
 
       if (!enableArchiveManager) {
@@ -294,7 +306,7 @@
         return onModel(model);
       }
 
-      cronograph.init('Calculating...');
+      cronograph.init(' ');
       exports.addEventListener('recordings-model-ready', function gotModel() {
         exports.removeEventListener('recordings-model-ready', gotModel);
         onModel(RecordingsController.model);
@@ -304,7 +316,11 @@
 
   function onStopArchiving() {
     getCronograph().then(function(cronograph) {
-      cronograph.reset();
+      stopArchivingElem.style.display = 'none';
+      recordingProgressElem.style.display = 'none';
+      startArchivingElem.style.display = 'inline-block';
+      manageRecordingsElem.classList.remove('recording');
+      cronograph.stop();
     });
   }
 
@@ -441,7 +457,6 @@
           break;
         case 'stopped':
           onStopArchiving();
-
           break;
       }
 

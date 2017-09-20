@@ -430,6 +430,9 @@
                 'user:', (evt.connection.data ?
                           JSON.parse(evt.connection.data).userName : 'unknown'));
     },
+    sessionConnected: function(evt) {
+      Utils.sendEvent('roomController:sessionConnected');
+    },
     sessionDisconnected: function(evt) {
       // The client has disconnected from the session.
       // This event may be dispatched asynchronously in response to a successful

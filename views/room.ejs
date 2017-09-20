@@ -86,17 +86,6 @@
               <a id="addToCallOld"><i data-icon="add"></i><span>Add participants</span></a>
             </li>
             <% if(!isWebRTCVersion) { %>
-            <% if(enableArchiving) { %>
-            <li id="toggleArchiving" disabled>
-              <a id="startArchiving"><i data-icon="archive"></i><span>Start recording</span></a>
-              <a id="stopArchiving"><i data-icon="archive_saving"></i><span class="duration"></span><span>Stop recording</span></a>
-            </li>
-            <% if(enableArchiveManager) { %>
-            <li id="manageRecordings">
-              <a id="viewRecordings"><i data-icon="recordings"></i><span>Manage recordings (<span id="recordings">0</span>)</span></a>
-            </li>
-            <% } %>
-            <% } %>
             <% if (enableScreensharing) { %>
             <li id="toggleSharing" disabled>
               <a id="startSharingDesktop"><i data-icon="screen"></i><span>Share your screen</span></a>
@@ -113,7 +102,7 @@
             </li-->
             <% if(!isWebRTCVersion) { %>
             <li>
-              <a id="endCall" class="danger"><i data-icon="end"></i><span>End meeting</span></a>
+              <a id="oldEndCall" class="danger"><i data-icon="end"></i><span>End meeting</span></a>
             </li>
             <li class="surrounded bottom tight tooltip" tooltip="Stop receiving video">
               <a id="videoSwitch"><i data-icon="videoSwitch"></i><span>Stop receiving video</span></a>
@@ -129,7 +118,7 @@
               <a id="audioSwitch"><i data-icon="audioSwitch"></i><span>Mute all participants</span></a>
             </li>
             <li>
-              <a id="endCall" class="danger"><i data-icon="end"></i><span>End meeting</span></a>
+              <a id="OldEndCall" class="danger"><i data-icon="end"></i><span>End meeting</span></a>
             </li>
             <li class="bottom tooltip" tooltip="See Documentation">
               <a href="https://tokbox.com/developer/" target="_blank" class="button see-documentation"><span>See Documentation</span></a>
@@ -160,11 +149,27 @@
       </div>
       <div class="right-container">
         <div class="videoSwitch">
-          <a id="videoSwitch"><i data-icon="videoSwitch"></i><span>Stop receiving video</span></a>
+          <a id="videoSwitch" disabled><i data-icon="videoSwitch"></i><span>Stop receiving video</span></a>
         </div>
-        <div class="audioSwitch">
+        <div class="audioSwitch" disabled>
           <a id="audioSwitch"><i data-icon="audioSwitch"></i><span>Mute all participants</span></a>
         </div>
+        <% if(!isWebRTCVersion) { %>
+        <%   if(enableArchiving) { %>
+        <div id="recordingProgress">
+          <i data-icon="record-solid"></i>
+          Rec
+          <div class="duration"></div>
+        </div>
+        <div id="toggleArchiving" disabled>
+          <a id="startArchiving" class="btn btn-blue btn-padding">Record</a>
+          <a id="stopArchiving" class="btn btn-blue btn-padding">Stop Recording</a>
+        </div>
+        <%      if(enableArchiveManager) { %>
+        <div id="manageRecordings">
+          <a id="viewRecordings"  class="btn btn-blue btn-padding"><span id="recordings">0</span></a>
+        </div>
+        <% } } } %>
         <div class="layout-container">
           <div id="layout-icon">
             <a id="chooseLayout">
@@ -183,7 +188,7 @@
       </div>
       <div class="call-controls">
         <div>
-          <button id="endCall">
+          <button id="endCall" disabled>
             <i data-icon="end_call"></i>
           </button>
           <p>Leave Call</p>
@@ -208,7 +213,7 @@
         </div>
         <% if (true) { %>
         <div>
-          <button id="screen-share">
+          <button id="screen-share" disabled>
             <i data-icon="screenshare"></i>
           </button>
           <p>Share Screen</p>
@@ -223,7 +228,7 @@
         -->
         <% } %>
         <div>
-          <button id="message-btn">
+          <button id="message-btn" disabled>
             <i data-icon="message"></i>
           </button>
           <p>Message
@@ -264,7 +269,7 @@
     <section class="bubbles">
 
       <section for="viewRecordings" class="bubble" data-recordings="loading">
-        <div class="bubble-content">
+        <div class="bubble-content top-arrow">
           <p class="title recordings">Your archived recordings</p>
           <p class="title no-recordings">No archived recordings</p>
           <p class="title loading">Loading archived recordings...</p>

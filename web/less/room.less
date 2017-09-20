@@ -311,24 +311,6 @@ body {
       color: #000;
     }
 
-    #stopArchiving {
-      display: none;
-
-      span.duration {
-        position: absolute;
-        top: 0;
-        right: 32px;
-      }
-
-      .duration {
-        font-feature-settings: 'tnum';
-      }
-
-      .duration, i {
-        color: #c61f4c;
-      }
-    }
-
     #stopSharingDesktop {
       display: none;
       color: #c61f4c;
@@ -384,7 +366,7 @@ body {
   }
 }
 
-[data-archive-status="started"] #dock .menu {
+[data-archive-status="started"] #top-banner {
   #startArchiving {
     display: none;
   }
@@ -467,6 +449,53 @@ body {
       float: none;
       font-size: 12px;
       color: #c0c0c0;
+    }
+  }
+  #toggleArchiving, #manageRecordings {
+    margin: 28px 0;
+    height: 40px;
+    background-color: inherit !important;
+    a {
+      height: 40px;
+      line-height: 40px;
+      font-size: 12px;
+      border-radius: 6px 0 0 6px;
+      box-shadow: none;
+      transition: none;
+    }
+  }
+  #manageRecordings {
+    border-left: 2px solid #3dc4f0;
+    background-color: #0888b3;
+    margin-right: 46px;
+    a {
+      font-size: 12px;
+      width: 34px;
+      padding: 0;
+      border-radius: 0 6px 6px 0;
+    }
+  }
+  #stopArchiving {
+    display: none;
+    background-color: #e75758;
+  }
+  #manageRecordings.recording {
+    border-left: 2px solid #f28284;
+    transition: none;
+    a {
+      background-color: #cc4446;
+    }
+  }
+  #recordingProgress {
+    margin: 38px 15.3px 0 0;
+    font-size: 14px;
+    display: none;
+    .duration {
+      width: 36px;
+      float: right;
+      text-align: right;
+      margin-left: 10px;
+      font-feature-settings: 'tnum';
     }
   }
 }
