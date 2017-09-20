@@ -1,4 +1,4 @@
-!(function(exports) {
+!(function (exports) {
   'use strict';
 
   var isTouch = 'ontouchstart' in exports;
@@ -7,11 +7,11 @@
   var touchend = isTouch ? 'touchend' : 'mouseup';
 
   var getTouch = (function getTouchWrapper() {
-    return isTouch ? function(e) { return e.touches[0]; } :
-                     function(e) { return e; };
+    return isTouch ? function (e) { return e.touches[0]; } :
+                     function (e) { return e; };
   }());
 
-  var DragDetector = function(element) {
+  var DragDetector = function (element) {
     this.element = element;
     this.timer = null;
     element.addEventListener(touchstart, this);
@@ -21,27 +21,27 @@
   DragDetector.CLICK_THRESHOLD = 10;
 
   DragDetector.prototype = {
-    attachHandlers: function() {
-      [touchmove, touchend, 'contextmenu'].forEach(function(eventName) {
+    attachHandlers: function () {
+      [touchmove, touchend, 'contextmenu'].forEach(function (eventName) {
         this.element.addEventListener(eventName, this);
       }, this);
     },
 
-    removeHandlers: function() {
-      [touchmove, touchend, 'contextmenu'].forEach(function(eventName) {
+    removeHandlers: function () {
+      [touchmove, touchend, 'contextmenu'].forEach(function (eventName) {
         this.element.removeEventListener(eventName, this);
       }, this);
     },
 
-    startTimer: function() {
+    startTimer: function () {
       this.attachHandlers();
       this.clearTimer();
-      this.timer = setTimeout(function() {
+      this.timer = setTimeout(function () {
         this.sendEvent();
       }.bind(this), DragDetector.DRAG_TIMEOUT);
     },
 
-    clearTimer: function() {
+    clearTimer: function () {
       if (this.timer !== null) {
         clearTimeout(this.timer);
         this.removeHandlers();
@@ -49,7 +49,7 @@
       }
     },
 
-    sendEvent: function() {
+    sendEvent: function () {
       Utils.sendEvent('DragDetector:dragstart', {
         pageX: this.startX,
         pageY: this.startY
@@ -57,7 +57,7 @@
       this.clearTimer();
     },
 
-    handleEvent: function(evt) {
+    handleEvent: function (evt) {
       switch (evt.type) {
         case touchstart:
           var touch = getTouch(evt);
@@ -84,7 +84,7 @@
       }
     },
 
-    destroy: function() {
+    destroy: function () {
       this.clearTimer();
       this.element.removeEventListener(touchstart, this);
       this.element = null;
@@ -93,7 +93,7 @@
     }
   };
 
-  var DraggableElement = function(element) {
+  var DraggableElement = function (element) {
     this.element = element;
     this.elementStyle = element.style;
 
@@ -106,19 +106,19 @@
   };
 
   DraggableElement.prototype = {
-    attachHandlers: function() {
-      [touchmove, touchend].forEach(function(eventName) {
+    attachHandlers: function () {
+      [touchmove, touchend].forEach(function (eventName) {
         exports.addEventListener(eventName, this);
       }, this);
     },
 
-    removeHandlers: function() {
-      [touchmove, touchend].forEach(function(eventName) {
+    removeHandlers: function () {
+      [touchmove, touchend].forEach(function (eventName) {
         exports.removeEventListener(eventName, this);
       }, this);
     },
 
-    handleEvent: function(evt) {
+    handleEvent: function (evt) {
       switch (evt.type) {
         case 'DragDetector:dragstart':
           this.startX = evt.detail.pageX - this.translatedX;
@@ -146,12 +146,12 @@
       }
     },
 
-    translate: function() {
+    translate: function () {
       Utils.setTransform(this.elementStyle,
                          'translate('.concat(this.translatedX, 'px,', this.translatedY, 'px)'));
     },
 
-    destroy: function() {
+    destroy: function () {
       this.element.removeEventListener('DragDetector:dragstart', this);
       this.detector.destroy();
       Utils.setTransform(this.elementStyle, '');
@@ -165,11 +165,11 @@
   var elements = {};
 
   var Draggable = {
-    on: function(element) {
+    on: function (element) {
       element && !elements[element] && (elements[element] = new DraggableElement(element));
     },
 
-    off: function(element) {
+    off: function (element) {
       var draggableElement = elements[element];
       if (draggableElement) {
         draggableElement.destroy();
