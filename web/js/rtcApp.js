@@ -1,4 +1,6 @@
-!(function(exports) {
+/* global RTCApp */
+
+!(function (exports) {
   'use strict';
 
   var debug;
@@ -26,7 +28,7 @@
       if (path.startsWith(pathViews[i]) &&
         _views[pathViews[i]]
           .dependencies
-          .every(function(dependency) {
+          .every(function (dependency) {
             return !!exports[dependency];
           })) {
         return exports[_views[pathViews[i]].mainView];
@@ -69,7 +71,7 @@ this.addEventListener('load', function startApp() {
       '/js/helpers/requests.js',
       '/js/roomController.js',
       '/js/landingController.js'
-    ]).then(function() {
+    ]).then(function () {
       RTCApp.init();
     });
   }

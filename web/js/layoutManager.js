@@ -1,5 +1,7 @@
+/* global Grid, Float, F2FHorizontal, F2FVertical, HangoutHorizontal, HangoutVertical, LayoutView,
+LayoutViewport, ItemsHandler */
 
-!(function(global) {
+!(function (global) {
   'use strict';
 
   var userLayout = null;
@@ -17,17 +19,17 @@
   }
 
   var handlers = {
-    layout: function(evt) {
+    layout: function (evt) {
       userLayout = evt.detail.type;
       rearrange();
     },
-    itemSelected: function(evt) {
+    itemSelected: function (evt) {
       if (isGroup() && isOnGoing(Grid)) {
         userLayout = HANGOUT_BY_DEFAULT;
         rearrange(evt.detail.item);
       }
     },
-    emptyStage: function(evt) {
+    emptyStage: function () {
       userLayout = 'grid';
       rearrange();
     }
@@ -50,7 +52,7 @@
     Utils.addEventsHandlers('hangout:', handlers, global);
     return enableHangoutScroll ? LazyLoader.load([
       '/js/layoutViewport.js', '/css/hangoutScroll.css'
-    ]).then(function() {
+    ]).then(function () {
       LayoutViewport.init(container.querySelector('.tc-list ul'), '.stream');
     }) : Promise.resolve();
   }
