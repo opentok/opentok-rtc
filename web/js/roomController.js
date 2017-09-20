@@ -576,10 +576,10 @@ ScreenShareController, FeedbackController */
     document.querySelector('.room-info .room-name').textContent = roomName;
   }
 
-  function showUserNamePrompt(roomName) {
+  function showUserNamePrompt() {
     var selector = '.user-name-modal';
     return Modal.show(selector).then(function () {
-      return new Promise(function(resolve) {
+      return new Promise(function (resolve) {
         var enterButton = document.querySelector(selector + ' button');
         enterButton.addEventListener('click', function onClicked(event) {
           event.preventDefault();
