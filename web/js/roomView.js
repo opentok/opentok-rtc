@@ -237,17 +237,17 @@ BubbleFactory, Clipboard, LayoutManager */
     topBannerElem.style.visibility = 'visible';
     screenElem.style.visibility = 'visible';
     screenElem.addEventListener('mousemove', showCallControls);
-    callControlsElem.addEventListener('mouseover', function() {
+    callControlsElem.addEventListener('mouseover', function () {
       clearTimeout(hideCallControlsTimer);
       overCallControls = true;
     });
-    callControlsElem.addEventListener('mouseout', function() {
+    callControlsElem.addEventListener('mouseout', function () {
       overCallControls = false;
       hideCallControls();
     });
   }
 
-  function showCallControls(event) {
+  function showCallControls() {
     callControlsElem.style.opacity = '1';
     if (!overCallControls && !hideCallControlsTimer) {
       hideCallControlsTimer = setTimeout(hideCallControls, 3000);
@@ -385,7 +385,7 @@ BubbleFactory, Clipboard, LayoutManager */
       dock.data('previouslyCollapsed', null);
     });
 
-    callControlsElem.addEventListener('click', function(e) {
+    callControlsElem.addEventListener('click', function (e) {
       var elem = e.target;
       elem = HTMLElems.getAncestorByTagName(elem, 'button');
       switch (elem.id) {
@@ -421,7 +421,7 @@ BubbleFactory, Clipboard, LayoutManager */
           setChatStatus(!messageButtonElem.classList.contains('activated'));
           break;
         case 'endCall':
-          showConfirm(MODAL_TXTS.endCall).then(function(endCall) {
+          showConfirm(MODAL_TXTS.endCall).then(function (endCall) {
             if (endCall) {
               RoomView.participantsNumber = 0;
               Utils.sendEvent('roomView:endCall');

@@ -351,16 +351,16 @@ ScreenShareController, FeedbackController */
       setAudioStatus(roomMuted);
       sendSignalMuteAll(roomMuted, false);
     },
-    addToCall: function() {
+    addToCall: function () {
       showAddToCallModal();
     },
-    togglePublisherAudio: function(evt) {
+    togglePublisherAudio: function (evt) {
       var newStatus = evt.detail.hasAudio;
       if (!otHelper.isPublisherReady || otHelper.publisherHas('audio') !== newStatus) {
         otHelper.togglePublisherAudio(newStatus);
       }
     },
-    togglePublisherVideo: function(evt) {
+    togglePublisherVideo: function (evt) {
       var newStatus = evt.detail.hasVideo;
       if (!otHelper.isPublisherReady || otHelper.publisherHas('video') !== newStatus) {
         otHelper.togglePublisherVideo(newStatus);
@@ -431,10 +431,10 @@ ScreenShareController, FeedbackController */
                 'user:', (evt.connection.data ?
                           JSON.parse(evt.connection.data).userName : 'unknown'));
     },
-    sessionConnected: function (evt) {
+    sessionConnected: function () {
       Utils.sendEvent('roomController:sessionConnected');
     },
-    sessionDisconnected: function (evt) {
+    sessionDisconnected: function () {
       // The client has disconnected from the session.
       // This event may be dispatched asynchronously in response to a successful
       // call to the disconnect() method of the Session object.
@@ -578,14 +578,14 @@ ScreenShareController, FeedbackController */
 
   function showAddToCallModal() {
     var selector = '.add-to-call-modal';
-    return Modal.show(selector).then(function() {
-      return new Promise(function(resolve, reject) {
+    return Modal.show(selector).then(function () {
+      return new Promise(function (resolve) {
         var enterButton = document.querySelector(selector + ' button');
         enterButton.addEventListener('click', function onClicked(event) {
           event.preventDefault();
           enterButton.removeEventListener('click', onClicked);
           return Modal.hide(selector)
-            .then(function() {
+            .then(function () {
               resolve(document.querySelector(selector + ' input').value.trim());
             });
         });
