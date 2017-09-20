@@ -1,5 +1,5 @@
 /* global Utils, Request, RoomStatus, RoomView, LayoutManager, Modal, LazyLoader,
-EndCallController, ChatController, LayoutMenuController, RecordingsController,
+EndCallController, ChatController, GoogleAuth, LayoutMenuController, RecordingsController,
 ScreenShareController, FeedbackController */
 
 !(function (exports) {
@@ -220,9 +220,9 @@ ScreenShareController, FeedbackController */
       });
   };
 
-  var dialOut = function(phoneNumber) {
+  var dialOut = function (phoneNumber) {
     var alreadyInCall = Object.keys(subscriberStreams)
-    .some(function(streamId) {
+    .some(function (streamId) {
       if (subscriberStreams[streamId]) {
         var stream = subscriberStreams[streamId].stream;
         return (stream.isSip && stream.name === phoneNumber);
@@ -394,11 +394,11 @@ ScreenShareController, FeedbackController */
       setAudioStatus(roomMuted);
       sendSignalMuteAll(roomMuted, false);
     },
-    dialOut: function(evt) {
+    dialOut: function (evt) {
       if (evt.detail.phoneNumber) {
         var phoneNumber = evt.detail.phoneNumber.replace(/\D/g, '');
         if (requireGoogleAuth && (googleAuth.isSignedIn.get() !== true)) {
-          googleAuth.signIn().then(function(response) {
+          googleAuth.signIn().then(function () {
             dialOut(phoneNumber);
           });
         } else {
@@ -785,7 +785,7 @@ ScreenShareController, FeedbackController */
     _allHandlers = RoomStatus.init(_allHandlers, { room: _sharedStatus });
 
     if (enableSip && requireGoogleAuth) {
-      GoogleAuth.init(aParams.googleId, aParams.googleHostedDomain, function(aGoogleAuth) {
+      GoogleAuth.init(aParams.googleId, aParams.googleHostedDomain, function (aGoogleAuth) {
         googleAuth = aGoogleAuth;
       });
     }

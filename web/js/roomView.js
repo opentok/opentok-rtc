@@ -390,7 +390,7 @@ BubbleFactory, Clipboard, LayoutManager */
 
     if (enableSip) {
       var dialOutBtn = document.getElementById('dialOutBtn');
-      dialOutBtn.addEventListener('click', function(event) {
+      dialOutBtn.addEventListener('click', function (event) {
         event.preventDefault();
         Utils.sendEvent('roomView:dialOut', {
           phoneNumber: document.getElementById('dialOutNumber').value
