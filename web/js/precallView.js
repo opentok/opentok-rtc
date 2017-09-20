@@ -64,6 +64,10 @@
     'PrecallController:endPrecall': function () {
       _model.addEventListener('value', render);
       render();
+    },
+    'PrecallController:audioOnly': function () {
+      var initialAudioSwitch = document.querySelector('#initialVideoSwitch');
+      setSwitchStatus(false, true, initialAudioSwitch, 'roomView:initialVideoSwitch');
     }
   };
 

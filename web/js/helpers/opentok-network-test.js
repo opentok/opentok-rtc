@@ -27,7 +27,8 @@
                 'but your bandwidth can support an audio-only stream.',
               icon: 'precall-warning',
               audio: results.audio,
-              video: null
+              video: null,
+              audioOnly: true
             });
           }
 
@@ -59,7 +60,8 @@
             text: 'Your bandwidth can support audio only.',
             icon: 'precall-warning',
             audio: results.audio,
-            video: results.video
+            video: results.video,
+            audioOnly: true
           });
         }
 
@@ -75,7 +77,8 @@
               text: 'Your bandwidth can support audio only.',
               icon: 'precall-warning',
               audio: results.audio,
-              video: results.video
+              video: results.video,
+              audioOnly: true
             });
           }
 

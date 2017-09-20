@@ -55,7 +55,7 @@
           publisher = pub;
           previewOptions = {
             apiKey: window.apiKey,
-            resolution: '1280x720',
+            resolution: '640x480',
             sessionId: window.precallSessionId,
             token: window.precallToken
           };
@@ -63,6 +63,10 @@
           otNetworkTest = new OTNetworkTest(publisher, previewOptions);
           otNetworkTest.startNetworkTest(function (error, result) {
             PrecallView.displayNetworkTestResults(result);
+            if (!result.audioOnly) {
+              publisher.publishVideo(false);
+              Utils.sendEvent('PrecallController:audioOnly');
+            }
           });
           Utils.addEventsHandlers('roomView:', videoPreviewEventHandlers, exports);
           var movingAvg = null;
