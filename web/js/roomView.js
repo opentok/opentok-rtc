@@ -516,11 +516,6 @@ BubbleFactory, Clipboard, LayoutManager */
   function toggleScreenSharing(evt) {
     var isSharing = evt.detail.isSharing;
     document.body.data('desktopStatus', isSharing ? 'sharing' : 'notSharing');
-    if (isSharing) {
-      document.getElementById('screen-share').classList.add('activated');
-    } else {
-      document.getElementById('screen-share').classList.remove('activated');
-    }
     HTMLElems.flush('#toggleSharing');
   }
 

@@ -136,8 +136,6 @@ describe('ScreenShareView', () => {
   });
 
   it('should close the stream window once it has been destroyed', sinon.test(function (done) {
-    RoomView.showRoom();
-    RoomView.init();
     ScreenShareView.init();
 
     this.stub(RoomView, 'deleteStreamView', (id) => {
