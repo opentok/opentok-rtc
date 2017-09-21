@@ -11,6 +11,12 @@ body {
   background-color: #FFF;
   color: @text;
   overflow: hidden;
+  background-color: black;
+  background-image: url(/images/background.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  transition: none;
+  padding: 0;
 }
 
 .main {
@@ -20,10 +26,7 @@ body {
   height: 100%;
 
   header {
-    padding-bottom: 25px;
-    @media @smartphones {
-      padding-bottom: 0px;
-    }
+    padding-bottom: 181px;
   }
 
   h1, h2, h3 {
@@ -34,13 +37,11 @@ body {
 
   h1 {
     font-family: @muliRegularFont, arial;
-    font-size: 48px;
-    @media @smartphones {
-      font-size: 36px;
-    }
+    font-size: 14px;
+    color: #8794a2;
+    letter-spacing: 1px;
     font-weight: 200;
     line-height: 60px;
-    color: @blueText;
     margin: 10px 0;
   }
 
@@ -76,6 +77,28 @@ body {
     }
     text-align: center;
 
+    div {
+      border-bottom: solid 1px #434d5a;
+    }
+
+    input {
+      background: none;
+      border: none;
+      width: 238px;
+      color: white;
+      outline: none;
+    }
+    textarea {
+      padding: 12px 20px 10px 0;
+    }
+
+    label {
+      color: #b6bfc8;
+      float: right;
+      width: 85px;
+      margin-top: 16px;
+    }
+
     p {
       margin: 0;
       padding: 0;
@@ -106,6 +129,8 @@ body {
 
     .error-room {
       margin: 0 356px 0 0;
+      background-color: white;
+      width: 100%;
       @media @smartphones {
         margin: 0 100px 0 0;
       }
@@ -135,6 +160,7 @@ body {
     }
 
     .text-input {
+      font-size: 16px;
       @media @smartphones {
         font-size: 14px;
       }
@@ -175,12 +201,40 @@ body {
     .flex-direction(column);
     .justify-content(center);
     .flex(1);
+    right: 2px;
+    position: absolute;
+    float: right;
+    margin-top: 46px;
+    margin-right: 41px;
+    padding: 20px;
+    width: 360px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   }
 
   a {
     text-decoration: none;
   }
 
+  #enter {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    right: 0;
+    top: 50%;
+    background-color: #0099cc;
+    margin-left: 0;
+    border: 0;
+    border-radius: 0;
+    transition: width 0.5s ease-out;
+    background-image: url(/images/icons/ctaarrow_white@2x.png);   
+    background-size: 12.5px 21px;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer
+  }
 }
 
 .tc-modal.contract {

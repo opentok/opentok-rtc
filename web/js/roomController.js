@@ -405,6 +405,21 @@ ScreenShareController, FeedbackController */
           dialOut(phoneNumber);
         }
       }
+    },
+      addToCall: function () {
+      showAddToCallModal();
+    },
+    togglePublisherAudio: function (evt) {
+      var newStatus = evt.detail.hasAudio;
+      if (!otHelper.isPublisherReady || otHelper.publisherHas('audio') !== newStatus) {
+        otHelper.togglePublisherAudio(newStatus);
+      }
+    },
+    togglePublisherVideo: function (evt) {
+      var newStatus = evt.detail.hasVideo;
+      if (!otHelper.isPublisherReady || otHelper.publisherHas('video') !== newStatus) {
+        otHelper.togglePublisherVideo(newStatus);
+      }
     }
   };
 
@@ -470,6 +485,9 @@ ScreenShareController, FeedbackController */
       debug.log('a participant left, total:', numUsrsInRoom,
                 'user:', (evt.connection.data ?
                           JSON.parse(evt.connection.data).userName : 'unknown'));
+    },
+    sessionConnected: function () {
+      Utils.sendEvent('roomController:sessionConnected');
     },
     sessionDisconnected: function () {
       // The client has disconnected from the session.
@@ -617,12 +635,14 @@ ScreenShareController, FeedbackController */
     }
   };
 
-  function showUserNamePrompt(roomName) {
+  function displayRoomName(roomName) {
+    document.querySelector('.user-name-modal header .room-name').textContent = roomName;
+    document.querySelector('.room-info .room-name').textContent = roomName;
+  }
+
+  function showUserNamePrompt() {
     var selector = '.user-name-modal';
-    function loadModalText() {
-      document.querySelector(selector + ' header .room-name').textContent = roomName;
-    }
-    return Modal.show(selector, loadModalText).then(function () {
+    return Modal.show(selector).then(function () {
       return new Promise(function (resolve) {
         var enterButton = document.querySelector(selector + ' button');
         enterButton.addEventListener('click', function onClicked(event) {
@@ -634,6 +654,23 @@ ScreenShareController, FeedbackController */
             });
         });
         document.querySelector(selector + ' input.username').focus();
+      });
+    });
+  }
+
+  function showAddToCallModal() {
+    var selector = '.add-to-call-modal';
+    return Modal.show(selector).then(function () {
+      return new Promise(function (resolve) {
+        var enterButton = document.querySelector(selector + ' button');
+        enterButton.addEventListener('click', function onClicked(event) {
+          event.preventDefault();
+          enterButton.removeEventListener('click', onClicked);
+          return Modal.hide(selector)
+            .then(function () {
+              resolve(document.querySelector(selector + ' input').value.trim());
+            });
+        });
       });
     });
   }
@@ -685,6 +722,8 @@ ScreenShareController, FeedbackController */
       roomName: roomName
     };
 
+    displayRoomName(roomName);
+
     if (usrId || (window.location.origin === getReferrerURL().origin)) {
       return Promise.resolve(info);
     }
@@ -695,6 +734,7 @@ ScreenShareController, FeedbackController */
   }
 
   function getRoomInfo(aRoomParams) {
+    RoomView.showRoom();
     return Request
       .getRoomInfo(aRoomParams)
       .then(function (aRoomInfo) {
@@ -797,8 +837,7 @@ ScreenShareController, FeedbackController */
         .then(function () {
           var publisherElement = RoomView.createStreamView('publisher', {
             name: userName,
-            type: 'publisher',
-            controlElems: publisherButtons
+            type: 'publisher'
           });
           // If we have all audios disabled, we need to set the button status
           // and don't publish audio
@@ -816,6 +855,7 @@ ScreenShareController, FeedbackController */
           publisherOptions.name = userName;
           return otHelper.publish(publisherElement, publisherOptions, {}).then(function () {
             setPublisherReady();
+            RoomView.showPublisherButtons();
           }).catch(function (errInfo) {
             if (errInfo.error.name === 'OT_CHROME_MICROPHONE_ACQUISITION_ERROR') {
               Utils.sendEvent('roomController:chromePublisherError');
