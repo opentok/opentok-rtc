@@ -406,7 +406,7 @@ ScreenShareController, FeedbackController */
         }
       }
     },
-      addToCall: function () {
+    addToCall: function () {
       showAddToCallModal();
     },
     togglePublisherAudio: function (evt) {
