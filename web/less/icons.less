@@ -38,6 +38,12 @@
   background-image: url("/images/icons/record.svg");
 }
 
+[data-icon="record-solid"] {
+  background-image: url("/images/icons/record-solid.svg");
+  width: 12.2px;
+  height: 12.2px;
+}
+
 [data-icon="collapse"] {
   background-image: url("/images/icons/collapse.svg");
 }
@@ -118,6 +124,42 @@
 
 [data-layout-type="hangout_vertical"]:disabled {
   background-image: url("/images/icons/layouts/hangout_vertical_disabled.svg");
+}
+
+[data-icon="tokbox_logo"] {
+  background-image: url("/images/tokbox-logo.svg");
+  width: 164.2px;
+  height: 45px;
+}
+
+[data-icon="end_call"] {
+  background-image: url("/images/icons/hang-up.svg");
+  width: 34px;
+  height: 21px;
+}
+
+[data-icon="video_icon"] {
+  background-image: url("/images/icons/video-icon.svg");
+  width: 26px;
+  height: 15.4px;
+}
+
+[data-icon="mic"] {
+  background-image: url("/images/icons/mic.svg");
+  width: 18px;
+  height: 28px;
+}
+
+[data-icon="screenshare"] {
+  background-image: url("/images/icons/screenshare.svg");
+  width: 37px;
+  height: 29px;
+}
+
+[data-icon="message"] {
+  background-image: url("/images/icons/message.svg");
+  width: 24px;
+  height: 20px;
 }
 
 /* Archives */
@@ -220,11 +262,13 @@
 
 [data-icon="participants"] {
   background-image: url("/images/icons/participants.svg");
-  width: 20px;
+  width: 25px;
   @media @smartphones {
     width: 16px;
   }  
-  height: 16px;
+  height: 13px;
+  margin-right: -4px;
+  margin-bottom: -1px;
 }
 
 /* Menu */
@@ -236,7 +280,16 @@
 
 [data-icon="add"] {
   background-image: url("/images/icons/add.svg");
+  width: 27px;
+  height: 28px;
 }
+
+[data-icon="annotate"] {
+  background-image: url("/images/icons/annotate.svg");
+  width: 22px;
+  height: 22px;
+}
+
 
 [data-icon="archive"] {
   background-image: url("/images/icons/archive.svg");
@@ -278,6 +331,12 @@
   background-image: url("/images/icons/layouts_hover.svg");
 }
 
+[data-icon="layout-icon"] {
+  background-image: url("/images/icons/layout-icon.svg");
+  width: 21.1px;
+  height: 22.4px;
+}
+
 [data-icon="chat"] {
   background-image: url("/images/icons/chat.svg");
 }
@@ -296,23 +355,17 @@
 
 #videoSwitch, #audioSwitch {
   [data-icon="videoSwitch"], [data-icon="audioSwitch"] {
-    background-image: url("/images/icons/switch_off.svg");
-    width: 30px;
-    height: 24px;
+    background-image: url("/images/icons/switch_off_blue.svg");
+    width: 51px;
+    height: 30.4px;
     vertical-align: text-bottom;
-  }
-}
-
-:hover > #videoSwitch, :hover > #audioSwitch {
-  [data-icon="videoSwitch"], [data-icon="audioSwitch"] {
-    background-image: url("/images/icons/switch_off_hover.svg");
   }
 }
 
 #videoSwitch.activated,
 #audioSwitch.activated {
   [data-icon="videoSwitch"], [data-icon="audioSwitch"] {
-    background-image: url("/images/icons/switch_on.svg");
+    background-image: url("/images/icons/switch_on_blue.svg");
   }
 }
 

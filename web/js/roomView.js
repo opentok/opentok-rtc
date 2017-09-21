@@ -7,15 +7,26 @@ BubbleFactory, Clipboard, LayoutManager */
   // HTML elements for the view
   var dock;
   var handler;
+  var callControlsElem;
   var roomNameElem;
-  var participantsNumberElem;
+  var togglePublisherVideoElem;
+  var togglePublisherAudioElem;
+  var startArchivingElem;
+  var stopArchivingElem;
+  var recordingProgressElem;
+  var manageRecordingsElem;
+  var messageButtonElem;
   var participantsStrElem;
   var recordingsNumberElem;
   var videoSwitch;
   var audioSwitch;
-  var startChatElem;
+  var topBannerElem;
+  var screenElem;
   var unreadCountElem;
   var enableArchiveManager;
+  var enableSip;
+  var hideCallControlsTimer;
+  var overCallControls = false;
 
   var _unreadMsg = 0;
   var _chatHasBeenShown = false;
@@ -79,18 +90,18 @@ BubbleFactory, Clipboard, LayoutManager */
 
   function setUnreadMessages(count) {
     _unreadMsg = count;
+    // document.getElementById('unreadMsg').style.display = count === 0 ? 'none' : 'block';
     unreadCountElem.textContent = count;
-    startChatElem.data('unreadMessages', count);
-    HTMLElems.flush(startChatElem);
+    // HTMLElems.flush(unreadCountElem.parentElement);
   }
 
   function setChatStatus(visible) {
     if (visible) {
       _chatHasBeenShown = true;
       setUnreadMessages(0);
-      document.body.data('chatStatus', 'visible');
+      messageButtonElem.classList.add('activated');
     } else {
-      document.body.data('chatStatus', 'hidden');
+      messageButtonElem.classList.remove('activated');
     }
     Utils.sendEvent('roomView:chatVisibility', visible);
     HTMLElems.flush('#toggleChat');
@@ -108,6 +119,7 @@ BubbleFactory, Clipboard, LayoutManager */
   var chatEvents = {
     hidden: function () {
       document.body.data('chatStatus', 'hidden');
+      messageButtonElem.classList.remove('activated');
       setUnreadMessages(0);
       HTMLElems.flush('#toggleChat');
     }
@@ -157,7 +169,9 @@ BubbleFactory, Clipboard, LayoutManager */
       LayoutManager.removeAll();
     },
     controllersReady: function () {
-      var elements = dock.querySelectorAll('.menu [disabled]');
+      var selectorStr = '#top-banner [disabled], .call-controls [disabled]'
+        + ':not(#toggle-publisher-video):not(#toggle-publisher-audio)';
+      var elements = document.querySelectorAll(selectorStr);
       Array.prototype.forEach.call(elements, function (element) {
         Utils.setDisabled(element, false);
       });
@@ -184,23 +198,31 @@ BubbleFactory, Clipboard, LayoutManager */
   }
 
   function initHTMLElements() {
-    dock = document.getElementById('dock');
-    handler = dock.querySelector('#handler');
+    dock = document.getElementById('top-banner');
+    handler = dock;
+    callControlsElem = document.querySelector('.call-controls');
 
     roomNameElem = dock.querySelector('#roomName');
-    participantsNumberElem = dock.querySelectorAll('.participants');
-    participantsStrElem = dock.querySelector('.participantsStr');
+    participantsStrElem = document.getElementById('participantsStr');
     recordingsNumberElem = dock.querySelector('#recordings');
     videoSwitch = dock.querySelector('#videoSwitch');
     audioSwitch = dock.querySelector('#audioSwitch');
-    startChatElem = dock.querySelector('#startChat');
-    unreadCountElem = dock.querySelector('#unreadCount');
+    unreadCountElem = document.getElementById('unreadCount');
+    togglePublisherAudioElem = document.getElementById('toggle-publisher-audio');
+    togglePublisherVideoElem = document.getElementById('toggle-publisher-video');
+    startArchivingElem = document.getElementById('startArchiving');
+    stopArchivingElem = document.getElementById('stopArchiving');
+    recordingProgressElem = document.getElementById('recordingProgress');
+    manageRecordingsElem = document.getElementById('manageRecordings');
+    messageButtonElem = document.getElementById('message-btn');
+    topBannerElem = document.getElementById('top-banner');
+    screenElem = document.getElementById('screen');
 
     // The title takes two lines maximum when the dock is expanded. When the title takes
     // one line with expanded mode, it ends taking two lines while is collapsing because the witdh
     // is reduced, so we have to fix the height to avoid this ugly effect during transition.
-    var title = dock.querySelector('.info h1');
-    title.style.height = title.clientHeight + 'px';
+    // var title = dock.querySelector('.info h1');
+    // title.style.height = title.clientHeight + 'px';
   }
 
   function createStreamView(streamId, type, controlBtns, name) {
@@ -209,6 +231,40 @@ BubbleFactory, Clipboard, LayoutManager */
 
   function deleteStreamView(id) {
     LayoutManager.remove(id);
+  }
+
+  function showRoom() {
+    initHTMLElements();
+    topBannerElem.style.visibility = 'visible';
+    screenElem.style.visibility = 'visible';
+    screenElem.addEventListener('mousemove', showCallControls);
+    callControlsElem.addEventListener('mouseover', function () {
+      clearTimeout(hideCallControlsTimer);
+      overCallControls = true;
+    });
+    callControlsElem.addEventListener('mouseout', function () {
+      overCallControls = false;
+      hideCallControls();
+    });
+  }
+
+  function showCallControls() {
+    callControlsElem.style.opacity = '1';
+    if (!overCallControls && !hideCallControlsTimer) {
+      hideCallControlsTimer = setTimeout(hideCallControls, 3000);
+    }
+  }
+
+  function hideCallControls() {
+    hideCallControlsTimer = null;
+    callControlsElem.style.opacity = '0';
+  }
+
+  function showPublisherButtons() {
+    Utils.setDisabled(togglePublisherVideoElem, false);
+    Utils.setDisabled(togglePublisherAudioElem, false);
+    togglePublisherVideoElem.classList.add('activated');
+    togglePublisherAudioElem.classList.add('activated');
   }
 
   function setSwitchStatus(status, bubbleUp, domElem, evtName) {
@@ -247,6 +303,10 @@ BubbleFactory, Clipboard, LayoutManager */
         var duration = 0;
         archive && (duration = Math.round((Date.now() - archive.createdAt) / 1000));
         cronograph.start(duration);
+        recordingProgressElem.style.display = 'block';
+        startArchivingElem.style.display = 'none';
+        stopArchivingElem.style.display = 'block';
+        manageRecordingsElem.classList.add('recording');
       };
 
       if (!enableArchiveManager) {
@@ -275,7 +335,7 @@ BubbleFactory, Clipboard, LayoutManager */
         return onModel(model);
       }
 
-      cronograph.init('Calculating...');
+      cronograph.init(' ');
       exports.addEventListener('recordings-model-ready', function gotModel() {
         exports.removeEventListener('recordings-model-ready', gotModel);
         onModel(RecordingsController.model);
@@ -285,7 +345,11 @@ BubbleFactory, Clipboard, LayoutManager */
 
   function onStopArchiving() {
     getCronograph().then(function (cronograph) {
-      cronograph.reset();
+      stopArchivingElem.style.display = 'none';
+      recordingProgressElem.style.display = 'none';
+      startArchivingElem.style.display = 'inline-block';
+      manageRecordingsElem.classList.remove('recording');
+      cronograph.stop();
     });
   }
 
@@ -322,7 +386,53 @@ BubbleFactory, Clipboard, LayoutManager */
       dock.data('previouslyCollapsed', null);
     });
 
-    var menu = document.querySelector('.menu ul');
+    callControlsElem.addEventListener('click', function (e) {
+      var elem = e.target;
+      elem = HTMLElems.getAncestorByTagName(elem, 'button');
+      switch (elem.id) {
+        case 'addToCall':
+          Utils.sendEvent('roomView:addToCall');
+          break;
+        case 'toggle-publisher-video':
+          var hasVideo;
+          if (elem.classList.contains('activated')) {
+            elem.classList.remove('activated');
+            hasVideo = false;
+          } else {
+            elem.classList.add('activated');
+            hasVideo = true;
+          }
+          Utils.sendEvent('roomView:togglePublisherVideo', { hasVideo: hasVideo });
+          break;
+        case 'toggle-publisher-audio':
+          var hasAudio;
+          if (elem.classList.contains('activated')) {
+            elem.classList.remove('activated');
+            hasAudio = false;
+          } else {
+            elem.classList.add('activated');
+            hasAudio = true;
+          }
+          Utils.sendEvent('roomView:togglePublisherAudio', { hasAudio: hasAudio });
+          break;
+        case 'screen-share':
+          Utils.sendEvent('roomView:shareScreen');
+          break;
+        case 'message-btn':
+          setChatStatus(!messageButtonElem.classList.contains('activated'));
+          break;
+        case 'endCall':
+          showConfirm(MODAL_TXTS.endCall).then(function (endCall) {
+            if (endCall) {
+              RoomView.participantsNumber = 0;
+              Utils.sendEvent('roomView:endCall');
+            }
+          });
+          break;
+      }
+    });
+
+    var menu = document.getElementById('top-banner');
 
     menu.addEventListener('click', function (e) {
       var elem = e.target;
@@ -333,9 +443,6 @@ BubbleFactory, Clipboard, LayoutManager */
         return;
       }
       switch (elem.id) {
-        case 'addToCall':
-          BubbleFactory.get('addToCall').toggle();
-          break;
         case 'viewRecordings':
           BubbleFactory.get('viewRecordings').toggle();
           break;
@@ -383,6 +490,17 @@ BubbleFactory, Clipboard, LayoutManager */
       }
     });
 
+    if (enableSip) {
+      var dialOutBtn = document.getElementById('dialOutBtn');
+      dialOutBtn.addEventListener('click', function (event) {
+        event.preventDefault();
+        Utils.sendEvent('roomView:dialOut', {
+          phoneNumber: document.getElementById('dialOutNumber').value
+        });
+        BubbleFactory.get('addToCall').hide();
+      });
+    }
+
     exports.addEventListener('archiving', function (e) {
       var detail = e.detail;
 
@@ -393,7 +511,6 @@ BubbleFactory, Clipboard, LayoutManager */
           break;
         case 'stopped':
           onStopArchiving();
-
           break;
       }
 
@@ -419,7 +536,7 @@ BubbleFactory, Clipboard, LayoutManager */
   };
 
   var addClipboardFeature = function () {
-    var input = document.querySelector('.bubble[for="addToCall"] input');
+    var input = document.getElementById('current-url');
     var urlToShare = getURLtoShare();
     input.value = urlToShare;
     var clipboard = new Clipboard(document.querySelector('#addToCall'), { // eslint-disable-line no-unused-vars
@@ -429,10 +546,11 @@ BubbleFactory, Clipboard, LayoutManager */
     });
   };
 
-  var init = function (enableHangoutScroll, aEnableArchiveManager) {
+  var init = function (enableHangoutScroll, aEnableArchiveManager, aEnableSip) {
     enableArchiveManager = aEnableArchiveManager;
     initHTMLElements();
     dock.style.visibility = 'visible';
+    enableSip = aEnableSip;
     addHandlers();
     addClipboardFeature();
     LayoutManager.init('.streams', enableHangoutScroll);
@@ -446,16 +564,15 @@ BubbleFactory, Clipboard, LayoutManager */
     },
 
     set participantsNumber(value) {
-      for (var i = 0, l = participantsNumberElem.length; i < l; i++) {
-        HTMLElems.replaceText(participantsNumberElem[i], value);
-      }
-      HTMLElems.replaceText(participantsStrElem, value === 1 ? 'participant' : 'participants');
+      HTMLElems.replaceText(participantsStrElem, value);
     },
 
     set recordingsNumber(value) {
       recordingsNumberElem && (recordingsNumberElem.textContent = value);
     },
 
+    showRoom: showRoom,
+    showPublisherButtons: showPublisherButtons,
     createStreamView: createStreamView,
     deleteStreamView: deleteStreamView,
     setAudioSwitchRemotely: setAudioSwitchRemotely,
