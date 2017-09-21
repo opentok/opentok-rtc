@@ -52,6 +52,7 @@
     <!--
     <script type="text/javascript" src="https://static.opentok.com/webrtc/v2/js/opentok.min.js"></script>
     -->
+
     <script defer src="/js/vendor/es6-promise.min.js"></script>
     <script defer type="text/javascript" src="/js/ie_polyfills.js"></script>
     <script defer src="/js/vendor/clipboard.min.js"></script>
@@ -190,6 +191,14 @@
           <p class="title">Meeting link has been copied <span class="check-mark">&#10003;</span></p>
           <p>Share link to add others to the meeting</p>
           <input class="block" onclick="this.select();">
+          <% if(hasSip) { %>
+          <form id="dialOutForm">
+            <p class="title">Dial out</p>
+            <p>Enter the phone number:</p>
+            <input id="dialOutNumber" class="block" onclick="this.select();" placeholder="1-415-555-0123">
+            <button id="dialOutBtn" class="btn btn-blue btn-padding ctaarrow-white">Dial</button>
+          </form>
+          <% } %>
         </div>
       </section>
 

@@ -16,6 +16,7 @@ BubbleFactory, Clipboard, LayoutManager */
   var startChatElem;
   var unreadCountElem;
   var enableArchiveManager;
+  var enableSip;
 
   var _unreadMsg = 0;
   var _chatHasBeenShown = false;
@@ -336,6 +337,10 @@ BubbleFactory, Clipboard, LayoutManager */
         case 'addToCall':
           BubbleFactory.get('addToCall').toggle();
           break;
+        case 'dialOut':
+          BubbleFactory.get('dialOut').show();
+          document.getElementById('dialOutNumber').focus();
+          break;
         case 'viewRecordings':
           BubbleFactory.get('viewRecordings').toggle();
           break;
@@ -383,6 +388,17 @@ BubbleFactory, Clipboard, LayoutManager */
       }
     });
 
+    if (enableSip) {
+      var dialOutBtn = document.getElementById('dialOutBtn');
+      dialOutBtn.addEventListener('click', function (event) {
+        event.preventDefault();
+        Utils.sendEvent('roomView:dialOut', {
+          phoneNumber: document.getElementById('dialOutNumber').value
+        });
+        BubbleFactory.get('addToCall').hide();
+      });
+    }
+
     exports.addEventListener('archiving', function (e) {
       var detail = e.detail;
 
@@ -429,8 +445,9 @@ BubbleFactory, Clipboard, LayoutManager */
     });
   };
 
-  var init = function (enableHangoutScroll, aEnableArchiveManager) {
+  var init = function (enableHangoutScroll, aEnableArchiveManager, aEnableSip) {
     enableArchiveManager = aEnableArchiveManager;
+    enableSip = aEnableSip;
     initHTMLElements();
     addHandlers();
     addClipboardFeature();
