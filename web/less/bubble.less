@@ -83,7 +83,7 @@
 
   input {
     font-size: 12px;
-    margin: 16px 0 0 0;
+    margin: 16px 0;
     width: 90%;
     outline: none;
     color: #9b9b93;
@@ -91,7 +91,8 @@
 }
 
 [for="addToCall"],
-[for="viewRecordings"] {
+[for="viewRecordings"],
+[for="dialOut"] {
   .bubble-content {
     max-width: none;
     padding: 40px;
@@ -194,6 +195,11 @@
   }
 }
 
+[for="dialOut"] {
+  input {
+    width: 140px;
+  }
+}
 [for="viewRecordings"] {
   .title, .subtitle {
     display: none;
