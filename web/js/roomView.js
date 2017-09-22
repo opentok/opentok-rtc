@@ -1,5 +1,5 @@
 /* global RoomView, Cronograph, FirebaseModel, RecordingsController, Modal,
-BubbleFactory, Clipboard, LayoutManager */
+BubbleFactory, Clipboard, LayoutManager, DialOutNumber */
 
 !(function (exports) {
   'use strict';
@@ -492,12 +492,19 @@ BubbleFactory, Clipboard, LayoutManager */
 
     if (enableSip) {
       var dialOutBtn = document.getElementById('dialOutBtn');
+      // Send event to get phonenumber from phoneNumberView
       dialOutBtn.addEventListener('click', function (event) {
         event.preventDefault();
-        Utils.sendEvent('roomView:dialOut', {
-          phoneNumber: document.getElementById('dialOutNumber').value
-        });
-        BubbleFactory.get('addToCall').hide();
+        Utils.sendEvent('roomView:verifyDialOut');
+      });
+
+      // Listen for PhoneNumberView event
+      Utils.addEventsHandlers('phoneNumberView:', {
+        dialOut: function (evt) {
+          Utils.sendEvent('roomView:dialOut', {
+            phoneNumber: evt.detail.phoneNumber
+          });
+        }
       });
     }
 

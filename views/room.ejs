@@ -23,6 +23,7 @@
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/<%=chromeExtensionId%>">
     <link rel="stylesheet" href="https://assets.tokbox.com/solutions/css/style.css">
     <link rel="stylesheet" href="/css/annotation.opentok.css">
+    <link rel="stylesheet" href="/css/intlTelInput.css">
 
     <script>
       window.isWebRTCVersion=<%=isWebRTCVersion%>
@@ -384,15 +385,29 @@
 
     <section class="tc-modal add-to-call-modal">
       <div class="tc-dialog">
-        <p class="title">Meeting link has been copied <span class="check-mark">&#10003;</span></p>
-        <p>Share link to add others to the meeting</p>
-        <input class="block" readonly id="current-url" onclick="this.select();">
+        <header>
+          <i data-icon="close_gray_full" class="close"></i>
+          <div class="title" data-tab="feedback">
+            <span>Invite Users</span>
+          </div>
+        </header>
+
+        <div class="meeting-link">
+          <input class="current-url" readonly id="current-url" onclick="this.select();">
+          <div class="copied-message">
+            <span>copied to clipboard!</span>
+          </div>
+        </div>
+        <div class="google-sign-in-note-container">
+          <div class="google-sign-in-note">
+            <span class=title>Note:</span><br/>
+            <span>This function requires you to sign in with your <b>@tokbox.com</b> Google account</span>
+          </div>
+        </div>
         <form id="dialOutForm">
-          <p class="title">Dial out</p>
-          <p>Enter the phone number:</p>
-          <input id="dialOutNumber" class="block" onclick="this.select();" 
-            placeholder="1-415-555-0123">
-          <button id="dialOutBtn" class="btn btn-blue btn-padding ctaarrow-white">Dial</button>
+          <input id="dialOutNumber" class="phoneNumber" onclick="this.select();"
+            placeholder="Phone number" required>
+          <button id="dialOutBtn" class="btn btn-blue btn-padding">Dial</button>
         </form>
       </div>
     </section>
