@@ -391,24 +391,25 @@
             <span>Invite Users</span>
           </div>
         </header>
-
-        <div class="meeting-link">
-          <input class="current-url" readonly id="current-url" onclick="this.select();">
-          <div class="copied-message">
-            <span>copied to clipboard!</span>
+        <secton class="dialog-content">
+          <div class="meeting-link">
+            <input class="current-url" readonly id="current-url" onclick="this.select();">
+            <div class="copied-message">
+              <span>copied to clipboard!</span>
+            </div>
           </div>
-        </div>
-        <div class="google-sign-in-note-container">
-          <div class="google-sign-in-note">
-            <span class=title>Note:</span><br/>
-            <span>This function requires you to sign in with your <b>@tokbox.com</b> Google account</span>
+          <div class="google-sign-in-note-container">
+            <div class="google-sign-in-note">
+              <span class=title>Note:</span><br/>
+              <span>This function requires you to sign in with your <b>@tokbox.com</b> Google account</span>
+            </div>
           </div>
-        </div>
-        <form id="dialOutForm">
-          <input id="dialOutNumber" class="phoneNumber" onclick="this.select();"
-            placeholder="Phone number" required>
-          <button id="dialOutBtn" class="btn btn-blue btn-padding">Dial</button>
-        </form>
+          <form id="dialOutForm">
+            <input id="dialOutNumber" class="phoneNumber" onclick="this.select();"
+              placeholder="Phone number" required>
+            <button id="dialOutBtn" class="btn btn-blue btn-padding">Dial</button>
+          </form>
+      </secton>
       </div>
     </section>
 
