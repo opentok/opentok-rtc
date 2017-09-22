@@ -22,5 +22,11 @@
       "annotations":{
          "enabled":true
       }
+   },
+   "SIP": {
+     "enabled": false,
+     "uri": "sip:username@your-sip-provider.com",
+     "username": "username",
+     "password": "password"
    }
 }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="589px" height="88px" viewBox="0 0 589 88" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.2 (44496) - http://www.bohemiancoding.com/sketch -->
+    <title>call controls bg</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M8.0582891,27.783341 C9.94493052,12.4390254 24.0008399,0 39.4742973,0 L551.520825,0 C566.984765,0 581.050911,12.4448805 582.936833,27.783341 L589.9745,85.0216579 C590.176745,86.6665508 588.995773,88 587.343221,88 L3.65190126,88 C1.99644025,88 0.817904457,86.6703903 1.02062233,85.0216579 L8.0582891,27.783341 Z" id="path-1"></path>
+        <filter x="-0.3%" y="-1.7%" width="100.5%" height="103.4%" filterUnits="objectBoundingBox" id="filter-2">
+            <feGaussianBlur stdDeviation="1" in="SourceAlpha" result="shadowBlurInner1"></feGaussianBlur>
+            <feOffset dx="0" dy="1" in="shadowBlurInner1" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0.551445578   0 0 0 0 0.551445578   0 0 0 0 0.551445578  0 0 0 0.795120018 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Welcome" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="call-controls" transform="translate(-226.000000, -429.000000)">
+            <g id="caller-controls" transform="translate(225.000000, 429.000000)">
+                <g id="call-controls-bg">
+                    <use fill-opacity="0.797073143" fill="#000000" fill-rule="evenodd" xlink:href="#path-1"></use>
+                    <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -20,4 +20,4 @@ env:
   - CMD="./node_modules/travis-github-lint-status/index.js"
   - CMD="npm run test" TB_API_SECRET=123 TB_API_KEY=123
 addons:
-  firefox: "latest"
+  firefox: "54.0"

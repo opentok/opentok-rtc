@@ -1,4 +1,4 @@
-!(function(exports) {
+!(function (exports) {
   'use strict';
 
   var VIDEO_EXT = 'mp4';
@@ -10,10 +10,10 @@
   var _model;
   var _sessionId;
 
-  var addHandlers = function() {
+  var addHandlers = function () {
     !exports.isWebRTCVersion && HTMLElems.addHandlerArchive(LIST_SELECTOR);
     var btn = document.getElementById('newCall');
-    btn && btn.addEventListener('click', function(evt) {
+    btn && btn.addEventListener('click', function (evt) {
       evt.preventDefault();
       evt.stopImmediatePropagation();
       window.location = window.location.origin + MAIN_PAGE;
@@ -24,7 +24,7 @@
     var data = {
       archives: []
     };
-    var sortingDescending = function(a, b) {
+    var sortingDescending = function (a, b) {
       var tA = archives[a].createdAt;
       var tB = archives[b].createdAt;
 
@@ -33,7 +33,7 @@
 
     archives = archives || {};
 
-    Object.keys(archives).sort(sortingDescending).forEach(function(archId) {
+    Object.keys(archives).sort(sortingDescending).forEach(function (archId) {
       var archive = archives[archId];
       var anArch = {};
       // data for preview
@@ -52,14 +52,14 @@
     data.sessionId = _sessionId;
     data.isWebRTCVersion = exports.isWebRTCVersion;
 
-    _template.render(data).then(function(aHTML) {
+    _template.render(data).then(function (aHTML) {
       document.body.innerHTML = aHTML;
       addHandlers();
     });
   }
 
   var eventHandlers = {
-    'EndCallController:endCall': function(evt) {
+    'EndCallController:endCall': function () {
       if (_model) {
         _model.addEventListener('value', render);
         render(_model.archives);
@@ -71,24 +71,24 @@
 
   var alreadyInitialized = false;
 
-  exports.EJS = function(aTemplateOptions) {
+  exports.EJS = function (aTemplateOptions) {
     if (aTemplateOptions.url) {
       this._templatePromise =
         exports.Request.sendXHR('GET', aTemplateOptions.url, null, null, 'text')
-          .then(function(aTemplateSrc) {
+          .then(function (aTemplateSrc) {
             return exports.ejs.compile(aTemplateSrc, { filename: aTemplateOptions.url });
           });
     } else {
       this._templatePromise = Promise.resolve(exports.ejs.compile(aTemplateOptions.text));
     }
-    this.render = function(aData) {
-      return this._templatePromise.then(function(aTemplate) {
+    this.render = function (aData) {
+      return this._templatePromise.then(function (aTemplate) {
         return aTemplate(aData);
       });
     };
   };
 
-  var init = function(model, sessionId) {
+  var init = function (model, sessionId) {
     _model = model;
     _sessionId = sessionId;
     if (alreadyInitialized) {
