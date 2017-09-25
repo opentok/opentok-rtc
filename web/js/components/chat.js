@@ -19,12 +19,6 @@
     });
   }
 
-  function onClick(evt) {
-    if (evt.target.id !== 'closeChat' && !isCollapsed()) {
-      hide();
-    }
-  }
-
   function collapse() {
     container.classList.add('collapsed');
   }
@@ -46,7 +40,6 @@
     chatShown = chatShown || new Promise(function (resolve) {
       container.addEventListener(transEndEventName, function onEnd() {
         container.removeEventListener(transEndEventName, onEnd);
-        document.body.addEventListener('click', onClick);
         resolve();
       });
 
@@ -67,7 +60,6 @@
     chatHidden = chatHidden || new Promise(function (resolve) {
       container.addEventListener(transEndEventName, function onEnd() {
         container.removeEventListener(transEndEventName, onEnd);
-        document.body.removeEventListener('click', onClick);
         setVisible(false);
         chatShown = chatHidden = null;
         Utils.sendEvent('chat:hidden');
