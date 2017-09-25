@@ -1,25 +1,22 @@
 #chat {
-  position: fixed;
-  width: 300px;
-  height: 60%;
-  right: 60px;
-  /* Screen padding (15) + padding among streams (4) */
-  bottom: calc(~"-60% + 19px");
+  width: 0px;
+  margin-top: 100px;
+  right: 0;
+  bottom: 0;
   background-color: white;
   z-index: 1000;
   font-size: 0;
 
   display: none;
-
-  transform: translateY(0);
-  transition: transform @transitionTime;
+  transition: width @transitionTime;
 
   &.show {
-    transform: translateY(-100%);
+    width: 300px;
+    transition: width @transitionTime;
   }
 
   &.collapsed {
-    transform: translateY(-60px);
+    transform: translateX(-60px);
 
     [data-icon="collapse"] {
       background-image: url("/images/icons/expand.svg");

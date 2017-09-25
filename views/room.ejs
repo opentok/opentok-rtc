@@ -234,8 +234,26 @@
           <p>Message
             <span id="unreadMsg">(<span id="unreadCount">0</span>)</span></span>
           </p>
-        <div>
+        </div>
       </div>
+
+    </section>
+    <section id="chat">
+      <form class="dialog-chat" id="chatForm">
+        <header>
+          <span>Chat</span>
+          <i id="toggleChat" data-icon="collapse"></i>
+          <i id="closeChat" data-icon="close_white"></i>
+        </header>
+        <div id="chatMsgs" class="tc-list">
+          <ul>
+          </ul>
+        </div>
+        <footer>
+          <textarea id="msgText"></textarea>
+          <button id="sendTxt" type="submit" class="btn btn-blue btn-padding btn-padding-small ctaarrow-white ctaarrow-white-small">Send</button>
+        </footer>
+      </form>
     </section>
 
     <section id="screenShareErrors" class="screen-modal tc-modal">
@@ -292,24 +310,6 @@
           </ul>
         </div>
       </section>
-    </section>
-
-    <section id="chat">
-      <form class="dialog-chat" id="chatForm">
-        <header>
-          <span>Chat</span>
-          <i id="toggleChat" data-icon="collapse"></i>
-          <i id="closeChat" data-icon="close_white"></i>
-        </header>
-        <div id="chatMsgs" class="tc-list">
-          <ul>
-          </ul>
-        </div>
-        <footer>
-          <textarea id="msgText"></textarea>
-          <button id="sendTxt" type="submit" class="btn btn-blue btn-padding btn-padding-small ctaarrow-white ctaarrow-white-small">Send</button>
-        </footer>
-      </form>
     </section>
 
     <section class="tc-modal user-name-modal">
