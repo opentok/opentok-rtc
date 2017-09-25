@@ -33,34 +33,43 @@
     overflow: hidden;
 
     header {
-      height: 60px;
+      height: 85px;
       width: 100%;
       font-size: 16px;
       text-align: left;
-      background-color: #1a99ce;
-      color: #fff;
-      text-align: center;
+      background-color: #3f4f57;
+      color: #728a95;
       position: relative;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
 
-      #toggleChat, #closeChat {
-        position: absolute;
-        top: 5px;
-        width: 20px;
-        height: 20px;
+      .chat-title {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
       }
 
-      #toggleChat {
-        right: 25px;
-      }
-
-      #closeChat {
-        right: 5px;
+      [data-icon="message_blue"] {
+        height: 27px;
+        width: 32px;
+        margin-left: 26px;
+        margin-right: 14px;
       }
 
       span {
         display: inline-block;
         line-height: 60px;
       }
+
+      #closeChat {
+        height: 19px;
+        width: 19px;
+        margin-right: 26px;
+        cursor: pointer;
+      }
+
     }
 
     #chatMsgs {
