@@ -87,8 +87,8 @@
 
   var _historyChat;
 
-  var CONN_TEXT = '(has connected)';
-  var DISCONN_TEXT = '(left the room)';
+  var CONN_TEXT = 'has joined the call';
+  var DISCONN_TEXT = 'has left the call';
   var STATUS_KEY = 'chat';
 
   function loadHistoryChat() {

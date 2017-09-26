@@ -69,11 +69,27 @@
       display: block;
       height: calc(~"100% - 200px");
       width: calc(~"100% + 15px");
-
+      flex: 1;
+      display: flex;
+      overflow: auto;
 
     ul {
       display: flex;
       flex-direction: column;
+      min-height: min-content;
+      width: 100%;
+      justify-content: flex-end;
+
+
+      li.event {
+        align-self: center;
+        color: #a7a0a0;
+
+        p {
+          background: none;
+          margin-right: 0;
+        }
+      }
 
       li.yourself {
         align-self: flex-end;

@@ -157,8 +157,13 @@
   }
 
   function insertChatEvent(data) {
-    data.time = data.time || Utils.getCurrentTime();
-    insertChatLine(data);
+    var time = (data.time || Utils.getCurrentTime()).toLowerCase();
+    var item = HTMLElems.createElementAt(chatContent, 'li');
+    item.classList.add('event');
+    var name = data.sender || data.userName;
+    var text = time + ' - ' + name + ' ' + data.text;
+    insertText(item, text);
+    scrollTo(item);
   }
 
   function insertText(elemRoot, text) {
