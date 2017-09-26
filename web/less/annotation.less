@@ -27,6 +27,14 @@
   opacity: 1;
 }
 
+[data-annotation-visible=true] #annotate {
+  background-image: url(/images/icons/active-circle.svg);
+}
+
+[data-annotation-visible=false] #annotate {
+  background-image: url(/images/icons/inactive-circle.svg);
+}
+
 .ots-annotation-toolbar-container {
   opacity: 0;
   transition: opacity @transitionTime;
