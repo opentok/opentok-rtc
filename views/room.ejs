@@ -218,15 +218,14 @@
           </button>
           <p>Share Screen</p>
         </div>
-        <!-- Disable annotate button. Annotation is available for all screen-sharing streams.
+        <% if (enableAnnotation) { %>
         <div>
           <button id="annotate">
             <i data-icon="annotate"></i>
           </button>
           <p>Annotate</p>
         </div>
-        -->
-        <% } %>
+        <% } } %>
         <div>
           <button id="message-btn" disabled>
             <i data-icon="message"></i>
