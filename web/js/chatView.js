@@ -176,7 +176,7 @@
     var item = HTMLElems.createElementAt(chatContent, 'li');
 
     var info = HTMLElems.createElementAt(item, 'p');
-    if ((data.sender || data.userName) === usrId) {
+    if (data.fromSelf) {
       info.classList.add('yourself');
     }
     var time = data.time.toLowerCase();
