@@ -12,6 +12,17 @@
   }
 }
 
+.ots-annotation-toolbar-container {
+  border-radius: 6px;
+  margin-top: 100px;
+  :first-child {
+    border-radius: 6px 6px 0 0;
+  }
+  :last-child {
+    border-radius: 0 0 6px 6px;
+  }
+}
+
 [data-annotation-visible=true] .ots-annotation-toolbar-container {
   opacity: 1;
 }
