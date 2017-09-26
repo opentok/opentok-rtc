@@ -379,6 +379,8 @@ body {
 #top-banner {
   visibility: hidden;
   height: 98px;
+  width: 100px;
+  min-width: 1400px;
   object-fit: contain;
   background-color: #293840;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
@@ -387,18 +389,24 @@ body {
   left: 0;
   right: 0;
   .icon-container {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: row;
+    flex-direction: row;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    justify-content: center;
     float: left;
     width: 269px;
     height: 100%;
     text-align: center;
     border-right: 1px solid #455b66;
-    i {
-      margin-top: 31px;
-    }
   }
   .center-container {
     float: left;
     height: 100%;
+    max-width: 200px;
     padding-left: 30px;
     .room-info {
       font-size: 13px;
@@ -418,7 +426,11 @@ body {
   }
   .right-container {
     float: right;
-    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    -webkit-justify-content: center;
+    justify-content: center;
     div {
       position:relative;
       height: 100%;
@@ -426,7 +438,7 @@ body {
     }
   }
   .videoSwitch, .audioSwitch {
-    margin: 36px 48px 0 0;
+    margin-right: 48px;
     span {
       margin-left: 12px;
       vertical-align: top;
@@ -437,8 +449,17 @@ body {
   }
   .layout-container {
     width: 114px;
+    height: 100%;
     border-left: 1px solid #455b66;
     text-align: center;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: row;
+    flex-direction: row;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    justify-content: center;
     #layout-icon {
       margin-top: 22px;
       height: 22px;
@@ -471,7 +492,7 @@ body {
     background-color: #0888b3;
     a {
       position: absolute;
-      right: 2px;
+      right: 0;
       border-left: 2px solid #3dc4f0;
       font-size: 12px;
       width: 34px;
@@ -491,7 +512,7 @@ body {
     }
   }
   #recordingProgress {
-    margin: 38px 15.3px 0 0;
+    margin-right: 15.3px;
     font-size: 14px;
     display: none;
     .duration {
