@@ -178,11 +178,11 @@
 
   function insertChatLine(data) {
     var item = HTMLElems.createElementAt(chatContent, 'li');
-
-    var info = HTMLElems.createElementAt(item, 'p');
     if ((data.sender || data.userName) === usrId) {
-      info.classList.add('yourself');
+      item.classList.add('yourself');
     }
+    var info = HTMLElems.createElementAt(item, 'p');
+
     var time = data.time.toLowerCase();
     HTMLElems.createElementAt(info, 'span', null, time).classList.add('time');
     HTMLElems.createElementAt(info, 'span', null, data.sender || data.userName)

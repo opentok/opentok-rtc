@@ -11,7 +11,7 @@
   transition: width @transitionTime;
 
   &.show {
-    width: 400px;
+    width: 486px;
     transition: width @transitionTime;
   }
 
@@ -70,73 +70,87 @@
       height: calc(~"100% - 200px");
       width: calc(~"100% + 15px");
 
-      li {
-        background-color: transparent;
-        padding: 5px 30px 5px 20px;
-        border: 0;
 
-        .time, .sender {
-          font-size: 12px;
-        }
+    ul {
+      display: flex;
+      flex-direction: column;
 
-        .time {
-          color: #c5bbb4;
-        }
-
-        .sender {
-          color: #282828;
-          padding-left: 10px;
-        }
+      li.yourself {
+        align-self: flex-end;
 
         & > p {
-          color: #151515;
-          background-color: #ffffff;
-          font-size: 16px;
-          word-break: break-all;
-          margin-top: 2px;
-          margin-bottom: 2px;
-          padding: 5px;
-          box-sizing: border-box;
-
-          p {
-            margin-top: 2px;
-            margin-bottom: 2px;
-          }
-        }
-
-        & > p.yourself {
           text-align: right;
           margin-left: 40px;
-          width: calc(~"100% - 40px");
+          margin-right: 0;
 
           & > p {
             text-align: left;
           }
         }
 
-        a {
-          background: none;
-          display: inline;
-          text-decoration: underline;
-          margin: -12px -15px;
-          padding: 12px 15px;
+      }
 
-          &:link {
-            color: #1a99c3;
+      li {
+          align-self: flex-start;
+          background-color: transparent;
+          padding: 10px 30px 10px 20px;
+          border: 0;
+          color: #3f4f57;
+          width: fit-content;
+
+          .time, .sender {
+            font-size: 12px;
           }
 
-          &:hover,
-          &:active {
-            color: #0d4c62;
+          .sender {
+            color: #282828;
+            padding-left: 10px;
           }
 
-          &:visited {
-            color: #76c2db;
-          }
-        }
+          & > p {
+            color: #151515;
+            background-color: #ffffff;
+            font-size: 16px;
+            word-break: break-all;
+            margin-right: 40px;
+            box-sizing: border-box;
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-top: 16px;
+            padding-bottom: 16px;
+            margin-top: 0;
+            margin-bottom: 0;
 
-        a, p, span {
-          user-select: text;
+            p {
+              margin-top: 5px;
+              margin-bottom: 0;
+            }
+          }
+
+          a {
+            background: none;
+            display: inline;
+            text-decoration: underline;
+            margin: -12px -15px;
+            padding: 12px 15px;
+
+            &:link {
+              color: #1a99c3;
+            }
+
+            &:hover,
+            &:active {
+              color: #0d4c62;
+            }
+
+            &:visited {
+              color: #76c2db;
+            }
+          }
+
+          a, p, span {
+            user-select: text;
+          }
         }
       }
     }
