@@ -683,12 +683,13 @@ RecordingsController, ScreenShareController, FeedbackController */
 
     return PrecallController.showCallSettingsPrompt(roomName, usrId).then(function (info) {
       info.roomName = roomName;
+      RoomView.showRoom();
+      RoomView.roomName = roomName;
       return info;
     });
   }
 
   function getRoomInfo(aRoomParams) {
-    RoomView.showRoom();
     return Request
       .getRoomInfo(aRoomParams)
       .then(function (aRoomInfo) {

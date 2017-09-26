@@ -202,7 +202,7 @@ BubbleFactory, Clipboard, LayoutManager */
     handler = dock;
     callControlsElem = document.querySelector('.call-controls');
 
-    roomNameElem = dock.querySelector('#roomName');
+    roomNameElem = dock.querySelector('.room-name');
     participantsStrElem = document.getElementById('participantsStr');
     recordingsNumberElem = dock.querySelector('#recordings');
     videoSwitch = dock.querySelector('#videoSwitch');
