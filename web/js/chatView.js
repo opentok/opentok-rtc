@@ -26,6 +26,7 @@
       addHandlers();
       return Chat.show().then(function () {
         scrollTo();
+        chatMsgInput.focus();
       });
     }
     removeHandlers();
