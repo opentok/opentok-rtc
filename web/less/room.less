@@ -583,11 +583,24 @@ body {
     }
 
     .intl-tel-input.allow-dropdown {
+        .selected-flag {
+          background: white;
+
+          .selected-dial-code {
+            padding-left: 35px;
+          }
+
+          .iti-arrow {
+            top: 22px;
+            left: 35px;
+          }
+      }
+
       input {
         border: none;
         border-bottom: 1px solid #24aadb;
-        padding-left: 6px;
-        padding-right: 52px;
+        padding-left: 90px !important;
+        padding-right: 6px !important;
       }
 
       input:invalid {
@@ -598,15 +611,7 @@ body {
         outline: none;
       }
 
-      .flag-container {
-        right: 0;
-        left: auto;
 
-        .country-list {
-          right: 0;
-          width: 270px;
-        }
-      }
     }
 
 

@@ -24,7 +24,8 @@
       input = $('#dialOutNumber');
       input.intlTelInput({
         utilsScript: '/js/vendor/itnl-tel-input/utils.js',
-        initialCountry: 'US'
+        initialCountry: 'US',
+        separateDialCode: true
       });
     });
     addHandlers();
