@@ -88,8 +88,8 @@ ScreenShareController, FeedbackController */
     }
   };
 
-  var SubscriberButtons = function (streamVideType) {
-    var isScreenSharing = streamVideType === 'screen';
+  var SubscriberButtons = function (streamVideoType, isSip) {
+    var isScreenSharing = streamVideoType === 'screen';
 
     var buttons = {
       video: {
@@ -109,6 +109,17 @@ ScreenShareController, FeedbackController */
         eventName: 'click',
         context: 'otHelper',
         action: 'toggleSubscribersAudio',
+        enabled: true
+      };
+    }
+
+    if (!isSip) {
+      buttons.sip = {
+        eventFiredName: 'roomView:buttonClick',
+        dataIcon: 'audio',
+        eventName: 'click',
+        context: 'otHelper',
+        action: 'unsubscribe',
         enabled: true
       };
     }
@@ -525,7 +536,7 @@ ScreenShareController, FeedbackController */
 
         subscriberStreams[streamId] = {
           stream: stream,
-          buttons: new SubscriberButtons(streamVideoType)
+          buttons: new SubscriberButtons(streamVideoType, stream.isSip)
         };
 
         var subOptions = subscriberOptions[streamVideoType];
