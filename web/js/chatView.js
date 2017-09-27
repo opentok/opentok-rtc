@@ -109,6 +109,9 @@
       return true;
     }
     if (keycode === 13) {
+      if (evt.shiftKey === true) {
+        return true;
+      }
       onSendClicked(evt);
       return false;
     }
