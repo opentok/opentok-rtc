@@ -1,9 +1,9 @@
 /* global PhoneNumberView */
 !(function (global) {
   var init = function () {
-    return LazyLoader.load([
+    return LazyLoader.load(
       '/js/phoneNumberView.js'
-    ]).then(function () {
+    ).then(function () {
       PhoneNumberView.init();
     });
   };

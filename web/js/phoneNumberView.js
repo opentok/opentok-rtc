@@ -4,9 +4,7 @@
 
   var sendPhoneNumber = function () {
     var phoneNumber = input.intlTelInput('getNumber');
-    Utils.sendEvent('phoneNumberView:dialOut', {
-      phoneNumber: phoneNumber
-    });
+    Utils.sendEvent('phoneNumberView:dialOut', phoneNumber);
   };
 
   var eventHandlers = {

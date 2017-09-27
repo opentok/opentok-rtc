@@ -395,8 +395,8 @@ ScreenShareController, FeedbackController, PhoneNumberController */
       sendSignalMuteAll(roomMuted, false);
     },
     dialOut: function (evt) {
-      if (evt.detail.phoneNumber) {
-        var phoneNumber = evt.detail.phoneNumber.replace(/\D/g, '');
+      if (evt.detail) {
+        var phoneNumber = evt.detail.replace(/\D/g, '');
         if (requireGoogleAuth && (googleAuth.isSignedIn.get() !== true)) {
           googleAuth.signIn().then(function () {
             document.body.data('google-signed-in', 'true');

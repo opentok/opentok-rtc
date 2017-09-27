@@ -501,9 +501,8 @@ BubbleFactory, Clipboard, LayoutManager */
       // Listen for PhoneNumberView event
       Utils.addEventsHandlers('phoneNumberView:', {
         dialOut: function (evt) {
-          Utils.sendEvent('roomView:dialOut', {
-            phoneNumber: evt.detail.phoneNumber
-          });
+          var phonenumber = evt.detail;
+          Utils.sendEvent('roomView:dialOut', phonenumber);
         }
       });
     }
