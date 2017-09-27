@@ -63,7 +63,7 @@
           otNetworkTest = new OTNetworkTest(publisher, previewOptions);
           otNetworkTest.startNetworkTest(function (error, result) {
             PrecallView.displayNetworkTestResults(result);
-            if (!result.audioOnly) {
+            if (result.audioOnly) {
               publisher.publishVideo(false);
               Utils.sendEvent('PrecallController:audioOnly');
             }
