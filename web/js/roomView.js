@@ -260,11 +260,11 @@ BubbleFactory, Clipboard, LayoutManager */
     callControlsElem.style.opacity = '0';
   }
 
-  function showPublisherButtons() {
+  function showPublisherButtons(publisherOptions) {
     Utils.setDisabled(togglePublisherVideoElem, false);
     Utils.setDisabled(togglePublisherAudioElem, false);
-    togglePublisherVideoElem.classList.add('activated');
-    togglePublisherAudioElem.classList.add('activated');
+    publisherOptions.publishVideo && togglePublisherVideoElem.classList.add('activated');
+    publisherOptions.publishAudio && togglePublisherAudioElem.classList.add('activated');
   }
 
   function setSwitchStatus(status, bubbleUp, domElem, evtName) {

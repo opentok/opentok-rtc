@@ -685,6 +685,8 @@ RecordingsController, ScreenShareController, FeedbackController */
       info.roomName = roomName;
       RoomView.showRoom();
       RoomView.roomName = roomName;
+      publisherOptions.publishAudio = info.publisherOptions.publishAudio;
+      publisherOptions.publishVideo = info.publisherOptions.publishVideo;
       return info;
     });
   }
@@ -816,7 +818,7 @@ RecordingsController, ScreenShareController, FeedbackController */
           publisherOptions.name = userName;
           return otHelper.publish(publisherElement, publisherOptions, {}).then(function () {
             setPublisherReady();
-            RoomView.showPublisherButtons();
+            RoomView.showPublisherButtons(publisherOptions);
           }).catch(function (errInfo) {
             if (errInfo.error.name === 'OT_CHROME_MICROPHONE_ACQUISITION_ERROR') {
               Utils.sendEvent('roomController:chromePublisherError');

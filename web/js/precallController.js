@@ -10,13 +10,20 @@
   var otNetworkTest;
   var publisher;
   var previewOptions;
+  var publisherOptions = {
+    publishAudio: true,
+    publishVideo: true,
+    name: ''
+  };
 
   var videoPreviewEventHandlers = {
     initialAudioSwitch: function (evt) {
       publisher.publishAudio(evt.detail.status);
+      publisherOptions.publishAudio = evt.detail.status;
     },
     initialVideoSwitch: function (evt) {
       publisher.publishVideo(evt.detail.status);
+      publisherOptions.publishVideo = evt.detail.status;
     },
     retest: function () {
       PrecallView.startPrecallTestMeter();
@@ -30,7 +37,7 @@
 
   function showCallSettingsPrompt(roomName, username) {
     var selector = '.user-name-modal';
-    return new Promise(function (resolveCallSettingsPrompt) {
+    return new Promise(function (resolve) {
       function loadModalText() {
         PrecallView.setRoomName(roomName);
 
@@ -42,8 +49,11 @@
             otNetworkTest.stopTest();
             Modal.hide(selector)
               .then(function () {
-                resolveCallSettingsPrompt({
-                  username: document.querySelector(selector + ' input').value.trim()
+                publisherOptions.name = document.querySelector(selector
+                  + ' input').value.trim();
+                resolve({
+                  username: document.querySelector(selector + ' input').value.trim(),
+                  publisherOptions: publisherOptions
                 });
               });
           });
