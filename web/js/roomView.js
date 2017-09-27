@@ -544,6 +544,9 @@ BubbleFactory, Clipboard, LayoutManager */
 
   var addClipboardFeature = function () {
     var input = document.getElementById('current-url');
+    input.addEventListener('click', function () {
+      input.select();
+    });
     var urlToShare = getURLtoShare();
     input.value = urlToShare;
     var clipboard = new Clipboard(document.querySelector('#addToCall'), { // eslint-disable-line no-unused-vars
