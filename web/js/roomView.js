@@ -191,6 +191,8 @@ BubbleFactory, Clipboard, LayoutManager */
 
   function setAudioSwitchRemotely(isMuted) {
     setSwitchStatus(isMuted, false, audioSwitch, 'roomView:muteAllSwitch');
+    isMuted ? togglePublisherAudioElem.classList.remove('activated')
+      : togglePublisherAudioElem.classList.add('activated');
   }
 
   function showConfirmChangeMicStatus(isMuted) {
