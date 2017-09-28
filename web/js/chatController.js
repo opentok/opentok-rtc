@@ -117,7 +117,7 @@
       //        sent with the signal.
       // type — (String) The type assigned to the signal (if there is one).
       var data = JSON.parse(evt.data);
-      data.fromSelf = this.isMyself(evt.from);
+      data.senderId = evt.from.connectionId;
       _historyChat.push(data);
       Utils.sendEvent('chatController:incomingMessage', { data: data });
     },
