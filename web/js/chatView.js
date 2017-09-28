@@ -1,4 +1,4 @@
-/* global Chat, TextProcessor */
+/* global Chat, TextProcessor, otHelper */
 
 !(function (exports) {
   'use strict';
@@ -12,6 +12,7 @@
   var chatContainer;
   var chatContent;
   var chatForm;
+  var chatParticipants = [];
 
   var _visibilityChanging = Promise.resolve();
 
@@ -186,10 +187,18 @@
 
   function insertChatLine(data) {
     var item = HTMLElems.createElementAt(chatContent, 'li');
+    var info = HTMLElems.createElementAt(item, 'p');
     if (otHelper.isMyself({ connectionId: data.senderId })) {
       item.classList.add('yourself');
+    } else {
+      var chatIndex = chatParticipants.indexOf(data.senderId);
+      if (chatIndex === -1) {
+        chatIndex = chatParticipants.push(data.senderId) - 1;
+      }
+      // We only have 10 colors so just get last digit.
+      var participantNumber = chatIndex.toString().slice(-1);
+      info.data('participant-number', participantNumber);
     }
-    var info = HTMLElems.createElementAt(item, 'p');
 
     var time = data.time.toLowerCase();
     HTMLElems.createElementAt(info, 'span', null, time).classList.add('time');

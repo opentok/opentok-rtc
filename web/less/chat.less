@@ -95,6 +95,7 @@
         align-self: flex-end;
 
         & > p {
+          border-right: 2px solid #10A9DC;
           text-align: right;
           margin-left: 40px;
           margin-right: 0;
@@ -167,6 +168,18 @@
           a, p, span {
             user-select: text;
           }
+
+          // Loop to make different color borders for chat users.
+          @chat-colors:  #DC0CE8, #54CC14, #F5A623,#C41F4B, #E8520C, #600DFF, #54CC14, #54CC14, #54CC14;
+          .chat-border-color(@counter) when (@counter > 0) {
+            .chat-border-color((@counter - 1));
+            @index: (@counter - 1);
+            & > p[data-participant-number="@{index}"] {
+              border-left: 2px solid;
+              border-color: extract(@chat-colors, @counter);
+            }
+          }
+          .chat-border-color(10);
         }
       }
     }
