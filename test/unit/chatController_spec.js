@@ -115,18 +115,20 @@ describe('ChatController', () => {
       it('should inform that a incoming message has been received', sinon.test((done) => {
         var signalEvt = {
           data: JSON.stringify(data),
-          from: 'from',
+          from: { connectionId: 'myConnId' },
           type: 'chat',
         };
         var handlers = [];
         window.addEventListener('chatController:incomingMessage', function handlerTest(evt) {
           window.removeEventListener('chatController:incomingMessage', handlerTest);
+          data.senderId = 'myConnId';
           expect(evt.detail.data).to.be.deep.equal(data);
           done();
         });
 
         ChatController.init('testRoomName', 'testUserName', handlers).then((aHandlers) => {
-          var chatHndls = aHandlers[0];
+          var chatHndls = window.MockOTHelper.bindHandlers(aHandlers[0]);
+          OTHelper._myConnId = 'myConnId';
           chatHndls['signal:chat'](signalEvt);
         });
       }));
