@@ -186,7 +186,7 @@
 
   function insertChatLine(data) {
     var item = HTMLElems.createElementAt(chatContent, 'li');
-    if ((data.sender || data.userName) === usrId) {
+    if (otHelper.isMyself({ connectionId: data.senderId })) {
       item.classList.add('yourself');
     }
     var info = HTMLElems.createElementAt(item, 'p');
