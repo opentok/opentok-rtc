@@ -220,7 +220,7 @@ describe('ChatView', () => {
 
          Chat._isVisible = true;
          this.spy(window, 'dispatchEvent');
-         data.sender = 'myself';
+         data.senderId = 'myConnectionId';
          window.dispatchEvent(new CustomEvent('chatController:incomingMessage',
                                            { detail: { data } }));
 
@@ -232,7 +232,7 @@ describe('ChatView', () => {
        sinon.test(function () {
          var chatContent = getChatContainer().querySelector('ul');
          var lengthBefore = chatContent.children.length;
-         data.sender = 'other';
+         data.senderId = 'other';
 
          Chat._isVisible = true;
          this.spy(window, 'dispatchEvent');
