@@ -46,8 +46,7 @@ module.exports = function(config) {
       'web/js/helpers/OTHelper.js',
       'web/js/vendor/opentok-annotation.js',
       'web/js/rtcApp.js',
-      'web/js/vendor/opentok-annotation.js',
-      'web/js/vendor/itnl-tel-input/*'
+      'web/js/vendor/opentok-annotation.js'
     ],
 
 

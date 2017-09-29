@@ -18,12 +18,12 @@
   var init = function () {
     LazyLoader.dependencyLoad([
       '//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js',
-      '/js/vendor/itnl-tel-input/intlTelInput.js',
-      '/js/vendor/itnl-tel-input/utils.js'
+      'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/js/intlTelInput.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/js/utils.js'
     ]).then(function () {
       input = $('#dialOutNumber');
       input.intlTelInput({
-        utilsScript: '/js/vendor/itnl-tel-input/utils.js',
+        utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/js/utils.js',
         initialCountry: 'US',
         separateDialCode: true
       });
