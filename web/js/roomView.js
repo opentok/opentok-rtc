@@ -144,7 +144,6 @@ BubbleFactory, Clipboard, LayoutManager */
     changeScreenShareStatus: toggleScreenSharing,
     destroyed: toggleScreenSharing.bind(undefined, NOT_SHARING),
     annotationStarted: function () {
-      document.body.data('annotationVisible', 'true');
       Utils.setDisabled(annotateBtnElem, false);
     },
     annotationEnded: function () {
@@ -181,7 +180,6 @@ BubbleFactory, Clipboard, LayoutManager */
       });
     },
     annotationStarted: function () {
-      document.body.data('annotationVisible', 'true');
       Utils.setDisabled(annotateBtnElem, false);
     },
     annotationEnded: function () {
