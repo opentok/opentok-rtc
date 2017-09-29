@@ -151,7 +151,7 @@ describe('ChatController', () => {
          sinon.test((done) => {
            var connData = {
              userName: 'otherUser',
-             text: '(has connected)',
+             text: 'has joined the call',
            };
 
            OTHelper._myConnId = 'myConnId';
@@ -169,7 +169,7 @@ describe('ChatController', () => {
          sinon.test(function () {
            var connData = {
              userName: 'mySelf',
-             text: '(has connected)',
+             text: 'has joined the call',
            };
 
            OTHelper._myConnId = 'myConnId';
@@ -189,7 +189,7 @@ describe('ChatController', () => {
 
           var disconnData = {
             userName: 'otherUsr',
-            text: '(left the room)',
+            text: 'has left the call',
           };
 
           OTHelper._myConnId = 'myConnId';

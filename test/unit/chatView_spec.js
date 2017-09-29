@@ -15,10 +15,12 @@ describe('ChatView', () => {
   }
 
   function dispatchKeyEvent(keyPressed) {
-    var keyEvt = document.createEvent('KeyboardEvent');
-    var initMethod = (typeof keyEvt.initKeyboardEvent !== 'undefined') ?
-          'initKeyboardEvent' :
-          'initKeyEvent';
+    var keyCode = keyPressed.charCodeAt(0);
+    var keyboardEventInit = {
+      location: window
+    };
+    var keyEvt = new KeyboardEvent('keypress', keyboardEventInit);
+    keyEvt.keyCodeVal = keyCode;
     Object.defineProperty(keyEvt, 'keyCode', {
       get() {
         return this.keyCodeVal;
@@ -29,23 +31,6 @@ describe('ChatView', () => {
         return this.keyCodeVal;
       }
     });
-
-    var keyCode = keyPressed.charCodeAt(0);
-
-    keyEvt[initMethod](
-      'keypress', // evn type: keydown, keyup or keypress
-       true,       // bubbles
-       true,       // cancelable
-       window,     // viewArg: should be window
-       false,      // ctrlKeyArg
-       false,      // altKeyArg
-       false,      // shiftKeyArg
-       false,      // metaKeyArg
-       keyCode,    // keyCodeArg : unsigned long the virtual key code
-       0);         // charCodeArgs : unsigned long the Unicode character
-                   // associated with the depressed key, else 0
-
-    keyEvt.keyCodeVal = keyCode;
     chatForm.dispatchEvent(keyEvt);
   }
 
@@ -191,7 +176,7 @@ describe('ChatView', () => {
       expect(p.children.length).to.be.equal(3);
 
       isMyself = !!isMyself;
-      expect(p.classList.contains('yourself')).to.be.equal(isMyself);
+      expect(newLine.classList.contains('yourself')).to.be.equal(isMyself);
 
       testSpan(p.childNodes[0], data.time.toLowerCase(), 'time');
       testSpan(p.childNodes[1], data.sender, 'sender');
@@ -264,9 +249,10 @@ describe('ChatView', () => {
     it('should add a new event correctly', () => {
       var data = {
         userName: 'usr1',
-        text: '(has connected)',
+        text: 'has joined the call',
         time: '00:00am',
       };
+      var eventText = '00:00am - usr1 has joined the call';
 
       var chatContent = getChatContainer().querySelector('ul');
       var lengthBefore = chatContent.children.length;
@@ -275,9 +261,7 @@ describe('ChatView', () => {
 
       expect(chatContent.children.length).to.be.equal(lengthBefore + 1);
       var newLine = chatContent.lastChild;
-      expect(newLine.querySelector('.time').textContent).to.be.equal(data.time);
-      expect(newLine.querySelector('.sender').textContent).to.be.equal(data.userName);
-      expect(newLine.querySelector('p p:last-child').textContent).to.be.equal(data.text);
+      expect(newLine.querySelector('p').textContent).to.be.equal(eventText);
     });
   });
 
