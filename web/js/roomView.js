@@ -13,7 +13,7 @@ BubbleFactory, Clipboard, LayoutManager */
   var togglePublisherAudioElem;
   var startArchivingElem;
   var stopArchivingElem;
-  var annotationBtnContainerElem;
+  var annotateBtnElem;
   var recordingProgressElem;
   var manageRecordingsElem;
   var messageButtonElem;
@@ -145,11 +145,11 @@ BubbleFactory, Clipboard, LayoutManager */
     destroyed: toggleScreenSharing.bind(undefined, NOT_SHARING),
     annotationStarted: function () {
       document.body.data('annotationVisible', 'true');
-      annotationBtnContainerElem.style.display = 'block';
+      Utils.setDisabled(annotateBtnElem, false);
     },
     annotationEnded: function () {
       document.body.data('annotationVisible', 'false');
-      annotationBtnContainerElem.style.display = 'none';
+      Utils.setDisabled(annotateBtnElem, true);
     }
   };
 
@@ -174,7 +174,7 @@ BubbleFactory, Clipboard, LayoutManager */
     controllersReady: function () {
       var selectorStr = '#top-banner [disabled], .call-controls [disabled]'
         + ':not(#toggle-publisher-video):not(#toggle-publisher-audio)'
-        + ':not(#annotate-button-container)';
+        + ':not(#annotate)';
       var elements = document.querySelectorAll(selectorStr);
       Array.prototype.forEach.call(elements, function (element) {
         Utils.setDisabled(element, false);
@@ -182,9 +182,11 @@ BubbleFactory, Clipboard, LayoutManager */
     },
     annotationStarted: function () {
       document.body.data('annotationVisible', 'true');
+      Utils.setDisabled(annotateBtnElem, false);
     },
     annotationEnded: function () {
       document.body.data('annotationVisible', 'false');
+      Utils.setDisabled(annotateBtnElem, true);
     },
     chromePublisherError: function () {
       showConfirm(MODAL_TXTS.chromePublisherError).then(function () {
@@ -216,7 +218,7 @@ BubbleFactory, Clipboard, LayoutManager */
     togglePublisherVideoElem = document.getElementById('toggle-publisher-video');
     startArchivingElem = document.getElementById('startArchiving');
     stopArchivingElem = document.getElementById('stopArchiving');
-    annotationBtnContainerElem = document.getElementById('annotate-button-container');
+    annotateBtnElem = document.getElementById('annotate');
     recordingProgressElem = document.getElementById('recordingProgress');
     manageRecordingsElem = document.getElementById('manageRecordings');
     messageButtonElem = document.getElementById('message-btn');
