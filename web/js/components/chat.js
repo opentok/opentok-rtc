@@ -1,4 +1,6 @@
-!(function(global) {
+/* global Chat */
+
+!(function (global) {
   'use strict';
 
   var transEndEventName =
@@ -12,7 +14,7 @@
   function init() {
     container = document.querySelector('#chat');
     // Chat consumes 'click' events in order not to be closed automatically
-    container.addEventListener('click', function(e) {
+    container.addEventListener('click', function (e) {
       e.stopImmediatePropagation();
     });
   }
@@ -41,7 +43,7 @@
   }
 
   function show() {
-    chatShown = chatShown || new Promise(function(resolve, reject) {
+    chatShown = chatShown || new Promise(function (resolve) {
       container.addEventListener(transEndEventName, function onEnd() {
         container.removeEventListener(transEndEventName, onEnd);
         document.body.addEventListener('click', onClick);
@@ -49,7 +51,7 @@
       });
 
       setVisible(true);
-      setTimeout(function() {
+      setTimeout(function () {
         container.classList.add('show');
       }, 50); // Give the chance to paint the UI element before fading in
     });
@@ -62,7 +64,7 @@
       return Promise.resolve();
     }
 
-    chatHidden = chatHidden || new Promise(function(resolve, reject) {
+    chatHidden = chatHidden || new Promise(function (resolve) {
       container.addEventListener(transEndEventName, function onEnd() {
         container.removeEventListener(transEndEventName, onEnd);
         document.body.removeEventListener('click', onClick);
