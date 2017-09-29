@@ -24,6 +24,7 @@ body {
   display: flex;
   .flex-direction(column);
   height: 100%;
+  .justify-content(center);
 
   header {
     padding-bottom: 181px;
@@ -84,7 +85,7 @@ body {
     input {
       background: none;
       border: none;
-      width: 238px;
+      width: 233px;
       color: white;
       outline: none;
     }
@@ -95,7 +96,7 @@ body {
     label {
       color: #b6bfc8;
       float: right;
-      width: 85px;
+      width: 90px;
       margin-top: 16px;
     }
 
@@ -205,10 +206,10 @@ body {
     position: absolute;
     float: right;
     margin-top: 46px;
-    margin-right: 41px;
+    margin-right: 80px;
     padding: 20px;
     width: 360px;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.6);
     border-radius: 4px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   }
@@ -225,6 +226,7 @@ body {
     right: 0;
     top: 50%;
     background-color: #0099cc;
+    opacity: 0.7;
     margin-left: 0;
     border: 0;
     border-radius: 0;
@@ -233,7 +235,11 @@ body {
     background-size: 12.5px 21px;
     background-repeat: no-repeat;
     background-position: center;
-    cursor: pointer
+    cursor: pointer;
+    transition: opacity 0.5s;
+    &:hover {
+      opacity: 1;
+    }
   }
 }
 

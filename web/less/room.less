@@ -13,6 +13,7 @@
 @import 'bubble.less';
 @import 'layout.less';
 @import 'tooltips.less';
+@import 'flexbox.less';
 
 body {
   margin: 0;
@@ -388,14 +389,10 @@ body {
   left: 0;
   right: 0;
   .icon-container {
-    display: -webkit-flex;
     display: flex;
-    -webkit-flex-direction: row;
-    flex-direction: row;
-    -webkit-align-items: center;
-    align-items: center;
-    -webkit-justify-content: center;
-    justify-content: center;
+    .flex-direction(row);
+    .align-items(center);
+    .justify-content(center);
     float: left;
     width: 269px;
     height: 100%;
@@ -426,10 +423,9 @@ body {
   .right-container {
     float: right;
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    -webkit-justify-content: center;
-    justify-content: center;
+    .flex-direction(row);
+    .align-items(center);
+    .justify-content(center);
     div {
       position:relative;
       float: left;
@@ -450,14 +446,10 @@ body {
     height: 98px;
     border-left: 1px solid #455b66;
     text-align: center;
-    display: -webkit-flex;
     display: flex;
-    -webkit-flex-direction: row;
-    flex-direction: row;
-    -webkit-align-items: center;
-    align-items: center;
-    -webkit-justify-content: center;
-    justify-content: center;
+    .flex-direction(row);
+    .align-items(center);
+    .justify-content(center);
     #layout-icon {
       height: 22px;
       float: none;
