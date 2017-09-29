@@ -4,10 +4,12 @@
   'use strict';
 
   var room,
+    inputFields,
     enterButton;
 
   var init = function () {
     enterButton = document.getElementById('enter');
+    inputFields = document.querySelectorAll('input');
     room = document.getElementById('room');
     resetForm();
     addHandlers();
@@ -73,32 +75,43 @@
   };
 
   var addHandlers = function () {
-    enterButton.addEventListener('click', function onEnterClicked(event) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
+    enterButton.addEventListener('click', onEnterClicked);
 
-      var form = document.querySelector('form');
-      if (!isValid()) {
-        form.classList.add('error');
-        return;
-      }
-
-      form.classList.remove('error');
-      enterButton.removeEventListener('click', onEnterClicked);
-
-      if (isWebRTCVersion) {
-        showContract().then(function (accepted) {
-          if (accepted) {
-            navigateToRoom();
-          } else {
-            addHandlers();
-          }
-        });
-      } else {
-        navigateToRoom();
-      }
-    });
+    for (var i = 0; i < inputFields.length; i++) {
+      inputFields[i].onkeypress = function (event) {
+        var keyCode = event.keyCode || event.which;
+        if (keyCode === 13) {
+          // Enter pressed
+          onEnterClicked(event);
+        }
+      };
+    }
   };
+
+  function onEnterClicked(event) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    var form = document.querySelector('form');
+    if (!isValid()) {
+      form.classList.add('error');
+      return;
+    }
+
+    form.classList.remove('error');
+
+    if (isWebRTCVersion) {
+      showContract().then(function (accepted) {
+        if (accepted) {
+          navigateToRoom();
+        } else {
+          addHandlers();
+        }
+      });
+    } else {
+      navigateToRoom();
+    }
+  }
 
   global.LandingView = {
     init: init
