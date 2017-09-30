@@ -1,4 +1,4 @@
-/* global Modal, OTNetworkTest, PrecallView, RoomView */
+/* global Modal, OTNetworkTest, PrecallView */
 
 !(function (exports) {
   'use strict';
@@ -29,7 +29,7 @@
       PrecallView.startPrecallTestMeter();
       otNetworkTest.startNetworkTest(function (error, result) {
         if (!error) {
-          RoomView.displayNetworkTestResults(result);
+          PrecallView.displayNetworkTestResults(result);
         }
       });
     }
@@ -40,6 +40,7 @@
     return new Promise(function (resolve) {
       function loadModalText() {
         PrecallView.setRoomName(roomName);
+        PrecallView.setUsername(username);
 
         document.querySelector('.user-name-modal #enter').disabled = false;
         document.querySelector('.user-name-modal .tc-dialog').addEventListener('submit',

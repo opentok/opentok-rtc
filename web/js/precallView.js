@@ -1,3 +1,4 @@
+/* globals setTimeout */
 !(function (exports) {
   'use strict';
 
@@ -36,19 +37,28 @@
       switch (elem.id) {
         case 'initialAudioSwitch':
           if (!initialAudioSwitch.classList.contains('activated')) {
-            setSwitchStatus(true, true, initialAudioSwitch, 'roomView:initialAudioSwitch');
+            setSwitchStatus(true, true, 'Audio', 'roomView:initialAudioSwitch');
           } else {
-            setSwitchStatus(false, true, initialAudioSwitch, 'roomView:initialAudioSwitch');
+            setSwitchStatus(false, true, 'Audio', 'roomView:initialAudioSwitch');
           }
           break;
         case 'initialVideoSwitch':
           if (!initialVideoSwitch.classList.contains('activated')) {
-            setSwitchStatus(true, true, initialVideoSwitch, 'roomView:initialVideoSwitch');
+            setSwitchStatus(true, true, 'Video', 'roomView:initialVideoSwitch');
           } else {
-            setSwitchStatus(false, true, initialVideoSwitch, 'roomView:initialVideoSwitch');
+            setSwitchStatus(false, true, 'Video', 'roomView:initialVideoSwitch');
           }
           break;
       }
+    });
+
+    var videoPreviewElement = document.getElementById('video-preview');
+    var videoPreviewNameElement = document.getElementById('video-preview-name');
+    videoPreviewElement.addEventListener('mouseover', function () {
+      videoPreviewNameElement.style.opacity = 1;
+    });
+    videoPreviewElement.addEventListener('mouseout', function () {
+      videoPreviewNameElement.style.opacity = 0;
     });
   };
 
@@ -66,14 +76,20 @@
       render();
     },
     'PrecallController:audioOnly': function () {
-      var initialAudioSwitch = document.querySelector('#initialVideoSwitch');
-      setSwitchStatus(false, true, initialAudioSwitch, 'roomView:initialVideoSwitch');
+      setSwitchStatus(false, true, 'Audio', 'roomView:initialVideoSwitch');
     }
   };
 
   var setRoomName = function (roomName) {
     document.querySelector('.user-name-modal button .room-name').textContent = 'Join ' + roomName;
     document.getElementById('name-heading').textContent = roomName;
+  };
+
+  var setUsername = function (username) {
+    document.getElementById('video-preview-name').textContent = username;
+    setTimeout(function () {
+      document.getElementById('video-preview-name').style.opacity = 0;
+    }, 2000);
   };
 
 
@@ -170,17 +186,23 @@
     document.getElementById('precall-audio-packet-loss').innerText = packetLossStr;
   };
 
-  function setSwitchStatus(status, bubbleUp, domElem, evtName) {
+  function setSwitchStatus(status, bubbleUp, switchName, evtName) {
+    var elementId = 'initial' + switchName + 'Switch';
+    var domElem = document.getElementById(elementId);
+    var labelElement = domElem.querySelector('label');
     var oldStatus = domElem.classList.contains('activated');
     var newStatus;
     if (status === undefined) {
       newStatus = domElem.classList.toggle('activated');
+      labelElement.innerText = 'On';
     } else {
       newStatus = status;
       if (status) {
         domElem.classList.add('activated');
+        labelElement.innerText = 'On';
       } else {
         domElem.classList.remove('activated');
+        labelElement.innerText = 'Off';
       }
     }
     bubbleUp && newStatus !== oldStatus && Utils.sendEvent(evtName, { status: newStatus });
@@ -190,6 +212,7 @@
     init: init,
     hide: hide,
     setRoomName: setRoomName,
+    setUsername: setUsername,
     setVolumeMeterLevel: setVolumeMeterLevel,
     startPrecallTestMeter: startPrecallTestMeter,
     displayNetworkTestResults: displayNetworkTestResults

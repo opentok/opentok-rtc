@@ -2,12 +2,19 @@
   <img id="logo" src="/images/tokbox-logo.svg" alt="opentok transparent logo">
 
   <form class="tc-dialog">
-    <div id="video-preview"></div>
+    <div id="video-preview">
+      <div id="video-preview-name">foo</div>
+    </div>
     <div class="publish-settings">
+      <div id="enter-name-prompt">
+        <input id="user-name-input" class="block username" placeholder="Your Name">
+        <span>Optional</span>
+      </div>
       <div id="video-settings">
         <img src="/images/icons/video-icon.svg" />
         <span>Video</span>
         <a id="initialVideoSwitch" class="activated">
+          <label>On</label>
           <i data-icon="videoSwitch"></i>
         </a>
       </div>
@@ -30,6 +37,7 @@
           <rect id="audioMeterLevel"></rect> 
         </svg>
                     <a id="initialAudioSwitch" class="activated">
+                      <label>On</label>
           <i data-icon="audioSwitch"></i>
         </a>
       </div>
@@ -60,13 +68,7 @@
     </footer>
   </form>
   <div id="precall-dialogs">
-    <div id="enter-name-prompt">
-      <p id="name-heading" class='room-name'></p>
-      <div>
-        <input id="user-name-input" class="block username" placeholder="Your Name">
-        <span>Optional</span>
-      </div>
-    </div>
+    <p id="name-heading" class='room-name'></p>
     <div id="pre-call-test-results">
       <i data-icon="close-box" id="precall-close"></i>
       <i data-icon="precall-tick" id="precall-icon"></i>
@@ -103,6 +105,7 @@
         </p>
       </div>
       <div id="retest">
+        <i data-icon="precall-retest" id="precall-retest"></i>
         Re-test
       </div>
     </div>

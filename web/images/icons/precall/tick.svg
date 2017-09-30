@@ -1,1 +1,17 @@
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/" x="0px" y="0px" width="24" height="24" xml:space="preserve"><g class="shape"><defs></defs><rect fill="#000000" display="none" width="24" height="24"></rect><rect fill="#000000" display="none" width="24" height="24"></rect><polygon fill="#2ec02e" fill-rule="evenodd" clip-rule="evenodd" points="20.5,2 9.5,16.5 3,10 0,13 10,23 24,5" id="icon_success"></polygon></g></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="51px" height="51px" viewBox="0 0 51 51" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.2 (44496) - http://www.bohemiancoding.com/sketch -->
+    <title>Success BIG@3x</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Welcome" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round">
+        <g id="notifications-+-pre-call-+-layout" transform="translate(-1578.000000, -829.000000)" stroke="#2EBF2E">
+            <g id="poor-connectivity-pop-over-copy-2" transform="translate(1452.000000, 792.000000)">
+                <g id="Success-BIG" transform="translate(128.000000, 39.000000)">
+                    <polyline id="Stroke-1" stroke-width="2" points="33.9335414 16.7566195 19.829031 30.7422521 13.5653302 24.3363641"></polyline>
+                    <path d="M47.0588235,23.7494358 C47.0588235,36.6232107 36.6208797,47.0588235 23.7494358,47.0588235 C10.8733301,47.0588235 0.440048142,36.6232107 0.440048142,23.7494358 C0.440048142,10.875661 10.8733301,0.440048142 23.7494358,0.440048142 C36.6208797,0.440048142 47.0588235,10.875661 47.0588235,23.7494358 L47.0588235,23.7494358 Z" id="Stroke-2" stroke-width="3" stroke-linejoin="round"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
