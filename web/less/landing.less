@@ -76,14 +76,17 @@ body {
     @media @smartphonesLandscape {
       margin: 7px 0 40px 0;
     }
-    text-align: center;
+    height: 100px;
 
     div {
       border-bottom: solid 1px #434d5a;
+      height: 50%;
     }
 
     input {
       background: none;
+      position: absolute;
+      left: 0;
       border: none;
       width: 233px;
       color: white;
@@ -95,9 +98,18 @@ body {
 
     label {
       color: #b6bfc8;
-      float: right;
-      width: 90px;
-      margin-top: 16px;
+      font-size: 16px;
+      line-height: 57px;
+      width: 100%;
+      float: left;
+      bottom: 0;
+      left: 0;
+      bottom: 36px;
+      font-size: 16px;
+      transition: margin-left 0.5s;
+    }
+    label.visited {
+      margin-left: 246px;
     }
 
     p {
@@ -162,6 +174,9 @@ body {
 
     .text-input {
       font-size: 16px;
+      position: absolute;
+      left: 0;
+      z-index: 100;
       @media @smartphones {
         font-size: 14px;
       }
