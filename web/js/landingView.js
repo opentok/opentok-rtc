@@ -45,9 +45,9 @@
     });
   };
 
-  var animateLabel = function() {
+  var animateLabel = function () {
     document.getElementById(this.id + '-label').classList.add('visited');
-  }
+  };
 
   var showContract = function () {
     var selector = '.tc-modal.contract';
