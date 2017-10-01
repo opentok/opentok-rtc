@@ -76,7 +76,7 @@
       render();
     },
     'PrecallController:audioOnly': function () {
-      setSwitchStatus(false, true, 'Audio', 'roomView:initialVideoSwitch');
+      setSwitchStatus(false, true, 'Video', 'roomView:initialVideoSwitch');
     }
   };
 
@@ -131,8 +131,7 @@
   };
 
   var setVolumeMeterLevel = function (level) {
-    var meterLevel = document.getElementById('audioMeterLevel');
-    meterLevel.style.width = (level * 89) + 'px';
+    document.getElementById('audioMeterLevel').style.width = (level * 89) + 'px';
   };
 
   var startPrecallTestMeter = function () {
@@ -150,6 +149,9 @@
 
   var displayNetworkTestResults = function (results) {
     var packetLossStr;
+    var audioResultsElem = document.getElementById('precall-audio-results');
+    var videoResultsElem = document.getElementById('precall-video-results');
+
     document.getElementById('pre-call-test-results').style.display = 'block';
     document.getElementById('audio-bitrate').innerText =
       Math.round(results.audio.bitsPerSecond / 1000);
@@ -159,13 +161,12 @@
       packetLossStr = isNaN(results.video.packetLossRatio) ? '' :
         Math.round(100 * results.video.packetLossRatio) + '% packet loss';
       document.getElementById('precall-video-packet-loss').innerText = packetLossStr;
-      document.getElementById('precall-audio-results').style.width = '50%';
-      document.getElementById('precall-audio-results').style.right = '0';
-      document.getElementById('precall-video-results').style.display = 'block';
+      audioResultsElem.style.width = '50%';
+      audioResultsElem.style.right = '0';
+      videoResultsElem.style.display = 'block';
     } else {
-      document.getElementById('precall-audio-results').style.width = '100%';
-      document.getElementById('precall-audio-results').style['text-align'] = 'center';
-      document.getElementById('precall-video-results').style.display = 'none';
+      document.getElementById('video-bitrate').innerText = 0;
+      document.getElementById('precall-video-packet-loss').innerText = 'No video.';
     }
     var precallHeading = document.getElementById('pre-call-heading');
     switch (results.icon) {
