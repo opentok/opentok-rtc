@@ -81,6 +81,13 @@
                     JSON.stringify(data), 'application/json');
   }
 
+  function hangUp(phoneNumber, token) {
+    return sendXHR('POST', server + '/hang-up/', JSON.stringify({
+        phoneNumber:phoneNumber,
+        googleIdToken: token
+      }), 'application/json');
+  }
+
   function deleteArchive(id) {
     return sendXHR('DELETE', server + '/archive/' + id);
   }
@@ -89,6 +96,7 @@
     getRoomInfo: getRoomInfo,
     sendArchivingOperation: sendArchivingOperation,
     dialOut: dialOut,
+    hangUp: hangUp,
     deleteArchive: deleteArchive,
     sendXHR: sendXHR
   };

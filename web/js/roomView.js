@@ -499,7 +499,6 @@ BubbleFactory, Clipboard, LayoutManager */
         Utils.sendEvent('roomView:dialOut', {
           phoneNumber: document.getElementById('dialOutNumber').value
         });
-        BubbleFactory.get('addToCall').hide();
       });
     }
 

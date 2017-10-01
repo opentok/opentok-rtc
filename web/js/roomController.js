@@ -88,19 +88,21 @@ ScreenShareController, FeedbackController */
     }
   };
 
-  var SubscriberButtons = function (streamVideType) {
-    var isScreenSharing = streamVideType === 'screen';
+  var SubscriberButtons = function (streamVideoType, phoneNumber) {
+    var isScreenSharing = streamVideoType === 'screen';
 
-    var buttons = {
-      video: {
+    var buttons = { };
+
+    if (!phoneNumber) {
+      buttons.video = {
         eventFiredName: 'roomView:buttonClick',
         dataIcon: isScreenSharing ? 'desktop' : 'video',
         eventName: 'click',
         context: 'otHelper',
         action: 'toggleSubscribersVideo',
         enabled: true
-      }
-    };
+      };
+    }
 
     if (!isScreenSharing) {
       buttons.audio = {
@@ -109,6 +111,17 @@ ScreenShareController, FeedbackController */
         eventName: 'click',
         context: 'otHelper',
         action: 'toggleSubscribersAudio',
+        enabled: true
+      };
+    }
+
+    if (phoneNumber && dialedNumberTokens[phoneNumber]) {
+      buttons.hangup = {
+        eventFiredName: 'roomView:buttonClick',
+        dataIcon: 'hangup',
+        eventName: 'click',
+        context: 'otHelper',
+        action: 'hangup',
         enabled: true
       };
     }
@@ -135,8 +148,8 @@ ScreenShareController, FeedbackController */
     }
   };
 
-  var subscriberStreams = {
-  };
+  var subscriberStreams = { };
+  var dialedNumberTokens = {};
 
   // We want to use media priorization on the subscriber streams. We're going to restrict the
   // maximum width and height to the one that's actually displayed. To do that, we're going to
@@ -245,7 +258,25 @@ ScreenShareController, FeedbackController */
         googleIdToken: googleIdToken
       };
       Request.dialOut(roomName, data);
+      dialedNumberTokens[phoneNumber] = googleIdToken;
     }
+  };
+
+  var hangup = function (streamId) {
+    if (!subscriberStreams[streamId]) {
+      return;
+    }
+    var stream = subscriberStreams[streamId].stream;
+    if (!stream.isSip) {
+      return;
+    }
+    var phoneNumber = stream.name;
+    var token = dialedNumberTokens[phoneNumber];
+    if (!token) {
+      return;
+    }
+    Request.hangUp(phoneNumber, token);
+    delete dialedNumberTokens[phoneNumber];
   };
 
   var roomStatusHandlers = {
@@ -341,6 +372,10 @@ ScreenShareController, FeedbackController */
         var stream = subscriberStreams[streamId];
         if (!stream) {
           debug.error('Got an event from an nonexistent stream');
+          return;
+        }
+        if (name === 'hangup') {
+          hangup(streamId);
           return;
         }
         buttonInfo = stream.buttons[name];
@@ -522,10 +557,11 @@ ScreenShareController, FeedbackController */
         }
 
         var streamId = stream.streamId;
+        var phoneNumber = stream.isSip && stream.name;
 
         subscriberStreams[streamId] = {
           stream: stream,
-          buttons: new SubscriberButtons(streamVideoType)
+          buttons: new SubscriberButtons(streamVideoType, phoneNumber)
         };
 
         var subOptions = subscriberOptions[streamVideoType];

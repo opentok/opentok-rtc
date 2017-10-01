@@ -352,6 +352,34 @@ paths:
       responses:
         '200':
           description: Indicates acknowledgement
+    post:
+      summary: Call hang-up callback for web client (to disconnect SIP connection)
+      x-implemented-in: postHangUp
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      description: Starts dialing a phone via a SIP gatway.
+      tags:
+        - Dial
+      parameters:
+        - phoneNumber: phoneNumber
+          in: body
+          description: The phone number for the connection to disconnect.
+          required: true
+          type: string
+        - name: googleIdToken
+          in: body
+          description: The google authentication token used to identify the client connecting.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Information about the SIP call
+        '400':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/ErrorInfo'
 definitions:
   RoomHTML:
     type: string
