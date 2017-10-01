@@ -649,6 +649,10 @@ body {
     word-break: break-all;
   }
 
+  footer {
+    margin-right: 20px
+  }
+
   p {
     font-family: @muliRegularFont, arial;
     font-size: 16px;
@@ -693,8 +697,15 @@ body {
     transition: opacity 0.5s;
   }
   #enter-name-prompt {
-    margin-bottom: 20px;
+    margin: 20px 20px 0;
     border-bottom: #788492 1px solid;
+    div {
+      display: flex;
+      align-items: center;
+      span {
+        font-size: 12px;
+      }
+    }
     input {
       background: none;
       border: none;
@@ -709,10 +720,13 @@ body {
       background: none;
     }
   }
-  #video-settings, #audio-settings {
+  #video-settings, #audio-settings, #enter-name-prompt {
+    display: flex;
+    .justify-content(space-between);
+    padding-bottom: 18px;
     img {
       float: left;
-      margin-right: 13px
+      margin-right: 13px;
     }
     span {
       float: left;
@@ -728,19 +742,69 @@ body {
       }
     }
   }
+  #audio-settings {
+    div {
+      display: flex;
+      align-items: center;
+    }
+  }
+  #audio-meter, #precall-test-meter {
+    background-color: #505050;
+    height: 5px;
+    width: 89px;
+  }
+  #audio-meter-level {
+    background-color: #10a9dc;
+    height: 100%;
+  }
+
   #audio-settings, #pre-call-test {
     border-top: #434d5a 1px solid;
     padding-top: 17px;
     clear: both;
   }
+
   #pre-call-test {
+    display: flex;
+    align-items: center;
     span {
-      margin-right: 10px;
+      margin-right: 14px;
+      font-size: 16px;
+    }
+    #test-status {
+      font-size: 10px;
     }
     img {
       margin-left: -4px;
-      margin-right: 4px;
+      margin-right: 8px;
     }
+    #precall-test-labels {
+      display: flex;
+    }
+  }
+
+  #precall-test-meter {
+    width: 278px;
+    margin-top: 12px;
+    margin-left: 28px
+  }
+  #precall-test-meter-level {
+    background-color: #10a9dc;
+    height: 100%;
+    background-image: -webkit-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+    background-image: -o-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+    background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+    -webkit-background-size: 40px 40px;
+    background-size: 40px 40px;
+    -webkit-animation: progress-bar-stripes 2s linear infinite;
+    -o-animation: progress-bar-stripes 2s linear infinite;
+    animation: progress-bar-stripes 2s linear infinite;
+    animation-play-state: paused;
+  }
+
+  @keyframes progress-bar-stripes {
+      from {background-position-x: 0;}
+      to {background-position-x: 40px;}
   }
 }
 
@@ -844,7 +908,6 @@ body {
   margin: 0 0 26px;
 }
 span {
-  color: #b6bfc8;
   font-size: 12px;
   color: #b6bfc8;
 }
@@ -936,6 +999,7 @@ footer.main {
   text-overflow: ellipsis;
   overflow: hidden;
   max-width: 290px;
+  color: white;
 }
 
 #enter.btn {

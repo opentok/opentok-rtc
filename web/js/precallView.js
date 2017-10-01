@@ -131,17 +131,23 @@
   };
 
   var setVolumeMeterLevel = function (level) {
-    document.getElementById('audioMeterLevel').style.width = (level * 89) + 'px';
+    document.getElementById('audio-meter-level').style.width = (level * 89) + 'px';
   };
 
   var startPrecallTestMeter = function () {
-    var meterLevel = document.getElementById('precallTestMeterLevel');
+    var meterLevel = document.getElementById('precall-test-meter-level');
+    var meterWidth = document.getElementById('precall-test-meter').offsetWidth;
+    var testStatusElement = document.getElementById('test-status');
+    testStatusElement.innerText = 'Testing audio / video quality…';
     meterLevel.style.width = 0;
+    meterLevel.style['animation-play-state'] = 'running';
     var preCallTestProgress = 0;
     var testMeterInterval = setInterval(function () {
       preCallTestProgress++;
-      meterLevel.style.width = ((preCallTestProgress * 89) / 15) + 'px';
+      meterLevel.style.width = ((preCallTestProgress * meterWidth) / 15) + 'px';
       if (preCallTestProgress === 15) {
+        testStatusElement.innerText = 'Done.';
+        meterLevel.style['animation-play-state'] = 'paused';
         clearInterval(testMeterInterval);
       }
     }, 1000);

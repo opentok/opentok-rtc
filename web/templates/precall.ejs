@@ -5,60 +5,49 @@
     <div id="video-preview">
       <div id="video-preview-name">foo</div>
     </div>
-    <div class="publish-settings">
-      <div id="enter-name-prompt">
+    <div id="enter-name-prompt">
+      <div>
         <input id="user-name-input" class="block username" placeholder="Your Name">
         <span>Optional</span>
       </div>
+    </div>
+    <div class="publish-settings">
       <div id="video-settings">
-        <img src="/images/icons/video-icon.svg" />
-        <span>Video</span>
+        <div>
+          <img src="/images/icons/video-icon.svg" />
+          <span>Video</span>
+        </div>
         <a id="initialVideoSwitch" class="activated">
           <label>On</label>
           <i data-icon="videoSwitch"></i>
         </a>
       </div>
       <div id="audio-settings">
-        <img src="/images/icons/mic-icon.svg" />
-        <span>Audio</span>
-        <svg style="height:5px; width:89px">
-          <style>
-            rect {
-              fill: #505050;
-              height: 5px;
-              width: 89px;
-            }
-            #audioMeterLevel {
-              fill: #10a9dc;
-            }
-          </style>
-          <rect id="audioMeterBackground">
-          </rect>
-          <rect id="audioMeterLevel"></rect> 
-        </svg>
+        <div>
+          <img src="/images/icons/mic-icon.svg" />
+          <span>Audio</span>
+          <div id="audio-meter">
+            <div id="audio-meter-level">
+            </div>
+          </div>
+        </div>
+
                     <a id="initialAudioSwitch" class="activated">
                       <label>On</label>
           <i data-icon="audioSwitch"></i>
         </a>
       </div>
       <div id="pre-call-test">
-        <img src="/images/icons/connectivity-icon.svg" />
-        <span>Connectivity test (in progress)</span>
-        <svg style="height:5px; width:89px">
-          <style>
-            rect {
-              fill: #505050;
-              height: 5px;
-              width: 0;
-            }
-            #precallTestMeterLevel {
-              fill: #10a9dc;
-            }
-          </style>
-          <rect id="precallTestMeterBackground">
-          </rect>
-          <rect id="precallTestMeterLevel"></rect> 
-        </svg>
+        <div id="precall-test-labels">
+          <img src="/images/icons/connectivity-icon.svg" />
+          <span>Connectivity test</span>
+          <span id="test-status"></div>
+          <i data-icon="close-box"></i>
+        </div>
+        <div id="precall-test-meter">
+          <div id="precall-test-meter-level">
+          </div>
+        </div>
       </div>
     </div>
     <footer>
