@@ -4,6 +4,8 @@
 module.exports = function(config) {
     configuration = {
 
+    plugins: ['karma-mocha', 'karma-coverage', 'karma-html2js-preprocessor', 'karma-chrome-launcher', 'karma-firefox-launcher'],
+
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
 
@@ -44,7 +46,6 @@ module.exports = function(config) {
       'web/bower_components/**/*.js',
       'web/js/vendor/lazy_loader.js',
       'web/js/helpers/OTHelper.js',
-      'web/js/vendor/opentok-annotation.js',
       'web/js/rtcApp.js',
       'web/js/vendor/opentok-annotation.js'
     ],
@@ -53,14 +54,15 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      '**/*.html': ['html2js']
+      '**/*.html': ['html2js'],
+      'web/**/*.js': ['coverage']
     },
 
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress'],
+    reporters: ['progress', 'coverage'],
 
 
     // web server port
@@ -79,6 +81,17 @@ module.exports = function(config) {
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: false,
 
+    coverageReporter: {
+      dir: 'coverage',
+      instrumenter: {
+        'web/**/*.js': ['istanbul']
+      },
+      reporters: [
+        { type: 'html', subdir: 'report-html' },
+        { type: 'lcov', subdir: 'report-lcov' },
+        { type: 'lcovonly', subdir: '.', file: 'report-lcovonly.txt' }
+      ]
+    },
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
