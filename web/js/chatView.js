@@ -1,4 +1,4 @@
-/* global Chat, TextProcessor */
+/* global Chat, TextProcessor, otHelper */
 
 !(function (exports) {
   'use strict';
@@ -12,6 +12,7 @@
   var chatContainer;
   var chatContent;
   var chatForm;
+  var chatParticipants = [];
 
   var _visibilityChanging = Promise.resolve();
 
@@ -26,6 +27,7 @@
       addHandlers();
       return Chat.show().then(function () {
         scrollTo();
+        chatMsgInput.focus();
       });
     }
     removeHandlers();
@@ -108,6 +110,9 @@
       return true;
     }
     if (keycode === 13) {
+      if (evt.shiftKey === true) {
+        return true;
+      }
       onSendClicked(evt);
       return false;
     }
@@ -156,8 +161,13 @@
   }
 
   function insertChatEvent(data) {
-    data.time = data.time || Utils.getCurrentTime();
-    insertChatLine(data);
+    var time = (data.time || Utils.getCurrentTime()).toLowerCase();
+    var item = HTMLElems.createElementAt(chatContent, 'li');
+    item.classList.add('event');
+    var name = data.sender || data.userName;
+    var text = time + ' - ' + name + ' ' + data.text;
+    insertText(item, text);
+    scrollTo(item);
   }
 
   function insertText(elemRoot, text) {
@@ -177,11 +187,19 @@
 
   function insertChatLine(data) {
     var item = HTMLElems.createElementAt(chatContent, 'li');
-
     var info = HTMLElems.createElementAt(item, 'p');
-    if ((data.sender || data.userName) === usrId) {
-      info.classList.add('yourself');
+    if (otHelper.isMyself({ connectionId: data.senderId })) {
+      item.classList.add('yourself');
+    } else {
+      var chatIndex = chatParticipants.indexOf(data.senderId);
+      if (chatIndex === -1) {
+        chatIndex = chatParticipants.push(data.senderId) - 1;
+      }
+      // We only have 10 colors so just get last digit.
+      var participantNumber = chatIndex.toString().slice(-1);
+      info.data('participant-number', participantNumber);
     }
+
     var time = data.time.toLowerCase();
     HTMLElems.createElementAt(info, 'span', null, time).classList.add('time');
     HTMLElems.createElementAt(info, 'span', null, data.sender || data.userName)
