@@ -128,7 +128,6 @@
 
   var hide = function () {
     document.getElementById('video-preview').style.visibility = 'hidden';
-    document.getElementById('dock').style.visibility = 'visible';
   };
 
   var setVolumeMeterLevel = function (level) {
