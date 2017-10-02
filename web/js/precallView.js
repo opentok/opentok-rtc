@@ -38,16 +38,16 @@
       switch (elem.id) {
         case 'initialAudioSwitch':
           if (!initialAudioSwitch.classList.contains('activated')) {
-            setSwitchStatus(true, true, 'Audio', 'roomView:initialAudioSwitch');
+            setSwitchStatus(true, 'Audio', 'roomView:initialAudioSwitch');
           } else {
-            setSwitchStatus(false, true, 'Audio', 'roomView:initialAudioSwitch');
+            setSwitchStatus(false, 'Audio', 'roomView:initialAudioSwitch');
           }
           break;
         case 'initialVideoSwitch':
           if (!initialVideoSwitch.classList.contains('activated')) {
-            setSwitchStatus(true, true, 'Video', 'roomView:initialVideoSwitch');
+            setSwitchStatus(true, 'Video', 'roomView:initialVideoSwitch');
           } else {
-            setSwitchStatus(false, true, 'Video', 'roomView:initialVideoSwitch');
+            setSwitchStatus(false, 'Video', 'roomView:initialVideoSwitch');
           }
           break;
       }
@@ -77,7 +77,7 @@
       render();
     },
     'PrecallController:audioOnly': function () {
-      setSwitchStatus(false, true, 'Video', 'roomView:initialVideoSwitch');
+      setSwitchStatus(false, 'Video', 'roomView:initialVideoSwitch');
     }
   };
 
@@ -137,7 +137,7 @@
   var startPrecallTestMeter = function () {
     var TEST_DURATION_MAX = 200; // 20 seconds
     var meterLevel = document.getElementById('precall-test-meter-level');
-    setSwitchStatus(true, false, 'Video', 'roomView:initialVideoSwitch');
+    setSwitchStatus(true, 'Video', 'roomView:initialVideoSwitch');
     document.getElementById('test-status').innerText = 'Testing audio / video quality…';
     meterLevel.style.width = 0;
     meterLevel.style['animation-play-state'] = 'running';
@@ -158,8 +158,6 @@
 
   var displayNetworkTestResults = function (results) {
     var packetLossStr;
-    var audioResultsElem = document.getElementById('precall-audio-results');
-    var videoResultsElem = document.getElementById('precall-video-results');
 
     clearInterval(testMeterInterval);
     document.getElementById('test-status').innerText = 'Done.';
@@ -169,15 +167,12 @@
     document.getElementById('pre-call-test-results').style.display = 'block';
     document.getElementById('audio-bitrate').innerText =
       Math.round(results.audio.bitsPerSecond / 1000);
-    if (results.video && results.text !== 'Your bandwidth can support audio only.') {
+    if (results.video) {
       document.getElementById('video-bitrate').innerText =
         Math.round(results.video.bitsPerSecond / 1000);
       packetLossStr = isNaN(results.video.packetLossRatio) ? '' :
         Math.round(100 * results.video.packetLossRatio) + '% packet loss';
       document.getElementById('precall-video-packet-loss').innerText = packetLossStr;
-      audioResultsElem.style.width = '50%';
-      audioResultsElem.style.right = '0';
-      videoResultsElem.style.display = 'block';
     } else {
       document.getElementById('video-bitrate').innerText = 0;
       document.getElementById('precall-video-packet-loss').innerText = 'No video.';
@@ -201,7 +196,7 @@
     document.getElementById('precall-audio-packet-loss').innerText = packetLossStr;
   };
 
-  function setSwitchStatus(status, bubbleUp, switchName, evtName) {
+  function setSwitchStatus(status, switchName, evtName) {
     var elementId = 'initial' + switchName + 'Switch';
     var domElem = document.getElementById(elementId);
     var labelElement = domElem.querySelector('label');
@@ -220,7 +215,7 @@
         labelElement.innerText = 'Off';
       }
     }
-    bubbleUp && newStatus !== oldStatus && Utils.sendEvent(evtName, { status: newStatus });
+    newStatus !== oldStatus && Utils.sendEvent(evtName, { status: newStatus });
   }
 
   exports.PrecallView = {
