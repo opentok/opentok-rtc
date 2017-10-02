@@ -617,7 +617,9 @@ RecordingsController, ScreenShareController, FeedbackController */
           return;
         }
         !onlySwitch && setAudioStatus(isMuted);
-        RoomView.setAudioSwitchRemotely(isMuted);
+        if (otHelper.isPublisherReady || otHelper.publisherHas('audio')) {
+          RoomView.setAudioSwitchRemotely(isMuted);
+        }
       }.bind(undefined, muteAllSwitch, onlyChangeSwitch);
 
       if (!otHelper.isMyself(evt.from)) {
