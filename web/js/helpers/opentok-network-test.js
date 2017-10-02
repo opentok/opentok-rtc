@@ -177,7 +177,7 @@
     };
     
     this.stopTest = function() {
-      bandwidthCalculator.stop();
+      bandwidthCalculator && bandwidthCalculator.stop();
       session.disconnect();
       publisher.destroy();
     }
