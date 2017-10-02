@@ -332,7 +332,7 @@ function ServerMethods(aLogLevel, aModules) {
         enableArchiving: tbConfig.enableArchiving,
         enableArchiveManager: tbConfig.enableArchiveManager,
         enableScreensharing: tbConfig.enableScreensharing,
-        enableAnnotation: tbConfig.enableAnnotation,
+        enableAnnotation: tbConfig.enableAnnotations,
         enableFeedback: tbConfig.enableFeedback,
         hasSip: tbConfig.enableSip,
       }, (err, html) => {
