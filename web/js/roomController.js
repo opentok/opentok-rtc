@@ -1,6 +1,6 @@
 /* global Utils, Request, RoomStatus, RoomView, LayoutManager, Modal, LazyLoader,
 EndCallController, ChatController, GoogleAuth, LayoutMenuController, RecordingsController,
-ScreenShareController, FeedbackController */
+ScreenShareController, FeedbackController, PhoneNumberController */
 
 !(function (exports) {
   'use strict';
@@ -430,10 +430,11 @@ ScreenShareController, FeedbackController */
       sendSignalMuteAll(roomMuted, false);
     },
     dialOut: function (evt) {
-      if (evt.detail.phoneNumber) {
-        var phoneNumber = evt.detail.phoneNumber.replace(/\D/g, '');
+      if (evt.detail) {
+        var phoneNumber = evt.detail.replace(/\D/g, '');
         if (requireGoogleAuth && (googleAuth.isSignedIn.get() !== true)) {
           googleAuth.signIn().then(function () {
+            document.body.data('google-signed-in', 'true');
             dialOut(phoneNumber);
           });
         } else {
@@ -808,7 +809,8 @@ ScreenShareController, FeedbackController */
     '/js/layoutMenuController.js',
     '/js/screenShareController.js',
     '/js/feedbackController.js',
-    '/js/googleAuth.js'
+    '/js/googleAuth.js',
+    '/js/phoneNumberController.js'
   ];
 
   var init = function () {
@@ -865,6 +867,9 @@ ScreenShareController, FeedbackController */
     if (enableSip && requireGoogleAuth) {
       GoogleAuth.init(aParams.googleId, aParams.googleHostedDomain, function (aGoogleAuth) {
         googleAuth = aGoogleAuth;
+        if (googleAuth.isSignedIn.get()) {
+          document.body.data('google-signed-in', 'true');
+        }
       });
     }
 
@@ -906,6 +911,7 @@ ScreenShareController, FeedbackController */
                                     aParams.firebaseToken, aParams.sessionId);
           ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
           FeedbackController.init(otHelper);
+          PhoneNumberController.init();
           Utils.sendEvent('roomController:controllersReady');
         })
         .catch(function (error) {
