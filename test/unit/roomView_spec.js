@@ -3,11 +3,8 @@ var expect = chai.expect;
 var should = chai.should();
 
 describe('RoomView', () => {
-  var dock = null;
-
   before(() => {
     window.document.body.innerHTML = window.__html__['test/unit/roomView_spec.html'];
-    dock = document.getElementById('dock');
   });
 
   it('should exist', () => {

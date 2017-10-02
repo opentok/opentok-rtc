@@ -14,26 +14,22 @@
 
     <link rel="stylesheet" href="/css/endMeeting.opentok.css">
 
-    <% if(isWebRTCVersion) { %>
-      <link rel="stylesheet" href="/css/webrtc.opentok.css">
-    <% } else { %>
-      <link rel="stylesheet" href="/css/room.opentok.css">
-    <% } %>
+    <link rel="stylesheet" href="/css/room.opentok.css">
 
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/<%=chromeExtensionId%>">
     <link rel="stylesheet" href="https://assets.tokbox.com/solutions/css/style.css">
     <link rel="stylesheet" href="/css/annotation.opentok.css">
     <link rel="stylesheet" href="/css/checkboxes.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/css/intlTelInput.css">
 
     <script>
-      window.isWebRTCVersion=<%=isWebRTCVersion%>;
       window.apiKey='<%=apiKey%>';
       window.precallSessionId='<%=precallSessionId%>';
       window.precallToken='<%=precallToken%>';
       var isMobile = function() { return typeof window.orientation !== 'undefined'; }
 
       var mobileSettings = function() {
-        document.getElementById("dock").classList.add("collapsed");
 
         var ids = ['toggleSharing', 'manageRecordings', 'videoSwitch',
           'audioSwitch', 'showFeedback', 'screenShareErrors'];
@@ -66,80 +62,6 @@
   </head>
 
   <body class="forbidden">
-    <section id="dock">
-      <header class="info">
-        <div id="handler">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-        <h1>
-          <span id="roomName"><%= roomName %></span>
-        </h1>
-        <hr>
-        <h2><span class="participants"></span></h2>
-        <h3>
-          <i data-icon="participants"></i>
-          <span class="participants" id="oldParticipantsStr"></span>
-        </h3>
-      </header>
-      <nav class="menu tc-sidebar">
-        <div class="tc-list">
-          <ul>
-            <li>
-              <a id="addToCallOld"><i data-icon="add"></i><span>Add participants</span></a>
-            </li>
-            <% if(!isWebRTCVersion) { %>
-            <% if (enableScreensharing) { %>
-            <li id="toggleSharing" disabled>
-              <a id="startSharingDesktop"><i data-icon="screen"></i><span>Share your screen</span></a>
-              <a id="stopSharingDesktop"><i data-icon="screen_sharing"></i><span>Stop sharing your screen</span></a>
-            </li>
-            <% } %>
-            <% } %>
-            <li>
-              <a id="chooseLayoutOld"><i data-icon="layouts"></i><span>Change layout</span></a>
-            </li>
-            <!--li id="toggleChat">
-              <a id="startChat" data-unread-messages="0"><i data-icon="chat"></i><span>Open text chat></a>
-              <a id="stopChat"><i data-icon="chat"></i><span>Close text chat</span></a>
-            </li-->
-            <% if(!isWebRTCVersion) { %>
-            <li>
-              <a id="oldEndCall" class="danger"><i data-icon="end"></i><span>End meeting</span></a>
-            </li>
-            <li class="surrounded bottom tight tooltip" tooltip="Stop receiving video">
-              <a id="videoSwitch"><i data-icon="videoSwitch"></i><span>Stop receiving video</span></a>
-            </li>
-            <li class="tight tooltip" tooltip="Mute all participants">
-              <a id="audioSwitch"><i data-icon="audioSwitch"></i><span>Mute all participants</span></a>
-            </li>
-            <% } else { %>
-            <li class="tooltip" tooltip="Stop receiving video">
-              <a id="videoSwitch"><i data-icon="videoSwitch"></i><span>Stop receiving video</span></a>
-            </li>
-            <li class="tooltip" tooltip="Mute all participants">
-              <a id="audioSwitch"><i data-icon="audioSwitch"></i><span>Mute all participants</span></a>
-            </li>
-            <li>
-              <a id="OldEndCall" class="danger"><i data-icon="end"></i><span>End meeting</span></a>
-            </li>
-            <li class="bottom tooltip" tooltip="See Documentation">
-              <a href="https://tokbox.com/developer/" target="_blank" class="button see-documentation"><span>See Documentation</span></a>
-            </li>
-            <li class="tooltip" tooltip="Talk to Sales">
-              <a href="https://tokbox.com/contact/sales" target="_blank" class="button talk-to-sales"><span>Talk to Sales</span></a>
-            </li>
-            <% } %>
-          </ul>
-        </div>
-      </nav>
-      <% if (enableFeedback) { %>
-      <footer class="feedback">
-        <a id="showFeedback"><span><span class="plus-icon">[+]</span> Give Demo Feedback</span></a>
-      </footer>
-      <% } %>
-    </section>
 
     <div id="top-banner">
       <div class="icon-container">
@@ -158,7 +80,6 @@
         <div class="audioSwitch" disabled>
           <a id="audioSwitch"><i data-icon="audioSwitch"></i><span>Mute all participants</span></a>
         </div>
-        <% if(!isWebRTCVersion) { %>
         <%   if(enableArchiving) { %>
         <div id="recordingProgress">
           <i data-icon="record-solid"></i>
@@ -173,14 +94,16 @@
         <div id="manageRecordings">
           <a id="viewRecordings"  class="btn btn-blue btn-padding"><span id="recordings">0</span></a>
         </div>
-        <% } } } %>
+        <% } } %>
         <div class="layout-container">
-          <div id="layout-icon">
-            <a id="chooseLayout">
-              <i data-icon="layout-icon"></i>
-            </a>
+          <div>
+            <div id="layout-icon">
+              <a id="chooseLayout">
+                <i data-icon="layout-icon"></i>
+              </a>
+            </div>
+            <div id="layout-label">Layout</div>
           </div>
-          <div id="layout-label">Layout</div>
         </div>
       </div>
     </div>
@@ -222,15 +145,14 @@
           </button>
           <p>Share Screen</p>
         </div>
-        <!-- Disable annotate button. Annotation is available for all screen-sharing streams.
-        <div>
-          <button id="annotate">
+        <% if (enableAnnotation) { %>
+        <div id="annotate-button-container">
+          <button id="annotate" disabled>
             <i data-icon="annotate"></i>
           </button>
           <p>Annotate</p>
         </div>
-        -->
-        <% } %>
+        <% } } %>
         <div>
           <button id="message-btn" disabled>
             <i data-icon="message"></i>
@@ -238,8 +160,28 @@
           <p>Message
             <span id="unreadMsg">(<span id="unreadCount">0</span>)</span></span>
           </p>
-        <div>
+        </div>
       </div>
+
+    </section>
+    <section id="chat">
+      <form class="dialog-chat" id="chatForm">
+        <header>
+          <div class="chat-title">
+            <i data-icon="message_blue"></i>
+            <span>Messaging</span>
+          </div>
+          <i id="closeChat" data-icon="close_blue"></i>
+        </header>
+        <div id="chatMsgs" class="tc-list">
+          <ul>
+          </ul>
+        </div>
+        <footer>
+          <textarea id="msgText" placeholder="Type your message..." required></textarea>
+          <button id="sendTxt" type="submit" data-icon="send" class="btn btn-blue btn-padding btn-padding-small" />
+        </footer>
+      </form>
     </section>
 
     <section id="screenShareErrors" class="screen-modal tc-modal">
@@ -296,24 +238,6 @@
           </ul>
         </div>
       </section>
-    </section>
-
-    <section id="chat">
-      <form class="dialog-chat" id="chatForm">
-        <header>
-          <span>Chat</span>
-          <i id="toggleChat" data-icon="collapse"></i>
-          <i id="closeChat" data-icon="close_white"></i>
-        </header>
-        <div id="chatMsgs" class="tc-list">
-          <ul>
-          </ul>
-        </div>
-        <footer>
-          <textarea id="msgText"></textarea>
-          <button id="sendTxt" type="submit" class="btn btn-blue btn-padding btn-padding-small ctaarrow-white ctaarrow-white-small">Send</button>
-        </footer>
-      </form>
     </section>
 
     <section class="tc-modal feedback-report">
@@ -375,16 +299,30 @@
 
     <section class="tc-modal add-to-call-modal">
       <div class="tc-dialog">
-        <p class="title">Meeting link has been copied <span class="check-mark">&#10003;</span></p>
-        <p>Share link to add others to the meeting</p>
-        <input class="block" readonly id="current-url" onclick="this.select();">
-        <form id="dialOutForm">
-          <p class="title">Dial out</p>
-          <p>Enter the phone number:</p>
-          <input id="dialOutNumber" class="block" onclick="this.select();" 
-            placeholder="1-415-555-0123">
-          <button id="dialOutBtn" class="btn btn-blue btn-padding ctaarrow-white">Dial</button>
-        </form>
+        <header>
+          <i data-icon="close_gray_full" class="close"></i>
+          <div class="title" data-tab="feedback">
+            <span>Invite Users</span>
+          </div>
+        </header>
+        <secton class="dialog-content">
+          <div class="meeting-link">
+            <input class="current-url" readonly id="current-url">
+            <div class="copied-message">
+              <span>copied to clipboard!</span>
+            </div>
+          </div>
+          <div class="google-sign-in-note-container">
+            <div class="google-sign-in-note">
+              <span class=title>Note:</span><br/>
+              <span>This function requires you to sign in with your <b>@tokbox.com</b> Google account</span>
+            </div>
+          </div>
+          <form id="dialOutForm">
+            <input id="dialOutNumber" class="phoneNumber" required>
+            <button id="dialOutBtn" class="btn btn-blue btn-padding">Dial</button>
+          </form>
+      </secton>
       </div>
     </section>
 

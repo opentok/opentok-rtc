@@ -1,6 +1,6 @@
 /* global Utils, Request, RoomStatus, RoomView, LayoutManager, LazyLoader, Modal,
 EndCallController, ChatController, GoogleAuth, LayoutMenuController, OTHelper, PrecallController,
-RecordingsController, ScreenShareController, FeedbackController */
+RecordingsController, ScreenShareController, FeedbackController, PhoneNumberController */
 
 !(function (exports) {
   'use strict';
@@ -88,19 +88,21 @@ RecordingsController, ScreenShareController, FeedbackController */
     }
   };
 
-  var SubscriberButtons = function (streamVideType) {
-    var isScreenSharing = streamVideType === 'screen';
+  var SubscriberButtons = function (streamVideoType, phoneNumber) {
+    var isScreenSharing = streamVideoType === 'screen';
 
-    var buttons = {
-      video: {
+    var buttons = { };
+
+    if (!phoneNumber) {
+      buttons.video = {
         eventFiredName: 'roomView:buttonClick',
         dataIcon: isScreenSharing ? 'desktop' : 'video',
         eventName: 'click',
         context: 'otHelper',
         action: 'toggleSubscribersVideo',
         enabled: true
-      }
-    };
+      };
+    }
 
     if (!isScreenSharing) {
       buttons.audio = {
@@ -109,6 +111,17 @@ RecordingsController, ScreenShareController, FeedbackController */
         eventName: 'click',
         context: 'otHelper',
         action: 'toggleSubscribersAudio',
+        enabled: true
+      };
+    }
+
+    if (phoneNumber && dialedNumberTokens[phoneNumber]) {
+      buttons.hangup = {
+        eventFiredName: 'roomView:buttonClick',
+        dataIcon: 'hangup',
+        eventName: 'click',
+        context: 'otHelper',
+        action: 'hangup',
         enabled: true
       };
     }
@@ -135,8 +148,8 @@ RecordingsController, ScreenShareController, FeedbackController */
     }
   };
 
-  var subscriberStreams = {
-  };
+  var subscriberStreams = { };
+  var dialedNumberTokens = {};
 
   // We want to use media priorization on the subscriber streams. We're going to restrict the
   // maximum width and height to the one that's actually displayed. To do that, we're going to
@@ -245,7 +258,25 @@ RecordingsController, ScreenShareController, FeedbackController */
         googleIdToken: googleIdToken
       };
       Request.dialOut(roomName, data);
+      dialedNumberTokens[phoneNumber] = googleIdToken;
     }
+  };
+
+  var hangup = function (streamId) {
+    if (!subscriberStreams[streamId]) {
+      return;
+    }
+    var stream = subscriberStreams[streamId].stream;
+    if (!stream.isSip) {
+      return;
+    }
+    var phoneNumber = stream.name;
+    var token = dialedNumberTokens[phoneNumber];
+    if (!token) {
+      return;
+    }
+    Request.hangUp(phoneNumber, token);
+    delete dialedNumberTokens[phoneNumber];
   };
 
   var roomStatusHandlers = {
@@ -342,6 +373,10 @@ RecordingsController, ScreenShareController, FeedbackController */
           debug.error('Got an event from an nonexistent stream');
           return;
         }
+        if (name === 'hangup') {
+          hangup(streamId);
+          return;
+        }
         buttonInfo = stream.buttons[name];
         args.push(stream.stream);
         newStatus = !buttonInfo.enabled;
@@ -394,10 +429,11 @@ RecordingsController, ScreenShareController, FeedbackController */
       sendSignalMuteAll(roomMuted, false);
     },
     dialOut: function (evt) {
-      if (evt.detail.phoneNumber) {
-        var phoneNumber = evt.detail.phoneNumber.replace(/\D/g, '');
+      if (evt.detail) {
+        var phoneNumber = evt.detail.replace(/\D/g, '');
         if (requireGoogleAuth && (googleAuth.isSignedIn.get() !== true)) {
           googleAuth.signIn().then(function () {
+            document.body.data('google-signed-in', 'true');
             dialOut(phoneNumber);
           });
         } else {
@@ -521,10 +557,11 @@ RecordingsController, ScreenShareController, FeedbackController */
         }
 
         var streamId = stream.streamId;
+        var phoneNumber = stream.isSip && stream.name;
 
         subscriberStreams[streamId] = {
           stream: stream,
-          buttons: new SubscriberButtons(streamVideoType)
+          buttons: new SubscriberButtons(streamVideoType, phoneNumber)
         };
 
         var subOptions = subscriberOptions[streamVideoType];
@@ -733,7 +770,8 @@ RecordingsController, ScreenShareController, FeedbackController */
     '/js/layoutMenuController.js',
     '/js/screenShareController.js',
     '/js/feedbackController.js',
-    '/js/googleAuth.js'
+    '/js/googleAuth.js',
+    '/js/phoneNumberController.js'
   ];
 
   var init = function () {
@@ -792,6 +830,9 @@ RecordingsController, ScreenShareController, FeedbackController */
     if (enableSip && requireGoogleAuth) {
       GoogleAuth.init(aParams.googleId, aParams.googleHostedDomain, function (aGoogleAuth) {
         googleAuth = aGoogleAuth;
+        if (googleAuth.isSignedIn.get()) {
+          document.body.data('google-signed-in', 'true');
+        }
       });
     }
 
@@ -833,6 +874,7 @@ RecordingsController, ScreenShareController, FeedbackController */
                                     aParams.firebaseToken, aParams.sessionId);
           ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
           FeedbackController.init(otHelper);
+          PhoneNumberController.init();
           Utils.sendEvent('roomController:controllersReady');
         })
         .catch(function (error) {

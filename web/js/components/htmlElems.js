@@ -27,7 +27,19 @@
   }
 
   function addText(aElem, aText) {
-    return aElem.appendChild(document.createTextNode(aText));
+    var lines = aText.split(/\r?\n/);
+
+    function addLine(line) {
+      if (line.length > 0) {
+        aElem.appendChild(document.createTextNode(line));
+      }
+    }
+
+    addLine(lines[0]);
+    for (var i = 1; i < lines.length; i++) {
+      aElem.appendChild(document.createElement('BR'));
+      addLine(lines[i]);
+    }
   }
 
   function createElement(aType, aAttrs, aOptionalText) {

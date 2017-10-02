@@ -13,6 +13,7 @@ BubbleFactory, Clipboard, LayoutManager */
   var togglePublisherAudioElem;
   var startArchivingElem;
   var stopArchivingElem;
+  var annotateBtnElem;
   var recordingProgressElem;
   var manageRecordingsElem;
   var messageButtonElem;
@@ -143,10 +144,11 @@ BubbleFactory, Clipboard, LayoutManager */
     changeScreenShareStatus: toggleScreenSharing,
     destroyed: toggleScreenSharing.bind(undefined, NOT_SHARING),
     annotationStarted: function () {
-      document.body.data('annotationVisible', 'true');
+      Utils.setDisabled(annotateBtnElem, false);
     },
     annotationEnded: function () {
       document.body.data('annotationVisible', 'false');
+      Utils.setDisabled(annotateBtnElem, true);
     }
   };
 
@@ -170,17 +172,19 @@ BubbleFactory, Clipboard, LayoutManager */
     },
     controllersReady: function () {
       var selectorStr = '#top-banner [disabled], .call-controls [disabled]'
-        + ':not(#toggle-publisher-video):not(#toggle-publisher-audio)';
+        + ':not(#toggle-publisher-video):not(#toggle-publisher-audio)'
+        + ':not(#annotate)';
       var elements = document.querySelectorAll(selectorStr);
       Array.prototype.forEach.call(elements, function (element) {
         Utils.setDisabled(element, false);
       });
     },
     annotationStarted: function () {
-      document.body.data('annotationVisible', 'true');
+      Utils.setDisabled(annotateBtnElem, false);
     },
     annotationEnded: function () {
       document.body.data('annotationVisible', 'false');
+      Utils.setDisabled(annotateBtnElem, true);
     },
     chromePublisherError: function () {
       showConfirm(MODAL_TXTS.chromePublisherError).then(function () {
@@ -214,6 +218,7 @@ BubbleFactory, Clipboard, LayoutManager */
     togglePublisherVideoElem = document.getElementById('toggle-publisher-video');
     startArchivingElem = document.getElementById('startArchiving');
     stopArchivingElem = document.getElementById('stopArchiving');
+    annotateBtnElem = document.getElementById('annotate');
     recordingProgressElem = document.getElementById('recordingProgress');
     manageRecordingsElem = document.getElementById('manageRecordings');
     messageButtonElem = document.getElementById('message-btn');
@@ -420,6 +425,10 @@ BubbleFactory, Clipboard, LayoutManager */
         case 'screen-share':
           Utils.sendEvent('roomView:shareScreen');
           break;
+        case 'annotate':
+          document.body.data('annotationVisible') === 'true' ?
+            document.body.data('annotationVisible', 'false') : document.body.data('annotationVisible', 'true');
+          break;
         case 'message-btn':
           setChatStatus(!messageButtonElem.classList.contains('activated'));
           break;
@@ -494,11 +503,18 @@ BubbleFactory, Clipboard, LayoutManager */
 
     if (enableSip) {
       var dialOutBtn = document.getElementById('dialOutBtn');
+      // Send event to get phonenumber from phoneNumberView
       dialOutBtn.addEventListener('click', function (event) {
         event.preventDefault();
-        Utils.sendEvent('roomView:dialOut', {
-          phoneNumber: document.getElementById('dialOutNumber').value
-        });
+        Utils.sendEvent('roomView:verifyDialOut');
+      });
+
+      // Listen for PhoneNumberView event
+      Utils.addEventsHandlers('phoneNumberView:', {
+        dialOut: function (evt) {
+          var phonenumber = evt.detail;
+          Utils.sendEvent('roomView:dialOut', phonenumber);
+        }
       });
     }
 
@@ -538,6 +554,9 @@ BubbleFactory, Clipboard, LayoutManager */
 
   var addClipboardFeature = function () {
     var input = document.getElementById('current-url');
+    input.addEventListener('click', function () {
+      input.select();
+    });
     var urlToShare = getURLtoShare();
     input.value = urlToShare;
     var clipboard = new Clipboard(document.querySelector('#addToCall'), { // eslint-disable-line no-unused-vars

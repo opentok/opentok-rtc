@@ -87,8 +87,8 @@
 
   var _historyChat;
 
-  var CONN_TEXT = '(has connected)';
-  var DISCONN_TEXT = '(left the room)';
+  var CONN_TEXT = 'has joined the call';
+  var DISCONN_TEXT = 'has left the call';
   var STATUS_KEY = 'chat';
 
   function loadHistoryChat() {
@@ -119,6 +119,7 @@
       //        sent with the signal.
       // type — (String) The type assigned to the signal (if there is one).
       var data = JSON.parse(evt.data);
+      data.senderId = evt.from.connectionId;
       _historyChat.push(data);
       Utils.sendEvent('chatController:incomingMessage', { data: data });
     },

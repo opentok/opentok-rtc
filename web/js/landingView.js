@@ -4,11 +4,13 @@
   'use strict';
 
   var room,
+    user,
     enterButton;
 
   var init = function () {
     enterButton = document.getElementById('enter');
     room = document.getElementById('room');
+    user = document.getElementById('user');
     resetForm();
     addHandlers();
     if (window.location.hostname.indexOf('opentokrtc.com') === 0) {
@@ -36,7 +38,15 @@
     Array.prototype.map.call(fields, function (field) {
       field.value = '';
       field.checked = false;
+      room.focus();
+      room.addEventListener('focus', animateLabel);
+      room.addEventListener('keypress', animateLabel);
+      user.addEventListener('focus', animateLabel);
     });
+  };
+
+  var animateLabel = function () {
+    document.getElementById(this.id + '-label').classList.add('visited');
   };
 
   var showContract = function () {
@@ -64,7 +74,7 @@
   var navigateToRoom = function () {
     var base = window.location.href.replace(/([^/]+)\.[^/]+$/, '');
     var url = base.concat('room/', room.value);
-    var userName = document.getElementById('user').value.trim();
+    var userName = user.value.trim();
     if (userName) {
       url = url.concat('?userName=', userName);
     }
