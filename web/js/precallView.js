@@ -5,6 +5,7 @@
   var _templateSrc = '/templates/precall.ejs';
   var _template;
   var _model;
+  var testMeterInterval;
 
   var addHandlers = function () {
     var preCallTestResults = document.getElementById('pre-call-test-results');
@@ -135,28 +136,36 @@
   };
 
   var startPrecallTestMeter = function () {
+    var TEST_DURATION_MAX = 200; // 20 seconds
     var meterLevel = document.getElementById('precall-test-meter-level');
-    var meterWidth = document.getElementById('precall-test-meter').offsetWidth;
-    var testStatusElement = document.getElementById('test-status');
-    testStatusElement.innerText = 'Testing audio / video quality…';
+    setSwitchStatus(true, false, 'Video', 'roomView:initialVideoSwitch');
+    document.getElementById('test-status').innerText = 'Testing audio / video quality…';
     meterLevel.style.width = 0;
     meterLevel.style['animation-play-state'] = 'running';
     var preCallTestProgress = 0;
-    var testMeterInterval = setInterval(function () {
+    testMeterInterval = setInterval(function () {
       preCallTestProgress++;
-      meterLevel.style.width = ((preCallTestProgress * meterWidth) / 15) + 'px';
-      if (preCallTestProgress === 15) {
-        testStatusElement.innerText = 'Done.';
-        meterLevel.style['animation-play-state'] = 'paused';
+      setTestMeterLevel(preCallTestProgress / TEST_DURATION_MAX);
+      if (preCallTestProgress === TEST_DURATION_MAX) {
         clearInterval(testMeterInterval);
       }
-    }, 1000);
+    }, 100);
+  };
+
+  var setTestMeterLevel = function (value) {
+    var width = value * document.getElementById('precall-test-meter').offsetWidth;
+    document.getElementById('precall-test-meter-level').style.width = width + 'px';
   };
 
   var displayNetworkTestResults = function (results) {
     var packetLossStr;
     var audioResultsElem = document.getElementById('precall-audio-results');
     var videoResultsElem = document.getElementById('precall-video-results');
+
+    clearInterval(testMeterInterval);
+    document.getElementById('test-status').innerText = 'Done.';
+    document.getElementById('precall-test-meter-level').style['animation-play-state'] = 'paused';
+    setTestMeterLevel(1);
 
     document.getElementById('pre-call-test-results').style.display = 'block';
     document.getElementById('audio-bitrate').innerText =

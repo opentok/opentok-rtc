@@ -13,6 +13,8 @@
     var publisher = publisher;
     var subscriber;
     var bandwidthCalculator;
+    var intervalId;
+    var currentStats;
 
     var testStreamingCapability = function(subscriber, callback) {
       performQualityTest({subscriber: subscriber, timeout: TEST_TIMEOUT_MS}, function(error, results) {
@@ -55,7 +57,7 @@
           });
         }
 
-        if (results.audio.packetLossRatio > 0.05) {
+        if (results.audio.packetLossRatio < 0.05) {
           return callback(false, {
             text: 'Your bandwidth can support audio only.',
             icon: 'precall-warning',
@@ -272,7 +274,6 @@
     }
 
     function bandwidthCalculatorObj(config) {
-      var intervalId;
 
       config.pollingInterval = config.pollingInterval || 500;
       config.windowSize = config.windowSize || 2000;
@@ -332,8 +333,6 @@
 
     var performQualityTest = function(config, callback) {
       var startMs = new Date().getTime();
-      var testTimeout;
-      var currentStats;
 
       bandwidthCalculator = bandwidthCalculatorObj({
         subscriber: config.subscriber
@@ -341,20 +340,15 @@
 
       var cleanupAndReport = function() {
         currentStats.elapsedTimeMs = new Date().getTime() - startMs;
-        callback(undefined, currentStats);
 
-        window.clearTimeout(testTimeout);
         bandwidthCalculator.stop();
-
+        callback(undefined, currentStats);
         callback = function() {};
       };
 
-      // bail out of the test after 30 seconds
       window.setTimeout(cleanupAndReport, config.timeout);
 
       bandwidthCalculator.start(function(stats) {
-        // you could do something smart here like determine if the bandwidth is
-        // stable or acceptable and exit early
         currentStats = stats;
       });
     }
