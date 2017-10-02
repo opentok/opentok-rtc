@@ -122,8 +122,9 @@ function ServerMethods(aLogLevel, aModules) {
       // overwritten the original methods but this way we make it explicit. That's also why we're
       // breaking camelCase here, to make it patent to the reader that those aren't standard
       // methods of the API.
-      ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'deleteArchive', 'dial']
-              .forEach(method => otInstance[method + '_P'] = promisify(otInstance[method])); // eslint-disable-line no-return-assign
+      ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'deleteArchive', 'dial',
+        'forceDisconnect']
+        .forEach(method => otInstance[method + '_P'] = promisify(otInstance[method])); // eslint-disable-line no-return-assign
 
       var maxSessionAge = config.get(C.OPENTOK_MAX_SESSION_AGE);
       var maxSessionAgeMs = maxSessionAge * 24 * 60 * 60 * 1000;
@@ -331,7 +332,7 @@ function ServerMethods(aLogLevel, aModules) {
         enableArchiving: tbConfig.enableArchiving,
         enableArchiveManager: tbConfig.enableArchiveManager,
         enableScreensharing: tbConfig.enableScreensharing,
-        enableAnnotation: tbConfig.enableAnnotation,
+        enableAnnotation: tbConfig.enableAnnotations,
         enableFeedback: tbConfig.enableFeedback,
         hasSip: tbConfig.enableSip,
       }, (err, html) => {
@@ -637,12 +638,12 @@ function ServerMethods(aLogLevel, aModules) {
     var roomName = aReq.params.roomName.toLowerCase();
     var body = aReq.body;
     var phoneNumber = body.phoneNumber;
-    var token = body.googleIdToken;
+    var googleIdToken = body.googleIdToken;
     if (!body || !body.phoneNumber) {
       logger.log('postRoomDial => missing body parameter: ', aReq.body);
       return aRes.status(400).send(new ErrorInfo(400, 'Missing required parameter'));
     }
-    return googleAuth.verifyIdToken(token).then(() =>
+    return googleAuth.verifyIdToken(googleIdToken).then(() =>
           serverPersistence
           .getKey(redisRoomPrefix + roomName, true)
           .then((sessionInfo) => {
@@ -668,6 +669,7 @@ function ServerMethods(aLogLevel, aModules) {
                 var dialedNumberInfo = {};
                 dialedNumberInfo.sessionId = sipCallData.sessionId;
                 dialedNumberInfo.connectionId = sipCallData.connectionId;
+                dialedNumberInfo.googleIdToken = googleIdToken;
                 serverPersistence.setKey(redisPhonePrefix + phoneNumber,
                                          JSON.stringify(dialedNumberInfo));
                 return aRes.send(sipCallData);
@@ -701,13 +703,33 @@ function ServerMethods(aLogLevel, aModules) {
     var tbConfig = aReq.tbConfig;
     serverPersistence.getKey(redisPhonePrefix + phoneNumber, true)
       .then((dialedNumberInfo) => {
-        logger.log('getHangUp', aReq.query, dialedNumberInfo);
         if (dialedNumberInfo !== null) {
           tbConfig.otInstance.forceDisconnect(dialedNumberInfo.sessionId);
           serverPersistence.delKey(redisPhonePrefix + phoneNumber);
         }
       });
   }
+
+  // /hang-up
+  // A web client that initiated a SIP call is requesting that we hang up
+  function postHangUp(aReq, aRes) {
+    var body = aReq.body;
+    var phoneNumber = body.phoneNumber;
+    var googleIdToken = body.googleIdToken;
+    var tbConfig = aReq.tbConfig;
+    serverPersistence.getKey(redisPhonePrefix + phoneNumber, true)
+      .then((dialedNumberInfo) => {
+        if (!dialedNumberInfo || dialedNumberInfo.googleIdToken !== googleIdToken) {
+          return aRes.status(400).send(new ErrorInfo(400, 'Unknown phone number.'));
+        }
+        return tbConfig.otInstance.forceDisconnect_P(dialedNumberInfo.sessionId,
+          dialedNumberInfo.connectionId).then(() => {
+            serverPersistence.delKey(redisPhonePrefix + phoneNumber);
+            return aRes.send({});
+          });
+      });
+  }
+
 
   function loadConfig() {
     tbConfigPromise = _initialTBConfig();
@@ -745,6 +767,7 @@ function ServerMethods(aLogLevel, aModules) {
     postRoomDial,
     getForward,
     getHangUp,
+    postHangUp,
     oldVersionCompat,
   };
 }
