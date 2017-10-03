@@ -114,8 +114,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
         enabled: true
       };
     }
-
-    if (phoneNumber && dialedNumberTokens[phoneNumber]) {
+    if (phoneNumber && (phoneNumber in dialedNumberTokens)) {
       buttons.hangup = {
         eventFiredName: 'roomView:buttonClick',
         dataIcon: 'hangup',
@@ -271,10 +270,10 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       return;
     }
     var phoneNumber = stream.name;
-    var token = dialedNumberTokens[phoneNumber];
-    if (!token) {
+    if (!(phoneNumber in dialedNumberTokens)) {
       return;
     }
+    var token = dialedNumberTokens[phoneNumber];
     Request.hangUp(phoneNumber, token);
     delete dialedNumberTokens[phoneNumber];
   };
