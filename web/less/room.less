@@ -478,7 +478,6 @@ body {
     border-radius: 4px;
   }
   .publish-settings {
-    margin-bottom: 20px;
     padding: 20px;
     span {
       margin-right: 20px;
@@ -504,30 +503,6 @@ body {
     overflow: hidden;
     transition: opacity 0.5s;
   }
-  #enter-name-prompt {
-    margin: 20px 20px 0;
-    border-bottom: #788492 1px solid;
-    div {
-      display: flex;
-      align-items: center;
-      span {
-        font-size: 12px;
-      }
-    }
-    input {
-      background: none;
-      border: none;
-      width: 234px;
-      color: white;
-      padding-left: 0;
-      margin-left: 0;
-    }
-    input:focus {
-      outline: none !important;
-      border: none;
-      background: none;
-    }
-  }
   #video-settings, #audio-settings, #enter-name-prompt {
     display: flex;
     .justify-content(space-between);
@@ -550,10 +525,36 @@ body {
       }
     }
   }
-  #audio-settings {
+  #video-settings, #audio-settings {
     div {
       display: flex;
       align-items: center;
+    }
+  }
+  #enter-name-prompt {
+    margin: 0 20px 0;
+    padding-bottom: 0;
+    border-bottom: #788492 1px solid;
+    div {
+      display: flex;
+      align-items: center;
+      span {
+        font-size: 12px;
+      }
+    }
+    input {
+      background: none;
+      border: none;
+      width: 234px;
+      height: 26px;
+      color: white;
+      padding-left: 0;
+      margin-left: 0;
+    }
+    input:focus {
+      outline: none !important;
+      border: none;
+      background: none;
     }
   }
   #audio-meter, #precall-test-meter {
@@ -575,12 +576,15 @@ body {
   #pre-call-test {
     display: flex;
     align-items: center;
+    font-weight: 400;
     span {
-      margin-right: 14px;
+      margin-right: 12px;
       font-size: 16px;
     }
     #test-status {
       font-size: 10px;
+      line-height: 26px;
+      text-align: right;
     }
     img {
       margin-left: -4px;
@@ -592,7 +596,7 @@ body {
   }
 
   #precall-test-meter {
-    width: 278px;
+    width: 290px;
     margin-top: 12px;
     margin-left: 28px
   }
@@ -616,16 +620,18 @@ body {
   }
 }
 
-#precall-dialogs {
-  margin-top: 46px;
-  float: right;
-  width: 221.5px;
+.precall-right {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  height: 100%;
 }
 
 #pre-call-test-results {
   position: absolute;
   display: none;
-  top: 42px;
   right: 456px;
   width: 233px;
   height: 420.4px;
@@ -633,7 +639,6 @@ body {
   border-radius: 10px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
   color: #494747;
-  margin: 0 0 26px;
   font-size: 14px;
   padding: 35px;
   p {
@@ -708,12 +713,15 @@ body {
     cursor: pointer;
     background-color: #f9f9f9;
     box-shadow: inset 0 2px 2px 0 rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
+    border-radius: 0 0 10px 10px;
   }
 }
 #name-heading {
   font-size: 30px;
   margin: 0 0 26px;
+  position: absolute;
+  top: 32px;
+  left: 184px;
 }
 span {
   font-size: 12px;
