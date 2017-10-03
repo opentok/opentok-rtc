@@ -208,7 +208,7 @@ BubbleFactory, Clipboard, LayoutManager */
     handler = dock;
     callControlsElem = document.querySelector('.call-controls');
 
-    roomNameElem = dock.querySelector('#roomName');
+    roomNameElem = dock.querySelector('.room-name');
     participantsStrElem = document.getElementById('participantsStr');
     recordingsNumberElem = dock.querySelector('#recordings');
     videoSwitch = dock.querySelector('#videoSwitch');
@@ -267,11 +267,11 @@ BubbleFactory, Clipboard, LayoutManager */
     callControlsElem.style.opacity = '0';
   }
 
-  function showPublisherButtons() {
+  function showPublisherButtons(publisherOptions) {
     Utils.setDisabled(togglePublisherVideoElem, false);
     Utils.setDisabled(togglePublisherAudioElem, false);
-    togglePublisherVideoElem.classList.add('activated');
-    togglePublisherAudioElem.classList.add('activated');
+    publisherOptions.publishVideo && togglePublisherVideoElem.classList.add('activated');
+    publisherOptions.publishAudio && togglePublisherAudioElem.classList.add('activated');
   }
 
   function setSwitchStatus(status, bubbleUp, domElem, evtName) {
@@ -568,6 +568,8 @@ BubbleFactory, Clipboard, LayoutManager */
 
   var init = function (enableHangoutScroll, aEnableArchiveManager, aEnableSip) {
     enableArchiveManager = aEnableArchiveManager;
+    initHTMLElements();
+    dock.style.visibility = 'visible';
     enableSip = aEnableSip;
     addHandlers();
     addClipboardFeature();

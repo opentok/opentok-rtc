@@ -71,28 +71,6 @@ describe('LayoutView', () => {
       expect(dblclickAreaElement).to.exist;
     });
 
-    it('should add items with controls', () => {
-      var list = getContainer().querySelector('ul');
-
-      var id = Math.random() + '';
-
-      var item = LayoutView.append(id, options);
-
-      var video = list.querySelector('i[data-icon="video"]');
-      expect(video.dataset.icon).to.equal(controls.video.dataIcon);
-      expect(video.dataset.eventName).to.equal(controls.video.eventFiredName);
-      expect(video.dataset.action).to.equal('video');
-      expect(video.dataset.streamId).to.equal(id);
-      expect(video.parentNode.classList.contains('enabled')).to.be.true;
-
-      var audio = list.querySelector('i[data-icon="audio"]');
-      expect(audio.dataset.icon).to.equal(controls.audio.dataIcon);
-      expect(audio.dataset.eventName).to.equal(controls.audio.eventFiredName);
-      expect(audio.dataset.action).to.equal('audio');
-      expect(audio.dataset.streamId).to.equal(id);
-      expect(audio.parentNode.classList.contains('enabled')).to.be.true;
-    });
-
     it('should add publisher with record icon', () => {
       var list = getContainer().querySelector('ul');
 

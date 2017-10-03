@@ -20,9 +20,13 @@
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/<%=chromeExtensionId%>">
     <link rel="stylesheet" href="https://assets.tokbox.com/solutions/css/style.css">
     <link rel="stylesheet" href="/css/annotation.opentok.css">
+    <link rel="stylesheet" href="/css/checkboxes.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/css/intlTelInput.css">
 
     <script>
+      window.apiKey='<%=apiKey%>';
+      window.precallSessionId='<%=precallSessionId%>';
+      window.precallToken='<%=precallToken%>';
       var isMobile = function() { return typeof window.orientation !== 'undefined'; }
 
       var mobileSettings = function() {
@@ -65,7 +69,7 @@
       </div>
       <div class="center-container">
         <div class="room-info">
-          <p class="room-name">Team Check-in</p>
+          <p class="room-name"></p>
           <i data-icon="participants"></i><span id="participantsStr"><span>
         </div>
       </div>
@@ -234,19 +238,6 @@
           </ul>
         </div>
       </section>
-    </section>
-
-    <section class="tc-modal user-name-modal">
-      <form class="tc-dialog">
-        <header>
-          <span>Welcome to</span> <span class="room-name"></span>
-        </header>
-        <p>Please enter your name to join this conversation.</p>
-        <input class="block username" placeholder="Enter your name">
-        <footer>
-          <button id="enter" class="btn btn-blue btn-padding-large ctaarrow-white">Join Meeting</button>
-        </footer>
-      </form>
     </section>
 
     <section class="tc-modal feedback-report">

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.2 (44496) - http://www.bohemiancoding.com/sketch -->
+    <title>warning@3x</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Welcome" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="notifications-+-pre-call-+-layout" transform="translate(-1580.000000, -1290.000000)">
+            <g id="poor-connectivity-pop-over-copy-3" transform="translate(1452.000000, 1251.000000)">
+                <g id="warning" transform="translate(128.000000, 41.000000)">
+                    <polygon id="Triangle" stroke="#E97E3B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="24 0 45.8181818 43.6363636 2.18181818 43.6363636"></polygon>
+                    <path d="M24,30.5454545 L24,17.4545455" id="Stroke-2" stroke="#E97E3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <circle id="Oval" fill="#E97E3B" cx="24.2181818" cy="36.3490909" r="1.44"></circle>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
