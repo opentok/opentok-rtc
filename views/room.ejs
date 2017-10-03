@@ -81,14 +81,9 @@
           <a id="audioSwitch"><i data-icon="audioSwitch"></i><span>Mute all participants</span></a>
         </div>
         <%   if(enableArchiving) { %>
-        <div id="recordingProgress">
-          <i data-icon="record-solid"></i>
-          Rec
-          <div class="duration"></div>
-        </div>
         <div id="toggleArchiving" disabled>
           <a id="startArchiving" class="btn btn-blue btn-padding">Record</a>
-          <a id="stopArchiving" class="btn btn-blue btn-padding">Stop Recording</a>
+          <a id="stopArchiving" class="btn btn-blue btn-padding duration">Stop Recording</a>
         </div>
         <%      if(enableArchiveManager) { %>
         <div id="manageRecordings">

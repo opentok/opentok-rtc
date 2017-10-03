@@ -14,7 +14,6 @@ BubbleFactory, Clipboard, LayoutManager */
   var startArchivingElem;
   var stopArchivingElem;
   var annotateBtnElem;
-  var recordingProgressElem;
   var manageRecordingsElem;
   var messageButtonElem;
   var participantsStrElem;
@@ -219,7 +218,6 @@ BubbleFactory, Clipboard, LayoutManager */
     startArchivingElem = document.getElementById('startArchiving');
     stopArchivingElem = document.getElementById('stopArchiving');
     annotateBtnElem = document.getElementById('annotate');
-    recordingProgressElem = document.getElementById('recordingProgress');
     manageRecordingsElem = document.getElementById('manageRecordings');
     messageButtonElem = document.getElementById('message-btn');
     topBannerElem = document.getElementById('top-banner');
@@ -310,7 +308,6 @@ BubbleFactory, Clipboard, LayoutManager */
         var duration = 0;
         archive && (duration = Math.round((Date.now() - archive.createdAt) / 1000));
         cronograph.start(duration);
-        recordingProgressElem.style.display = 'block';
         startArchivingElem.style.display = 'none';
         stopArchivingElem.style.display = 'block';
         manageRecordingsElem.classList.add('recording');
@@ -342,7 +339,7 @@ BubbleFactory, Clipboard, LayoutManager */
         return onModel(model);
       }
 
-      cronograph.init(' ');
+      cronograph.init('Recording');
       exports.addEventListener('recordings-model-ready', function gotModel() {
         exports.removeEventListener('recordings-model-ready', gotModel);
         onModel(RecordingsController.model);
@@ -353,7 +350,6 @@ BubbleFactory, Clipboard, LayoutManager */
   function onStopArchiving() {
     getCronograph().then(function (cronograph) {
       stopArchivingElem.style.display = 'none';
-      recordingProgressElem.style.display = 'none';
       startArchivingElem.style.display = 'inline-block';
       manageRecordingsElem.classList.remove('recording');
       cronograph.stop();
@@ -588,7 +584,14 @@ BubbleFactory, Clipboard, LayoutManager */
     },
 
     set recordingsNumber(value) {
-      recordingsNumberElem && (recordingsNumberElem.textContent = value);
+      if (value === 0) {
+        manageRecordingsElem.style.display = 'none';
+        document.getElementById('toggleArchiving').classList.remove('manage-recordings');
+      } else {
+        manageRecordingsElem.style.display = 'block';
+        recordingsNumberElem && (recordingsNumberElem.textContent = value);
+        document.getElementById('toggleArchiving').classList.add('manage-recordings')
+      }
     },
 
     showRoom: showRoom,

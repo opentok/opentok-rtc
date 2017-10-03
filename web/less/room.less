@@ -40,7 +40,7 @@ body {
 #top-banner {
   visibility: hidden;
   height: 98px;
-  min-width: 1400px;
+  min-width: 1294px;
   width: 100%;
   background-color: #293840;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
@@ -137,10 +137,18 @@ body {
       transition: none;
     }
   }
+  #toggleArchiving a {
+    padding: 0 37.5px;
+    .manage-recordings {
+      padding-right: 60px;
+      padding-left: 0;
+    }
+  }
   #manageRecordings {
-    background-color: #0888b3;
+    display: none;
     a {
       position: absolute;
+      background-color: #0888b3;
       right: 0;
       border-left: 2px solid #3dc4f0;
       font-size: 12px;
@@ -152,24 +160,17 @@ body {
   #stopArchiving {
     display: none;
     background-color: #e75758;
+    &:hover,
+    &:focus,
+    &:active {
+      background-color: #cb4348;
+    }
   }
   #manageRecordings.recording {
     transition: none;
     a {
       border-left: 2px solid #f28284;
       background-color: #cc4446;
-    }
-  }
-  #recordingProgress {
-    margin-right: 15.3px;
-    font-size: 14px;
-    display: none;
-    .duration {
-      width: 36px;
-      float: right;
-      text-align: right;
-      margin-left: 10px;
-      font-feature-settings: 'tnum';
     }
   }
 }
