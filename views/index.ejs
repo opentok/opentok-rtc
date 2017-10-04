@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <link rel="stylesheet" href="css/buttons.css" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 <% if (isWebRTCVersion) { %>
     <link rel="stylesheet" href="css/checkboxes.css" />
 <% } %>
@@ -28,25 +29,31 @@
 
   <body class="forbidden">
     <section class="main">
-      <section>
+      <section id="main-content">
 
         <header>
-          <img src="images/opentok-logo.png" alt="opentok transparent logo">
+          <% if (!isWebRTCVersion) { %>
+                  <h1>OpenTok Demo by</h1>
+          <% } else { %>
+                  <h1>WebRTC Demo</h1>
+          <% } %>
+          <img src="images/tokbox-log.svg" alt="opentok transparent logo">
         </header>
-<% if (!isWebRTCVersion) { %>
-        <h1>The OpenTok Platform Demo</h1>
-<% } else { %>
-        <h1>WebRTC Demo</h1>
+<% if (isWebRTCVersion) { %>
         <h2>Built by TokBox on the OpenTok Platform</h2>
         <h3>This WebRTC Demo enables group video conferencing, text chat, screen sharing, and more</h3>
 <% } %>
         <form>
-          <p>
-            <input id="room" class="text-input required" placeholder="Type the name of the meeting">
-            <input id="user" class="text-input" placeholder="Type your name">
-            <p class="error-room error-text">Please enter a meeting name</p>
-          </p>
-          <button id="enter" class="btn tb btn-primary btn-arrow btn-next btn-padding">Create Meeting</button>
+          <div>
+            <input id="room" class="text-input required">
+            <label id="room-label">Meeting name</label>
+          </div>
+          <div>
+            <input id="user" class="text-input">
+            <label id="user-label">Your name</label>
+          </div>
+          <p class="error-room error-text">Please enter a meeting name</p>
+          <button id="enter"></button>
         </form>
         <div class="safari-plug">
           <a href="https://safari.opentokrtc.com/">Try the WebRTC Demo for Safari.</a>

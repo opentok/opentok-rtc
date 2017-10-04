@@ -76,6 +76,18 @@
                     composeDate(data), 'application/x-www-form-urlencoded');
   }
 
+  function dialOut(roomName, data) {
+    return sendXHR('POST', server + '/room/' + roomName + '/dial',
+                    JSON.stringify(data), 'application/json');
+  }
+
+  function hangUp(phoneNumber, token) {
+    return sendXHR('POST', server + '/hang-up/', JSON.stringify({
+        phoneNumber:phoneNumber,
+        googleIdToken: token
+      }), 'application/json');
+  }
+
   function deleteArchive(id) {
     return sendXHR('DELETE', server + '/archive/' + id);
   }
@@ -83,6 +95,8 @@
   var Request = {
     getRoomInfo: getRoomInfo,
     sendArchivingOperation: sendArchivingOperation,
+    dialOut: dialOut,
+    hangUp: hangUp,
     deleteArchive: deleteArchive,
     sendXHR: sendXHR
   };

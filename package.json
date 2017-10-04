@@ -32,6 +32,7 @@
     "firebase": "^2.3.1",
     "firebase-token-generator": "^2.0.0",
     "fs": "0.0.1-security",
+    "google-auth-library": "^0.11.0",
     "grunt": "^0.4.5",
     "grunt-autoprefixer": "^2.2.0",
     "grunt-bower-task": "^0.4.0",
@@ -49,6 +50,7 @@
     "ioredis": "^1.7.6",
     "lodash": "^4.17.4",
     "opentok": "^2.3.0",
+    "plivo": "0.4.1",
     "swagger-boilerplate": "^0.0.9",
     "yamljs": "^0.2.10"
   },
