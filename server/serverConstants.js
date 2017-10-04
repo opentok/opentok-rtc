@@ -97,6 +97,10 @@ E.SIP_PASSWORD = { envVar: 'SIP_PASSWORD', jsonPath: 'SIP.password', defaultValu
 
 E.SIP_REQUIRE_GOOGLE_AUTH = { envVar: 'SIP_REQUIRE_GOOGLE_AUTH', jsonPath: 'SIP.requireGoogleAuth', defaultValue: false };
 
+E.PLIVO_AUTH_ID = { envVar: 'PLIVO_AUTH_ID', jsonPath: 'Plivo.authId', defaultValue: '' };
+
+E.PLIVO_AUTH_TOKEN = { envVar: 'PLIVO_AUTH_TOKEN', jsonPath: 'Plivo.authToken', defaultValue: '' };
+
 E.GOOGLE_CLIENT_ID = { envVar: 'GOOGLE_CLIENT_ID', jsonPath: 'Google.clientId', defaultValue: '' };
 
 E.GOOGLE_HOSTED_DOMAIN = { envVar: 'GOOGLE_HOSTED_DOMAIN', jsonPath: 'Google.hostedDomain', defaultValue: '' };
