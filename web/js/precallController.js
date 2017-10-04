@@ -71,7 +71,7 @@
             token: window.precallToken
           };
           PrecallView.startPrecallTestMeter();
-          otNetworkTest = new OTNetworkTest(publisher, previewOptions);
+          otNetworkTest = new OTNetworkTest(previewOptions);
           otNetworkTest.startNetworkTest(function (error, result) {
             PrecallView.displayNetworkTestResults(result);
             if (result.audioOnly) {

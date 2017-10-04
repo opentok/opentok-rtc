@@ -3,14 +3,15 @@
 !function(global) {
   'use strict';
 
-  function OTNetworkTest(publisher, options) {
+  function OTNetworkTest(options) {
 
     var TEST_TIMEOUT_MS = 15000; // 15 seconds
 
     var subscriberEl = document.createElement('div');
+    var publisherEl = document.createElement('div');
 
     var session;
-    var publisher = publisher;
+    var publisher = OT.initPublisher(publisherEl, options);
     var subscriber;
     var bandwidthCalculator;
     var intervalId;
