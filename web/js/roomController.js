@@ -668,7 +668,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     return Modal.show(selector).then(function () {
       return new Promise(function (resolve) {
         var enterButton = document.querySelector(selector + ' button');
-        enterButton.addEventListener('click', function onClicked(event) {
+        enterButton && enterButton.addEventListener('click', function onClicked(event) {
           event.preventDefault();
           enterButton.removeEventListener('click', onClicked);
           return Modal.hide(selector)
