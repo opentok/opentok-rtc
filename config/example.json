@@ -32,5 +32,9 @@
    "Plivo": {
     "authId": "yourId",
     "authToken": "yourToken"
+  },
+  "Google": {
+    "clientId": "yourClientId.apps.googleusercontent.com",
+    "hostedDomain": "yourhosteddomain.com"
   }
 }
