@@ -146,17 +146,28 @@
     if (time.length) {
       (minutes < 10) && time.push('0');
       time.push(minutes);
-      time.push(':');
     } else if (minutes) {
       time.push(minutes);
-      time.push(':');
+    } else {
+      time.push('0');
     }
+    time.push(':');
 
     var seconds = duration % 60;
-    (time.length) && (seconds < 10) && time.push('0');
+    (seconds < 10) && time.push('0');
     time.push(seconds);
 
     return time.join('');
+  }
+
+  function toPrettySize(size) {
+    if (!size) {
+      return '';
+    }
+    if (size < 1048576) {
+      return ' / ' + (size / 1024).toFixed(2) + ' kB';
+    }
+    return ' / ' + (size / 1048576).toFixed(2) + ' MB';
   }
 
   function getLabelText(archive) {
@@ -168,7 +179,7 @@
     time.indexOf(':') === 1 && (prefix = '0');
 
     var label = [prefix, time, ' - ', archive.recordingUser, '\'s Archive (',
-      toPrettyDuration(archive.duration), 's)'];
+      toPrettyDuration(archive.duration), toPrettySize(archive.size), ')'];
 
     return label.join('');
   }
