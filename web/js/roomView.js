@@ -584,13 +584,16 @@ BubbleFactory, Clipboard, LayoutManager */
     },
 
     set recordingsNumber(value) {
+      if (!manageRecordingsElem) {
+        return;
+      }
       if (value === 0) {
         manageRecordingsElem.style.display = 'none';
         document.getElementById('toggleArchiving').classList.remove('manage-recordings');
       } else {
         manageRecordingsElem.style.display = 'block';
         recordingsNumberElem && (recordingsNumberElem.textContent = value);
-        document.getElementById('toggleArchiving').classList.add('manage-recordings')
+        document.getElementById('toggleArchiving').classList.add('manage-recordings');
       }
     },
 
