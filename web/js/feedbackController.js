@@ -3,8 +3,6 @@
 !(function (global) {
   'use strict';
 
-  var debug =
-    new Utils.MultiLevelLogger('feedbackController.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
   var otHelper;
 
   var eventHandlers = {
@@ -20,7 +18,6 @@
         videoScore: report.videoScore,
         description: report.description
       };
-      debug.log('feedbackView:sendFeedback', loggedEvent);
       OT.analytics.logEvent(loggedEvent);
     },
     reportIssue: function () {
@@ -32,11 +29,8 @@
         publisherId: otHelper.publisherId
       };
       OT.reportIssue(function (error, reportId) {
-        if (error) {
-          debug.error('feedbackView:reportIssue', loggedEvent);
-        } else {
+        if (!error) {
           loggedEvent.reportIssueId = reportId;
-          debug.log('feedbackView:reportIssue', loggedEvent);
         }
       });
     }

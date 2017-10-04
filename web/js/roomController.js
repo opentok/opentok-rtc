@@ -226,10 +226,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       operation: operation
     };
 
-    Request.sendArchivingOperation(data)
-      .then(function (response) {
-        debug.log(response);
-      });
+    Request.sendArchivingOperation(data);
   };
 
   var dialOut = function (phoneNumber) {
@@ -508,17 +505,11 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
   };
 
   var _allHandlers = {
-    connectionCreated: function (evt) {
+    connectionCreated: function () {
       RoomView.participantsNumber = ++numUsrsInRoom;
-      debug.log('New participant, total:', numUsrsInRoom,
-                'user:', (evt.connection.data ?
-                          JSON.parse(evt.connection.data).userName : 'unknown'));
     },
-    connectionDestroyed: function (evt) {
+    connectionDestroyed: function () {
       RoomView.participantsNumber = --numUsrsInRoom;
-      debug.log('a participant left, total:', numUsrsInRoom,
-                'user:', (evt.connection.data ?
-                          JSON.parse(evt.connection.data).userName : 'unknown'));
     },
     sessionConnected: function () {
       Utils.sendEvent('roomController:sessionConnected');
@@ -695,13 +686,9 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     }
 
     // pathName should be /room/<roomName>[?username=<userName>]
-    debug.log(document.location.pathname);
-    debug.log(document.location.search);
     var pathName = document.location.pathname.split('/');
 
     if (!pathName || pathName.length < 2) {
-      debug.log('This should not be happen, it\'s not possible to do a ' +
-                'request without /room/<roomName>[?username=<usr>]');
       throw new Error('Invalid path');
     }
 
