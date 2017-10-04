@@ -48,6 +48,7 @@ function ServerMethods(aLogLevel, aModules) {
   const redisRoomPrefix = C.REDIS_ROOM_PREFIX;
   const redisPhonePrefix = C.REDIS_PHONE_PREFIX;
 
+  var plivoClient;
   var googleAuth;
   // Opentok API instance, which will be configured only after tbConfigPromise
   // is resolved
@@ -110,12 +111,20 @@ function ServerMethods(aLogLevel, aModules) {
       var sipUsername = config.get(C.SIP_USERNAME);
       var sipPassword = config.get(C.SIP_PASSWORD);
       var sipRequireGoogleAuth = config.get(C.SIP_REQUIRE_GOOGLE_AUTH);
+      var plivoAuthId = config.get(C.PLIVO_AUTH_ID);
+      var plivoAuthToken = config.get(C.PLIVO_AUTH_TOKEN);
       var googleId = config.get(C.GOOGLE_CLIENT_ID);
       var googleHostedDomain = config.get(C.GOOGLE_HOSTED_DOMAIN);
       if (sipRequireGoogleAuth) {
         googleAuth = new GoogleAuth.EnabledGoogleAuthStrategy(googleId, googleHostedDomain);
       } else {
         googleAuth = new GoogleAuth.DisabledGoogleAuthStategy();
+      }
+      if (enableSip) {
+        plivoClient = plivo.RestAPI({
+          authId: plivoAuthId,
+          authToken: plivoAuthToken,
+        });
       }
       // This isn't strictly necessary... but since we're using promises all over the place, it
       // makes sense. The _P are just a promisified version of the methods. We could have
@@ -698,9 +707,18 @@ function ServerMethods(aLogLevel, aModules) {
   function getForward(aReq, aRes) {
     var plivoResponse = plivo.Response();
     var phoneNumber = aReq.query['X-PH-DIALOUT-NUMBER'];
+    var uuid = aReq.query.CallUUID;
     plivoResponse.addDial()
       .addNumber(phoneNumber);
     aRes.send(plivoResponse.toXML());
+    serverPersistence.getKey(redisPhonePrefix + phoneNumber, true)
+    .then((dialedNumberInfo) => {
+      if (dialedNumberInfo !== null) {
+        dialedNumberInfo.uuid = uuid;
+        serverPersistence.setKey(redisPhonePrefix + phoneNumber,
+          JSON.stringify(dialedNumberInfo));
+      }
+    });
   }
 
   // /hang-up
@@ -728,6 +746,12 @@ function ServerMethods(aLogLevel, aModules) {
       .then((dialedNumberInfo) => {
         if (!dialedNumberInfo || dialedNumberInfo.googleIdToken !== googleIdToken) {
           return aRes.status(400).send(new ErrorInfo(400, 'Unknown phone number.'));
+        }
+        if (dialedNumberInfo.uuid) {
+          var params = {
+            call_uuid: dialedNumberInfo.uuid,
+          };
+          plivoClient.hangup_call(params);
         }
         return tbConfig.otInstance.forceDisconnect_P(dialedNumberInfo.sessionId,
           dialedNumberInfo.connectionId).then(() => {
