@@ -28,5 +28,9 @@
      "uri": "sip:username@your-sip-provider.com",
      "username": "username",
      "password": "password"
-   }
+   },
+   "Plivo": {
+    "authId": "yourId",
+    "authToken": "yourToken"
+  }
 }
