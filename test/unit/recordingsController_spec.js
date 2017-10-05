@@ -38,7 +38,7 @@ describe('RecordingsController', () => {
             return Promise.resolve(model);
           });
           var enableArchiveManager = true;
-          RecordingsController.init(enableArchiveManager, 'valueA', 'valueB');
+          RecordingsController.init(enableArchiveManager, 'valueA');
         }));
   });
 });
