@@ -315,6 +315,10 @@ body {
   }
 }
 
+.call-controls.visible {
+  opacity: 1;
+}
+
 .call-controls {
   position: absolute;
   display: table;
@@ -362,6 +366,33 @@ body {
       margin-bottom: 0;
       line-height: 0;
     }
+  }
+}
+
+.feedbackButton.visible {
+  opacity: 1;
+}
+
+.feedbackButton {
+  opacity: 0;
+  transition: opacity @transitionTime;
+  position: absolute;
+  top: 250px;
+  right: 0;
+  left: 0;
+  height: 49px;
+  width: 190px;
+  transform: rotate(90deg) translate(0, 78px);
+  margin: 0;
+  z-index: 1001;
+  background-image: url(/images/icons/feedback.svg);
+  background-repeat: no-repeat;
+  cursor: pointer;
+  span {
+    display: block;
+    transform: rotate(180deg);
+    font-size: 12px;
+    padding: 20px;
   }
 }
 
