@@ -31,9 +31,8 @@ describe('RecordingsController', () => {
               action: 'delete',
             });
           });
-          this.stub(FirebaseModel, 'init', (valA, valB) => {
+          this.stub(FirebaseModel, 'init', (valA) => {
             expect(valA).to.be.equal('valueA');
-            expect(valB).to.be.equal('valueB');
             var model = {};
             return Promise.resolve(model);
           });
