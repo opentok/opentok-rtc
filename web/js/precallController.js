@@ -42,6 +42,9 @@
         PrecallView.setRoomName(roomName);
         PrecallView.setUsername(username);
 
+        // You cannot use the network test in IE. IE cannot subscribe to its own stream.å
+        Utils.isIE() && PrecallView.hideConnectivityTest();
+
         document.querySelector('.user-name-modal #enter').disabled = false;
         document.querySelector('.user-name-modal .tc-dialog').addEventListener('submit',
           function (event) {
