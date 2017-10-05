@@ -93,10 +93,6 @@
     }, 2000);
   };
 
-  var hideConnectivityTest = function () {
-    document.getElementById('pre-call-test').style.display = 'none';
-    document.getElementById('precall-test-meter').style.display = 'none';
-  };
 
   var alreadyInitialized = false;
 
@@ -229,7 +225,6 @@
     setUsername: setUsername,
     setVolumeMeterLevel: setVolumeMeterLevel,
     startPrecallTestMeter: startPrecallTestMeter,
-    displayNetworkTestResults: displayNetworkTestResults,
-    hideConnectivityTest: hideConnectivityTest
+    displayNetworkTestResults: displayNetworkTestResults
   };
 }(this));
