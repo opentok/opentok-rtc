@@ -177,20 +177,9 @@
       document.getElementById('video-bitrate').innerText = 0;
       document.getElementById('precall-video-packet-loss').innerText = 'No video.';
     }
-    var precallHeading = document.getElementById('pre-call-heading');
-    switch (results.icon) {
-      case 'precall-tick':
-        precallHeading.style.color = '#3fbe36';
-        break;
-      case 'precall-warning':
-        precallHeading.style.color = '#ffcc33';
-        break;
-      case 'precall-error':
-        precallHeading.style.color = '#ff0000';
-        break;
-    }
+    document.getElementById('pre-call-heading').classList = results.classification;
     document.getElementById('pre-call-description').innerText = results.text;
-    document.getElementById('precall-icon').setAttribute('data-icon', results.icon);
+    document.getElementById('precall-icon').setAttribute('data-icon', results.classification);
     packetLossStr = isNaN(results.audio.packetLossRatio) ? '' :
       Math.round(100 * results.audio.packetLossRatio) + '% packet loss';
     document.getElementById('precall-audio-packet-loss').innerText = packetLossStr;
