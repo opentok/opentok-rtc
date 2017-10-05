@@ -56,12 +56,6 @@ BubbleFactory, Clipboard, LayoutManager */
               'unmute just yourself by clicking your <microphone icon> icon',
       button: 'I understand'
     },
-    disabledVideos: {
-      head: 'Stop receiving video from other participants',
-      detail: 'This option can help to improve or preserve call quality in situations of poor ' +
-              'bandwidth or other resource constraints.',
-      button: 'Stop receiving video'
-    },
     endCall: {
       head: 'Exit the Meeting',
       detail: 'You are going to exit the OpenTok Meeting Room. The call will continue with the ' +
@@ -478,9 +472,7 @@ BubbleFactory, Clipboard, LayoutManager */
           break;
         case 'videoSwitch':
           if (!videoSwitch.classList.contains('activated')) {
-            showConfirm(MODAL_TXTS.disabledVideos).then(function (shouldDisable) {
-              shouldDisable && setSwitchStatus(true, true, videoSwitch, 'roomView:videoSwitch');
-            });
+            setSwitchStatus(true, true, videoSwitch, 'roomView:videoSwitch');
           } else {
             setSwitchStatus(false, true, videoSwitch, 'roomView:videoSwitch');
           }
