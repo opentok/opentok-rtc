@@ -65,20 +65,23 @@
     }
 
     #chatMsgs {
-      overflow-y: auto;
-      display: block;
+      width: 100%;
       height: calc(~"100% - 200px");
-      width: calc(~"100% + 15px");
-      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
       display: flex;
-      overflow: auto;
+      flex: 1;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
 
     ul {
       display: flex;
       flex-direction: column;
-      min-height: min-content;
+      min-height: 0;
       width: 100%;
-      justify-content: flex-end;
+      max-width: 486px;
+      // justify-content: flex-end;
 
 
       li.event {
