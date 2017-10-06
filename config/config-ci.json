@@ -1,0 +1,25 @@
+{
+   "Archiving":{
+      "enabled":false,
+      "archiveManager":{
+         "enabled":false
+      }
+   },
+   "Feedback":{
+      "enabled":false
+   },
+   "Screensharing":{
+      "enabled":true,
+      "chromeExtensionId":"test",
+      "annotations":{
+         "enabled":true
+      }
+   },
+   "SIP": {
+     "enabled": false,
+     "uri": "sip:test@sip.test.com",
+     "username": "test",
+     "password": "test",
+     "requireGoogleAuth": false
+   }
+}
