@@ -34,26 +34,26 @@ BubbleFactory, Clipboard, LayoutManager */
   var MODAL_TXTS = {
     mute: {
       head: 'Mute all participants, including yourself',
-      detail: 'Everyone will be notified and can click their <i data-icon="no_mic"></i> to ' +
-              'unmute themselves.',
+      detail: 'Everyone will be notified and can click their <i data-icon="no_mic"></i> button' +
+              'to unmute themselves.',
       button: 'Mute all participants'
     },
     muteRemotely: {
-      head: 'All participants microphones are going to be disabled in the call',
+      head: 'All participants microphones are being disabled in the call',
       detail: 'If you want to keep talking , ' +
-              'you must enable manually your own microphone',
+              'you must manually enable your own microphone.',
       button: 'I understand'
     },
     unmutedRemotely: {
-      head: 'Your microphone is going to be enabled in the call',
-      detail: 'If you want to keep muted , ' +
-              'you must disable manually your own microphone',
+      head: 'Your microphone is now enabled in the call',
+      detail: 'If you want to remain muted , ' +
+              'you must manually disable your own microphone.',
       button: 'I understand'
     },
     join: {
       head: 'All participants are muted',
       detail: 'You can unmute everyone by toggling the Mute all participants option. Or you can ' +
-              'unmute just yourself by clicking your <microphone icon> icon',
+              'unmute just yourself by clicking the microphone icon in the bottom menu.',
       button: 'I understand'
     },
     disabledVideos: {
