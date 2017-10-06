@@ -859,7 +859,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
           RecordingsController.init(enableArchiveManager, aParams.firebaseURL,
                                     aParams.firebaseToken, aParams.sessionId);
           ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
-          FeedbackController.init(otHelper);
+          FeedbackController.init(otHelper, aParams.reportIssueLevel);
           PhoneNumberController.init();
           Utils.sendEvent('roomController:controllersReady');
         })

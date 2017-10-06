@@ -149,6 +149,7 @@ function ServerMethods(aLogLevel, aModules) {
       var enableScreensharing = config.get(C.ENABLE_SCREENSHARING);
       var enableAnnotations = enableScreensharing && config.get(C.ENABLE_ANNOTATIONS);
       var enableFeedback = config.get(C.ENABLE_FEEDBACK);
+      var reportIssueLevel = config.get(C.REPORT_ISSUE_LEVEL);
 
       if (!firebaseConfigured && enableArchiveManager) {
         logger.error('Firebase not configured. Please provide firebase credentials or disable archive_manager');
@@ -194,6 +195,7 @@ function ServerMethods(aLogLevel, aModules) {
                 sipRequireGoogleAuth,
                 googleId,
                 googleHostedDomain,
+                reportIssueLevel,
               }));
     });
   }
@@ -455,6 +457,7 @@ function ServerMethods(aLogLevel, aModules) {
           requireGoogleAuth: tbConfig.sipRequireGoogleAuth,
           googleId: tbConfig.googleId,
           googleHostedDomain: tbConfig.googleHostedDomain,
+          reportIssueLevel: tbConfig.reportIssueLevel,
         };
         answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId;
         aRes.send(answer);
