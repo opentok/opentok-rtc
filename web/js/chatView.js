@@ -167,7 +167,7 @@
     var name = data.sender || data.userName;
     var text = time + ' - ' + name + ' ' + data.text;
     insertText(item, text);
-    scrollTo(item);
+    scrollTo();
   }
 
   function insertText(elemRoot, text) {
@@ -207,12 +207,11 @@
 
     insertText(info, data.text);
 
-    scrollTo(item);
+    scrollTo();
   }
 
-  function scrollTo(item) {
-    item = item || chatContent.lastChild;
-    chatContainer.scrollTop = chatContent.offsetHeight + item.clientHeight;
+  function scrollTo() {
+    chatContainer.scrollTop = chatContent.scrollHeight - chatContent.offsetHeight;
   }
 
   function init(aUsrId, aRoomName, configuredEvts) {
