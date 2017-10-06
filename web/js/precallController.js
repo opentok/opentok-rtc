@@ -42,15 +42,17 @@
         PrecallView.setRoomName(roomName);
         PrecallView.setUsername(username);
 
-        // You cannot use the network test in IE. IE cannot subscribe to its own stream.å
-        Utils.isIE() && PrecallView.hideConnectivityTest();
+        if (Utils.isIE()) PrecallView.hideConnectivityTest();
 
         document.querySelector('.user-name-modal #enter').disabled = false;
         document.querySelector('.user-name-modal .tc-dialog').addEventListener('submit',
           function (event) {
             event.preventDefault();
             PrecallView.hide();
-            otNetworkTest.stopTest();
+
+            if (!Utils.isIE()) {
+              otNetworkTest.stopTest();
+            }
             Modal.hide(selector)
               .then(function () {
                 publisherOptions.name = document.querySelector(selector
@@ -74,14 +76,19 @@
             token: window.precallToken
           };
           PrecallView.startPrecallTestMeter();
-          otNetworkTest = new OTNetworkTest(previewOptions);
-          otNetworkTest.startNetworkTest(function (error, result) {
-            PrecallView.displayNetworkTestResults(result);
-            if (result.audioOnly) {
-              publisher.publishVideo(false);
-              Utils.sendEvent('PrecallController:audioOnly');
-            }
-          });
+
+          // You cannot use the network test in IE. IE cannot subscribe to its own stream.
+          if (!Utils.isIE()) {
+            otNetworkTest = new OTNetworkTest(previewOptions);
+            otNetworkTest.startNetworkTest(function (error, result) {
+              PrecallView.displayNetworkTestResults(result);
+              if (result.audioOnly) {
+                publisher.publishVideo(false);
+                Utils.sendEvent('PrecallController:audioOnly');
+              }
+            });
+          }
+
           Utils.addEventsHandlers('roomView:', videoPreviewEventHandlers, exports);
           var movingAvg = null;
           publisher.on('audioLevelUpdated', function (event) {
