@@ -179,7 +179,12 @@
     
     this.stopTest = function() {
       bandwidthCalculator && bandwidthCalculator.stop();
-      session.disconnect();
+      try {
+        session.unpublish(publisher);
+        session.disconnect();
+      } catch(error) {
+        // Probably not connected yet.
+      }
       publisher.destroy();
     }
 

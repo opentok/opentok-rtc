@@ -15,6 +15,7 @@
     publishVideo: true,
     name: ''
   };
+  var selector = '.user-name-modal';
 
   var videoPreviewEventHandlers = {
     initialAudioSwitch: function (evt) {
@@ -36,28 +37,13 @@
   };
 
   function showCallSettingsPrompt(roomName, username) {
-    var selector = '.user-name-modal';
     return new Promise(function (resolve) {
       function loadModalText() {
         PrecallView.setRoomName(roomName);
         PrecallView.setUsername(username);
 
         document.querySelector('.user-name-modal #enter').disabled = false;
-        document.querySelector('.user-name-modal .tc-dialog').addEventListener('submit',
-          function (event) {
-            event.preventDefault();
-            PrecallView.hide();
-            otNetworkTest.stopTest();
-            Modal.hide(selector)
-              .then(function () {
-                publisherOptions.name = document.querySelector(selector
-                  + ' input').value.trim();
-                resolve({
-                  username: document.querySelector(selector + ' input').value.trim(),
-                  publisherOptions: publisherOptions
-                });
-              });
-          });
+        document.querySelector('.user-name-modal .tc-dialog').addEventListener('submit', formSubmittedHandler);
         document.querySelector(selector + ' input.username').focus();
 
         otHelper.initPublisher('video-preview',
@@ -100,11 +86,38 @@
           var userNameInputElement = document.getElementById('user-name-input');
           userNameInputElement.value = username;
           userNameInputElement.setAttribute('readonly', true);
+          document.body.addEventListener('keypress', function (event) {
+            enterKeypressHandler(event, resolve);
+          });
         }
       }
       Modal.show(selector, loadModalText);
     });
   }
+
+  var formSubmittedHandler = function (event, resolve) {
+    event.preventDefault();
+    PrecallView.hide();
+    otNetworkTest.stopTest();
+    Modal.hide(selector)
+      .then(function () {
+        publisherOptions.name = document.querySelector(selector
+          + ' input').value.trim();
+        resolve({
+          username: document.querySelector(selector + ' input').value.trim(),
+          publisherOptions: publisherOptions
+        });
+      });
+  };
+
+  var enterKeypressHandler = function (event, resolve) {
+    var keyCode = event.which || event.keyCode;
+    if (keyCode === 13) {
+      formSubmittedHandler(event, resolve);
+      document.body.removeEventListener('keypress', enterKeypressHandler);
+    }
+  };
+
 
   var eventHandlers = {
     'roomView:endprecall': endPrecall
