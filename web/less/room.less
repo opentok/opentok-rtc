@@ -317,22 +317,22 @@ body {
 
 .call-controls {
   position: absolute;
-  display: table;
-  table-layout: fixed;
+  display: flex;
   bottom: 0;
   right: 0;
   left: 0;
   height: 86px;
-  width: 520px;
+  width: fit-content;
   margin: auto;
   z-index: 1001;
-  background-image: url(/images/call-controls-bg.svg);
+  border-image: url(/images/call-controls-bg.svg) 30 42 52 42 fill;
+  border-image-width: 171px;
   background-repeat: no-repeat;
   padding: 0 40px;
   opacity: 0;
   transition: opacity @transitionTime;
   div {
-    display: table-cell;
+    margin: 0 11.5px;
     padding-top: 10px;
     font-size: 11px;
     font-weight: 600;
@@ -362,6 +362,12 @@ body {
       margin-bottom: 0;
       line-height: 0;
     }
+  }
+  :first-child {
+    margin-left: 0;
+  }
+  :last-child {
+    margin-right: 0;
   }
 }
 
