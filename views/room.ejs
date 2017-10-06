@@ -158,9 +158,11 @@
         </div>
     </section>
 
-    <section class="feedbackButton">
-      <span id="showFeedback">Feedback / Report a Bug</span>
-    </section>
+    <% if (enableFeedback) { %>
+      <section class="feedbackButton">
+        <span id="showFeedback">Feedback / Report a Bug</span>
+      </section>
+    <% } %>
 
     <section id="chat">
       <form class="dialog-chat" id="chatForm">
