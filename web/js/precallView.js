@@ -177,7 +177,19 @@
       document.getElementById('video-bitrate').innerText = 0;
       document.getElementById('precall-video-packet-loss').innerText = 'No video.';
     }
-    document.getElementById('pre-call-heading').classList = results.classification;
+    var precallHeadingElement = document.getElementById('pre-call-heading');
+    precallHeadingElement.classList = results.classification;
+    switch (results.classification) {
+      case 'precall-tick':
+        precallHeadingElement.innerText = 'Excellent Connectivity';
+        break;
+      case 'precall-warning':
+        precallHeadingElement.innerText = 'OK Connectivity';
+        break;
+      case 'precall-error':
+        precallHeadingElement.innerText = 'Poor Connectivity';
+        break;
+    }
     document.getElementById('pre-call-description').innerText = results.text;
     document.getElementById('precall-icon').setAttribute('data-icon', results.classification);
     packetLossStr = isNaN(results.audio.packetLossRatio) ? '' :
