@@ -49,18 +49,20 @@
             event.preventDefault();
             PrecallView.hide();
 
+            publisher.destroy();
             if (!Utils.isIE()) {
               otNetworkTest.stopTest();
             }
-            Modal.hide(selector)
-              .then(function () {
-                publisherOptions.name = document.querySelector(selector
-                  + ' input').value.trim();
+            Modal.hide(selector).then(function () {
+              publisherOptions.name = document.querySelector(selector
+                + ' input').value.trim();
+              setTimeout(function () {
                 resolve({
                   username: document.querySelector(selector + ' input').value.trim(),
                   publisherOptions: publisherOptions
                 });
-              });
+              }, 1);
+            });
           });
         document.querySelector(selector + ' input.username').focus();
 
