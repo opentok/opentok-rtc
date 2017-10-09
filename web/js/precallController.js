@@ -6,7 +6,6 @@
   var endPrecall = function () {
     Utils.sendEvent('PrecallController:endPrecall');
   };
-  var otHelper;
   var otNetworkTest;
   var publisher;
   var previewOptions;
@@ -35,7 +34,7 @@
     }
   };
 
-  function showCallSettingsPrompt(roomName, username) {
+  function showCallSettingsPrompt(roomName, username, otHelper) {
     var selector = '.user-name-modal';
     return new Promise(function (resolve) {
       function loadModalText() {
@@ -112,7 +111,9 @@
           userNameInputElement.setAttribute('readonly', true);
         }
       }
-      Modal.show(selector, loadModalText);
+      otHelper.otLoaded.then(function () {
+        return Modal.show(selector, loadModalText);
+      });
     });
   }
 
@@ -120,8 +121,7 @@
     'roomView:endprecall': endPrecall
   };
 
-  var init = function (model) {
-    otHelper = model.otHelper;
+  var init = function () {
     return new Promise(function (resolve) {
       LazyLoader.dependencyLoad([
         '/js/vendor/ejs_production.js',

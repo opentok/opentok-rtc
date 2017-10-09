@@ -532,6 +532,7 @@
         return _session;
       },
       connect: connect,
+      otLoaded: otLoaded,
       off: off,
       initPublisher: initPublisher,
       publish: publish,

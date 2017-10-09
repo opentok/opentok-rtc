@@ -706,7 +706,8 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     debugPreferredResolution = params.getFirstValue('debugPreferredResolution');
     enableHangoutScroll = params.getFirstValue('enableHangoutScroll') !== undefined;
 
-    return PrecallController.showCallSettingsPrompt(roomName, usrId).then(function (info) {
+    return PrecallController.showCallSettingsPrompt(roomName, usrId, otHelper)
+    .then(function (info) {
       info.roomName = roomName;
       RoomView.showRoom();
       RoomView.roomName = roomName;
@@ -741,7 +742,6 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
   var modules = [
     '/js/components/htmlElems.js',
     '/js/helpers/resolutionAlgorithms.js',
-    '/js/helpers/OTHelper.js',
     '/js/helpers/opentok-network-test.js',
     '/js/itemsHandler.js',
     '/js/layoutView.js',
@@ -763,10 +763,15 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
   var init = function () {
     LazyLoader.load(modules)
     .then(function () {
+      EndCallController.init({ addEventListener: function () {} }, 'NOT_AVAILABLE');
+      return PrecallController.init();
+    })
+    .then(function () {
+      return LazyLoader.load('/js/helpers/OTHelper.js');
+    })
+    .then(function () {
       otHelper = new OTHelper({});
       exports.otHelper = otHelper;
-      EndCallController.init({ addEventListener: function () {} }, 'NOT_AVAILABLE');
-      return PrecallController.init({ otHelper: otHelper });
     })
     .then(getRoomParams)
     .then(getRoomInfo)
