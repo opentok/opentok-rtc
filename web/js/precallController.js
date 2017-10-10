@@ -48,6 +48,7 @@
         document.querySelector('.user-name-modal .tc-dialog').addEventListener('submit', function (event) {
           event.preventDefault();
           PrecallView.hide();
+          publisher.destroy();
           if (!Utils.isIE()) {
             otNetworkTest.stopTest();
           }

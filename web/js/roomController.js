@@ -763,12 +763,14 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
   var init = function () {
     LazyLoader.load(modules)
     .then(function () {
+      return PrecallController.init();
+    })
+    .then(function () {
       return LazyLoader.load('/js/helpers/OTHelper.js');
     })
     .then(function () {
       otHelper = new OTHelper({});
       exports.otHelper = otHelper;
-      return PrecallController.init({ otHelper: otHelper });
     })
     .then(getRoomParams)
     .then(getRoomInfo)
