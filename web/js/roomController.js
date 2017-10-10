@@ -1,5 +1,5 @@
 /* global Utils, Request, RoomStatus, RoomView, LayoutManager, LazyLoader, Modal,
-EndCallController, ChatController, GoogleAuth, LayoutMenuController, OTHelper, PrecallController,
+ChatController, GoogleAuth, LayoutMenuController, OTHelper, PrecallController,
 RecordingsController, ScreenShareController, FeedbackController, PhoneNumberController */
 
 !(function (exports) {
@@ -315,6 +315,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
   var viewEventHandlers = {
     endCall: function () {
       otHelper.disconnect();
+      window.location = '/';
     },
     startArchiving: function (evt) {
       sendArchivingOperation((evt.detail && evt.detail.operation) || 'startComposite');
@@ -751,7 +752,6 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     '/js/roomStatus.js',
     '/js/chatController.js',
     '/js/recordingsController.js',
-    '/js/endCallController.js',
     '/js/precallController.js',
     '/js/layoutMenuController.js',
     '/js/screenShareController.js',
@@ -763,15 +763,12 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
   var init = function () {
     LazyLoader.load(modules)
     .then(function () {
-      EndCallController.init({ addEventListener: function () {} }, 'NOT_AVAILABLE');
-      return PrecallController.init();
-    })
-    .then(function () {
       return LazyLoader.load('/js/helpers/OTHelper.js');
     })
     .then(function () {
       otHelper = new OTHelper({});
       exports.otHelper = otHelper;
+      return PrecallController.init({ otHelper: otHelper });
     })
     .then(getRoomParams)
     .then(getRoomInfo)
@@ -862,7 +859,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
         })
         .then(function () {
           RecordingsController.init(enableArchiveManager, aParams.firebaseURL,
-                                    aParams.firebaseToken, aParams.sessionId);
+                                    aParams.firebaseToken);
           ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
           FeedbackController.init(otHelper);
           PhoneNumberController.init();

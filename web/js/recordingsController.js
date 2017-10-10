@@ -1,11 +1,11 @@
-/* global Modal, FirebaseModel, EndCallController, RecordingsView */
+/* global Modal, FirebaseModel, RecordingsView */
 
 !(function (exports) {
   'use strict';
 
   var model = null;
 
-  function init(enableArchiveManager, firebaseUrl, firebaseToken, sessionId) {
+  function init(enableArchiveManager, firebaseUrl, firebaseToken) {
     var dependenciesLoaded;
     if (enableArchiveManager) {
       dependenciesLoaded = LazyLoader.dependencyLoad([
@@ -24,7 +24,6 @@
       Utils.sendEvent('recordings-model-ready', null, exports);
       addListeners();
       aModel && RecordingsView.init(model);
-      EndCallController.init(model, sessionId);
     });
   }
 
