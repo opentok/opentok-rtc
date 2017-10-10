@@ -42,7 +42,7 @@
         PrecallView.setUsername(username);
         PrecallView.setFocus(username);
 
-        if (!Utils.isIE()) PrecallView.hideConnectivityTest();
+        if (Utils.isIE()) PrecallView.hideConnectivityTest();
 
         document.querySelector('.user-name-modal #enter').disabled = false;
         document.querySelector('.user-name-modal .tc-dialog').addEventListener('submit', function (event) {
