@@ -33,6 +33,7 @@
 
 [data-annotation-visible=true] .ots-annotation-toolbar-container {
   opacity: 1;
+  visibility: visible;
 }
 
 [data-annotation-visible=true] #annotate {
@@ -45,7 +46,8 @@
 
 .ots-annotation-toolbar-container {
   opacity: 0;
-  transition: opacity @transitionTime;
+  visibility: hidden;
+  transition: all @transitionTime;
 
   z-index: 1001;
   top: 18px;

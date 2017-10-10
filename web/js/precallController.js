@@ -6,7 +6,6 @@
   var endPrecall = function () {
     Utils.sendEvent('PrecallController:endPrecall');
   };
-  var otHelper;
   var otNetworkTest;
   var publisher;
   var previewOptions;
@@ -15,7 +14,6 @@
     publishVideo: true,
     name: ''
   };
-  var selector = '.user-name-modal';
 
   var videoPreviewEventHandlers = {
     initialAudioSwitch: function (evt) {
@@ -36,25 +34,32 @@
     }
   };
 
-  function showCallSettingsPrompt(roomName, username) {
+  function showCallSettingsPrompt(roomName, username, otHelper) {
+    var selector = '.user-name-modal';
     return new Promise(function (resolve) {
       function loadModalText() {
         PrecallView.setRoomName(roomName);
         PrecallView.setUsername(username);
         PrecallView.setFocus(username);
 
+        if (Utils.isIE()) PrecallView.hideConnectivityTest();
+
         document.querySelector('.user-name-modal #enter').disabled = false;
         document.querySelector('.user-name-modal .tc-dialog').addEventListener('submit', function (event) {
           event.preventDefault();
           PrecallView.hide();
-          otNetworkTest.stopTest();
+          if (!Utils.isIE()) {
+            otNetworkTest.stopTest();
+          }
           Modal.hide(selector)
             .then(function () {
               publisherOptions.name = document.querySelector(selector + ' input').value.trim();
-              resolve({
-                username: document.querySelector(selector + ' input').value.trim(),
-                publisherOptions: publisherOptions
-              });
+              setTimeout(function () {
+                resolve({
+                  username: document.querySelector(selector + ' input').value.trim(),
+                  publisherOptions: publisherOptions
+                });
+              }, 1);
             });
         });
 
@@ -69,14 +74,19 @@
             token: window.precallToken
           };
           PrecallView.startPrecallTestMeter();
-          otNetworkTest = new OTNetworkTest(previewOptions);
-          otNetworkTest.startNetworkTest(function (error, result) {
-            PrecallView.displayNetworkTestResults(result);
-            if (result.audioOnly) {
-              publisher.publishVideo(false);
-              Utils.sendEvent('PrecallController:audioOnly');
-            }
-          });
+
+          // You cannot use the network test in IE. IE cannot subscribe to its own stream.
+          if (!Utils.isIE()) {
+            otNetworkTest = new OTNetworkTest(previewOptions);
+            otNetworkTest.startNetworkTest(function (error, result) {
+              PrecallView.displayNetworkTestResults(result);
+              if (result.audioOnly) {
+                publisher.publishVideo(false);
+                Utils.sendEvent('PrecallController:audioOnly');
+              }
+            });
+          }
+
           Utils.addEventsHandlers('roomView:', videoPreviewEventHandlers, exports);
           var movingAvg = null;
           publisher.on('audioLevelUpdated', function (event) {
@@ -100,8 +110,10 @@
           userNameInputElement.setAttribute('readonly', true);
         }
       }
-      Modal.show(selector, loadModalText).then(function() {
-        PrecallView.setFocus(username);
+      otHelper.otLoaded.then(function () {
+        return Modal.show(selector, loadModalText).then(function () {
+          PrecallView.setFocus(username);
+        });
       });
     });
   }
@@ -110,8 +122,7 @@
     'roomView:endprecall': endPrecall
   };
 
-  var init = function (model) {
-    otHelper = model.otHelper;
+  var init = function () {
     return new Promise(function (resolve) {
       LazyLoader.dependencyLoad([
         '/js/vendor/ejs_production.js',

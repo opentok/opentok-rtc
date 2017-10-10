@@ -99,6 +99,11 @@
     focusElement.focus();
   };
 
+  var hideConnectivityTest = function () {
+    document.getElementById('pre-call-test').style.display = 'none';
+    document.getElementById('precall-test-meter').style.display = 'none';
+  };
+
   var alreadyInitialized = false;
 
   exports.EJS = function (aTemplateOptions) {
@@ -231,6 +236,7 @@
     setFocus: setFocus,
     setVolumeMeterLevel: setVolumeMeterLevel,
     startPrecallTestMeter: startPrecallTestMeter,
-    displayNetworkTestResults: displayNetworkTestResults
+    displayNetworkTestResults: displayNetworkTestResults,
+    hideConnectivityTest: hideConnectivityTest
   };
 }(this));
