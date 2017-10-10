@@ -214,7 +214,7 @@
     chatContainer.scrollTop = chatContent.scrollHeight - chatContent.offsetHeight;
   }
 
-  function init(aUsrId, aRoomName, configuredEvts) {
+  function init(aUsrId, configuredEvts) {
     return LazyLoader.dependencyLoad([
       '/js/helpers/textProcessor.js',
       '/js/components/chat.js'

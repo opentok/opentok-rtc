@@ -674,7 +674,7 @@ function ServerMethods(aLogLevel, aModules) {
             var options = {
               // Plivo accepts custom headers that start with 'X-PH'
               headers: {
-                'X-PH-ROOMNAME': roomName,
+                'X-PH-ROOMNAME': encodeURIComponent(roomName),
                 'X-PH-DIALOUT-NUMBER': phoneNumber,
               },
               auth: {

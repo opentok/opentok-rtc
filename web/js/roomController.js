@@ -29,7 +29,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
   };
 
   var userName = null;
-  var roomName = null;
+  var roomURI = null;
   var resolutionAlgorithm = null;
   var debugPreferredResolution = null;
 
@@ -222,7 +222,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
   var sendArchivingOperation = function (operation) {
     var data = {
       userName: userName,
-      roomName: roomName,
+      roomURI: roomURI,
       operation: operation
     };
 
@@ -253,7 +253,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
         phoneNumber: phoneNumber,
         googleIdToken: googleIdToken
       };
-      Request.dialOut(roomName, data);
+      Request.dialOut(roomURI, data);
       dialedNumberTokens[phoneNumber] = googleIdToken;
     }
   };
@@ -686,7 +686,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       throw new Error('Room Controller is not defined. Missing script tag?');
     }
 
-    // pathName should be /room/<roomName>[?username=<userName>]
+    // pathName should be /room/<roomURI>[?username=<userName>]
     var pathName = document.location.pathname.split('/');
 
     if (!pathName || pathName.length < 2) {
@@ -694,11 +694,12 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     }
 
     var roomName = '';
+    var roomURI = '';
     var length = pathName.length;
     if (length > 0) {
-      roomName = pathName[length - 1];
+      roomURI = pathName[length - 1];
     }
-    roomName = Utils.decodeStr(roomName);
+    roomName = Utils.decodeStr(roomURI);
 
     // Recover user identifier
     var params = Utils.parseSearch(document.location.search);
@@ -709,9 +710,10 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
 
     return PrecallController.showCallSettingsPrompt(roomName, usrId, otHelper)
     .then(function (info) {
-      info.roomName = roomName;
+      info.roomURI = roomURI;
       RoomView.showRoom();
       RoomView.roomName = roomName;
+      RoomView.roomURI = roomURI;
       publisherOptions.publishAudio = info.publisherOptions.publishAudio;
       publisherOptions.publishVideo = info.publisherOptions.publishVideo;
       return info;
@@ -729,7 +731,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
                       '] without correct response');
           throw new Error('Error getting room parameters');
         }
-        aRoomInfo.roomName = aRoomParams.roomName;
+        aRoomInfo.roomURI = aRoomParams.roomURI;
         aRoomInfo.publishAudio = aRoomParams.publishAudio;
         aRoomInfo.publishVideo = aRoomParams.publishVideo;
         enableAnnotations = aRoomInfo.enableAnnotation;
@@ -797,7 +799,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
     RoomView.init(enableHangoutScroll, enableArchiveManager, enableSip);
 
-    roomName = aParams.roomName;
+    roomURI = aParams.roomURI;
     userName = aParams.username ? aParams.username.substring(0, 1000) : '';
 
     var sessionInfo = {
@@ -808,9 +810,6 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
 
     var connect = otHelper.connect.bind(otHelper, sessionInfo);
 
-      // Room's name is set by server, we don't need to do this, but
-      // perphaps it would be convenient
-      // RoomView.roomName = aParams.roomName;
     RoomView.participantsNumber = 0;
 
     _allHandlers = RoomStatus.init(_allHandlers, { room: _sharedStatus });
@@ -825,7 +824,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     }
 
     ChatController
-        .init(aParams.roomName, userName, _allHandlers)
+        .init(userName, _allHandlers)
         .then(connect)
         .then(LayoutMenuController.init)
         .then(function () {

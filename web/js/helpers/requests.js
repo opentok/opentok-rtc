@@ -45,7 +45,7 @@
 
     var userName = aRoomParams.username ? '?userName=' + aRoomParams.username : '';
 
-    return sendXHR('GET', server + '/room/' + aRoomParams.roomName + '/info' + userName).
+    return sendXHR('GET', server + '/room/' + aRoomParams.roomURI + '/info' + userName).
       then(function(roomInfo) {
         if (!(roomInfo && roomInfo.sessionId)) {
           throw new Error('Room\'s data could not be recovered');
@@ -72,12 +72,12 @@
   }
 
   function sendArchivingOperation(data) {
-    return sendXHR('POST', server + '/room/' + data.roomName + '/archive',
+    return sendXHR('POST', server + '/room/' + data.roomURI + '/archive',
                     composeDate(data), 'application/x-www-form-urlencoded');
   }
 
-  function dialOut(roomName, data) {
-    return sendXHR('POST', server + '/room/' + roomName + '/dial',
+  function dialOut(roomURI, data) {
+    return sendXHR('POST', server + '/room/' + roomURI + '/dial',
                     JSON.stringify(data), 'application/json');
   }
 
