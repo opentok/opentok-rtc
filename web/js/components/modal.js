@@ -8,7 +8,7 @@
     'webkitTransitionEnd' : 'transitionend';
 
   var closeHandlers = {};
-
+  var keyPressHandler;
   var _queuedModals = [];
   var _modalShown = false;
 
@@ -24,12 +24,21 @@
       handler: handler
     };
 
+    keyPressHandler = function (event) {
+      var keyCode = event.which || event.keyCode;
+      if (keyCode === 27) { // escape key maps to keycode `27`
+        handler();
+      }
+    };
+
     closeElement.addEventListener('click', handler);
+    document.body.addEventListener('keyup', keyPressHandler);
   }
 
   function removeCloseHandler(selector) {
     var obj = closeHandlers[selector];
     obj && obj.target.removeEventListener('click', obj.handler);
+    document.body.removeEventListener('keyup', keyPressHandler);
   }
 
   function show(selector, preShowCb) {
