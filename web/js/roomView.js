@@ -386,6 +386,9 @@ BubbleFactory, Clipboard, LayoutManager */
     callControlsElem.addEventListener('click', function (e) {
       var elem = e.target;
       elem = HTMLElems.getAncestorByTagName(elem, 'button');
+      if (elem === null) {
+        return;
+      }
       switch (elem.id) {
         case 'addToCall':
           Utils.sendEvent('roomView:addToCall');
