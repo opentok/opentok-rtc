@@ -40,22 +40,20 @@
       function loadModalText() {
         PrecallView.setRoomName(roomName);
         PrecallView.setUsername(username);
+        PrecallView.setFocus(username);
 
         if (Utils.isIE()) PrecallView.hideConnectivityTest();
 
         document.querySelector('.user-name-modal #enter').disabled = false;
-        document.querySelector('.user-name-modal .tc-dialog').addEventListener('submit',
-          function (event) {
-            event.preventDefault();
-            PrecallView.hide();
-
-            publisher.destroy();
-            if (!Utils.isIE()) {
-              otNetworkTest.stopTest();
-            }
-            Modal.hide(selector).then(function () {
-              publisherOptions.name = document.querySelector(selector
-                + ' input').value.trim();
+        document.querySelector('.user-name-modal .tc-dialog').addEventListener('submit', function (event) {
+          event.preventDefault();
+          PrecallView.hide();
+          if (!Utils.isIE()) {
+            otNetworkTest.stopTest();
+          }
+          Modal.hide(selector)
+            .then(function () {
+              publisherOptions.name = document.querySelector(selector + ' input').value.trim();
               setTimeout(function () {
                 resolve({
                   username: document.querySelector(selector + ' input').value.trim(),
@@ -63,8 +61,7 @@
                 });
               }, 1);
             });
-          });
-        document.querySelector(selector + ' input.username').focus();
+        });
 
         otHelper.initPublisher('video-preview',
           { width: '100%', height: '100%', insertMode: 'append', showControls: false }
@@ -114,7 +111,9 @@
         }
       }
       otHelper.otLoaded.then(function () {
-        return Modal.show(selector, loadModalText);
+        return Modal.show(selector, loadModalText).then(function () {
+          PrecallView.setFocus(username);
+        });
       });
     });
   }

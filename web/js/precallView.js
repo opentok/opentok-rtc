@@ -93,6 +93,12 @@
     }, 2000);
   };
 
+  var setFocus = function (username) {
+    var focusElement = username ? document.getElementById('enter') :
+      document.getElementById('user-name-input');
+    focusElement.focus();
+  };
+
   var hideConnectivityTest = function () {
     document.getElementById('pre-call-test').style.display = 'none';
     document.getElementById('precall-test-meter').style.display = 'none';
@@ -228,6 +234,7 @@
     hide: hide,
     setRoomName: setRoomName,
     setUsername: setUsername,
+    setFocus: setFocus,
     setVolumeMeterLevel: setVolumeMeterLevel,
     startPrecallTestMeter: startPrecallTestMeter,
     displayNetworkTestResults: displayNetworkTestResults,
