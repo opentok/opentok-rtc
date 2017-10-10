@@ -550,7 +550,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
         var streamId = stream.streamId;
         stream.phoneNumber = stream.isSip && stream.name;
         if (stream.isSip) {
-          stream.name = 'Audio Only Participant';
+          stream.name = 'Invited Participant';
         }
 
         subscriberStreams[streamId] = {
