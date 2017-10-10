@@ -72,7 +72,7 @@
   }
 
   function sendArchivingOperation(data) {
-    return sendXHR('POST', server + '/room/' + data.roomURI + '/archive',
+    return sendXHR('POST', server + '/room/' + data.roomName + '/archive',
                     composeDate(data), 'application/x-www-form-urlencoded');
   }
 

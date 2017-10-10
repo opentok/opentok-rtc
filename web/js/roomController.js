@@ -222,7 +222,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
   var sendArchivingOperation = function (operation) {
     var data = {
       userName: userName,
-      roomURI: roomURI,
+      roomName: roomURI,
       operation: operation
     };
 
