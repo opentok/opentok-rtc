@@ -153,7 +153,7 @@
             <i data-icon="message"></i>
           </button>
           <p>Message
-            <span id="unreadMsg">(<span id="unreadCount">0</span>)</span></span>
+            <span id="unreadMsg">(<span id="unreadCount">0</span>)</span>
           </p>
         </div>
       </div>
@@ -174,7 +174,7 @@
         </div>
         <footer>
           <textarea id="msgText" placeholder="Type your message..." required></textarea>
-          <button id="sendTxt" type="submit" data-icon="send" class="btn btn-blue btn-padding btn-padding-small" />
+          <button id="sendTxt" type="submit" data-icon="send" class="btn btn-blue btn-padding btn-padding-small"></button>
         </footer>
       </form>
     </section>
@@ -306,6 +306,7 @@
               <span>copied to clipboard!</span>
             </div>
           </div>
+          <%   if(hasSip) { %>
           <div class="google-sign-in-note-container">
             <div class="google-sign-in-note">
               <span class=title>Note:</span><br/>
@@ -316,6 +317,7 @@
             <input id="dialOutNumber" class="phoneNumber" required>
             <button id="dialOutBtn" class="btn btn-blue btn-padding">Dial</button>
           </form>
+          <% } %>
       </secton>
       </div>
     </section>

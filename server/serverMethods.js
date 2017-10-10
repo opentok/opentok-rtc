@@ -655,6 +655,9 @@ function ServerMethods(aLogLevel, aModules) {
     var body = aReq.body;
     var phoneNumber = body.phoneNumber;
     var googleIdToken = body.googleIdToken;
+    if (!tbConfig.enableSip) {
+      return aRes.status(400).send(new ErrorInfo(400, 'Phone dial-out not allowed.'));
+    }
     if (!body || !body.phoneNumber) {
       logger.log('postRoomDial => missing body parameter: ', aReq.body);
       return aRes.status(400).send(new ErrorInfo(400, 'Missing required parameter'));
