@@ -97,19 +97,23 @@ body {
     }
 
     label {
-      color: #b6bfc8;
+      color: #748393;
       font-size: 16px;
       line-height: 57px;
       width: 100%;
       float: left;
       bottom: 0;
       margin-left: 10px;
-      bottom: 36px;
+      text-align: left;
       font-weight: normal;
-      transition: margin-left 0.5s;
+      position: relative;
+      transition: all 0.5s;
     }
     label.visited {
-      margin-left: 246px;
+      margin-left: 0;
+      text-align: right;
+      font-size: 12px;
+      right: 0;
     }
 
     p {
@@ -188,7 +192,9 @@ body {
   }
   .landing-more-info {
     color: #748393;
+    font-size: 12px;
     margin-top: 69px;
+    margin-bottom: 12px;
     a {
       color: @blueText;
     }
