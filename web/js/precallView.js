@@ -181,20 +181,21 @@
       document.getElementById('video-bitrate').innerText = 0;
       document.getElementById('precall-video-packet-loss').innerText = 'No video.';
     }
-    var precallHeading = document.getElementById('pre-call-heading');
-    switch (results.icon) {
+    var precallHeadingElement = document.getElementById('pre-call-heading');
+    precallHeadingElement.classList = results.classification;
+    switch (results.classification) {
       case 'precall-tick':
-        precallHeading.style.color = '#3fbe36';
+        precallHeadingElement.innerText = 'Excellent Connectivity';
         break;
       case 'precall-warning':
-        precallHeading.style.color = '#ffcc33';
+        precallHeadingElement.innerText = 'OK Connectivity';
         break;
       case 'precall-error':
-        precallHeading.style.color = '#ff0000';
+        precallHeadingElement.innerText = 'Poor Connectivity';
         break;
     }
     document.getElementById('pre-call-description').innerText = results.text;
-    document.getElementById('precall-icon').setAttribute('data-icon', results.icon);
+    document.getElementById('precall-icon').setAttribute('data-icon', results.classification);
     packetLossStr = isNaN(results.audio.packetLossRatio) ? '' :
       Math.round(100 * results.audio.packetLossRatio) + '% packet loss';
     document.getElementById('precall-audio-packet-loss').innerText = packetLossStr;

@@ -28,7 +28,7 @@
             return callback(false, {
               text: 'You can\'t send video because no camera was found, ' +
                 'but your bandwidth can support an audio-only stream.',
-              icon: 'precall-warning',
+              classification: 'precall-warning',
               audio: results.audio,
               video: null,
               audioOnly: true
@@ -38,7 +38,7 @@
           return callback(false, {
               text: 'You can\'t send video because no camera was found, ' +
                 'and your bandwidth is too low for an audio-only stream.',
-            icon: 'precall-warning',
+            classification: 'precall-error',
             audio: results.audio,
             video: null
           });
@@ -52,7 +52,7 @@
         if (audioVideoSupported) {
           return callback(false, {
             text: 'You\'re all set!',
-            icon: 'precall-tick',
+            classification: 'precall-tick',
             audio: results.audio,
             video: results.video
           });
@@ -61,7 +61,7 @@
         if (results.audio.packetLossRatio < 0.05) {
           return callback(false, {
             text: 'Your bandwidth can support audio only.',
-            icon: 'precall-warning',
+            classification: 'precall-warning',
             audio: results.audio,
             video: results.video,
             audioOnly: true
@@ -78,7 +78,7 @@
           if (audioSupported) {
             return callback(false, {
               text: 'Your bandwidth can support audio only.',
-              icon: 'precall-warning',
+              classification: 'precall-warning',
               audio: results.audio,
               video: results.video,
               audioOnly: true
@@ -87,7 +87,7 @@
 
           return callback(false, {
             text: 'Your bandwidth is too low for video or audio.',
-            icon: 'precall-error',
+            classification: 'precall-error',
             audio: results.audio,
             video: results.video
           });
