@@ -4,7 +4,6 @@ describe('ChatView', () => {
   var container = null;
   var chatContainer = null;
   var chatTextArea = null;
-  var ROOM_NAME_TEST = 'roomNameTest';
 
   function getMouseClickEvt() {
     return new MouseEvent('click', {
@@ -77,7 +76,7 @@ describe('ChatView', () => {
     function verifyInit(context, done, handlerShouldHave, configuredHandlers) {
       context.stub(Utils, 'addHandlers');
       context.spy(Chat, 'init');
-      ChatView.init('myself', ROOM_NAME_TEST, configuredHandlers).then(() => {
+      ChatView.init('myself', configuredHandlers).then(() => {
         expect(Chat.init.calledOnce).to.be.true;
         var spyArg = Utils.addHandlers.getCall(0).args[0];
         expect(Object.keys(spyArg).length).to.be.equal(Object.keys(handlerShouldHave).length);
@@ -193,7 +192,7 @@ describe('ChatView', () => {
     }
 
     before((done) => {
-      ChatView.init('myself', ROOM_NAME_TEST).then(() => {
+      ChatView.init('myself').then(() => {
         done();
       });
     });

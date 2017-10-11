@@ -73,8 +73,8 @@
 
   var navigateToRoom = function () {
     var base = window.location.href.replace(/([^/]+)\.[^/]+$/, '');
-    var url = base.concat('room/', room.value);
-    var userName = user.value.trim();
+    var url = base.concat('room/', encodeURIComponent(room.value));
+    var userName = encodeURIComponent(user.value.trim());
     if (userName) {
       url = url.concat('?userName=', userName);
     }
