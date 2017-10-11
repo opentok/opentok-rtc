@@ -266,7 +266,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     if (!stream.isSip) {
       return;
     }
-    var phoneNumber = stream.name;
+    var phoneNumber = stream.phoneNumber;
     if (!(phoneNumber in dialedNumberTokens)) {
       return;
     }
@@ -548,11 +548,14 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
         }
 
         var streamId = stream.streamId;
-        var phoneNumber = stream.isSip && stream.name;
+        stream.phoneNumber = stream.isSip && stream.name;
+        if (stream.isSip) {
+          stream.name = 'Invited Participant';
+        }
 
         subscriberStreams[streamId] = {
           stream: stream,
-          buttons: new SubscriberButtons(streamVideoType, phoneNumber)
+          buttons: new SubscriberButtons(streamVideoType, stream.phoneNumber)
         };
 
         var subOptions = subscriberOptions[streamVideoType];
