@@ -21,8 +21,6 @@ body {
 
 .main {
 
-  display: flex;
-  .flex-direction(column);
   height: 100%;
   .justify-content(center);
 
@@ -231,7 +229,7 @@ body {
     .justify-content(center);
     .flex(1);
     right: 2px;
-    position: absolute;
+    position: relative;
     float: right;
     margin-right: 80px;
     padding: 20px;
@@ -267,6 +265,17 @@ body {
     &:hover {
       opacity: 1;
     }
+  }
+  #righthand-container {
+    height: 100%;
+    display: table;
+    width: 498px;
+    right: 0;
+    position: absolute;
+  }
+  #righthand-container-cell {
+    vertical-align: middle;
+    display: table-cell;
   }
 }
 
