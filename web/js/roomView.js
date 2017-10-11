@@ -254,11 +254,11 @@ BubbleFactory, Clipboard, LayoutManager */
       overCallControls = false;
       hideCallControls();
     });
-    feedbackButton.addEventListener('mouseover', function () {
+    feedbackButton && feedbackButton.addEventListener('mouseover', function () {
       clearTimeout(hideFeedbackButtonTimer);
       overFeedbackButton = true;
     });
-    feedbackButton.addEventListener('mouseout', function () {
+    feedbackButton && feedbackButton.addEventListener('mouseout', function () {
       overFeedbackButton = false;
       hideFeedbackButton();
     });
@@ -282,6 +282,9 @@ BubbleFactory, Clipboard, LayoutManager */
   }
 
   function showFeedbackButton() {
+    if (!feedbackButton) {
+      return;
+    }
     feedbackButton.classList.add('visible');
     if (!overFeedbackButton && !hideFeedbackButtonTimer) {
       hideFeedbackButtonTimer = setTimeout(hideFeedbackButton, 3000);
