@@ -851,6 +851,8 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
             publisherOptions.publishAudio = false;
           }
           publisherOptions.name = userName;
+          // Remember previous device selection in IE:
+          publisherOptions.usePreviousDeviceSelection = true;
           return otHelper.publish(publisherElement, publisherOptions, {}).then(function () {
             setPublisherReady();
             RoomView.showPublisherButtons(publisherOptions);
