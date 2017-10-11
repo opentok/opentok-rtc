@@ -12,7 +12,7 @@ const config = {
   waitforTimeout: !DEBUG ? 60 * 1000 : Infinity,
 
   specs: [
-    'regression_tests/specs/*.js'
+    'test/regression_tests/specs/*.js'
   ],
 
   //
