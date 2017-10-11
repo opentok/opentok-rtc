@@ -211,7 +211,7 @@
   }
 
   function scrollTo() {
-    chatContainer.scrollTop = chatContent.scrollHeight - chatContent.offsetHeight;
+    chatContainer.scrollTop = chatContainer.scrollHeight;
   }
 
   function init(aUsrId, configuredEvts) {
