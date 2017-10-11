@@ -29,7 +29,6 @@
 
   var otLoaded = otPromise.then(function() {
     var hasRequirements = OT.checkSystemRequirements();
-    logger.log('checkSystemRequirements:', hasRequirements);
     if (!hasRequirements) {
       OT.upgradeSystemRequirements();
       throw new Error('Unsupported browser, probably needs upgrade');
