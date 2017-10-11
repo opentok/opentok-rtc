@@ -515,11 +515,14 @@ BubbleFactory, Clipboard, LayoutManager */
         case 'audioSwitch':
           if (!audioSwitch.classList.contains('activated')) {
             showConfirm(MODAL_TXTS.mute).then(function (shouldDisable) {
-              shouldDisable &&
+              if (shouldDisable) {
                 setSwitchStatus(true, true, audioSwitch, 'roomView:muteAllSwitch');
+                togglePublisherAudioElem.classList.remove('activated');
+              }
             });
           } else {
             setSwitchStatus(false, true, audioSwitch, 'roomView:muteAllSwitch');
+            togglePublisherAudioElem.classList.add('activated');
           }
       }
     });
