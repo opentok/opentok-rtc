@@ -8,6 +8,7 @@ BubbleFactory, Clipboard, LayoutManager */
   var dock;
   var handler;
   var callControlsElem;
+  var feedbackButton;
   var roomNameElem;
   var togglePublisherVideoElem;
   var togglePublisherAudioElem;
@@ -26,7 +27,9 @@ BubbleFactory, Clipboard, LayoutManager */
   var enableArchiveManager;
   var enableSip;
   var hideCallControlsTimer;
+  var hideFeedbackButtonTimer;
   var overCallControls = false;
+  var overFeedbackButton = false;
 
   var _unreadMsg = 0;
   var _chatHasBeenShown = false;
@@ -200,7 +203,7 @@ BubbleFactory, Clipboard, LayoutManager */
     dock = document.getElementById('top-banner');
     handler = dock;
     callControlsElem = document.querySelector('.call-controls');
-
+    feedbackButton = document.querySelector('.feedbackButton');
     roomNameElem = dock.querySelector('.room-name');
     participantsStrElem = document.getElementById('participantsStr');
     recordingsNumberElem = dock.querySelector('#recordings');
@@ -236,7 +239,7 @@ BubbleFactory, Clipboard, LayoutManager */
     initHTMLElements();
     topBannerElem.style.visibility = 'visible';
     screenElem.style.visibility = 'visible';
-    screenElem.addEventListener('mousemove', showCallControls);
+    screenElem.addEventListener('mousemove', showControls);
     callControlsElem.addEventListener('mouseover', function () {
       clearTimeout(hideCallControlsTimer);
       overCallControls = true;
@@ -245,10 +248,23 @@ BubbleFactory, Clipboard, LayoutManager */
       overCallControls = false;
       hideCallControls();
     });
+    feedbackButton && feedbackButton.addEventListener('mouseover', function () {
+      clearTimeout(hideFeedbackButtonTimer);
+      overFeedbackButton = true;
+    });
+    feedbackButton && feedbackButton.addEventListener('mouseout', function () {
+      overFeedbackButton = false;
+      hideFeedbackButton();
+    });
+  }
+
+  function showControls() {
+    showCallControls();
+    showFeedbackButton();
   }
 
   function showCallControls() {
-    callControlsElem.style.opacity = '1';
+    callControlsElem.classList.add('visible');
     if (!overCallControls && !hideCallControlsTimer) {
       hideCallControlsTimer = setTimeout(hideCallControls, 3000);
     }
@@ -256,8 +272,24 @@ BubbleFactory, Clipboard, LayoutManager */
 
   function hideCallControls() {
     hideCallControlsTimer = null;
-    callControlsElem.style.opacity = '0';
+    callControlsElem.classList.remove('visible');
   }
+
+  function showFeedbackButton() {
+    if (!feedbackButton) {
+      return;
+    }
+    feedbackButton.classList.add('visible');
+    if (!overFeedbackButton && !hideFeedbackButtonTimer) {
+      hideFeedbackButtonTimer = setTimeout(hideFeedbackButton, 3000);
+    }
+  }
+
+  function hideFeedbackButton() {
+    hideFeedbackButtonTimer = null;
+    feedbackButton.classList.remove('visible');
+  }
+
 
   function showPublisherButtons(publisherOptions) {
     Utils.setDisabled(togglePublisherVideoElem, false);

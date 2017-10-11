@@ -392,10 +392,11 @@ sharing](tokbox.com/developer/guides/screen-sharing/).
 #### Feedback
 
  `ENABLE_FEEDBACK`: Enable the "Give Demo Feedback" form.
-
+ `REPORT_ISSUE_LEVEL`: The audio and video scores in the feedback form are between 1 (awful) and 5 (excellent). When the feedback form is submitted, if an audio or video score is less than or equal to the report issue level, the app calls `OT.reportIssue()`. This reports an issue, which you can view in OpenTok Inspector. (For more information, see [Reporting an issue](https://tokbox.com/developer/guides/debugging/js/#report-issue) in the OpenTok developer Guides.) The default value is 3, set to 0 to disable issue reporting.
  ```json
  "Feedback": {
-     "enabled": false
+     "enabled": true,
+     "reportIssueLevel": 0
  },
  ```
 

@@ -156,9 +156,14 @@
             <span id="unreadMsg">(<span id="unreadCount">0</span>)</span>
           </p>
         </div>
-      </div>
-
     </section>
+
+    <% if (enableFeedback) { %>
+      <section class="feedbackButton">
+        <span id="showFeedback">Feedback / Report a Bug</span>
+      </section>
+    <% } %>
+
     <section id="chat">
       <form class="dialog-chat" id="chatForm">
         <header>
@@ -235,48 +240,53 @@
     </section>
 
     <section class="tc-modal feedback-report">
-      <form class="tc-dialog">
-        <i data-icon="close_gray" class="close"></i>
-        <header>
-          <span>Demo Feedback Report</span>
-        </header>
-        <section>
-          <label>Audio Score:</label>
-          <div class="tc-dropdown" data-icon="down">
-            <select class="audio-score">
-              <option value="1">Bad. Very annoying.</option>
-              <option value="2">Poor. Annoying.</option>
-              <option value="3" selected="selected">Fair. Slightly annoying.</option>
-              <option value="4">Good. Not perfect but not annoying.</option>
-              <option value="5">Excellent. Imperceptible impairment.</option>
-            </select>
+      <div class="tc-dialog">
+      <header>
+        <i data-icon="close_gray_full" class="close"></i>
+        <div class="title-container">
+            <div class="title" data-tab="feedback">
+              <span>Share Your Feedback</span>
+            </div>
           </div>
-        </section>
-        <section>
-          <label>Video Score:</label>
-          <div class="tc-dropdown" data-icon="down">
-            <select class="video-score">
-              <option value="1">Bad. Very annoying.</option>
-              <option value="2">Poor. Annoying.</option>
-              <option value="3" selected="selected">Fair. Slightly annoying.</option>
-              <option value="4">Good. Not perfect but not annoying.</option>
-              <option value="5">Excellent. Imperceptible impairment.</option>
-            </select>
+      </header>
+      <section data-tab="feedback">
+        <form>
+        <div class="call-quality-feedback">
+          <span class="feedback-title">How was the audio quality?</span>
+          <div class="audio-feedback">
+            <div class="feedback-dropdown">
+              <select class="audio-score">
+                  <option value="5">Excellent! No issues.</span>
+                  <option value="4">Good! Not perfect but not annoying.</option>
+                  <option value="3" selected="selected">It was ok. I had a few issues.</span></option>
+                  <option value="2">Poor. Annoying.</option>
+                  <option value="1">I'm disappointed.</option>
+              </select>
+            </div>
           </div>
-        </section>
-        <section>
-          <label>Other info:</label>
-          <input class="other-info" placeholder="Type additional info optionally">
-        </section>
-        <footer>
-          <button class="btn btn-blue btn-padding-large ctaarrow-white send-feedback">Send</button>
-        </footer>
-        <div class="hero">Report Issue With Demo</div>
-        <footer>
-          <button class="btn btn-blue btn-padding-large ctaarrow-white report-issue">Report Issue</button>
-        </footer>
+          <div class="video-feedback">
+            <span class="feedback-title">How was the video quality?</span>
+            <div class="feedback-dropdown">
+                <select class="video-score">
+                    <option value="5">Excellent! No issues.</span>
+                    <option value="4">Good! Not perfect but not annoying.</option>
+                    <option value="3" selected="selected">It was ok. I had a few issues.</span></option>
+                    <option value="2">Poor. Annoying.</option>
+                    <option value="1">I'm disappointed.</option>
+                </select>
+            </div>
+          </div>
+        </div>
+        <div class="feedback-suggestion">
+            <span class="feedback-title suggestion-title">Any other info?</span>
+            <input class="other-info" placeholder="What's on your mind?" />
+        </div>
+        <button class="btn btn-blue btn-padding send-feedback">Send Feedback</button>
       </form>
-    </section>
+      </section>
+
+    </div>
+  </section>
 
     <section class="tc-modal archive-delete-modal">
       <form class="tc-dialog">

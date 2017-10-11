@@ -36,13 +36,13 @@
     }
   };
 
-  var init = function (aOTHelper) {
+  var init = function (aOTHelper, aReportIssueLevel) {
     return LazyLoader.load([
       '/js/feedbackView.js'
     ]).then(function () {
       otHelper = aOTHelper;
       Utils.addEventsHandlers('feedbackView:', eventHandlers, global);
-      FeedbackView.init();
+      FeedbackView.init(aReportIssueLevel);
     });
   };
 
