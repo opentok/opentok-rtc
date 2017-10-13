@@ -40,11 +40,11 @@
                   <h1>WebRTC Demo</h1>
           <% } %>
           <img src="images/tokbox-log.svg" alt="opentok transparent logo">
+          <% if (isWebRTCVersion) { %>
+                  <h2>Built by TokBox on the OpenTok Platform</h2>
+                  <h3>This WebRTC Demo enables group video conferencing, text chat, screen sharing, and more.</h3>
+          <% } %>
         </header>
-<% if (isWebRTCVersion) { %>
-        <h2>Built by TokBox on the OpenTok Platform</h2>
-        <h3>This WebRTC Demo enables group video conferencing, text chat, screen sharing, and more</h3>
-<% } %>
         <form>
           <div>
             <input id="room" class="text-input required">
