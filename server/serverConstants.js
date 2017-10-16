@@ -57,6 +57,7 @@ E.EMPTY_ROOM_LIFETIME = { envVar: 'EMPTY_ROOM_LIFETIME', jsonPath: 'Archiving.ar
 
 E.ENABLE_FEEDBACK = { envVar: 'ENABLE_FEEDBACK', jsonPath: 'Feedback.enabled', defaultValue: false, parser: parseBool };
 
+E.REPORT_ISSUE_LEVEL = { envVar: 'REPORT_ISSUE_LEVEL', jsonPath: 'Feedback.reportIssueLevel', defaultValue: 3 };
 
 E.ENABLE_SCREENSHARING = { envVar: 'ENABLE_SCREENSHARING', jsonPath: 'Screensharing.enabled', defaultValue: false, parser: parseBool };
 
@@ -87,7 +88,7 @@ E.IOS_URL_PREFIX = { envVar: 'IOS_URL_PREFIX', jsonPath: 'IOSUrlPrefix', default
 
 E.DEFAULT_INDEX_PAGE = { envVar: 'DEFAULT_INDEX_PAGE', jsonPath: 'defaultPageIndex', defaultValue: undefined };
 
-E.SIP_ENABLED = { envVar: 'SIP_ENABLED', jsonPath: 'SIP.enabled', defaultValue: false };
+E.SIP_ENABLED = { envVar: 'SIP_ENABLED', jsonPath: 'SIP.enabled', defaultValue: false, parser: parseBool };
 
 E.SIP_URI = { envVar: 'SIP_URI', jsonPath: 'SIP.uri', defaultValue: '' };
 
@@ -95,7 +96,11 @@ E.SIP_USERNAME = { envVar: 'SIP_USERNAME', jsonPath: 'SIP.username', defaultValu
 
 E.SIP_PASSWORD = { envVar: 'SIP_PASSWORD', jsonPath: 'SIP.password', defaultValue: '' };
 
-E.SIP_REQUIRE_GOOGLE_AUTH = { envVar: 'SIP_REQUIRE_GOOGLE_AUTH', jsonPath: 'SIP.requireGoogleAuth', defaultValue: false };
+E.SIP_REQUIRE_GOOGLE_AUTH = { envVar: 'SIP_REQUIRE_GOOGLE_AUTH', jsonPath: 'SIP.requireGoogleAuth', defaultValue: false, parser: parseBool };
+
+E.PLIVO_AUTH_ID = { envVar: 'PLIVO_AUTH_ID', jsonPath: 'Plivo.authId', defaultValue: '' };
+
+E.PLIVO_AUTH_TOKEN = { envVar: 'PLIVO_AUTH_TOKEN', jsonPath: 'Plivo.authToken', defaultValue: '' };
 
 E.GOOGLE_CLIENT_ID = { envVar: 'GOOGLE_CLIENT_ID', jsonPath: 'Google.clientId', defaultValue: '' };
 

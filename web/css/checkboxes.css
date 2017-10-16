@@ -130,9 +130,8 @@ label.switch span:before {
   background: white;
   border-radius: 50%;
   margin-top: -10px;
-  -webkit-transform: translateX(3px);
-      -ms-transform: translateX(3px);
-          transform: translateX(3px);
+  -ms-transform: translateX(3px);
+      transform: translateX(3px);
   transition: all 0.1s ease;
   z-index: 1;
 }
@@ -147,21 +146,18 @@ label.switch input:checked ~ span:after {
   background: #0099cc;
 }
 label.switch input:checked ~ span:before {
-  -webkit-transform: translateX(21px);
-      -ms-transform: translateX(21px);
-          transform: translateX(21px);
+  -ms-transform: translateX(21px);
+      transform: translateX(21px);
 }
 label.switch.right span {
   padding: 0 55px 0 0;
 }
 label.switch.right span:before {
   right: 0;
-  -webkit-transform: translateX(-21px);
-      -ms-transform: translateX(-21px);
-          transform: translateX(-21px);
+  -ms-transform: translateX(-21px);
+      transform: translateX(-21px);
 }
 label.switch.right input:checked ~ span:before {
-  -webkit-transform: translateX(-3px);
-      -ms-transform: translateX(-3px);
-          transform: translateX(-3px);
+  -ms-transform: translateX(-3px);
+      transform: translateX(-3px);
 }

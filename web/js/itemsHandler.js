@@ -37,9 +37,6 @@
         case 'roomController:audio':
           var detail = evt.detail;
           var item = this.items[detail.id];
-          if (detail.reason === 'publishVideo' || detail.reason === 'publishAudio') {
-            item = this.items.publisher;
-          }
 
           if (!item) {
             return;

@@ -8,13 +8,13 @@ BubbleFactory, Clipboard, LayoutManager */
   var dock;
   var handler;
   var callControlsElem;
+  var feedbackButton;
   var roomNameElem;
   var togglePublisherVideoElem;
   var togglePublisherAudioElem;
   var startArchivingElem;
   var stopArchivingElem;
   var annotateBtnElem;
-  var recordingProgressElem;
   var manageRecordingsElem;
   var messageButtonElem;
   var participantsStrElem;
@@ -27,7 +27,9 @@ BubbleFactory, Clipboard, LayoutManager */
   var enableArchiveManager;
   var enableSip;
   var hideCallControlsTimer;
+  var hideFeedbackButtonTimer;
   var overCallControls = false;
+  var overFeedbackButton = false;
 
   var _unreadMsg = 0;
   var _chatHasBeenShown = false;
@@ -35,33 +37,27 @@ BubbleFactory, Clipboard, LayoutManager */
   var MODAL_TXTS = {
     mute: {
       head: 'Mute all participants, including yourself',
-      detail: 'Everyone will be notified and can click their <i data-icon="no_mic"></i> to ' +
-              'unmute themselves.',
+      detail: 'Everyone will be notified and can click their <i data-icon="no_mic"></i> button' +
+              ' to unmute themselves.',
       button: 'Mute all participants'
     },
     muteRemotely: {
-      head: 'All participants microphones are going to be disabled in the call',
-      detail: 'If you want to keep talking , ' +
-              'you must enable manually your own microphone',
+      head: 'All participants microphones are being disabled in the call',
+      detail: 'If you want to keep talking, ' +
+              'you must manually enable your own microphone.',
       button: 'I understand'
     },
     unmutedRemotely: {
-      head: 'Your microphone is going to be enabled in the call',
-      detail: 'If you want to keep muted , ' +
-              'you must disable manually your own microphone',
+      head: 'Your microphone is now enabled in the call',
+      detail: 'If you want to remain muted, ' +
+              'you must manually disable your own microphone.',
       button: 'I understand'
     },
     join: {
       head: 'All participants are muted',
       detail: 'You can unmute everyone by toggling the Mute all participants option. Or you can ' +
-              'unmute just yourself by clicking your <microphone icon> icon',
+              'unmute just yourself by clicking the microphone icon in the bottom menu.',
       button: 'I understand'
-    },
-    disabledVideos: {
-      head: 'Stop receiving video from other participants',
-      detail: 'This option can help to improve or preserve call quality in situations of poor ' +
-              'bandwidth or other resource constraints.',
-      button: 'Stop receiving video'
     },
     endCall: {
       head: 'Exit the Meeting',
@@ -207,8 +203,8 @@ BubbleFactory, Clipboard, LayoutManager */
     dock = document.getElementById('top-banner');
     handler = dock;
     callControlsElem = document.querySelector('.call-controls');
-
-    roomNameElem = dock.querySelector('#roomName');
+    feedbackButton = document.querySelector('.feedbackButton');
+    roomNameElem = dock.querySelector('.room-name');
     participantsStrElem = document.getElementById('participantsStr');
     recordingsNumberElem = dock.querySelector('#recordings');
     videoSwitch = dock.querySelector('#videoSwitch');
@@ -219,7 +215,6 @@ BubbleFactory, Clipboard, LayoutManager */
     startArchivingElem = document.getElementById('startArchiving');
     stopArchivingElem = document.getElementById('stopArchiving');
     annotateBtnElem = document.getElementById('annotate');
-    recordingProgressElem = document.getElementById('recordingProgress');
     manageRecordingsElem = document.getElementById('manageRecordings');
     messageButtonElem = document.getElementById('message-btn');
     topBannerElem = document.getElementById('top-banner');
@@ -244,7 +239,7 @@ BubbleFactory, Clipboard, LayoutManager */
     initHTMLElements();
     topBannerElem.style.visibility = 'visible';
     screenElem.style.visibility = 'visible';
-    screenElem.addEventListener('mousemove', showCallControls);
+    screenElem.addEventListener('mousemove', showControls);
     callControlsElem.addEventListener('mouseover', function () {
       clearTimeout(hideCallControlsTimer);
       overCallControls = true;
@@ -253,10 +248,23 @@ BubbleFactory, Clipboard, LayoutManager */
       overCallControls = false;
       hideCallControls();
     });
+    feedbackButton && feedbackButton.addEventListener('mouseover', function () {
+      clearTimeout(hideFeedbackButtonTimer);
+      overFeedbackButton = true;
+    });
+    feedbackButton && feedbackButton.addEventListener('mouseout', function () {
+      overFeedbackButton = false;
+      hideFeedbackButton();
+    });
+  }
+
+  function showControls() {
+    showCallControls();
+    showFeedbackButton();
   }
 
   function showCallControls() {
-    callControlsElem.style.opacity = '1';
+    callControlsElem.classList.add('visible');
     if (!overCallControls && !hideCallControlsTimer) {
       hideCallControlsTimer = setTimeout(hideCallControls, 3000);
     }
@@ -264,14 +272,30 @@ BubbleFactory, Clipboard, LayoutManager */
 
   function hideCallControls() {
     hideCallControlsTimer = null;
-    callControlsElem.style.opacity = '0';
+    callControlsElem.classList.remove('visible');
   }
 
-  function showPublisherButtons() {
+  function showFeedbackButton() {
+    if (!feedbackButton) {
+      return;
+    }
+    feedbackButton.classList.add('visible');
+    if (!overFeedbackButton && !hideFeedbackButtonTimer) {
+      hideFeedbackButtonTimer = setTimeout(hideFeedbackButton, 3000);
+    }
+  }
+
+  function hideFeedbackButton() {
+    hideFeedbackButtonTimer = null;
+    feedbackButton.classList.remove('visible');
+  }
+
+
+  function showPublisherButtons(publisherOptions) {
     Utils.setDisabled(togglePublisherVideoElem, false);
     Utils.setDisabled(togglePublisherAudioElem, false);
-    togglePublisherVideoElem.classList.add('activated');
-    togglePublisherAudioElem.classList.add('activated');
+    publisherOptions.publishVideo && togglePublisherVideoElem.classList.add('activated');
+    publisherOptions.publishAudio && togglePublisherAudioElem.classList.add('activated');
   }
 
   function setSwitchStatus(status, bubbleUp, domElem, evtName) {
@@ -310,7 +334,6 @@ BubbleFactory, Clipboard, LayoutManager */
         var duration = 0;
         archive && (duration = Math.round((Date.now() - archive.createdAt) / 1000));
         cronograph.start(duration);
-        recordingProgressElem.style.display = 'block';
         startArchivingElem.style.display = 'none';
         stopArchivingElem.style.display = 'block';
         manageRecordingsElem.classList.add('recording');
@@ -342,7 +365,7 @@ BubbleFactory, Clipboard, LayoutManager */
         return onModel(model);
       }
 
-      cronograph.init(' ');
+      cronograph.init('Recording');
       exports.addEventListener('recordings-model-ready', function gotModel() {
         exports.removeEventListener('recordings-model-ready', gotModel);
         onModel(RecordingsController.model);
@@ -353,7 +376,6 @@ BubbleFactory, Clipboard, LayoutManager */
   function onStopArchiving() {
     getCronograph().then(function (cronograph) {
       stopArchivingElem.style.display = 'none';
-      recordingProgressElem.style.display = 'none';
       startArchivingElem.style.display = 'inline-block';
       manageRecordingsElem.classList.remove('recording');
       cronograph.stop();
@@ -396,6 +418,9 @@ BubbleFactory, Clipboard, LayoutManager */
     callControlsElem.addEventListener('click', function (e) {
       var elem = e.target;
       elem = HTMLElems.getAncestorByTagName(elem, 'button');
+      if (elem === null) {
+        return;
+      }
       switch (elem.id) {
         case 'addToCall':
           Utils.sendEvent('roomView:addToCall');
@@ -482,9 +507,7 @@ BubbleFactory, Clipboard, LayoutManager */
           break;
         case 'videoSwitch':
           if (!videoSwitch.classList.contains('activated')) {
-            showConfirm(MODAL_TXTS.disabledVideos).then(function (shouldDisable) {
-              shouldDisable && setSwitchStatus(true, true, videoSwitch, 'roomView:videoSwitch');
-            });
+            setSwitchStatus(true, true, videoSwitch, 'roomView:videoSwitch');
           } else {
             setSwitchStatus(false, true, videoSwitch, 'roomView:videoSwitch');
           }
@@ -492,11 +515,14 @@ BubbleFactory, Clipboard, LayoutManager */
         case 'audioSwitch':
           if (!audioSwitch.classList.contains('activated')) {
             showConfirm(MODAL_TXTS.mute).then(function (shouldDisable) {
-              shouldDisable &&
+              if (shouldDisable) {
                 setSwitchStatus(true, true, audioSwitch, 'roomView:muteAllSwitch');
+                togglePublisherAudioElem.classList.remove('activated');
+              }
             });
           } else {
             setSwitchStatus(false, true, audioSwitch, 'roomView:muteAllSwitch');
+            togglePublisherAudioElem.classList.add('activated');
           }
       }
     });
@@ -568,6 +594,8 @@ BubbleFactory, Clipboard, LayoutManager */
 
   var init = function (enableHangoutScroll, aEnableArchiveManager, aEnableSip) {
     enableArchiveManager = aEnableArchiveManager;
+    initHTMLElements();
+    dock.style.visibility = 'visible';
     enableSip = aEnableSip;
     addHandlers();
     addClipboardFeature();
@@ -586,7 +614,17 @@ BubbleFactory, Clipboard, LayoutManager */
     },
 
     set recordingsNumber(value) {
-      recordingsNumberElem && (recordingsNumberElem.textContent = value);
+      if (!manageRecordingsElem) {
+        return;
+      }
+      if (value === 0) {
+        manageRecordingsElem.style.display = 'none';
+        document.getElementById('toggleArchiving').classList.remove('manage-recordings');
+      } else {
+        manageRecordingsElem.style.display = 'block';
+        recordingsNumberElem && (recordingsNumberElem.textContent = value);
+        document.getElementById('toggleArchiving').classList.add('manage-recordings');
+      }
     },
 
     showRoom: showRoom,

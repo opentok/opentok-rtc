@@ -296,6 +296,10 @@ To enable this feature:
 
   * `SIP.password` -- Set this to the password for the Plivo app you created.
 
+  * `Plivo.authId` -- Set this to Auth Id for the Plivo account you created.
+
+  * `Plivo.authToken` -- Set this to the Auth Token for the Plivo account you created.
+
   * `SIP.requireGoogleAuth` -- See [Google Authentication for Phone dial-out](#google-authentication-for-phone-dial-out) for instructions on how to limit this functionality to users authenticated by their google account.
 
   For example, the new lines in the config.json file should look like this:
@@ -305,9 +309,13 @@ To enable this feature:
          "sipUsername" : "yourapp145617992434@phone.plivo.com",
          "sipPassword" : "sip:yourpassword",
          "requireGoogleAuth": false
+       },
+       "Plivo": {
+           "authId": "yourAuthId",
+           "authToken": "yourAuthToken"
        }
 ```
-You can also add these settings as `SIP_ENABLED`, `SIP_URL`, `SIP_USERNAME`, `SIP_PASSWORD` and `SIP_REQUIRE_GOOGLE_AUTH` environment variables (instead of config.json settings).
+You can also add these settings as `SIP_ENABLED`, `SIP_URL`, `SIP_USERNAME`, `SIP_PASSWORD`, `PLIVO_AUTH_ID`, `PLIVO_AUTH_TOKEN` and `SIP_REQUIRE_GOOGLE_AUTH` environment variables (instead of config.json settings).
 
 #### Google Authentication for Phone dial-out
 
@@ -384,10 +392,11 @@ sharing](tokbox.com/developer/guides/screen-sharing/).
 #### Feedback
 
  `ENABLE_FEEDBACK`: Enable the "Give Demo Feedback" form.
-
+ `REPORT_ISSUE_LEVEL`: The audio and video scores in the feedback form are between 1 (awful) and 5 (excellent). When the feedback form is submitted, if an audio or video score is less than or equal to the report issue level, the app calls `OT.reportIssue()`. This reports an issue, which you can view in OpenTok Inspector. (For more information, see [Reporting an issue](https://tokbox.com/developer/guides/debugging/js/#report-issue) in the OpenTok developer Guides.) The default value is 3, set to 0 to disable issue reporting.
  ```json
  "Feedback": {
-     "enabled": false
+     "enabled": true,
+     "reportIssueLevel": 0
  },
  ```
 

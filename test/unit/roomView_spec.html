@@ -16,11 +16,6 @@
       <a id="audioSwitch"><i data-icon="audioSwitch"></i><span>Mute all participants</span></a>
     </div>
     <%   if(enableArchiving) { %>
-    <div id="recordingProgress">
-      <i data-icon="record-solid"></i>
-      Rec
-      <div class="duration"></div>
-    </div>
     <div id="toggleArchiving" disabled>
       <a id="startArchiving" class="btn btn-blue btn-padding">Record</a>
       <a id="stopArchiving" class="btn btn-blue btn-padding">Stop Recording</a>
@@ -99,7 +94,9 @@
     <div>
   </div>
 </section>
-
+<section class="feedbackButton">
+    <span id="showFeedback">Feedback / Report a Bug</span>
+</section>
 <section id="screenShareErrors" class="screen-modal tc-modal">
   <div class="tc-dialog">
     <i data-icon="close_gray" class="close"></i>
@@ -132,11 +129,10 @@
 
   <section for="viewRecordings" class="bubble" data-recordings="loading">
     <div class="bubble-content top-arrow">
-      <p class="title recordings">Your archived recordings</p>
-      <p class="title no-recordings">No archived recordings</p>
-      <p class="title loading">Loading archived recordings...</p>
-      <p class="subtitle">Access to recordings will not be available after the meeting.<br>Please download the recording before exiting the meeting.</p>
-      <hr>
+      <p class="title recordings">Your recordings</p>
+      <p class="title no-recordings">No recordings</p>
+      <p class="title loading">Loading recordings...</p>
+      <p class="subtitle">Click to view a recording.</p>
       <div class="tc-list videos">
         <ul></ul>
       </div>
@@ -253,7 +249,7 @@
     <form id="dialOutForm">
       <p class="title">Dial out</p>
       <p>Enter the phone number:</p>
-      <input id="dialOutNumber" class="block" onclick="this.select();" 
+      <input id="dialOutNumber" class="block" onclick="this.select();"
         placeholder="1-415-555-0123">
       <button id="dialOutBtn" class="btn btn-blue btn-padding ctaarrow-white">Dial</button>
     </form>

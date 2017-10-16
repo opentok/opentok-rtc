@@ -39,7 +39,6 @@
 
   function init() {
     debug = new Utils.MultiLevelLogger('rtcApp.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
-    debug.log('Initializing app');
     var view = getView();
     if (view) {
       view.init();

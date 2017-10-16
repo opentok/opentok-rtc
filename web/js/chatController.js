@@ -182,7 +182,7 @@
     Utils.addHandlers(eventsIn);
   }
 
-  function init(aRoomName, aUsrId, aGlobalHandlers, listenedEvts) {
+  function init(aUsrId, aGlobalHandlers, listenedEvts) {
     return LazyLoader.dependencyLoad([
       '/js/chatView.js'
     ]).then(function () {
@@ -199,7 +199,7 @@
       };
       _historyChat = [];
       _hasStatus = (exports.RoomStatus !== undefined);
-      return ChatView.init(aUsrId, aRoomName, listenedEvts)
+      return ChatView.init(aUsrId, listenedEvts)
         .then(function () {
           _hasStatus && RoomStatus.set(STATUS_KEY, _historyChat);
           addEventsHandlers(listenedEvts);

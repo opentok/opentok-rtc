@@ -167,7 +167,7 @@
     var name = data.sender || data.userName;
     var text = time + ' - ' + name + ' ' + data.text;
     insertText(item, text);
-    scrollTo(item);
+    scrollTo();
   }
 
   function insertText(elemRoot, text) {
@@ -207,15 +207,14 @@
 
     insertText(info, data.text);
 
-    scrollTo(item);
+    scrollTo();
   }
 
-  function scrollTo(item) {
-    item = item || chatContent.lastChild;
-    chatContainer.scrollTop = chatContent.offsetHeight + item.clientHeight;
+  function scrollTo() {
+    chatContainer.scrollTop = chatContainer.scrollHeight;
   }
 
-  function init(aUsrId, aRoomName, configuredEvts) {
+  function init(aUsrId, configuredEvts) {
     return LazyLoader.dependencyLoad([
       '/js/helpers/textProcessor.js',
       '/js/components/chat.js'
