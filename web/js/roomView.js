@@ -38,18 +38,18 @@ BubbleFactory, Clipboard, LayoutManager */
     mute: {
       head: 'Mute all participants, including yourself',
       detail: 'Everyone will be notified and can click their <i data-icon="no_mic"></i> button' +
-              'to unmute themselves.',
+              ' to unmute themselves.',
       button: 'Mute all participants'
     },
     muteRemotely: {
       head: 'All participants microphones are being disabled in the call',
-      detail: 'If you want to keep talking , ' +
+      detail: 'If you want to keep talking, ' +
               'you must manually enable your own microphone.',
       button: 'I understand'
     },
     unmutedRemotely: {
       head: 'Your microphone is now enabled in the call',
-      detail: 'If you want to remain muted , ' +
+      detail: 'If you want to remain muted, ' +
               'you must manually disable your own microphone.',
       button: 'I understand'
     },
