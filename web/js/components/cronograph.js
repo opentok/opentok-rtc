@@ -1,4 +1,4 @@
-!(function(exports) {
+!(function (exports) {
   'use strict';
 
   var cronographElement;
@@ -30,7 +30,7 @@
      *
      * {initialText} Optional text which will be displayed before starting.
      */
-    init: function(initialText) {
+    init: function (initialText) {
       cronographElement = document.querySelector('.duration');
       reset(initialText);
       return this;
@@ -42,19 +42,19 @@
      * {from} This param sets the seconds from where the cronograph will start
      *        counting.
      */
-    start: function(from) {
+    start: function (from) {
       if (counterTimer !== null) {
         return this;
       }
       counter = Math.max(from || 0, 0);
-      counterTimer = setInterval(function() {
+      counterTimer = setInterval(function () {
         ++counter;
         paint();
       }, 1000);
       return this;
     },
 
-    stop: function() {
+    stop: function () {
       exports.clearInterval(counterTimer);
       counterTimer = null;
       return this;

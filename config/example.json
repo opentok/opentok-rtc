@@ -14,7 +14,8 @@
       }
    },
    "Feedback":{
-      "enabled":false
+     "enabled": false,
+     "reportIssueLevel": 0
    },
    "Screensharing":{
       "enabled":false,
@@ -22,5 +23,19 @@
       "annotations":{
          "enabled":true
       }
-   }
+   },
+   "SIP": {
+     "enabled": false,
+     "uri": "sip:username@your-sip-provider.com",
+     "username": "username",
+     "password": "password"
+   },
+   "Plivo": {
+    "authId": "yourId",
+    "authToken": "yourToken"
+  },
+  "Google": {
+    "clientId": "yourClientId.apps.googleusercontent.com",
+    "hostedDomain": "yourhosteddomain.com"
+  }
 }

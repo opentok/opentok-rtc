@@ -1,3 +1,5 @@
+/* global ChatView, RoomStatus */
+
 /**
  * CHAT COMPONENT
  * They are formed by chatController.js chatView.js, chat.js and textProcessor.js
@@ -61,7 +63,7 @@
  *
  */
 
-!(function(exports) {
+!(function (exports) {
   'use strict';
 
   var _hasStatus;
@@ -85,8 +87,8 @@
 
   var _historyChat;
 
-  var CONN_TEXT = '(has connected)';
-  var DISCONN_TEXT = '(left the room)';
+  var CONN_TEXT = 'has joined the call';
+  var DISCONN_TEXT = 'has left the call';
   var STATUS_KEY = 'chat';
 
   function loadHistoryChat() {
@@ -108,7 +110,7 @@
   var otHelper;
 
   var _chatHandlers = {
-    'signal:chat': function(evt) {
+    'signal:chat': function (evt) {
       // A signal of the specified type was received from the session. The
       // SignalEvent class defines this event object. It includes the following
       // properties:
@@ -117,10 +119,11 @@
       //        sent with the signal.
       // type — (String) The type assigned to the signal (if there is one).
       var data = JSON.parse(evt.data);
+      data.senderId = evt.from.connectionId;
       _historyChat.push(data);
       Utils.sendEvent('chatController:incomingMessage', { data: data });
     },
-    connectionCreated: function(evt) {
+    connectionCreated: function (evt) {
       // Dispatched when an new client (including your own) has connected to the
       // session, and for every client in the session when you first connect
       // Session object also dispatches a sessionConnected evt when your local
@@ -135,7 +138,7 @@
         otHelper = this;
       }
     },
-    connectionDestroyed: function(evt) {
+    connectionDestroyed: function (evt) {
       Utils.sendEvent('chatController:presenceEvent', {
         userName: JSON.parse(evt.connection.data).userName,
         text: DISCONN_TEXT
@@ -149,9 +152,9 @@
   function sendMsg(evt) {
     var data = evt.detail;
     return otHelper.sendSignal('chat', data)
-      .then(function() {
+      .then(function () {
         Utils.sendEvent('chatController:messageDelivered');
-      }).catch(function(error) {
+      }).catch(function (error) {
         debug.error('Error sending [', data.text.value, '] to the group. ', error.message);
       });
   }
@@ -172,17 +175,17 @@
    * with the new name for the event and it exists here change its name
    */
   function addEventsHandlers(aEvents) {
-    Array.isArray(aEvents) && aEvents.forEach(function(aEvt) {
+    Array.isArray(aEvents) && aEvents.forEach(function (aEvt) {
       var event = eventsIn[aEvt.type];
       event && event.couldBeChanged && (event.name = aEvt.name);
     });
     Utils.addHandlers(eventsIn);
   }
 
-  function init(aRoomName, aUsrId, aGlobalHandlers, listenedEvts) {
+  function init(aUsrId, aGlobalHandlers, listenedEvts) {
     return LazyLoader.dependencyLoad([
       '/js/chatView.js'
-    ]).then(function() {
+    ]).then(function () {
       eventsIn = {
         updatedRemotely: {
           name: 'roomStatus:updatedRemotely',
@@ -196,8 +199,8 @@
       };
       _historyChat = [];
       _hasStatus = (exports.RoomStatus !== undefined);
-      return ChatView.init(aUsrId, aRoomName, listenedEvts)
-        .then(function() {
+      return ChatView.init(aUsrId, listenedEvts)
+        .then(function () {
           _hasStatus && RoomStatus.set(STATUS_KEY, _historyChat);
           addEventsHandlers(listenedEvts);
           return addOTHandlers(aGlobalHandlers);

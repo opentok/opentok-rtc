@@ -1,8 +1,8 @@
 /* global window, safari, LazyLoader, Draggable */
-!(function(exports) {
+!(function (exports) {
   'use strict';
 
-  var getCurrentTime = function() {
+  var getCurrentTime = function () {
     var now = new Date();
     var time = [];
     var suffix = ' AM';
@@ -25,35 +25,35 @@
     return time.join('');
   };
 
-  var inspectObject = function(obj) {
+  var inspectObject = function (obj) {
     var str = '';
-    Object.keys(obj).forEach(function(elto) {
+    Object.keys(obj).forEach(function (elto) {
       str += '\n' + elto + ':' + JSON.stringify(obj[elto]);
     });
     return str;
   };
 
-  var sendEvent = function(eventName, data, target) {
+  var sendEvent = function (eventName, data, target) {
     data = data ? { detail: data } : {};
     var newEvt = new CustomEvent(eventName, data);
     (target || exports).dispatchEvent(newEvt);
   };
 
-  var addHandlers = function(events) {
-    Object.keys(events).forEach(function(evtName) {
+  var addHandlers = function (events) {
+    Object.keys(events).forEach(function (evtName) {
       var event = events[evtName];
       (event.target || exports).addEventListener(event.name, event.handler);
     });
   };
 
-  var addEventsHandlers = function(eventPreffixName, handlers, target) {
+  var addEventsHandlers = function (eventPreffixName, handlers, target) {
     eventPreffixName = eventPreffixName || '';
-    Object.keys(handlers).forEach(function(eventName) {
+    Object.keys(handlers).forEach(function (eventName) {
       (target || exports).addEventListener(eventPreffixName + eventName, handlers[eventName]);
     });
   };
 
-  var setTransform = function(style, transform) {
+  var setTransform = function (style, transform) {
     /* eslint-disable no-multi-assign */
     style.MozTransform = style.webkitTransform = style.msTransform = style.transform = transform;
     /* eslint-enable no-multi-assign */
@@ -79,18 +79,18 @@
   // parses a URL search string. It returns an object that has a key the parameter name(s)
   // and as values either the value if the value is unique or an array of values if it exists
   // more than once on the search
-  var parseSearch = function(aSearchStr) {
+  var parseSearch = function (aSearchStr) {
     aSearchStr = decodeStr(aSearchStr);
     return aSearchStr.slice(1).split('&')
-      .map(function(aParam) { return aParam.split(/=(.+)?/); })
-      .reduce(function(aObject, aCurrentValue) {
+      .map(function (aParam) { return aParam.split(/=(.+)?/); })
+      .reduce(function (aObject, aCurrentValue) {
         var parName = aCurrentValue[0];
         aObject.params[parName] = _addValue(aObject.params[parName], aCurrentValue[1] || null);
         return aObject;
       },
       {
         params: {},
-        getFirstValue: function(aParam) {
+        getFirstValue: function (aParam) {
           return Array.isArray(this.params[aParam]) ? this.params[aParam][0] : this.params[aParam];
         }
       }
@@ -101,10 +101,10 @@
   // key: value or key: [value1,value2] structure.
   function generateSearchStr(aObject) {
     return Object.keys(aObject)
-      .reduce(function(aPrevious, aParam, aIndex) {
+      .reduce(function (aPrevious, aParam, aIndex) {
         var value = aObject[aParam];
         value = Array.isArray(value) ? value : [value];
-        value.forEach(function(aSingleValue, aValueIndex) {
+        value.forEach(function (aSingleValue, aValueIndex) {
           (aIndex + aValueIndex) && aPrevious.push('&');
           aPrevious.push(aParam);
           aSingleValue && aPrevious.push('=', aSingleValue);
@@ -118,7 +118,7 @@
     return str ? window.decodeURIComponent(str) : str;
   }
 
-  var setDisabled = function(element, disabled) {
+  var setDisabled = function (element, disabled) {
     element.disabled = disabled;
     disabled ? element.setAttribute('disabled', 'disabled') :
                element.removeAttribute('disabled');
@@ -146,17 +146,28 @@
     if (time.length) {
       (minutes < 10) && time.push('0');
       time.push(minutes);
-      time.push(':');
     } else if (minutes) {
       time.push(minutes);
-      time.push(':');
+    } else {
+      time.push('0');
     }
+    time.push(':');
 
     var seconds = duration % 60;
-    (time.length) && (seconds < 10) && time.push('0');
+    (seconds < 10) && time.push('0');
     time.push(seconds);
 
     return time.join('');
+  }
+
+  function toPrettySize(size) {
+    if (!size) {
+      return '';
+    }
+    if (size < 1048576) {
+      return ' / ' + (size / 1024).toFixed(2) + ' kB';
+    }
+    return ' / ' + (size / 1048576).toFixed(2) + ' MB';
   }
 
   function getLabelText(archive) {
@@ -168,7 +179,7 @@
     time.indexOf(':') === 1 && (prefix = '0');
 
     var label = [prefix, time, ' - ', archive.recordingUser, '\'s Archive (',
-      toPrettyDuration(archive.duration), 's)'];
+      toPrettyDuration(archive.duration), toPrettySize(archive.size), ')'];
 
     return label.join('');
   }
@@ -179,7 +190,7 @@
   }
 
   function isSafari() {
-    var checkObject = function(p) { return p.toString() === '[object SafariRemoteNotification]'; };
+    var checkObject = function (p) { return p.toString() === '[object SafariRemoteNotification]'; };
     return /constructor/i.test(window.HTMLElement) ||
         checkObject(!window.safari || safari.pushNotification);
   }
@@ -194,14 +205,14 @@
     get draggableUI() {
       return document.querySelectorAll('[draggable]').length;
     },
-    getDraggable: function() {
+    getDraggable: function () {
       return LazyLoader.dependencyLoad([
         '/js/components/draggable.js'
-      ]).then(function() {
+      ]).then(function () {
         return Draggable;
       });
     },
-    isScreen: function(item) {
+    isScreen: function (item) {
       var type = item.data('streamType');
       return type === 'desktop' || type === 'screen';
     },
@@ -209,7 +220,7 @@
     parseSearch: parseSearch,
     generateSearchStr: generateSearchStr,
     decodeStr: decodeStr,
-    isChrome: function() {
+    isChrome: function () {
       var userAgent = 'userAgent' in navigator && (navigator.userAgent.toLowerCase() || '');
       var vendor = 'vendor' in navigator && (navigator.vendor.toLowerCase() || '');
       return /chrome|chromium/i.test(userAgent) && /google inc/.test(vendor);
@@ -221,7 +232,7 @@
 
   // Just replacing global.utils might not be safe... let's just expand it...
   exports.Utils = exports.Utils || {};
-  Object.keys(Utils).forEach(function(utilComponent) {
+  Object.keys(Utils).forEach(function (utilComponent) {
     exports.Utils[utilComponent] = Utils[utilComponent];
   });
 }(this));

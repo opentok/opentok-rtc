@@ -11,19 +11,21 @@ body {
   background-color: #FFF;
   color: @text;
   overflow: hidden;
+  background-color: black;
+  background-image: url(/images/background.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  transition: none;
+  padding: 0;
 }
 
 .main {
 
-  display: flex;
-  .flex-direction(column);
   height: 100%;
+  .justify-content(center);
 
   header {
-    padding-bottom: 25px;
-    @media @smartphones {
-      padding-bottom: 0px;
-    }
+    padding-bottom: 122px;
   }
 
   h1, h2, h3 {
@@ -34,13 +36,11 @@ body {
 
   h1 {
     font-family: @muliRegularFont, arial;
-    font-size: 48px;
-    @media @smartphones {
-      font-size: 36px;
-    }
+    font-size: 14px;
+    color: #8794a2;
+    letter-spacing: 1px;
     font-weight: 200;
     line-height: 60px;
-    color: @blueText;
     margin: 10px 0;
   }
 
@@ -68,13 +68,45 @@ body {
   form {
     width: 100%;
     margin: 20px 0 0 0;
-    @media @smartphones {
-      margin: 5px 0 40px 0;
+    height: 100px;
+
+    div {
+      border-bottom: solid 1px #434d5a;
+      height: 50%;
     }
-    @media @smartphonesLandscape {
-      margin: 7px 0 40px 0;
+
+    input {
+      background: none;
+      position: absolute;
+      left: 0;
+      border: none;
+      width: 233px;
+      color: white;
+      outline: none;
     }
-    text-align: center;
+    textarea {
+      padding: 12px 20px 10px 0;
+    }
+
+    label {
+      color: #748393;
+      font-size: 16px;
+      line-height: 57px;
+      width: 100%;
+      float: left;
+      bottom: 0;
+      margin-left: 10px;
+      text-align: left;
+      font-weight: normal;
+      position: relative;
+      transition: all 0.5s;
+    }
+    label.visited {
+      margin-left: 0;
+      text-align: right;
+      font-size: 12px;
+      right: 0;
+    }
 
     p {
       margin: 0;
@@ -106,9 +138,8 @@ body {
 
     .error-room {
       margin: 0 356px 0 0;
-      @media @smartphones {
-        margin: 0 100px 0 0;
-      }
+      background-color: white;
+      width: 100%;
     }
 
     &.error {
@@ -135,13 +166,25 @@ body {
     }
 
     .text-input {
+      font-size: 16px;
+      position: absolute;
+      left: 12px;
+      z-index: 100;
       @media @smartphones {
         font-size: 14px;
       }
       @media @smartphonesLandscape {
         font-size: 14px;
-        padding: 8px 10px;
       }
+    }
+  }
+  .landing-more-info {
+    color: #748393;
+    font-size: 12px;
+    margin-top: 69px;
+    margin-bottom: 12px;
+    a {
+      color: @blueText;
     }
   }
 
@@ -175,12 +218,55 @@ body {
     .flex-direction(column);
     .justify-content(center);
     .flex(1);
+    right: 2px;
+    position: relative;
+    float: right;
+    margin-right: 80px;
+    padding: 20px;
+    width: 360px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   }
 
   a {
     text-decoration: none;
   }
 
+  #enter {
+    position: fixed;
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    right: 0;
+    top: 50%;
+    background-color: #0099cc;
+    opacity: 0.7;
+    margin-left: 0;
+    border: 0;
+    border-radius: 0;
+    transition: width 0.5s ease-out;
+    background-image: url(/images/icons/ctaarrow_white@2x.png);   
+    background-size: 12.5px 21px;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    transition: opacity 0.5s;
+    &:hover {
+      opacity: 1;
+    }
+  }
+  #righthand-container {
+    height: 100%;
+    display: table;
+    width: 498px;
+    right: 0;
+    position: absolute;
+  }
+  #righthand-container-cell {
+    vertical-align: middle;
+    display: table-cell;
+  }
 }
 
 .tc-modal.contract {
@@ -194,7 +280,7 @@ body {
   }
 
   p {
-    font-family: "Muli", arial;
+    font-family: "Open Sans", arial;
     color: @text;
     font-weight: 300;
     font-size: 16px;

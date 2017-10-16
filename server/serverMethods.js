@@ -15,6 +15,8 @@ var SwaggerBP = require('swagger-boilerplate');
 var C = require('./serverConstants');
 var configLoader = require('./configLoader');
 var FirebaseArchives = require('./firebaseArchives');
+var plivo = require('plivo');
+var GoogleAuth = require('./googleAuthStrategies');
 
 
 function ServerMethods(aLogLevel, aModules) {
@@ -44,7 +46,10 @@ function ServerMethods(aLogLevel, aModules) {
     new ServerPersistence([], connectionString, aLogLevel, aModules);
 
   const redisRoomPrefix = C.REDIS_ROOM_PREFIX;
+  const redisPhonePrefix = C.REDIS_PHONE_PREFIX;
 
+  var plivoClient;
+  var googleAuth;
   // Opentok API instance, which will be configured only after tbConfigPromise
   // is resolved
   var tbConfigPromise;
@@ -89,6 +94,7 @@ function ServerMethods(aLogLevel, aModules) {
       var templatingSecret = config.get(C.TEMPLATING_SECRET);
       var apiKey = config.get(C.OPENTOK_API_KEY);
       var apiSecret = config.get(C.OPENTOK_API_SECRET);
+      logger.log('apiSecret', apiSecret);
       var archivePollingTO = config.get(C.ARCHIVE_POLLING_INITIAL_TIMEOUT);
       var archivePollingTOMultiplier =
                 config.get(C.ARCHIVE_POLLING_TIMEOUT_MULTIPLIER);
@@ -100,13 +106,34 @@ function ServerMethods(aLogLevel, aModules) {
       var iosAppId = config.get(C.IOS_APP_ID);
       var iosUrlPrefix = config.get(C.IOS_URL_PREFIX);
 
+      var enableSip = config.get(C.SIP_ENABLED);
+      var sipUri = config.get(C.SIP_URI);
+      var sipUsername = config.get(C.SIP_USERNAME);
+      var sipPassword = config.get(C.SIP_PASSWORD);
+      var sipRequireGoogleAuth = config.get(C.SIP_REQUIRE_GOOGLE_AUTH);
+      var plivoAuthId = config.get(C.PLIVO_AUTH_ID);
+      var plivoAuthToken = config.get(C.PLIVO_AUTH_TOKEN);
+      var googleId = config.get(C.GOOGLE_CLIENT_ID);
+      var googleHostedDomain = config.get(C.GOOGLE_HOSTED_DOMAIN);
+      if (sipRequireGoogleAuth) {
+        googleAuth = new GoogleAuth.EnabledGoogleAuthStrategy(googleId, googleHostedDomain);
+      } else {
+        googleAuth = new GoogleAuth.DisabledGoogleAuthStategy();
+      }
+      if (enableSip) {
+        plivoClient = plivo.RestAPI({
+          authId: plivoAuthId,
+          authToken: plivoAuthToken,
+        });
+      }
       // This isn't strictly necessary... but since we're using promises all over the place, it
       // makes sense. The _P are just a promisified version of the methods. We could have
       // overwritten the original methods but this way we make it explicit. That's also why we're
       // breaking camelCase here, to make it patent to the reader that those aren't standard
       // methods of the API.
-      ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'deleteArchive']
-              .forEach(method => otInstance[method + '_P'] = promisify(otInstance[method])); // eslint-disable-line no-return-assign
+      ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'deleteArchive', 'dial',
+        'forceDisconnect']
+        .forEach(method => otInstance[method + '_P'] = promisify(otInstance[method])); // eslint-disable-line no-return-assign
 
       var maxSessionAge = config.get(C.OPENTOK_MAX_SESSION_AGE);
       var maxSessionAgeMs = maxSessionAge * 24 * 60 * 60 * 1000;
@@ -122,6 +149,7 @@ function ServerMethods(aLogLevel, aModules) {
       var enableScreensharing = config.get(C.ENABLE_SCREENSHARING);
       var enableAnnotations = enableScreensharing && config.get(C.ENABLE_ANNOTATIONS);
       var enableFeedback = config.get(C.ENABLE_FEEDBACK);
+      var reportIssueLevel = config.get(C.REPORT_ISSUE_LEVEL);
 
       if (!firebaseConfigured && enableArchiveManager) {
         logger.error('Firebase not configured. Please provide firebase credentials or disable archive_manager');
@@ -160,6 +188,14 @@ function ServerMethods(aLogLevel, aModules) {
                 enableScreensharing,
                 enableAnnotations,
                 enableFeedback,
+                enableSip,
+                sipUri,
+                sipUsername,
+                sipPassword,
+                sipRequireGoogleAuth,
+                googleId,
+                googleHostedDomain,
+                reportIssueLevel,
               }));
     });
   }
@@ -287,36 +323,44 @@ function ServerMethods(aLogLevel, aModules) {
       (tbConfig.templatingSecret === query.template_auth) && query.template;
     var userName = query && query.userName;
 
-    // We really don't want to cache this
-    aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
-    aRes.set('Pragma', 'no-cache');
-    aRes.set('Expires', 0);
-    aRes
-      .render((template || tbConfig.defaultTemplate) + '.ejs',
-      {
-        isWebRTCVersion: tbConfig.isWebRTCVersion,
-        userName: userName || C.DEFAULT_USER_NAME,
-        roomName: aReq.params.roomName,
-        chromeExtensionId: tbConfig.chromeExtId,
-        iosAppId: tbConfig.iosAppId,
-               // iosUrlPrefix should have something like:
-               // https://opentokdemo.tokbox.com/room/
-               // or whatever other thing that should be before the roomName
-        iosURL: tbConfig.iosUrlPrefix + aReq.params.roomName + '?userName=' +
-                       (userName || C.DEFAULT_USER_NAME),
-        enableArchiving: tbConfig.enableArchiving,
-        enableArchiveManager: tbConfig.enableArchiveManager,
-        enableScreensharing: tbConfig.enableScreensharing,
-        enableAnnotation: tbConfig.enableAnnotation,
-        enableFeedback: tbConfig.enableFeedback,
-      }, (err, html) => {
-        if (err) {
-          logger.log('getRoom. error:', err);
-          aRes.status(400).send(new ErrorInfo(400, 'Unknown template.'));
-        } else {
-          aRes.send(html);
-        }
-      });
+    // Create a session ID and token for the network test
+    tbConfig.otInstance.createSession({ mediaMode: 'routed' }, (error, testSession) => {
+      // We really don't want to cache this
+      aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+      aRes.set('Pragma', 'no-cache');
+      aRes.set('Expires', 0);
+      aRes
+        .render((template || tbConfig.defaultTemplate) + '.ejs',
+        {
+          userName: userName || C.DEFAULT_USER_NAME,
+          roomName: aReq.params.roomName,
+          chromeExtensionId: tbConfig.chromeExtId,
+          iosAppId: tbConfig.iosAppId,
+                 // iosUrlPrefix should have something like:
+                 // https://opentokdemo.tokbox.com/room/
+                 // or whatever other thing that should be before the roomName
+          iosURL: tbConfig.iosUrlPrefix + aReq.params.roomName + '?userName=' +
+                         (userName || C.DEFAULT_USER_NAME),
+          enableArchiving: tbConfig.enableArchiving,
+          enableArchiveManager: tbConfig.enableArchiveManager,
+          enableScreensharing: tbConfig.enableScreensharing,
+          enableAnnotation: tbConfig.enableAnnotations,
+          enableFeedback: tbConfig.enableFeedback,
+          precallSessionId: testSession.sessionId,
+          apiKey: tbConfig.apiKey,
+          precallToken: tbConfig.otInstance.generateToken(testSession.sessionId, {
+            role: 'publisher',
+          }),
+          hasSip: tbConfig.enableSip,
+        }, (err, html) => {
+          if (err) {
+            logger.log('getRoom. error:', err);
+            aRes.status(400).send(new ErrorInfo(400, 'Unknown template.'));
+          } else {
+            aRes.send(html);
+          }
+        });
+    });
   }
 
   // Given a sessionInfo (which might be empty or non usable) returns a promise than will fullfill
@@ -409,6 +453,11 @@ function ServerMethods(aLogLevel, aModules) {
           enableArchiveManager: tbConfig.enableArchiveManager,
           enableAnnotation: tbConfig.enableAnnotations,
           enableArchiving: tbConfig.enableArchiving,
+          enableSip: tbConfig.enableSip,
+          requireGoogleAuth: tbConfig.sipRequireGoogleAuth,
+          googleId: tbConfig.googleId,
+          googleHostedDomain: tbConfig.googleHostedDomain,
+          reportIssueLevel: tbConfig.reportIssueLevel,
         };
         answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId;
         aRes.send(answer);
@@ -600,6 +649,125 @@ function ServerMethods(aLogLevel, aModules) {
       });
   }
 
+  // /room/:roomName/dial
+  // Returns DialInfo:
+  // { number: string, status: string }
+  function postRoomDial(aReq, aRes) {
+    var tbConfig = aReq.tbConfig;
+    var roomName = aReq.params.roomName.toLowerCase();
+    var body = aReq.body;
+    var phoneNumber = body.phoneNumber;
+    var googleIdToken = body.googleIdToken;
+    if (!tbConfig.enableSip) {
+      return aRes.status(400).send(new ErrorInfo(400, 'Phone dial-out not allowed.'));
+    }
+    if (!body || !body.phoneNumber) {
+      logger.log('postRoomDial => missing body parameter: ', aReq.body);
+      return aRes.status(400).send(new ErrorInfo(400, 'Missing required parameter'));
+    }
+    return googleAuth.verifyIdToken(googleIdToken).then(() =>
+          serverPersistence
+          .getKey(redisRoomPrefix + roomName, true)
+          .then((sessionInfo) => {
+            const sessionId = sessionInfo.sessionId;
+            const token = tbConfig.otInstance.generateToken(sessionId, {
+              role: 'publisher',
+              data: '{"sip":true, "role":"client", "name":"' + phoneNumber + '"}',
+            });
+            var options = {
+              // Plivo accepts custom headers that start with 'X-PH'
+              headers: {
+                'X-PH-ROOMNAME': encodeURIComponent(roomName),
+                'X-PH-DIALOUT-NUMBER': phoneNumber,
+              },
+              auth: {
+                username: tbConfig.sipUsername,
+                password: tbConfig.sipPassword,
+              },
+              secure: true,
+            };
+            tbConfig.otInstance.dial_P(sessionId, token, tbConfig.sipUri, options)
+              .then((sipCallData) => {
+                var dialedNumberInfo = {};
+                dialedNumberInfo.sessionId = sipCallData.sessionId;
+                dialedNumberInfo.connectionId = sipCallData.connectionId;
+                dialedNumberInfo.googleIdToken = googleIdToken;
+                serverPersistence.setKey(redisPhonePrefix + phoneNumber,
+                                         JSON.stringify(dialedNumberInfo));
+                return aRes.send(sipCallData);
+              })
+              .catch((error) => {
+                logger.log('postRoomDial error', error);
+                return aRes.status(400).send(new ErrorInfo(400, 'An error ocurred while forwarding SIP Call'));
+              });
+          }))
+      .catch((err) => {
+        logger.log('postRoomDial => authentication error: ', err);
+        return aRes.status(401).send(new ErrorInfo(401, 'Authentication Error'));
+      });
+  }
+
+  // /forward
+  // Returns Plivo call-forwarding XML:
+  // { callStatus, callUUId, fromPhone }
+  function getForward(aReq, aRes) {
+    var plivoResponse = plivo.Response();
+    var phoneNumber = aReq.query['X-PH-DIALOUT-NUMBER'];
+    var uuid = aReq.query.CallUUID;
+    plivoResponse.addDial()
+      .addNumber(phoneNumber);
+    aRes.send(plivoResponse.toXML());
+    serverPersistence.getKey(redisPhonePrefix + phoneNumber, true)
+    .then((dialedNumberInfo) => {
+      if (dialedNumberInfo !== null) {
+        dialedNumberInfo.uuid = uuid;
+        serverPersistence.setKey(redisPhonePrefix + phoneNumber,
+          JSON.stringify(dialedNumberInfo));
+      }
+    });
+  }
+
+  // /hang-up
+  // Indicates a phone call on the SIP gateway has ended
+  function getHangUp(aReq) {
+    var phoneNumber = aReq.query['X-PH-DIALOUT-NUMBER'];
+    var tbConfig = aReq.tbConfig;
+    serverPersistence.getKey(redisPhonePrefix + phoneNumber, true)
+      .then((dialedNumberInfo) => {
+        if (dialedNumberInfo !== null) {
+          tbConfig.otInstance.forceDisconnect(dialedNumberInfo.sessionId);
+          serverPersistence.delKey(redisPhonePrefix + phoneNumber);
+        }
+      });
+  }
+
+  // /hang-up
+  // A web client that initiated a SIP call is requesting that we hang up
+  function postHangUp(aReq, aRes) {
+    var body = aReq.body;
+    var phoneNumber = body.phoneNumber;
+    var googleIdToken = body.googleIdToken;
+    var tbConfig = aReq.tbConfig;
+    serverPersistence.getKey(redisPhonePrefix + phoneNumber, true)
+      .then((dialedNumberInfo) => {
+        if (!dialedNumberInfo || dialedNumberInfo.googleIdToken !== googleIdToken) {
+          return aRes.status(400).send(new ErrorInfo(400, 'Unknown phone number.'));
+        }
+        if (dialedNumberInfo.uuid) {
+          var params = {
+            call_uuid: dialedNumberInfo.uuid,
+          };
+          plivoClient.hangup_call(params);
+        }
+        return tbConfig.otInstance.forceDisconnect_P(dialedNumberInfo.sessionId,
+          dialedNumberInfo.connectionId).then(() => {
+            serverPersistence.delKey(redisPhonePrefix + phoneNumber);
+            return aRes.send({});
+          });
+      });
+  }
+
+
   function loadConfig() {
     tbConfigPromise = _initialTBConfig();
     return tbConfigPromise;
@@ -633,6 +801,10 @@ function ServerMethods(aLogLevel, aModules) {
     getArchive,
     deleteArchive,
     getRoomArchive,
+    postRoomDial,
+    getForward,
+    getHangUp,
+    postHangUp,
     oldVersionCompat,
   };
 }

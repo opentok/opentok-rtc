@@ -1,25 +1,25 @@
-!(function(global) {
+!(function (global) {
   'use strict';
 
-  var Handler = function(container, items) {
-    ['click', 'dblclick'].forEach(function(name) {
+  var Handler = function (container, items) {
+    ['click', 'dblclick'].forEach(function (name) {
       container.addEventListener(name, this);
     }, this);
     var events = ['roomController:video', 'roomController:audio', 'roomController:videoDisabled',
       'roomController:videoEnabled', 'roomController:disconnected',
       'roomController:connected'];
-    events.forEach(function(name) {
+    events.forEach(function (name) {
       window.addEventListener(name, this);
     }, this);
     this.items = items;
   };
 
-  var setVideoDisabled = function(item, disabled) {
+  var setVideoDisabled = function (item, disabled) {
     item && item.data('videoDisabled', disabled);
   };
 
   Handler.prototype = {
-    handleEvent: function(evt) {
+    handleEvent: function (evt) {
       switch (evt.type) {
         case 'click':
           var elemClicked = evt.target;
@@ -37,9 +37,6 @@
         case 'roomController:audio':
           var detail = evt.detail;
           var item = this.items[detail.id];
-          if (detail.reason === 'publishVideo' || detail.reason === 'publishAudio') {
-            item = this.items.publisher;
-          }
 
           if (!item) {
             return;

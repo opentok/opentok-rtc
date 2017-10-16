@@ -1,4 +1,6 @@
-!(function(exports) {
+/* globals Firebase */
+
+!(function (exports) {
   'use strict';
 
   var archives = null;
@@ -8,17 +10,17 @@
     var self = this;
     return LazyLoader.dependencyLoad([
       'https://cdn.firebase.com/js/client/2.3.1/firebase.js'
-    ]).then(function() {
-      return new Promise(function(resolve, reject) {
+    ]).then(function () {
+      return new Promise(function (resolve) {
         // url points to the session root
         var sessionRef = new Firebase(aUrl);
-        sessionRef.authWithCustomToken(aToken, function() {
+        sessionRef.authWithCustomToken(aToken, function () {
           var archivesRef = sessionRef.child('archives');
           archivesRef.on('value', function updateArchiveHistory(snapshot) {
             var handlers = listeners.value;
             archives = snapshot.val();
             var archiveValues = Promise.resolve(archives || {});
-            handlers && handlers.forEach(function(aHandler) {
+            handlers && handlers.forEach(function (aHandler) {
               archiveValues.then(aHandler.method.bind(aHandler.context));
             });
           }, function onCancel(err) {
@@ -27,7 +29,7 @@
             var handlers = listeners.value;
             console.error('Lost connection to Firebase. Reason: ', err); // eslint-disable-line no-console
             var archiveValues = Promise.resolve({});
-            handlers && handlers.forEach(function(aHandler) {
+            handlers && handlers.forEach(function (aHandler) {
               archiveValues.then(aHandler.method.bind(aHandler.context));
             });
           });
