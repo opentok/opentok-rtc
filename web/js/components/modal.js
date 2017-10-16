@@ -11,6 +11,7 @@
   var keyPressHandler;
   var _queuedModals = [];
   var _modalShown = false;
+  var preShowFocusElement;
 
   function addCloseHandler(selector) {
     var closeElement = document.querySelector(selector + ' .close');
@@ -43,6 +44,8 @@
 
   function show(selector, preShowCb) {
     var screenFree;
+    preShowFocusElement = document.activeElement;
+    preShowFocusElement.blur();
     if (!_modalShown) {
       screenFree = Promise.resolve();
     } else {
@@ -74,6 +77,7 @@
       modal.addEventListener(transEndEventName, function onTransitionend() {
         modal.removeEventListener(transEndEventName, onTransitionend);
         modal.classList.remove('visible');
+        preShowFocusElement.focus();
         resolve();
       });
       removeCloseHandler(selector);
