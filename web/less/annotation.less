@@ -12,13 +12,42 @@
   }
 }
 
+.ots-annotation-toolbar-container {
+  border-radius: 6px;
+  margin-top: 100px;
+  background-color: #29383f !important;
+  :first-child {
+    border-radius: 6px 6px 0 0;
+  }
+  :last-child {
+    border-radius: 0 0 6px 6px;
+  }
+  .annotation-btn {
+    padding: inherit;
+    background-color: #29383f !important;
+  }
+  .annotation-btn.selected {
+    background-color: #19262c !important;
+  }
+}
+
 [data-annotation-visible=true] .ots-annotation-toolbar-container {
   opacity: 1;
+  visibility: visible;
+}
+
+[data-annotation-visible=true] #annotate {
+  background-image: url(/images/icons/active-circle.svg);
+}
+
+[data-annotation-visible=false] #annotate {
+  background-image: url(/images/icons/inactive-circle.svg);
 }
 
 .ots-annotation-toolbar-container {
   opacity: 0;
-  transition: opacity @transitionTime;
+  visibility: hidden;
+  transition: all @transitionTime;
 
   z-index: 1001;
   top: 18px;
@@ -40,12 +69,10 @@
     .OT_subpanel, .color-picker {
       border-top-left-radius: 8px;
       border-bottom-left-radius: 8px;
-      height: auto !important;
-    }
-
-    .OT_subpanel, .color-picker {
-      top: 50%;
-      transform: translateY(-50%);
+      height: auto;
+      top: 6px;
+      right: 71px;
+      background-color: #29383f;
     }
   }
 }

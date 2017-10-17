@@ -63,9 +63,8 @@
   height: 16px;
   vertical-align: middle;
   transition: all 0.5s ease-out;
-  -webkit-transform: rotate(180deg);
-      -ms-transform: rotate(180deg);
-          transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+      transform: rotate(180deg);
   margin-right: 15px;
 }
 .tb.btn.btn-primary.btn-arrow.small:after {
@@ -73,15 +72,13 @@
 }
 .tb.btn.btn-primary.btn-arrow.btn-next:hover:after {
   background-size: 9px 16px;
-  -webkit-transform: translate(3px, 0px);
-      -ms-transform: translate(3px, 0px);
-          transform: translate(3px, 0px);
+  -ms-transform: translate(3px, 0px);
+      transform: translate(3px, 0px);
 }
 .tb.btn.btn-primary.btn-arrow.btn-prev:hover:before {
   background-size: 9px 16px;
-  -webkit-transform: translate(-3px, 0px) rotate(180deg);
-      -ms-transform: translate(-3px, 0px) rotate(180deg);
-          transform: translate(-3px, 0px) rotate(180deg);
+  -ms-transform: translate(-3px, 0px) rotate(180deg);
+      transform: translate(-3px, 0px) rotate(180deg);
 }
 .tb.btn.btn-secondary.btn-arrow.btn-next:after {
   display: inline-block;
@@ -103,22 +100,19 @@
   height: 16px;
   vertical-align: middle;
   transition: all 0.5s ease-out;
-  -webkit-transform: rotate(180deg);
-      -ms-transform: rotate(180deg);
-          transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+      transform: rotate(180deg);
   margin-right: 15px;
 }
 .tb.btn.btn-secondary.btn-arrow.btn-next:hover:after {
   background-size: 9px 16px;
-  -webkit-transform: translate(3px, 0px);
-      -ms-transform: translate(3px, 0px);
-          transform: translate(3px, 0px);
+  -ms-transform: translate(3px, 0px);
+      transform: translate(3px, 0px);
 }
 .tb.btn.btn-secondary.btn-arrow.btn-prev:hover:before {
   background-size: 9px 16px;
-  -webkit-transform: translate(-3px, 0px) rotate(180deg);
-      -ms-transform: translate(-3px, 0px) rotate(180deg);
-          transform: translate(-3px, 0px) rotate(180deg);
+  -ms-transform: translate(-3px, 0px) rotate(180deg);
+      transform: translate(-3px, 0px) rotate(180deg);
 }
 .tb.btn.btn-positive {
   background-color: #1ba71b;

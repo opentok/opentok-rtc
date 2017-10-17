@@ -29,7 +29,6 @@
 
   var otLoaded = otPromise.then(function() {
     var hasRequirements = OT.checkSystemRequirements();
-    logger.log('checkSystemRequirements:', hasRequirements);
     if (!hasRequirements) {
       OT.upgradeSystemRequirements();
       throw new Error('Unsupported browser, probably needs upgrade');
@@ -230,12 +229,10 @@
   }
 
   // aSessionInfo must have sessionId, apiKey, token
-  function OTHelper(aSessionInfo) {
+  function OTHelper() {
     var _session;
     var _publisher;
     var _publisherInitialized = false;
-    var _sessionInfo = aSessionInfo;
-
 
     function disconnect() {
       if (_session) {
@@ -249,11 +246,11 @@
 
     // aHandlers is either an object with the handlers for each event type
     // or an array of objects
-    function connect(aHandlers) {
+    function connect(sessionInfo, aHandlers) {
       var self = this;
-      var apiKey = _sessionInfo.apiKey;
-      var sessionId = _sessionInfo.sessionId;
-      var token = _sessionInfo.token;
+      var apiKey = sessionInfo.apiKey;
+      var sessionId = sessionInfo.sessionId;
+      var token = sessionInfo.token;
       if (!Array.isArray(aHandlers)) {
         aHandlers = [aHandlers];
       }
@@ -295,6 +292,15 @@
     var _publisherPromise = new Promise(function(resolve, reject) {
       _solvePublisherPromise = resolve;
     });
+
+    function initPublisher(aDOMElement, aProperties, aHandlers) {
+      return new Promise(function(resolve, reject) {
+        otLoaded.then(function() {
+          var publisher = OT.initPublisher(aDOMElement, aProperties);
+          return resolve(publisher);
+        });
+      });
+    }
 
     function publish(aDOMElement, aProperties, aHandlers) {
       var self = this;
@@ -525,7 +531,9 @@
         return _session;
       },
       connect: connect,
+      otLoaded: otLoaded,
       off: off,
+      initPublisher: initPublisher,
       publish: publish,
       subscribe: subscribe,
       toggleSubscribersAudio: toggleSubscribersAudio,

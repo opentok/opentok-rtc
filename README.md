@@ -20,9 +20,11 @@ This repository contains a Node.js server and a web client application.
   - [OpenTok configuration](#opentok-configuration)
   - [Firebase configuration](#firebase-configuration)
   - [Screen sharing](#screen-sharing)
+  - [Phone dial-out](#phone-dial-out)
+  - [Google Authentication for Phone dial-out](#google-authentication-for-phone-dial-out)
   - [Web client configuration](#web-client-configuration)
   - [Additional configuration options](#additional-configuration-options)
-- [Customizing UI](#customizing-ui)
+- [Customizing the UI](#customizing-the-ui)
 - [Troubleshooting](#troubleshooting)
 
 ---
@@ -244,6 +246,100 @@ For more information and how to use your extension in production see the documen
 [opentok/screensharing-extensions](https://github.com/opentok/screensharing-extensions/blob/master/chrome/ScreenSharing/README.md#customizing-the-extension-for-your-website)
 repo on GitHub.
 
+### Phone dial-out
+
+The app can dial out and add a phone-based end user to the OpenTok session, using the OpenTok
+[SIP API](https://tokbox.com/developer/rest/#sip_call). This app uses
+[Plivo](https://www.plivo.com/) as the SIP application that connects
+to OpenTok. (You can also use the OpenTok SIP API to connect to other SIP endpoints.)
+
+To enable this feature:
+
+1. Sign up for a [Plivo](https://www.plivo.com/) account.
+
+2. Create a new Plivo [application](https://manage.plivo.com/app/). Make the following application
+   settings:
+
+   * *Application Name* -- Specify a unique identifying name. (This will only be used by your
+     server code.)
+
+   * *Answer URL* -- Add the public address for the /forward endpoint of your OpenTok demo server.
+     This is the webhook callback URL that Plivo calls when a call starts. (In response, the OpenTok
+     Demo server responds with XML that includes the phone number to dial.) You must run OpenTok
+     Demo on a publicly available URL -- you cannot test the dial-out code using localhost. For
+     example, set this URL to `https://yourappdomain.com/forward`.
+
+   * *Answer Method* -- Set this to GET.
+
+   * *Hangup URL* -- Add the public address for the /hang-up endpoint of your OpenTok demo server.
+     This is the webhook callback URL that Plivo calls when a call ends. You must run OpenTok
+     Demo on a publicly available URL -- you cannot test the dial-out code using localhost. For
+     example, set this URL to `https://yourappdomain.com/hang-up`.
+
+   * *Hangup Method* -- Set this to GET.
+
+4. Create a new Plivo [endpoint](https://manage.plivo.com/endpoint/). Assign it a username and
+   password, and assign the endpoint to the Plivo application you created.
+
+3. Edit config/config.json file in this application, and add the following properties:
+
+  * `SIP.enabled` -- Set this to `true`.
+
+  * `SIP.uri` -- Set this to a URL of the following form:
+
+         "sip:your-endpoint-username@phone.plivo.com"
+
+     Replace `your-endpoint-username` with the username for the Plivo endpoint you created.
+     See https://manage.plivo.com/endpoint/.
+
+  * `SIP.username` -- Set this to the username for the Plivo endpoint you created.
+
+  * `SIP.password` -- Set this to the password for the Plivo app you created.
+
+  * `Plivo.authId` -- Set this to Auth Id for the Plivo account you created.
+
+  * `Plivo.authToken` -- Set this to the Auth Token for the Plivo account you created.
+
+  * `SIP.requireGoogleAuth` -- See [Google Authentication for Phone dial-out](#google-authentication-for-phone-dial-out) for instructions on how to limit this functionality to users authenticated by their google account.
+
+  For example, the new lines in the config.json file should look like this:
+```json
+       "SIP": {
+         "sipUri" : "sip:yourapp145617992434@phone.plivo.com",
+         "sipUsername" : "yourapp145617992434@phone.plivo.com",
+         "sipPassword" : "sip:yourpassword",
+         "requireGoogleAuth": false
+       },
+       "Plivo": {
+           "authId": "yourAuthId",
+           "authToken": "yourAuthToken"
+       }
+```
+You can also add these settings as `SIP_ENABLED`, `SIP_URL`, `SIP_USERNAME`, `SIP_PASSWORD`, `PLIVO_AUTH_ID`, `PLIVO_AUTH_TOKEN` and `SIP_REQUIRE_GOOGLE_AUTH` environment variables (instead of config.json settings).
+
+#### Google Authentication for Phone dial-out
+
+You can limit the ability to place outgoing calls to those authenticated by google.
+To enable this feature:
+
+1. Create a Google API Console Project and client ID following the steps detailed here: https://developers.google.com/identity/sign-in/web/devconsole-project
+
+2. Edit the config/config.json file in this applciation, and add the following properties:
+
+  * `Google.clientId` -- Set this to your client ID.
+  * `Google.hostedDomain` -- If you wish to limit sign in to accounts associated with a hosted domain, set the domain here.
+  * `Sip.requireGoogleAuth` -- `true` to require auth for SIP dial-out as detailed in [Phone dial-out](#phone-dial-out).
+
+  For example, the new lines in the config.json file should look like this:
+ ```json
+   "Google": {
+     "clientId": "yourClientId.apps.googleusercontent.com>",
+     "hostedDomain": "yourhosteddomain.com"
+   }
+ ```
+
+ You can also add these as `GOOGLE_CLIENT_ID` and `GOOGLE_HOSTED_DOMAIN` environment variables instead of config.json setings.
+
 ### Web client configuration
 
 Web client allows to be configured in some of its features. You can enable or disable using their `enabled` field in JSON or `ENABLE_<FEATURE>` environment variable.
@@ -296,12 +392,17 @@ sharing](tokbox.com/developer/guides/screen-sharing/).
 #### Feedback
 
  `ENABLE_FEEDBACK`: Enable the "Give Demo Feedback" form.
-
+ `REPORT_ISSUE_LEVEL`: The audio and video scores in the feedback form are between 1 (awful) and 5 (excellent). When the feedback form is submitted, if an audio or video score is less than or equal to the report issue level, the app calls `OT.reportIssue()`. This reports an issue, which you can view in OpenTok Inspector. (For more information, see [Reporting an issue](https://tokbox.com/developer/guides/debugging/js/#report-issue) in the OpenTok developer Guides.) The default value is 3, set to 0 to disable issue reporting.
  ```json
  "Feedback": {
-     "enabled": false
+     "enabled": true,
+     "reportIssueLevel": 0
  },
  ```
+
+ #### SIP connection
+
+  See the [Phone dial-out](#phone-dial-out) section.
 
 ### Additional configuration options
 
@@ -316,9 +417,9 @@ sharing](tokbox.com/developer/guides/screen-sharing/).
    - 'sameorigin': Set X-Frame-Options to 'SAMEORIGIN' (Only allow iframe content to be loaded
      from pages in the same origin)
 
-   We don't allow restricting iframe loading to specific URIs because it doesn't work on Chrome
+   We don't allow restricting iframe loading to specific URIs because it doesn't work on Chrome.
 
-## Customizing UI
+## Customizing the UI
 
 For information on how to customize OpenTokRTC's UI, see [CUSTOMIZING-UI.md](CUSTOMIZING-UI.md).
 
@@ -346,7 +447,7 @@ $ bower install
 $ grunt clientBuild
 ```
 
-We recommend that you run the application as a non-root user. Howerver, if you are running the application as the `root` user, you will additionally need to tell `bower` to allow root user to install dependencies, else bower will refuse to work:
+We recommend that you run the application as a non-root user. However, if you are running the application as the `root` user, you will additionally need to tell `bower` to allow root user to install dependencies, else bower will refuse to work:
 
 ```
 $ bower install --allow-root

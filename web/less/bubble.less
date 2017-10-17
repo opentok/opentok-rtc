@@ -2,7 +2,7 @@
 @bubbleBackgroundColor: #fff;
 
 .bubble {
-  z-index: 100;
+  z-index: 2000;
   position: absolute;
   display: none;
   opacity: 0;
@@ -13,6 +13,8 @@
     padding: 20px;
     border: 1px solid @bubbleBorderColor;
     background-color: @bubbleBackgroundColor;
+    box-shadow: -2px 3px 4px 0 rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
 
     color: #9b9c9b;
     font-size: 12px;
@@ -40,6 +42,12 @@
     border-bottom: 10px solid transparent;
     border-right: 10px solid @bubbleBorderColor;
   }
+  .bubble-content.top-arrow:before {
+    right: 25px;
+    left: inherit;
+    top: -16px;
+    transform: rotate(90deg);
+  }
 
   .bubble-content:after {
     left: -9px;
@@ -48,6 +56,13 @@
     border-bottom: 9px solid transparent;
     border-right: 9px solid #fff;
   }
+  .bubble-content.top-arrow:after {
+    right: 26px;
+    left: inherit;
+    top: -13px;
+    transform: rotate(90deg);
+  }
+
 }
 
 .bubble.show {
@@ -70,7 +85,7 @@
 
   input {
     font-size: 12px;
-    margin: 16px 0 0 0;
+    margin: 16px 0;
     width: 90%;
     outline: none;
     color: #9b9b93;
@@ -78,7 +93,8 @@
 }
 
 [for="addToCall"],
-[for="viewRecordings"] {
+[for="viewRecordings"],
+[for="dialOut"] {
   .bubble-content {
     max-width: none;
     padding: 40px;
@@ -86,13 +102,21 @@
   }
 
   .title {
-    font-size: 16px;
+    font-size: 20px;
     color: #4f4f4f;
   }
 
-  p, a {
+  .subtitle {
+    font-size: 16px;
+  }
+
+  p {
+    font-size: 16px;
+    color: #5b5b5b;
+  }
+  
+  a {
     font-size: 12px;
-    color: #9b9b9b;
   }
 
   hr {
@@ -109,10 +133,11 @@
     max-height: 200px;
     overflow-x: hidden;
     padding: 10px 0;
+    margin-top: 18px;
 
     ul {
       height: 100%;
-      min-width: 320px;
+      min-width: 420px;
       text-align: left
     }
 
@@ -181,6 +206,11 @@
   }
 }
 
+[for="dialOut"] {
+  input {
+    width: 140px;
+  }
+}
 [for="viewRecordings"] {
   .title, .subtitle {
     display: none;
@@ -219,6 +249,10 @@
 }
 
 [for="chooseLayout"] {
+  .bubble-content {
+    border-radius: 10px;
+    box-shadow: -1px 1px 4px rgba(0, 0, 0, 0.2);
+  }
   ul {
     list-style: none;
     margin: 0;
