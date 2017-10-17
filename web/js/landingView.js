@@ -51,21 +51,22 @@
 
   var showContract = function () {
     var selector = '.tc-modal.contract';
-    var ui = document.querySelector(selector);
+    var acceptElement = document.querySelector(selector + ' .accept');
 
     return Modal.show(selector)
       .then(function () {
         return new Promise(function (resolve) {
-          ui.addEventListener('click', function onClicked(evt) {
-            var classList = evt.target.classList;
-            var hasAccepted = classList.contains('accept');
-            if (!hasAccepted && !classList.contains('close')) {
-              return;
-            }
-            evt.stopImmediatePropagation();
+          acceptElement.addEventListener('click', function onClicked(evt) {
+            acceptElement.removeEventListener('click', onClicked);
+            resolve(true);
             evt.preventDefault();
-            ui.removeEventListener('click', onClicked);
-            Modal.hide(selector).then(function () { resolve(hasAccepted); });
+            Modal.hide(selector);
+          });
+
+          Utils.addEventsHandlers('modal:', {
+            close: function () {
+              resolve();
+            }
           });
         });
       });

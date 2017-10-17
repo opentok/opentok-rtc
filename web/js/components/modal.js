@@ -1,5 +1,3 @@
-/* global Modal */
-
 !(function (global) {
   'use strict';
 
@@ -19,7 +17,10 @@
       return;
     }
 
-    var handler = Modal.hide.bind(Modal, selector);
+    var handler = function () {
+      Utils.sendEvent('modal:close');
+      hide(selector);
+    };
     closeHandlers[selector] = {
       target: closeElement,
       handler: handler
