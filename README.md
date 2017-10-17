@@ -1,6 +1,6 @@
 ![logo](./tokbox-logo.png)
 
-# OpenTokRTC v2
+# OpenTokRTC v3
 [![Build Status](https://travis-ci.com/opentok/OpenTokRTC-V2.svg?token=qPpN1jG8Wftsn1cafKif&branch=master)](https://travis-ci.com/opentok/OpenTokRTC-V2)
 [![codecov](https://codecov.io/gh/opentok/OpenTokRTC-V2/branch/master/graph/badge.svg)](https://codecov.io/gh/opentok/OpenTokRTC-V2/branch/master)
 
@@ -37,7 +37,7 @@ If you want to install OpenTokRTC on your own server, read on. If you want to de
 
 You will need these dependencies installed on your machine:
 
-- [NodeJS v4+](https://nodejs.org): This version of OpenTokRTC is tested with NodeJS v4 LTS.
+- [NodeJS v4+](https://nodejs.org): This version of OpenTokRTC is tested with NodeJS v8 LTS.
 - [Redis](https://redis.io): A `redis` server running on `localhost`.
 - [Grunt](http://gruntjs.com): Used for bundling assets and running tests. You can install the Grunt CLI globally by running: `# npm i -g grunt-cli`.
 
