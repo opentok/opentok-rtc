@@ -19,10 +19,10 @@ script:
   - ./node_modules/travis-github-lint-status/index.js
   - npm run test && bash <(curl -s https://codecov.io/bash)
   - if [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then
-     mv config/config-ci.json config/config.json && eval $CMD;
+     mv config/config-ci.json config/config.json && npm run regression-test;
     fi
 env:
-  - TB_API_SECRET=123 TB_API_KEY=123 SAUCE_USERNAME=opentok CMD="npm run regression-test"
+  - TB_API_SECRET=123 TB_API_KEY=123 SAUCE_USERNAME=opentok
 addons:
   firefox: "latest"
   jwt:

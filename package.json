@@ -12,7 +12,7 @@
     "dev": "concurrently \"npm run start\" \"grunt clientDev\"",
     "postinstall": "bower install && grunt clientBuild",
     "test": "grunt test",
-    "regression-test": "wdio wdio.conf.js"
+    "regression-test": "node server.js & wdio wdio.conf.js"
   },
   "repository": {
     "type": "git",
