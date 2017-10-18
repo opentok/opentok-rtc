@@ -110,6 +110,12 @@ BubbleFactory, Clipboard, LayoutManager */
       if (!_chatHasBeenShown) {
         setChatStatus(true);
       }
+    },
+    hidden: function () {
+      Utils.sendEvent('roomView:screenChange');
+    },
+    shown: function () {
+      Utils.sendEvent('roomView:screenChange');
     }
   };
 
@@ -119,6 +125,12 @@ BubbleFactory, Clipboard, LayoutManager */
       messageButtonElem.classList.remove('activated');
       setUnreadMessages(0);
       HTMLElems.flush('#toggleChat');
+    }
+  };
+
+  var layoutManagerEvents = {
+    layoutChanged: function () {
+      Utils.sendEvent('roomView:screenChange');
     }
   };
 
@@ -566,6 +578,7 @@ BubbleFactory, Clipboard, LayoutManager */
     Utils.addEventsHandlers('chat:', chatEvents);
     Utils.addEventsHandlers('chatView:', chatViews);
     Utils.addEventsHandlers('hangout:', hangoutEvents);
+    Utils.addEventsHandlers('layoutManager:', layoutManagerEvents);
   };
 
   function toggleScreenSharing(evt) {

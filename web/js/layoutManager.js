@@ -145,10 +145,10 @@ LayoutViewport, ItemsHandler */
     if (!currentLayout || !isOnGoing(CandidateLayout)) {
       currentLayout && currentLayout.destroy();
       currentLayout = new CandidateLayout(container, items, item);
-      Utils.sendEvent('layoutManager:layoutChanged');
     }
 
     currentLayout.rearrange();
+    Utils.sendEvent('layoutManager:layoutChanged');
     updateAvailableLayouts();
   }
 

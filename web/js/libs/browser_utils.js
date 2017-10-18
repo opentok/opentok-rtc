@@ -53,6 +53,13 @@
     });
   };
 
+  var removeEventHandlers = function (eventPreffixName, handlers, target) {
+    eventPreffixName = eventPreffixName || '';
+    Object.keys(handlers).forEach(function (eventName) {
+      (target || exports).removeEventListener(eventPreffixName + eventName, handlers[eventName]);
+    });
+  };
+
   var setTransform = function (style, transform) {
     /* eslint-disable no-multi-assign */
     style.MozTransform = style.webkitTransform = style.msTransform = style.transform = transform;
@@ -201,6 +208,7 @@
     inspectObject: inspectObject,
     sendEvent: sendEvent,
     addEventsHandlers: addEventsHandlers,
+    removeEventHandlers: removeEventHandlers,
     addHandlers: addHandlers,
     get draggableUI() {
       return document.querySelectorAll('[draggable]').length;
