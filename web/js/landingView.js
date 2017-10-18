@@ -5,12 +5,16 @@
 
   var room,
     user,
-    enterButton;
+    enterButton,
+    form,
+    errorMessage;
 
   var init = function () {
     enterButton = document.getElementById('enter');
     room = document.getElementById('room');
     user = document.getElementById('user');
+    form = document.querySelector('form');
+    errorMessage = document.querySelector('.error-room');
     resetForm();
     addHandlers();
     if (window.location.hostname.indexOf('opentokrtc.com') === 0) {
@@ -24,7 +28,7 @@
     var fields = document.querySelectorAll('form input.required');
 
     Array.prototype.map.call(fields, function (field) {
-      var errorMessage = document.querySelector('.error-' + field.id);
+      errorMessage = document.querySelector('.error-' + field.id);
       var valid = field.type === 'checkbox' ? field.checked : field.value.trim();
       valid ? errorMessage.classList.remove('show') : errorMessage.classList.add('show');
       formValid = formValid && valid;
@@ -40,13 +44,20 @@
       field.checked = false;
       room.focus();
       room.addEventListener('focus', animateLabel);
-      room.addEventListener('keypress', animateLabel);
-      user.addEventListener('focus', animateLabel);
+      room.addEventListener('keyup', animateLabel);
+      user.addEventListener('keyup', animateLabel);
     });
   };
 
   var animateLabel = function () {
     document.getElementById(this.id + '-label').classList.add('visited');
+    if (this.value.length === 0) {
+      document.getElementById(this.id + '-label').classList.remove('visited');
+    }
+    if (this.id === 'room') {
+      errorMessage.classList.remove('show');
+      document.getElementById('room-label').style.opacity = 1;
+    }
   };
 
   var showContract = function () {
@@ -88,9 +99,10 @@
       event.preventDefault();
       event.stopImmediatePropagation();
 
-      var form = document.querySelector('form');
       if (!isValid()) {
         form.classList.add('error');
+        room.blur();
+        document.getElementById('room-label').style.opacity = 0;
         return;
       }
 
@@ -108,6 +120,9 @@
       } else {
         navigateToRoom();
       }
+    });
+    room.addEventListener('keypress', function onKeypress() {
+      errorMessage.classList.remove('show');
     });
   };
 
