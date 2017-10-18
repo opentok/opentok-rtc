@@ -22,7 +22,7 @@ script:
      mv config/config-ci.json config/config.json && eval $CMD;
     fi
 env:
-  - TB_API_SECRET=123 TB_API_KEY=123 SAUCE_USERNAME=opentok CMD="retry -n 1 -- npm run regression-test"
+  - TB_API_SECRET=123 TB_API_KEY=123 SAUCE_USERNAME=opentok CMD="npm run regression-test"
 addons:
   firefox: "latest"
   jwt:
