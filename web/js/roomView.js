@@ -191,8 +191,9 @@ BubbleFactory, Clipboard, LayoutManager */
 
   function setAudioSwitchRemotely(isMuted) {
     setSwitchStatus(isMuted, false, audioSwitch, 'roomView:muteAllSwitch');
-    isMuted ? togglePublisherAudioElem.classList.remove('activated')
-      : togglePublisherAudioElem.classList.add('activated');
+    isMuted ?
+      setPublisherAudioSwitchStatus('muted') :
+      setPublisherAudioSwitchStatus('activated');
   }
 
   function showConfirmChangeMicStatus(isMuted) {
@@ -294,8 +295,13 @@ BubbleFactory, Clipboard, LayoutManager */
   function showPublisherButtons(publisherOptions) {
     Utils.setDisabled(togglePublisherVideoElem, false);
     Utils.setDisabled(togglePublisherAudioElem, false);
-    publisherOptions.publishVideo && togglePublisherVideoElem.classList.add('activated');
-    publisherOptions.publishAudio && togglePublisherAudioElem.classList.add('activated');
+    if (publisherOptions.publishVideo) {
+      togglePublisherVideoElem.classList.add('activated');
+      togglePublisherVideoElem.querySelector('i').data('icon', 'video_icon');
+    }
+    if (publisherOptions.publishAudio) {
+      setPublisherAudioSwitchStatus('activated');
+    }
   }
 
   function setSwitchStatus(status, bubbleUp, domElem, evtName) {
@@ -312,6 +318,16 @@ BubbleFactory, Clipboard, LayoutManager */
       }
     }
     bubbleUp && newStatus !== oldStatus && Utils.sendEvent(evtName, { status: newStatus });
+  }
+
+  function setPublisherAudioSwitchStatus(status) {
+    if (status === 'activated') {
+      togglePublisherAudioElem.classList.add('activated');
+      togglePublisherAudioElem.querySelector('i').data('icon', 'mic');
+    } else {
+      togglePublisherAudioElem.classList.remove('activated');
+      togglePublisherAudioElem.querySelector('i').data('icon', 'mic-muted');
+    }
   }
 
   var cronograph = null;
@@ -429,9 +445,11 @@ BubbleFactory, Clipboard, LayoutManager */
           var hasVideo;
           if (elem.classList.contains('activated')) {
             elem.classList.remove('activated');
+            elem.querySelector('i').data('icon', 'no_video');
             hasVideo = false;
           } else {
             elem.classList.add('activated');
+            elem.querySelector('i').data('icon', 'video_icon');
             hasVideo = true;
           }
           Utils.sendEvent('roomView:togglePublisherVideo', { hasVideo: hasVideo });
@@ -440,9 +458,11 @@ BubbleFactory, Clipboard, LayoutManager */
           var hasAudio;
           if (elem.classList.contains('activated')) {
             elem.classList.remove('activated');
+            elem.querySelector('i').data('icon', 'mic-muted');
             hasAudio = false;
           } else {
             elem.classList.add('activated');
+            elem.querySelector('i').data('icon', 'mic');
             hasAudio = true;
           }
           Utils.sendEvent('roomView:togglePublisherAudio', { hasAudio: hasAudio });
