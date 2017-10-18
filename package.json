@@ -11,7 +11,8 @@
     "start": "node server.js",
     "dev": "concurrently \"npm run start\" \"grunt clientDev\"",
     "postinstall": "bower install && grunt clientBuild",
-    "test": "grunt test"
+    "test": "grunt test",
+    "regression-test": "wdio wdio.conf.js"
   },
   "repository": {
     "type": "git",
@@ -64,6 +65,7 @@
     "eslint-plugin-import": "^2.3.0",
     "eslint-plugin-jsx-a11y": "^5.0.3",
     "eslint-plugin-react": "^7.0.1",
+    "firefox-profile": "^1.0.3",
     "istanbul": "^0.4.5",
     "karma": "^1.7.1",
     "karma-chrome-launcher": "^0.2.3",
@@ -74,6 +76,11 @@
     "mocha": "^3.5.3",
     "mockfirebase": "^0.12.0",
     "sinon": "^1.17.0",
-    "supertest": "^1.1.0"
+    "supertest": "^1.1.0",
+    "wdio": "^1.0.3",
+    "wdio-firefox-profile-service": "^0.1.0",
+    "wdio-mocha-framework": "^0.5.11",
+    "wdio-sauce-service": "^0.4.0",
+    "wdio-selenium-standalone-service": "0.0.9"
   }
 }

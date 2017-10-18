@@ -40,22 +40,22 @@
                   <h1>WebRTC Demo</h1>
           <% } %>
           <img src="images/tokbox-log.svg" alt="opentok transparent logo">
+          <% if (isWebRTCVersion) { %>
+                  <h2>Built by TokBox on the OpenTok Platform</h2>
+                  <h3>This WebRTC Demo enables group video conferencing, text chat, screen sharing, and more.</h3>
+          <% } %>
         </header>
-<% if (isWebRTCVersion) { %>
-        <h2>Built by TokBox on the OpenTok Platform</h2>
-        <h3>This WebRTC Demo enables group video conferencing, text chat, screen sharing, and more</h3>
-<% } %>
         <form>
           <div>
-            <input id="room" class="text-input required">
+            <input id="room" class="text-input required" data-wd="roomname">
             <label id="room-label">Meeting name</label>
           </div>
           <div>
-            <input id="user" class="text-input">
+            <input id="user" class="text-input" data-wd="username">
             <label id="user-label">Your name</label>
           </div>
           <p class="error-room error-text">Please enter a meeting name</p>
-          <button id="enter"></button>
+          <button id="enter" data-wd="enterroom"></button>
         </form>
         <div class="landing-more-info">
           Need help?
