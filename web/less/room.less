@@ -317,13 +317,14 @@ body {
 
 .call-controls.visible {
   opacity: 1;
+  bottom: 0;
 }
 
 .call-controls {
   position: absolute;
   display: table;
   table-layout: fixed;
-  bottom: 0;
+  bottom: -86px;
   right: 0;
   left: 0;
   height: 86px;
@@ -334,7 +335,7 @@ body {
   background-repeat: no-repeat;
   padding: 0 40px;
   opacity: 0;
-  transition: opacity @transitionTime;
+  transition: all @transitionTime;
   div {
     display: table-cell;
     padding-top: 10px;
@@ -371,15 +372,16 @@ body {
 
 .feedbackButton.visible {
   opacity: 1;
+  left: 0
 }
 
 .feedbackButton {
   opacity: 0;
-  transition: opacity @transitionTime;
+  transition: all @transitionTime;
   position: absolute;
   top: 250px;
   right: 0;
-  left: 0;
+  left: -190px;
   height: 49px;
   width: 190px;
   transform: rotate(90deg) translate(0, 78px);
