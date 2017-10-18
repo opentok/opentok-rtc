@@ -1,10 +1,10 @@
 {
   "name": "opentokrtc-v2",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "description": "OpenTok RTC sample application to show off the OpenTok API and platform capabilities ",
   "main": "server.js",
   "engines": {
-    "node": "4.8.x",
+    "node": "8.0.x",
     "npm": "2.14.x"
   },
   "scripts": {
@@ -52,7 +52,7 @@
     "lodash": "^4.17.4",
     "opentok": "^2.3.0",
     "plivo": "0.4.1",
-    "swagger-boilerplate": "^0.0.9",
+    "swagger-boilerplate": "^0.0.16",
     "yamljs": "^0.2.10"
   },
   "devDependencies": {
