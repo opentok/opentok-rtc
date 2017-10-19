@@ -46,7 +46,7 @@
   function show(selector, preShowCb) {
     var screenFree;
     preShowFocusElement = document.activeElement;
-    preShowFocusElement.blur();
+    preShowFocusElement && preShowFocusElement.blur();
     if (!_modalShown) {
       screenFree = Promise.resolve();
     } else {
@@ -78,7 +78,7 @@
       modal.addEventListener(transEndEventName, function onTransitionend() {
         modal.removeEventListener(transEndEventName, onTransitionend);
         modal.classList.remove('visible');
-        preShowFocusElement.focus();
+        preShowFocusElement && preShowFocusElement.focus();
         resolve();
       });
       removeCloseHandler(selector);
