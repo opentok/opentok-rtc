@@ -47,30 +47,19 @@
       field.value = '';
       field.checked = false;
       room.focus();
+      room.addEventListener('keyup', onKeyup);
       room.addEventListener('focus', onFocus);
       user.addEventListener('focus', onFocus);
-      room.addEventListener('keyup', onKeyup);
     });
   };
 
-  var onKeyup = function (event) {
-    var labelElem = document.getElementById(this.id + '-label');
-    var keyCode = event.keyCode || event.which;
-    // Ignore tab and Shift key presses (from tabbing between fields)
-    if (keyCode === 9 || keyCode === 16) {
-      return;
-    }
-    if (this.value.length === 0) {
-      labelElem.classList.remove('visited');
-    } else {
-      labelElem.classList.add('visited');
-    }
+  var onKeyup = function () {
+    roomLabelElem.classList.add('visited');
+    room.removeEventListener('keyup', onFocus);
   };
 
   var onFocus = function () {
     if (this.id === 'room') {
-      room.addEventListener('keyup', onKeyup);
-      user.removeEventListener('keyup', onKeyup);
       errorMessage.classList.remove('show');
       document.getElementById('room-label').style.opacity = 1;
       roomLabelElem.classList.add('visited');
@@ -78,8 +67,6 @@
         userLabelElem.classList.remove('visited');
       }
     } else {
-      user.addEventListener('keyup', onKeyup);
-      room.removeEventListener('keyup', onKeyup);
       userLabelElem.classList.add('visited');
       if (document.getElementById('room').value.length === 0) {
         roomLabelElem.classList.remove('visited');
