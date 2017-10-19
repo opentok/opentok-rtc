@@ -7,6 +7,8 @@
     user,
     enterButton,
     form,
+    roomLabelElem,
+    userLabelElem,
     errorMessage;
 
   var init = function () {
@@ -14,6 +16,8 @@
     room = document.getElementById('room');
     user = document.getElementById('user');
     form = document.querySelector('form');
+    roomLabelElem = document.getElementById('room-label');
+    userLabelElem = document.getElementById('user-label');
     errorMessage = document.querySelector('.error-room');
     resetForm();
     addHandlers();
@@ -43,20 +47,43 @@
       field.value = '';
       field.checked = false;
       room.focus();
-      room.addEventListener('focus', animateLabel);
-      room.addEventListener('keyup', animateLabel);
-      user.addEventListener('keyup', animateLabel);
+      room.addEventListener('focus', onFocus);
+      user.addEventListener('focus', onFocus);
+      room.addEventListener('keyup', onKeyup);
     });
   };
 
-  var animateLabel = function () {
-    document.getElementById(this.id + '-label').classList.add('visited');
-    if (this.value.length === 0) {
-      document.getElementById(this.id + '-label').classList.remove('visited');
+  var onKeyup = function (event) {
+    var labelElem = document.getElementById(this.id + '-label');
+    var keyCode = event.keyCode || event.which;
+    // Ignore tab and Shift key presses (from tabbing between fields)
+    if (keyCode === 9 || keyCode === 16) {
+      return;
     }
+    if (this.value.length === 0) {
+      labelElem.classList.remove('visited');
+    } else {
+      labelElem.classList.add('visited');
+    }
+  };
+
+  var onFocus = function () {
     if (this.id === 'room') {
+      room.addEventListener('keyup', onKeyup);
+      user.removeEventListener('keyup', onKeyup);
       errorMessage.classList.remove('show');
       document.getElementById('room-label').style.opacity = 1;
+      roomLabelElem.classList.add('visited');
+      if (document.getElementById('user').value.length === 0) {
+        userLabelElem.classList.remove('visited');
+      }
+    } else {
+      user.addEventListener('keyup', onKeyup);
+      room.removeEventListener('keyup', onKeyup);
+      userLabelElem.classList.add('visited');
+      if (document.getElementById('room').value.length === 0) {
+        roomLabelElem.classList.remove('visited');
+      }
     }
   };
 
