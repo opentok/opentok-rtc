@@ -2,11 +2,9 @@ coverage:
   status:
     project:
       default:
-        # basic
         target: auto
         threshold: null
         base: auto
-        # advanced
         branches: null
         if_no_uploads: error
         if_not_found: success
