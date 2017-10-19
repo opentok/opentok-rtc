@@ -16,10 +16,10 @@ install:
   - npm install;
   - npm install travis-github-lint-status;
 script:
-  - if [ "$SAUCE_USERNAME" == "" ]
+  - if ["$SAUCE_USERNAME" == ""]
     then
       eval $CMD;
-    elif [ "$TRAVIS_PULL_REQUEST" == "false" ]
+    elif ["$TRAVIS_PULL_REQUEST" == "false"]
     then
       mv config/config-ci.json config/config.json && npm run regression-test;
     fi
