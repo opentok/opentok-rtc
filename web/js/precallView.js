@@ -23,6 +23,12 @@
       }
     });
 
+    var userNameInputElement = document.getElementById('user-name-input');
+    userNameInputElement.addEventListener('keyup', function keyupHandler() {
+      document.querySelector('#enter-name-prompt label').classList.add('visited');
+      userNameInputElement.removeEventListener('keyup', keyupHandler);
+    });
+
     var publishSettings = document.querySelector('.publish-settings');
 
     publishSettings.addEventListener('click', function (e) {
