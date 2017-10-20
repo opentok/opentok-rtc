@@ -128,12 +128,6 @@ BubbleFactory, Clipboard, LayoutManager */
     }
   };
 
-  var layoutManagerEvents = {
-    layoutChanged: function () {
-      Utils.sendEvent('roomView:screenChange');
-    }
-  };
-
   var hangoutEvents = {
     screenOnStage: function (event) {
       var status = event.detail.status;
@@ -145,6 +139,9 @@ BubbleFactory, Clipboard, LayoutManager */
           dock.classList.remove('collapsed');
         dock.data('previouslyCollapsed', null);
       }
+    },
+    rearranged: function () {
+      Utils.sendEvent('roomView:screenChange');
     }
   };
 
@@ -465,6 +462,7 @@ BubbleFactory, Clipboard, LayoutManager */
         case 'annotate':
           document.body.data('annotationVisible') === 'true' ?
             document.body.data('annotationVisible', 'false') : document.body.data('annotationVisible', 'true');
+          Utils.sendEvent('roomView:screenChange');
           break;
         case 'message-btn':
           setChatStatus(!messageButtonElem.classList.contains('activated'));
@@ -578,7 +576,6 @@ BubbleFactory, Clipboard, LayoutManager */
     Utils.addEventsHandlers('chat:', chatEvents);
     Utils.addEventsHandlers('chatView:', chatViews);
     Utils.addEventsHandlers('hangout:', hangoutEvents);
-    Utils.addEventsHandlers('layoutManager:', layoutManagerEvents);
   };
 
   function toggleScreenSharing(evt) {
