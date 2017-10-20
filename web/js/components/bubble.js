@@ -40,7 +40,7 @@
       'webkitTransitionEnd' : 'transitionend';
 
   var HORIZONTAL_OFFSET = 10;
-  var VERTICAL_OFFSET = 73;
+  var VERTICAL_OFFSET = 4;
 
   var bubbles = {};
 
