@@ -29,6 +29,10 @@
       userNameInputElement.removeEventListener('keyup', keyupHandler);
     });
 
+    document.querySelector('.user-name-modal').addEventListener('click', function () {
+      userNameInputElement.focus();
+    });
+
     var publishSettings = document.querySelector('.publish-settings');
 
     publishSettings.addEventListener('click', function (e) {
