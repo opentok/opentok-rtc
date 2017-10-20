@@ -897,6 +897,17 @@ footer.main {
   background-color: @mainBackgroundColor;
 }
 
+
+#opentok_canvas {
+  pointer-events: none;
+}
+
+body[data-annotation-visible=true]  {
+  #opentok_canvas {
+    pointer-events: auto;
+  }
+}
+
 .dragging {
   pointer-events: none;
 }
