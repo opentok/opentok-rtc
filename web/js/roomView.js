@@ -110,6 +110,12 @@ BubbleFactory, Clipboard, LayoutManager */
       if (!_chatHasBeenShown) {
         setChatStatus(true);
       }
+    },
+    hidden: function () {
+      Utils.sendEvent('roomView:screenChange');
+    },
+    shown: function () {
+      Utils.sendEvent('roomView:screenChange');
     }
   };
 
@@ -133,6 +139,9 @@ BubbleFactory, Clipboard, LayoutManager */
           dock.classList.remove('collapsed');
         dock.data('previouslyCollapsed', null);
       }
+    },
+    rearranged: function () {
+      Utils.sendEvent('roomView:screenChange');
     }
   };
 
@@ -453,6 +462,7 @@ BubbleFactory, Clipboard, LayoutManager */
         case 'annotate':
           document.body.data('annotationVisible') === 'true' ?
             document.body.data('annotationVisible', 'false') : document.body.data('annotationVisible', 'true');
+          Utils.sendEvent('roomView:screenChange');
           break;
         case 'message-btn':
           setChatStatus(!messageButtonElem.classList.contains('activated'));

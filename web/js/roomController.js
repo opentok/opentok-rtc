@@ -580,6 +580,10 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
           .then(function (subscriber) {
             if (streamVideoType === 'screen') {
               enableAnnotations && Utils.sendEvent('roomController:annotationStarted');
+              var subContainer = subscriber.element.parentElement;
+              Utils.sendEvent('layoutView:itemSelected', {
+                item: subContainer
+              });
               return subscriber;
             }
 
