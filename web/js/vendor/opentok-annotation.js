@@ -2146,7 +2146,7 @@
   }, 1000);
 
   /** Resize the canvas to match the size of its container */
-  var _resizeCanvas = function () {
+  var _resizeCanvas = _.throttle(function () {
     var width;
     var height;
 
@@ -2183,16 +2183,14 @@
 
     _refreshCanvas();
     _triggerEvent('resizeCanvas');
-  };
+  }, 500, {trailing: false});
 
   var _changeColorByIndex = function(colorIndex) {
     _canvas.changeColorByIndex(colorIndex);
   };
 
   var _listenForResize = function () {
-    $(_elements.resizeSubject).on('resize', _.throttle(function () {
-      _resizeCanvas();
-    }, 500));
+    $(_elements.resizeSubject).on('resize', _resizeCanvas);
   };
 
   var _createToolbar = function (session, options, externalWindow) {

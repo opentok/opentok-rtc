@@ -16,6 +16,7 @@ LayoutBase.prototype = {
       });
     }, this);
     this.flush();
+    Utils.sendEvent('hangout:rearranged');
     return this;
   },
 
