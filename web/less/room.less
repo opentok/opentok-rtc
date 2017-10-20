@@ -77,6 +77,7 @@ body {
         overflow: hidden;
         white-space: nowrap;
         line-height: 22px;
+        margin-bottom: 8px;
       }
     }
   }
@@ -139,9 +140,10 @@ body {
   }
   #toggleArchiving a {
     padding: 0 37.5px;
-    .manage-recordings {
-      padding-right: 60px;
-      padding-left: 0;
+  }
+  .manage-recordings {
+    #startArchiving, #stopArchiving {
+      padding: 0 57.5px 0 17.5px;
     }
   }
   #manageRecordings {
@@ -178,6 +180,7 @@ body {
 #screen {
   visibility: hidden;
   position: relative;
+  overflow: hidden;
 }
 
 .add-to-call-modal {
@@ -317,13 +320,14 @@ body {
 
 .call-controls.visible {
   opacity: 1;
+  bottom: 0;
 }
 
 .call-controls {
   position: absolute;
   display: table;
   table-layout: fixed;
-  bottom: 0;
+  bottom: -86px;
   right: 0;
   left: 0;
   height: 86px;
@@ -334,7 +338,7 @@ body {
   background-repeat: no-repeat;
   padding: 0 40px;
   opacity: 0;
-  transition: opacity @transitionTime;
+  transition: all @transitionTime;
   div {
     display: table-cell;
     padding-top: 10px;
@@ -371,15 +375,16 @@ body {
 
 .feedbackButton.visible {
   opacity: 1;
+  left: 0
 }
 
 .feedbackButton {
   opacity: 0;
-  transition: opacity @transitionTime;
+  transition: all @transitionTime;
   position: absolute;
   top: 250px;
   right: 0;
-  left: 0;
+  left: -190px;
   height: 49px;
   width: 190px;
   transform: rotate(90deg) translate(0, 78px);
@@ -460,6 +465,10 @@ body {
     width: 135px;
     height: 37px;
   }
+}
+
+.user-name-modal #name-heading {
+    top: 34px;
 }
 
 .user-name-modal .tc-dialog {
@@ -583,7 +592,7 @@ body {
     input {
       background: none;
       border: none;
-      width: 234px;
+      width: 190px;
       height: 26px;
       color: white;
       padding-left: 0;
@@ -593,6 +602,17 @@ body {
       outline: none !important;
       border: none;
       background: none;
+    }
+    label {
+      position: absolute;
+      color: #757575;
+      font-size: 16px;
+      left: 42px;
+      transition: all 0.5s;
+    }
+    label.visited {
+      left: 236px;
+      font-size: 12px;
     }
   }
   #audio-meter, #precall-test-meter {
