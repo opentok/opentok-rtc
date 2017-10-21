@@ -70,7 +70,7 @@
       <div class="center-container">
         <div class="room-info">
           <p class="room-name"></p>
-          <i data-icon="participants"></i><span id="participantsStr"><span>
+          <i data-icon="participants"></i><span id="participantsStr"></span>
         </div>
       </div>
       <div class="right-container">
@@ -117,13 +117,13 @@
         </div>
         <div>
           <button id="toggle-publisher-video" class="selected" disabled>
-            <i data-icon="video_icon" data-event-name="roomView:buttonClick" data-action="video" data-stream-id="publisher" data-stream-type="publisher"></i>
+            <i data-icon="no_video" data-event-name="roomView:buttonClick" data-action="video" data-stream-id="publisher" data-stream-type="publisher"></i>
           </button>
           <p>Your Video</p>
         </div>
         <div>
           <button id="toggle-publisher-audio" disabled>
-            <i data-icon="mic"></i>
+            <i data-icon="mic-muted"></i>
           </button>
           <p>Your Mic</p>
         </div>
@@ -156,6 +156,7 @@
             <span id="unreadMsg">(<span id="unreadCount">0</span>)</span>
           </p>
         </div>
+      </div>
     </section>
 
     <% if (enableFeedback) { %>
@@ -218,7 +219,6 @@
           <p class="title recordings">Your recordings</p>
           <p class="title no-recordings">No recordings</p>
           <p class="title loading">Loading archived recordings...</p>
-          <p class="subtitle">Click to view a recording.</p>
           <div class="tc-list videos">
             <ul></ul>
           </div>
@@ -256,9 +256,9 @@
           <div class="audio-feedback">
             <div class="feedback-dropdown">
               <select class="audio-score">
-                  <option value="5">Excellent! No issues.</span>
+                  <option value="5">Excellent! No issues.</option>
                   <option value="4">Good! Not perfect but not annoying.</option>
-                  <option value="3" selected="selected">It was ok. I had a few issues.</span></option>
+                  <option value="3" selected="selected">It was ok. I had a few issues.</option>
                   <option value="2">Poor. Annoying.</option>
                   <option value="1">I'm disappointed.</option>
               </select>
@@ -268,9 +268,9 @@
             <span class="feedback-title">How was the video quality?</span>
             <div class="feedback-dropdown">
                 <select class="video-score">
-                    <option value="5">Excellent! No issues.</span>
+                    <option value="5">Excellent! No issues.</option>
                     <option value="4">Good! Not perfect but not annoying.</option>
-                    <option value="3" selected="selected">It was ok. I had a few issues.</span></option>
+                    <option value="3" selected="selected">It was ok. I had a few issues.</option>
                     <option value="2">Poor. Annoying.</option>
                     <option value="1">I'm disappointed.</option>
                 </select>

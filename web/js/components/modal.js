@@ -1,5 +1,3 @@
-/* global Modal */
-
 !(function (global) {
   'use strict';
 
@@ -11,6 +9,7 @@
   var keyPressHandler;
   var _queuedModals = [];
   var _modalShown = false;
+  var preShowFocusElement;
 
   function addCloseHandler(selector) {
     var closeElement = document.querySelector(selector + ' .close');
@@ -18,7 +17,10 @@
       return;
     }
 
-    var handler = Modal.hide.bind(Modal, selector);
+    var handler = function () {
+      Utils.sendEvent('modal:close');
+      hide(selector);
+    };
     closeHandlers[selector] = {
       target: closeElement,
       handler: handler
@@ -43,6 +45,8 @@
 
   function show(selector, preShowCb) {
     var screenFree;
+    preShowFocusElement = document.activeElement;
+    preShowFocusElement && preShowFocusElement.blur();
     if (!_modalShown) {
       screenFree = Promise.resolve();
     } else {
@@ -74,6 +78,7 @@
       modal.addEventListener(transEndEventName, function onTransitionend() {
         modal.removeEventListener(transEndEventName, onTransitionend);
         modal.classList.remove('visible');
+        preShowFocusElement && preShowFocusElement.focus();
         resolve();
       });
       removeCloseHandler(selector);

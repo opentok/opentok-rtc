@@ -23,6 +23,16 @@
       }
     });
 
+    var userNameInputElement = document.getElementById('user-name-input');
+    userNameInputElement.addEventListener('keyup', function keyupHandler() {
+      document.querySelector('#enter-name-prompt label').classList.add('visited');
+      userNameInputElement.removeEventListener('keyup', keyupHandler);
+    });
+
+    document.querySelector('.user-name-modal').addEventListener('click', function () {
+      userNameInputElement.focus();
+    });
+
     var publishSettings = document.querySelector('.publish-settings');
 
     publishSettings.addEventListener('click', function (e) {

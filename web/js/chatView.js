@@ -26,12 +26,15 @@
     if (isVisible) {
       addHandlers();
       return Chat.show().then(function () {
+        Utils.sendEvent('chatView:shown');
         scrollTo();
         chatMsgInput.focus();
       });
     }
     removeHandlers();
-    return Chat.hide();
+    return Chat.hide().then(function () {
+      Utils.sendEvent('chatView:hidden');
+    });
   }
 
   var eventHandlers;
@@ -128,7 +131,6 @@
     evt.preventDefault();
     evt.stopImmediatePropagation();
     _visibilityChanging = setVisibility(false);
-    Utils.sendEvent('chatView:hidden');
   };
 
   var onToggle = function () {

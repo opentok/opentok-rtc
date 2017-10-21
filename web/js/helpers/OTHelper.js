@@ -3,6 +3,7 @@
 
   var dynamicOTLoad = true;
   var otPromise = Promise.resolve();
+  var annotation;
 
   var preReqSources = [
   ];
@@ -410,11 +411,18 @@
       };
       return new AnnotationAccPack(options);
     }
+    function resizeAnnotationCanvas () {
+      annotation && annotation.resizeCanvas();
+    }
 
     function startAnnotation(aAccPack) {
       if (!aAccPack) {
         return Promise.resolve();
       }
+      annotation = aAccPack;
+      Utils.addEventsHandlers('roomView:', {
+        screenChange: resizeAnnotationCanvas
+      });
       return aAccPack.start(_session, {
         imageAssets: IMAGE_ASSETS,
         backgroundColor: TOOLBAR_BG_COLOR
@@ -425,6 +433,10 @@
     function endAnnotation(aElement) {
       var annPack =  aElement && aElement._ANNOTATION_PACK || aElement;
       annPack && annPack.end && annPack.end();
+      Utils.removeEventHandlers('roomView:', {
+        screenChange: resizeAnnotationCanvas
+      });
+      annotation = null;
     }
 
     function setupAnnotation(aAccPack, aPubSub, aParentElement) {

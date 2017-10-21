@@ -16,19 +16,19 @@
   "env": {
     "TB_API_KEY": {
       "description": "OpenTok API key: Login to the Tokbox Dashboard (https://dashboard.tokbox.com/keys) to get this value.",
-      "required": "true"
+      "required": true
     },
     "TB_API_SECRET": {
       "description": "OpenTok API secret: Login to the Tokbox Dashboard (https://dashboard.tokbox.com/keys) to get this value.",
-      "required": "true"
+      "required": true
     },
     "FB_DATA_URL": {
       "description": "URL of the Firebase app used to store the archive information. Go to https://firebase.com to get a valid URL.",
-      "required": "false"
+      "required": false
     },
     "FB_AUTH_SECRET": {
       "description": "Firebase Auth secret for the database. Go to https://firebase.com to get a valid URL and secret.",
-      "required": "false"
+      "required": false
     }
   },
   "addons": [

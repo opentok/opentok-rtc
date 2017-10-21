@@ -5,12 +5,20 @@
 
   var room,
     user,
-    enterButton;
+    enterButton,
+    form,
+    roomLabelElem,
+    userLabelElem,
+    errorMessage;
 
   var init = function () {
     enterButton = document.getElementById('enter');
     room = document.getElementById('room');
     user = document.getElementById('user');
+    form = document.querySelector('form');
+    roomLabelElem = document.getElementById('room-label');
+    userLabelElem = document.getElementById('user-label');
+    errorMessage = document.querySelector('.error-room');
     resetForm();
     addHandlers();
     if (window.location.hostname.indexOf('opentokrtc.com') === 0) {
@@ -24,7 +32,7 @@
     var fields = document.querySelectorAll('form input.required');
 
     Array.prototype.map.call(fields, function (field) {
-      var errorMessage = document.querySelector('.error-' + field.id);
+      errorMessage = document.querySelector('.error-' + field.id);
       var valid = field.type === 'checkbox' ? field.checked : field.value.trim();
       valid ? errorMessage.classList.remove('show') : errorMessage.classList.add('show');
       formValid = formValid && valid;
@@ -39,33 +47,51 @@
       field.value = '';
       field.checked = false;
       room.focus();
-      room.addEventListener('focus', animateLabel);
-      room.addEventListener('keypress', animateLabel);
-      user.addEventListener('focus', animateLabel);
+      room.addEventListener('keyup', onKeyup);
+      room.addEventListener('focus', onFocus);
+      user.addEventListener('focus', onFocus);
     });
   };
 
-  var animateLabel = function () {
-    document.getElementById(this.id + '-label').classList.add('visited');
+  var onKeyup = function () {
+    roomLabelElem.classList.add('visited');
+    room.removeEventListener('keyup', onFocus);
+  };
+
+  var onFocus = function () {
+    if (this.id === 'room') {
+      errorMessage.classList.remove('show');
+      document.getElementById('room-label').style.opacity = 1;
+      roomLabelElem.classList.add('visited');
+      if (document.getElementById('user').value.length === 0) {
+        userLabelElem.classList.remove('visited');
+      }
+    } else {
+      userLabelElem.classList.add('visited');
+      if (document.getElementById('room').value.length === 0) {
+        roomLabelElem.classList.remove('visited');
+      }
+    }
   };
 
   var showContract = function () {
     var selector = '.tc-modal.contract';
-    var ui = document.querySelector(selector);
+    var acceptElement = document.querySelector(selector + ' .accept');
 
     return Modal.show(selector)
       .then(function () {
         return new Promise(function (resolve) {
-          ui.addEventListener('click', function onClicked(evt) {
-            var classList = evt.target.classList;
-            var hasAccepted = classList.contains('accept');
-            if (!hasAccepted && !classList.contains('close')) {
-              return;
-            }
-            evt.stopImmediatePropagation();
+          acceptElement.addEventListener('click', function onClicked(evt) {
+            acceptElement.removeEventListener('click', onClicked);
+            resolve(true);
             evt.preventDefault();
-            ui.removeEventListener('click', onClicked);
-            Modal.hide(selector).then(function () { resolve(hasAccepted); });
+            Modal.hide(selector);
+          });
+
+          Utils.addEventsHandlers('modal:', {
+            close: function () {
+              resolve();
+            }
           });
         });
       });
@@ -87,9 +113,10 @@
       event.preventDefault();
       event.stopImmediatePropagation();
 
-      var form = document.querySelector('form');
       if (!isValid()) {
         form.classList.add('error');
+        room.blur();
+        document.getElementById('room-label').style.opacity = 0;
         return;
       }
 
@@ -107,6 +134,9 @@
       } else {
         navigateToRoom();
       }
+    });
+    room.addEventListener('keypress', function onKeypress() {
+      errorMessage.classList.remove('show');
     });
   };
 

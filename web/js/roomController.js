@@ -580,6 +580,10 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
           .then(function (subscriber) {
             if (streamVideoType === 'screen') {
               enableAnnotations && Utils.sendEvent('roomController:annotationStarted');
+              var subContainer = subscriber.element.parentElement;
+              Utils.sendEvent('layoutView:itemSelected', {
+                item: subContainer
+              });
               return subscriber;
             }
 
@@ -852,7 +856,9 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
           }
           publisherOptions.name = userName;
           // Remember previous device selection in IE:
-          publisherOptions.usePreviousDeviceSelection = true;
+          if (Utils.isIE()) {
+            publisherOptions.usePreviousDeviceSelection = true;
+          }
           return otHelper.publish(publisherElement, publisherOptions, {}).then(function () {
             setPublisherReady();
             RoomView.showPublisherButtons(publisherOptions);
