@@ -8,7 +8,7 @@
     var suffix = ' AM';
 
     var hours = now.getHours();
-    if (hours > 12) {
+    if (hours >= 12) {
       suffix = ' PM';
       hours -= 12;
     }
