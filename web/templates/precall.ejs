@@ -44,20 +44,23 @@
         <div id="precall-test-labels">
           <img src="/images/icons/connectivity-icon.svg" />
           <span>Connectivity test</span>
-          <span id="test-status"></div>
-          <i data-icon="close-box"></i>
-        </div>
-        <div id="precall-test-meter">
-          <div id="precall-test-meter-level">
-          </div>
+          <span id="test-status">
+            <label></label>
+            <button id="connectivity-cancel">
+              <i data-icon="connectivity-cancel"></i>
+            </button>
+          </span>
         </div>
       </div>
-    <footer>
+      <div id="precall-test-meter">
+        <div id="precall-test-meter-level">
+        </div>
+      </div>
       <button id="enter" class="btn btn-blue btn-padding" type="submit" disabled>
         <span class="room-name"></span>
       </button>
-    </footer>
-  </form>
+    </form>
+  </div>
   <div id="pre-call-test-results">
     <i data-icon="close-box" id="precall-close"></i>
     <i data-icon="precall-tick" id="precall-icon"></i>

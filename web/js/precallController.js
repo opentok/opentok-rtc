@@ -31,6 +31,10 @@
           PrecallView.displayNetworkTestResults(result);
         }
       });
+    },
+    cancelTest: function () {
+      PrecallView.hideConnectivityTest();
+      otNetworkTest.stopTest();
     }
   };
 
