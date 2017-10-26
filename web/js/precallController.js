@@ -56,7 +56,7 @@
           PrecallView.hide();
           publisher.destroy();
           if (!Utils.isIE()) {
-            otNetworkTest.stopTest();
+            otNetworkTest && otNetworkTest.stopTest();
           }
           Modal.hide(selector)
             .then(function () {

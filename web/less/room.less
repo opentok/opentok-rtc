@@ -67,7 +67,6 @@ body {
     @media @smartphonesPortrait {
       width: 56px;
       min-width: 56px;
-      padding: 0 12px;
     }
   }
   .center-container {
@@ -88,6 +87,7 @@ body {
       line-height: 0.5;
       letter-spacing: 1.1px;
       color: #7a8b93;
+      min-width: 60px;
       .room-name {
         font-size: 22px;
         text-overflow: ellipsis;
@@ -110,13 +110,13 @@ body {
     display: flex;
     .flex-direction(row);
     .align-items(center);
-    .justify-content(center);
+    .justify-content(flex-end);
     right: 0;
 
     @media @smartphonesPortrait {
       float: left;
       width: unset;
-      min-width: calc(~"100% - 94px");
+      min-width: calc(~"100% - 190px");
       height: 92px;
     }
     div {
@@ -125,6 +125,7 @@ body {
   }
   .videoSwitch, .audioSwitch {
     width: 216px;
+    min-width: 216px;
     span {
       margin-left: 12px;
       margin-right: 12px;
@@ -559,6 +560,10 @@ body {
     left: 20px;
     width: 135px;
     height: 37px;
+    @media @smartphones {
+      display: none;
+      position: relative;
+    }
   }
 }
 
@@ -642,6 +647,13 @@ body {
     border-radius: 12px;
     .OT_publisher .OT_widget-container {
       border-radius: 12px;
+    }
+    @media @smartphonesPortrait {
+      position: relative;
+      max-height: 40%;
+      max-width: calc(~"100% - 20px");
+      top: 10px;
+      left: 10px;
     }
   }
   #video-preview-name {
@@ -785,9 +797,11 @@ body {
       max-width: calc(~"100% - 80px");
     }
   }
+
   #precall-test-meter-level {
     background-color: #10a9dc;
     height: 100%;
+    width: 0;
     background-image: -webkit-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
     background-image: -o-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
     background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
@@ -812,6 +826,10 @@ body {
   display: flex;
   align-items: center;
   height: 100%;
+  @media @smartphones {
+    width: 100%;
+    margin: 0;
+  }
 }
 
 #pre-call-test-results {
@@ -826,6 +844,11 @@ body {
   color: #494747;
   font-size: 14px;
   padding: 35px;
+
+  @media @smartphonesPortrait  {
+    left: calc(~"50% - 152px");
+  }
+
   p {
     font-size: 14px;
   }
@@ -915,6 +938,9 @@ body {
   position: absolute;
   top: 32px;
   left: 184px;
+  @media @smartphones {
+    display: none;
+  }
 }
 
 .feedback-report .tc-dialog {
@@ -1038,6 +1064,10 @@ footer.main {
 #enter.btn {
   overflow: hidden;
   width: 100%;
+  @media @smartphonesPortrait {
+    left: 10px;
+    width: calc(~"100% - 20px");
+  }
 }
 
 [data-chat-visible=true] footer.main {

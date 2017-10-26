@@ -48,10 +48,14 @@
     publishSettings.addEventListener('click', function (e) {
       var initialVideoSwitch = document.querySelector('#initialVideoSwitch');
       var initialAudioSwitch = document.querySelector('#initialAudioSwitch');
-      var elem = e.target;
-      elem.blur();
+
+      setTimeout(function () {
+        // This must be done asynchronously to hide the virtual keyboard in iOS:
+        document.activeElement.blur();
+      }, 1);
+
       // pointer-events is not working on IE so we can receive as target a child
-      elem = HTMLElems.getAncestorByTagName(elem, 'a');
+      var elem = HTMLElems.getAncestorByTagName(e.target, 'a');
       if (!elem) {
         return;
       }
