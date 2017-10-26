@@ -97,7 +97,7 @@ BubbleFactory, Clipboard, LayoutManager */
       _chatHasBeenShown = true;
       setUnreadMessages(0);
       messageButtonElem.classList.add('activated');
-      
+
       // hide call controls on small screens
       if (window.innerWidth <= 480) {
         hideCallControls();
