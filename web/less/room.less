@@ -393,6 +393,20 @@ body {
   padding: 0 40px;
   opacity: 0;
   transition: all @transitionTime;
+
+  @media @smartphonesPortrait {
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    background-image: none;
+    padding: 0;
+  }
+
+  #addToCall-container, #screen-share-container, #annotate-button-container {
+    @media @smartphonesPortrait {
+      display: none;
+    }
+  }
+
   div {
     display: table-cell;
     padding-top: 10px;
@@ -447,6 +461,9 @@ body {
   background-image: url(/images/icons/feedback.svg);
   background-repeat: no-repeat;
   cursor: pointer;
+  @media @smartphonesPortrait {
+    display: none;
+  }
   span {
     display: block;
     transform: rotate(180deg);

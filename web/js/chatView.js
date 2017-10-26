@@ -96,6 +96,7 @@
     if (!chatMsgInput.value.trim().length) {
       return;
     }
+    document.activeElement.blur(); // Hide the virtual keyboard.
     Utils.sendEvent('chatView:outgoingMessage', {
       sender: usrId,
       time: Utils.getCurrentTime(),
