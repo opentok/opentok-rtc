@@ -78,17 +78,21 @@
             sessionId: window.precallSessionId,
             token: window.precallToken
           };
-          PrecallView.startPrecallTestMeter();
 
-          // You cannot use the network test in IE. IE cannot subscribe to its own stream.
-          if (!Utils.isIE()) {
-            otNetworkTest = new OTNetworkTest(previewOptions);
-            otNetworkTest.startNetworkTest(function (error, result) {
-              PrecallView.displayNetworkTestResults(result);
-              if (result.audioOnly) {
-                publisher.publishVideo(false);
-                Utils.sendEvent('PrecallController:audioOnly');
-              }
+          // You cannot use the network test in IE or Safari. IE cannot subscribe to its own stream.
+          // In Safari on iOS, you cannot use two publishers (the preview publisher and the network
+          // test publisher) simultaneously.
+          if (!Utils.isIE() && !Utils.isSafariIOS()) {
+            publisher.on('accessAllowed', function () {
+              PrecallView.startPrecallTestMeter();
+              otNetworkTest = new OTNetworkTest(previewOptions);
+              otNetworkTest.startNetworkTest(function (error, result) {
+                PrecallView.displayNetworkTestResults(result);
+                if (result.audioOnly) {
+                  publisher.publishVideo(false);
+                  Utils.sendEvent('PrecallController:audioOnly');
+                }
+              });
             });
           }
 

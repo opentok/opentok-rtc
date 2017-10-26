@@ -99,6 +99,10 @@
     max-width: none;
     padding: 40px;
     text-align: center;
+    @media @smartphonesPortrait {
+      right: 20px;
+      width: 200px;
+    }
   }
 
   .title {
@@ -146,6 +150,9 @@
       border-bottom: 0;
       padding: 5px 0;
       width: calc(~"100% - 10px");
+      @media @smartphonesPortrait {
+        width: 200px;
+      }
     }
 
     li:first-child {

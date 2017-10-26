@@ -84,6 +84,9 @@ body {
       width: 233px;
       color: white;
       outline: none;
+      @media @smartphonesPortrait {
+        width: calc(~"100% - 180px");
+      }
       text-shadow: black 1px 1px 12px;
     }
     textarea {
