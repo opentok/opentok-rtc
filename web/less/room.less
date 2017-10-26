@@ -21,9 +21,9 @@ body {
   .flex-direction(row);
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  overflow-x: hidden;
   color: #fff;
-  overflow-y: auto;
+  overflow-y: hidden;
   background-color: @mainBackgroundColor;
 }
 
@@ -40,11 +40,11 @@ body {
 #top-banner {
   visibility: hidden;
   height: 98px;
-  min-width: 1294px;
   width: 100%;
   background-color: #293840;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
   position: absolute;
+  display: flex;
   top: 0;
   left: 0;
   right: 0;
@@ -60,11 +60,14 @@ body {
     .justify-content(center);
     float: left;
     width: 269px;
+    min-width: 269px;
     height: 100%;
     text-align: center;
     border-right: 1px solid #455b66;
     @media @smartphonesPortrait {
       width: 56px;
+      min-width: 56px;
+      padding: 0 12px;
     }
   }
   .center-container {
@@ -108,20 +111,23 @@ body {
     .flex-direction(row);
     .align-items(center);
     .justify-content(center);
+    right: 0;
 
     @media @smartphonesPortrait {
       float: left;
       width: unset;
+      min-width: calc(~"100% - 94px");
+      height: 92px;
     }
     div {
-      position:relative;
-      float: left;
+        float: left;
     }
   }
   .videoSwitch, .audioSwitch {
-    margin-right: 48px;
+    width: 216px;
     span {
       margin-left: 12px;
+      margin-right: 12px;
       vertical-align: top;
       line-height: 24px;
       font-size: 12px;
@@ -137,6 +143,7 @@ body {
     border-left: 1px solid #455b66;
     text-align: center;
     display: flex;
+    right: 0;
     .flex-direction(row);
     .align-items(center);
     .justify-content(center);
@@ -160,10 +167,11 @@ body {
     margin: 28px 0;
     height: 40px;
     background-color: inherit !important;
-
+    position: relative;
+    
     @media @smartphonesPortrait {
       top: -20px;
-      right: -8px;
+      right: 8px;
     }
 
     a {
@@ -182,7 +190,7 @@ body {
     padding: 0 37.5px;
     @media @smartphonesPortrait {
       top: -20px;
-      right: -8px;
+      right: 8px;
       width: 116px;
       margin: 0;
       padding: 0;
@@ -192,7 +200,8 @@ body {
     #startArchiving, #stopArchiving {
       padding: 0 57.5px 0 17.5px;
       @media @smartphonesPortrait {
-        padding: 0;
+        padding: 0 20px 0 0;
+        width: 100px;
         right: -8px;
       }
     }
@@ -200,7 +209,7 @@ body {
   #manageRecordings {
     display: none;
     @media @smartphonesPortrait {
-      right: -42px;
+      right: -26px;
     }
     a {
       position: absolute;
@@ -235,6 +244,18 @@ body {
   visibility: hidden;
   position: relative;
   overflow: hidden;
+  @media @smartphonesPortrait {
+    margin-top: 64px;
+    margin-bottom: 2px;
+    height: calc(~"100% - 68px");
+    padding: 2px;
+  }
+}
+
+#screen.streams {
+  @media @smartphonesPortrait {
+    height: 100%;
+  }
 }
 
 .add-to-call-modal {
@@ -375,6 +396,9 @@ body {
 .call-controls.visible {
   opacity: 1;
   bottom: 0;
+  @media smartphonesPortrait {
+    bottom: 14px;
+  }
 }
 
 .call-controls {
@@ -395,7 +419,7 @@ body {
   transition: all @transitionTime;
 
   @media @smartphonesPortrait {
-    width: 100%;
+    width: (100% + 2px);
     background-color: rgba(0, 0, 0, 0.8);
     background-image: none;
     padding: 0;

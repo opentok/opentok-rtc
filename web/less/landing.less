@@ -27,12 +27,28 @@ body {
 
   header {
     min-height: 222px;
+    @media @smartphonesPortrait {
+      min-height: 66px;
+    }
+    img {
+      margin-left: calc(~"50% - 100px");
+      @media @smartphonesPortrait {
+        margin-left: calc(~"50% - 50px");
+        top: 37px;
+        width: 120px;
+        height: 31.5px;
+      }
+    }
+
   }
 
   h1, h2, h3 {
     font-family: @muliRegularFont, arial;
     padding: 0;
     text-align: center;
+    @media @smartphonesPortrait {
+      visibility: hidden;
+    }
   }
 
   h1 {
