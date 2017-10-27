@@ -26,12 +26,12 @@ describe('RoomView', () => {
 
   describe('#roomControllerEvents', () => {
     it('should listen for roomController:controllersReady event', () => {
-      expect(document.querySelectorAll('#call-controls [disabled]').length).to.equal(5);
+      expect(document.querySelectorAll('#call-controls [disabled]').length).to.equal(6);
       expect(document.querySelectorAll('#top-banner [disabled]').length).to.equal(3);
       RoomView.showRoom();
       window.dispatchEvent(new CustomEvent('roomController:controllersReady'));
       var selectorStr = '#top-banner [disabled], .call-controls [disabled]'
-        + ':not(#toggle-publisher-video):not(#toggle-publisher-audio)';
+        + ':not(#toggle-publisher-video):not(#toggle-publisher-audio):not(#annotate)';
       expect(document.querySelectorAll(selectorStr).length).to.equal(0);
     });
   });
