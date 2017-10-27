@@ -10,6 +10,11 @@
   display: none;
   transition: width @transitionTime;
 
+  @media @smartphonesPortrait {
+    margin-left: -4px;
+    margin-top: 58px;
+  }
+
   &.show {
     width: 486px;
     transition: width @transitionTime;

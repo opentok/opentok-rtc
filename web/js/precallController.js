@@ -46,7 +46,9 @@
         PrecallView.setUsername(username);
         PrecallView.setFocus(username);
 
-        if (Utils.isIE()) PrecallView.hideConnectivityTest();
+        if (Utils.isIE() || Utils.isSafariIOS()) {
+          PrecallView.hideConnectivityTest();
+        }
 
         document.querySelector('.user-name-modal #enter').disabled = false;
         document.querySelector('.user-name-modal .tc-dialog').addEventListener('submit', function (event) {
@@ -54,7 +56,7 @@
           PrecallView.hide();
           publisher.destroy();
           if (!Utils.isIE()) {
-            otNetworkTest.stopTest();
+            otNetworkTest && otNetworkTest.stopTest();
           }
           Modal.hide(selector)
             .then(function () {
@@ -78,17 +80,21 @@
             sessionId: window.precallSessionId,
             token: window.precallToken
           };
-          PrecallView.startPrecallTestMeter();
 
-          // You cannot use the network test in IE. IE cannot subscribe to its own stream.
-          if (!Utils.isIE()) {
-            otNetworkTest = new OTNetworkTest(previewOptions);
-            otNetworkTest.startNetworkTest(function (error, result) {
-              PrecallView.displayNetworkTestResults(result);
-              if (result.audioOnly) {
-                publisher.publishVideo(false);
-                Utils.sendEvent('PrecallController:audioOnly');
-              }
+          // You cannot use the network test in IE or Safari. IE cannot subscribe to its own stream.
+          // In Safari on iOS, you cannot use two publishers (the preview publisher and the network
+          // test publisher) simultaneously.
+          if (!Utils.isIE() && !Utils.isSafariIOS()) {
+            publisher.on('accessAllowed', function () {
+              PrecallView.startPrecallTestMeter();
+              otNetworkTest = new OTNetworkTest(previewOptions);
+              otNetworkTest.startNetworkTest(function (error, result) {
+                PrecallView.displayNetworkTestResults(result);
+                if (result.audioOnly) {
+                  publisher.publishVideo(false);
+                  Utils.sendEvent('PrecallController:audioOnly');
+                }
+              });
             });
           }
 
