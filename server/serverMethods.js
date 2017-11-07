@@ -447,8 +447,8 @@ function ServerMethods(aLogLevel, aModules) {
                   }),
           username: userName,
           firebaseURL:
-            (enableArchiveManager && fbArchives.baseURL + '/' + usableSessionInfo.sessionId) || 'unknown',
-          firebaseToken: fbUserToken || 'unknown',
+            (enableArchiveManager && fbArchives.baseURL + '/' + usableSessionInfo.sessionId) || '',
+          firebaseToken: fbUserToken || '',
           chromeExtId: tbConfig.chromeExtId,
           enableArchiveManager: tbConfig.enableArchiveManager,
           enableAnnotation: tbConfig.enableAnnotations,
