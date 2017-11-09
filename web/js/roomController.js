@@ -732,8 +732,9 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       .getRoomInfo(aRoomParams)
       .then(function (aRoomInfo) {
         if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId &&
-              aRoomInfo.apiKey && aRoomInfo.username &&
-              aRoomInfo.firebaseToken && aRoomInfo.firebaseURL)) {
+              aRoomInfo.apiKey && aRoomInfo.username) ||
+              (aRoomInfo.enableArchiveManager &&
+              (!aRoomInfo.firebaseToken || !aRoomInfo.firebaseURL))) {
           debug.error('Error getRoomParams [', aRoomInfo,
                       '] without correct response');
           throw new Error('Error getting room parameters');
