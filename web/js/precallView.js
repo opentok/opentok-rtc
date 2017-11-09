@@ -18,9 +18,19 @@
           break;
         case 'retest':
           preCallTestResults.style.display = 'none';
+          document.getElementById('connectivity-cancel').style.display = 'inline-block';
           Utils.sendEvent('roomView:retest');
           break;
       }
+    });
+
+    var connectivityCancelElement = document.getElementById('connectivity-cancel');
+    connectivityCancelElement.addEventListener('click', function (event) {
+      event.preventDefault();
+      Utils.sendEvent('roomView:cancelTest');
+      connectivityCancelElement.style.display = 'none';
+      preCallTestResults.style.display = 'none';
+      hideConnectivityTest();
     });
 
     var userNameInputElement = document.getElementById('user-name-input');
@@ -38,10 +48,14 @@
     publishSettings.addEventListener('click', function (e) {
       var initialVideoSwitch = document.querySelector('#initialVideoSwitch');
       var initialAudioSwitch = document.querySelector('#initialAudioSwitch');
-      var elem = e.target;
-      elem.blur();
+
+      setTimeout(function () {
+        // This must be done asynchronously to hide the virtual keyboard in iOS:
+        document.activeElement.blur();
+      }, 1);
+
       // pointer-events is not working on IE so we can receive as target a child
-      elem = HTMLElems.getAncestorByTagName(elem, 'a');
+      var elem = HTMLElems.getAncestorByTagName(e.target, 'a');
       if (!elem) {
         return;
       }
@@ -158,7 +172,7 @@
     var TEST_DURATION_MAX = 200; // 20 seconds
     var meterLevel = document.getElementById('precall-test-meter-level');
     setSwitchStatus(true, 'Video', 'roomView:initialVideoSwitch');
-    document.getElementById('test-status').innerText = 'Testing audio / video quality…';
+    document.querySelector('#test-status label').innerText = 'Testing audio / video quality…';
     meterLevel.style.width = 0;
     meterLevel.style['animation-play-state'] = 'running';
     var preCallTestProgress = 0;
@@ -180,9 +194,10 @@
     var packetLossStr;
 
     clearInterval(testMeterInterval);
-    document.getElementById('test-status').innerText = 'Done.';
+    document.querySelector('#test-status label').innerText = 'Done.';
     document.getElementById('precall-test-meter-level').style['animation-play-state'] = 'paused';
     setTestMeterLevel(1);
+    document.getElementById('connectivity-cancel').style.display = 'none';
 
     document.getElementById('pre-call-test-results').style.display = 'block';
     document.getElementById('audio-bitrate').innerText =

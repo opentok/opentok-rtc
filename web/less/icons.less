@@ -29,6 +29,12 @@
   background-image: url("/images/icons/close-box.svg");
 }
 
+[data-icon="connectivity-cancel"] {
+  background-image: url("/images/icons/connectivity-cancel.svg");
+  height: 13px;
+  width: 13px;
+}
+
 [data-icon="precall-tick"] {
   background-image: url("/images/icons/precall/tick.svg");
 }
@@ -143,6 +149,11 @@
   background-image: url("/images/tokbox-logo.svg");
   width: 164.2px;
   height: 45px;
+  @media @smartphonesPortrait {
+    background-image: url("/images/tokbox-logo-bug.svg");
+    width: 27px;
+    height: 27px;
+  }
 }
 
 [data-icon="warning"] {
@@ -326,9 +337,6 @@
 [data-icon="participants"] {
   background-image: url("/images/icons/participants.svg");
   width: 25px;
-  @media @smartphones {
-    width: 16px;
-  }
   height: 13px;
   margin-right: -4px;
   margin-bottom: -1px;

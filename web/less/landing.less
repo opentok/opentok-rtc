@@ -17,21 +17,39 @@ body {
   background-size: cover;
   transition: none;
   padding: 0;
+  margin: 0;
 }
 
 .main {
 
   height: 100%;
   .justify-content(center);
+  text-shadow: black 1px 1px 12px;
 
   header {
     min-height: 222px;
+    @media @smartphonesPortrait {
+      min-height: 66px;
+    }
+    img {
+      margin-left: calc(~"50% - 100px");
+      @media @smartphonesPortrait {
+        margin-left: calc(~"50% - 50px");
+        top: 37px;
+        width: 120px;
+        height: 31.5px;
+      }
+    }
+
   }
 
   h1, h2, h3 {
     font-family: @muliRegularFont, arial;
     padding: 0;
     text-align: center;
+    @media @smartphonesPortrait {
+      visibility: hidden;
+    }
   }
 
   h1 {
@@ -46,9 +64,6 @@ body {
 
   h2 {
     font-size: 20px;
-    @media @smartphones {
-      font-size: 14px;
-    }
     font-weight: 400;
     margin: 6px 0;
     color: @grey4;
@@ -56,9 +71,6 @@ body {
 
   h3 {
     font-size: 14px;
-    @media @smartphones {
-      font-size: 12px;
-    }
     margin: 5px 0;
     font-weight: 600;
     color: @grey3;
@@ -69,6 +81,11 @@ body {
     width: 100%;
     margin: 20px 0 0 0;
     height: 100px;
+    @media @smartphonesPortrait {
+      max-width: calc(~"100% - 60px");
+      margin: 0;
+      margin: 20px 30px 0 24px;
+    }
 
     div {
       border-bottom: solid 1px #434d5a;
@@ -83,13 +100,17 @@ body {
       width: 233px;
       color: white;
       outline: none;
+      @media @smartphonesPortrait {
+        width: calc(~"100% - 180px");
+      }
+      text-shadow: black 1px 1px 12px;
     }
     textarea {
       padding: 12px 20px 10px 0;
     }
 
     label {
-      color: #748393;
+      color: #fff;
       font-size: 16px;
       line-height: 57px;
       width: 100%;
@@ -104,10 +125,18 @@ body {
       font-size: 12px;
     }
     #room-label.visited {
+      color: #748393;
       left: 278px;
+      @media @smartphonesPortrait {
+        left: calc(~"100% - 80px");
+      }
     }
     #user-label.visited {
+      color: #748393;
       left: 296px;
+      @media @smartphonesPortrait {
+        left: calc(~"100% - 60px");
+      }
     }
 
     p {
@@ -121,7 +150,7 @@ body {
       color: #ed5654;
       opacity: 0;
 
-      @media @smartphones {
+      @media @smartphonesPortrait {
         font-size: 12px;
       }
 
@@ -140,6 +169,9 @@ body {
 
     .error-room {
       margin: 0 356px 0 0;
+      @media @smartphonesPortrait {
+        margin: 0 0 0 0;
+      }
       position: relative;
       font-size: 16px;
       width: 100%;
@@ -162,7 +194,7 @@ body {
     .tb.btn {
       font-family: @muliRegularFont, arial;
       font-size: 16px;
-      @media @smartphones {
+      @media @smartphonesPortrait {
         font-size: 14px;
       }
       font-weight: normal;
@@ -176,7 +208,9 @@ body {
       position: absolute;
       left: 12px;
       z-index: 100;
-      @media @smartphones {
+      @media @smartphonesPortrait {
+        position: fixed;
+        left: 0;
         font-size: 14px;
       }
       @media @smartphonesLandscape {
@@ -189,6 +223,11 @@ body {
     font-size: 12px;
     margin-top: 69px;
     margin-bottom: 32px;
+    @media @smartphones {
+      position: fixed;
+      right: 20px;
+      bottom: 0;
+    }
     a {
       color: @blueText;
     }
@@ -230,6 +269,11 @@ body {
     margin-right: 80px;
     padding: 20px;
     width: 360px;
+    @media @smartphonesPortrait {
+      margin-right: 0;
+      width: 100%;
+      height: 100%;
+    }
     background: rgba(0, 0, 0, 0.6);
     border-radius: 10px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
@@ -240,12 +284,16 @@ body {
   }
 
   #enter {
-    position: fixed;
+    position: absolute;
     width: 50px;
     height: 50px;
     padding: 0;
-    right: 0;
-    top: 50%;
+    right: -82px;
+    top: calc(~"50% - 25px");
+    @media @smartphones {
+      right: 0;
+      position: fixed;
+    }
     background-color: #0099cc;
     opacity: 0.7;
     margin-left: 0;
@@ -266,6 +314,9 @@ body {
     height: 100%;
     display: table;
     width: 498px;
+    @media @smartphonesPortrait {
+      width: 100%;
+    }
     right: 0;
     position: absolute;
   }
@@ -278,7 +329,7 @@ body {
 .tc-modal.contract {
   header {
     font-size: 24px;
-    @media @smartphones {
+    @media @smartphonesPortrait {
       font-size: 20px;
     }
     color: @blueText;

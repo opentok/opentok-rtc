@@ -14,7 +14,8 @@
     var publisher = OT.initPublisher(publisherEl, options);
     var subscriber;
     var bandwidthCalculator;
-    var intervalId;
+    var getStatsIntervalId;
+    var testTimeoutId;
     var currentStats;
 
     var testStreamingCapability = function(subscriber, callback) {
@@ -297,7 +298,7 @@
             video: {}
           };
 
-          intervalId = window.setInterval(function() {
+          getStatsIntervalId = window.setInterval(function() {
             config.subscriber.getStats(function(error, stats) {
               var activeMediaTypes = Object.keys(stats)
               .filter(function(key) {
@@ -336,7 +337,8 @@
         },
 
         stop: function() {
-          window.clearInterval(intervalId);
+          window.clearInterval(getStatsIntervalId);
+          window.clearTimeout(testTimeoutId);
         }
       };
     }
@@ -356,7 +358,7 @@
         callback = function() {};
       };
 
-      window.setTimeout(cleanupAndReport, config.timeout);
+      testTimeoutId = window.setTimeout(cleanupAndReport, config.timeout);
 
       bandwidthCalculator.start(function(stats) {
         currentStats = stats;

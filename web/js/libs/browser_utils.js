@@ -8,7 +8,7 @@
     var suffix = ' AM';
 
     var hours = now.getHours();
-    if (hours > 12) {
+    if (hours >= 12) {
       suffix = ' PM';
       hours -= 12;
     }
@@ -196,14 +196,20 @@
     return /msie/.test(userAgent) || userAgent.indexOf('trident/') !== -1;
   }
 
-  function isSafari() {
+  function isSafariMac() {
     var checkObject = function (p) { return p.toString() === '[object SafariRemoteNotification]'; };
     return /constructor/i.test(window.HTMLElement) ||
         checkObject(!window.safari || safari.pushNotification);
   }
 
+  function isSafariIOS() {
+    var userAgent = window.navigator.userAgent;
+    return userAgent.match(/iPad/i) || userAgent.match(/iPhone/i);
+  }
+
   var Utils = {
-    isSafari: isSafari,
+    isSafariMac: isSafariMac,
+    isSafariIOS: isSafariIOS,
     getCurrentTime: getCurrentTime,
     inspectObject: inspectObject,
     sendEvent: sendEvent,

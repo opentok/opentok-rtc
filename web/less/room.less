@@ -21,9 +21,9 @@ body {
   .flex-direction(row);
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  overflow-x: hidden;
   color: #fff;
-  overflow-y: auto;
+  overflow-y: hidden;
   background-color: @mainBackgroundColor;
 }
 
@@ -40,14 +40,19 @@ body {
 #top-banner {
   visibility: hidden;
   height: 98px;
-  min-width: 1294px;
   width: 100%;
   background-color: #293840;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
   position: absolute;
+  display: flex;
   top: 0;
   left: 0;
   right: 0;
+
+  @media @smartphonesPortrait {
+    height: 56px;
+  }
+
   .icon-container {
     display: flex;
     .flex-direction(row);
@@ -55,21 +60,34 @@ body {
     .justify-content(center);
     float: left;
     width: 269px;
+    min-width: 269px;
     height: 100%;
     text-align: center;
     border-right: 1px solid #455b66;
+    @media @smartphonesPortrait {
+      width: 56px;
+      min-width: 56px;
+    }
   }
   .center-container {
     float: left;
     height: 100%;
     max-width: 200px;
     padding-left: 30px;
+
+    @media @smartphonesPortrait {
+      padding: 0;
+      padding-left: 17px;
+      max-width: 130px;
+    }
+
     .room-info {
       font-size: 13px;
       font-weight: 600;
       line-height: 0.5;
       letter-spacing: 1.1px;
       color: #7a8b93;
+      min-width: 60px;
       .room-name {
         font-size: 22px;
         text-overflow: ellipsis;
@@ -78,6 +96,12 @@ body {
         white-space: nowrap;
         line-height: 22px;
         margin-bottom: 8px;
+        @media @smartphonesPortrait {
+          font-size: 16px;
+          margin: 4px 0 0 12px;
+          margin-left: 0;
+          width: 116px;
+        }
       }
     }
   }
@@ -86,20 +110,32 @@ body {
     display: flex;
     .flex-direction(row);
     .align-items(center);
-    .justify-content(center);
-    div {
-      position:relative;
+    .justify-content(flex-end);
+    right: 0;
+
+    @media @smartphonesPortrait {
       float: left;
+      width: unset;
+      min-width: calc(~"100% - 190px");
+      height: 92px;
+    }
+    div {
+        float: left;
     }
   }
   .videoSwitch, .audioSwitch {
-    margin-right: 48px;
+    width: 216px;
+    min-width: 216px;
     span {
       margin-left: 12px;
+      margin-right: 12px;
       vertical-align: top;
       line-height: 24px;
       font-size: 12px;
       color: #c0c0c0;
+    }
+    @media @smartphonesPortrait {
+      display: none;
     }
   }
   .layout-container {
@@ -108,9 +144,15 @@ body {
     border-left: 1px solid #455b66;
     text-align: center;
     display: flex;
+    right: 0;
     .flex-direction(row);
     .align-items(center);
     .justify-content(center);
+
+    @media @smartphonesPortrait {
+      display: none;
+    }
+
     #layout-icon {
       height: 22px;
       float: none;
@@ -126,6 +168,13 @@ body {
     margin: 28px 0;
     height: 40px;
     background-color: inherit !important;
+    position: relative;
+    
+    @media @smartphonesPortrait {
+      top: -20px;
+      right: 8px;
+    }
+
     a {
       height: 40px;
       width: 85px;
@@ -140,14 +189,29 @@ body {
   }
   #toggleArchiving a {
     padding: 0 37.5px;
+    @media @smartphonesPortrait {
+      top: -20px;
+      right: 8px;
+      width: 116px;
+      margin: 0;
+      padding: 0;
+    }
   }
   .manage-recordings {
     #startArchiving, #stopArchiving {
       padding: 0 57.5px 0 17.5px;
+      @media @smartphonesPortrait {
+        padding: 0 20px 0 0;
+        width: 100px;
+        right: -8px;
+      }
     }
   }
   #manageRecordings {
     display: none;
+    @media @smartphonesPortrait {
+      right: -26px;
+    }
     a {
       position: absolute;
       background-color: #0888b3;
@@ -181,6 +245,18 @@ body {
   visibility: hidden;
   position: relative;
   overflow: hidden;
+  @media @smartphonesPortrait {
+    margin-top: 64px;
+    margin-bottom: 2px;
+    height: calc(~"100% - 68px");
+    padding: 2px;
+  }
+}
+
+#screen.streams {
+  @media @smartphonesPortrait {
+    height: 100%;
+  }
 }
 
 .add-to-call-modal {
@@ -321,6 +397,9 @@ body {
 .call-controls.visible {
   opacity: 1;
   bottom: 0;
+  @media smartphonesPortrait {
+    bottom: 14px;
+  }
 }
 
 .call-controls {
@@ -339,6 +418,20 @@ body {
   padding: 0 40px;
   opacity: 0;
   transition: all @transitionTime;
+
+  @media @smartphonesPortrait {
+    width: (100% + 2px);
+    background-color: rgba(0, 0, 0, 0.8);
+    background-image: none;
+    padding: 0;
+  }
+
+  #addToCall-container, #screen-share-container, #annotate-button-container {
+    @media @smartphonesPortrait {
+      display: none;
+    }
+  }
+
   div {
     display: table-cell;
     padding-top: 10px;
@@ -393,6 +486,9 @@ body {
   background-image: url(/images/icons/feedback.svg);
   background-repeat: no-repeat;
   cursor: pointer;
+  @media @smartphonesPortrait {
+    display: none;
+  }
   span {
     display: block;
     transform: rotate(180deg);
@@ -464,11 +560,16 @@ body {
     left: 20px;
     width: 135px;
     height: 37px;
+    @media @smartphones {
+      display: none;
+      position: relative;
+    }
   }
 }
 
 .user-name-modal #name-heading {
     top: 34px;
+    text-shadow: black 1px 1px 8px;
 }
 
 .user-name-modal .tc-dialog {
@@ -480,12 +581,21 @@ body {
     max-width: none;
     padding: 10px;
   }
-  width: 360px;
+  max-width: 360px;
   background: rgba(0,0,0,0.6);
   transform: translateY(0);
   color: white;
+  text-shadow: black 1px 1px 8px;
 
-  header, footer, p {
+  @media @smartphonesPortrait {
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    margin: 0;
+    max-width: unset;
+  }
+
+  header, p {
     margin: 0;
     padding: 0;
   }
@@ -504,8 +614,8 @@ body {
     word-break: break-all;
   }
 
-  footer {
-    margin-right: 20px
+  button#enter {
+    margin: 32px 0 0 0;
   }
 
   p {
@@ -525,7 +635,7 @@ body {
     border-radius: 4px;
   }
   .publish-settings {
-    padding: 20px;
+    padding-top: 20px;
     span {
       margin-right: 20px;
     }
@@ -537,6 +647,13 @@ body {
     border-radius: 12px;
     .OT_publisher .OT_widget-container {
       border-radius: 12px;
+    }
+    @media @smartphonesPortrait {
+      position: relative;
+      max-height: 40%;
+      max-width: calc(~"100% - 20px");
+      top: 10px;
+      left: 10px;
     }
   }
   #video-preview-name {
@@ -605,7 +722,7 @@ body {
     }
     label {
       position: absolute;
-      color: #757575;
+      color: #fff;
       font-size: 16px;
       left: 42px;
       transition: all 0.5s;
@@ -613,6 +730,7 @@ body {
     label.visited {
       left: 236px;
       font-size: 12px;
+      color: #757575;
     }
   }
   #audio-meter, #precall-test-meter {
@@ -640,9 +758,21 @@ body {
       font-size: 16px;
     }
     #test-status {
-      font-size: 10px;
-      line-height: 26px;
-      text-align: right;
+      position: absolute;
+      right: 10px;
+      label {
+        color: #c6c6c6;
+        font-size: 10px;
+        line-height: 26px;
+        text-align: right;
+        padding: 0;
+        @media @smartphonesPortrait {
+          letter-spacing: -0.05px;
+        }
+      }
+      button {
+        padding: 0 0 0 15px;
+      }
     }
     img {
       margin-left: -4px;
@@ -651,16 +781,27 @@ body {
     #precall-test-labels {
       display: flex;
     }
+    #connectivity-cancel {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+    }
   }
 
   #precall-test-meter {
-    width: 290px;
-    margin-top: 12px;
-    margin-left: 28px
+    position: absolute;
+    width: 330px;
+    margin-top: 8px;
+    margin-left: 28px;
+    @media @smartphonesPortrait {
+      max-width: calc(~"100% - 80px");
+    }
   }
+
   #precall-test-meter-level {
     background-color: #10a9dc;
     height: 100%;
+    width: 0;
     background-image: -webkit-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
     background-image: -o-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
     background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
@@ -685,6 +826,10 @@ body {
   display: flex;
   align-items: center;
   height: 100%;
+  @media @smartphones {
+    width: 100%;
+    margin: 0;
+  }
 }
 
 #pre-call-test-results {
@@ -699,6 +844,11 @@ body {
   color: #494747;
   font-size: 14px;
   padding: 35px;
+
+  @media @smartphonesPortrait  {
+    left: calc(~"50% - 152px");
+  }
+
   p {
     font-size: 14px;
   }
@@ -788,6 +938,9 @@ body {
   position: absolute;
   top: 32px;
   left: 184px;
+  @media @smartphones {
+    display: none;
+  }
 }
 
 .feedback-report .tc-dialog {
@@ -911,6 +1064,10 @@ footer.main {
 #enter.btn {
   overflow: hidden;
   width: 100%;
+  @media @smartphonesPortrait {
+    left: 10px;
+    width: calc(~"100% - 20px");
+  }
 }
 
 [data-chat-visible=true] footer.main {
