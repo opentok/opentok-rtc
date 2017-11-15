@@ -645,6 +645,11 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     'signal:muteAll': function (evt) {
       var statusData = JSON.parse(evt.data);
       var muteAllSwitch = statusData.status;
+      var onlyChangeSwitch = statusData.onlyChangeSwitch;		
+      // onlyChangeSwitch is true when the iOS app sends a false muteAll signal.
+      if (onlyChangeSwitch) {
+        return;
+      }
 
       var setNewAudioStatus = function (isMuted) {
         if (_sharedStatus.roomMuted !== isMuted) {
