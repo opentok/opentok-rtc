@@ -407,6 +407,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
           var isMicrophone = name === 'audio' && isPublisher;
           var isSubscribeToVideo = name === 'video' && !isPublisher;
           if (isMicrophone || isSubscribeToVideo) {
+            // Is this correct?
             Utils.sendEvent('roomController:userChangeStatus', { status: newStatus, name: name });
             if (isMicrophone) {
               sendSignalMuteAll(false, true);
@@ -418,9 +419,6 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     },
     videoSwitch: function (evt) {
       changeSubscriberStatus('video', evt.detail.status);
-    },
-    audioSwitch: function (evt) {
-      changeSubscriberStatus('audio', evt.detail.status);
     },
     muteAllSwitch: function (evt) {
       var roomMuted = evt.detail.status;
