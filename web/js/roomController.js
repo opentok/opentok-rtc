@@ -419,6 +419,9 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     videoSwitch: function (evt) {
       changeSubscriberStatus('video', evt.detail.status);
     },
+    audioSwitch: function (evt) {
+      changeSubscriberStatus('audio', evt.detail.status);
+    },
     muteAllSwitch: function (evt) {
       var roomMuted = evt.detail.status;
       _sharedStatus.roomMuted = roomMuted;
@@ -645,25 +648,19 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     'signal:muteAll': function (evt) {
       var statusData = JSON.parse(evt.data);
       var muteAllSwitch = statusData.status;
-      var onlyChangeSwitch = statusData.onlyChangeSwitch;
 
-      var setNewAudioStatus = function (isMuted, onlySwitch) {
+      var setNewAudioStatus = function (isMuted) {
         if (_sharedStatus.roomMuted !== isMuted) {
           return;
         }
-        !onlySwitch && setAudioStatus(isMuted);
-        if (otHelper.isPublisherReady || otHelper.publisherHas('audio')) {
-          RoomView.setAudioSwitchRemotely(isMuted);
-        }
-      }.bind(undefined, muteAllSwitch, onlyChangeSwitch);
+        setAudioStatus(isMuted);
+      }.bind(undefined, muteAllSwitch);
 
       if (!otHelper.isMyself(evt.from)) {
         _sharedStatus.roomMuted = muteAllSwitch;
         if (muteAllSwitch) {
           setAudioStatus(muteAllSwitch);
           Utils.sendEvent('roomController:roomMuted', { isJoining: false });
-        } else if (onlyChangeSwitch) {
-          setNewAudioStatus();
         } else {
           RoomView.showConfirmChangeMicStatus(muteAllSwitch).then(setNewAudioStatus);
         }
