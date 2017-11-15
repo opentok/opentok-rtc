@@ -407,7 +407,6 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
           var isMicrophone = name === 'audio' && isPublisher;
           var isSubscribeToVideo = name === 'video' && !isPublisher;
           if (isMicrophone || isSubscribeToVideo) {
-            // Is this correct?
             Utils.sendEvent('roomController:userChangeStatus', { status: newStatus, name: name });
             if (isMicrophone) {
               sendSignalMuteAll(false, true);
