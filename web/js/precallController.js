@@ -51,8 +51,19 @@
         }
 
         document.querySelector('.user-name-modal #enter').disabled = false;
+        document.querySelector('.user-name-modal').addEventListener('keypress', function (event) {
+          if (event.which === 13) {
+            event.preventDefault();
+            submitForm();
+          }
+        });
+
         document.querySelector('.user-name-modal .tc-dialog').addEventListener('submit', function (event) {
           event.preventDefault();
+          submitForm();
+        });
+
+        function submitForm() {
           PrecallView.hide();
           publisher.destroy();
           if (!Utils.isIE()) {
@@ -68,7 +79,7 @@
                 });
               }, 1);
             });
-        });
+        }
 
         otHelper.initPublisher('video-preview',
           { width: '100%', height: '100%', insertMode: 'append', showControls: false }
