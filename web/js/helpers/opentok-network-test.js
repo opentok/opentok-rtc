@@ -163,12 +163,6 @@
         }
       );
 
-      var container = document.createElement('div');
-      container.className = 'container';
-
-      container.appendChild(subscriberEl);
-      document.body.appendChild(container);
-
       callbacks.onInitPublisher();
 
       // This publisher uses the default resolution (640x480 pixels) and frame rate (30fps).
