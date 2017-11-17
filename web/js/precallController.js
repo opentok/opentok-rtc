@@ -65,7 +65,7 @@
 
         function submitForm() {
           PrecallView.hide();
-          publisher.destroy();
+          publisher && publisher.destroy();
           if (!Utils.isIE()) {
             otNetworkTest && otNetworkTest.stopTest();
           }

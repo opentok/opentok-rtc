@@ -12,12 +12,20 @@ describe('PrecallController', () => {
     } };
     sinon.stub(LazyLoader, 'dependencyLoad', resources => Promise.resolve());
     sinon.stub(ChatView, 'init', () => Promise.resolve());
+    sinon.stub(Modal, 'show', (selector, fcCb) => new Promise((resolve) => {
+      var modal = document.querySelector(selector);
+      modal.classList.add('visible');
+      modal.classList.add('show');
+      fcCb && fcCb();
+      resolve();
+    }));
     window.MockOTHelper._install();
   });
 
   after(() => {
     window.MockOTHelper._restore();
     LazyLoader.dependencyLoad.restore();
+    Modal.show.restore();
   });
 
   it('should exist', () => {
@@ -41,5 +49,33 @@ describe('PrecallController', () => {
       expect(PrecallController.showCallSettingsPrompt).to.exist;
       expect(PrecallController.showCallSettingsPrompt).to.be.a('function');
     });
+
+    it('should display the call settings', sinon.test((done) => {
+      const callSettingsElem = document.querySelector('.user-name-modal');
+      const otHelper = new window.MockOTHelper({});
+      PrecallController.init();
+      PrecallController.showCallSettingsPrompt('roomName', 'username', otHelper);
+      otHelper.otLoaded.then(() => {
+        expect(callSettingsElem.classList.contains('visible')).to.be.true;
+        done();
+      });
+    }));
+
+    it('should hide call settings on Enter keypress', sinon.test(function (done) {
+      this.stub(PrecallView, 'hide', () => {
+        PrecallView.hide.restore();
+        done();
+      });
+      const callSettingsElem = document.querySelector('.user-name-modal');
+      const otHelper = new window.MockOTHelper({});
+      PrecallController.init();
+      PrecallController.showCallSettingsPrompt('roomName', 'username', otHelper);
+      otHelper.otLoaded.then(() => {
+        const keypressEvent = document.createEvent('Event');
+        keypressEvent.which = 13;
+        keypressEvent.initEvent('keypress', true);
+        document.getElementById('user-name-input').dispatchEvent(keypressEvent);
+      });
+    }));
   });
 });
