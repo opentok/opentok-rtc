@@ -646,24 +646,23 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       var statusData = JSON.parse(evt.data);
       var muteAllSwitch = statusData.status;
       var onlyChangeSwitch = statusData.onlyChangeSwitch;
+      // onlyChangeSwitch is true when the iOS app sends a false muteAll signal.
+      if (onlyChangeSwitch) {
+        return;
+      }
 
-      var setNewAudioStatus = function (isMuted, onlySwitch) {
+      var setNewAudioStatus = function (isMuted) {
         if (_sharedStatus.roomMuted !== isMuted) {
           return;
         }
-        !onlySwitch && setAudioStatus(isMuted);
-        if (otHelper.isPublisherReady || otHelper.publisherHas('audio')) {
-          RoomView.setAudioSwitchRemotely(isMuted);
-        }
-      }.bind(undefined, muteAllSwitch, onlyChangeSwitch);
+        setAudioStatus(isMuted);
+      }.bind(undefined, muteAllSwitch);
 
       if (!otHelper.isMyself(evt.from)) {
         _sharedStatus.roomMuted = muteAllSwitch;
         if (muteAllSwitch) {
           setAudioStatus(muteAllSwitch);
           Utils.sendEvent('roomController:roomMuted', { isJoining: false });
-        } else if (onlyChangeSwitch) {
-          setNewAudioStatus();
         } else {
           RoomView.showConfirmChangeMicStatus(muteAllSwitch).then(setNewAudioStatus);
         }
