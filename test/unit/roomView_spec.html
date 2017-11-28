@@ -4,8 +4,8 @@
   </div>
   <div class="center-container">
     <div class="room-info">
-      <p class="room-name">Team Check-in</p>
-      <i data-icon="participants"></i><span id="participantsStr"><span>
+      <p class="room-name"></p>
+      <i data-icon="participants"></i><span id="participantsStr"></span>
     </div>
   </div>
   <div class="right-container">
@@ -18,7 +18,7 @@
     <%   if(enableArchiving) { %>
     <div id="toggleArchiving" disabled>
       <a id="startArchiving" class="btn btn-blue btn-padding">Record</a>
-      <a id="stopArchiving" class="btn btn-blue btn-padding">Stop Recording</a>
+      <a id="stopArchiving" class="btn btn-blue btn-padding duration">Stop Recording</a>
     </div>
     <%      if(enableArchiveManager) { %>
     <div id="manageRecordings">
@@ -52,51 +52,74 @@
     </div>
     <div>
       <button id="toggle-publisher-video" class="selected" disabled>
-        <i data-icon="video_icon" data-event-name="roomView:buttonClick" data-action="video" data-stream-id="publisher" data-stream-type="publisher"></i>
+        <i data-icon="no_video" data-event-name="roomView:buttonClick" data-action="video" data-stream-id="publisher" data-stream-type="publisher"></i>
       </button>
       <p>Your Video</p>
     </div>
     <div>
       <button id="toggle-publisher-audio" disabled>
-        <i data-icon="mic"></i>
+        <i data-icon="mic-muted"></i>
       </button>
       <p>Your Mic</p>
     </div>
-    <div>
+    <div id="addToCall-container">
       <button id="addToCall">
         <i data-icon="add"></i>
       </button>
       <p>Invite</p>
     </div>
     <% if (enableScreensharing) { %>
-    <div>
+    <div id="screen-share-container">
       <button id="screen-share" disabled>
         <i data-icon="screenshare"></i>
       </button>
       <p>Share Screen</p>
     </div>
-    <!-- Disable annotate button. Annotation is available for all screen-sharing streams.
-    <div>
-      <button id="annotate">
+    <% if (enableAnnotation) { %>
+    <div id="annotate-button-container">
+      <button id="annotate" disabled>
         <i data-icon="annotate"></i>
       </button>
       <p>Annotate</p>
     </div>
-    -->
-    <% } %>
+    <% } } %>
     <div>
       <button id="message-btn" disabled>
         <i data-icon="message"></i>
       </button>
       <p>Message
-        <span id="unreadMsg">(<span id="unreadCount">0</span>)</span></span>
+        <span id="unreadMsg">(<span id="unreadCount">0</span>)</span>
       </p>
-    <div>
+    </div>
   </div>
 </section>
-<section class="feedbackButton">
+
+<% if (enableFeedback) { %>
+  <section class="feedbackButton">
     <span id="showFeedback">Feedback / Report a Bug</span>
+  </section>
+<% } %>
+
+<section id="chat">
+  <form class="dialog-chat" id="chatForm">
+    <header>
+      <div class="chat-title">
+        <i data-icon="message_blue"></i>
+        <span>Messaging</span>
+      </div>
+      <i id="closeChat" data-icon="close_blue"></i>
+    </header>
+    <div id="chatMsgs" class="tc-list">
+      <ul>
+      </ul>
+    </div>
+    <footer>
+      <textarea id="msgText" placeholder="Type your message..." required></textarea>
+      <button id="sendTxt" type="submit" data-icon="send" class="btn btn-blue btn-padding btn-padding-small"></button>
+    </footer>
+  </form>
 </section>
+
 <section id="screenShareErrors" class="screen-modal tc-modal">
   <div class="tc-dialog">
     <i data-icon="close_gray" class="close"></i>
@@ -126,12 +149,11 @@
 </section>
 
 <section class="bubbles">
-
   <section for="viewRecordings" class="bubble" data-recordings="loading">
     <div class="bubble-content top-arrow">
       <p class="title recordings">Your recordings</p>
       <p class="title no-recordings">No recordings</p>
-      <p class="title loading">Loading recordings...</p>
+      <p class="title loading">Loading archived recordings...</p>
       <div class="tc-list videos">
         <ul></ul>
       </div>
@@ -152,79 +174,53 @@
   </section>
 </section>
 
-<section id="chat">
-  <form class="dialog-chat" id="chatForm">
-    <header>
-      <span>Chat</span>
-      <i id="toggleChat" data-icon="collapse"></i>
-      <i id="closeChat" data-icon="close_white"></i>
-    </header>
-    <div id="chatMsgs" class="tc-list">
-      <ul>
-      </ul>
-    </div>
-    <footer>
-      <textarea id="msgText"></textarea>
-      <button id="sendTxt" type="submit" class="btn btn-blue btn-padding btn-padding-small ctaarrow-white ctaarrow-white-small">Send</button>
-    </footer>
-  </form>
-</section>
-
-<section class="tc-modal user-name-modal">
-  <form class="tc-dialog">
-    <header>
-      <span>Welcome to</span> <span class="room-name"></span>
-    </header>
-    <p>Please enter your name to join this conversation.</p>
-    <input class="block username" placeholder="Enter your name">
-    <footer>
-      <button id="enter" class="btn btn-blue btn-padding-large ctaarrow-white">Join Meeting</button>
-    </footer>
-  </form>
-</section>
-
 <section class="tc-modal feedback-report">
-  <form class="tc-dialog">
-    <i data-icon="close_gray" class="close"></i>
-    <header>
-      <span>Demo Feedback Report</span>
-    </header>
-    <section>
-      <label>Audio Score:</label>
-      <div class="tc-dropdown" data-icon="down">
-        <select class="audio-score">
-          <option value="1">Bad. Very annoying.</option>
-          <option value="2">Poor. Annoying.</option>
-          <option value="3" selected="selected">Fair. Slightly annoying.</option>
-          <option value="4">Good. Not perfect but not annoying.</option>
-          <option value="5">Excellent. Imperceptible impairment.</option>
-        </select>
+  <div class="tc-dialog">
+  <header>
+    <i data-icon="close_gray_full" class="close"></i>
+    <div class="title-container">
+        <div class="title" data-tab="feedback">
+          <span>Share Your Feedback</span>
+        </div>
       </div>
-    </section>
-    <section>
-      <label>Video Score:</label>
-      <div class="tc-dropdown" data-icon="down">
-        <select class="video-score">
-          <option value="1">Bad. Very annoying.</option>
-          <option value="2">Poor. Annoying.</option>
-          <option value="3" selected="selected">Fair. Slightly annoying.</option>
-          <option value="4">Good. Not perfect but not annoying.</option>
-          <option value="5">Excellent. Imperceptible impairment.</option>
-        </select>
+  </header>
+  <section data-tab="feedback">
+    <form>
+    <div class="call-quality-feedback">
+      <span class="feedback-title">How was the audio quality?</span>
+      <div class="audio-feedback">
+        <div class="feedback-dropdown">
+          <select class="audio-score">
+              <option value="5">Excellent! No issues.</option>
+              <option value="4">Good! Not perfect but not annoying.</option>
+              <option value="3" selected="selected">It was ok. I had a few issues.</option>
+              <option value="2">Poor. Annoying.</option>
+              <option value="1">I'm disappointed.</option>
+          </select>
+        </div>
       </div>
-    </section>
-    <section>
-      <label>Other info:</label>
-      <input class="other-info" placeholder="Type additional info optionally">
-    </section>
-    <footer>
-      <button class="btn btn-blue btn-padding-large ctaarrow-white send-feedback">Send</button>
-    </footer>
-    <div class="hero">Report Issue With Demo</div>
-    <footer>
-      <button class="btn btn-blue btn-padding-large ctaarrow-white report-issue">Report Issue</button>
-    </footer>
+      <div class="video-feedback">
+        <span class="feedback-title">How was the video quality?</span>
+        <div class="feedback-dropdown">
+            <select class="video-score">
+                <option value="5">Excellent! No issues.</option>
+                <option value="4">Good! Not perfect but not annoying.</option>
+                <option value="3" selected="selected">It was ok. I had a few issues.</option>
+                <option value="2">Poor. Annoying.</option>
+                <option value="1">I'm disappointed.</option>
+            </select>
+        </div>
+      </div>
+    </div>
+    <div class="feedback-suggestion">
+        <span class="feedback-title suggestion-title">Any other info?</span>
+        <input class="other-info" placeholder="What's on your mind?" />
+    </div>
+    <button class="btn btn-blue btn-padding send-feedback">Send Feedback</button>
   </form>
+  </section>
+
+</div>
 </section>
 
 <section class="tc-modal archive-delete-modal">
@@ -242,16 +238,32 @@
 
 <section class="tc-modal add-to-call-modal">
   <div class="tc-dialog">
-    <p class="title">Meeting link has been copied <span class="check-mark">&#10003;</span></p>
-    <p>Share link to add others to the meeting</p>
-    <input class="block" readonly id="current-url" onclick="this.select();">
-    <form id="dialOutForm">
-      <p class="title">Dial out</p>
-      <p>Enter the phone number:</p>
-      <input id="dialOutNumber" class="block" onclick="this.select();"
-        placeholder="1-415-555-0123">
-      <button id="dialOutBtn" class="btn btn-blue btn-padding ctaarrow-white">Dial</button>
-    </form>
+    <header>
+      <i data-icon="close_gray_full" class="close"></i>
+      <div class="title" data-tab="feedback">
+        <span>Invite Participants</span>
+      </div>
+    </header>
+    <secton class="dialog-content">
+      <div class="meeting-link">
+        <input class="current-url" readonly id="current-url">
+        <div class="copied-message">
+          <span>copied to clipboard!</span>
+        </div>
+      </div>
+      <%   if(hasSip) { %>
+      <div class="google-sign-in-note-container">
+        <div class="google-sign-in-note">
+          <span class=title>Note:</span><br/>
+          <span>This function requires you to sign in with your <b>@tokbox.com</b> Google account</span>
+        </div>
+      </div>
+      <form id="dialOutForm">
+        <input id="dialOutNumber" class="phoneNumber" required>
+        <button id="dialOutBtn" class="btn btn-blue btn-padding">Dial</button>
+      </form>
+      <% } %>
+  </secton>
   </div>
 </section>
 
