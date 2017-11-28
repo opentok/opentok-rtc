@@ -54,6 +54,7 @@
     },
     removeListener(evtName) {},
     disconnectFromSession() {},
+    otLoaded: Promise.resolve()
   };
 
   function MockOTHelper() {
