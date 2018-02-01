@@ -3,26 +3,7 @@
   'use strict';
 
   var getCurrentTime = function () {
-    var now = new Date();
-    var time = [];
-    var suffix = ' AM';
-
-    var hours = now.getHours();
-    if (hours >= 12) {
-      suffix = ' PM';
-      hours -= 12;
-    }
-
-    time.push(hours);
-    time.push(':');
-
-    var minutes = now.getMinutes();
-    minutes < 10 && time.push('0');
-
-    time.push(minutes);
-    time.push(suffix);
-
-    return time.join('');
+    return new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
   };
 
   var inspectObject = function (obj) {
