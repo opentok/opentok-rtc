@@ -1,4 +1,5 @@
 {
+   "showTos": false,
    "OpenTok":{
       "apiKey": "<key>",
       "apiSecret": "<secret>"

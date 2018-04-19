@@ -1,4 +1,4 @@
-/* global Modal, isWebRTCVersion */
+/* global Modal, showTos */
 
 !(function (global) {
   'use strict';
@@ -11,19 +11,36 @@
     userLabelElem,
     errorMessage;
 
+  var loadTosTemplate = function () {
+    return new Promise(function (resolve) {
+      if (showTos) {
+        var templateUrl = '/templates/precall.ejs';
+        global.Request.sendXHR('GET', templateUrl, null, null, 'text')
+          .then(function (aTemplateSrc) {
+            document.body.innerHTML += global.ejs.compile(aTemplateSrc, { filename: templateUrl });
+            resolve();
+          });
+      } else {
+        resolve();
+      }
+    });
+  };
+
   var init = function () {
-    enterButton = document.getElementById('enter');
-    room = document.getElementById('room');
-    user = document.getElementById('user');
-    form = document.querySelector('form');
-    roomLabelElem = document.getElementById('room-label');
-    userLabelElem = document.getElementById('user-label');
-    errorMessage = document.querySelector('.error-room');
-    resetForm();
-    addHandlers();
-    if (window.location.hostname.indexOf('opentokrtc.com') === 0) {
-      document.querySelector('.safari-plug').style.display = 'block';
-    }
+    loadTosTemplate().then(function () {
+      enterButton = document.getElementById('enter');
+      room = document.getElementById('room');
+      user = document.getElementById('user');
+      form = document.querySelector('form');
+      roomLabelElem = document.getElementById('room-label');
+      userLabelElem = document.getElementById('user-label');
+      errorMessage = document.querySelector('.error-room');
+      resetForm();
+      addHandlers();
+      if (window.location.hostname.indexOf('opentokrtc.com') === 0) {
+        document.querySelector('.safari-plug').style.display = 'block';
+      }
+    });
   };
 
   var isValid = function () {
@@ -123,9 +140,10 @@
       form.classList.remove('error');
       enterButton.removeEventListener('click', onEnterClicked);
 
-      if (isWebRTCVersion) {
+      if (showTos && !sessionStorage.tosAccepted) {
         showContract().then(function (accepted) {
           if (accepted) {
+            sessionStorage.setItem('tosAccepted', true);
             navigateToRoom();
           } else {
             addHandlers();

@@ -24,6 +24,7 @@
 
     <script>
       window.isWebRTCVersion=<%=isWebRTCVersion%>
+      window.showTos=<%=showTos%>
     </script>
   </head>
 
@@ -73,8 +74,7 @@
     </div>
   </div>
     </section>
-
-<% if (isWebRTCVersion) { %>
+<% if (showTos) { %>
     <section class="tc-modal contract">
       <form class="tc-dialog">
         <i data-icon="close_gray" class="close"></i>

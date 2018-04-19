@@ -406,6 +406,9 @@ sharing](tokbox.com/developer/guides/screen-sharing/).
 
 ### Additional configuration options
 
+* `SHOW_TOS` (Optional, default value: false): Whether the app will display the terms of service
+  dialog box and require the user to agree to the terms before joining a room.
+
 * `ALLOW_IFRAMING` (Optional, default value: 'never'): Controls the server-side restriction on
    allowing content to load inside an iframe. The allowed values are:
 
