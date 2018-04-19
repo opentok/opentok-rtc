@@ -1,4 +1,4 @@
-/* global Modal, OTNetworkTest, PrecallView */
+/* global Modal, OTNetworkTest, PrecallView, showTos */
 
 !(function (exports) {
   'use strict';
@@ -63,7 +63,7 @@
           submitForm();
         });
 
-        function submitForm() {
+        function hidePrecall() {
           PrecallView.hide();
           publisher && publisher.destroy();
           if (!Utils.isIE()) {
@@ -79,6 +79,14 @@
                 });
               }, 1);
             });
+        }
+
+        function submitForm() {
+          if (showTos) {
+            PrecallView.showContract().then(hidePrecall);
+          } else {
+            hidePrecall();
+          }
         }
 
         otHelper.initPublisher('video-preview',

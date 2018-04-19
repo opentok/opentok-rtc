@@ -355,6 +355,7 @@ function ServerMethods(aLogLevel, aModules) {
             role: 'publisher',
           }),
           hasSip: tbConfig.enableSip,
+          showTos: tbConfig.showTos,
         }, (err, html) => {
           if (err) {
             logger.log('getRoom. error:', err);

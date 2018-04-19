@@ -27,6 +27,7 @@
       window.apiKey='<%=apiKey%>';
       window.precallSessionId='<%=precallSessionId%>';
       window.precallToken='<%=precallToken%>';
+      window.showTos=<%=showTos%> && !sessionStorage.tosAccepted;
       var isMobile = function() { return typeof window.orientation !== 'undefined'; }
 
       var mobileSettings = function() {
