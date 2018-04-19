@@ -11,15 +11,31 @@
     userLabelElem,
     errorMessage;
 
+  var EJS = function (aTemplateOptions) {
+    if (aTemplateOptions.url) {
+      this._templatePromise =
+        global.Request.sendXHR('GET', aTemplateOptions.url, null, null, 'text')
+          .then(function (aTemplateSrc) {
+            return global.ejs.compile(aTemplateSrc, { filename: aTemplateOptions.url });
+          });
+    } else {
+      this._templatePromise = Promise.resolve(exports.ejs.compile(aTemplateOptions.text));
+    }
+    this.render = function (aData) {
+      return this._templatePromise.then(function (aTemplate) {
+        return aTemplate(aData);
+      });
+    };
+  };
+
   var loadTosTemplate = function () {
     return new Promise(function (resolve) {
       if (showTos) {
-        var templateUrl = '/templates/precall.ejs';
-        global.Request.sendXHR('GET', templateUrl, null, null, 'text')
-          .then(function (aTemplateSrc) {
-            document.body.innerHTML += global.ejs.compile(aTemplateSrc, { filename: templateUrl });
-            resolve();
-          });
+        var tosTemplate = new EJS({ url: '/templates/tos.ejs' });
+        tosTemplate.render().then(function (aHTML) {
+          document.body.innerHTML += aHTML;
+          resolve();
+        });
       } else {
         resolve();
       }
@@ -140,7 +156,7 @@
       form.classList.remove('error');
       enterButton.removeEventListener('click', onEnterClicked);
 
-      if (showTos && !sessionStorage.tosAccepted) {
+      if (showTos) {
         showContract().then(function (accepted) {
           if (accepted) {
             sessionStorage.setItem('tosAccepted', true);
