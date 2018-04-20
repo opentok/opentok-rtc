@@ -8,6 +8,7 @@ describe('LandingView', () => {
 
   before(() => {
     window.document.body.innerHTML = window.__html__['test/unit/landingView_spec.html'];
+    window.showTos = false;
     enterButton = document.getElementById('enter');
     input = document.getElementById('room');
   });
@@ -27,11 +28,14 @@ describe('LandingView', () => {
   });
 
   describe('#click event', () => {
-    it('should show error when room name is empty', () => {
+    it('should show error when room name is empty', (done) => {
       var form = document.querySelector('form');
       expect(form.classList.contains('error')).is.false;
-      enterButton.click();
-      expect(form.classList.contains('error')).is.true;
+      setTimeout(() => {
+        enterButton.click();
+        expect(form.classList.contains('error')).is.true;
+        done();
+      }, 1);
     });
   });
 });
