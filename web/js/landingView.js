@@ -1,4 +1,4 @@
-/* global Modal, showTos */
+/* global EJSTemplate, Modal, showTos */
 
 !(function (global) {
   'use strict';
@@ -11,52 +11,39 @@
     userLabelElem,
     errorMessage;
 
-  var EJS = function (aTemplateOptions) {
-    if (aTemplateOptions.url) {
-      this._templatePromise =
-        global.Request.sendXHR('GET', aTemplateOptions.url, null, null, 'text')
-          .then(function (aTemplateSrc) {
-            return global.ejs.compile(aTemplateSrc, { filename: aTemplateOptions.url });
-          });
-    } else {
-      this._templatePromise = Promise.resolve(exports.ejs.compile(aTemplateOptions.text));
-    }
-    this.render = function (aData) {
-      return this._templatePromise.then(function (aTemplate) {
-        return aTemplate(aData);
-      });
-    };
-  };
-
   var loadTosTemplate = function () {
     return new Promise(function (resolve) {
-      if (showTos) {
-        var tosTemplate = new EJS({ url: '/templates/tos.ejs' });
-        tosTemplate.render().then(function (aHTML) {
-          document.body.innerHTML += aHTML;
-          resolve();
-        });
-      } else {
+      var tosTemplate = new EJSTemplate({ url: '/templates/tos.ejs' });
+      tosTemplate.render().then(function (aHTML) {
+        document.body.innerHTML += aHTML;
         resolve();
-      }
+      });
     });
+  };
+
+  var performInit = function () {
+    enterButton = document.getElementById('enter');
+    room = document.getElementById('room');
+    user = document.getElementById('user');
+    form = document.querySelector('form');
+    roomLabelElem = document.getElementById('room-label');
+    userLabelElem = document.getElementById('user-label');
+    errorMessage = document.querySelector('.error-room');
+    resetForm();
+    addHandlers();
+    if (window.location.hostname.indexOf('opentokrtc.com') === 0) {
+      document.querySelector('.safari-plug').style.display = 'block';
+    }
   };
 
   var init = function () {
-    loadTosTemplate().then(function () {
-      enterButton = document.getElementById('enter');
-      room = document.getElementById('room');
-      user = document.getElementById('user');
-      form = document.querySelector('form');
-      roomLabelElem = document.getElementById('room-label');
-      userLabelElem = document.getElementById('user-label');
-      errorMessage = document.querySelector('.error-room');
-      resetForm();
-      addHandlers();
-      if (window.location.hostname.indexOf('opentokrtc.com') === 0) {
-        document.querySelector('.safari-plug').style.display = 'block';
-      }
-    });
+    if (showTos) {
+      loadTosTemplate().then(function () {
+        performInit();
+      });
+    } else {
+      performInit();
+    }
   };
 
   var isValid = function () {

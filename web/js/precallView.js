@@ -1,4 +1,4 @@
-/* globals Modal, setTimeout, showTos */
+/* globals EJSTemplate, Modal, setTimeout, showTos */
 !(function (exports) {
   'use strict';
 
@@ -138,23 +138,6 @@
 
   var alreadyInitialized = false;
 
-  exports.EJS = function (aTemplateOptions) {
-    if (aTemplateOptions.url) {
-      this._templatePromise =
-        exports.Request.sendXHR('GET', aTemplateOptions.url, null, null, 'text')
-          .then(function (aTemplateSrc) {
-            return exports.ejs.compile(aTemplateSrc, { filename: aTemplateOptions.url });
-          });
-    } else {
-      this._templatePromise = Promise.resolve(exports.ejs.compile(aTemplateOptions.text));
-    }
-    this.render = function (aData) {
-      return this._templatePromise.then(function (aTemplate) {
-        return aTemplate(aData);
-      });
-    };
-  };
-
   var init = function () {
     return new Promise(function (resolve) {
       if (alreadyInitialized) {
@@ -162,9 +145,9 @@
       }
 
       Utils.addEventsHandlers('', eventHandlers);
-      _precallTemplate = new exports.EJS({ url: _precallTemplateSrc });
+      _precallTemplate = new EJSTemplate({ url: _precallTemplateSrc });
       if (showTos) {
-        _tosTemplate = new exports.EJS({ url: _tosTemplateSrc });
+        _tosTemplate = new EJSTemplate({ url: _tosTemplateSrc });
       }
       alreadyInitialized = true;
       return render(resolve);

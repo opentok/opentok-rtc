@@ -28,14 +28,11 @@ describe('LandingView', () => {
   });
 
   describe('#click event', () => {
-    it('should show error when room name is empty', (done) => {
+    it('should show error when room name is empty', () => {
       var form = document.querySelector('form');
       expect(form.classList.contains('error')).is.false;
-      setTimeout(() => {
-        enterButton.click();
-        expect(form.classList.contains('error')).is.true;
-        done();
-      }, 1);
+      enterButton.click();
+      expect(form.classList.contains('error')).is.true;
     });
   });
 });

@@ -155,6 +155,7 @@
   var init = function () {
     return new Promise(function (resolve) {
       LazyLoader.dependencyLoad([
+        '/js/helpers/ejsTemplate.js',
         '/js/vendor/ejs_production.js',
         '/js/precallView.js'
       ]).then(function () {
