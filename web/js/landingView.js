@@ -1,4 +1,4 @@
-/* global Modal, isWebRTCVersion */
+/* global EJSTemplate, Modal, showTos */
 
 !(function (global) {
   'use strict';
@@ -11,7 +11,17 @@
     userLabelElem,
     errorMessage;
 
-  var init = function () {
+  var loadTosTemplate = function () {
+    return new Promise(function (resolve) {
+      var tosTemplate = new EJSTemplate({ url: '/templates/tos.ejs' });
+      tosTemplate.render().then(function (aHTML) {
+        document.body.innerHTML += aHTML;
+        resolve();
+      });
+    });
+  };
+
+  var performInit = function () {
     enterButton = document.getElementById('enter');
     room = document.getElementById('room');
     user = document.getElementById('user');
@@ -23,6 +33,14 @@
     addHandlers();
     if (window.location.hostname.indexOf('opentokrtc.com') === 0) {
       document.querySelector('.safari-plug').style.display = 'block';
+    }
+  };
+
+  var init = function () {
+    if (showTos) {
+      loadTosTemplate().then(performInit);
+    } else {
+      performInit();
     }
   };
 
@@ -123,9 +141,10 @@
       form.classList.remove('error');
       enterButton.removeEventListener('click', onEnterClicked);
 
-      if (isWebRTCVersion) {
+      if (showTos) {
         showContract().then(function (accepted) {
           if (accepted) {
+            sessionStorage.setItem('tosAccepted', true);
             navigateToRoom();
           } else {
             addHandlers();

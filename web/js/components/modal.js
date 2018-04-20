@@ -43,11 +43,11 @@
     document.body.removeEventListener('keyup', keyPressHandler);
   }
 
-  function show(selector, preShowCb) {
+  function show(selector, preShowCb, allowMultiple) {
     var screenFree;
     preShowFocusElement = document.activeElement;
     preShowFocusElement && preShowFocusElement.blur();
-    if (!_modalShown) {
+    if (!_modalShown || allowMultiple) {
       screenFree = Promise.resolve();
     } else {
       screenFree = new Promise(function (resolve) {

@@ -8,6 +8,7 @@ describe('LandingView', () => {
 
   before(() => {
     window.document.body.innerHTML = window.__html__['test/unit/landingView_spec.html'];
+    window.showTos = false;
     enterButton = document.getElementById('enter');
     input = document.getElementById('room');
   });

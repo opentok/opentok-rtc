@@ -140,6 +140,7 @@ function ServerMethods(aLogLevel, aModules) {
       var chromeExtId = config.get(C.CHROME_EXTENSION_ID);
 
       var isWebRTCVersion = config.get(C.DEFAULT_INDEX_PAGE) === 'opentokrtc';
+      var showTos = config.get(C.SHOW_TOS);
 
       var firebaseConfigured =
               config.get(C.FIREBASE_DATA_URL) && config.get(C.FIREBASE_AUTH_SECRET);
@@ -189,6 +190,7 @@ function ServerMethods(aLogLevel, aModules) {
                 enableAnnotations,
                 enableFeedback,
                 enableSip,
+                showTos,
                 sipUri,
                 sipUsername,
                 sipPassword,
@@ -302,6 +304,7 @@ function ServerMethods(aLogLevel, aModules) {
     aRes
       .render('index.ejs', {
         isWebRTCVersion: aReq.tbConfig.isWebRTCVersion,
+        showTos: aReq.tbConfig.showTos,
       }, (err, html) => {
         if (err) {
           logger.error('getRoot. error: ', err);
@@ -352,6 +355,7 @@ function ServerMethods(aLogLevel, aModules) {
             role: 'publisher',
           }),
           hasSip: tbConfig.enableSip,
+          showTos: tbConfig.showTos,
         }, (err, html) => {
           if (err) {
             logger.log('getRoom. error:', err);
