@@ -1,9 +1,11 @@
-/* globals setTimeout */
+/* globals EJSTemplate, Modal, setTimeout, showTos */
 !(function (exports) {
   'use strict';
 
-  var _templateSrc = '/templates/precall.ejs';
-  var _template;
+  var _precallTemplateSrc = '/templates/precall.ejs';
+  var _precallTemplate;
+  var _tosTemplateSrc = '/templates/tos.ejs';
+  var _tosTemplate;
   var _model;
   var testMeterInterval;
 
@@ -88,8 +90,14 @@
   };
 
   function render(resolve) {
-    _template.render().then(function (aHTML) {
-      document.body.innerHTML += aHTML;
+    var templatePromises = [_precallTemplate.render()];
+    if (showTos) {
+      templatePromises.push(_tosTemplate.render());
+    }
+    Promise.all(templatePromises).then(function (htmlStrings) {
+      htmlStrings.forEach(function (aHTML) {
+        document.body.innerHTML += aHTML;
+      });
       addHandlers();
       resolve();
     });
@@ -130,23 +138,6 @@
 
   var alreadyInitialized = false;
 
-  exports.EJS = function (aTemplateOptions) {
-    if (aTemplateOptions.url) {
-      this._templatePromise =
-        exports.Request.sendXHR('GET', aTemplateOptions.url, null, null, 'text')
-          .then(function (aTemplateSrc) {
-            return exports.ejs.compile(aTemplateSrc, { filename: aTemplateOptions.url });
-          });
-    } else {
-      this._templatePromise = Promise.resolve(exports.ejs.compile(aTemplateOptions.text));
-    }
-    this.render = function (aData) {
-      return this._templatePromise.then(function (aTemplate) {
-        return aTemplate(aData);
-      });
-    };
-  };
-
   var init = function () {
     return new Promise(function (resolve) {
       if (alreadyInitialized) {
@@ -154,10 +145,36 @@
       }
 
       Utils.addEventsHandlers('', eventHandlers);
-      _template = new exports.EJS({ url: _templateSrc });
+      _precallTemplate = new EJSTemplate({ url: _precallTemplateSrc });
+      if (showTos) {
+        _tosTemplate = new EJSTemplate({ url: _tosTemplateSrc });
+      }
       alreadyInitialized = true;
       return render(resolve);
     });
+  };
+
+  var showContract = function () {
+    var selector = '.tc-modal.contract';
+    var acceptElement = document.querySelector(selector + ' .accept');
+    return Modal.show(selector, null, true)
+      .then(function () {
+        return new Promise(function (resolve) {
+          acceptElement.addEventListener('click', function onClicked(evt) {
+            acceptElement.removeEventListener('click', onClicked);
+            evt.preventDefault();
+            sessionStorage.setItem('tosAccepted', true);
+            Modal.hide(selector);
+            resolve();
+          });
+
+          Utils.addEventsHandlers('modal:', {
+            close: function () {
+              Modal.show('.user-name-modal');
+            }
+          });
+        });
+      });
   };
 
   var hide = function () {
@@ -261,6 +278,7 @@
     setUsername: setUsername,
     setFocus: setFocus,
     setVolumeMeterLevel: setVolumeMeterLevel,
+    showContract: showContract,
     startPrecallTestMeter: startPrecallTestMeter,
     displayNetworkTestResults: displayNetworkTestResults,
     hideConnectivityTest: hideConnectivityTest
