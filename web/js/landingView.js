@@ -38,9 +38,7 @@
 
   var init = function () {
     if (showTos) {
-      loadTosTemplate().then(function () {
-        performInit();
-      });
+      loadTosTemplate().then(performInit);
     } else {
       performInit();
     }
