@@ -11,7 +11,7 @@
   // in IE dynamic loading the library doesn't work. For the time being, as a stopgap measure,
   // loading it statically.
   if (dynamicOTLoad) {
-    var OPENTOK_API = 'https://enterprise.opentok.com/v2/js/opentok.min.js ';
+    var OPENTOK_API = 'https://enterprise.opentok.com/v2/js/opentok.min.js';
     preReqSources.unshift(OPENTOK_API);
   }
 
