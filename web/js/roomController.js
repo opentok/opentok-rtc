@@ -796,7 +796,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
             };
           };
         loadAnnotations = LazyLoader.load([
-          'https://code.jquery.com/jquery-3.1.0.min.js',
+          '//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js',
           'https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js',
           '/js/vendor/opentok-annotation.js'
         ]);
