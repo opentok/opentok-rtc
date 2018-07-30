@@ -1,23 +1,10 @@
 !function(global) {
   'use strict';
 
-  var dynamicOTLoad = true;
   var otPromise = Promise.resolve();
   var annotation;
 
-  var preReqSources = [
-  ];
-
-  // in IE dynamic loading the library doesn't work. For the time being, as a stopgap measure,
-  // loading it statically.
-  if (dynamicOTLoad) {
-    var OPENTOK_API = 'https://enterprise.opentok.com/v2/js/opentok.min.js';
-    preReqSources.unshift(OPENTOK_API);
-  }
-
-  if (preReqSources.length) {
-    otPromise = LazyLoader.load(preReqSources);
-  }
+  otPromise = LazyLoader.load([opentokJsUrl]);
 
   var MSG_MULTIPART = 'signal';
   var SIZE_MAX = 7800;

@@ -94,6 +94,7 @@ function ServerMethods(aLogLevel, aModules) {
       var templatingSecret = config.get(C.TEMPLATING_SECRET);
       var apiKey = config.get(C.OPENTOK_API_KEY);
       var apiSecret = config.get(C.OPENTOK_API_SECRET);
+      var opentokJsUrl = config.get(C.OPENTOK_JS_URL);
       logger.log('apiSecret', apiSecret);
       var archivePollingTO = config.get(C.ARCHIVE_POLLING_INITIAL_TIMEOUT);
       var archivePollingTOMultiplier =
@@ -190,6 +191,7 @@ function ServerMethods(aLogLevel, aModules) {
                 enableAnnotations,
                 enableFeedback,
                 enableSip,
+                opentokJsUrl,
                 showTos,
                 sipUri,
                 sipUsername,
@@ -356,6 +358,7 @@ function ServerMethods(aLogLevel, aModules) {
           }),
           hasSip: tbConfig.enableSip,
           showTos: tbConfig.showTos,
+          opentokJsUrl: tbConfig.opentokJsUrl,
         }, (err, html) => {
           if (err) {
             logger.log('getRoom. error:', err);
