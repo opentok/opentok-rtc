@@ -140,8 +140,8 @@ Environment Variable Names and Description:
 - `TB_API_KEY` (Required): Your OpenTok API key.
 - `TB_API_SECRET` (Required): Your OpenTok API Secret.
 - `TB_JS_URL` (Optional): The OpenTok.js URL to be loaded by the app. The default value is
-  "https://static.opentok.com/v2/js/opentok.js". Enterprise partners should set this to the URL
-  for the enterprise version of OpenTok.js ("https://enterprise.opentok.com/v2/js/opentok.js").
+  "https://static.opentok.com/v2/js/opentok.min.js". Enterprise partners should set this to the URL
+  for the enterprise version of OpenTok.js ("https://enterprise.opentok.com/v2/js/opentok.min.js").
 - `TB_MAX_SESSION_AGE` (Optional, default value 2):  Sessions should not live forever. So we'll store
    the last time a session was used and if when we fetch it from Redis we determine it's older than
    this max age (in days). This is the key where that value (in days) should be stored.
@@ -153,7 +153,7 @@ JSON example:
 "OpenTok": {
 	"apiKey": "<key>",
   "apiSecret": "<secret>",
-  "jsUrl": "https://static.opentok.com/v2/js/opentok.js",
+  "jsUrl": "https://static.opentok.com/v2/js/opentok.min.js",
 	"maxSessionAge": 2,
 }
 ```
