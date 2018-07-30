@@ -154,7 +154,7 @@ JSON example:
 	"apiKey": "<key>",
   "apiSecret": "<secret>",
   "jsUrl": "https://static.opentok.com/v2/js/opentok.min.js",
-	"maxSessionAge": 2,
+  "maxSessionAge": 2
 }
 ```
 
