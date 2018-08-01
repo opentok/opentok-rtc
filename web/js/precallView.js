@@ -154,6 +154,11 @@
     });
   };
 
+  var showModal = function () {
+    Utils.removeEventHandlers('modal:', { close: showModal });
+    Modal.show('.user-name-modal');
+  };
+
   var showContract = function () {
     var selector = '.tc-modal.contract';
     var acceptElement = document.querySelector(selector + ' .accept');
@@ -168,17 +173,14 @@
             resolve();
           });
 
-          Utils.addEventsHandlers('modal:', {
-            close: function () {
-              Modal.show('.user-name-modal');
-            }
-          });
+          Utils.addEventsHandlers('modal:', { close: showModal });
         });
       });
   };
 
   var hide = function () {
     document.getElementById('video-preview').style.visibility = 'hidden';
+    Utils.removeEventHandlers('modal:', { close: showModal });
   };
 
   var setVolumeMeterLevel = function (level) {
