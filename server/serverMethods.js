@@ -137,7 +137,7 @@ function ServerMethods(aLogLevel, aModules) {
         .forEach(method => otInstance[method + '_P'] = promisify(otInstance[method])); // eslint-disable-line no-return-assign
 
       var maxSessionAgeDays = config.get(C.OPENTOK_MAX_SESSION_AGE);
-      var maxSessionAge = maxSessionAge * 24 * 60 * 60;
+      var maxSessionAge = maxSessionAgeDays * 24 * 60 * 60;
       var chromeExtId = config.get(C.CHROME_EXTENSION_ID);
 
       var isWebRTCVersion = config.get(C.DEFAULT_INDEX_PAGE) === 'opentokrtc';
