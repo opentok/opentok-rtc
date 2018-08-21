@@ -27,14 +27,9 @@
    },
    "SIP": {
      "enabled": false,
-     "uri": "sip:username@your-sip-provider.com",
-     "username": "username",
-     "password": "password"
+     "username": "nexmoApiKey",
+     "password": "nexmoApiSecret"
    },
-   "Plivo": {
-    "authId": "yourId",
-    "authToken": "yourToken"
-  },
   "Google": {
     "clientId": "yourClientId.apps.googleusercontent.com",
     "hostedDomain": "yourhosteddomain.com"
