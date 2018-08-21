@@ -29,7 +29,7 @@ class EnabledGoogleAuthStrategy {
       this.verifyIdTokenPromise(token, this.googleId)
       .then((login) => {
         const payload = login.getPayload();
-        if (this.hostedDomains && this.hostedDomains.split('').some(domain => domain === payload.hd)) {
+        if (this.hostedDomains && this.hostedDomains.split(',').some(domain => domain === payload.hd)) {
           resolve();
         } else {
           reject(new Error('Authentication Domain Does Not Match'));
