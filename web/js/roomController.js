@@ -824,15 +824,11 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     _allHandlers = RoomStatus.init(_allHandlers, { room: _sharedStatus });
 
     if (enableSip && requireGoogleAuth) {
-      aParams.googleHostedDomain.split(',').forEach(function (domain) {
-        GoogleAuth.init(aParams.googleId, domain, function (aGoogleAuthError, aGoogleAuth) {
-          if (!aGoogleAuthError) {
-            googleAuth = aGoogleAuth;
-            if (googleAuth.isSignedIn.get()) {
-              document.body.data('google-signed-in', 'true');
-            }
-          }
-        });
+      GoogleAuth.init(aParams.googleId, null, function (aGoogleAuth) {
+        googleAuth = aGoogleAuth;
+        if (googleAuth.isSignedIn.get()) {
+          document.body.data('google-signed-in', 'true');
+        }
       });
     }
 
