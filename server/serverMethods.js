@@ -136,8 +136,8 @@ function ServerMethods(aLogLevel, aModules) {
         'forceDisconnect']
         .forEach(method => otInstance[method + '_P'] = promisify(otInstance[method])); // eslint-disable-line no-return-assign
 
-      var maxSessionAge = config.get(C.OPENTOK_MAX_SESSION_AGE);
-      var maxSessionAgeMs = maxSessionAge * 24 * 60 * 60 * 1000;
+      var maxSessionAgeDays = config.get(C.OPENTOK_MAX_SESSION_AGE);
+      var maxSessionAge = maxSessionAgeDays * 24 * 60 * 60;
       var chromeExtId = config.get(C.CHROME_EXTENSION_ID);
 
       var isWebRTCVersion = config.get(C.DEFAULT_INDEX_PAGE) === 'opentokrtc';
@@ -175,7 +175,7 @@ function ServerMethods(aLogLevel, aModules) {
                 apiSecret,
                 archivePollingTO,
                 archivePollingTOMultiplier,
-                maxSessionAgeMs,
+                maxSessionAge,
                 fbArchives: firebaseArchives,
                 allowIframing,
                 chromeExtId,
@@ -248,10 +248,10 @@ function ServerMethods(aLogLevel, aModules) {
     serverPersistence
       .getKey(redisRoomPrefix + roomName)
       .then(_getUsableSessionInfo.bind(tbConfig.otInstance,
-                                      tbConfig.maxSessionAgeMs,
+                                      tbConfig.maxSessionAge,
                                       tbConfig.archiveAlways))
       .then((usableSessionInfo) => {
-        serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, redisRoomPrefix + roomName,
+        serverPersistence.setKeyEx(tbConfig.maxSessionAge, redisRoomPrefix + roomName,
                                    JSON.stringify(usableSessionInfo));
         var sessionId = usableSessionInfo.sessionId;
         tbConfig.otInstance.listArchives_P({ offset: 0, count: 1000 })
@@ -434,11 +434,11 @@ function ServerMethods(aLogLevel, aModules) {
     // Note that we do not persist tokens.
     serverPersistence
       .getKey(redisRoomPrefix + roomName)
-      .then(_getUsableSessionInfo.bind(tbConfig.otInstance, tbConfig.maxSessionAgeMs,
+      .then(_getUsableSessionInfo.bind(tbConfig.otInstance, tbConfig.maxSessionAge,
                                       tbConfig.archiveAlways))
       .then((usableSessionInfo) => {
         // Update the database. We could do this on getUsable...
-        serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, redisRoomPrefix + roomName,
+        serverPersistence.setKeyEx(tbConfig.maxSessionAge, redisRoomPrefix + roomName,
                                    JSON.stringify(usableSessionInfo));
 
         // We have to create an authentication token for the new user...
@@ -478,7 +478,7 @@ function ServerMethods(aLogLevel, aModules) {
     }
 
     logger.log('_getUpdatedArchiveInfo: ', aSessionInfo);
-    var minLastUsage = Date.now() - aTbConfig.maxSessionAgeMs;
+    var minLastUsage = Date.now() - aTbConfig.maxSessionAge;
     // What do we do if we get an order for an expired session? Since if it's expired then
     // nobody should be on and as such there will not be any streams... if it's expired we just
     // return an error
