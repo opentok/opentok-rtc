@@ -276,7 +276,7 @@ To enable this feature:
        "SIP": {
          "sipUri" : "sip:phoneumber@sip.nexmo.com",
          "sipUsername" : "nexmoApiKey",
-         "sipPassword" : "nexmoPassword",
+         "sipPassword" : "nexmoApiSecret",
          "requireGoogleAuth": false
        }
 ```
