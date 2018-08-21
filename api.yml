@@ -302,56 +302,7 @@ paths:
           description: Unauthorized, problem with authentication credentials.
         '403':
           description: Forbidden. Operation not valid for user token with this domain.
-  '/forward':
-    get:
-      summary: Call answer webhook for the SIP service
-      x-implemented-in: getForward
-      produces:
-        - text/xml
-      description: Starts dialing a phone via a SIP gateway.
-      parameters:
-        - name: CallStatus
-          in: path
-          description: Name of the room.
-          required: true
-          type: string
-        - name: CallUUID
-          in: path
-          description: Name of the room.
-          required: true
-          type: string
-        - name: From
-          in: path
-          description: Name of the room.
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Information about the SIP call
   '/hang-up':
-    get:
-      summary: Call hang-up webhook for the SIP service
-      x-implemented-in: getHangUp
-      description: Called when a call has ended in the SIP gateway.
-      parameters:
-        - name: CallStatus
-          in: path
-          description: Name of the room.
-          required: true
-          type: string
-        - name: CallUUID
-          in: path
-          description: Name of the room.
-          required: true
-          type: string
-        - name: From
-          in: path
-          description: Name of the room.
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Indicates acknowledgement
     post:
       summary: Call hang-up callback for web client (to disconnect SIP connection)
       x-implemented-in: postHangUp
