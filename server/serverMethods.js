@@ -251,7 +251,7 @@ function ServerMethods(aLogLevel, aModules) {
                                       tbConfig.maxSessionAgeMs,
                                       tbConfig.archiveAlways))
       .then((usableSessionInfo) => {
-        serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, redisRoomPrefix + roomName,
+        serverPersistence.setKeyEx(Math.round(tbConfig.maxSessionAgeMs / 1000), redisRoomPrefix + roomName,
                                    JSON.stringify(usableSessionInfo));
         var sessionId = usableSessionInfo.sessionId;
         tbConfig.otInstance.listArchives_P({ offset: 0, count: 1000 })
@@ -438,7 +438,7 @@ function ServerMethods(aLogLevel, aModules) {
                                       tbConfig.archiveAlways))
       .then((usableSessionInfo) => {
         // Update the database. We could do this on getUsable...
-        serverPersistence.setKeyEx(tbConfig.maxSessionAgeMs, redisRoomPrefix + roomName,
+        serverPersistence.setKeyEx(Math.round(tbConfig.maxSessionAgeMs / 1000), redisRoomPrefix + roomName,
                                    JSON.stringify(usableSessionInfo));
 
         // We have to create an authentication token for the new user...
