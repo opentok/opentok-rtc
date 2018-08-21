@@ -376,7 +376,7 @@ function ServerMethods(aLogLevel, aModules) {
   function _getUsableSessionInfo(aMaxSessionAge, aArchiveAlways, aSessionInfo) {
     aSessionInfo = aSessionInfo && JSON.parse(aSessionInfo);
     return new Promise((resolve) => {
-      var minLastUsage = Date.now() - aMaxSessionAge;
+	    var minLastUsage = Date.now() - (aMaxSessionAge * 1000);
 
       logger.log('getUsableSessionInfo. aSessionInfo:', JSON.stringify(aSessionInfo),
                  'minLastUsage: ', minLastUsage, 'maxSessionAge:', aMaxSessionAge,
