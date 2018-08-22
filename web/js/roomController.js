@@ -824,7 +824,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     _allHandlers = RoomStatus.init(_allHandlers, { room: _sharedStatus });
 
     if (enableSip && requireGoogleAuth) {
-      GoogleAuth.init(aParams.googleId, aParams.googleHostedDomain, function (aGoogleAuth) {
+      GoogleAuth.init(aParams.googleId, null, function (aGoogleAuth) {
         googleAuth = aGoogleAuth;
         if (googleAuth.isSignedIn.get()) {
           document.body.data('google-signed-in', 'true');

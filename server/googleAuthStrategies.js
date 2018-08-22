@@ -16,9 +16,9 @@ class DisabledGoogleAuthStategy {
 /* eslint-disable class-methods-use-this */
 
 class EnabledGoogleAuthStrategy {
-  constructor(googleId, hostedDomain) {
+  constructor(googleId, hostedDomains) {
     this.googleId = googleId;
-    this.hostedDomain = hostedDomain;
+    this.hostedDomains = hostedDomains;
     this.auth = new GoogleAuth; // eslint-disable-line new-parens
     this.client = new this.auth.OAuth2(googleId, '', '');
     this.verifyIdTokenPromise = Utils.promisify(this.client.verifyIdToken, 1, this.client);
@@ -29,10 +29,11 @@ class EnabledGoogleAuthStrategy {
       this.verifyIdTokenPromise(token, this.googleId)
       .then((login) => {
         const payload = login.getPayload();
-        if (this.hostedDomain && (this.hostedDomain !== payload.hd)) {
+        if (this.hostedDomains && this.hostedDomains.split(',').some(domain => domain === payload.hd)) {
+          resolve();
+        } else {
           reject(new Error('Authentication Domain Does Not Match'));
         }
-        resolve();
       })
       .catch(err => reject(err));
     });
