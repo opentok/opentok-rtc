@@ -254,72 +254,33 @@ repo on GitHub.
 
 The app can dial out and add a phone-based end user to the OpenTok session, using the OpenTok
 [SIP API](https://tokbox.com/developer/rest/#sip_call). This app uses
-[Plivo](https://www.plivo.com/) as the SIP application that connects
+[Nexmo](https://www.nexmo.com/) as the SIP application that connects
 to OpenTok. (You can also use the OpenTok SIP API to connect to other SIP endpoints.)
 
 To enable this feature:
 
-1. Sign up for a [Plivo](https://www.plivo.com/) account.
+1. Sign up for a [Nexmo](https://www.nexmo.com/) account.
 
-2. Create a new Plivo [application](https://manage.plivo.com/app/). Make the following application
-   settings:
-
-   * *Application Name* -- Specify a unique identifying name. (This will only be used by your
-     server code.)
-
-   * *Answer URL* -- Add the public address for the /forward endpoint of your OpenTok demo server.
-     This is the webhook callback URL that Plivo calls when a call starts. (In response, the OpenTok
-     Demo server responds with XML that includes the phone number to dial.) You must run OpenTok
-     Demo on a publicly available URL -- you cannot test the dial-out code using localhost. For
-     example, set this URL to `https://yourappdomain.com/forward`.
-
-   * *Answer Method* -- Set this to GET.
-
-   * *Hangup URL* -- Add the public address for the /hang-up endpoint of your OpenTok demo server.
-     This is the webhook callback URL that Plivo calls when a call ends. You must run OpenTok
-     Demo on a publicly available URL -- you cannot test the dial-out code using localhost. For
-     example, set this URL to `https://yourappdomain.com/hang-up`.
-
-   * *Hangup Method* -- Set this to GET.
-
-4. Create a new Plivo [endpoint](https://manage.plivo.com/endpoint/). Assign it a username and
-   password, and assign the endpoint to the Plivo application you created.
-
-3. Edit config/config.json file in this application, and add the following properties:
+2. Edit config/config.json file in this application, and add the following properties:
 
   * `SIP.enabled` -- Set this to `true`.
 
-  * `SIP.uri` -- Set this to a URL of the following form:
+  * `SIP.username` -- Set this to the apiKey for the Nexmo account you created.
 
-         "sip:your-endpoint-username@phone.plivo.com"
-
-     Replace `your-endpoint-username` with the username for the Plivo endpoint you created.
-     See https://manage.plivo.com/endpoint/.
-
-  * `SIP.username` -- Set this to the username for the Plivo endpoint you created.
-
-  * `SIP.password` -- Set this to the password for the Plivo app you created.
-
-  * `Plivo.authId` -- Set this to Auth Id for the Plivo account you created.
-
-  * `Plivo.authToken` -- Set this to the Auth Token for the Plivo account you created.
+  * `SIP.password` -- Set this to the apiSecret for the Nexmo account you created.
 
   * `SIP.requireGoogleAuth` -- See [Google Authentication for Phone dial-out](#google-authentication-for-phone-dial-out) for instructions on how to limit this functionality to users authenticated by their google account.
 
   For example, the new lines in the config.json file should look like this:
 ```json
        "SIP": {
-         "sipUri" : "sip:yourapp145617992434@phone.plivo.com",
-         "sipUsername" : "yourapp145617992434@phone.plivo.com",
-         "sipPassword" : "sip:yourpassword",
+         "sipUri" : "sip:phoneumber@sip.nexmo.com",
+         "sipUsername" : "nexmoApiKey",
+         "sipPassword" : "nexmoApiSecret",
          "requireGoogleAuth": false
-       },
-       "Plivo": {
-           "authId": "yourAuthId",
-           "authToken": "yourAuthToken"
        }
 ```
-You can also add these settings as `SIP_ENABLED`, `SIP_URL`, `SIP_USERNAME`, `SIP_PASSWORD`, `PLIVO_AUTH_ID`, `PLIVO_AUTH_TOKEN` and `SIP_REQUIRE_GOOGLE_AUTH` environment variables (instead of config.json settings).
+You can also add these settings as `SIP_ENABLED`, `SIP_URL`, `SIP_USERNAME`, `SIP_PASSWORD` and `SIP_REQUIRE_GOOGLE_AUTH` environment variables (instead of config.json settings).
 
 #### Google Authentication for Phone dial-out
 
