@@ -1,5 +1,5 @@
 {
-  "name": "opentokrtc-v2",
+  "name": "opentok-rtc",
   "dependencies": {
     "theme": "tef-components/theme#0.2.68"
   }

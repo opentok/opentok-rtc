@@ -1,8 +1,8 @@
 ![logo](./tokbox-logo.png)
 
-# OpenTokRTC v3
-[![Build Status](https://travis-ci.com/opentok/OpenTokRTC-V2.svg?token=qPpN1jG8Wftsn1cafKif&branch=master)](https://travis-ci.com/opentok/OpenTokRTC-V2)
-[![codecov](https://codecov.io/gh/opentok/OpenTokRTC-V2/branch/master/graph/badge.svg)](https://codecov.io/gh/opentok/OpenTokRTC-V2/branch/master)
+# OpenTokRTC
+[![Build Status](https://travis-ci.com/opentok/opentok-rtc.svg?token=qPpN1jG8Wftsn1cafKif&branch=master)](https://travis-ci.com/opentok/opentok-rtc)
+[![codecov](https://codecov.io/gh/opentok/opentok-rtc/branch/master/graph/badge.svg)](https://codecov.io/gh/opentok/opentok-rtc/branch/master)
 
 OpenTokRTC is your private web-based video conferencing solution. It is based on the TokBox
 [OpenTok platform](https://tokbox.com/developer/) and uses the OpenTok SDKs and API. You can deploy
@@ -53,7 +53,7 @@ Once all the dependencies are in place, you will need to set some configuration 
 First, change directory to where you have downloaded OpenTokRTC. Then create create the file `config.json` in the `config` folder. You can copy `config/example.json` to `config/config.json`
 
 ```sh
-$ cd <path-to-OpenTokRTC>
+$ cd <path-to-opentok-rtc>
 $ cp config/example.json config/config.json
 ```
 

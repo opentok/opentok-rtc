@@ -1,5 +1,5 @@
 {
-  "name": "OpenTokRTCV2",
+  "name": "OpenTokRTC",
   "description": "OpenTok RTC sample application to show off the OpenTok API and platform capabilities ",
   "keywords": [
     "WebRTC",
@@ -7,7 +7,7 @@
     "productivity"
   ],
   "website": "https://tokbox.com/",
-  "repository": "https://github.com/opentok/OpentokRTC-V2.git",
+  "repository": "https://github.com/opentok/opentok-rtc.git",
   "logo": "https://tokbox.com/developer/img/OT_logo.png",
   "success_url": "/",
   "scripts": {
