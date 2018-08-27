@@ -14,7 +14,7 @@ var server =
  new Server({
    apiFile: './api.yml',
    modulePath: __dirname + '/server/',
-   appName: 'OpentokRTC-V2 Main',
+   appName: 'OpenTok Demo',
    staticOptions: {
      dotfiles: 'ignore',
      extensions: ['jpg'],

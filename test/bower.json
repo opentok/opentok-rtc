@@ -1,11 +1,11 @@
 {
-  "name": "OpenTokRTCV2Tests",
+  "name": "OpenTok DemoV2Tests",
   "version": "0.0.1",
-  "homepage": "https://github.com/AntonioMA/opentokRTCV2",
+  "homepage": "https://github.com/opentok/opentok-demo",
   "authors": [
     "Tokbox's PSE Team"
   ],
-  "description": "Client Unit Tests for OpenTokRTCV2",
+  "description": "Client Unit Tests for OpenTok Demo",
   "main": "tests.html",
   "license": "MIT",
   "ignore": [

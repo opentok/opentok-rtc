@@ -1,12 +1,12 @@
 ![logo](./tokbox-logo.png)
 
-# OpenTokRTC v4
-[![Build Status](https://travis-ci.com/opentok/OpenTokRTC-V2.svg?token=qPpN1jG8Wftsn1cafKif&branch=master)](https://travis-ci.com/opentok/OpenTokRTC-V2)
-[![codecov](https://codecov.io/gh/opentok/OpenTokRTC-V2/branch/master/graph/badge.svg)](https://codecov.io/gh/opentok/OpenTokRTC-V2/branch/master)
+# OpenTok Demo v4
+[![Build Status](https://travis-ci.com/opentok/opentok-demo.svg?token=qPpN1jG8Wftsn1cafKif&branch=master)](https://travis-ci.com/opentok/opentok-demo)
+[![codecov](https://codecov.io/gh/opentok/opentok-demo/branch/master/graph/badge.svg)](https://codecov.io/gh/opentok/opentok-demo/branch/master)
 
-OpenTokRTC is your private web-based video conferencing solution. It is based on the TokBox
+OpenTok Demo is your private web-based video conferencing solution. It is based on the TokBox
 [OpenTok platform](https://tokbox.com/developer/) and uses the OpenTok SDKs and API. You can deploy
-OpenTokRTC on your servers to get your own Google Hangouts alternative running on WebRTC.
+OpenTok Demo on your servers to get your own Google Hangouts alternative running on WebRTC.
 
 This repository contains a Node.js server and a web client application.
 
@@ -31,13 +31,13 @@ This repository contains a Node.js server and a web client application.
 
 ## Installation
 
-If you want to install OpenTokRTC on your own server, read on. If you want to deploy OpenTokRTC to Heroku, see [`INSTALL-heroku.md`](INSTALL-heroku.md).
+If you want to install OpenTok Demo on your own server, read on. If you want to deploy OpenTok Demo to Heroku, see [`INSTALL-heroku.md`](INSTALL-heroku.md).
 
 ### Requirements
 
 You will need these dependencies installed on your machine:
 
-- [NodeJS v8+](https://nodejs.org): This version of OpenTokRTC is tested with NodeJS v8 LTS.
+- [NodeJS v8+](https://nodejs.org): This version of OpenTok Demo is tested with NodeJS v8 LTS.
 - [Redis](https://redis.io): A `redis` server running on `localhost`.
 - [Grunt](http://gruntjs.com): Used for bundling assets and running tests. You can install the Grunt CLI globally by running: `# npm i -g grunt-cli`.
 
@@ -50,10 +50,10 @@ You will also need these API subscriptions:
 
 Once all the dependencies are in place, you will need to set some configuration options and install the applications dependencies.
 
-First, change directory to where you have downloaded OpenTokRTC. Then create create the file `config.json` in the `config` folder. You can copy `config/example.json` to `config/config.json`
+First, change directory to where you have downloaded OpenTok Demo. Then create create the file `config.json` in the `config` folder. You can copy `config/example.json` to `config/config.json`
 
 ```sh
-$ cd <path-to-OpenTokRTC>
+$ cd <path-to-opentok-demo>
 $ cp config/example.json config/config.json
 ```
 
@@ -389,21 +389,21 @@ sharing](tokbox.com/developer/guides/screen-sharing/).
 
 ## Customizing the UI
 
-For information on how to customize OpenTokRTC's UI, see [CUSTOMIZING-UI.md](CUSTOMIZING-UI.md).
+For information on how to customize OpenTok Demo's UI, see [CUSTOMIZING-UI.md](CUSTOMIZING-UI.md).
 
 ## Troubleshooting
 
 **"ServerPersistence: Timeout while connecting to the Persistence Provider! Is Redis running?**
 
 Ensure Redis server is running on localhost (run `redis-server` in the command line)
-and restart OpenTokRTC.
+and restart OpenTok Demo.
 
-**OpenTokRTC does not work on when served over HTTP.**
+**OpenTok Demo does not work on when served over HTTP.**
 
 Browser security policies require HTTPS for WebRTC video communications. You will need to set up
 the app to be served over HTTPS. You can set up a
 [secure reverse-proxy](https://www.nginx.com/resources/admin-guide/nginx-https-upstreams/)
-to your OpenTokRTC port using nginx. For details, read
+to your OpenTok Demo port using nginx. For details, read
 [this post](https://tokbox.com/blog/the-impact-of-googles-new-chrome-security-policy-on-webrtc/).
 
 **UI looks broken**
