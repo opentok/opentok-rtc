@@ -12,7 +12,7 @@ You will need a validated Heroku account (with the ability to use free add-ons).
 To easily deploy this repository to Heroku, sign up for a Heroku account and click this
 button:
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/opentok/opentok-demo)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/opentok/opentok-rtc)
 
 If you prefer to deploy to Heroku manually instead, follow the procedure described next.
 

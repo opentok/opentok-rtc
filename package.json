@@ -1,5 +1,5 @@
 {
-  "name": "opentok-demo",
+  "name": "opentok-rtc",
   "version": "4.0.1",
   "description": "OpenTokRTC sample application to show off the OpenTok API and platform capabilities ",
   "main": "server.js",
@@ -16,14 +16,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/opentok/opentok-demo.git"
+    "url": "https://github.com/opentok/opentok-rtc.git"
   },
   "author": "Tokbox's PSE Team",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/opentok/opentok-demo/issues"
+    "url": "https://github.com/opentok/opentok-rtc/issues"
   },
-  "homepage": "https://github.com/opentok/opentok-demo/",
+  "homepage": "https://github.com/opentok/opentok-rtc/",
   "dependencies": {
     "bower": "^1.6.5",
     "cors": "^2.7.1",
