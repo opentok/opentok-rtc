@@ -1,6 +1,6 @@
 ![logo](./tokbox-logo.png)
 
-# OpenTok Demo v4
+# OpenTok Demo
 [![Build Status](https://travis-ci.com/opentok/opentok-demo.svg?token=qPpN1jG8Wftsn1cafKif&branch=master)](https://travis-ci.com/opentok/opentok-demo)
 [![codecov](https://codecov.io/gh/opentok/opentok-demo/branch/master/graph/badge.svg)](https://codecov.io/gh/opentok/opentok-demo/branch/master)
 
