@@ -1,6 +1,6 @@
 ![logo](./tokbox-logo.png)
 
-# OpenTokRTC v3
+# OpenTokRTC v4
 [![Build Status](https://travis-ci.com/opentok/OpenTokRTC-V2.svg?token=qPpN1jG8Wftsn1cafKif&branch=master)](https://travis-ci.com/opentok/OpenTokRTC-V2)
 [![codecov](https://codecov.io/gh/opentok/OpenTokRTC-V2/branch/master/graph/badge.svg)](https://codecov.io/gh/opentok/OpenTokRTC-V2/branch/master)
 
