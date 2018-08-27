@@ -1,10 +1,10 @@
-# Customizing OpenTok Demo UI
+# Customizing OpenTokRTC UI
 
-You can customize UI colors and logos of OpenTok Demo. Follow this guide to know where to edit them.
+You can customize UI colors and logos of OpenTokRTC. Follow this guide to know where to edit them.
 
 ## Changing theme colors
 
-OpenTok Demo uses the LESS CSS pre-processor for its CSS. Values for theme colors are in the file [`web/less/variables.less`](web/less/variables.less). Edit this values in this file to suit your needs.
+OpenTokRTC uses the LESS CSS pre-processor for its CSS. Values for theme colors are in the file [`web/less/variables.less`](web/less/variables.less). Edit this values in this file to suit your needs.
 
 Once you have edited this file, you will need to build new UI assets. Run:
 

@@ -1,7 +1,7 @@
 {
 "update_url": "https://clients2.google.com/service/update2/crx",
 
-  "name" : "OpenTok Demo Screen Sharing",
+  "name" : "OpenTokRTC Screen Sharing",
   "author": "TokBox, Inc.",
   "version" : "1.4",
   "manifest_version" : 2,

@@ -1,8 +1,8 @@
 swagger: '2.0'
 info:
-  title: OpenTok Demo API
+  title: OpenTokRTC API
   description: >-
-    OpenTok Demo App, v2.0 path and API description. TO-DO: Add here a general
+    OpenTokRTC App, v2.0 path and API description. TO-DO: Add here a general
     description of the page navigation.
   version: 1.0.0
 host: opentokdemo.tokbox.com

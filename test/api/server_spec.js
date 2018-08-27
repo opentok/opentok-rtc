@@ -5,7 +5,7 @@ var expect = chai.expect;
 
 const TEST_LOG_LEVEL = 0;
 
-describe('OpenTok Demo server', () => {
+describe('OpenTokRTC server', () => {
   'use strict';
 
   var app, MockOpentok;

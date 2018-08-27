@@ -1,7 +1,7 @@
 {
   "name": "opentok-demo",
   "version": "4.0.1",
-  "description": "OpenTok Demo sample application to show off the OpenTok API and platform capabilities ",
+  "description": "OpenTokRTC sample application to show off the OpenTok API and platform capabilities ",
   "main": "server.js",
   "engines": {
     "node": "8.0.x",

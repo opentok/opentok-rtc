@@ -1,4 +1,4 @@
-# Contributing to OpenTok Demo
+# Contributing to OpenTokRTC
 
 ## Issues
 
@@ -12,7 +12,7 @@ If you are filing a bug, please specify the following:
 
 ## Contributing code
 
-If you are contributing code to OpenTok Demo, please ensure the following:
+If you are contributing code to OpenTokRTC, please ensure the following:
 
 - Add test for any feature that you add or change. Tests go in the `./test` directory.
 - Run test locally and ensure they pass, so that you do not break any build. Run tests using: `$ grunt precommit`.
