@@ -349,6 +349,7 @@ function ServerMethods(aLogLevel, aModules) {
           hasSip: tbConfig.enableSip,
           showTos: tbConfig.showTos,
           opentokJsUrl: tbConfig.opentokJsUrl,
+	  authDomain: tbConfig.googleHostedDomain,
         }, (err, html) => {
           if (err) {
             logger.log('getRoom. error:', err);
