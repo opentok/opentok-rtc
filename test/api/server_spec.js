@@ -223,7 +223,7 @@ describe('OpenTokRTC server', () => {
       expect(response.body.name).to.equal('opentok-rtc');
       expect(response.body.version).to.be.a.string;
       expect(response.body.gitHash).to.be.a.string;
-      expect(response.body.success).to.equal('fail');
+      expect(response.body.status).to.equal('fail');
       done();
     });
   });
