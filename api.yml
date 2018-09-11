@@ -331,6 +331,25 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/ErrorInfo'
+  '/server/health':
+    get:
+      summary: >-
+        A health check endpoint, reporting the ability of the app to connect to external services
+      x-implemented-in: getHealth
+      produces:
+        - application/json
+      description: Starts dialing a phone via a SIP gatway.
+      tags:
+        - Health
+      responses:
+        '200':
+          description: Passed health check  
+          schema:
+            $ref: '#/definitions/HealthInfo'
+        '400':
+          description: Failed health check
+          schema:
+            $ref: '#/definitions/HealthInfo'
 definitions:
   RoomHTML:
     type: string
@@ -429,3 +448,21 @@ definitions:
         type: string
       streamId:
         type: string
+  HealthInfo:
+    type: object
+    properties:
+      name:
+        type: string
+      version:
+        type: string
+      gitHash:
+        type: string
+      opentok:
+        type: boolean
+      firebase:
+        type: boolean
+      googleAuth:
+        type: boolean
+      status:
+        type: string
+        enum: [pass, fail]

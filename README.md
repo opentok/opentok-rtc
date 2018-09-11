@@ -26,6 +26,7 @@ This repository contains a Node.js server and a web client application.
   - [Additional configuration options](#additional-configuration-options)
 - [Customizing the UI](#customizing-the-ui)
 - [Troubleshooting](#troubleshooting)
+- [Health status check](#health-status-check)
 
 ---
 
@@ -420,3 +421,60 @@ We recommend that you run the application as a non-root user. However, if you ar
 ```
 $ bower install --allow-root
 ```
+
+### Health status check
+
+There is a health status check endpoint at /server/health. You can load this URL to check whether
+the app is able to connect to all required external services. On success, this health check
+endpoint sends a response with the HTTP status code set to 200 and the JSON like the following:
+
+```json
+{
+  "name": "opentok-rtc",
+  "version": "4.1.0",
+  "gitHash": "312903cd043d5267bc11639718c47a9b313c1663",
+  "opentok": true,
+  "firebase": true,
+  "googleAuth": true,
+  "status": "pass"
+}
+```
+
+The JSON includes the following properties:
+
+* `name` -- `"ot-embed"`
+
+* `version` -- The version number deployed (from package.json)
+
+* `git_hash` -- The git commit deployed
+
+* `opentok` -- Whether the OpenTok API check passed. The app uses the OpenTok Node.js SDK,
+  which connects to the OpenTok API server to create OpenTok sessions.
+
+* `firebase` -- Whether the Firebase check passed. The app uses Firebase to store
+  embed data.
+
+* `googleAuth` -- Whether the Google Authentication check passed. This check is only run if the app
+  uses Google Authentication for making outbound SIP calls. (See [Google Authentication for
+  Phone dial-out](#google-authentication-for-phone-dial-out).)
+
+* `status` -- "pass" (if all checks pass) or "fail" (if any check fails)
+
+On failure, the health status check endpoint returns a response with
+the HTTP status code set 400 and JSON like the following:
+
+```json
+{
+  "name": "opentok-rtc",
+  "version": "4.1.0",
+  "git_hash": "312903cd043d5267bc11639718c47a9b313c1663",
+  "opentok": true,
+  "firebase": false,
+  "error": "10-second Firebase timeout reached.",
+  "status": "fail"
+}
+```
+
+Note that upon failure, the `status` property is set to `"fail"` and the `error` property
+is set to an error message. Also, the property for the failing test, such as `firebase`,
+will be set to `false`. If a test fails, the health check will not run subsequent tests.
