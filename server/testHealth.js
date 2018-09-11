@@ -77,11 +77,11 @@ module.exports = (config, googleAuth) => new Promise((resolve, reject) => {
   .then(testFirebase)
   .then(testGoogleAuth)
   .then(() => {
-    healthObj.success = 'pass';
+    healthObj.status = 'pass';
     resolve(healthObj);
   })
   .catch((error) => {
-    healthObj.success = 'fail';
+    healthObj.status = 'fail';
     healthObj.error = error.message;
     reject(healthObj);
   });
