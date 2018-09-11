@@ -213,4 +213,18 @@ describe('OpenTokRTC server', () => {
       .get('/room/' + Math.random() + '/archive')
       .expect(404, done);
   });
+
+  it('GET /server/health should return 400 and expected values', (done) => {
+    request(app)
+    .get('/server/health')
+    .expect(400)
+    .then((response) => {
+      console.log(response.body);
+      expect(response.body.name).to.equal('opentok-rtc');
+      expect(response.body.version).to.be.a.string;
+      expect(response.body.gitHash).to.be.a.string;
+      expect(response.body.success).to.equal('fail');
+      done();
+    });
+  });
 });

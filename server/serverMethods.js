@@ -16,7 +16,7 @@ var C = require('./serverConstants');
 var configLoader = require('./configLoader');
 var FirebaseArchives = require('./firebaseArchives');
 var GoogleAuth = require('./googleAuthStrategies');
-
+var testHealth = require('./testHealth');
 
 function ServerMethods(aLogLevel, aModules) {
   aModules = aModules || {};
@@ -740,6 +740,18 @@ function ServerMethods(aLogLevel, aModules) {
     aNext();
   }
 
+  // /health
+  // Checks the ability to connect to external services used by the app
+  function getHealth(aReq, aRes) {
+    testHealth(aReq.tbConfig, googleAuth)
+    .then((healthObj) => {
+      aRes.send(healthObj);
+    })
+    .catch((healthObj) => {
+      aRes.status(400).send(healthObj);
+    });
+  }
+
   return {
     logger,
     configReady,
@@ -756,6 +768,7 @@ function ServerMethods(aLogLevel, aModules) {
     getRoomArchive,
     postRoomDial,
     postHangUp,
+    getHealth,
     oldVersionCompat,
   };
 }

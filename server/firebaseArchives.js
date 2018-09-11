@@ -51,6 +51,7 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
       updateArchive: () => Promise.resolve(),
       removeArchive: () => Promise.resolve(),
       shutdown: () => {},
+      ping: () => {},
     });
   }
 
@@ -103,6 +104,15 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
         fbRootRef.unauth();
         Object.keys(_timers).forEach((sessionId) => {
           clearTimeout(_timers[sessionId]);
+        });
+      },
+      ping() {
+        return new Promise((resolve, reject) => {
+          fbRootRef.child('ping').set(true)
+            .then(resolve)
+            .catch((error) => {
+              reject(error);
+            });
         });
       },
     };
