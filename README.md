@@ -290,7 +290,7 @@ To enable this feature:
 
 1. Create a Google API Console Project and client ID following the steps detailed here: https://developers.google.com/identity/sign-in/web/devconsole-project
 
-2. Edit the config/config.json file in this applciation, and add the following properties:
+2. Edit the config/config.json file in this application, and add the following properties:
 
   * `Google.clientId` -- Set this to your client ID.
   * `Google.hostedDomain` -- If you wish to limit sign in to accounts associated with a hosted domain, set the domain here.
