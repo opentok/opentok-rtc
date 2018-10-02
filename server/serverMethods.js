@@ -140,7 +140,7 @@ function ServerMethods(aLogLevel, aModules) {
       var enableArchiveManager = enableArchiving && config.get(C.ENABLE_ARCHIVE_MANAGER);
       var enableScreensharing = config.get(C.ENABLE_SCREENSHARING);
       var enableAnnotations = enableScreensharing && config.get(C.ENABLE_ANNOTATIONS);
-      var enableFeedback = config.get(C.ENABLE_FEEDBACK);
+      var feedbackUrl = config.get(C.FEEDBACK_URL);
       var reportIssueLevel = config.get(C.REPORT_ISSUE_LEVEL);
 
       if (!firebaseConfigured && enableArchiveManager) {
@@ -179,7 +179,7 @@ function ServerMethods(aLogLevel, aModules) {
                 enableArchiveManager,
                 enableScreensharing,
                 enableAnnotations,
-                enableFeedback,
+                feedbackUrl,
                 enableSip,
                 opentokJsUrl,
                 showTos,
@@ -340,7 +340,7 @@ function ServerMethods(aLogLevel, aModules) {
           enableArchiveManager: tbConfig.enableArchiveManager,
           enableScreensharing: tbConfig.enableScreensharing,
           enableAnnotation: tbConfig.enableAnnotations,
-          enableFeedback: tbConfig.enableFeedback,
+          feedbackUrl: tbConfig.feedbackUrl,
           precallSessionId: testSession.sessionId,
           apiKey: tbConfig.apiKey,
           precallToken: tbConfig.otInstance.generateToken(testSession.sessionId, {

@@ -16,9 +16,14 @@
         publisherId: otHelper.publisherId,
         audioScore: report.audioScore,
         videoScore: report.videoScore,
-        description: report.description
+        description: report.description,
+        clientSystemTime: new Date().getTime(),
+        source: document.location.href
       };
-      OT.analytics.logEvent(loggedEvent);
+      var xhr = new XMLHttpRequest();
+      var url = window.feedbackUrl;
+      xhr.open('POST', url, true);
+      xhr.send(JSON.stringify(loggedEvent));
     },
     reportIssue: function () {
       var loggedEvent = {

@@ -30,6 +30,7 @@
       window.precallToken='<%=precallToken%>';
       window.showTos=<%=showTos%> && !sessionStorage.tosAccepted;
       window.opentokJsUrl='<%=opentokJsUrl%>';
+      window.feedbackUrl = '<%=feedbackUrl%>';
       var isMobile = function() { return typeof window.orientation !== 'undefined'; }
 
       var mobileSettings = function() {
@@ -158,7 +159,7 @@
       </div>
     </section>
 
-    <% if (enableFeedback) { %>
+    <% if (feedbackUrl) { %>
       <section class="feedbackButton">
         <span id="showFeedback">Feedback / Report a Bug</span>
       </section>
