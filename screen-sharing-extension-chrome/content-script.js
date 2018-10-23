@@ -43,7 +43,7 @@ window.addEventListener('message', function (event) {
       payload = event.data.payload;
 
   if(!payload.requestId) {
-    console.warn('Message to screen sharing extesnion does not have a requestId for replies.');
+    console.warn('Message to screen sharing extension does not have a requestId for replies.');
     return undefined;
   }
 
