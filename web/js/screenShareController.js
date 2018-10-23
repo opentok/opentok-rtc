@@ -74,21 +74,12 @@
 
   var screenShareViewEvents = {
     installExtension: function () {
-      try {
-        chrome.webstore.install('https://chrome.google.com/webstore/detail/' + _chromeExtId,
-          function () {
-            Utils.sendEvent('screenShareController:extInstallationResult',
-                            { error: false });
-          }, function (err) {
-            Utils.sendEvent('screenShareController:extInstallationResult',
-                            { error: true, message: err });
-          });
-      } catch (e) {
-        // WARNING!! This shouldn't happen
-        // If this message is displayed it could be because the extensionId is not
-        // registred and, in this case, we have a bug because this was already controlled
-        debug.error('Error installing extension:', e);
-      }
+      var newTab = window.open('https://chrome.google.com/webstore/detail/' + _chromeExtId, '_blank');
+      var error = !newTab || typeof newTab !== 'object';
+      Utils.sendEvent('screenShareController:extInstallationResult', {
+        error: error,
+        message: error ? 'It seems you have a Pop-Up blocker enabled. Please disabled it and try again.' : null
+      });
     }
   };
 
