@@ -80,7 +80,7 @@
         error: error,
         message: error ? 'It seems you have a Pop-Up blocker enabled. Please disabled it and try again.' : null
       });
-      if (debug) {
+      if (error) {
         debug.error('Error opening Chrome Webstore');
       }
     }
