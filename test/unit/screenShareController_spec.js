@@ -144,7 +144,7 @@ describe('ScreenShareController', () => {
      'installation does not work', (done) => {
     var event = new CustomEvent('screenShareView:installExtension');
     var realWindowOpen = window.open;
-    window.open = function () { return null };
+    window.open = () => null;
 
     window.addEventListener('screenShareController:extInstallationResult',
                             function handlerTest(evt) {

@@ -1,4 +1,4 @@
-/* global RoomView, OTHelper, chrome, ScreenShareView */
+/* global RoomView, OTHelper, ScreenShareView */
 
 !(function (globals) {
   'use strict';
@@ -80,6 +80,9 @@
         error: error,
         message: error ? 'It seems you have a Pop-Up blocker enabled. Please disabled it and try again.' : null
       });
+      if (debug) {
+        debug.error('Error opening Chrome Webstore');
+      }
     }
   };
 
