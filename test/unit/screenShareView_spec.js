@@ -124,7 +124,7 @@ describe('ScreenShareView', () => {
     testMsgError(event, '', 'successful-installation', done);
   });
 
-  it('should show installation success', (done) => {
+  it('should show installation failure', (done) => {
     var err = {
       error: true,
       message: 'Error message',
