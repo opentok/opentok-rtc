@@ -57,7 +57,7 @@ E.ENABLE_ARCHIVE_MANAGER = { envVar: 'ENABLE_ARCHIVE_MANAGER', jsonPath: 'Archiv
 // Maximum time an empty room will keep it's history alive, in minutes.
 E.EMPTY_ROOM_LIFETIME = { envVar: 'EMPTY_ROOM_LIFETIME', jsonPath: 'Archiving.archiveManager.emptyRoomMaxLifetime', defaultValue: 3 };
 
-E.ENABLE_FEEDBACK = { envVar: 'ENABLE_FEEDBACK', jsonPath: 'Feedback.enabled', defaultValue: false, parser: parseBool };
+E.FEEDBACK_URL = { envVar: 'FEEDBACK_URL', jsonPath: 'Feedback.url', defaultValue: '' };
 
 E.REPORT_ISSUE_LEVEL = { envVar: 'REPORT_ISSUE_LEVEL', jsonPath: 'Feedback.reportIssueLevel', defaultValue: 3 };
 
