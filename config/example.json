@@ -15,7 +15,7 @@
       }
    },
    "Feedback":{
-     "enabled": false,
+     "url": "",
      "reportIssueLevel": 0
    },
    "Screensharing":{

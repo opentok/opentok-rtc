@@ -357,11 +357,16 @@ sharing](tokbox.com/developer/guides/screen-sharing/).
 
 #### Feedback
 
- `ENABLE_FEEDBACK`: Enable the "Give Demo Feedback" form.
+The app lets the developer POST feedback data to an endpoint on your HTTP server:
+
+ `FEEDBACK_URL`: The URL to send a POST request with feedback data. Leave this as an empty string or
+ undefined to disable issue reporting.
+ 
  `REPORT_ISSUE_LEVEL`: The audio and video scores in the feedback form are between 1 (awful) and 5 (excellent). When the feedback form is submitted, if an audio or video score is less than or equal to the report issue level, the app calls `OT.reportIssue()`. This reports an issue, which you can view in OpenTok Inspector. (For more information, see [Reporting an issue](https://tokbox.com/developer/guides/debugging/js/#report-issue) in the OpenTok developer Guides.) The default value is 3, set to 0 to disable issue reporting.
+
  ```json
  "Feedback": {
-     "enabled": true,
+     "url": "",
      "reportIssueLevel": 0
  },
  ```
@@ -431,7 +436,7 @@ endpoint sends a response with the HTTP status code set to 200 and the JSON like
 ```json
 {
   "name": "opentok-rtc",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "gitHash": "312903cd043d5267bc11639718c47a9b313c1663",
   "opentok": true,
   "firebase": true,
@@ -466,7 +471,7 @@ the HTTP status code set 400 and JSON like the following:
 ```json
 {
   "name": "opentok-rtc",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "git_hash": "312903cd043d5267bc11639718c47a9b313c1663",
   "opentok": true,
   "firebase": false,
