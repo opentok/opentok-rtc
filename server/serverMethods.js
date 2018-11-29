@@ -544,6 +544,7 @@ function ServerMethods(aLogLevel, aModules) {
         var now = new Date();
         var archiveOptions = {
           name: userName + ' ' + now.toLocaleDateString() + ' ' + now.toLocaleTimeString(),
+          resolution: '1280x720',
         };
         var archiveOp;
         switch (operation) {
