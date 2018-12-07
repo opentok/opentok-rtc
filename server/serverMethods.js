@@ -552,6 +552,7 @@ function ServerMethods(aLogLevel, aModules) {
             // falls through
           case 'startComposite':
             logger.log('Binding archiveOp to startArchive with sessionId:', sessionInfo.sessionId);
+            archiveOptions.resolution = '1280x720';
             archiveOp =
               otInstance.startArchive_P.bind(otInstance, sessionInfo.sessionId, archiveOptions);
             break;
