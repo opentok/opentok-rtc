@@ -17,7 +17,7 @@
 
   var init = function () {
     LazyLoader.dependencyLoad([
-      '//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js',
+      '/js/vendor/jquery-1.11.1.min.js',
       'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/js/intlTelInput.js',
       'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/js/utils.js'
     ]).then(function () {
