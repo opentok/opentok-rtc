@@ -94,7 +94,7 @@
         ).then(function (pub) {
           publisher = pub;
           previewOptions = {
-            apiKey: window.apiKey,
+            apiKey: window.precallApiKey,
             resolution: '640x480',
             sessionId: window.precallSessionId,
             token: window.precallToken
