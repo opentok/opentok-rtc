@@ -93,12 +93,16 @@ function ServerMethods(aLogLevel, aModules) {
       var templatingSecret = config.get(C.TEMPLATING_SECRET);
       var apiKey = config.get(C.OPENTOK_API_KEY);
       var apiSecret = config.get(C.OPENTOK_API_SECRET);
+      var precallApiKey = config.get(C.OPENTOK_PRECALL_API_KEY) || config.get(C.OPENTOK_API_KEY);
+      var precallApiSecret = config.get(C.OPENTOK_PRECALL_API_SECRET)
+        || config.get(C.OPENTOK_API_SECRET);
       var opentokJsUrl = config.get(C.OPENTOK_JS_URL);
       logger.log('apiSecret', apiSecret);
       var archivePollingTO = config.get(C.ARCHIVE_POLLING_INITIAL_TIMEOUT);
       var archivePollingTOMultiplier =
                 config.get(C.ARCHIVE_POLLING_TIMEOUT_MULTIPLIER);
       var otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret);
+      var precallOtInstance = Utils.CachifiedObject(Opentok, precallApiKey, precallApiSecret);
 
       var allowIframing = config.get(C.ALLOW_IFRAMING);
       var archiveAlways = config.get(C.ARCHIVE_ALWAYS);
@@ -161,8 +165,11 @@ function ServerMethods(aLogLevel, aModules) {
       return firebaseArchivesPromise
               .then(firebaseArchives => ({
                 otInstance,
+                precallOtInstance,
                 apiKey,
                 apiSecret,
+                precallApiKey,
+                precallApiSecret,
                 archivePollingTO,
                 archivePollingTOMultiplier,
                 maxSessionAgeMs,
@@ -319,7 +326,7 @@ function ServerMethods(aLogLevel, aModules) {
     var userName = query && query.userName;
 
     // Create a session ID and token for the network test
-    tbConfig.otInstance.createSession({ mediaMode: 'routed' }, (error, testSession) => {
+    tbConfig.precallOtInstance.createSession({ mediaMode: 'routed' }, (error, testSession) => {
       // We really don't want to cache this
       aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
       aRes.set('Pragma', 'no-cache');
@@ -343,7 +350,8 @@ function ServerMethods(aLogLevel, aModules) {
           feedbackUrl: tbConfig.feedbackUrl,
           precallSessionId: testSession.sessionId,
           apiKey: tbConfig.apiKey,
-          precallToken: tbConfig.otInstance.generateToken(testSession.sessionId, {
+          precallApiKey: tbConfig.precallApiKey,
+          precallToken: tbConfig.precallOtInstance.generateToken(testSession.sessionId, {
             role: 'publisher',
           }),
           hasSip: tbConfig.enableSip,
