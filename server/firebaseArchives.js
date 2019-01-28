@@ -177,14 +177,6 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
         .authWithCustomToken_P(serverToken);
   };
 
-  firebaseArchives = fbRootRef.child('archives');
-  firebaseArchives.on('value', function updateArchiveHistory(snapshot) {
-    archives = snapshot.val();
-    console.log(archives);
-  }, function onCancel(err) {
-    console.log({});
-  });
-
   // Refresh the authentication every 23 hours (tokens expire by default at 24 hours)
   setInterval(authWithAdminToken, 23 * 3600000);
 
