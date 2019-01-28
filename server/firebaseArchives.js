@@ -158,12 +158,17 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
     }
   }
 
+  function _getArchiveList(aDataSnapshot) {
+    console.log(aDataSnapshot.val());
+  }
+
   function _processSession(aDataSnapshot) {
     var sessionId = aDataSnapshot.key();
     logger.log('_processSession: Found sessionId: ', sessionId);
     // We only care about the connections here.
     // Funnily enough this works even if the connections key doesn't exist.
     aDataSnapshot.ref().child('connections').on('value', _checkConnectionsNumber);
+    aDataSnapshot.ref().child('archives').on('value', _getArchiveList);
   }
 
   fbRootRef.authWithCustomToken_P = promisify(fbRootRef.authWithCustomToken);
