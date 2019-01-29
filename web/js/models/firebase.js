@@ -5,6 +5,7 @@
 
   var archives = null;
   var listeners = {};
+  var server = window.location.origin;
 
   function init(aUrl, aToken) {
     var self = this;
@@ -35,6 +36,8 @@
             });
           });
           sessionRef.child('connections').push(new Date().getTime()).onDisconnect().remove();
+          var socket = io();
+          socket.emit('connections', new Date().getTime());
           resolve(self);
         });
       });

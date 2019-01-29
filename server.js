@@ -29,3 +29,11 @@ var server =
  });
 
 server.start();
+
+const io = require('socket.io')(server);
+
+io.on('connection', function(socket){
+  socket.on('connections', function(msg){
+    console.log('Client connected at: '+ msg);
+  });
+});
