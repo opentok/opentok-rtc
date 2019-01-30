@@ -9,8 +9,7 @@
   function init(aUrl, aToken) {
     var self = this;
     return LazyLoader.dependencyLoad([
-      'https://cdn.firebase.com/js/client/2.3.1/firebase.js',
-      '/socket.io/socket.io.js'
+      'https://cdn.firebase.com/js/client/2.3.1/firebase.js'
     ]).then(function () {
       return new Promise(function (resolve) {
         // url points to the session root
