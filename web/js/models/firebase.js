@@ -9,8 +9,12 @@
   function init(aUrl, aToken) {
     var self = this;
     return LazyLoader.dependencyLoad([
-      'https://cdn.firebase.com/js/client/2.3.1/firebase.js'
+      //'https://cdn.firebase.com/js/client/2.3.1/firebase.js'
+      'https://cdn.pubnub.com/sdk/javascript/pubnub.4.21.7.js'
     ]).then(function () {
+      pubnub.subscribe({
+        channels: ['archives_channel'],
+      });
       return new Promise(function (resolve) {
         // url points to the session root
         var sessionRef = new Firebase(aUrl);

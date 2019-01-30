@@ -39,6 +39,9 @@
 var Firebase = require('firebase');
 var SwaggerBP = require('swagger-boilerplate');
 var FirebaseTokenGenerator = require('firebase-token-generator');
+var C = require('./serverConstants');
+var configLoader = require('./configLoader');
+var PubNub = require('pubnub');
 
 function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
   if (!aRootURL || !aSecret) {
@@ -72,6 +75,25 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
   // Connect and authenticate the firebase session
   var fbRootRef = new Firebase(aRootURL);
   var fbTokenGenerator = new FirebaseTokenGenerator(aSecret);
+
+  var pubnubSubKey = config.get(C.PUBNUB_SUB_KEY);
+  var pubnubPubKey = config.get(C.PUBNUB_PUB_KEY);
+
+  var pubnub = new PubNub({
+    subscribeKey: pubnubSubKey,
+    publishKey: pubnubPubKey,
+    ssl: true
+  });
+
+  pubnub.subscribe({
+    channels: ['connections_channel'],
+  });
+
+  pubnub.addListener({
+    message: function(message) {
+      console.log("Message": + message);
+    }
+  });
 
   function _getFbObject() {
     // All done, just return an usable object... this will resolve te promise.
@@ -159,7 +181,25 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
   }
 
   function _getArchiveList(aDataSnapshot) {
-    console.log(aDataSnapshot.val());
+    var archives = aDataSnapshot.val();
+    console.log(archives);
+    pubnub.publish(
+      {
+        message: {
+          archives: archives
+        },
+        channel: 'archives_channel',
+        sendByPost: false,
+        storeInHistory: false
+      },
+      function(status, response) {
+        if(status.error) {
+          console.log(status);
+        } else {
+          console.log("message Published w/ timetoken", response.timetoken);
+        }
+      }
+    );
   }
 
   function _processSession(aDataSnapshot) {
