@@ -10,7 +10,7 @@
     var self = this;
     return LazyLoader.dependencyLoad([
       'https://cdn.firebase.com/js/client/2.3.1/firebase.js',
-      'https://' + window.location.hostname + ':3000/socket.io/socket.io.js'
+      '/socket.io/socket.io.js'
     ]).then(function () {
       return new Promise(function (resolve) {
         // url points to the session root
