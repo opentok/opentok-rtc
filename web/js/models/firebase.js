@@ -12,7 +12,7 @@
       'https://cdn.firebase.com/js/client/2.3.1/firebase.js',
       'https://cdn.pubnub.com/sdk/javascript/pubnub.4.21.7.js'
     ]).then(function () {
-      var pubnubDemo = new PubNub({
+      var pubnub = new PubNub({
         publishKey: pubnubSubKey,
         subscribeKey: pubnubPubKey
       });
