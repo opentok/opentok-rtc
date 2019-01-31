@@ -41,9 +41,9 @@
 
           pubnub.addListener({
             message: function(message) {
-              console.log('Message FBM: ' + message.archives);
+              console.log('Message FBM: ' + message.message);
               var handlers = listeners.value;
-              archives = message.archives;
+              archives = message.message;
               var archiveValues = Promise.resolve(archives || {});
               handlers && handlers.forEach(function (aHandler) {
                 archiveValues.then(aHandler.method.bind(aHandler.context));
