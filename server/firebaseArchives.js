@@ -86,7 +86,6 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel, pubnubSubK
 
   pubnub.addListener({
     message: function(payload) {
-      console.log("Message: " + payload.message.connection);
       fbRootRef.child(payload.message.connection + '/connections').push(new Date().getTime());
     }
   });
@@ -187,13 +186,6 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel, pubnubSubK
         channel: 'archives_channel',
         sendByPost: false,
         storeInHistory: false
-      },
-      function(status, response) {
-        if(status.error) {
-          console.log(status);
-        } else {
-          console.log("message Published w/ timetoken", response.timetoken);
-        }
       }
     );
   }
