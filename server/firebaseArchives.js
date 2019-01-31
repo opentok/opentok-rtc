@@ -39,11 +39,9 @@
 var Firebase = require('firebase');
 var SwaggerBP = require('swagger-boilerplate');
 var FirebaseTokenGenerator = require('firebase-token-generator');
-var C = require('./serverConstants');
-var configLoader = require('./configLoader');
 var PubNub = require('pubnub');
 
-function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
+function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel, pubnubSubKey, pubnubPubKey) {
   if (!aRootURL || !aSecret) {
     // Just return an object with the right signature and be done...
     return Promise.resolve({
@@ -75,9 +73,6 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
   // Connect and authenticate the firebase session
   var fbRootRef = new Firebase(aRootURL);
   var fbTokenGenerator = new FirebaseTokenGenerator(aSecret);
-
-  var pubnubSubKey = config.get(C.PUBNUB_SUB_KEY);
-  var pubnubPubKey = config.get(C.PUBNUB_PUB_KEY);
 
   var pubnub = new PubNub({
     subscribeKey: pubnubSubKey,

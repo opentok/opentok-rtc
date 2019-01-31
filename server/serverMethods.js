@@ -112,6 +112,10 @@ function ServerMethods(aLogLevel, aModules) {
       var sipRequireGoogleAuth = config.get(C.SIP_REQUIRE_GOOGLE_AUTH);
       var googleId = config.get(C.GOOGLE_CLIENT_ID);
       var googleHostedDomain = config.get(C.GOOGLE_HOSTED_DOMAIN);
+
+      var pubnubSubKey = config.get(C.PUBNUB_SUB_KEY);
+      var pubnubPubKey = config.get(C.PUBNUB_PUB_KEY);
+      
       if (sipRequireGoogleAuth) {
         googleAuth = new GoogleAuth.EnabledGoogleAuthStrategy(googleId, googleHostedDomain);
       } else {
@@ -155,7 +159,7 @@ function ServerMethods(aLogLevel, aModules) {
       var firebaseArchivesPromise =
               Utils.CachifiedObject(FirebaseArchives, config.get(C.FIREBASE_DATA_URL),
                                     config.get(C.FIREBASE_AUTH_SECRET),
-                                    config.get(C.EMPTY_ROOM_LIFETIME), aLogLevel);
+                                    config.get(C.EMPTY_ROOM_LIFETIME), aLogLevel, pubnubSubKey, pubnubPubKey);
       _shutdownOldInstance(oldFirebaseArchivesPromise, firebaseArchivesPromise);
 
       return firebaseArchivesPromise
@@ -190,6 +194,8 @@ function ServerMethods(aLogLevel, aModules) {
                 googleId,
                 googleHostedDomain,
                 reportIssueLevel,
+                pubnubSubKey,
+                pubnubPubKey
               }));
     });
   }
@@ -456,6 +462,8 @@ function ServerMethods(aLogLevel, aModules) {
           googleId: tbConfig.googleId,
           googleHostedDomain: tbConfig.googleHostedDomain,
           reportIssueLevel: tbConfig.reportIssueLevel,
+          pubnubSubKey: tbConfig.pubnubSubKey,
+          pubnubPubKey: tbConfig.pubnubPubKey
         };
         answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId;
         aRes.send(answer);

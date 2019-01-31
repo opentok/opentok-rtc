@@ -871,7 +871,8 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
         })
         .then(function () {
           RecordingsController.init(enableArchiveManager, aParams.firebaseURL,
-                                    aParams.firebaseToken);
+                                    aParams.firebaseToken, aParams.pubnubSubKey,
+                                    aParams.pubnubPubKey);
           ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
           FeedbackController.init(otHelper, aParams.reportIssueLevel);
           PhoneNumberController.init();

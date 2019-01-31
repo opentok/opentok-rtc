@@ -6,12 +6,23 @@
   var archives = null;
   var listeners = {};
 
-  function init(aUrl, aToken) {
+  function init(aUrl, aToken, pubnubSubKey, pubnubPubKey) {
     var self = this;
     return LazyLoader.dependencyLoad([
-      //'https://cdn.firebase.com/js/client/2.3.1/firebase.js'
+      'https://cdn.firebase.com/js/client/2.3.1/firebase.js'
       'https://cdn.pubnub.com/sdk/javascript/pubnub.4.21.7.js'
     ]).then(function () {
+      var pubnubDemo = new PubNub({
+        publishKey: pubnubSubKey,
+        subscribeKey: pubnubPubKey
+      });
+
+      pubnub.addListener({
+        message: function(message) {
+          console.log('Message FBM: ' + message);
+        }
+      });
+
       pubnub.subscribe({
         channels: ['archives_channel'],
       });
