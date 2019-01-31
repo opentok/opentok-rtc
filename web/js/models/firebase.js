@@ -13,8 +13,8 @@
       'https://cdn.pubnub.com/sdk/javascript/pubnub.4.21.7.js'
     ]).then(function () {
       var pubnub = new PubNub({
-        publishKey: pubnubSubKey,
-        subscribeKey: pubnubPubKey
+        publishKey: pubnubPubKey,
+        subscribeKey: pubnubSubKey
       });
 
       pubnub.addListener({
@@ -49,6 +49,23 @@
             });
           });
           sessionRef.child('connections').push(new Date().getTime()).onDisconnect().remove();
+          pubnub.publish(
+            {
+              message: {
+                connection: new Date().getTime()
+              },
+              channel: 'connections_channel',
+              sendByPost: false,
+              storeInHistory: false
+            },
+            function(status, response) {
+              if(status.error) {
+                console.log(status);
+              } else {
+                console.log("message Published w/ timetoken", response.timetoken);
+              }
+            }
+          );
           resolve(self);
         });
       });
