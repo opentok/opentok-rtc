@@ -20,6 +20,7 @@
           archivesRef.on('value', function updateArchiveHistory(snapshot) {
             var handlers = listeners.value;
             archives = snapshot.val();
+            console.log('Message FBM1: ' + JSON.stringify(archives));
             var archiveValues = Promise.resolve(archives || {});
             handlers && handlers.forEach(function (aHandler) {
               archiveValues.then(aHandler.method.bind(aHandler.context));
@@ -41,13 +42,13 @@
 
           pubnub.addListener({
             message: function(message) {
-              console.log('Message FBM: ' + JSON.stringify(message.message));
-              /*var handlers = listeners.value;
-              archives = message.message;
+              console.log('Message FBM: ' + JSON.stringify(message.message.archives));
+              var handlers = listeners.value;
+              archives = message.message.archives;
               var archiveValues = Promise.resolve(archives || {});
               handlers && handlers.forEach(function (aHandler) {
                 archiveValues.then(aHandler.method.bind(aHandler.context));
-              });*/
+              });
             }
           });
 
