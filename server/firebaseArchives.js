@@ -86,7 +86,7 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel, pubnubSubK
 
   pubnub.addListener({
     message: function(message) {
-      console.log("Message": + message);
+      console.log("Message: " + message);
     }
   });
 
