@@ -16,7 +16,7 @@
         // url points to the session root
         var sessionRef = new Firebase(aUrl);
         sessionRef.authWithCustomToken(aToken, function () {
-          /*var archivesRef = sessionRef.child('archives');
+          var archivesRef = sessionRef.child('archives');
           archivesRef.on('value', function updateArchiveHistory(snapshot) {
             var handlers = listeners.value;
             archives = snapshot.val();
@@ -33,7 +33,7 @@
             handlers && handlers.forEach(function (aHandler) {
               archiveValues.then(aHandler.method.bind(aHandler.context));
             });
-          });*/
+          });
           var pubnub = new PubNub({
             publishKey: pubnubPubKey,
             subscribeKey: pubnubSubKey
@@ -41,13 +41,13 @@
 
           pubnub.addListener({
             message: function(message) {
-              console.log('Message FBM: ' + message.message);
-              var handlers = listeners.value;
+              console.log('Message FBM: ' + JSON.stringify(message.message));
+              /*var handlers = listeners.value;
               archives = message.message;
               var archiveValues = Promise.resolve(archives || {});
               handlers && handlers.forEach(function (aHandler) {
                 archiveValues.then(aHandler.method.bind(aHandler.context));
-              });
+              });*/
             }
           });
 
