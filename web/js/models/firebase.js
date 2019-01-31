@@ -17,7 +17,7 @@
         var sessionRef = new Firebase(aUrl);
         sessionRef.authWithCustomToken(aToken, function () {
           var archivesRef = sessionRef.child('archives');
-          archivesRef.on('value', function updateArchiveHistory(snapshot) {
+          /*archivesRef.on('value', function updateArchiveHistory(snapshot) {
             var handlers = listeners.value;
             archives = snapshot.val();
             console.log('Message FBM1: ' + JSON.stringify(archives));
@@ -34,7 +34,7 @@
             handlers && handlers.forEach(function (aHandler) {
               archiveValues.then(aHandler.method.bind(aHandler.context));
             });
-          });
+          });*/
           var pubnub = new PubNub({
             publishKey: pubnubPubKey,
             subscribeKey: pubnubSubKey
@@ -42,7 +42,7 @@
 
           pubnub.addListener({
             message: function(message) {
-              console.log('Message FBM: ' + JSON.stringify(message.message.archives));
+              //console.log('Message FBM: ' + JSON.stringify(message.message.archives));
               var handlers = listeners.value;
               archives = message.message.archives;
               var archiveValues = Promise.resolve(archives || {});
