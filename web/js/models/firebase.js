@@ -19,7 +19,13 @@
 
       pubnub.addListener({
         message: function(message) {
-          console.log('Message FBM: ' + message);
+          //console.log('Message FBM: ' + message);
+          var handlers = listeners.value;
+          archives = message.archives;
+          var archiveValues = archives || {};
+          handlers && handlers.forEach(function (aHandler) {
+            archiveValues.then(aHandler.method.bind(aHandler.context));
+          });
         }
       });
 
@@ -30,7 +36,7 @@
         // url points to the session root
         var sessionRef = new Firebase(aUrl);
         sessionRef.authWithCustomToken(aToken, function () {
-          var archivesRef = sessionRef.child('archives');
+          /*var archivesRef = sessionRef.child('archives');
           archivesRef.on('value', function updateArchiveHistory(snapshot) {
             var handlers = listeners.value;
             archives = snapshot.val();
@@ -47,7 +53,7 @@
             handlers && handlers.forEach(function (aHandler) {
               archiveValues.then(aHandler.method.bind(aHandler.context));
             });
-          });
+          });*/
           sessionRef.child('connections').push(new Date().getTime()).onDisconnect().remove();
           pubnub.publish(
             {

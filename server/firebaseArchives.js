@@ -177,7 +177,7 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel, pubnubSubK
 
   function _getArchiveList(aDataSnapshot) {
     var archives = aDataSnapshot.val();
-    console.log(archives);
+
     pubnub.publish(
       {
         message: {
