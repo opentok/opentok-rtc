@@ -85,8 +85,9 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel, pubnubSubK
   });
 
   pubnub.addListener({
-    message: function(message) {
-      console.log("Message: " + message);
+    message: function(payload) {
+      console.log("Message: " + payload.message.connectionId);
+      fbRootRef.child(payload.message.connectionId + '/connections').push(new Date().getTime());
     }
   });
 

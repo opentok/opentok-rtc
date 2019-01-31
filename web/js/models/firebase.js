@@ -55,8 +55,6 @@
             channels: ['archives_channel'],
           });
 
-          console.log(sessionId);
-
           sessionRef.child('connections').push(new Date().getTime()).onDisconnect().remove();
           pubnub.publish(
             {
