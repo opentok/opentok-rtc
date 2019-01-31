@@ -12,26 +12,6 @@
       'https://cdn.firebase.com/js/client/2.3.1/firebase.js',
       'https://cdn.pubnub.com/sdk/javascript/pubnub.4.21.7.js'
     ]).then(function () {
-      var pubnub = new PubNub({
-        publishKey: pubnubPubKey,
-        subscribeKey: pubnubSubKey
-      });
-
-      pubnub.addListener({
-        message: function(message) {
-          //console.log('Message FBM: ' + message);
-          var handlers = listeners.value;
-          archives = message.archives;
-          var archiveValues = archives || {};
-          handlers && handlers.forEach(function (aHandler) {
-            archiveValues.then(aHandler.method.bind(aHandler.context));
-          });
-        }
-      });
-
-      pubnub.subscribe({
-        channels: ['archives_channel'],
-      });
       return new Promise(function (resolve) {
         // url points to the session root
         var sessionRef = new Firebase(aUrl);
@@ -54,6 +34,27 @@
               archiveValues.then(aHandler.method.bind(aHandler.context));
             });
           });*/
+          var pubnub = new PubNub({
+            publishKey: pubnubPubKey,
+            subscribeKey: pubnubSubKey
+          });
+
+          pubnub.addListener({
+            message: function(message) {
+              console.log('Message FBM: ' + message.archives);
+              var handlers = listeners.value;
+              archives = message.archives;
+              var archiveValues = Promise.resolve(archives || {});
+              handlers && handlers.forEach(function (aHandler) {
+                archiveValues.then(aHandler.method.bind(aHandler.context));
+              });
+            }
+          });
+
+          pubnub.subscribe({
+            channels: ['archives_channel'],
+          });
+
           sessionRef.child('connections').push(new Date().getTime()).onDisconnect().remove();
           pubnub.publish(
             {
