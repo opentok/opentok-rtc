@@ -6,7 +6,7 @@
   var archives = null;
   var listeners = {};
 
-  function init(aUrl, aToken, pubnubSubKey, pubnubPubKey) {
+  function init(aUrl, aToken, pubnubSubKey, pubnubPubKey, sessionId) {
     var self = this;
     return LazyLoader.dependencyLoad([
       'https://cdn.firebase.com/js/client/2.3.1/firebase.js',
@@ -42,7 +42,6 @@
 
           pubnub.addListener({
             message: function(message) {
-              //console.log('Message FBM: ' + JSON.stringify(message.message.archives));
               var handlers = listeners.value;
               archives = message.message.archives;
               var archiveValues = Promise.resolve(archives || {});
@@ -56,11 +55,13 @@
             channels: ['archives_channel'],
           });
 
+          console.log(sessionId);
+
           sessionRef.child('connections').push(new Date().getTime()).onDisconnect().remove();
           pubnub.publish(
             {
               message: {
-                connection: new Date().getTime()
+                connection: sessionId
               },
               channel: 'connections_channel',
               sendByPost: false,
