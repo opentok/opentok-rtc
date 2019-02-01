@@ -91,7 +91,7 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel, pubnubSubK
         .push(new Date().getTime())
         .onDisconnect().remove();
 
-      fbRootRef.child('archives').on('value', _getArchiveList(session));
+      fbRootRef.child(session + '/archives').on('value', _getArchiveList(session));
     }
   });
 
