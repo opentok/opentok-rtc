@@ -52,6 +52,7 @@
     "ioredis": "^1.7.6",
     "lodash": "^4.17.4",
     "opentok": "^2.3.0",
+    "pubnub": "^4.21.7",
     "swagger-boilerplate": "^0.0.16",
     "yamljs": "^0.2.10"
   },
