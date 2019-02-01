@@ -106,8 +106,6 @@ E.GOOGLE_CLIENT_ID = { envVar: 'GOOGLE_CLIENT_ID', jsonPath: 'Google.clientId', 
 
 E.GOOGLE_HOSTED_DOMAIN = { envVar: 'GOOGLE_HOSTED_DOMAIN', jsonPath: 'Google.hostedDomain', defaultValue: '' };
 
-E.OPENTOK_API_KEY = { envVar: 'TB_API_KEY', jsonPath: 'OpenTok.apiKey', required: true };
-
 E.PUBNUB_SUB_KEY = { envVar: 'PUBNUB_SUB_KEY', jsonPath: 'PubNub.subKey', required: false };
 
 E.PUBNUB_PUB_KEY = { envVar: 'PUBNUB_PUB_KEY', jsonPath: 'PubNub.pubKey', required: false };
