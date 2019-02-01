@@ -86,9 +86,12 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel, pubnubSubK
 
   pubnub.addListener({
     message: function(payload) {
-      fbRootRef.child(payload.message.connection + '/connections')
+      var session = payload.message.session;
+      fbRootRef.child(session + '/connections')
         .push(new Date().getTime())
-        .onDisconnect().remove();;
+        .onDisconnect().remove();
+
+      fbRootRef.child('archives').on('value', _getArchiveList(session));
     }
   });
 
@@ -177,7 +180,7 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel, pubnubSubK
     }
   }
 
-  function _getArchiveList(aDataSnapshot) {
+  function _getArchiveList(session, aDataSnapshot) {
     var archives = aDataSnapshot.val();
 
     pubnub.publish(
@@ -185,7 +188,7 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel, pubnubSubK
         message: {
           archives: archives
         },
-        channel: 'archives_channel',
+        channel: session,
         sendByPost: false,
         storeInHistory: false
       }
@@ -198,7 +201,7 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel, pubnubSubK
     // We only care about the connections here.
     // Funnily enough this works even if the connections key doesn't exist.
     aDataSnapshot.ref().child('connections').on('value', _checkConnectionsNumber);
-    aDataSnapshot.ref().child('archives').on('value', _getArchiveList);
+    //aDataSnapshot.ref().child('archives').on('value', _getArchiveList);
   }
 
   fbRootRef.authWithCustomToken_P = promisify(fbRootRef.authWithCustomToken);

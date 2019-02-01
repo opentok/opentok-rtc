@@ -29,13 +29,13 @@
         });
 
         pubnub.subscribe({
-          channels: ['archives_channel'],
+          channels: [sessionId],
         });
 
         pubnub.publish(
           {
             message: {
-              connection: sessionId
+              session: sessionId
             },
             channel: 'connections_channel',
             sendByPost: false,
