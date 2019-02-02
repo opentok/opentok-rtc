@@ -42,7 +42,7 @@ E.FIREBASE_AUTH_SECRET = { envVar: 'FB_AUTH_SECRET', jsonPath: 'Firebase.authSec
 // Sessions should not live forever. So we'll store the last time a session was used and if when
 // we fetch it from Redis we determine it's older than this max age (in days). This is the key
 // where that value (in days) should be stored. By default, sessions live two days.
-E.OPENTOK_MAX_SESSION_AGE = { envVar: 'TB_MAX_SESSION_AGE', jsonPath: 'OpenTok.maxSessionAge', defaultValue: 2, parser: parseInt };
+E.OPENTOK_MAX_SESSION_AGE = { envVar: 'TB_MAX_SESSION_AGE', jsonPath: 'OpenTok.maxSessionAge', defaultValue: 2, parser: parseFloat };
 
 E.ENABLE_ARCHIVING = { envVar: 'ENABLE_ARCHIVING', jsonPath: 'Archiving.enabled', defaultValue: true, parser: parseBool };
 
