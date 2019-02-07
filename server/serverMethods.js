@@ -94,6 +94,7 @@ function ServerMethods(aLogLevel, aModules) {
       var apiKey = config.get(C.OPENTOK_API_KEY);
       var apiSecret = config.get(C.OPENTOK_API_SECRET);
       var opentokJsUrl = config.get(C.OPENTOK_JS_URL);
+      var fontPath = config.get(C.FONT_PATH);
       logger.log('apiSecret', apiSecret);
       var archivePollingTO = config.get(C.ARCHIVE_POLLING_INITIAL_TIMEOUT);
       var archivePollingTOMultiplier =
@@ -184,6 +185,7 @@ function ServerMethods(aLogLevel, aModules) {
                 enableScreensharing,
                 enableAnnotations,
                 feedbackUrl,
+                fontPath,
                 enableSip,
                 opentokJsUrl,
                 showTos,
@@ -347,6 +349,7 @@ function ServerMethods(aLogLevel, aModules) {
           enableScreensharing: tbConfig.enableScreensharing,
           enableAnnotation: tbConfig.enableAnnotations,
           feedbackUrl: tbConfig.feedbackUrl,
+          fontPath: tbConfig.fontPath,
           precallSessionId: testSession.sessionId,
           apiKey: tbConfig.apiKey,
           precallToken: tbConfig.otInstance.generateToken(testSession.sessionId, {
@@ -356,6 +359,7 @@ function ServerMethods(aLogLevel, aModules) {
           showTos: tbConfig.showTos,
           opentokJsUrl: tbConfig.opentokJsUrl,
           authDomain: tbConfig.googleHostedDomain,
+          useGoogleFonts: tbConfig.fontPath !== 'local',
         }, (err, html) => {
           if (err) {
             logger.log('getRoom. error:', err);

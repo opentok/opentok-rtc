@@ -5,13 +5,13 @@
   font-family: 'Open Sans';
   font-style: normal;
   font-weight: 400;
-  src: url('../fonts/open-sans-v15-latin-regular.eot'); /* IE9 Compat Modes */
-  src: local('Open Sans Regular'), local('OpenSans-Regular'),
+  src: if(useLocalFonts(), url('../fonts/open-sans-v15-latin-regular.eot')); /* IE9 Compat Modes */
+  src: if(useLocalFonts(), local('Open Sans Regular'), local('OpenSans-Regular'),
        url('../fonts/open-sans-v15-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
        url('../fonts/open-sans-v15-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
        url('../fonts/open-sans-v15-latin-regular.woff') format('woff'), /* Modern Browsers */
        url('../fonts/open-sans-v15-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
-       url('../fonts/open-sans-v15-latin-regular.svg#OpenSans') format('svg'); /* Legacy iOS */
+       url('../fonts/open-sans-v15-latin-regular.svg#OpenSans') format('svg')); /* Legacy iOS */
 }
 
 /* muli-300italic - latin */

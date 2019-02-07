@@ -63,6 +63,7 @@ E.REPORT_ISSUE_LEVEL = { envVar: 'REPORT_ISSUE_LEVEL', jsonPath: 'Feedback.repor
 
 E.ENABLE_SCREENSHARING = { envVar: 'ENABLE_SCREENSHARING', jsonPath: 'Screensharing.enabled', defaultValue: false, parser: parseBool };
 
+E.FONT_PATH = { envVar: 'TB_FONT_PATH', jsonPath: 'fontPath', required: false, defaultValue: '' };
 
 // Chrome AddOn extension Id for sharing screen
 E.CHROME_EXTENSION_ID = { envVar: 'CHROME_EXTENSION_ID', jsonPath: 'Screensharing.chromeExtensionId' };

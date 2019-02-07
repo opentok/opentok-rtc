@@ -1,5 +1,7 @@
 'use strict';
 
+const config = require('./config/config.json');
+
 module.exports = function(grunt) {
 
   // To-Do check what we need and add/remove as needed...
@@ -87,6 +89,9 @@ module.exports = function(grunt) {
 
     less: {
       default: {
+        options: {
+          useLocalFonts: () => config.fontPath === 'local'
+        },
         files: {
           'web/css/landing.opentok.css': 'web/less/landing.less',
           'web/css/room.opentok.css': 'web/less/room.less',
