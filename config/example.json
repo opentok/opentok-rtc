@@ -33,5 +33,6 @@
   "Google": {
     "clientId": "yourClientId.apps.googleusercontent.com",
     "hostedDomain": "yourhosteddomain.com"
-  }
+  },
+  "fontPath": "local"
 }
