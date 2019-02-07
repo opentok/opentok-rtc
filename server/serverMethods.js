@@ -305,6 +305,7 @@ function ServerMethods(aLogLevel, aModules) {
       .render('index.ejs', {
         isWebRTCVersion: aReq.tbConfig.isWebRTCVersion,
         showTos: aReq.tbConfig.showTos,
+        useGoogleFonts: aReq.tbConfig.fontPath !== 'local',
       }, (err, html) => {
         if (err) {
           logger.error('getRoot. error: ', err);

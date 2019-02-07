@@ -90,7 +90,9 @@ module.exports = function(grunt) {
     less: {
       default: {
         options: {
-          useLocalFonts: () => config.fontPath === 'local'
+          customFunctions: {
+            useLocalFonts: () => config.fontPath === 'local'
+          }
         },
         files: {
           'web/css/landing.opentok.css': 'web/less/landing.less',
