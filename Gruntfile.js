@@ -91,7 +91,7 @@ module.exports = function(grunt) {
       default: {
         options: {
           customFunctions: {
-            useLocalFonts: () => config.fontPath === 'local'
+            loadFontsFromAppServer: () => !config.useGoogleFonts
           }
         },
         files: {
