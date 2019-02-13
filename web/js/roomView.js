@@ -514,6 +514,9 @@ BubbleFactory, Clipboard, LayoutManager */
         return;
       }
       switch (elem.id) {
+        case 'toggleFacingMode':
+          Utils.sendEvent('roomView:toggleFacingMode');
+          break;
         case 'viewRecordings':
           BubbleFactory.get('viewRecordings').toggle();
           break;

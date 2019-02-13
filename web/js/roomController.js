@@ -313,6 +313,9 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
   }
 
   var viewEventHandlers = {
+    toggleFacingMode: function () {
+      otHelper.toggleFacingMode();
+    },
     endCall: function () {
       otHelper.disconnect();
       window.location = '/';

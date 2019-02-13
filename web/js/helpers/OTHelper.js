@@ -372,6 +372,10 @@
       subscribeTo(aStream, 'Audio', value);
     }
 
+    function toggleFacingMode() {
+      _publisher.cycleVideo();
+    }
+
     var _screenShare;
 
     const FAKE_OTK_ANALYTICS = global.OTKAnalytics ||
@@ -539,6 +543,7 @@
       toggleSubscribersVideo: toggleSubscribersVideo,
       togglePublisherAudio: togglePublisherAudio,
       togglePublisherVideo: togglePublisherVideo,
+      toggleFacingMode: toggleFacingMode,
       shareScreen: shareScreen,
       stopShareScreen: stopShareScreen,
       get isPublisherReady() {
