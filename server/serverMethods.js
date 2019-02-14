@@ -95,7 +95,6 @@ function ServerMethods(aLogLevel, aModules) {
       var apiSecret = config.get(C.OPENTOK_API_SECRET);
       var opentokJsUrl = config.get(C.OPENTOK_JS_URL);
       var useGoogleFonts = config.get(C.USE_GOOGLE_FONTS);
-      logger.log('useGoogleFonts', useGoogleFonts)
       logger.log('apiSecret', apiSecret);
       var archivePollingTO = config.get(C.ARCHIVE_POLLING_INITIAL_TIMEOUT);
       var archivePollingTOMultiplier =

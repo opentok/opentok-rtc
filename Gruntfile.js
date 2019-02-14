@@ -89,11 +89,6 @@ module.exports = function(grunt) {
 
     less: {
       default: {
-        options: {
-          customFunctions: {
-            loadFontsFromAppServer: () => !config.useGoogleFonts
-          }
-        },
         files: {
           'web/css/landing.opentok.css': 'web/less/landing.less',
           'web/css/room.opentok.css': 'web/less/room.less',
