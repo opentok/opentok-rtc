@@ -324,6 +324,21 @@
               Object.keys(aHandlers).forEach(function(name) {
                 _publisher.on(name, aHandlers[name].bind(self));
               });
+
+              getDevices().then(function(devices) {
+                var select = document.getElementById('select-devices');
+                Object.values(devices)
+                .forEach(function (device) {
+                  console.log(device);
+                  if (device.kind === 'audioInput') {
+                    var option = document.createElement("option");
+                    option.text = device.label;
+                    option.value = device.label;
+                    select.appendChild(option);
+                  }
+                });
+              });
+              
               _solvePublisherPromise(_publisher);
               resolve(_publisher);
             }
@@ -440,6 +455,14 @@
       };
       aAccPack.linkCanvas(aPubSub, container, canvasOptions);
       aPubSub._ANNOTATION_PACK = aAccPack;
+    }
+
+    function getDevices() {
+      return new Promise(function(resolve, reject) {
+        OT.getDevices(function (error, devices) {
+          resolve(devices);
+        });
+      });  
     }
 
     function subscribe(aStream, aTargetElement, aProperties, aHandlers, aEnableAnnotation) {

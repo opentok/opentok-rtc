@@ -76,6 +76,11 @@ BubbleFactory, Clipboard, LayoutManager */
       detail: 'Failed to acquire microphone. This is a known Chrome bug. Please completely quit ' +
               'and restart your browser.',
       button: 'Reload'
+    },
+    stethoscope: {
+      head: 'Start stethoscope',
+      detail: 'Please identify the stethoscope in the following list:',
+      button: 'Start'
     }
   };
 
@@ -491,6 +496,20 @@ BubbleFactory, Clipboard, LayoutManager */
           break;
         case 'message-btn':
           setChatStatus(!messageButtonElem.classList.contains('activated'));
+          break;
+        case 'stethoscope-btn':
+          if ($('#stethoscope-btn').hasClass('activated')) {
+            Utils.sendEvent('roomView:stopStethoscope');
+          } else {
+            var select = document.getElementById('select-devices');
+            select.style.display = 'inline-block';
+            showConfirm(MODAL_TXTS.stethoscope).then(function (start) {
+              if(start) {
+                Utils.sendEvent('roomView:startStethoscope', select.value);
+              }
+              select.style.display = 'none';
+            });
+          }
           break;
         case 'endCall':
           showConfirm(MODAL_TXTS.endCall).then(function (endCall) {

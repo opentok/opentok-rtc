@@ -455,6 +455,21 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       if (!otHelper.isPublisherReady || otHelper.publisherHas('video') !== newStatus) {
         otHelper.togglePublisherVideo(newStatus);
       }
+    },
+    startStethoscope: function (evt) {
+      var publisherElement2 = RoomView.createStreamView('publisher2', {
+        name: 'Stethoscope',
+        type: 'publisher'
+      });
+      var device = evt.detail;
+      otHelper.setupPatientAudio(device, publisherElement2);
+      $('#stethoscope-btn').addClass('activated');
+    },
+    stopStethoscope: function (evt) {
+      var device = evt.detail;
+      otHelper.stopPatientAudio();
+      RoomView.deleteStreamView('publisher2');
+      $('#stethoscope-btn').removeClass('activated');
     }
   };
 

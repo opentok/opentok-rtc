@@ -84,6 +84,12 @@
         <div class="facingMode">
           <a id="toggleFacingMode"><i data-icon="cycleVideo"></i></a>
         </div>
+        <div>
+          <button id="stethoscope-btn" disabled>
+            <i data-icon="stethoscope"></i>
+          </button>
+          <p>Stethoscope</p>
+        </div>
         <%   if(enableArchiving) { %>
         <div id="toggleArchiving" disabled>
           <a id="startArchiving" class="btn btn-blue btn-padding">Record</a>
@@ -342,6 +348,7 @@
         <header><span class="msg"></span></header>
         <hr>
         <p class="detail"></p>
+        <select id="select-devices" class="devices"></select>
         <footer>
           <button class="btn btn-blue btn-padding ctaarrow-white accept"></button>
         </footer>
