@@ -329,11 +329,10 @@
                 var select = document.getElementById('select-devices');
                 Object.values(devices)
                 .forEach(function (device) {
-                  console.log(device);
                   if (device.kind === 'audioInput') {
                     var option = document.createElement("option");
                     option.text = device.label;
-                    option.value = device.label;
+                    option.value = device.deviceId;
                     select.appendChild(option);
                   }
                 });
@@ -389,6 +388,10 @@
 
     function toggleFacingMode() {
       _publisher.cycleVideo();
+    }
+
+    function setAudioSource(deviceId) {
+      _publisher.setAudioSource(deviceId)
     }
 
     var _screenShare;
@@ -567,6 +570,7 @@
       togglePublisherAudio: togglePublisherAudio,
       togglePublisherVideo: togglePublisherVideo,
       toggleFacingMode: toggleFacingMode,
+      changeAudioSource: changeAudioSource,
       shareScreen: shareScreen,
       stopShareScreen: stopShareScreen,
       get isPublisherReady() {
