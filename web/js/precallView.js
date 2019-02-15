@@ -58,12 +58,57 @@
 
       // pointer-events is not working on IE so we can receive as target a child
       var elem = HTMLElems.getAncestorByTagName(e.target, 'a');
+
+      function showConfirm(txt) {
+        var selector = '.switch-alert-modal';
+        var ui = document.querySelector(selector);
+ 
+        function loadModalText() {
+
+          console.log(txt.head);
+          ui.querySelector(' header .msg').textContent = txt.head;
+          ui.querySelector(' p.detail').innerHTML = txt.detail;
+          ui.querySelector(' footer button.accept').textContent = txt.button;
+        }
+
+        return Modal.show(selector, loadModalText, true)
+          .then(function () {
+            return new Promise(function (resolve) {
+              ui.addEventListener('click', function onClicked(evt) {
+                var classList = evt.target.classList;
+                var hasAccepted = classList.contains('accept');
+                if (evt.target.id !== 'switchAlerts' && !hasAccepted && !classList.contains('close')) {
+                  return;
+                }
+                evt.stopImmediatePropagation();
+                evt.preventDefault();
+                ui.removeEventListener('click', onClicked);
+                Modal.hide(selector).then(function () { resolve(hasAccepted); });
+              });
+            });
+          });
+      }
+
       if (!elem) {
         return;
       }
       switch (elem.id) {
         case 'toggleFacingMode':
           Utils.sendEvent('roomView:toggleFacingMode');
+          break;
+        case 'stethoscope-btn':
+          var select = document.getElementById('select-devices');
+          select.style.display = 'inline-block';
+          showConfirm({
+            head: 'Set mic input',
+            detail: 'Please identify the audio source in the following list:',
+            button: 'Start'
+          }).then(function (start) {
+            if(start) {
+              Utils.sendEvent('roomView:setAudioSource', select.value);
+            }
+            select.style.display = 'none';
+          });
           break;
         case 'initialAudioSwitch':
           if (!initialAudioSwitch.classList.contains('activated')) {
