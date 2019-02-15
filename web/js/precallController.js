@@ -6,6 +6,7 @@
   var endPrecall = function () {
     Utils.sendEvent('PrecallController:endPrecall');
   };
+  
   var otNetworkTest;
   var publisher;
   var previewOptions;
@@ -16,6 +17,9 @@
   };
 
   var videoPreviewEventHandlers = {
+    toggleFacingMode: function () {
+      otHelper.toggleFacingMode();
+    },
     initialAudioSwitch: function (evt) {
       publisher.publishAudio(evt.detail.status);
       publisherOptions.publishAudio = evt.detail.status;

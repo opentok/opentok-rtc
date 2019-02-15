@@ -62,6 +62,9 @@
         return;
       }
       switch (elem.id) {
+        case 'toggleFacingMode':
+          Utils.sendEvent('roomView:toggleFacingMode');
+          break;
         case 'initialAudioSwitch':
           if (!initialAudioSwitch.classList.contains('activated')) {
             setSwitchStatus(true, 'Audio', 'roomView:initialAudioSwitch');
