@@ -284,8 +284,8 @@
     function initPublisher(aDOMElement, aProperties, aHandlers) {
       return new Promise(function(resolve, reject) {
         otLoaded.then(function() {
-          _publisher = OT.initPublisher(aDOMElement, aProperties);
-          return resolve(_publisher);
+          var publisher = OT.initPublisher(aDOMElement, aProperties);
+          return resolve(publisher);
         });
       });
     }

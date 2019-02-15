@@ -18,7 +18,7 @@
 
   var videoPreviewEventHandlers = {
     toggleFacingMode: function () {
-      otHelper.toggleFacingMode();
+      publisher.cycleVideo();
     },
     initialAudioSwitch: function (evt) {
       publisher.publishAudio(evt.detail.status);
