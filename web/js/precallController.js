@@ -13,37 +13,50 @@
   var publisherOptions = {
     publishAudio: true,
     publishVideo: true,
+    audioDeviceId: window.localStorage.getItem('audioDeviceId'),
+    videoDeviceId: window.localStorage.getItem('videoDeviceId'),
     name: ''
-  };
-
-  var videoPreviewEventHandlers = {
-    toggleFacingMode: function () {
-      publisher.cycleVideo();
-    },
-    initialAudioSwitch: function (evt) {
-      publisher.publishAudio(evt.detail.status);
-      publisherOptions.publishAudio = evt.detail.status;
-    },
-    initialVideoSwitch: function (evt) {
-      publisher.publishVideo(evt.detail.status);
-      publisherOptions.publishVideo = evt.detail.status;
-    },
-    retest: function () {
-      PrecallView.startPrecallTestMeter();
-      otNetworkTest.startNetworkTest(function (error, result) {
-        if (!error) {
-          PrecallView.displayNetworkTestResults(result);
-        }
-      });
-    },
-    cancelTest: function () {
-      PrecallView.hideConnectivityTest();
-      otNetworkTest.stopTest();
-    }
   };
 
   function showCallSettingsPrompt(roomName, username, otHelper) {
     var selector = '.user-name-modal';
+
+    var videoPreviewEventHandlers = {
+      toggleFacingMode: function () {
+        otHelper.toggleFacingMode().then((dev) => {
+          var deviceId = dev.deviceId;
+          publisherOptions.videoDeviceId = deviceId;
+          window.localStorage.setItem('videoDeviceId', deviceId);
+        });
+      },
+      setAudioSource: function (evt) {
+        var deviceId = evt.detail;
+        otHelper.setAudioSource(deviceId);
+        publisherOptions.audioDeviceId = deviceId;
+        window.localStorage.setItem('audioDeviceId', deviceId);
+      },
+      initialAudioSwitch: function (evt) {
+        publisher.publishAudio(evt.detail.status);
+        publisherOptions.publishAudio = evt.detail.status;
+      },
+      initialVideoSwitch: function (evt) {
+        publisher.publishVideo(evt.detail.status);
+        publisherOptions.publishVideo = evt.detail.status;
+      },
+      retest: function () {
+        PrecallView.startPrecallTestMeter();
+        otNetworkTest.startNetworkTest(function (error, result) {
+          if (!error) {
+            PrecallView.displayNetworkTestResults(result);
+          }
+        });
+      },
+      cancelTest: function () {
+        PrecallView.hideConnectivityTest();
+        otNetworkTest.stopTest();
+      }
+    };
+
     return new Promise(function (resolve) {
       function loadModalText() {
         PrecallView.setRoomName(roomName);
@@ -94,7 +107,7 @@
         }
 
         otHelper.initPublisher('video-preview',
-          { width: '100%', height: '100%', insertMode: 'append', showControls: false }
+          Object.assign({ width: '100%', height: '100%', insertMode: 'append', showControls: false }, publisherOptions)
         ).then(function (pub) {
           publisher = pub;
           previewOptions = {

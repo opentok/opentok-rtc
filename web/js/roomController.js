@@ -729,6 +729,9 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       RoomView.roomURI = roomURI;
       publisherOptions.publishAudio = info.publisherOptions.publishAudio;
       publisherOptions.publishVideo = info.publisherOptions.publishVideo;
+      publisherOptions.audioSource = info.publisherOptions.audioDeviceId;
+      publisherOptions.videoSource = info.publisherOptions.videoDeviceId;
+      
       return info;
     });
   }

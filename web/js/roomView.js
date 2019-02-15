@@ -80,7 +80,7 @@ BubbleFactory, Clipboard, LayoutManager */
     micSource: {
       head: 'Set mic input',
       detail: 'Please identify the audio source in the following list:',
-      button: 'Start'
+      button: 'Change'
     }
   };
 
@@ -497,16 +497,6 @@ BubbleFactory, Clipboard, LayoutManager */
         case 'message-btn':
           setChatStatus(!messageButtonElem.classList.contains('activated'));
           break;
-        case 'stethoscope-btn':
-          var select = document.getElementById('select-devices');
-          select.style.display = 'inline-block';
-          showConfirm(MODAL_TXTS.micSource).then(function (start) {
-            if(start) {
-              Utils.sendEvent('roomView:setAudioSource', select.value);
-            }
-            select.style.display = 'none';
-          });
-          break;
         case 'endCall':
           showConfirm(MODAL_TXTS.endCall).then(function (endCall) {
             if (endCall) {
@@ -531,6 +521,16 @@ BubbleFactory, Clipboard, LayoutManager */
       switch (elem.id) {
         case 'toggleFacingMode':
           Utils.sendEvent('roomView:toggleFacingMode');
+          break;
+        case 'pickMic':
+          var select = document.getElementById('select-devices');
+          select.style.display = 'inline-block';
+          showConfirm(MODAL_TXTS.micSource).then(function (start) {
+            if(start) {
+              Utils.sendEvent('roomView:setAudioSource', select.value);
+            }
+            select.style.display = 'none';
+          });
           break;
         case 'viewRecordings':
           BubbleFactory.get('viewRecordings').toggle();

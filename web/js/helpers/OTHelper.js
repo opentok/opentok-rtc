@@ -284,7 +284,7 @@
     function initPublisher(aDOMElement, aProperties, aHandlers) {
       return new Promise(function(resolve, reject) {
         otLoaded.then(function() {
-          var publisher = OT.initPublisher(aDOMElement, aProperties);
+          _publisher = OT.initPublisher(aDOMElement, aProperties);
 
           getDevices().then(function(devices) {
             var select = document.getElementById('select-devices');
@@ -299,7 +299,7 @@
             });
           });
 
-          return resolve(publisher);
+          return resolve(_publisher);
         });
       });
     }
@@ -388,7 +388,7 @@
     }
 
     function toggleFacingMode() {
-      _publisher.cycleVideo();
+      return _publisher.cycleVideo();
     }
 
     function setAudioSource(deviceId) {

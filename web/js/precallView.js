@@ -64,8 +64,6 @@
         var ui = document.querySelector(selector);
  
         function loadModalText() {
-
-          console.log(txt.head);
           ui.querySelector(' header .msg').textContent = txt.head;
           ui.querySelector(' p.detail').innerHTML = txt.detail;
           ui.querySelector(' footer button.accept').textContent = txt.button;
@@ -96,7 +94,7 @@
         case 'toggleFacingMode':
           Utils.sendEvent('roomView:toggleFacingMode');
           break;
-        case 'stethoscope-btn':
+        case 'pickMic':
           var select = document.getElementById('select-devices');
           select.style.display = 'inline-block';
           showConfirm({
