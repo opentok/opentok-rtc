@@ -285,6 +285,20 @@
       return new Promise(function(resolve, reject) {
         otLoaded.then(function() {
           var publisher = OT.initPublisher(aDOMElement, aProperties);
+
+          getDevices().then(function(devices) {
+            var select = document.getElementById('select-devices');
+            Object.values(devices)
+            .forEach(function (device) {
+              if (device.kind === 'audioInput') {
+                var option = document.createElement("option");
+                option.text = device.label;
+                option.value = device.deviceId;
+                select.appendChild(option);
+              }
+            });
+          });
+
           return resolve(publisher);
         });
       });
@@ -325,19 +339,6 @@
                 _publisher.on(name, aHandlers[name].bind(self));
               });
 
-              getDevices().then(function(devices) {
-                var select = document.getElementById('select-devices');
-                Object.values(devices)
-                .forEach(function (device) {
-                  if (device.kind === 'audioInput') {
-                    var option = document.createElement("option");
-                    option.text = device.label;
-                    option.value = device.deviceId;
-                    select.appendChild(option);
-                  }
-                });
-              });
-              
               _solvePublisherPromise(_publisher);
               resolve(_publisher);
             }
