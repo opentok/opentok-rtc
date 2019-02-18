@@ -313,9 +313,6 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
   }
 
   var viewEventHandlers = {
-    toggleFacingMode: function () {
-      otHelper.toggleFacingMode();
-    },
     endCall: function () {
       otHelper.disconnect();
       window.location = '/';
@@ -455,10 +452,6 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       if (!otHelper.isPublisherReady || otHelper.publisherHas('video') !== newStatus) {
         otHelper.togglePublisherVideo(newStatus);
       }
-    },
-    setAudioSource: function (evt) {
-      var deviceId = evt.detail;
-      otHelper.setAudioSource(deviceId);
     }
   };
 

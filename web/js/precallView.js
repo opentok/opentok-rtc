@@ -91,10 +91,10 @@
         return;
       }
       switch (elem.id) {
-        case 'toggleFacingMode':
+        case 'preToggleFacingMode':
           Utils.sendEvent('roomView:toggleFacingMode');
           break;
-        case 'pickMic':
+        case 'prePickMic':
           var select = document.getElementById('select-devices');
           select.style.display = 'inline-block';
           showConfirm({
