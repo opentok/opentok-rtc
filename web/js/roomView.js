@@ -76,11 +76,6 @@ BubbleFactory, Clipboard, LayoutManager */
       detail: 'Failed to acquire microphone. This is a known Chrome bug. Please completely quit ' +
               'and restart your browser.',
       button: 'Reload'
-    },
-    micSource: {
-      head: 'Set mic input',
-      detail: 'Please identify the audio source in the following list:',
-      button: 'Change'
     }
   };
 

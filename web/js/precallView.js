@@ -1,4 +1,3 @@
-/* globals EJSTemplate, Modal, setTimeout, showTos */
 !(function (exports) {
   'use strict';
 
@@ -100,7 +99,7 @@
           showConfirm({
             head: 'Set mic input',
             detail: 'Please identify the audio source in the following list:',
-            button: 'Start'
+            button: 'Change'
           }).then(function (start) {
             if(start) {
               Utils.sendEvent('roomView:setAudioSource', select.value);
