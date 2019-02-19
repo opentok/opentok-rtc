@@ -116,7 +116,8 @@
             apiKey: window.precallApiKey,
             resolution: '640x480',
             sessionId: window.precallSessionId,
-            token: window.precallToken
+            token: window.precallToken,
+            facingMode: 'environment'
           };
 
           // You cannot use the network test in IE or Safari. IE cannot subscribe to its own stream.
