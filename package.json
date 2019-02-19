@@ -67,7 +67,7 @@
     "eslint-plugin-react": "^7.0.1",
     "firefox-profile": "^1.0.3",
     "istanbul": "^0.4.5",
-    "karma": "^4.0.0",
+    "karma": "^1.7.1",
     "karma-chrome-launcher": "^0.2.3",
     "karma-coverage": "^1.1.1",
     "karma-firefox-launcher": "^1.0.1",
