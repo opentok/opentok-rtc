@@ -284,21 +284,20 @@
     function initPublisher(aDOMElement, aProperties, aHandlers) {
       return new Promise(function(resolve, reject) {
         otLoaded.then(function() {
-          _publisher = OT.initPublisher(aDOMElement, aProperties);
-          
-          getDevices().then(function(devices) {
-            var select = document.getElementById('select-devices');
-            Object.values(devices)
-            .forEach(function (device) {
-              if (device.kind === 'audioInput') {
-                var option = document.createElement("option");
-                option.text = device.label;
-                option.value = device.deviceId;
-                select.appendChild(option);
-              }
+          _publisher = OT.initPublisher(aDOMElement, aProperties, function(error) {
+            getDevices().then(function(devices) {
+              var select = document.getElementById('select-devices');
+              Object.values(devices)
+              .forEach(function (device) {
+                if (device.kind === 'audioInput') {
+                  var option = document.createElement("option");
+                  option.text = device.label;
+                  option.value = device.deviceId;
+                  select.appendChild(option);
+                }
+              });
             });
           });
-
           return resolve(_publisher);
         });
       });
