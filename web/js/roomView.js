@@ -174,7 +174,7 @@ BubbleFactory, Clipboard, LayoutManager */
     roomMuted: function (evt) {
       var isJoining = evt.detail.isJoining;
       setAudioSwitchRemotely(true);
-      showConfirm(isJoining ? MODAL_TXTS.join : MODAL_TXTS.muteRemotely);
+      Modal.showConfirm(isJoining ? MODAL_TXTS.join : MODAL_TXTS.muteRemotely);
     },
     sessionDisconnected: function () {
       RoomView.participantsNumber = 0;
@@ -197,7 +197,7 @@ BubbleFactory, Clipboard, LayoutManager */
       Utils.setDisabled(annotateBtnElem, true);
     },
     chromePublisherError: function () {
-      showConfirm(MODAL_TXTS.chromePublisherError).then(function () {
+      Modal.showConfirm(MODAL_TXTS.chromePublisherError).then(function () {
         document.location.reload();
       });
     }
@@ -211,7 +211,7 @@ BubbleFactory, Clipboard, LayoutManager */
   }
 
   function showConfirmChangeMicStatus(isMuted) {
-    return showConfirm(isMuted ? MODAL_TXTS.muteRemotely : MODAL_TXTS.unmutedRemotely);
+    return Modal.showConfirm(isMuted ? MODAL_TXTS.muteRemotely : MODAL_TXTS.unmutedRemotely);
   }
 
   function initHTMLElements() {
@@ -412,33 +412,6 @@ BubbleFactory, Clipboard, LayoutManager */
     });
   }
 
-  function showConfirm(txt) {
-    var selector = '.switch-alert-modal';
-    var ui = document.querySelector(selector);
-    function loadModalText() {
-      ui.querySelector(' header .msg').textContent = txt.head;
-      ui.querySelector(' p.detail').innerHTML = txt.detail;
-      ui.querySelector(' footer button.accept').textContent = txt.button;
-    }
-
-    return Modal.show(selector, loadModalText)
-      .then(function () {
-        return new Promise(function (resolve) {
-          ui.addEventListener('click', function onClicked(evt) {
-            var classList = evt.target.classList;
-            var hasAccepted = classList.contains('accept');
-            if (evt.target.id !== 'switchAlerts' && !hasAccepted && !classList.contains('close')) {
-              return;
-            }
-            evt.stopImmediatePropagation();
-            evt.preventDefault();
-            ui.removeEventListener('click', onClicked);
-            Modal.hide(selector).then(function () { resolve(hasAccepted); });
-          });
-        });
-      });
-  }
-
   var addHandlers = function () {
     handler.addEventListener('click', function () {
       dock.classList.toggle('collapsed');
@@ -493,7 +466,7 @@ BubbleFactory, Clipboard, LayoutManager */
           setChatStatus(!messageButtonElem.classList.contains('activated'));
           break;
         case 'endCall':
-          showConfirm(MODAL_TXTS.endCall).then(function (endCall) {
+          Modal.showConfirm(MODAL_TXTS.endCall).then(function (endCall) {
             if (endCall) {
               RoomView.participantsNumber = 0;
               Utils.sendEvent('roomView:endCall');
@@ -520,7 +493,7 @@ BubbleFactory, Clipboard, LayoutManager */
         case 'pickMic':
           var select = document.getElementById('select-devices');
           select.style.display = 'inline-block';
-          showConfirm({
+          Modal.showConfirm({
             head: 'Set mic input',
             detail: 'Please identify the audio source in the following list:',
             button: 'Change'
@@ -546,7 +519,7 @@ BubbleFactory, Clipboard, LayoutManager */
           setChatStatus(elem.id === 'startChat');
           break;
         case 'endCall':
-          showConfirm(MODAL_TXTS.endCall).then(function (endCall) {
+          Modal.showConfirm(MODAL_TXTS.endCall).then(function (endCall) {
             if (endCall) {
               RoomView.participantsNumber = 0;
               Utils.sendEvent('roomView:endCall');
@@ -566,7 +539,7 @@ BubbleFactory, Clipboard, LayoutManager */
           break;
         case 'audioSwitch':
           if (!audioSwitch.classList.contains('activated')) {
-            showConfirm(MODAL_TXTS.mute).then(function (shouldDisable) {
+            Modal.showConfirm(MODAL_TXTS.mute).then(function (shouldDisable) {
               if (shouldDisable) {
                 setSwitchStatus(true, true, audioSwitch, 'roomView:muteAllSwitch');
                 togglePublisherAudioElem.classList.remove('activated');

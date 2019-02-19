@@ -90,8 +90,36 @@
     });
   }
 
+  function showConfirm(txt, allowMultiple) {
+    var selector = '.switch-alert-modal';
+    var ui = document.querySelector(selector);
+    function loadModalText() {
+      ui.querySelector(' header .msg').textContent = txt.head;
+      ui.querySelector(' p.detail').innerHTML = txt.detail;
+      ui.querySelector(' footer button.accept').textContent = txt.button;
+    }
+
+    return show(selector, loadModalText, allowMultiple)
+      .then(function () {
+        return new Promise(function (resolve) {
+          ui.addEventListener('click', function onClicked(evt) {
+            var classList = evt.target.classList;
+            var hasAccepted = classList.contains('accept');
+            if (evt.target.id !== 'switchAlerts' && !hasAccepted && !classList.contains('close')) {
+              return;
+            }
+            evt.stopImmediatePropagation();
+            evt.preventDefault();
+            ui.removeEventListener('click', onClicked);
+            hide(selector).then(function () { resolve(hasAccepted); });
+          });
+        });
+      });
+  }
+
   global.Modal = {
     show: show,
-    hide: hide
+    hide: hide,
+    showConfirm: showConfirm
   };
 }(this));
