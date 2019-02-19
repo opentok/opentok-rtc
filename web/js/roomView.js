@@ -520,7 +520,11 @@ BubbleFactory, Clipboard, LayoutManager */
         case 'pickMic':
           var select = document.getElementById('select-devices');
           select.style.display = 'inline-block';
-          showConfirm(MODAL_TXTS.micSource).then(function (start) {
+          showConfirm({
+            head: 'Set mic input',
+            detail: 'Please identify the audio source in the following list:',
+            button: 'Change'
+          }).then(function (start) {
             if(start) {
               Utils.sendEvent('roomView:setAudioSource', select.value);
             }

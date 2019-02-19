@@ -285,7 +285,7 @@
       return new Promise(function(resolve, reject) {
         otLoaded.then(function() {
           _publisher = OT.initPublisher(aDOMElement, aProperties);
-
+          
           getDevices().then(function(devices) {
             var select = document.getElementById('select-devices');
             Object.values(devices)

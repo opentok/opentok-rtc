@@ -13,10 +13,11 @@
   var publisherOptions = {
     publishAudio: true,
     publishVideo: true,
-    audioDeviceId: window.localStorage.getItem('audioDeviceId'),
-    videoDeviceId: window.localStorage.getItem('videoDeviceId'),
     name: ''
   };
+
+  if (window.localStorage.getItem('audioDeviceId')) publisherOptions.audioSource = window.localStorage.getItem('audioDeviceId');
+  if (window.localStorage.getItem('videoDeviceId')) publisherOptions.videoSource = window.localStorage.getItem('videoDeviceId');;
 
   function showCallSettingsPrompt(roomName, username, otHelper) {
     var selector = '.user-name-modal';
@@ -25,14 +26,14 @@
       toggleFacingMode: function () {
         otHelper.toggleFacingMode().then((dev) => {
           var deviceId = dev.deviceId;
-          publisherOptions.videoDeviceId = deviceId;
+          publisherOptions.videoSource = deviceId;
           window.localStorage.setItem('videoDeviceId', deviceId);
         });
       },
       setAudioSource: function (evt) {
         var deviceId = evt.detail;
         otHelper.setAudioSource(deviceId);
-        publisherOptions.audioDeviceId = deviceId;
+        publisherOptions.audioSource = deviceId;
         window.localStorage.setItem('audioDeviceId', deviceId);
       },
       initialAudioSwitch: function (evt) {
@@ -107,7 +108,8 @@
         }
 
         otHelper.initPublisher('video-preview',
-          Object.assign({ width: '100%', height: '100%', insertMode: 'append', showControls: false }, publisherOptions)
+          Object.assign(
+            { width: '100%', height: '100%', insertMode: 'append', showControls: false }, publisherOptions)
         ).then(function (pub) {
           publisher = pub;
           previewOptions = {
