@@ -433,9 +433,30 @@
   }
 }
 
-#toggleFacingMode {
+.sourcePick {
+    min-width: 70px;
+    cursor: pointer;
+    display: inline-block; 
+    text-align: center;
+    @media @smartphonesPortrait {
+      margin-top: -36px;
+      margin-right: 7px;
+    }
+  }
+
+#preToggleFacingMode, #toggleFacingMode {
   [data-icon="cycleVideo"] {
     background-image: url("/images/icons/group.svg");
+    width: 51px;
+    height: 30.4px;
+    vertical-align: text-bottom;
+  }
+}
+
+#prePickMic, #pickMic {
+  [data-icon="mico"] {
+    background-image: url("/images/icons/mic.svg");
+    background-position: center; 
     width: 51px;
     height: 30.4px;
     vertical-align: text-bottom;

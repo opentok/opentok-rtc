@@ -81,11 +81,11 @@
         <div class="audioSwitch" disabled>
           <a id="audioSwitch"><i data-icon="audioSwitch"></i><span>Mute all participants</span></a>
         </div>
-        <div class="facingMode">
+        <div class="sourcePick">
           <a id="toggleFacingMode"><i data-icon="cycleVideo"></i></a>
         </div>
-        <div class="facingMode">
-          <a id="pickMic">Mic</a>
+        <div class="sourcePick">
+          <a id="pickMic"><i data-icon="mico"></i></a>
         </div>
         <%   if(enableArchiving) { %>
         <div id="toggleArchiving" disabled>
@@ -339,7 +339,7 @@
       </div>
     </section>
 
-    <section id="switchAlerts" class="tc-modal switch-alert-modal" style="z-index: 2147483647">
+    <section id="switchAlerts" class="tc-modal switch-alert-modal">
       <form class="tc-dialog">
         <i data-icon="close_gray" class="close"></i>
         <header><span class="msg"></span></header>

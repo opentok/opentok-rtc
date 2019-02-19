@@ -123,14 +123,6 @@ body {
         float: left;
     }
   }
-  .facingMode {
-    min-width: 70px;
-    cursor: pointer;
-    @media @smartphonesPortrait {
-      margin-top: -36px;
-      margin-right: 7px;
-    }
-  }
   .videoSwitch, .audioSwitch {
     width: 216px;
     min-width: 216px;
@@ -1110,4 +1102,8 @@ body[data-annotation-visible=true]  {
 
 .main {
   width: 100%
+}
+
+#switchAlerts {
+  z-index: 2147483647; /* Keep modal always on top */
 }
