@@ -293,6 +293,7 @@
                   var option = document.createElement("option");
                   option.text = device.label;
                   option.value = device.deviceId;
+                  if (option.value == aProperties.audioSource) option.selected = true;
                   select.appendChild(option);
                 }
               });
