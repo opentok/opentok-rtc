@@ -66,6 +66,7 @@
     "eslint-plugin-jsx-a11y": "^5.0.3",
     "eslint-plugin-react": "^7.0.1",
     "firefox-profile": "^1.0.3",
+    "geckodriver": "^1.15.1",
     "istanbul": "^0.4.5",
     "karma": "^1.7.1",
     "karma-chrome-launcher": "^0.2.3",
