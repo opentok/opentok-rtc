@@ -795,11 +795,17 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
               }
             };
           };
-        loadAnnotations = LazyLoader.load([
-          '/js/vendor/jquery-3.3.1.min.js',
-          'https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js',
-          '/js/vendor/opentok-annotation.js'
-        ]);
+        var annotationsLibs = [];
+
+        if(aParams.useGoogleApi)
+          annotationsLibs.push('//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js');
+        else
+          annotationsLibs.push('//static.opentok.com/js/vendor/jquery-3.3.1.min.js');
+
+        annotationsLibs.push('//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js');
+        annotationsLibs.push('/js/vendor/opentok-annotation.js');
+
+        loadAnnotations = LazyLoader.load(annotationsLibs);
       }
       return loadAnnotations.then(function () { return aParams; });
     })
@@ -874,7 +880,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
                                     aParams.pubnubPubKey, aParams.sessionId);
           ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
           FeedbackController.init(otHelper, aParams.reportIssueLevel);
-          PhoneNumberController.init();
+          PhoneNumberController.init(aParams.useGoogleApi);
           Utils.sendEvent('roomController:controllersReady');
         })
         .catch(function (error) {

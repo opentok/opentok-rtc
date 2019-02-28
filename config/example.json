@@ -34,5 +34,5 @@
     "clientId": "yourClientId.apps.googleusercontent.com",
     "hostedDomain": "yourhosteddomain.com"
   },
-  "useGoogleFonts": true
+  "useGoogleApi": true
 }
