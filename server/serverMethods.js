@@ -94,7 +94,7 @@ function ServerMethods(aLogLevel, aModules) {
       var apiKey = config.get(C.OPENTOK_API_KEY);
       var apiSecret = config.get(C.OPENTOK_API_SECRET);
       var opentokJsUrl = config.get(C.OPENTOK_JS_URL);
-      var useGoogleApi = config.get(C.USE_GOOGLE_API);
+      var useGoogleFonts = config.get(C.USE_GOOGLE_FONTS);
       logger.log('apiSecret', apiSecret);
       var archivePollingTO = config.get(C.ARCHIVE_POLLING_INITIAL_TIMEOUT);
       var archivePollingTOMultiplier =
@@ -197,7 +197,7 @@ function ServerMethods(aLogLevel, aModules) {
                 reportIssueLevel,
                 pubnubSubKey,
                 pubnubPubKey,
-                useGoogleApi,
+                useGoogleFonts,
               }));
     });
   }
@@ -305,7 +305,7 @@ function ServerMethods(aLogLevel, aModules) {
       .render('index.ejs', {
         isWebRTCVersion: aReq.tbConfig.isWebRTCVersion,
         showTos: aReq.tbConfig.showTos,
-        useGoogleApi: aReq.tbConfig.useGoogleApi,
+        useGoogleFonts: aReq.tbConfig.useGoogleFonts,
       }, (err, html) => {
         if (err) {
           logger.error('getRoot. error: ', err);
@@ -359,7 +359,7 @@ function ServerMethods(aLogLevel, aModules) {
           showTos: tbConfig.showTos,
           opentokJsUrl: tbConfig.opentokJsUrl,
           authDomain: tbConfig.googleHostedDomain,
-          useGoogleApi: tbConfig.useGoogleApi
+          useGoogleFonts: tbConfig.useGoogleFonts,
         }, (err, html) => {
           if (err) {
             logger.log('getRoom. error:', err);
@@ -467,8 +467,7 @@ function ServerMethods(aLogLevel, aModules) {
           googleHostedDomain: tbConfig.googleHostedDomain,
           reportIssueLevel: tbConfig.reportIssueLevel,
           pubnubSubKey: tbConfig.pubnubSubKey,
-          pubnubPubKey: tbConfig.pubnubPubKey,
-          useGoogleApi: tbConfig.useGoogleApi
+          pubnubPubKey: tbConfig.pubnubPubKey
         };
         answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId;
         aRes.send(answer);

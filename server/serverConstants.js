@@ -63,7 +63,7 @@ E.REPORT_ISSUE_LEVEL = { envVar: 'REPORT_ISSUE_LEVEL', jsonPath: 'Feedback.repor
 
 E.ENABLE_SCREENSHARING = { envVar: 'ENABLE_SCREENSHARING', jsonPath: 'Screensharing.enabled', defaultValue: false, parser: parseBool };
 
-E.USE_GOOGLE_API = { envVar: 'USE_GOOGLE_API', jsonPath: 'useGoogleApi', required: false, defaultValue: true, parser: parseBool };
+E.USE_GOOGLE_FONTS = { envVar: 'USE_GOOGLE_FONTS', jsonPath: 'useGoogleFonts', required: false, defaultValue: true, parser: parseBool };
 
 // Chrome AddOn extension Id for sharing screen
 E.CHROME_EXTENSION_ID = { envVar: 'CHROME_EXTENSION_ID', jsonPath: 'Screensharing.chromeExtensionId' };

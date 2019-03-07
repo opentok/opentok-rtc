@@ -393,8 +393,9 @@ The app lets the developer POST feedback data to an endpoint on your HTTP server
 
    We don't allow restricting iframe loading to specific URIs because it doesn't work on Chrome.
 
-* `USE_GOOGLE_API` (Optional, default value: true): Whether the client app will use google API
-   to load Jquery scripts (ajax.googleapis.com) and the Open Sans font (the main font used in the user interface) from the Google font library (fonts.googleapis.com) or not.
+* `USE_GOOGLE_FONTS` (Optional, default value: true): Whether the client app will load
+   the Open Sans font (the main font used in the user interface) from the Google font library
+   (fonts.googleapis.com) or not.
 
 ## Customizing the UI
 

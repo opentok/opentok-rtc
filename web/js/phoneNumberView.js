@@ -15,18 +15,12 @@
     Utils.addEventsHandlers('roomView:', eventHandlers, global);
   };
 
-  var init = function (useGoogleApi) {
-    var dependencyLibs = [];
-
-    if(aParams.useGoogleApi)
-      dependencyLibs.push('//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js');
-    else
-      dependencyLibs.push('//static.opentok.com/js/vendor/jquery-1.11.1.min.js');
-
-    dependencyLibs.push('//cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/js/intlTelInput.js');
-    dependencyLibs.push('//cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/js/utils.js');
-
-    LazyLoader.dependencyLoad(dependencyLibs).then(function () {
+  var init = function () {
+    LazyLoader.dependencyLoad([
+      '/js/vendor/jquery-1.11.1.min.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/js/intlTelInput.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/js/utils.js'
+    ]).then(function () {
       input = $('#dialOutNumber');
       input.intlTelInput({
         utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/js/utils.js',
