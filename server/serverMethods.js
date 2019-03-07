@@ -114,9 +114,6 @@ function ServerMethods(aLogLevel, aModules) {
       var googleId = config.get(C.GOOGLE_CLIENT_ID);
       var googleHostedDomain = config.get(C.GOOGLE_HOSTED_DOMAIN);
 
-      var pubnubSubKey = config.get(C.PUBNUB_SUB_KEY);
-      var pubnubPubKey = config.get(C.PUBNUB_PUB_KEY);
-
       if (sipRequireGoogleAuth) {
         googleAuth = new GoogleAuth.EnabledGoogleAuthStrategy(googleId, googleHostedDomain);
       } else {
@@ -160,7 +157,7 @@ function ServerMethods(aLogLevel, aModules) {
       var firebaseArchivesPromise =
               Utils.CachifiedObject(FirebaseArchives, config.get(C.FIREBASE_DATA_URL),
                                     config.get(C.FIREBASE_AUTH_SECRET),
-                                    config.get(C.EMPTY_ROOM_LIFETIME), aLogLevel, pubnubSubKey, pubnubPubKey);
+                                    config.get(C.EMPTY_ROOM_LIFETIME), aLogLevel);
       _shutdownOldInstance(oldFirebaseArchivesPromise, firebaseArchivesPromise);
 
       return firebaseArchivesPromise
@@ -195,8 +192,6 @@ function ServerMethods(aLogLevel, aModules) {
                 googleId,
                 googleHostedDomain,
                 reportIssueLevel,
-                pubnubSubKey,
-                pubnubPubKey,
                 useGoogleApi,
               }));
     });
@@ -445,6 +440,28 @@ function ServerMethods(aLogLevel, aModules) {
         // We have to create an authentication token for the new user...
         var fbUserToken =
           enableArchiveManager && fbArchives.createUserToken(usableSessionInfo.sessionId, userName);
+
+        if (enableArchiveManager) {
+          var fbArchivesCallback = function (archives) {
+            if (archives.val()) {
+              tbConfig.otInstance.signal(
+                usableSessionInfo.sessionId,
+                null,
+                {
+                  'type': 'archives',
+                  data: JSON.stringify(archives.val())
+                },
+                function (error) {
+                  if (error)
+                    return logger.log('Get archives error:', error);
+                },
+              );
+            } 
+          }
+
+          fbArchives.subscribeArchiveUpdates(usableSessionInfo.sessionId, fbArchivesCallback)
+        }
+        
         // and finally, answer...
         var answer = {
           apiKey: tbConfig.apiKey,
@@ -466,8 +483,6 @@ function ServerMethods(aLogLevel, aModules) {
           googleId: tbConfig.googleId,
           googleHostedDomain: tbConfig.googleHostedDomain,
           reportIssueLevel: tbConfig.reportIssueLevel,
-          pubnubSubKey: tbConfig.pubnubSubKey,
-          pubnubPubKey: tbConfig.pubnubPubKey,
           useGoogleApi: tbConfig.useGoogleApi
         };
         answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId;

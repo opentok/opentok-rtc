@@ -53,6 +53,7 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel, pubnubSubK
       removeArchive: () => Promise.resolve(),
       shutdown: () => {},
       ping: () => {},
+      subscribeArchiveUpdates: () => Promise.resolve(),
     });
   }
 
@@ -74,7 +75,7 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel, pubnubSubK
   var fbRootRef = new Firebase(aRootURL);
   var fbTokenGenerator = new FirebaseTokenGenerator(aSecret);
 
-  var pubnub = new PubNub({
+  /* var pubnub = new PubNub({
     subscribeKey: pubnubSubKey,
     publishKey: pubnubPubKey,
     ssl: true
@@ -96,6 +97,22 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel, pubnubSubK
       fbRootRef.child(session + '/archives').on('value', partialGetArchiveList);
     }
   });
+
+  function _getArchiveList(session, aDataSnapshot) {
+    var archives = aDataSnapshot.val();
+
+    pubnub.publish(
+      {
+        message: {
+          archives: archives
+        },
+        channel: session,
+        sendByPost: false,
+        storeInHistory: false
+      }
+    );
+  }
+  */
 
   function _getFbObject() {
     // All done, just return an usable object... this will resolve te promise.
@@ -137,6 +154,11 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel, pubnubSubK
             .catch((error) => {
               reject(error);
             });
+        });
+      },
+      subscribeArchiveUpdates(sessionId, sendSignalCallback) {
+        return new Promise((resolve) => {
+          fbRootRef.child(sessionId + '/archives').on('value', sendSignalCallback);
         });
       },
     };
@@ -182,28 +204,12 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel, pubnubSubK
     }
   }
 
-  function _getArchiveList(session, aDataSnapshot) {
-    var archives = aDataSnapshot.val();
-
-    pubnub.publish(
-      {
-        message: {
-          archives: archives
-        },
-        channel: session,
-        sendByPost: false,
-        storeInHistory: false
-      }
-    );
-  }
-
   function _processSession(aDataSnapshot) {
     var sessionId = aDataSnapshot.key();
     logger.log('_processSession: Found sessionId: ', sessionId);
     // We only care about the connections here.
     // Funnily enough this works even if the connections key doesn't exist.
     aDataSnapshot.ref().child('connections').on('value', _checkConnectionsNumber);
-    //aDataSnapshot.ref().child('archives').on('value', _getArchiveList);
   }
 
   fbRootRef.authWithCustomToken_P = promisify(fbRootRef.authWithCustomToken);

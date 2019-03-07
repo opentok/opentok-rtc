@@ -6,44 +6,21 @@
   var archives = null;
   var listeners = {};
 
-  function init(pubnubSubKey, pubnubPubKey, sessionId) {
-    var self = this;
-    return LazyLoader.dependencyLoad([
-      'https://cdn.pubnub.com/sdk/javascript/pubnub.4.21.7.js'
-    ]).then(function () {
-      return new Promise(function (resolve) {
-        var pubnub = new PubNub({
-          publishKey: pubnubPubKey,
-          subscribeKey: pubnubSubKey
-        });
-
-        pubnub.addListener({
-          message: function(message) {
-            var handlers = listeners.value;
-            archives = message.message.archives;
-            var archiveValues = Promise.resolve(archives || {});
-            handlers && handlers.forEach(function (aHandler) {
-              archiveValues.then(aHandler.method.bind(aHandler.context));
-            });
-          }
-        });
-
-        pubnub.subscribe({
-          channels: [sessionId],
-        });
-
-        pubnub.publish(
-          {
-            message: {
-              session: sessionId
-            },
-            channel: 'connections_channel',
-            sendByPost: false,
-            storeInHistory: false
-          }
-        );
-        resolve(self);
+  var archiveHandler = {
+    archiveUpdates: function (evt) {
+      var handlers = listeners.value;
+      var archiveValues = Promise.resolve(evt.detail || {});
+      handlers && handlers.forEach(function (aHandler) {
+        archiveValues.then(aHandler.method.bind(aHandler.context));
       });
+    }
+  };
+
+  function init() {
+    var self = this;
+    return new Promise(function (resolve) {
+      Utils.addEventsHandlers('roomController:', archiveHandler, exports);
+      resolve(self);
     });
   }
 

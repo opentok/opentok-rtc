@@ -5,7 +5,7 @@
 
   var model = null;
 
-  function init(enableArchiveManager, pubnubSubKey, pubnubPubKey, sessionId) {
+  function init(enableArchiveManager) {
     var dependenciesLoaded;
     if (enableArchiveManager) {
       dependenciesLoaded = LazyLoader.dependencyLoad([
@@ -13,7 +13,7 @@
         '/js/recordingsView.js'
       ]).then(function () {
         return FirebaseModel
-                  .init(pubnubSubKey, pubnubPubKey, sessionId);
+                  .init();
       });
     } else {
       dependenciesLoaded = Promise.resolve();

@@ -128,8 +128,9 @@
     function parseMultiPartMsg(aEvt) {
       var dataParsed;
       dataParsed = JSON.parse(aEvt.data);
+      var fromConnectionId = aEvt.from !== null ? aEvt.from.connectionId : 'server';
       return {
-        connectionId: aEvt.from.connectionId,
+        connectionId: fromConnectionId,
         head: dataParsed._head,
         data: dataParsed.data
       };
@@ -137,7 +138,7 @@
 
     var receiveMultipartMsg = function(aFcClients, aEvt) {
       var parsedMsg = parseMultiPartMsg(aEvt);
-
+      
       var connection = _msgPieces[parsedMsg.connectionId];
       var newPromise = null;
       // First msg from a client
@@ -170,6 +171,11 @@
         msg.data[parsedMsg.head.seq] = parsedMsg.data;
         msg.have++;
       }
+
+      if (parsedMsg.connectionId === 'server') {
+        msg.promiseSolver(parsedMsg.data);
+      }
+
       // If we have completed the message, fulfill the promise
       if (msg.have >= parsedMsg.head.tot ) {
         aEvt.data = msg.data.join('');

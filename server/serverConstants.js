@@ -106,7 +106,3 @@ E.SIP_REQUIRE_GOOGLE_AUTH = { envVar: 'SIP_REQUIRE_GOOGLE_AUTH', jsonPath: 'SIP.
 E.GOOGLE_CLIENT_ID = { envVar: 'GOOGLE_CLIENT_ID', jsonPath: 'Google.clientId', defaultValue: '' };
 
 E.GOOGLE_HOSTED_DOMAIN = { envVar: 'GOOGLE_HOSTED_DOMAIN', jsonPath: 'Google.hostedDomain', defaultValue: '' };
-
-E.PUBNUB_SUB_KEY = { envVar: 'PUBNUB_SUB_KEY', jsonPath: 'PubNub.subKey', required: false };
-
-E.PUBNUB_PUB_KEY = { envVar: 'PUBNUB_PUB_KEY', jsonPath: 'PubNub.pubKey', required: false };
