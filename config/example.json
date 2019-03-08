@@ -35,5 +35,5 @@
     "hostedDomain": "yourhosteddomain.com"
   },
   "useGoogleFonts": true,
-  "jqueryUrl": "https:////ajax.googleapis.com/ajax/libs/jquery"
+  "jqueryUrl": "https://ajax.googleapis.com/ajax/libs/jquery"
 }
