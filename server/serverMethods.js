@@ -95,6 +95,7 @@ function ServerMethods(aLogLevel, aModules) {
       var apiSecret = config.get(C.OPENTOK_API_SECRET);
       var opentokJsUrl = config.get(C.OPENTOK_JS_URL);
       var useGoogleFonts = config.get(C.USE_GOOGLE_FONTS);
+      var jqueryUrl = config.get(C.JQUERY_URL);
       logger.log('apiSecret', apiSecret);
       var archivePollingTO = config.get(C.ARCHIVE_POLLING_INITIAL_TIMEOUT);
       var archivePollingTOMultiplier =
@@ -198,6 +199,7 @@ function ServerMethods(aLogLevel, aModules) {
                 pubnubSubKey,
                 pubnubPubKey,
                 useGoogleFonts,
+                jqueryUrl,
               }));
     });
   }
@@ -467,7 +469,8 @@ function ServerMethods(aLogLevel, aModules) {
           googleHostedDomain: tbConfig.googleHostedDomain,
           reportIssueLevel: tbConfig.reportIssueLevel,
           pubnubSubKey: tbConfig.pubnubSubKey,
-          pubnubPubKey: tbConfig.pubnubPubKey
+          pubnubPubKey: tbConfig.pubnubPubKey,
+          jqueryUrl: tbConfig.jqueryUrl,
         };
         answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId;
         aRes.send(answer);

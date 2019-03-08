@@ -34,5 +34,6 @@
     "clientId": "yourClientId.apps.googleusercontent.com",
     "hostedDomain": "yourhosteddomain.com"
   },
-  "useGoogleFonts": true
+  "useGoogleFonts": true,
+  "jqueryUrl": "https:////ajax.googleapis.com/ajax/libs/jquery"
 }
