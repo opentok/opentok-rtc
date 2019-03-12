@@ -464,6 +464,18 @@
       });  
     }
 
+    function getVideoDeviceNotInUse(selectedDeviceId) {
+      return new Promise(function(resolve, reject) {
+        getDevices('videoInput').then(function(videoDevices) {
+          var matchingDevice = videoDevices.find(function(device) {
+            return device.deviceId !== selectedDeviceId;
+          });
+
+          return resolve(matchingDevice || selectedDeviceId);
+        });
+      });
+    }
+
     function getFallbackMediaDeviceId(devices, kind) {
       kind = kind.replace('Source', 'Input');
       var matchingDevice = devices.find(function(device) {
@@ -582,6 +594,7 @@
       },
       connect: connect,
       getDevices: getDevices,
+      getVideoDeviceNotInUse: getVideoDeviceNotInUse,
       initPublisher: initPublisher,
       off: off,
       otLoaded: otLoaded,

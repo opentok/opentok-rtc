@@ -118,31 +118,35 @@
             PrecallView.populateAudioDevicesDropdown(audioDevs, publisherOptions.audioSource);
           });
           publisher = pub;
-          previewOptions = {
-            apiKey: window.precallApiKey,
-            resolution: '640x480',
-            sessionId: window.precallSessionId,
-            token: window.precallToken,
-            facingMode: 'environment'
-          };
 
-          // You cannot use the network test in IE or Safari. IE cannot subscribe to its own stream.
-          // In Safari on iOS, you cannot use two publishers (the preview publisher and the network
-          // test publisher) simultaneously.
-          if (!Utils.isIE() && !Utils.isSafariIOS()) {
-            publisher.on('accessAllowed', function () {
-              PrecallView.startPrecallTestMeter();
-              otNetworkTest = new OTNetworkTest(previewOptions);
-              otNetworkTest.startNetworkTest(function (error, result) {
-                PrecallView.displayNetworkTestResults(result);
-                if (result.audioOnly) {
-                  publisher.publishVideo(false);
-                  Utils.sendEvent('PrecallController:audioOnly');
-                }
+
+          otHelper.getVideoDeviceNotInUse(publisherOptions.videoSource)
+          .then(function (videoSourceId) {
+            previewOptions = {
+              apiKey: window.precallApiKey,
+              resolution: '640x480',
+              sessionId: window.precallSessionId,
+              token: window.precallToken,
+              videoSource: videoSourceId
+            };
+
+            // You cannot use the network test in IE or Safari. IE cannot subscribe to its own stream.
+            // In Safari on iOS, you cannot use two publishers (the preview publisher and the network
+            // test publisher) simultaneously.
+            if (!Utils.isIE() && !Utils.isSafariIOS()) {
+              publisher.on('accessAllowed', function () {
+                PrecallView.startPrecallTestMeter();
+                otNetworkTest = new OTNetworkTest(previewOptions);
+                otNetworkTest.startNetworkTest(function (error, result) {
+                  PrecallView.displayNetworkTestResults(result);
+                  if (result.audioOnly) {
+                    publisher.publishVideo(false);
+                    Utils.sendEvent('PrecallController:audioOnly');
+                  }
+                });
               });
-            });
-          }
-
+            }
+          });
           Utils.addEventsHandlers('roomView:', videoPreviewEventHandlers, exports);
           var movingAvg = null;
           publisher.on('audioLevelUpdated', function (event) {
