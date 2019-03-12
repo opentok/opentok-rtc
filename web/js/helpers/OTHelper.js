@@ -284,8 +284,15 @@
     function initPublisher(aDOMElement, aProperties, aHandlers) {
       return new Promise(function(resolve, reject) {
         otLoaded.then(function() {
-          _publisher = OT.initPublisher(aDOMElement, aProperties);
-          return resolve(_publisher);
+          getFilteredSources({
+            audioSource: aProperties.audioSource,
+            videoSource: aProperties.videoSource
+          }).then(function(mediaSources) {
+            Object.assign(aProperties, mediaSources);
+            _publisher = OT.initPublisher(aDOMElement, aProperties);
+            return resolve(_publisher);
+          });
+          
         });
       });
     }
@@ -450,11 +457,37 @@
     function getDevices(kind = 'all') {
       return new Promise(function(resolve, reject) {
         OT.getDevices(function (error, devices) {
-          devices = devices.filter(function (device) { return device.kind === kind });
-          resolve(devices);
+          if (error) return reject(error);
+          devices = devices.filter(function (device) { return device.kind === kind || kind === 'all' });
+          return resolve(devices);
         });
       });  
     }
+
+    function getFallbackMediaDeviceId(devices, kind) {
+      kind = kind.replace('Source', 'Input');
+      var matchingDevice = devices.find(function(device) {
+        return device.kind === kind;
+      });  
+      return matchingDevice ? matchingDevice.deviceId : null;
+    }
+
+    function getFilteredSources(mediaDeviceIds) {
+      return new Promise(function(resolve, reject) {
+        getDevices().then(function (devices) {          
+          for (var source in mediaDeviceIds) {
+            var matchingDevice = devices.find(function(device) {
+              return device.deviceId === mediaDeviceIds[source];
+            });
+
+            if (!matchingDevice) mediaDeviceIds[source] = getFallbackMediaDeviceId(devices, source);
+          }
+          return resolve(mediaDeviceIds);
+      }).catch(function(e) {
+        return reject(e);
+      });
+    })
+   }  
 
     function subscribe(aStream, aTargetElement, aProperties, aHandlers, aEnableAnnotation) {
       var self = this;
