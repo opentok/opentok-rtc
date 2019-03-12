@@ -1,3 +1,4 @@
+/* globals EJSTemplate, Modal, setTimeout, showTos */
 !(function (exports) {
   'use strict';
 
@@ -73,7 +74,7 @@
             detail: 'Please identify the audio source in the following list:',
             button: 'Set'
           }, true).then(function (start) {
-            if(start) {
+            if (start) {
               Utils.sendEvent('roomView:setAudioSource', select.value);
             }
             select.style.display = 'none';

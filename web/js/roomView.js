@@ -498,7 +498,7 @@ BubbleFactory, Clipboard, LayoutManager */
             detail: 'Please identify the audio source in the following list:',
             button: 'Change'
           }).then(function (start) {
-            if(start) {
+            if (start) {
               Utils.sendEvent('roomView:setAudioSource', select.value);
             }
             select.style.display = 'none';

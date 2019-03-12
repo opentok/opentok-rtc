@@ -6,7 +6,6 @@
   var endPrecall = function () {
     Utils.sendEvent('PrecallController:endPrecall');
   };
-  
   var otNetworkTest;
   var publisher;
   var previewOptions;
@@ -17,14 +16,14 @@
   };
 
   if (window.localStorage.getItem('audioDeviceId')) publisherOptions.audioSource = window.localStorage.getItem('audioDeviceId');
-  if (window.localStorage.getItem('videoDeviceId')) publisherOptions.videoSource = window.localStorage.getItem('videoDeviceId');;
+  if (window.localStorage.getItem('videoDeviceId')) publisherOptions.videoSource = window.localStorage.getItem('videoDeviceId');
 
   function showCallSettingsPrompt(roomName, username, otHelper) {
     var selector = '.user-name-modal';
 
     var videoPreviewEventHandlers = {
       toggleFacingMode: function () {
-        otHelper.toggleFacingMode().then((dev) => {
+        otHelper.toggleFacingMode().then(function (dev) {
           var deviceId = dev.deviceId;
           publisherOptions.videoSource = deviceId;
           window.localStorage.setItem('videoDeviceId', deviceId);
