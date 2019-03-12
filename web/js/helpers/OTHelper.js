@@ -290,7 +290,7 @@
               Object.values(devices)
               .forEach(function (device) {
                 if (device.kind === 'audioInput') {
-                  var option = document.createElement("option");
+                  var option = document.createElement('option');
                   option.text = device.label;
                   option.value = device.deviceId;
                   if (option.value == aProperties.audioSource) option.selected = true;

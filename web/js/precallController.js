@@ -12,11 +12,17 @@
   var publisherOptions = {
     publishAudio: true,
     publishVideo: true,
-    name: ''
+    name: '',
+    width: '100%',
+    height: '100%',
+    insertMode: 'append',
+    showControls: false
   };
 
-  if (window.localStorage.getItem('audioDeviceId')) publisherOptions.audioSource = window.localStorage.getItem('audioDeviceId');
-  if (window.localStorage.getItem('videoDeviceId')) publisherOptions.videoSource = window.localStorage.getItem('videoDeviceId');
+  var storedAudioDeviceId = window.localStorage.getItem('audioDeviceId');
+  var storedVideoDeviceId = window.localStorage.getItem('videoDeviceId');
+  if (storedAudioDeviceId) publisherOptions.audioSource = storedAudioDeviceId;
+  if (storedVideoDeviceId) publisherOptions.videoSource = storedVideoDeviceId;
 
   function showCallSettingsPrompt(roomName, username, otHelper) {
     var selector = '.user-name-modal';
@@ -106,10 +112,8 @@
           }
         }
 
-        otHelper.initPublisher('video-preview',
-          Object.assign(
-            { width: '100%', height: '100%', insertMode: 'append', showControls: false }, publisherOptions)
-        ).then(function (pub) {
+        otHelper.initPublisher('video-preview', publisherOptions)
+        .then(function (pub) {
           publisher = pub;
           previewOptions = {
             apiKey: window.precallApiKey,
