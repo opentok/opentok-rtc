@@ -114,6 +114,9 @@
 
         otHelper.initPublisher('video-preview', publisherOptions)
         .then(function (pub) {
+          otHelper.getDevices('audioInput').then(function (audioDevs) {
+            PrecallView.populateAudioDevicesDropdown(audioDevs, publisherOptions.audioSource);
+          });
           publisher = pub;
           previewOptions = {
             apiKey: window.precallApiKey,

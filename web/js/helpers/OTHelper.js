@@ -284,21 +284,7 @@
     function initPublisher(aDOMElement, aProperties, aHandlers) {
       return new Promise(function(resolve, reject) {
         otLoaded.then(function() {
-          _publisher = OT.initPublisher(aDOMElement, aProperties, function(error) {
-            getDevices().then(function(devices) {
-              var select = document.getElementById('select-devices');
-              Object.values(devices)
-              .forEach(function (device) {
-                if (device.kind === 'audioInput') {
-                  var option = document.createElement('option');
-                  option.text = device.label;
-                  option.value = device.deviceId;
-                  if (option.value == aProperties.audioSource) option.selected = true;
-                  select.appendChild(option);
-                }
-              });
-            });
-          });
+          _publisher = OT.initPublisher(aDOMElement, aProperties);
           return resolve(_publisher);
         });
       });
@@ -461,9 +447,10 @@
       aPubSub._ANNOTATION_PACK = aAccPack;
     }
 
-    function getDevices() {
+    function getDevices(kind = 'all') {
       return new Promise(function(resolve, reject) {
         OT.getDevices(function (error, devices) {
+          devices = devices.filter(function (device) { return device.kind === kind });
           resolve(devices);
         });
       });  
@@ -561,11 +548,11 @@
         return _session;
       },
       connect: connect,
-      otLoaded: otLoaded,
-      off: off,
+      getDevices: getDevices,
       initPublisher: initPublisher,
+      off: off,
+      otLoaded: otLoaded,
       publish: publish,
-      subscribe: subscribe,
       toggleSubscribersAudio: toggleSubscribersAudio,
       toggleSubscribersVideo: toggleSubscribersVideo,
       togglePublisherAudio: togglePublisherAudio,
@@ -573,6 +560,7 @@
       toggleFacingMode: toggleFacingMode,
       setAudioSource: setAudioSource,
       shareScreen: shareScreen,
+      subscribe: subscribe,
       stopShareScreen: stopShareScreen,
       get isPublisherReady() {
         return _publisherInitialized;

@@ -154,6 +154,17 @@
     document.getElementById('precall-test-meter').style.display = 'none';
   };
 
+  var populateAudioDevicesDropdown = function (audioDevices, selectedDevId) {
+    var select = document.getElementById('select-devices');
+    audioDevices.forEach(function (device) {
+      var option = document.createElement('option');
+      option.text = device.label;
+      option.value = device.deviceId;
+      if (option.value === selectedDevId) option.selected = true;
+      select.appendChild(option);
+    });
+  };
+
   var alreadyInitialized = false;
 
   var init = function () {
@@ -294,6 +305,7 @@
   exports.PrecallView = {
     init: init,
     hide: hide,
+    populateAudioDevicesDropdown: populateAudioDevicesDropdown,
     setRoomName: setRoomName,
     setUsername: setUsername,
     setFocus: setFocus,
