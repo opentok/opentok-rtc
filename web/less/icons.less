@@ -433,6 +433,41 @@
   }
 }
 
+.sourcePick {
+  min-width: 70px;
+  cursor: pointer;
+  display: inline-block; 
+  text-align: center;
+}
+
+.right-container {
+  .sourcePick {
+    @media @smartphonesPortrait {
+      margin-top: -36px;
+      margin-right: 7px;
+    }
+  }
+}
+
+#toggleFacingMode {
+  [data-icon="cycleVideo"] {
+    background-image: url("/images/icons/toggleVideo.svg");
+    width: 51px;
+    height: 30.4px;
+    vertical-align: text-bottom;
+  }
+}
+
+#pickMic {
+  [data-icon="pmic"] {
+    background-image: url("/images/icons/mic.svg");
+    background-position: center; 
+    width: 51px;
+    height: 30.4px;
+    vertical-align: text-bottom;
+  }
+}
+
 #videoSwitch.activated,
 #audioSwitch.activated {
   [data-icon="videoSwitch"], [data-icon="audioSwitch"] {
