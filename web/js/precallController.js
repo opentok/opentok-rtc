@@ -114,11 +114,7 @@
 
         otHelper.initPublisher('video-preview', publisherOptions)
         .then(function (pub) {
-          otHelper.getDevices('audioInput').then(function (audioDevs) {
-            PrecallView.populateAudioDevicesDropdown(audioDevs, publisherOptions.audioSource);
-          });
           publisher = pub;
-
 
           otHelper.getVideoDeviceNotInUse(publisherOptions.videoSource)
           .then(function (videoSourceId) {
@@ -130,10 +126,13 @@
               videoSource: videoSourceId
             };
 
-            // You cannot use the network test in IE or Safari because you cannot use two publishers
-            // (the preview publisher and the network test publisher) simultaneously.
-            if (!Utils.isIE() && !Utils.isSafariIOS()) {
-              publisher.on('accessAllowed', function () {
+            publisher.on('accessAllowed', function () {
+              otHelper.getDevices('audioInput').then(function (audioDevs) {
+                PrecallView.populateAudioDevicesDropdown(audioDevs, publisherOptions.audioSource);
+              });
+              // You cannot use the network test in IE or Safari because you cannot use two
+              // publishers (the preview publisher and the network test publisher) simultaneously.
+              if (!Utils.isIE() && !Utils.isSafariIOS()) {
                 PrecallView.startPrecallTestMeter();
                 otNetworkTest = new OTNetworkTest(previewOptions);
                 otNetworkTest.startNetworkTest(function (error, result) {
@@ -143,8 +142,8 @@
                     Utils.sendEvent('PrecallController:audioOnly');
                   }
                 });
-              });
-            }
+              }
+            });
           });
           Utils.addEventsHandlers('roomView:', videoPreviewEventHandlers, exports);
           var movingAvg = null;
