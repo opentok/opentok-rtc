@@ -94,10 +94,12 @@
           }
           Modal.hide(selector)
             .then(function () {
-              publisherOptions.name = document.querySelector(selector + ' input').value.trim();
+              var username = document.querySelector(selector + ' input').value.trim();
+              window.localStorage.setItem('username', username);
+              publisherOptions.name = username;
               setTimeout(function () {
                 resolve({
-                  username: document.querySelector(selector + ' input').value.trim(),
+                  username: username,
                   publisherOptions: publisherOptions
                 });
               }, 1);
@@ -160,12 +162,15 @@
             PrecallView.setVolumeMeterLevel(logLevel);
           });
         });
-
+        var userNameInputElement = document.getElementById('user-name-input');
+        var storedUsername = window.localStorage.getItem('username');
         if (username) {
           document.getElementById('enter-name-prompt').style.display = 'none';
-          var userNameInputElement = document.getElementById('user-name-input');
           userNameInputElement.value = username;
           userNameInputElement.setAttribute('readonly', true);
+        } else if (storedUsername) {
+          userNameInputElement.value = storedUsername;
+          document.querySelector('#enter-name-prompt label').classList.add('visited');
         }
       }
       otHelper.otLoaded.then(function () {
