@@ -65,6 +65,8 @@ E.ENABLE_SCREENSHARING = { envVar: 'ENABLE_SCREENSHARING', jsonPath: 'Screenshar
 
 E.USE_GOOGLE_API = { envVar: 'USE_GOOGLE_API', jsonPath: 'useGoogleApi', required: false, defaultValue: true, parser: parseBool };
 
+E.JQUERY_URL = { envVar: 'JQUERY_URL', jsonPath: 'jqueryUrl', required: false, defaultValue: 'https://ajax.googleapis.com/ajax/libs/jquery' };
+
 // Chrome AddOn extension Id for sharing screen
 E.CHROME_EXTENSION_ID = { envVar: 'CHROME_EXTENSION_ID', jsonPath: 'Screensharing.chromeExtensionId' };
 

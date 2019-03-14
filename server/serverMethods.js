@@ -94,7 +94,8 @@ function ServerMethods(aLogLevel, aModules) {
       var apiKey = config.get(C.OPENTOK_API_KEY);
       var apiSecret = config.get(C.OPENTOK_API_SECRET);
       var opentokJsUrl = config.get(C.OPENTOK_JS_URL);
-      var useGoogleApi = config.get(C.USE_GOOGLE_API);
+      var useGoogleFonts = config.get(C.USE_GOOGLE_FONTS);
+      var jqueryUrl = config.get(C.JQUERY_URL);
       logger.log('apiSecret', apiSecret);
       var archivePollingTO = config.get(C.ARCHIVE_POLLING_INITIAL_TIMEOUT);
       var archivePollingTOMultiplier =
@@ -192,7 +193,8 @@ function ServerMethods(aLogLevel, aModules) {
                 googleId,
                 googleHostedDomain,
                 reportIssueLevel,
-                useGoogleApi,
+                useGoogleFonts,
+                jqueryUrl,
               }));
     });
   }
@@ -448,12 +450,13 @@ function ServerMethods(aLogLevel, aModules) {
                 usableSessionInfo.sessionId,
                 null,
                 {
-                  'type': 'archives',
-                  data: JSON.stringify(archives.val())
+                  type: 'archives',
+                  data: JSON.stringify(archives.val()),
                 },
                 function (error) {
-                  if (error)
+                  if (error) {
                     return logger.log('Get archives error:', error);
+                  }
                 },
               );
             } 
@@ -483,7 +486,7 @@ function ServerMethods(aLogLevel, aModules) {
           googleId: tbConfig.googleId,
           googleHostedDomain: tbConfig.googleHostedDomain,
           reportIssueLevel: tbConfig.reportIssueLevel,
-          useGoogleApi: tbConfig.useGoogleApi
+          jqueryUrl: tbConfig.jqueryUrl,
         };
         answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId;
         aRes.send(answer);

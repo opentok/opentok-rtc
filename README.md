@@ -396,6 +396,9 @@ The app lets the developer POST feedback data to an endpoint on your HTTP server
 * `USE_GOOGLE_API` (Optional, default value: true): Whether the client app will use google API
    to load Jquery scripts (ajax.googleapis.com) and the Open Sans font (the main font used in the user interface) from the Google font library (fonts.googleapis.com) or not.
 
+* `JQUERY_URL` (Optional, default value: 'https://ajax.googleapis.com/ajax/libs/jquery/'):
+   Route of the CDN that will be used to load JQuery scripts.
+
 ## Customizing the UI
 
 For information on how to customize OpenTokRTC's UI, see [CUSTOMIZING-UI.md](CUSTOMIZING-UI.md).
