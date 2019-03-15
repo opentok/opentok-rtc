@@ -79,6 +79,7 @@
     sessionConnected: function (evt) {
       _myCreationTime = evt.target.connection.creationTime;
       otHelper = this;
+      Request.saveConnectionFirebase(_myCreationTime, otHelper.session.id);
     },
     connectionDestroyed: function (evt) {
       // If connection destroyed belongs to someone older than me,
@@ -89,6 +90,12 @@
         _connectedEarlierThanMe--;
       }
       cancelPendingSend(evt.connection.connectionId);
+    },
+    sessionDisconnected: function (evt) {
+      Request.deleteConnectionFirebase(_myCreationTime, otHelper.session.id)
+      .then(function () {
+        window.location = '/';
+      });
     }
   };
 

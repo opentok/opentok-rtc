@@ -92,13 +92,29 @@
     return sendXHR('DELETE', server + '/archive/' + id);
   }
 
+  function saveConnectionFirebase(connection, sessionId) {
+    return sendXHR('POST', server + '/storeConnection/', JSON.stringify({
+      connection: connection,
+      sessionId: sessionId
+    }), 'application/json');
+  }
+
+  function deleteConnectionFirebase(connection, sessionId) {
+    return sendXHR('POST', server + '/deleteConnection/', JSON.stringify({
+      connection: connection,
+      sessionId: sessionId
+    }), 'application/json');
+  }
+
   var Request = {
     getRoomInfo: getRoomInfo,
     sendArchivingOperation: sendArchivingOperation,
     dialOut: dialOut,
     hangUp: hangUp,
     deleteArchive: deleteArchive,
-    sendXHR: sendXHR
+    sendXHR: sendXHR,
+    saveConnectionFirebase: saveConnectionFirebase,
+    deleteConnectionFirebase: deleteConnectionFirebase
   };
 
   exports.Request = Request;

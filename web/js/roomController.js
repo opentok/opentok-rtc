@@ -315,7 +315,6 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
   var viewEventHandlers = {
     endCall: function () {
       otHelper.disconnect();
-      window.location = '/';
     },
     startArchiving: function (evt) {
       sendArchivingOperation((evt.detail && evt.detail.operation) || 'startComposite');

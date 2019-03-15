@@ -39,9 +39,8 @@
 var Firebase = require('firebase');
 var SwaggerBP = require('swagger-boilerplate');
 var FirebaseTokenGenerator = require('firebase-token-generator');
-var PubNub = require('pubnub');
 
-function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel, pubnubSubKey, pubnubPubKey) {
+function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
   if (!aRootURL || !aSecret) {
     // Just return an object with the right signature and be done...
     return Promise.resolve({
@@ -54,6 +53,8 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel, pubnubSubK
       shutdown: () => {},
       ping: () => {},
       subscribeArchiveUpdates: () => Promise.resolve(),
+      storeConnection: () => Promise.resolve(),
+      deleteConnection: () => Promise.resolve(),
     });
   }
 
@@ -74,45 +75,6 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel, pubnubSubK
   // Connect and authenticate the firebase session
   var fbRootRef = new Firebase(aRootURL);
   var fbTokenGenerator = new FirebaseTokenGenerator(aSecret);
-
-  /* var pubnub = new PubNub({
-    subscribeKey: pubnubSubKey,
-    publishKey: pubnubPubKey,
-    ssl: true
-  });
-
-  pubnub.subscribe({
-    channels: ['connections_channel'],
-  });
-
-  pubnub.addListener({
-    message: function(payload) {
-      var session = payload.message.session;
-      fbRootRef.child(session + '/connections')
-        .push(new Date().getTime())
-        .onDisconnect().remove();
-
-      var partialGetArchiveList = _getArchiveList.bind(null, session);
-
-      fbRootRef.child(session + '/archives').on('value', partialGetArchiveList);
-    }
-  });
-
-  function _getArchiveList(session, aDataSnapshot) {
-    var archives = aDataSnapshot.val();
-
-    pubnub.publish(
-      {
-        message: {
-          archives: archives
-        },
-        channel: session,
-        sendByPost: false,
-        storeInHistory: false
-      }
-    );
-  }
-  */
 
   function _getFbObject() {
     // All done, just return an usable object... this will resolve te promise.
@@ -159,6 +121,17 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel, pubnubSubK
       subscribeArchiveUpdates(sessionId, sendSignalCallback) {
         return new Promise((resolve) => {
           fbRootRef.child(sessionId + '/archives').on('value', sendSignalCallback);
+        });
+      },
+      storeConnection(connection, sessionId) {
+        return new Promise((resolve) => {
+          fbRootRef.child(sessionId + '/connections/' + connection).set(connection);
+        });
+      },
+      deleteConnection(connection, sessionId) {
+        return new Promise((resolve) => {
+          logger.log('DELETING:', sessionId + '/connections/' + connection);
+          fbRootRef.child(sessionId + '/connections/' + connection).remove(resolve);
         });
       },
     };

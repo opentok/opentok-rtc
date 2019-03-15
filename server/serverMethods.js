@@ -451,7 +451,14 @@ function ServerMethods(aLogLevel, aModules) {
                 null,
                 {
                   type: 'archives',
-                  data: JSON.stringify(archives.val()),
+                  data: JSON.stringify({
+                    _head: {
+                      id: 1,
+                      seq: 1,
+                      tot: 1
+                    },
+                    data: archives.val()
+                  })
                 },
                 function (error) {
                   if (error) {
@@ -783,6 +790,30 @@ function ServerMethods(aLogLevel, aModules) {
     });
   }
 
+  function storeConnectionFirebase(aReq, aRes) {
+    var body = aReq.body;
+    var connection = body.connection;
+    var sessionId = body.sessionId;
+    var tbConfig = aReq.tbConfig;
+    var fbArchives = tbConfig.fbArchives;
+
+    fbArchives.storeConnection(connection, sessionId);
+
+    aRes.send({});
+  }
+
+  function deleteConnectionFirebase(aReq, aRes) {
+    var body = aReq.body;
+    var connection = body.connection;
+    var sessionId = body.sessionId;
+    var tbConfig = aReq.tbConfig;
+    var fbArchives = tbConfig.fbArchives;
+
+    fbArchives.deleteConnection(connection, sessionId);
+
+    aRes.send({});
+  }
+
   return {
     logger,
     configReady,
@@ -801,6 +832,8 @@ function ServerMethods(aLogLevel, aModules) {
     postHangUp,
     getHealth,
     oldVersionCompat,
+    storeConnectionFirebase,
+    deleteConnectionFirebase,
   };
 }
 
