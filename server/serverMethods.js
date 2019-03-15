@@ -302,7 +302,7 @@ function ServerMethods(aLogLevel, aModules) {
       .render('index.ejs', {
         isWebRTCVersion: aReq.tbConfig.isWebRTCVersion,
         showTos: aReq.tbConfig.showTos,
-        useGoogleApi: aReq.tbConfig.useGoogleApi,
+        useGoogleFonts: aReq.tbConfig.useGoogleFonts,
       }, (err, html) => {
         if (err) {
           logger.error('getRoot. error: ', err);
@@ -356,7 +356,7 @@ function ServerMethods(aLogLevel, aModules) {
           showTos: tbConfig.showTos,
           opentokJsUrl: tbConfig.opentokJsUrl,
           authDomain: tbConfig.googleHostedDomain,
-          useGoogleApi: tbConfig.useGoogleApi
+          useGoogleFonts: tbConfig.useGoogleFonts
         }, (err, html) => {
           if (err) {
             logger.log('getRoom. error:', err);
@@ -452,7 +452,7 @@ function ServerMethods(aLogLevel, aModules) {
                 {
                   type: 'archives',
                   data: JSON.stringify({
-                    _head: {
+                    _head: { // TODO: use the same method that's implemented in client to wrap signal msg
                       id: 1,
                       seq: 1,
                       tot: 1

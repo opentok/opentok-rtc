@@ -138,7 +138,7 @@
 
     var receiveMultipartMsg = function(aFcClients, aEvt) {
       var parsedMsg = parseMultiPartMsg(aEvt);
-      
+
       var connection = _msgPieces[parsedMsg.connectionId];
       var newPromise = null;
       // First msg from a client

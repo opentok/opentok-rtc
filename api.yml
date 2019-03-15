@@ -373,7 +373,7 @@ paths:
           description: OK
   /deleteConnection:
     post:
-      summary: Callback to delete a innactive connection from Firebase.
+      summary: Callback to delete a inactive connection from Firebase.
       x-implemented-in: deleteConnectionFirebase
       description: Deletes a connection in the corresponding session in Firebase.
       parameters:
