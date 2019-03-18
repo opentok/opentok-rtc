@@ -790,14 +790,14 @@ function ServerMethods(aLogLevel, aModules) {
     });
   }
 
-  function storeConnectionFirebase(aReq, aRes) {
+  function saveConnectionFirebase(aReq, aRes) {
     var body = aReq.body;
     var connection = body.connection;
     var sessionId = body.sessionId;
     var tbConfig = aReq.tbConfig;
     var fbArchives = tbConfig.fbArchives;
 
-    fbArchives.storeConnection(connection, sessionId);
+    fbArchives.saveConnection(connection, sessionId);
 
     aRes.send({});
   }
@@ -832,7 +832,7 @@ function ServerMethods(aLogLevel, aModules) {
     postHangUp,
     getHealth,
     oldVersionCompat,
-    storeConnectionFirebase,
+    saveConnectionFirebase,
     deleteConnectionFirebase,
   };
 }

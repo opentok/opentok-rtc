@@ -92,14 +92,14 @@
     return sendXHR('DELETE', server + '/archive/' + id);
   }
 
-  function saveConnectionFirebase(connection, sessionId) {
-    return sendXHR('POST', server + '/storeConnection/', JSON.stringify({
+  function saveConnection(connection, sessionId) {
+    return sendXHR('POST', server + '/saveConnection/', JSON.stringify({
       connection: connection,
       sessionId: sessionId
     }), 'application/json');
   }
 
-  function deleteConnectionFirebase(connection, sessionId) {
+  function deleteConnection(connection, sessionId) {
     return sendXHR('POST', server + '/deleteConnection/', JSON.stringify({
       connection: connection,
       sessionId: sessionId
@@ -113,8 +113,8 @@
     hangUp: hangUp,
     deleteArchive: deleteArchive,
     sendXHR: sendXHR,
-    saveConnectionFirebase: saveConnectionFirebase,
-    deleteConnectionFirebase: deleteConnectionFirebase
+    saveConnection: saveConnection,
+    deleteConnection: deleteConnection
   };
 
   exports.Request = Request;

@@ -53,7 +53,7 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
       shutdown: () => {},
       ping: () => {},
       subscribeArchiveUpdates: () => Promise.resolve(),
-      storeConnection: () => Promise.resolve(),
+      saveConnection: () => Promise.resolve(),
       deleteConnection: () => Promise.resolve(),
     });
   }
@@ -123,7 +123,7 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
           fbRootRef.child(sessionId + '/archives').on('value', sendSignalCallback);
         });
       },
-      storeConnection(connection, sessionId) {
+      saveConnection(connection, sessionId) {
         return new Promise((resolve) => {
           fbRootRef.child(sessionId + '/connections/' + connection).set(connection);
         });
