@@ -465,10 +465,10 @@ function ServerMethods(aLogLevel, aModules) {
                     return logger.log('Get archives error:', error);
                   }
                 },
-              );
+              ); // TODO: Fix lint error
             } 
           }
-
+          // TODO: Send archives at the beginning of the call
           fbArchives.subscribeArchiveUpdates(usableSessionInfo.sessionId, fbArchivesCallback)
         }
         
