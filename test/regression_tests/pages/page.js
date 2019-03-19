@@ -31,14 +31,17 @@ class Page {
     return browser.desiredCapabilities.browserName;
   }
   get room() {
+    if (browser.desiredCapabilities.browserName === 'firefox') {
+      browser.pause(100);
+    }
+    browser.waitForExist('[data-wd=roomname]');
     return browser.element('[data-wd=roomname]');
   }
   get name() {
     return browser.element('[data-wd=username]');
   }
   goToRoom() {
-    this.clickWhenExist('[data-wd=enterroom]');
-    browser.pause(15000);
+    this.clickWhenExist('#enter');
   }
 }
 module.exports = Page;

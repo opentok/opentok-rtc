@@ -30,6 +30,7 @@
 
     <script>
       window.apiKey='<%=apiKey%>';
+      window.precallApiKey='<%=precallApiKey%>';
       window.precallSessionId='<%=precallSessionId%>';
       window.precallToken='<%=precallToken%>';
       window.showTos=<%=showTos%> && !sessionStorage.tosAccepted;
@@ -83,6 +84,12 @@
         </div>
         <div class="audioSwitch" disabled>
           <a id="audioSwitch"><i data-icon="audioSwitch"></i><span>Mute all participants</span></a>
+        </div>
+        <div class="sourcePick">
+          <a id="toggleFacingMode"><i data-icon="cycleVideo"></i></a>
+        </div>
+        <div class="sourcePick">
+          <a id="pickMic"><i data-icon="pmic"></i></a>
         </div>
         <%   if(enableArchiving) { %>
         <div id="toggleArchiving" disabled>
@@ -342,6 +349,7 @@
         <header><span class="msg"></span></header>
         <hr>
         <p class="detail"></p>
+        <select id="select-devices" class="devices"></select>
         <footer>
           <button class="btn btn-blue btn-padding ctaarrow-white accept"></button>
         </footer>
