@@ -315,7 +315,6 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
   var viewEventHandlers = {
     endCall: function () {
       otHelper.disconnect();
-      window.location = '/';
     },
     startArchiving: function (evt) {
       sendArchivingOperation((evt.detail && evt.detail.operation) || 'startComposite');
@@ -667,6 +666,9 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
           RoomView.showConfirmChangeMicStatus(muteAllSwitch).then(setNewAudioStatus);
         }
       }
+    },
+    'signal:archives': function (evt) {
+      Utils.sendEvent('roomController:archiveUpdates', evt);
     }
   };
 
@@ -871,8 +873,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
           });
         })
         .then(function () {
-          RecordingsController.init(enableArchiveManager, aParams.pubnubSubKey,
-                                    aParams.pubnubPubKey, aParams.sessionId);
+          RecordingsController.init(enableArchiveManager);
           ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
           FeedbackController.init(otHelper, aParams.reportIssueLevel);
           PhoneNumberController.init(aParams.jqueryUrl);
