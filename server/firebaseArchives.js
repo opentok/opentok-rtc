@@ -121,16 +121,17 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
       subscribeArchiveUpdates(sessionId, sendSignalCallback) {
         return new Promise((resolve) => {
           fbRootRef.child(sessionId + '/archives').on('value', sendSignalCallback);
+          resolve();
         });
       },
       saveConnection(connection, sessionId) {
         return new Promise((resolve) => {
-          fbRootRef.child(sessionId + '/connections/' + connection).set(connection);
+          fbRootRef.child(sessionId + '/connections/' + connection).set(connection)
+          .then(resolve);
         });
       },
       deleteConnection(connection, sessionId) {
         return new Promise((resolve) => {
-          logger.log('DELETING:', sessionId + '/connections/' + connection);
           fbRootRef.child(sessionId + '/connections/' + connection).remove(resolve);
         });
       },
