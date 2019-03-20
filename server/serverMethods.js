@@ -364,7 +364,7 @@ function ServerMethods(aLogLevel, aModules) {
           showTos: tbConfig.showTos,
           opentokJsUrl: tbConfig.opentokJsUrl,
           authDomain: tbConfig.googleHostedDomain,
-          useGoogleFonts: tbConfig.useGoogleFonts
+          useGoogleFonts: tbConfig.useGoogleFonts,
         }, (err, html) => {
           if (err) {
             logger.log('getRoom. error:', err);
@@ -451,35 +451,6 @@ function ServerMethods(aLogLevel, aModules) {
         var fbUserToken =
           enableArchiveManager && fbArchives.createUserToken(usableSessionInfo.sessionId, userName);
 
-        if (enableArchiveManager) {
-          var fbArchivesCallback = function (archives) {
-            if (archives.val()) {
-              tbConfig.otInstance.signal(
-                usableSessionInfo.sessionId,
-                null,
-                {
-                  type: 'archives',
-                  data: JSON.stringify({
-                    _head: { // TODO: use the same method that's implemented in client to wrap signal msg
-                      id: 1,
-                      seq: 1,
-                      tot: 1
-                    },
-                    data: archives.val()
-                  })
-                },
-                function (error) {
-                  if (error) {
-                    return logger.log('Get archives error:', error);
-                  }
-                },
-              ); // TODO: Fix lint error
-            } 
-          }
-          // TODO: Send archives at the beginning of the call
-          fbArchives.subscribeArchiveUpdates(usableSessionInfo.sessionId, fbArchivesCallback)
-        }
-        
         // and finally, answer...
         var answer = {
           apiKey: tbConfig.apiKey,
@@ -805,8 +776,39 @@ function ServerMethods(aLogLevel, aModules) {
     var sessionId = body.sessionId;
     var tbConfig = aReq.tbConfig;
     var fbArchives = tbConfig.fbArchives;
+    var enableArchiveManager = tbConfig.enableArchiveManager;
 
-    fbArchives.saveConnection(connection, sessionId);
+    fbArchives.saveConnection(connection, sessionId)
+    .then(() => {
+      if (enableArchiveManager) {
+        var fbArchivesCallback = function (archivesSnapshot) {
+          var archives = archivesSnapshot.val() || {};
+
+          tbConfig.otInstance.signal(
+            sessionId,
+            null,
+            {
+              type: 'archives',
+              data: JSON.stringify({
+                _head: {
+                  id: 1,
+                  seq: 1,
+                  tot: 1,
+                },
+                data: archives,
+              }),
+            },
+            (error) => {
+              if (error) {
+                return logger.log('Get archives error:', error);
+              }
+              return false;
+            });
+        };
+
+        fbArchives.subscribeArchiveUpdates(sessionId, fbArchivesCallback);
+      }
+    });
 
     aRes.send({});
   }

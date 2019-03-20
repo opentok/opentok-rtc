@@ -812,6 +812,9 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
     Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
     RoomView.init(enableHangoutScroll, enableArchiveManager, enableSip);
+    // Init this controller before connect to the session
+    // to start receiving signals about archives updates
+    RecordingsController.init(enableArchiveManager);
 
     roomURI = aParams.roomURI;
     userName = aParams.username ? aParams.username.substring(0, 1000) : '';
@@ -875,7 +878,6 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
           });
         })
         .then(function () {
-          RecordingsController.init(enableArchiveManager);
           ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
           FeedbackController.init(otHelper, aParams.reportIssueLevel);
           PhoneNumberController.init(aParams.jqueryUrl);
