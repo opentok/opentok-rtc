@@ -1,7 +1,5 @@
 'use strict';
 
-const config = require('./config/config.json');
-
 module.exports = function(grunt) {
 
   // To-Do check what we need and add/remove as needed...
