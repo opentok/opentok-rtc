@@ -1,10 +1,10 @@
 /* global PhoneNumberView */
 !(function (global) {
-  var init = function () {
+  var init = function (jqueryUrl) {
     return LazyLoader.load(
       '/js/phoneNumberView.js'
     ).then(function () {
-      PhoneNumberView.init();
+      PhoneNumberView.init(jqueryUrl);
     });
   };
 
