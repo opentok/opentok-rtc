@@ -128,8 +128,9 @@
     function parseMultiPartMsg(aEvt) {
       var dataParsed;
       dataParsed = JSON.parse(aEvt.data);
+      var fromConnectionId = aEvt.from !== null ? aEvt.from.connectionId : 'server';
       return {
-        connectionId: aEvt.from.connectionId,
+        connectionId: fromConnectionId,
         head: dataParsed._head,
         data: dataParsed.data
       };
@@ -170,6 +171,11 @@
         msg.data[parsedMsg.head.seq] = parsedMsg.data;
         msg.have++;
       }
+
+      if (parsedMsg.connectionId === 'server') {
+        msg.promiseSolver(parsedMsg.data);
+      }
+
       // If we have completed the message, fulfill the promise
       if (msg.have >= parsedMsg.head.tot ) {
         aEvt.data = msg.data.join('');
@@ -284,8 +290,15 @@
     function initPublisher(aDOMElement, aProperties, aHandlers) {
       return new Promise(function(resolve, reject) {
         otLoaded.then(function() {
-          var publisher = OT.initPublisher(aDOMElement, aProperties);
-          return resolve(publisher);
+          getFilteredSources({
+            audioSource: aProperties.audioSource,
+            videoSource: aProperties.videoSource
+          }).then(function(mediaSources) {
+            Object.assign(aProperties, mediaSources);
+            _publisher = OT.initPublisher(aDOMElement, aProperties);
+            return resolve(_publisher);
+          });
+          
         });
       });
     }
@@ -324,6 +337,7 @@
               Object.keys(aHandlers).forEach(function(name) {
                 _publisher.on(name, aHandlers[name].bind(self));
               });
+
               _solvePublisherPromise(_publisher);
               resolve(_publisher);
             }
@@ -370,6 +384,14 @@
 
     function toggleSubscribersAudio(aStream, value) {
       subscribeTo(aStream, 'Audio', value);
+    }
+
+    function toggleFacingMode() {
+      return _publisher.cycleVideo();
+    }
+
+    function setAudioSource(deviceId) {
+      _publisher.setAudioSource(deviceId)
     }
 
     var _screenShare;
@@ -437,6 +459,53 @@
       aAccPack.linkCanvas(aPubSub, container, canvasOptions);
       aPubSub._ANNOTATION_PACK = aAccPack;
     }
+
+    function getDevices(kind = 'all') {
+      return new Promise(function(resolve, reject) {
+        OT.getDevices(function (error, devices) {
+          if (error) return reject(error);
+          devices = devices.filter(function (device) { return device.kind === kind || kind === 'all' });
+          return resolve(devices);
+        });
+      });  
+    }
+
+    function getVideoDeviceNotInUse(selectedDeviceId) {
+      return new Promise(function(resolve, reject) {
+        getDevices('videoInput').then(function(videoDevices) {
+          var matchingDevice = videoDevices.find(function(device) {
+            return device.deviceId !== selectedDeviceId;
+          });
+
+          return resolve(matchingDevice || selectedDeviceId);
+        });
+      });
+    }
+
+    function getFallbackMediaDeviceId(devices, kind) {
+      kind = kind.replace('Source', 'Input');
+      var matchingDevice = devices.find(function(device) {
+        return device.kind === kind;
+      });  
+      return matchingDevice ? matchingDevice.deviceId : null;
+    }
+
+    function getFilteredSources(mediaDeviceIds) {
+      return new Promise(function(resolve, reject) {
+        getDevices().then(function (devices) {          
+          for (var source in mediaDeviceIds) {
+            var matchingDevice = devices.find(function(device) {
+              return device.deviceId === mediaDeviceIds[source];
+            });
+
+            if (!matchingDevice) mediaDeviceIds[source] = getFallbackMediaDeviceId(devices, source);
+          }
+          return resolve(mediaDeviceIds);
+      }).catch(function(e) {
+        return reject(e);
+      });
+    })
+   }  
 
     function subscribe(aStream, aTargetElement, aProperties, aHandlers, aEnableAnnotation) {
       var self = this;
@@ -530,16 +599,20 @@
         return _session;
       },
       connect: connect,
-      otLoaded: otLoaded,
-      off: off,
+      getDevices: getDevices,
+      getVideoDeviceNotInUse: getVideoDeviceNotInUse,
       initPublisher: initPublisher,
+      off: off,
+      otLoaded: otLoaded,
       publish: publish,
-      subscribe: subscribe,
       toggleSubscribersAudio: toggleSubscribersAudio,
       toggleSubscribersVideo: toggleSubscribersVideo,
       togglePublisherAudio: togglePublisherAudio,
       togglePublisherVideo: togglePublisherVideo,
+      toggleFacingMode: toggleFacingMode,
+      setAudioSource: setAudioSource,
       shareScreen: shareScreen,
+      subscribe: subscribe,
       stopShareScreen: stopShareScreen,
       get isPublisherReady() {
         return _publisherInitialized;
@@ -590,3 +663,4 @@
   global.OTHelper = OTHelper;
 
 }(this);
+    

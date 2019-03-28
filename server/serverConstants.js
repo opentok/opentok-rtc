@@ -29,6 +29,10 @@ E.OPENTOK_API_KEY = { envVar: 'TB_API_KEY', jsonPath: 'OpenTok.apiKey', required
 
 E.OPENTOK_API_SECRET = { envVar: 'TB_API_SECRET', jsonPath: 'OpenTok.apiSecret', required: true };
 
+E.OPENTOK_PRECALL_API_KEY = { envVar: 'TB_PRECALL_API_KEY', jsonPath: 'precallTest.apiKey' };
+
+E.OPENTOK_PRECALL_API_SECRET = { envVar: 'TB_PRECALL_API_SECRET', jsonPath: 'precallTest.apiSecret' };
+
 E.OPENTOK_JS_URL = { envVar: 'TB_JS_URL', jsonPath: 'OpenTok.jsUrl', required: false, defaultValue: 'https://static.opentok.com/v2/js/opentok.min.js' };
 
 E.FIREBASE_DATA_URL = { envVar: 'FB_DATA_URL', jsonPath: 'Firebase.dataUrl' };
@@ -38,7 +42,7 @@ E.FIREBASE_AUTH_SECRET = { envVar: 'FB_AUTH_SECRET', jsonPath: 'Firebase.authSec
 // Sessions should not live forever. So we'll store the last time a session was used and if when
 // we fetch it from Redis we determine it's older than this max age (in days). This is the key
 // where that value (in days) should be stored. By default, sessions live two days.
-E.OPENTOK_MAX_SESSION_AGE = { envVar: 'TB_MAX_SESSION_AGE', jsonPath: 'OpenTok.maxSessionAge', defaultValue: 2, parser: parseInt };
+E.OPENTOK_MAX_SESSION_AGE = { envVar: 'TB_MAX_SESSION_AGE', jsonPath: 'OpenTok.maxSessionAge', defaultValue: 2, parser: parseFloat };
 
 E.ENABLE_ARCHIVING = { envVar: 'ENABLE_ARCHIVING', jsonPath: 'Archiving.enabled', defaultValue: true, parser: parseBool };
 
@@ -63,6 +67,9 @@ E.REPORT_ISSUE_LEVEL = { envVar: 'REPORT_ISSUE_LEVEL', jsonPath: 'Feedback.repor
 
 E.ENABLE_SCREENSHARING = { envVar: 'ENABLE_SCREENSHARING', jsonPath: 'Screensharing.enabled', defaultValue: false, parser: parseBool };
 
+E.USE_GOOGLE_FONTS = { envVar: 'USE_GOOGLE_FONTS', jsonPath: 'useGoogleFonts', required: false, defaultValue: true, parser: parseBool };
+
+E.JQUERY_URL = { envVar: 'JQUERY_URL', jsonPath: 'jqueryUrl', required: false, defaultValue: 'https://ajax.googleapis.com/ajax/libs/jquery' };
 
 // Chrome AddOn extension Id for sharing screen
 E.CHROME_EXTENSION_ID = { envVar: 'CHROME_EXTENSION_ID', jsonPath: 'Screensharing.chromeExtensionId' };

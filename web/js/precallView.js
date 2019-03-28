@@ -58,10 +58,28 @@
 
       // pointer-events is not working on IE so we can receive as target a child
       var elem = HTMLElems.getAncestorByTagName(e.target, 'a');
+
       if (!elem) {
         return;
       }
       switch (elem.id) {
+        case 'preToggleFacingMode':
+          Utils.sendEvent('roomView:toggleFacingMode');
+          break;
+        case 'prePickMic':
+          var select = document.getElementById('select-devices');
+          select.style.display = 'inline-block';
+          Modal.showConfirm({
+            head: 'Set mic input',
+            detail: 'Please identify the audio source in the following list:',
+            button: 'Set'
+          }, true).then(function (start) {
+            if (start) {
+              Utils.sendEvent('roomView:setAudioSource', select.value);
+            }
+            select.style.display = 'none';
+          });
+          break;
         case 'initialAudioSwitch':
           if (!initialAudioSwitch.classList.contains('activated')) {
             setSwitchStatus(true, 'Audio', 'roomView:initialAudioSwitch');
@@ -134,6 +152,17 @@
   var hideConnectivityTest = function () {
     document.getElementById('pre-call-test').style.display = 'none';
     document.getElementById('precall-test-meter').style.display = 'none';
+  };
+
+  var populateAudioDevicesDropdown = function (audioDevices, selectedDevId) {
+    var select = document.getElementById('select-devices');
+    audioDevices.forEach(function (device) {
+      var option = document.createElement('option');
+      option.text = device.label;
+      option.value = device.deviceId;
+      if (option.value === selectedDevId) option.selected = true;
+      select.appendChild(option);
+    });
   };
 
   var alreadyInitialized = false;
@@ -276,6 +305,7 @@
   exports.PrecallView = {
     init: init,
     hide: hide,
+    populateAudioDevicesDropdown: populateAudioDevicesDropdown,
     setRoomName: setRoomName,
     setUsername: setUsername,
     setFocus: setFocus,

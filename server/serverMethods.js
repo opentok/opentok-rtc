@@ -93,12 +93,18 @@ function ServerMethods(aLogLevel, aModules) {
       var templatingSecret = config.get(C.TEMPLATING_SECRET);
       var apiKey = config.get(C.OPENTOK_API_KEY);
       var apiSecret = config.get(C.OPENTOK_API_SECRET);
+      var precallApiKey = config.get(C.OPENTOK_PRECALL_API_KEY) || config.get(C.OPENTOK_API_KEY);
+      var precallApiSecret = config.get(C.OPENTOK_PRECALL_API_SECRET)
+        || config.get(C.OPENTOK_API_SECRET);
       var opentokJsUrl = config.get(C.OPENTOK_JS_URL);
+      var useGoogleFonts = config.get(C.USE_GOOGLE_FONTS);
+      var jqueryUrl = config.get(C.JQUERY_URL);
       logger.log('apiSecret', apiSecret);
       var archivePollingTO = config.get(C.ARCHIVE_POLLING_INITIAL_TIMEOUT);
       var archivePollingTOMultiplier =
                 config.get(C.ARCHIVE_POLLING_TIMEOUT_MULTIPLIER);
       var otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret);
+      var precallOtInstance = Utils.CachifiedObject(Opentok, precallApiKey, precallApiSecret);
 
       var allowIframing = config.get(C.ALLOW_IFRAMING);
       var archiveAlways = config.get(C.ARCHIVE_ALWAYS);
@@ -112,6 +118,7 @@ function ServerMethods(aLogLevel, aModules) {
       var sipRequireGoogleAuth = config.get(C.SIP_REQUIRE_GOOGLE_AUTH);
       var googleId = config.get(C.GOOGLE_CLIENT_ID);
       var googleHostedDomain = config.get(C.GOOGLE_HOSTED_DOMAIN);
+
       if (sipRequireGoogleAuth) {
         googleAuth = new GoogleAuth.EnabledGoogleAuthStrategy(googleId, googleHostedDomain);
       } else {
@@ -161,8 +168,11 @@ function ServerMethods(aLogLevel, aModules) {
       return firebaseArchivesPromise
               .then(firebaseArchives => ({
                 otInstance,
+                precallOtInstance,
                 apiKey,
                 apiSecret,
+                precallApiKey,
+                precallApiSecret,
                 archivePollingTO,
                 archivePollingTOMultiplier,
                 maxSessionAgeMs,
@@ -190,6 +200,8 @@ function ServerMethods(aLogLevel, aModules) {
                 googleId,
                 googleHostedDomain,
                 reportIssueLevel,
+                useGoogleFonts,
+                jqueryUrl,
               }));
     });
   }
@@ -297,6 +309,7 @@ function ServerMethods(aLogLevel, aModules) {
       .render('index.ejs', {
         isWebRTCVersion: aReq.tbConfig.isWebRTCVersion,
         showTos: aReq.tbConfig.showTos,
+        useGoogleFonts: aReq.tbConfig.useGoogleFonts,
       }, (err, html) => {
         if (err) {
           logger.error('getRoot. error: ', err);
@@ -319,7 +332,7 @@ function ServerMethods(aLogLevel, aModules) {
     var userName = query && query.userName;
 
     // Create a session ID and token for the network test
-    tbConfig.otInstance.createSession({ mediaMode: 'routed' }, (error, testSession) => {
+    tbConfig.precallOtInstance.createSession({ mediaMode: 'routed' }, (error, testSession) => {
       // We really don't want to cache this
       aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
       aRes.set('Pragma', 'no-cache');
@@ -343,13 +356,15 @@ function ServerMethods(aLogLevel, aModules) {
           feedbackUrl: tbConfig.feedbackUrl,
           precallSessionId: testSession.sessionId,
           apiKey: tbConfig.apiKey,
-          precallToken: tbConfig.otInstance.generateToken(testSession.sessionId, {
+          precallApiKey: tbConfig.precallApiKey,
+          precallToken: tbConfig.precallOtInstance.generateToken(testSession.sessionId, {
             role: 'publisher',
           }),
           hasSip: tbConfig.enableSip,
           showTos: tbConfig.showTos,
           opentokJsUrl: tbConfig.opentokJsUrl,
           authDomain: tbConfig.googleHostedDomain,
+          useGoogleFonts: tbConfig.useGoogleFonts,
         }, (err, html) => {
           if (err) {
             logger.log('getRoom. error:', err);
@@ -435,6 +450,7 @@ function ServerMethods(aLogLevel, aModules) {
         // We have to create an authentication token for the new user...
         var fbUserToken =
           enableArchiveManager && fbArchives.createUserToken(usableSessionInfo.sessionId, userName);
+
         // and finally, answer...
         var answer = {
           apiKey: tbConfig.apiKey,
@@ -456,6 +472,7 @@ function ServerMethods(aLogLevel, aModules) {
           googleId: tbConfig.googleId,
           googleHostedDomain: tbConfig.googleHostedDomain,
           reportIssueLevel: tbConfig.reportIssueLevel,
+          jqueryUrl: tbConfig.jqueryUrl,
         };
         answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId;
         aRes.send(answer);
@@ -552,6 +569,7 @@ function ServerMethods(aLogLevel, aModules) {
             // falls through
           case 'startComposite':
             logger.log('Binding archiveOp to startArchive with sessionId:', sessionInfo.sessionId);
+            archiveOptions.resolution = '1280x720';
             archiveOp =
               otInstance.startArchive_P.bind(otInstance, sessionInfo.sessionId, archiveOptions);
             break;
@@ -752,6 +770,61 @@ function ServerMethods(aLogLevel, aModules) {
     });
   }
 
+  function saveConnectionFirebase(aReq, aRes) {
+    var body = aReq.body;
+    var connection = body.connection;
+    var sessionId = body.sessionId;
+    var tbConfig = aReq.tbConfig;
+    var fbArchives = tbConfig.fbArchives;
+    var enableArchiveManager = tbConfig.enableArchiveManager;
+
+    fbArchives.saveConnection(connection, sessionId)
+    .then(() => {
+      if (enableArchiveManager) {
+        var fbArchivesCallback = function (archivesSnapshot) {
+          var archives = archivesSnapshot.val() || {};
+
+          tbConfig.otInstance.signal(
+            sessionId,
+            null,
+            {
+              type: 'archives',
+              data: JSON.stringify({
+                _head: {
+                  id: 1,
+                  seq: 1,
+                  tot: 1,
+                },
+                data: archives,
+              }),
+            },
+            (error) => {
+              if (error) {
+                return logger.log('Get archives error:', error);
+              }
+              return false;
+            });
+        };
+
+        fbArchives.subscribeArchiveUpdates(sessionId, fbArchivesCallback);
+      }
+    });
+
+    aRes.send({});
+  }
+
+  function deleteConnectionFirebase(aReq, aRes) {
+    var body = aReq.body;
+    var connection = body.connection;
+    var sessionId = body.sessionId;
+    var tbConfig = aReq.tbConfig;
+    var fbArchives = tbConfig.fbArchives;
+
+    fbArchives.deleteConnection(connection, sessionId);
+
+    aRes.send({});
+  }
+
   return {
     logger,
     configReady,
@@ -770,6 +843,8 @@ function ServerMethods(aLogLevel, aModules) {
     postHangUp,
     getHealth,
     oldVersionCompat,
+    saveConnectionFirebase,
+    deleteConnectionFirebase,
   };
 }
 

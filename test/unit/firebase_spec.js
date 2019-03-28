@@ -33,7 +33,7 @@ describe('FirebaseModel', () => {
 
 
     it('should return a promise, and it should fulfill', (done) => {
-      initPromise = FirebaseModel.init(baseURL, 'fakeToken');
+      initPromise = FirebaseModel.init();
       expect(initPromise.then).to.be.a('function');
       initPromise.then(() => {
         done();
