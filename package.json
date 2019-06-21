@@ -59,7 +59,7 @@
     "chai": "^3.3.0",
     "chai-as-promised": "^5.2.0",
     "concurrently": "^3.4.0",
-    "eslint": "^3.19.0",
+    "eslint": "^4.18.2",
     "eslint-config-airbnb": "^15.0.1",
     "eslint-config-airbnb-base": "^11.2.0",
     "eslint-plugin-import": "^2.3.0",
