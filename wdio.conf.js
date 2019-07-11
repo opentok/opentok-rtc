@@ -100,7 +100,7 @@ const config = {
   seleniumArgs: {
     drivers: {
       chrome: {
-        version: 2.31,
+        version: '2.46',
         baseURL: 'https://chromedriver.storage.googleapis.com'
       }
     }
@@ -108,7 +108,7 @@ const config = {
   seleniumInstallArgs: {
     drivers: {
       chrome: {
-        version: 2.31,
+        version: '2.46',
         baseURL: 'https://chromedriver.storage.googleapis.com'
       }
     }

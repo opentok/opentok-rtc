@@ -17,7 +17,11 @@
     <link rel="stylesheet" href="/css/room.opentok.css">
     <link rel="stylesheet" href="/css/buttons.css" />
 
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <% if (useGoogleFonts) { %>
+      <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <% } else { %>
+      <link href="/css/fonts.css" rel="stylesheet">
+    <% } %>
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/<%=chromeExtensionId%>">
     <link rel="stylesheet" href="https://assets.tokbox.com/solutions/css/style.css">
     <link rel="stylesheet" href="/css/annotation.opentok.css">
@@ -80,6 +84,12 @@
         </div>
         <div class="audioSwitch" disabled>
           <a id="audioSwitch"><i data-icon="audioSwitch"></i><span>Mute all participants</span></a>
+        </div>
+        <div class="sourcePick">
+          <a id="toggleFacingMode"><i data-icon="cycleVideo"></i></a>
+        </div>
+        <div class="sourcePick">
+          <a id="pickMic"><i data-icon="pmic"></i></a>
         </div>
         <%   if(enableArchiving) { %>
         <div id="toggleArchiving" disabled>
@@ -203,9 +213,9 @@
             </footer>
         </section>
         <section id="extInstallationSuccessful">
-          <header>Chrome extension was installed successfully.</header>
+          <header>You need a Chrome extension to share your screen.</header>
           <hr>
-          <p>You need to refresh your browser in order to use it.</p>
+          <p>Once you have installed it, refresh your browser and click 'share screen' again.</p>
           <footer>
             <button id="scrShrLater" class="btn btn-white btn-padding ctaarrow-blue">Later</button>
             <button id="scrShrReload" class="btn btn-blue btn-padding ctaarrow-white">Reload</button>
@@ -339,6 +349,7 @@
         <header><span class="msg"></span></header>
         <hr>
         <p class="detail"></p>
+        <select id="select-devices" class="devices"></select>
         <footer>
           <button class="btn btn-blue btn-padding ctaarrow-white accept"></button>
         </footer>

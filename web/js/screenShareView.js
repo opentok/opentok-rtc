@@ -22,7 +22,7 @@
 
     var installLink = shareError.querySelector('#screenShareErrorInstall button');
     installLink.addEventListener('click', function () {
-      hideShareScreenError();
+      Modal.hide('.screen-modal');
       Utils.sendEvent('screenShareView:installExtension');
     });
     Utils.addEventsHandlers('screenShareController:', screenShareCtrlEvents, exports);

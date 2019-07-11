@@ -32,19 +32,16 @@ body {
       min-height: 66px;
     }
     img {
-      margin-left: calc(~"50% - 100px");
       @media @smartphonesPortrait {
-        margin-left: calc(~"50% - 50px");
         top: 37px;
-        width: 120px;
-        height: 31.5px;
+        width: 240px;
       }
     }
 
   }
 
   h1, h2, h3 {
-    font-family: @muliRegularFont, arial;
+    font-family: @baseFontFamily;
     padding: 0;
     text-align: center;
     @media @smartphonesPortrait {
@@ -53,7 +50,7 @@ body {
   }
 
   h1 {
-    font-family: @muliRegularFont, arial;
+    font-family: @baseFontFamily;
     font-size: 14px;
     color: #8794a2;
     letter-spacing: 1px;
@@ -192,7 +189,7 @@ body {
     }
 
     .tb.btn {
-      font-family: @muliRegularFont, arial;
+      font-family: @baseFontFamily;
       font-size: 16px;
       @media @smartphonesPortrait {
         font-size: 14px;

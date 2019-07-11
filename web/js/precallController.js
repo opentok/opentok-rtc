@@ -12,34 +12,57 @@
   var publisherOptions = {
     publishAudio: true,
     publishVideo: true,
-    name: ''
+    name: '',
+    width: '100%',
+    height: '100%',
+    insertMode: 'append',
+    showControls: false
   };
 
-  var videoPreviewEventHandlers = {
-    initialAudioSwitch: function (evt) {
-      publisher.publishAudio(evt.detail.status);
-      publisherOptions.publishAudio = evt.detail.status;
-    },
-    initialVideoSwitch: function (evt) {
-      publisher.publishVideo(evt.detail.status);
-      publisherOptions.publishVideo = evt.detail.status;
-    },
-    retest: function () {
-      PrecallView.startPrecallTestMeter();
-      otNetworkTest.startNetworkTest(function (error, result) {
-        if (!error) {
-          PrecallView.displayNetworkTestResults(result);
-        }
-      });
-    },
-    cancelTest: function () {
-      PrecallView.hideConnectivityTest();
-      otNetworkTest.stopTest();
-    }
-  };
+  var storedAudioDeviceId = window.localStorage.getItem('audioDeviceId');
+  var storedVideoDeviceId = window.localStorage.getItem('videoDeviceId');
+  if (storedAudioDeviceId) publisherOptions.audioSource = storedAudioDeviceId;
+  if (storedVideoDeviceId) publisherOptions.videoSource = storedVideoDeviceId;
 
   function showCallSettingsPrompt(roomName, username, otHelper) {
     var selector = '.user-name-modal';
+
+    var videoPreviewEventHandlers = {
+      toggleFacingMode: function () {
+        otHelper.toggleFacingMode().then(function (dev) {
+          var deviceId = dev.deviceId;
+          publisherOptions.videoSource = deviceId;
+          window.localStorage.setItem('videoDeviceId', deviceId);
+        });
+      },
+      setAudioSource: function (evt) {
+        var deviceId = evt.detail;
+        otHelper.setAudioSource(deviceId);
+        publisherOptions.audioSource = deviceId;
+        window.localStorage.setItem('audioDeviceId', deviceId);
+      },
+      initialAudioSwitch: function (evt) {
+        publisher.publishAudio(evt.detail.status);
+        publisherOptions.publishAudio = evt.detail.status;
+      },
+      initialVideoSwitch: function (evt) {
+        publisher.publishVideo(evt.detail.status);
+        publisherOptions.publishVideo = evt.detail.status;
+      },
+      retest: function () {
+        PrecallView.startPrecallTestMeter();
+        otNetworkTest.startNetworkTest(function (error, result) {
+          if (!error) {
+            PrecallView.displayNetworkTestResults(result);
+          }
+        });
+      },
+      cancelTest: function () {
+        PrecallView.hideConnectivityTest();
+        otNetworkTest.stopTest();
+      }
+    };
+
     return new Promise(function (resolve) {
       function loadModalText() {
         PrecallView.setRoomName(roomName);
@@ -89,34 +112,39 @@
           }
         }
 
-        otHelper.initPublisher('video-preview',
-          { width: '100%', height: '100%', insertMode: 'append', showControls: false }
-        ).then(function (pub) {
+        otHelper.initPublisher('video-preview', publisherOptions)
+        .then(function (pub) {
           publisher = pub;
-          previewOptions = {
-            apiKey: window.precallApiKey,
-            resolution: '640x480',
-            sessionId: window.precallSessionId,
-            token: window.precallToken
-          };
 
-          // You cannot use the network test in IE or Safari. IE cannot subscribe to its own stream.
-          // In Safari on iOS, you cannot use two publishers (the preview publisher and the network
-          // test publisher) simultaneously.
-          if (!Utils.isIE() && !Utils.isSafariIOS()) {
+          otHelper.getVideoDeviceNotInUse(publisherOptions.videoSource)
+          .then(function (videoSourceId) {
+            previewOptions = {
+              apiKey: window.precallApiKey,
+              resolution: '640x480',
+              sessionId: window.precallSessionId,
+              token: window.precallToken,
+              videoSource: videoSourceId
+            };
+
             publisher.on('accessAllowed', function () {
-              PrecallView.startPrecallTestMeter();
-              otNetworkTest = new OTNetworkTest(previewOptions);
-              otNetworkTest.startNetworkTest(function (error, result) {
-                PrecallView.displayNetworkTestResults(result);
-                if (result.audioOnly) {
-                  publisher.publishVideo(false);
-                  Utils.sendEvent('PrecallController:audioOnly');
-                }
+              otHelper.getDevices('audioInput').then(function (audioDevs) {
+                PrecallView.populateAudioDevicesDropdown(audioDevs, publisherOptions.audioSource);
               });
+              // You cannot use the network test in IE or Safari because you cannot use two
+              // publishers (the preview publisher and the network test publisher) simultaneously.
+              if (!Utils.isIE() && !Utils.isSafariIOS()) {
+                PrecallView.startPrecallTestMeter();
+                otNetworkTest = new OTNetworkTest(previewOptions);
+                otNetworkTest.startNetworkTest(function (error, result) {
+                  PrecallView.displayNetworkTestResults(result);
+                  if (result.audioOnly) {
+                    publisher.publishVideo(false);
+                    Utils.sendEvent('PrecallController:audioOnly');
+                  }
+                });
+              }
             });
-          }
-
+          });
           Utils.addEventsHandlers('roomView:', videoPreviewEventHandlers, exports);
           var movingAvg = null;
           publisher.on('audioLevelUpdated', function (event) {
