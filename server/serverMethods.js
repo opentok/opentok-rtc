@@ -31,6 +31,8 @@ function ServerMethods(aLogLevel, aModules) {
 
   var Opentok = aModules.Opentok || require('opentok');  // eslint-disable-line global-require
 
+  var roomBlackList = env.blacklist ? env.blacklist.split(',').map(word => word.trim()) : [];
+
   if (aModules.Firebase) {
     FirebaseArchives.Firebase = aModules.Firebase;
   }
@@ -247,6 +249,10 @@ function ServerMethods(aLogLevel, aModules) {
     logger.log('getRoomArchive ' + aReq.path, 'roomName: ' + aReq.params.roomName);
     var tbConfig = aReq.tbConfig;
     var roomName = aReq.params.roomName.toLowerCase();
+    if (isInBlacklist(roomName)) {
+      logger.log('getRoom. error:', `Blacklist found '${roomName}'`);
+      return aRes.status(404).send(null);
+    }
     serverPersistence
       .getKey(redisRoomPrefix + roomName)
       .then(_getUsableSessionInfo.bind(tbConfig.otInstance,
@@ -320,12 +326,20 @@ function ServerMethods(aLogLevel, aModules) {
       });
   }
 
+  function isInBlacklist(name) {
+    return roomBlackList.includes(name.trim().toLowerCase());
+  }
+
   // Return the personalized HTML for a room.
   function getRoom(aReq, aRes) {
     var query = aReq.query;
     logger.log('getRoom serving ' + aReq.path, 'roomName:', aReq.params.roomName,
                'userName:', query && query.userName,
                'template:', query && query.template);
+    if (isInBlacklist(aReq.params.roomName)) {
+      logger.log('getRoom. error:', `Blacklist found '${aReq.params.roomName}'`);
+      return aRes.status(404).send(null);
+    }
     var tbConfig = aReq.tbConfig;
     var template = query && tbConfig.templatingSecret &&
       (tbConfig.templatingSecret === query.template_auth) && query.template;
@@ -433,8 +447,13 @@ function ServerMethods(aLogLevel, aModules) {
     var userName =
       (aReq.query && aReq.query.userName) || C.DEFAULT_USER_NAME + _numAnonymousUsers++;
     logger.log('getRoomInfo serving ' + aReq.path, 'roomName: ', roomName, 'userName: ', userName);
-
     var enableArchiveManager = tbConfig.enableArchiveManager;
+
+    if (isInBlacklist(roomName)) {
+      logger.log('getRoomInfo. error:', `Blacklist found '${roomName}'`);
+      return aRes.status(404).send(null);
+    }
+
     // We have to check if we have a session id stored already on the persistence provider (and if
     // it's not too old).
     // Note that we do not persist tokens.
@@ -548,6 +567,11 @@ function ServerMethods(aLogLevel, aModules) {
     var userName = body.userName;
     var operation = body.operation;
     var otInstance = tbConfig.otInstance;
+
+    if (isInBlacklist(roomName)) {
+      logger.log('postRoomArchive error:', `Blacklist found '${roomName}'`);
+      return aRes.status(404).send(null);
+    }
 
     logger.log('postRoomArchive serving ' + aReq.path, 'roomName:', roomName,
                'userName:', userName);
@@ -674,6 +698,10 @@ function ServerMethods(aLogLevel, aModules) {
     var body = aReq.body;
     var phoneNumber = body.phoneNumber;
     var googleIdToken = body.googleIdToken;
+    if (isInBlacklist(roomName)) {
+      logger.log('postRoomDial. error:', `Blacklist found '${roomName}'`);
+      return aRes.status(404).send(null);
+    }
     if (!tbConfig.enableSip) {
       return aRes.status(400).send(new ErrorInfo(400, 'Phone dial-out not allowed.'));
     }
