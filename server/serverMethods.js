@@ -31,7 +31,7 @@ function ServerMethods(aLogLevel, aModules) {
 
   var Opentok = aModules.Opentok || require('opentok');  // eslint-disable-line global-require
 
-  var roomBlackList = env.blacklist ? env.blacklist.split(',') : [];
+  var roomBlackList = env.blacklist ? env.blacklist.split(',').map(word => word.trim()) : [];
 
   if (aModules.Firebase) {
     FirebaseArchives.Firebase = aModules.Firebase;
@@ -327,7 +327,7 @@ function ServerMethods(aLogLevel, aModules) {
   }
 
   function isInBlacklist(name) {
-    return roomBlackList.includes(name.toLowerCase());
+    return roomBlackList.includes(name.trim().toLowerCase());
   }
 
   // Return the personalized HTML for a room.
