@@ -350,6 +350,48 @@ paths:
           description: Failed health check
           schema:
             $ref: '#/definitions/HealthInfo'
+  /saveConnection:
+    post:
+      summary: Callback to store a new connection in Firebase.
+      x-implemented-in: saveConnectionFirebase
+      description: Adds a new connection in the corresponding session in Firebase.
+      parameters:
+        - name: connection
+          in: body
+          description: The connection to be stored.
+          required: true
+          type: string
+        - name: sessionId
+          in: body
+          description: The sessionId of the connection.
+          required: true
+          type: string
+      tags:
+        - Firebase
+      responses:
+        '200':
+          description: OK
+  /deleteConnection:
+    post:
+      summary: Callback to delete a inactive connection from Firebase.
+      x-implemented-in: deleteConnectionFirebase
+      description: Deletes a connection in the corresponding session in Firebase.
+      parameters:
+        - name: connection
+          in: body
+          description: The connection to be deleted.
+          required: true
+          type: string
+        - name: sessionId
+          in: body
+          description: The sessionId of the connection.
+          required: true
+          type: string
+      tags:
+        - Firebase
+      responses:
+        '200':
+          description: OK
 definitions:
   RoomHTML:
     type: string

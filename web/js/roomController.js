@@ -315,7 +315,6 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
   var viewEventHandlers = {
     endCall: function () {
       otHelper.disconnect();
-      window.location = '/';
     },
     startArchiving: function (evt) {
       sendArchivingOperation((evt.detail && evt.detail.operation) || 'startComposite');
@@ -667,6 +666,9 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
           RoomView.showConfirmChangeMicStatus(muteAllSwitch).then(setNewAudioStatus);
         }
       }
+    },
+    'signal:archives': function (evt) {
+      Utils.sendEvent('roomController:archiveUpdates', evt);
     }
   };
 
@@ -722,6 +724,8 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       RoomView.roomURI = roomURI;
       publisherOptions.publishAudio = info.publisherOptions.publishAudio;
       publisherOptions.publishVideo = info.publisherOptions.publishVideo;
+      publisherOptions.audioSource = info.publisherOptions.audioSource;
+      publisherOptions.videoSource = info.publisherOptions.videoSource;
       return info;
     });
   }
@@ -795,8 +799,9 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
               }
             };
           };
+
         loadAnnotations = LazyLoader.load([
-          '//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js',
+          aParams.jqueryUrl + '/3.3.1/jquery.min.js',
           'https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js',
           '/js/vendor/opentok-annotation.js'
         ]);
@@ -807,6 +812,9 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
     Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
     RoomView.init(enableHangoutScroll, enableArchiveManager, enableSip);
+    // Init this controller before connect to the session
+    // to start receiving signals about archives updates
+    RecordingsController.init(enableArchiveManager);
 
     roomURI = aParams.roomURI;
     userName = aParams.username ? aParams.username.substring(0, 1000) : '';
@@ -870,11 +878,9 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
           });
         })
         .then(function () {
-          RecordingsController.init(enableArchiveManager, aParams.firebaseURL,
-                                    aParams.firebaseToken);
           ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
           FeedbackController.init(otHelper, aParams.reportIssueLevel);
-          PhoneNumberController.init();
+          PhoneNumberController.init(aParams.jqueryUrl);
           Utils.sendEvent('roomController:controllersReady');
         })
         .catch(function (error) {

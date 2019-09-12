@@ -146,9 +146,9 @@
 }
 
 [data-icon="tokbox_logo"] {
-  background-image: url("/images/tokbox-logo.svg");
-  width: 164.2px;
-  height: 45px;
+  background-image: url("/images/tokbox-nexmo-logo.svg");
+  width: 235px;
+  height: 41px;
   @media @smartphonesPortrait {
     background-image: url("/images/tokbox-logo-bug.svg");
     width: 27px;
@@ -427,6 +427,41 @@
 #videoSwitch, #audioSwitch {
   [data-icon="videoSwitch"], [data-icon="audioSwitch"] {
     background-image: url("/images/icons/switch_off_blue.svg");
+    width: 51px;
+    height: 30.4px;
+    vertical-align: text-bottom;
+  }
+}
+
+.sourcePick {
+  min-width: 70px;
+  cursor: pointer;
+  display: inline-block; 
+  text-align: center;
+}
+
+.right-container {
+  .sourcePick {
+    @media @smartphonesPortrait {
+      margin-top: -36px;
+      margin-right: 7px;
+    }
+  }
+}
+
+#toggleFacingMode {
+  [data-icon="cycleVideo"] {
+    background-image: url("/images/icons/toggleVideo.svg");
+    width: 51px;
+    height: 30.4px;
+    vertical-align: text-bottom;
+  }
+}
+
+#pickMic {
+  [data-icon="pmic"] {
+    background-image: url("/images/icons/mic.svg");
+    background-position: center; 
     width: 51px;
     height: 30.4px;
     vertical-align: text-bottom;

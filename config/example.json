@@ -15,7 +15,7 @@
       }
    },
    "Feedback":{
-     "enabled": false,
+     "url": "",
      "reportIssueLevel": 0
    },
    "Screensharing":{
@@ -33,5 +33,7 @@
   "Google": {
     "clientId": "yourClientId.apps.googleusercontent.com",
     "hostedDomain": "yourhosteddomain.com"
-  }
+  },
+  "useGoogleFonts": true,
+  "jqueryUrl": "https://ajax.googleapis.com/ajax/libs/jquery"
 }
