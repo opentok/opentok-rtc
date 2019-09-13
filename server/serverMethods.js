@@ -156,7 +156,8 @@ function ServerMethods(aLogLevel, aModules) {
         logger.error('Firebase not configured. Please provide firebase credentials or disable archive_manager');
       }
 
-      roomBlackList = config.get(C.BLACKLIST) ? config.get(C.BLACKLIST).split(',').map(word => word.trim()) : [];
+      roomBlackList = config.get(C.BLACKLIST) ?
+        config.get(C.BLACKLIST).split(',').map(word => word.trim().toLowerCase()) : [];
 
             // For this object we need to know if/when we're reconnecting so we can shutdown the
             // old instance.
