@@ -36,47 +36,47 @@
     <section class="main">
       <div id="righthand-container">
         <div id="righthand-container-cell">
-      <section id="main-content">
-
-        <header>
-          <% if (!isWebRTCVersion) { %>
-                  <h1>OpenTok Demo by</h1>
-          <% } else { %>
-                  <h1>WebRTC Demo</h1>
-          <% } %>
-          <img src="images/tokbox-nexmo-logo.svg" alt="opentok transparent logo">
-          <% if (isWebRTCVersion) { %>
-                  <h2>Built by TokBox on the OpenTok Platform</h2>
-                  <h3>This WebRTC Demo enables group video conferencing, text chat, screen sharing, and more.</h3>
-          <% } %>
-        </header>
-        <form>
-          <div>
-            <input id="room" class="text-input required" data-wd="roomname">
-            <label id="room-label">Meeting name</label>
-            <p class="error-room error-text">
-              <i data-icon="warning"></i>
-              Please enter a meeting name.
-            </p>
-          </div>
-          <div>
-            <input id="user" class="text-input" data-wd="username">
-            <label id="user-label">Your name</label>
-          </div>
+          <section id="main-content">
+            <header>
+              <% if (!isWebRTCVersion) { %>
+                <h1>Vonage Free Conferencing</h1>
+              <% } else { %>
+                <h1>WebRTC Demo</h1>
+              <% } %>
+              <img src="images/vonage-logo.svg" alt="vonage transparent logo">
+              <p>
+                Free to use for everyone who unexpectedly needs to work from home, etc.
+              </p>
+              <% if (isWebRTCVersion) { %>
+                <h2>Built by TokBox on the OpenTok Platform</h2>
+                <h3>This WebRTC Demo enables group video conferencing, text chat, screen sharing, and more.</h3>
+              <% } %>
+            </header>
+            <form>
+              <div>
+                <input id="room" class="text-input required" data-wd="roomname">
+                <label id="room-label">Meeting name</label>
+                <p class="error-room error-text">
+                  <i data-icon="warning"></i>
+                  Please enter a meeting name.
+                </p>
+              </div>
+              <div>
+                <input id="user" class="text-input" data-wd="username">
+                <label id="user-label">Your name</label>
+              </div>
+            </form>
+            <div class="landing-more-info">
+              Need help?
+              <a href="https://tokbox.com/" target="_blank">About TokBox</a>
+            </div>
+            <div class="safari-plug">
+              <a href="https://safari.opentokrtc.com/">Try the WebRTC Demo for Safari.</a>
+            </div>
+          </section>
           <button id="enter" data-wd="enterroom"></button>
-        </form>
-        <div class="landing-more-info">
-          Need help?
-            <a href="https://tokbox.com/" target="_blank">About TokBox</a>
-          /
-            <a href="https://tokbox.com/contact/sales" target="_blank">Contact Sales</a>
         </div>
-        <div class="safari-plug">
-          <a href="https://safari.opentokrtc.com/">Try the WebRTC Demo for Safari.</a>
-        </div>
-      </section>
-    </div>
-  </div>
+      </div>
     </section>
 
     <script>
@@ -88,6 +88,14 @@
       ga('create', 'UA-462500-32', 'auto');
       ga('send', 'pageview');
 
+      document.querySelectorAll('.text-input').forEach(function(input) {
+        input.addEventListener("keyup", function(event) {
+          if (event.keyCode === 13) {
+            event.preventDefault();
+            document.getElementById("enter").click();
+          }
+        });
+      });
     </script>
   </body>
 </html>

@@ -8,29 +8,24 @@
 @import 'buttons.less';
 
 body {
-  background-color: #FFF;
-  color: @text;
-  overflow: hidden;
-  background-color: black;
-  background-image: url(/images/background.jpg);
-  background-repeat: no-repeat;
+  background: url(/images/background-rebrand.png) no-repeat center center fixed;
   background-size: cover;
-  transition: none;
-  padding: 0;
-  margin: 0;
+  height: 100%;
+  overflow: hidden;
 }
 
 .main {
-
   height: 100%;
-  .justify-content(center);
-  text-shadow: black 1px 1px 12px;
 
   header {
+    display: flex;
+    flex-direction: column;
     min-height: 222px;
+
     @media @smartphonesPortrait {
       min-height: 66px;
     }
+
     img {
       @media @smartphonesPortrait {
         top: 37px;
@@ -38,6 +33,14 @@ body {
       }
     }
 
+    p {
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 21px;
+      text-align: center;
+      color: #FFFFFF;
+      margin-top: 25px;
+    }
   }
 
   h1, h2, h3 {
@@ -102,6 +105,7 @@ body {
       }
       text-shadow: black 1px 1px 12px;
     }
+
     textarea {
       padding: 12px 20px 10px 0;
     }
@@ -112,25 +116,27 @@ body {
       line-height: 57px;
       width: 100%;
       bottom: 0;
-      left: 8px;
+      left: 15px;
       text-align: left;
       font-weight: normal;
       position: relative;
       transition: all 0.5s;
     }
+
     label.visited {
       font-size: 12px;
+      color: #F7D3EC;
     }
+
     #room-label.visited {
-      color: #748393;
-      left: 278px;
+      left: 220px;
       @media @smartphonesPortrait {
         left: calc(~"100% - 80px");
       }
     }
+
     #user-label.visited {
-      color: #748393;
-      left: 296px;
+      left: 240px;
       @media @smartphonesPortrait {
         left: calc(~"100% - 60px");
       }
@@ -203,20 +209,22 @@ body {
     .text-input {
       font-size: 16px;
       position: absolute;
-      left: 12px;
       z-index: 100;
+
       @media @smartphonesPortrait {
         position: fixed;
         left: 0;
         font-size: 14px;
       }
+
       @media @smartphonesLandscape {
         font-size: 14px;
       }
     }
   }
+
   .landing-more-info {
-    color: #748393;
+    color: #ffffff;
     font-size: 12px;
     margin-top: 69px;
     margin-bottom: 32px;
@@ -254,26 +262,19 @@ body {
     padding: 0;
   }
 
-  section {
+  #main-content {
     display: flex;
     .align-items(center);
     .flex-direction(column);
     .justify-content(center);
     .flex(1);
-    right: 2px;
     position: relative;
-    float: right;
-    margin-right: 80px;
-    padding: 20px;
-    width: 360px;
+    width: 305px;
     @media @smartphonesPortrait {
       margin-right: 0;
       width: 100%;
       height: 100%;
     }
-    background: rgba(0, 0, 0, 0.6);
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   }
 
   a {
@@ -284,20 +285,16 @@ body {
     position: absolute;
     width: 50px;
     height: 50px;
-    padding: 0;
-    right: -82px;
     top: calc(~"50% - 25px");
+    right: 0;
     @media @smartphones {
       right: 0;
       position: fixed;
     }
-    background-color: #0099cc;
-    opacity: 0.7;
-    margin-left: 0;
+    background-color: #ffffff;
     border: 0;
-    border-radius: 0;
     transition: width 0.5s ease-out;
-    background-image: url(/images/icons/ctaarrow_white@2x.png);   
+    background-image: url(/images/icons/ctaarrow-black.png);
     background-size: 12.5px 21px;
     background-repeat: no-repeat;
     background-position: center;
@@ -306,19 +303,21 @@ body {
     &:hover {
       opacity: 1;
     }
+    mix-blend-mode: normal;
+    border-radius: 2px 0px 0px 2px;
   }
+
   #righthand-container {
     height: 100%;
-    display: table;
-    width: 498px;
+    width: 554px;
     @media @smartphonesPortrait {
       width: 100%;
     }
     right: 0;
     position: absolute;
-  }
-  #righthand-container-cell {
-    vertical-align: middle;
-    display: table-cell;
+    background: rgba(19, 20, 21, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
