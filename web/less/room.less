@@ -549,11 +549,10 @@ body {
 }
 
 .user-name-modal {
-  background-color: black;
-  background-image: url(/images/background.jpg);
-  background-repeat: no-repeat;
+  background: url(/images/background-rebrand.png) no-repeat center center fixed;
   background-size: cover;
-  padding: 0;
+  height: 100%;
+  overflow: hidden;
   #logo {
     position: absolute;
     top: 40px;
@@ -573,19 +572,16 @@ body {
 }
 
 .user-name-modal .tc-dialog {
-  float: right;
-  margin-right: 41px;
-  margin-top: 46px;
-  padding: 20px;
+  padding: 0;
+  margin: 0;
   @media @smartphones {
     max-width: none;
     padding: 10px;
   }
-  max-width: 360px;
-  background: rgba(0,0,0,0.6);
-  transform: translateY(0);
   color: white;
   text-shadow: black 1px 1px 8px;
+  background: transparent;
+  box-shadow: unset;
 
   @media @smartphonesPortrait {
     width: 100%;
@@ -634,6 +630,7 @@ body {
     line-height: 50px;
     border-radius: 4px;
   }
+
   .publish-settings {
     padding-top: 20px;
     span {
@@ -642,11 +639,11 @@ body {
   }
   #video-preview {
     width: 360px;
-    height: 264px;
+    height: 212px;
     background-color: #222;
-    border-radius: 12px;
+    border-radius: 5px;
     .OT_publisher .OT_widget-container {
-      border-radius: 12px;
+      border-radius: 5px;
     }
     @media @smartphonesPortrait {
       position: relative;
@@ -759,7 +756,7 @@ body {
     width: 89px;
   }
   #audio-meter-level {
-    background-color: #10a9dc;
+    background-color: #ffffff;
     height: 100%;
   }
 
@@ -819,7 +816,7 @@ body {
   }
 
   #precall-test-meter-level {
-    background-color: #10a9dc;
+    background-color: #ffffff;
     height: 100%;
     width: 0;
     background-image: -webkit-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
@@ -844,18 +841,35 @@ body {
   top: 0;
   right: 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
   height: 100%;
+  width: 554px;
+  background: rgba(19, 20, 21, 0.5);
   @media @smartphones {
     width: 100%;
     margin: 0;
+  }
+
+  .logo-container {
+    position: relative;
+    width: 100%;
+    margin-top: 60px;
+    display: flex;
+    justify-content: flex-end;
+
+    img {
+      width: 138px;
+      padding: 0 50px 0 50px;
+    }
   }
 }
 
 #pre-call-test-results {
   position: absolute;
   display: none;
-  right: 456px;
+  right: 554px;
   width: 233px;
   height: 420.4px;
   background-color: white;
@@ -1078,7 +1092,7 @@ footer.main {
   text-overflow: ellipsis;
   overflow: hidden;
   max-width: 290px;
-  color: white;
+  color: #131415;
 }
 
 #enter.btn {
