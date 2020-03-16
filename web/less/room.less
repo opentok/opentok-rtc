@@ -41,8 +41,8 @@ body {
   visibility: hidden;
   height: 98px;
   width: 100%;
-  background-color: #293840;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+  background: #131415;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
   position: absolute;
   display: flex;
   top: 0;
@@ -96,6 +96,7 @@ body {
         white-space: nowrap;
         line-height: 22px;
         margin-bottom: 8px;
+        color: #ffffff;
         @media @smartphonesPortrait {
           font-size: 16px;
           margin: 4px 0 0 12px;
@@ -453,7 +454,9 @@ body {
       }
     }
     button.activated {
-      background-image: url('/images/icons/active-circle.svg');
+      background-image: none;
+      border: 2px solid #871FFF;
+      border-radius: 50%;
     }
     button#endCall {
       background-image: url('/images/icons/red-circle.svg');
