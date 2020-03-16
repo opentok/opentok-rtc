@@ -126,6 +126,15 @@
     window.location.href = url;
   };
 
+  var triggerEnterClick = function(event) {
+    var code = event.keyCode || event.which;
+    console.log(code);
+    if (code === 13) {
+      event.preventDefault();
+      enterButton.click();
+    }
+  }
+
   var addHandlers = function () {
     enterButton.addEventListener('click', function onEnterClicked(event) {
       event.preventDefault();
@@ -154,9 +163,14 @@
         navigateToRoom();
       }
     });
+
     room.addEventListener('keypress', function onKeypress() {
       errorMessage.classList.remove('show');
     });
+
+    room.addEventListener("keydown", triggerEnterClick, false);
+
+    user.addEventListener("keydown", triggerEnterClick, false);
   };
 
   global.LandingView = {
