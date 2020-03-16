@@ -128,7 +128,7 @@
 
   var triggerEnterClick = function(event) {
     var code = event.keyCode || event.which;
-    console.log(code);
+
     if (code === 13) {
       event.preventDefault();
       enterButton.click();
