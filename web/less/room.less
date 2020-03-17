@@ -408,8 +408,7 @@ body {
   display: table;
   table-layout: fixed;
   bottom: -86px;
-  right: 0;
-  left: 0;
+  left: calc(50% - 290px);
   height: 86px;
   width: 520px;
   margin: auto;
@@ -422,6 +421,8 @@ body {
 
   @media @smartphonesPortrait {
     width: (100% + 2px);
+    right: 0;
+    left: 0;
     background-color: rgba(0, 0, 0, 0.8);
     background-image: none;
     padding: 0;
