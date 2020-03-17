@@ -17,6 +17,7 @@ var configLoader = require('./configLoader');
 var FirebaseArchives = require('./firebaseArchives');
 var GoogleAuth = require('./googleAuthStrategies');
 var testHealth = require('./testHealth');
+var Haikunator = require('haikunator');
 
 function ServerMethods(aLogLevel, aModules) {
   aModules = aModules || {};
@@ -45,6 +46,8 @@ function ServerMethods(aLogLevel, aModules) {
     env.REDIS_URL || env.REDISTOGO_URL || '';
   var serverPersistence =
     new ServerPersistence([], connectionString, aLogLevel, aModules);
+
+  const haikunator = new Haikunator();
 
   const redisRoomPrefix = C.REDIS_ROOM_PREFIX;
   const redisPhonePrefix = C.REDIS_PHONE_PREFIX;
@@ -315,6 +318,7 @@ function ServerMethods(aLogLevel, aModules) {
   function getRoot(aReq, aRes) {
     aRes
       .render('index.ejs', {
+        roomName: haikunator.haikunate(),
         isWebRTCVersion: aReq.tbConfig.isWebRTCVersion,
         showTos: aReq.tbConfig.showTos,
         useGoogleFonts: aReq.tbConfig.useGoogleFonts,

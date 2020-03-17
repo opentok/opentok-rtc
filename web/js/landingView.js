@@ -1,4 +1,4 @@
-/* global EJSTemplate, Modal, showTos */
+/* global EJSTemplate, Modal, showTos, roomName */
 
 !(function (global) {
   'use strict';
@@ -30,6 +30,8 @@
     userLabelElem = document.getElementById('user-label');
     errorMessage = document.querySelector('.error-room');
     resetForm();
+    roomLabelElem.classList.add('visited');
+    room.value = roomName;
     addHandlers();
     if (window.location.hostname.indexOf('opentokrtc.com') === 0) {
       document.querySelector('.safari-plug').style.display = 'block';
