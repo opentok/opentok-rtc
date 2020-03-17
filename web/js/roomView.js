@@ -61,7 +61,7 @@ BubbleFactory, Clipboard, LayoutManager */
     },
     endCall: {
       head: 'Exit the Meeting',
-      detail: 'You are going to exit the OpenTok Meeting Room. The call will continue with the ' +
+      detail: 'You are going to exit the Vonage Free Conferencing Meeting Room. The call will continue with the ' +
               'remaining participants.',
       button: 'End meeting'
     },
