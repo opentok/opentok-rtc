@@ -133,7 +133,7 @@ describe('OpenTokRTC server', () => {
     request(app)
       .get('/room/roomName?template=room')
       .set('Accept', 'text/html')
-      .expect('Content-Type', new RegExp('text/html'))
+      .expect('X-XSS-Protection', '1; mode=block')
       .expect(200, done);
   });
 

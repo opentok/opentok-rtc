@@ -327,6 +327,7 @@ function ServerMethods(aLogLevel, aModules) {
           logger.error('getRoot. error: ', err);
           aRes.status(500).send(new ErrorInfo(500, 'Invalid Template'));
         } else {
+          aRes.set('X-XSS-Protection', '1; mode=block');
           aRes.send(html);
         }
       });
@@ -357,6 +358,7 @@ function ServerMethods(aLogLevel, aModules) {
       aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
       aRes.set('Pragma', 'no-cache');
       aRes.set('Expires', 0);
+      aRes.set('X-XSS-Protection', '1; mode=block');
       aRes
         .render((template || tbConfig.defaultTemplate) + '.ejs',
         {
