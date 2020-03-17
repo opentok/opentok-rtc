@@ -476,6 +476,29 @@ BubbleFactory, Clipboard, LayoutManager */
       }
     });
 
+    var switchMic = document.getElementById('pickMicContainer');
+
+    switchMic.addEventListener('click', function (e) {
+      var select = document.getElementById('select-devices');
+      select.style.display = 'inline-block';
+      Modal.showConfirm({
+        head: 'Set mic input',
+        detail: 'Please identify the audio source in the following list:',
+        button: 'Change'
+      }).then(function (start) {
+        if (start) {
+          Utils.sendEvent('roomView:setAudioSource', select.value);
+        }
+        select.style.display = 'none';
+      });
+    });
+
+    var switchCam = document.getElementById('pickCamContainer');
+
+    switchCam.addEventListener('click', function (e) {
+      Utils.sendEvent('roomView:toggleFacingMode');
+    });
+
     var menu = document.getElementById('top-banner');
 
     menu.addEventListener('click', function (e) {
@@ -487,23 +510,6 @@ BubbleFactory, Clipboard, LayoutManager */
         return;
       }
       switch (elem.id) {
-        case 'toggleFacingMode':
-          Utils.sendEvent('roomView:toggleFacingMode');
-          break;
-        case 'pickMic':
-          var select = document.getElementById('select-devices');
-          select.style.display = 'inline-block';
-          Modal.showConfirm({
-            head: 'Set mic input',
-            detail: 'Please identify the audio source in the following list:',
-            button: 'Change'
-          }).then(function (start) {
-            if (start) {
-              Utils.sendEvent('roomView:setAudioSource', select.value);
-            }
-            select.style.display = 'none';
-          });
-          break;
         case 'viewRecordings':
           BubbleFactory.get('viewRecordings').toggle();
           break;

@@ -85,12 +85,6 @@
         <div class="audioSwitch" disabled>
           <a id="audioSwitch"><i data-icon="audioSwitch"></i><span>Mute all participants</span></a>
         </div>
-        <div class="sourcePick">
-          <a id="toggleFacingMode"><i data-icon="cycleVideo"></i></a>
-        </div>
-        <div class="sourcePick">
-          <a id="pickMic"><i data-icon="pmic"></i></a>
-        </div>
         <%   if(enableArchiving) { %>
         <div id="toggleArchiving" disabled>
           <a id="startArchiving" class="btn btn-blue btn-padding">Record</a>
@@ -238,6 +232,19 @@
 
       <section for="chooseLayout" class="bubble">
         <div class="bubble-content top-arrow">
+          <div class="source-pick-container">
+            <div id="pickMicContainer" class="sourcePick icon-with-text">
+              <a id="pickMic"><i data-icon="pmic"></i></a>
+              <span>Switch Microphone</span>
+            </div>
+          </div>
+          <div id="pickCamContainer" class="source-pick-container">
+            <div class="sourcePick icon-with-text">
+              <a id="toggleFacingMode"><i data-icon="cycleVideo"></i></a>
+              <span>Switch Camera</span>
+            </div>
+          </div>
+          <hr>
           <ul>
             <li><a data-layout-type="float"></a></li>
             <li><a data-layout-type="f2f_horizontal"></a></li>
