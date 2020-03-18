@@ -1,4 +1,4 @@
-/* global Modal, OTNetworkTest, PrecallView, showTos */
+/* global Modal, OTNetworkTest, PrecallView, showTos, showUnavailable */
 
 !(function (exports) {
   'use strict';
@@ -105,11 +105,26 @@
         }
 
         function submitForm() {
-          if (showTos) {
-            PrecallView.showContract().then(hidePrecall);
-          } else {
-            hidePrecall();
+          function isAllowedToJoin() {
+            return new Promise((resolve, reject) => {
+              if (!showUnavailable) return resolve();
+              Request
+                .roomExists(roomName).then((exists) => {
+                  if (exists) return resolve();
+                  else return reject();
+                })
+            });
           }
+
+          isAllowedToJoin().then(() => {
+            if (showTos) {
+              PrecallView.showContract().then(hidePrecall);
+            } else {
+              hidePrecall();
+            }
+          }).catch((e) => {
+            PrecallView.showUnavailableMessage();
+          });
         }
 
         otHelper.initPublisher('video-preview', publisherOptions)

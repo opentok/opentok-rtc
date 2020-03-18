@@ -1,4 +1,4 @@
-/* global EJSTemplate, Modal, showTos, roomName */
+/* global EJSTemplate, Modal, showTos, showUnavailable, roomName */
 
 !(function (global) {
   'use strict';
@@ -14,6 +14,16 @@
   var loadTosTemplate = function () {
     return new Promise(function (resolve) {
       var tosTemplate = new EJSTemplate({ url: '/templates/tos.ejs' });
+      tosTemplate.render().then(function (aHTML) {
+        document.body.innerHTML += aHTML;
+        resolve();
+      });
+    });
+  };
+
+  var loadUnavailableTemplate = function () {
+    return new Promise(function (resolve) {
+      var tosTemplate = new EJSTemplate({ url: '/templates/unavailable.ejs' });
       tosTemplate.render().then(function (aHTML) {
         document.body.innerHTML += aHTML;
         resolve();
@@ -39,7 +49,9 @@
   };
 
   var init = function () {
-    if (showTos) {
+    if (showUnavailable) {
+      loadUnavailableTemplate().then(performInit);
+    } else if (showTos) {
       loadTosTemplate().then(performInit);
     } else {
       performInit();
@@ -92,6 +104,11 @@
         roomLabelElem.classList.remove('visited');
       }
     }
+  };
+
+  var showUnavailableMessage = function () {
+    var selector = '.tc-modal.unavailable';
+    return Modal.show(selector);
   };
 
   var showContract = function () {
@@ -152,7 +169,9 @@
       form.classList.remove('error');
       enterButton.removeEventListener('click', onEnterClicked);
 
-      if (showTos) {
+      if (showUnavailable) {
+        showUnavailableMessage();
+      } else if (showTos) {
         showContract().then(function (accepted) {
           if (accepted) {
             sessionStorage.setItem('tosAccepted', true);

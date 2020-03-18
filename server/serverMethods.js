@@ -144,6 +144,7 @@ function ServerMethods(aLogLevel, aModules) {
 
       var isWebRTCVersion = config.get(C.DEFAULT_INDEX_PAGE) === 'opentokrtc';
       var showTos = config.get(C.SHOW_TOS);
+      var showUnavailable = config.get(C.SHOW_UNAVAILABLE);
       var supportIE = config.get(C.SUPPORT_IE);
 
       var firebaseConfigured =
@@ -201,6 +202,7 @@ function ServerMethods(aLogLevel, aModules) {
                 enableSip,
                 opentokJsUrl,
                 showTos,
+                showUnavailable,
                 sipUri,
                 sipUsername,
                 sipPassword,
@@ -323,6 +325,7 @@ function ServerMethods(aLogLevel, aModules) {
         roomName: haikunator.haikunate(),
         isWebRTCVersion: aReq.tbConfig.isWebRTCVersion,
         showTos: aReq.tbConfig.showTos,
+        showUnavailable: aReq.tbConfig.showUnavailable,
         useGoogleFonts: aReq.tbConfig.useGoogleFonts,
         supportIE: aReq.tbConfig.supportIE,
       }, (err, html) => {
@@ -387,6 +390,7 @@ function ServerMethods(aLogLevel, aModules) {
           }),
           hasSip: tbConfig.enableSip,
           showTos: tbConfig.showTos,
+          showUnavailable: tbConfig.showUnavailable,
           opentokJsUrl: tbConfig.opentokJsUrl,
           authDomain: tbConfig.googleHostedDomain,
           useGoogleFonts: tbConfig.useGoogleFonts,
@@ -437,6 +441,14 @@ function ServerMethods(aLogLevel, aModules) {
         });
       }
     });
+  }
+
+  function roomExists(aReq, aRes) {
+    var roomName = aReq.params.roomName.toLowerCase();
+    serverPersistence
+      .getKey(redisRoomPrefix + roomName).then((room) => {
+        aRes.send({exists: !!room});
+      })
   }
 
   // Get the information needed to connect to a session
@@ -883,6 +895,7 @@ function ServerMethods(aLogLevel, aModules) {
     postHangUp,
     getHealth,
     oldVersionCompat,
+    roomExists,
     saveConnectionFirebase,
     deleteConnectionFirebase,
   };
