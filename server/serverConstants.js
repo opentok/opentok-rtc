@@ -114,3 +114,5 @@ E.GOOGLE_CLIENT_ID = { envVar: 'GOOGLE_CLIENT_ID', jsonPath: 'Google.clientId', 
 E.GOOGLE_HOSTED_DOMAIN = { envVar: 'GOOGLE_HOSTED_DOMAIN', jsonPath: 'Google.hostedDomain', defaultValue: '' };
 
 E.BLACKLIST = { envVar: 'BLACKLIST', jsonPath: 'blacklist', defaultValue: '' };
+
+E.MEDIA_MODE = { envVar: 'MEDIA_MODE', jsonPath: 'mediaMode', defaultValue: 'routed'};

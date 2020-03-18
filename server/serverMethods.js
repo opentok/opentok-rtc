@@ -120,6 +120,7 @@ function ServerMethods(aLogLevel, aModules) {
       var sipRequireGoogleAuth = config.get(C.SIP_REQUIRE_GOOGLE_AUTH);
       var googleId = config.get(C.GOOGLE_CLIENT_ID);
       var googleHostedDomain = config.get(C.GOOGLE_HOSTED_DOMAIN);
+      var mediaMode = config.get(C.MEDIA_MODE);
 
       if (sipRequireGoogleAuth) {
         googleAuth = new GoogleAuth.EnabledGoogleAuthStrategy(googleId, googleHostedDomain);
@@ -206,6 +207,7 @@ function ServerMethods(aLogLevel, aModules) {
                 reportIssueLevel,
                 useGoogleFonts,
                 jqueryUrl,
+                mediaMode,
               }));
     });
   }
@@ -406,7 +408,7 @@ function ServerMethods(aLogLevel, aModules) {
 
       if (!aSessionInfo || aSessionInfo.lastUsage <= minLastUsage) {
         // We need to create a new session...
-        var sessionOptions = { mediaMode: 'routed' };
+        var sessionOptions = { mediaMode };
         if (aArchiveAlways) {
           sessionOptions.archiveMode = 'always';
         }
