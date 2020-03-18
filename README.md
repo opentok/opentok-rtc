@@ -400,6 +400,12 @@ The app lets the developer POST feedback data to an endpoint on your HTTP server
 * `JQUERY_URL` (Optional, default value: 'https://ajax.googleapis.com/ajax/libs/jquery/'):
    Route of the CDN that will be used to load JQuery scripts.
 
+ * `SUPPORT_IE` (Optional, default value: true): Whether the app support Internet Explorer.
+   If you set this to `false`, the app will not load scripts that add polyfills for IE.
+   Note that OpenTok.js 2.17 removes support for IE, and you should set this to `false`.
+   (When OpenTok.js 2.16 is no longer supported, we will remove this config settings
+   and remove these polyfill scripts.)
+
 ## Customizing the UI
 
 For information on how to customize OpenTokRTC's UI, see [CUSTOMIZING-UI.md](CUSTOMIZING-UI.md).

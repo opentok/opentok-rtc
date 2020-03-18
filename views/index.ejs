@@ -20,8 +20,10 @@
     <!--[if IE]><link rel="shortcut icon" href="/favicon.ico"><![endif]-->
     <link rel="icon" href="/favicon.png">
 
+    <% if (supportIE) { %>
     <script defer type="text/javascript" src="/js/vendor/es6-promise.min.js"></script>
     <script defer type="text/javascript" src="/js/ie_polyfills.js"></script>
+    <% } %>
     <script defer type="text/javascript" src="/js/components/modal.js"></script>
     <script defer type="text/javascript" src="/js/vendor/lazy_loader.js"></script>
     <script defer type="text/javascript" src="/js/rtcApp.js"></script>

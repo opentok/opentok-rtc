@@ -23,8 +23,10 @@
     </script>
 
     <script type="text/javascript" src="https://enterprise.opentok.com/v2/js/opentok.min.js"></script>
+    <% if (supportIE) { %>
     <script defer src="/js/vendor/es6-promise.min.js"></script>
     <script defer type="text/javascript" src="/js/ie_polyfills.js"></script>
+    <% } %>
     <script defer src="/js/vendor/clipboard.min.js"></script>
     <script defer src="/js/components/bubble.js"></script>
     <script defer src="/js/components/modal.js"></script>
