@@ -144,6 +144,7 @@ function ServerMethods(aLogLevel, aModules) {
 
       var isWebRTCVersion = config.get(C.DEFAULT_INDEX_PAGE) === 'opentokrtc';
       var showTos = config.get(C.SHOW_TOS);
+      var supportIE = config.get(C.SUPPORT_IE);
 
       var firebaseConfigured =
               config.get(C.FIREBASE_DATA_URL) && config.get(C.FIREBASE_AUTH_SECRET);
@@ -204,6 +205,7 @@ function ServerMethods(aLogLevel, aModules) {
                 sipUsername,
                 sipPassword,
                 sipRequireGoogleAuth,
+                supportIE,
                 googleId,
                 googleHostedDomain,
                 reportIssueLevel,
@@ -322,6 +324,7 @@ function ServerMethods(aLogLevel, aModules) {
         isWebRTCVersion: aReq.tbConfig.isWebRTCVersion,
         showTos: aReq.tbConfig.showTos,
         useGoogleFonts: aReq.tbConfig.useGoogleFonts,
+        supportIE: aReq.tbConfig.supportIE,
       }, (err, html) => {
         if (err) {
           logger.error('getRoot. error: ', err);
@@ -387,6 +390,7 @@ function ServerMethods(aLogLevel, aModules) {
           opentokJsUrl: tbConfig.opentokJsUrl,
           authDomain: tbConfig.googleHostedDomain,
           useGoogleFonts: tbConfig.useGoogleFonts,
+          supportIE: tbConfig.supportIE,
         }, (err, html) => {
           if (err) {
             logger.log('getRoom. error:', err);
