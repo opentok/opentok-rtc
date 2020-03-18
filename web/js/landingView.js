@@ -3,6 +3,14 @@
 !(function (global) {
   'use strict';
 
+  const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
+  const CognitoUserPool = AmazonCognitoIdentity.CognitoUserPool;
+  const AWS = require('aws-sdk');
+  const request = require('request');
+  const jwkToPem = require('jwk-to-pem');
+  const jwt = require('jsonwebtoken');
+  global.fetch = require('node-fetch');
+
   var room,
     user,
     enterButton,
@@ -20,6 +28,13 @@
       });
     });
   };
+
+  const poolData = {    
+    UserPoolId : "us-east-1_sqwFUAPCz", // Your user pool id here    
+    ClientId : "4ao65ul71je8mf57jfbf1l07bn" // Your client id here
+  }; 
+  
+  const pool_region = 'us-east-1';
 
   var performInit = function () {
     enterButton = document.getElementById('enter');

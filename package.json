@@ -25,6 +25,8 @@
   },
   "homepage": "https://github.com/opentok/opentok-rtc/",
   "dependencies": {
+    "amazon-cognito-identity-js": "^3.2.5",
+    "aws-sdk": "^2.641.0",
     "bower": "^1.6.5",
     "cors": "^2.7.1",
     "daemon": "^1.1.0",
@@ -51,8 +53,12 @@
     "grunt-mocha-test": "^0.12.7",
     "haikunator": "^2.1.2",
     "ioredis": "^4.6.3",
+    "jsonwebtoken": "^8.5.1",
+    "jwk-to-pem": "^2.0.3",
     "lodash": "^4.17.13",
+    "node-fetch": "^2.6.0",
     "opentok": "^2.3.0",
+    "request": "^2.88.2",
     "swagger-boilerplate": "^0.0.16",
     "yamljs": "^0.2.10"
   },
