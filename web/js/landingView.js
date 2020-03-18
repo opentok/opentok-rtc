@@ -66,16 +66,16 @@
     Array.prototype.map.call(fields, function (field) {
       field.value = '';
       field.checked = false;
-      room.focus();
-      room.addEventListener('keyup', onKeyup);
+      user.focus();
+      user.addEventListener('keyup', onKeyup);
       room.addEventListener('focus', onFocus);
       user.addEventListener('focus', onFocus);
     });
   };
 
   var onKeyup = function () {
-    roomLabelElem.classList.add('visited');
-    room.removeEventListener('keyup', onFocus);
+    userLabelElem.classList.add('visited');
+    user.removeEventListener('keyup', onFocus);
   };
 
   var onFocus = function () {
