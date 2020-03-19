@@ -38,7 +38,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     width: '100%',
     height: '100%',
     showControls: true,
-    resolution: '1280x720',
+    resolution: publisherResolution,
     style: {
       audioLevelDisplayMode: 'auto',
       buttonDisplayMode: 'off',
@@ -149,6 +149,15 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
 
   var subscriberStreams = { };
   var dialedNumberTokens = {};
+
+  function htmlEscape(str) {
+    return String(str)
+      .replace(/&/g, '')
+      .replace(/"/g, '')
+      .replace(/'/g, '')
+      .replace(/</g, '')
+      .replace(/>/g, '');
+  };
 
   // We want to use media priorization on the subscriber streams. We're going to restrict the
   // maximum width and height to the one that's actually displayed. To do that, we're going to
@@ -818,6 +827,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
 
     roomURI = aParams.roomURI;
     userName = aParams.username ? aParams.username.substring(0, 1000) : '';
+    userName = htmlEscape(userName.substring(0, 25));
 
     var sessionInfo = {
       apiKey: aParams.apiKey,

@@ -11,6 +11,15 @@
     userLabelElem,
     errorMessage;
 
+  function htmlEscape(str) {
+    return String(str)
+      .replace(/&/g, '')
+      .replace(/"/g, '')
+      .replace(/'/g, '')
+      .replace(/</g, '')
+      .replace(/>/g, '');
+  };
+
   var loadTosTemplate = function () {
     return new Promise(function (resolve) {
       var tosTemplate = new EJSTemplate({ url: '/templates/tos.ejs' });
@@ -78,16 +87,16 @@
     Array.prototype.map.call(fields, function (field) {
       field.value = '';
       field.checked = false;
-      room.focus();
-      room.addEventListener('keyup', onKeyup);
+      user.focus();
+      user.addEventListener('keyup', onKeyup);
       room.addEventListener('focus', onFocus);
       user.addEventListener('focus', onFocus);
     });
   };
 
   var onKeyup = function () {
-    roomLabelElem.classList.add('visited');
-    room.removeEventListener('keyup', onFocus);
+    userLabelElem.classList.add('visited');
+    user.removeEventListener('keyup', onFocus);
   };
 
   var onFocus = function () {
@@ -136,8 +145,8 @@
 
   var navigateToRoom = function () {
     var base = window.location.href.replace(/([^/]+)\.[^/]+$/, '');
-    var url = base.concat('room/', encodeURIComponent(room.value));
-    var userName = encodeURIComponent(user.value.trim());
+    var url = base.concat('room/', encodeURIComponent(htmlEscape(room.value)));
+    var userName = encodeURIComponent(htmlEscape(user.value.trim()));
     if (userName) {
       url = url.concat('?userName=', userName);
     }

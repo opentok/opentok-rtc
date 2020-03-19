@@ -140,6 +140,7 @@ These are the detailed configuration options:
 Environment Variable Names and Description:
 - `TB_API_KEY` (Required): Your OpenTok API key.
 - `TB_API_SECRET` (Required): Your OpenTok API Secret.
+- `PUBLISHER_RESOLUTION` (Optional): Desired resolution for publishers.
 - `TB_JS_URL` (Optional): The OpenTok.js URL to be loaded by the app. The default value is
   "https://static.opentok.com/v2/js/opentok.min.js". Enterprise partners should set this to the URL
   for the enterprise version of OpenTok.js ("https://enterprise.opentok.com/v2/js/opentok.min.js").
@@ -154,6 +155,7 @@ JSON example:
 "OpenTok": {
   "apiKey": "<key>",
   "apiSecret": "<secret>",
+  "publisherResolution": "640x480",
   "jsUrl": "https://static.opentok.com/v2/js/opentok.min.js",
   "maxSessionAge": 2
 }
