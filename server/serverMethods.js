@@ -261,7 +261,8 @@ function ServerMethods(aLogLevel, aModules) {
       .getKey(redisRoomPrefix + roomName)
       .then(_getUsableSessionInfo.bind(tbConfig.otInstance,
                                       tbConfig.maxSessionAgeMs,
-                                      tbConfig.archiveAlways))
+                                      tbConfig.archiveAlways,
+                                      tbConfig.mediaMode))
       .then((usableSessionInfo) => {
         serverPersistence.setKeyEx(Math.round(tbConfig.maxSessionAgeMs / 1000),
           redisRoomPrefix + roomName, JSON.stringify(usableSessionInfo));
@@ -397,18 +398,19 @@ function ServerMethods(aLogLevel, aModules) {
   // Given a sessionInfo (which might be empty or non usable) returns a promise than will fullfill
   // to an usable sessionInfo. This function cannot be invoked directly, it has
   // to be bound so 'this' is a valid Opentok instance!
-  function _getUsableSessionInfo(aMaxSessionAge, aArchiveAlways, aSessionInfo) {
+  function _getUsableSessionInfo(aMaxSessionAge, aArchiveAlways, aMediaMode, aSessionInfo) {
     aSessionInfo = aSessionInfo && JSON.parse(aSessionInfo);
     return new Promise((resolve) => {
       var minLastUsage = Date.now() - aMaxSessionAge;
 
       logger.log('getUsableSessionInfo. aSessionInfo:', JSON.stringify(aSessionInfo),
                  'minLastUsage: ', minLastUsage, 'maxSessionAge:', aMaxSessionAge,
-                 'archiveAlways: ', aArchiveAlways);
+                 'archiveAlways: ', aArchiveAlways,
+                 'mediaMode: ', aMediaMode);
 
       if (!aSessionInfo || aSessionInfo.lastUsage <= minLastUsage) {
         // We need to create a new session...
-        var sessionOptions = { mediaMode };
+        var sessionOptions = { mediaMode: aMediaMode };
         if (aArchiveAlways) {
           sessionOptions.archiveMode = 'always';
         }
@@ -464,7 +466,7 @@ function ServerMethods(aLogLevel, aModules) {
     serverPersistence
       .getKey(redisRoomPrefix + roomName)
       .then(_getUsableSessionInfo.bind(tbConfig.otInstance, tbConfig.maxSessionAgeMs,
-                                      tbConfig.archiveAlways))
+                                      tbConfig.archiveAlways, tbConfig.mediaMode))
       .then((usableSessionInfo) => {
         // Update the database. We could do this on getUsable...
         serverPersistence.setKeyEx(Math.round(tbConfig.maxSessionAgeMs / 1000),
