@@ -38,7 +38,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     width: '100%',
     height: '100%',
     showControls: true,
-    resolution: '1280x720',
+    resolution: publisherResolution,
     style: {
       audioLevelDisplayMode: 'auto',
       buttonDisplayMode: 'off',
@@ -54,6 +54,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       width: '100%',
       inserMode: 'append',
       showControls: true,
+      preferredFrameRate: subscriberReceivedFramerate,
       style: {
         audioLevelDisplayMode: 'auto',
         buttonDisplayMode: 'off',

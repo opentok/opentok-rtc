@@ -99,6 +99,10 @@ E.DEFAULT_INDEX_PAGE = { envVar: 'DEFAULT_INDEX_PAGE', jsonPath: 'defaultPageInd
 
 E.SHOW_TOS = { envVar: 'SHOW_TOS', jsonPath: 'showTos', defaultValue: false, parser: parseBool };
 
+E.SUBSCRIBER_RECEIVED_FRAMERATE = { envVar: 'SUBSCRIBER_RECEIVED_FRAMERATE', jsonPath: 'OpenTok.subscriberReceivedFramerate', defaultValue: 15 };
+
+E.PUBLISHER_RESOLUTION = { envVar: 'PUBLISHER_RESOLUTION', jsonPath: 'OpenTok.publisherResolution', defaultValue: '640x480' };
+
 E.SIP_ENABLED = { envVar: 'SIP_ENABLED', jsonPath: 'SIP.enabled', defaultValue: false, parser: parseBool };
 
 E.SIP_URI = { envVar: 'SIP_URI', jsonPath: 'SIP.uri', defaultValue: '' };
