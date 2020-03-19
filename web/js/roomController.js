@@ -54,7 +54,6 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       width: '100%',
       inserMode: 'append',
       showControls: true,
-      preferredFrameRate: subscriberReceivedFramerate,
       style: {
         audioLevelDisplayMode: 'auto',
         buttonDisplayMode: 'off',

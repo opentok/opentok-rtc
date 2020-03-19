@@ -3,8 +3,7 @@
    "OpenTok":{
       "apiKey": "<key>",
       "apiSecret": "<secret>",
-      "publisherResolution": "640x480",
-      "subscriberReceivedFramerate": 15
+      "publisherResolution": "640x480"
    },
    "Firebase":{
       "dataUrl":"<firebase_url>",
