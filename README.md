@@ -400,6 +400,8 @@ The app lets the developer POST feedback data to an endpoint on your HTTP server
 * `JQUERY_URL` (Optional, default value: 'https://ajax.googleapis.com/ajax/libs/jquery/'):
    Route of the CDN that will be used to load JQuery scripts.
 
+* `MEDIA_MODE` (Optional, default value: 'routed'): Whether the OpenTok sessions should be `relayed` or `routed`.
+
 ## Customizing the UI
 
 For information on how to customize OpenTokRTC's UI, see [CUSTOMIZING-UI.md](CUSTOMIZING-UI.md).
