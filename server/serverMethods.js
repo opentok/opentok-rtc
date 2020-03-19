@@ -153,6 +153,9 @@ function ServerMethods(aLogLevel, aModules) {
 
       var isWebRTCVersion = config.get(C.DEFAULT_INDEX_PAGE) === 'opentokrtc';
       var showTos = config.get(C.SHOW_TOS);
+
+      var publisherResolution = config.get(C.PUBLISHER_RESOLUTION);
+
       var supportIE = config.get(C.SUPPORT_IE);
 
       var firebaseConfigured =
@@ -215,6 +218,7 @@ function ServerMethods(aLogLevel, aModules) {
                 sipPassword,
                 sipRequireGoogleAuth,
                 supportIE,
+                publisherResolution,
                 googleId,
                 googleHostedDomain,
                 reportIssueLevel,
@@ -397,6 +401,7 @@ function ServerMethods(aLogLevel, aModules) {
           }),
           hasSip: tbConfig.enableSip,
           showTos: tbConfig.showTos,
+          publisherResolution: tbConfig.publisherResolution,
           opentokJsUrl: tbConfig.opentokJsUrl,
           authDomain: tbConfig.googleHostedDomain,
           useGoogleFonts: tbConfig.useGoogleFonts,
