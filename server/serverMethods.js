@@ -446,9 +446,7 @@ function ServerMethods(aLogLevel, aModules) {
   function roomExists(aReq, aRes) {
     var roomName = aReq.params.roomName.toLowerCase();
     serverPersistence
-      .getKey(redisRoomPrefix + roomName).then((room) => {
-        aRes.send({exists: !!room});
-      })
+      .getKey(redisRoomPrefix + roomName).then(room => aRes.send({exists: !!room}));
   }
 
   // Get the information needed to connect to a session
