@@ -437,6 +437,16 @@ function ServerMethods(aLogLevel, aModules) {
         if (aArchiveAlways) {
           sessionOptions.archiveMode = 'always';
         }
+
+        getAppUsage().then((usage) => {
+          if (parseInt(usage.lastUpdate) + 60000 < Date.now()) {
+            setAppUsage(Date.now(), 1);
+          } else {
+            let meetings = parseInt(usage.meetings) + 1;
+            setAppUsage(usage.lastUpdate, meetings);
+          }
+        });
+
         this
           .createSession(sessionOptions, (error, session) => {
             resolve({
@@ -454,6 +464,28 @@ function ServerMethods(aLogLevel, aModules) {
         });
       }
     });
+  }
+
+  function getAppUsage() {
+    return new Promise((resolve, reject) => {
+      serverPersistence
+        .getKey('APP_USAGE_').then((usage) => {
+          console.log(usage);
+          if (!usage) return resolve({lastUpdate: Date.now(), meetings: 0 });
+          else return resolve(JSON.parse(usage));
+        });
+    });
+  }
+
+  function getUsage(aReq, aRes) {
+    getAppUsage().then((usage) => {
+      aRes.send(usage);
+    });
+  }
+
+  function setAppUsage(date, meetings) {
+    serverPersistence
+      .setKey('APP_USAGE_', JSON.stringify({lastUpdate: date, meetings}));
   }
 
   function roomExists(aReq, aRes) {
@@ -894,6 +926,7 @@ function ServerMethods(aLogLevel, aModules) {
     iframingOptions,
     featureEnabled,
     loadConfig,
+    getUsage,
     getRoot,
     getRoom,
     getRoomInfo,
