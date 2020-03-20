@@ -99,7 +99,7 @@ E.DEFAULT_INDEX_PAGE = { envVar: 'DEFAULT_INDEX_PAGE', jsonPath: 'defaultPageInd
 
 E.SHOW_TOS = { envVar: 'SHOW_TOS', jsonPath: 'showTos', defaultValue: false, parser: parseBool };
 
-E.SHOW_UNAVAILABLE = { envVar: 'SHOW_UNAVAILABLE', jsonPath: 'showUnavailable', defaultValue: false, parser: parseBool };
+E.MEETINGS_RATE_PER_MINUTE = { envVar: 'MEETINGS_RATE_PER_MINUTE', jsonPath: 'meetingsRatePerMinute', defaultValue: 30 };
 
 E.PUBLISHER_RESOLUTION = { envVar: 'PUBLISHER_RESOLUTION', jsonPath: 'OpenTok.publisherResolution', defaultValue: '1280x720' };
 
