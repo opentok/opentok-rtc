@@ -935,7 +935,6 @@ function ServerMethods(aLogLevel, aModules) {
     iframingOptions,
     featureEnabled,
     loadConfig,
-    getUsage,
     getRoot,
     getRoom,
     getRoomInfo,
