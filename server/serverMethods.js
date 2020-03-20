@@ -482,11 +482,12 @@ function ServerMethods(aLogLevel, aModules) {
 
   async function isMeetingAllowed(aReq) {
     return new Promise((resolve) => {
+      if (aReq.tbConfig.meetingsRatePerMinute === 0) 
+        return resolve(false);
+      else if (aReq.tbConfig.meetingsRatePerMinute < 0)
+        return resolve(true);
       getAppUsage().then((usage) => {
-        if (aReq.tbConfig.meetingsRatePerMinute === 0) 
-          return resolve(false);
-        else
-          return resolve(usage.lastUpdate + 60000 < Date.now() || usage.meetings < aReq.tbConfig.meetingsRatePerMinute);
+        return resolve(usage.lastUpdate + 60000 < Date.now() || usage.meetings < aReq.tbConfig.meetingsRatePerMinute);
       });
     });
   }
