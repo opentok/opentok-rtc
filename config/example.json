@@ -1,8 +1,10 @@
 {
    "showTos": false,
+   "showUnavailable": false,
    "OpenTok":{
       "apiKey": "<key>",
-      "apiSecret": "<secret>"
+      "apiSecret": "<secret>",
+      "publisherResolution": "640x480"
    },
    "Firebase":{
       "dataUrl":"<firebase_url>",
@@ -35,5 +37,6 @@
     "hostedDomain": "yourhosteddomain.com"
   },
   "useGoogleFonts": true,
-  "jqueryUrl": "https://ajax.googleapis.com/ajax/libs/jquery"
+  "jqueryUrl": "https://ajax.googleapis.com/ajax/libs/jquery",
+  "supportIE": true
 }

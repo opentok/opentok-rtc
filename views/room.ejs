@@ -34,8 +34,10 @@
       window.precallSessionId='<%=precallSessionId%>';
       window.precallToken='<%=precallToken%>';
       window.showTos=<%=showTos%> && !sessionStorage.tosAccepted;
+      window.showUnavailable=<%=showUnavailable%>;
       window.opentokJsUrl='<%=opentokJsUrl%>';
       window.feedbackUrl = '<%=feedbackUrl%>';
+      window.publisherResolution = '<%=publisherResolution%>';
       var isMobile = function() { return typeof window.orientation !== 'undefined'; }
 
       var mobileSettings = function() {
@@ -57,8 +59,10 @@
       });
     </script>
 
+    <% if (supportIE) { %>
     <script defer src="/js/vendor/es6-promise.min.js"></script>
     <script defer type="text/javascript" src="/js/ie_polyfills.js"></script>
+    <% } %>
     <script defer src="/js/vendor/clipboard.min.js"></script>
     <script defer src="/js/components/bubble.js"></script>
     <script defer src="/js/components/modal.js"></script>
@@ -70,7 +74,7 @@
 
     <div id="top-banner">
       <div class="icon-container">
-        <i data-icon="tokbox_logo"></i>
+        <i data-icon="vonage_logo"></i>
       </div>
       <div class="center-container">
         <div class="room-info">
@@ -84,12 +88,6 @@
         </div>
         <div class="audioSwitch" disabled>
           <a id="audioSwitch"><i data-icon="audioSwitch"></i><span>Mute all participants</span></a>
-        </div>
-        <div class="sourcePick">
-          <a id="toggleFacingMode"><i data-icon="cycleVideo"></i></a>
-        </div>
-        <div class="sourcePick">
-          <a id="pickMic"><i data-icon="pmic"></i></a>
         </div>
         <%   if(enableArchiving) { %>
         <div id="toggleArchiving" disabled>
@@ -238,6 +236,19 @@
 
       <section for="chooseLayout" class="bubble">
         <div class="bubble-content top-arrow">
+          <div class="source-pick-container">
+            <div id="pickMicContainer" class="sourcePick icon-with-text">
+              <a id="pickMic"><i data-icon="pmic"></i></a>
+              <span>Switch Microphone</span>
+            </div>
+          </div>
+          <div id="pickCamContainer" class="source-pick-container">
+            <div class="sourcePick icon-with-text">
+              <a id="toggleFacingMode"><i data-icon="cycleVideo"></i></a>
+              <span>Switch Camera</span>
+            </div>
+          </div>
+          <hr>
           <ul>
             <li><a data-layout-type="float"></a></li>
             <li><a data-layout-type="f2f_horizontal"></a></li>

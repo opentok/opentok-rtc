@@ -99,6 +99,10 @@ E.DEFAULT_INDEX_PAGE = { envVar: 'DEFAULT_INDEX_PAGE', jsonPath: 'defaultPageInd
 
 E.SHOW_TOS = { envVar: 'SHOW_TOS', jsonPath: 'showTos', defaultValue: false, parser: parseBool };
 
+E.SHOW_UNAVAILABLE = { envVar: 'SHOW_UNAVAILABLE', jsonPath: 'showUnavailable', defaultValue: false, parser: parseBool };
+
+E.PUBLISHER_RESOLUTION = { envVar: 'PUBLISHER_RESOLUTION', jsonPath: 'OpenTok.publisherResolution', defaultValue: '1280x720' };
+
 E.SIP_ENABLED = { envVar: 'SIP_ENABLED', jsonPath: 'SIP.enabled', defaultValue: false, parser: parseBool };
 
 E.SIP_URI = { envVar: 'SIP_URI', jsonPath: 'SIP.uri', defaultValue: '' };
@@ -114,3 +118,5 @@ E.GOOGLE_CLIENT_ID = { envVar: 'GOOGLE_CLIENT_ID', jsonPath: 'Google.clientId', 
 E.GOOGLE_HOSTED_DOMAIN = { envVar: 'GOOGLE_HOSTED_DOMAIN', jsonPath: 'Google.hostedDomain', defaultValue: '' };
 
 E.BLACKLIST = { envVar: 'BLACKLIST', jsonPath: 'blacklist', defaultValue: '' };
+
+E.SUPPORT_IE = { envVar: 'SUPPORT_IE', jsonPath: 'supportIE', defaultValue: true, parser: parseBool };

@@ -56,6 +56,15 @@
       });
   }
 
+  function roomExists(roomName) {
+    return sendXHR('GET', server + '/room/' + roomName + '/exists').
+      then(function(resp) {
+        return resp.exists;
+      }).catch(function(error) {
+        return false;
+      });
+  }
+
   function composeDate(data) {
     var composed = [];
 
@@ -107,14 +116,15 @@
   }
 
   var Request = {
-    getRoomInfo: getRoomInfo,
-    sendArchivingOperation: sendArchivingOperation,
-    dialOut: dialOut,
-    hangUp: hangUp,
-    deleteArchive: deleteArchive,
-    sendXHR: sendXHR,
-    saveConnection: saveConnection,
-    deleteConnection: deleteConnection
+    getRoomInfo,
+    roomExists,
+    sendArchivingOperation,
+    dialOut,
+    hangUp,
+    deleteArchive,
+    sendXHR,
+    saveConnection,
+    deleteConnection
   };
 
   exports.Request = Request;

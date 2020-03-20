@@ -1,10 +1,12 @@
-/* globals EJSTemplate, Modal, setTimeout, showTos */
+/* globals EJSTemplate, Modal, setTimeout, showTos, showUnavailable */
 !(function (exports) {
   'use strict';
 
   var _precallTemplateSrc = '/templates/precall.ejs';
   var _precallTemplate;
   var _tosTemplateSrc = '/templates/tos.ejs';
+  var _unavailableTemplateSrc = '/templates/unavailable.ejs';
+  var _unavailableTemplate;
   var _tosTemplate;
   var _model;
   var testMeterInterval;
@@ -108,7 +110,7 @@
   };
 
   function render(resolve) {
-    var templatePromises = [_precallTemplate.render()];
+    var templatePromises = [_precallTemplate.render(), _unavailableTemplate.render()];
     if (showTos) {
       templatePromises.push(_tosTemplate.render());
     }
@@ -177,6 +179,7 @@
       if (showTos) {
         _tosTemplate = new EJSTemplate({ url: _tosTemplateSrc });
       }
+      _unavailableTemplate = new EJSTemplate({ url: _unavailableTemplateSrc });
       alreadyInitialized = true;
       return render(resolve);
     });
@@ -185,6 +188,11 @@
   var showModal = function () {
     Utils.removeEventHandlers('modal:', { close: showModal });
     Modal.show('.user-name-modal');
+  };
+
+  var showUnavailableMessage = function () {
+    var selector = '.tc-modal.unavailable';
+    return Modal.show(selector, null, true);
   };
 
   var showContract = function () {
@@ -302,16 +310,17 @@
   }
 
   exports.PrecallView = {
-    init: init,
-    hide: hide,
-    populateAudioDevicesDropdown: populateAudioDevicesDropdown,
-    setRoomName: setRoomName,
-    setUsername: setUsername,
-    setFocus: setFocus,
-    setVolumeMeterLevel: setVolumeMeterLevel,
-    showContract: showContract,
-    startPrecallTestMeter: startPrecallTestMeter,
-    displayNetworkTestResults: displayNetworkTestResults,
-    hideConnectivityTest: hideConnectivityTest
+    init,
+    hide,
+    populateAudioDevicesDropdown,
+    setRoomName,
+    setUsername,
+    setFocus,
+    setVolumeMeterLevel,
+    showContract,
+    showUnavailableMessage,
+    startPrecallTestMeter,
+    displayNetworkTestResults,
+    hideConnectivityTest
   };
 }(this));

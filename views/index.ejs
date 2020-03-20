@@ -20,8 +20,10 @@
     <!--[if IE]><link rel="shortcut icon" href="/favicon.ico"><![endif]-->
     <link rel="icon" href="/favicon.png">
 
+    <% if (supportIE) { %>
     <script defer type="text/javascript" src="/js/vendor/es6-promise.min.js"></script>
     <script defer type="text/javascript" src="/js/ie_polyfills.js"></script>
+    <% } %>
     <script defer type="text/javascript" src="/js/components/modal.js"></script>
     <script defer type="text/javascript" src="/js/vendor/lazy_loader.js"></script>
     <script defer type="text/javascript" src="/js/rtcApp.js"></script>
@@ -29,6 +31,8 @@
     <script>
       window.isWebRTCVersion=<%=isWebRTCVersion%>;
       window.showTos=<%=showTos%> && !sessionStorage.tosAccepted;
+      window.showUnavailable=<%=showUnavailable%>;
+      window.roomName="<%=roomName%>";
     </script>
   </head>
 
@@ -52,21 +56,21 @@
             </header>
             <form>
               <div>
-                <input id="room" class="text-input required" data-wd="roomname">
-                <label id="room-label">Meeting name</label>
+                <input id="room" class="text-input required" data-wd="roomname" maxlength="25">
+                <label id="room-label" class="visited">Meeting name</label>
                 <p class="error-room error-text">
                   <i data-icon="warning"></i>
                   Please enter a meeting name.
                 </p>
               </div>
               <div>
-                <input id="user" class="text-input" data-wd="username">
+                <input id="user" class="text-input" data-wd="username" maxlength="25">
                 <label id="user-label">Your name</label>
               </div>
             </form>
             <div class="landing-more-info">
-              Need help?
-              <a href="https://tokbox.com/" target="_blank">About TokBox</a>
+              <a href="Vonage-Free-Conferencing-help.pdf"  target="_blank">Need help?</a>
+              <a href="https://vonage.com/" target="_blank">About Vonage</a>
             </div>
             <div class="safari-plug">
               <a href="https://safari.opentokrtc.com/">Try the WebRTC Demo for Safari.</a>
