@@ -441,11 +441,10 @@ function ServerMethods(aLogLevel, aModules) {
         }
 
         getAppUsage().then((usage) => {
-          if (parseInt(usage.lastUpdate) + 60000 < Date.now()) {
+          if (usage.lastUpdate + 60000 < Date.now()) {
             setAppUsage(Date.now(), 1);
           } else {
-            let meetings = parseInt(usage.meetings) + 1;
-            setAppUsage(usage.lastUpdate, meetings);
+            setAppUsage(usage.lastUpdate, ++ usage.meetings);
           }
         });
 
