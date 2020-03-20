@@ -469,7 +469,7 @@ function ServerMethods(aLogLevel, aModules) {
   }
 
   function getAppUsage() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const initial = { lastUpdate: Date.now(), meetings: 0 };
       serverPersistence
         .getKey('APP_USAGE_').then((usage) => {
