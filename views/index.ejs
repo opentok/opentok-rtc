@@ -1,31 +1,44 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <title>Vonage Free Conferencing</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
 
     <link rel="stylesheet" href="css/buttons.css" />
-<% if (useGoogleFonts) { %>
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
-<% } else { %>
-    <link href="/css/fonts.css" rel="stylesheet">
-<% } %>
-<% if (isWebRTCVersion) { %>
+    <% if (useGoogleFonts) { %>
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans"
+      rel="stylesheet"
+    />
+    <% } else { %>
+    <link href="/css/fonts.css" rel="stylesheet" />
+    <% } %> <% if (isWebRTCVersion) { %>
     <link rel="stylesheet" href="css/checkboxes.css" />
-<% } %>
-    <link rel="stylesheet" href="css/landing.opentok.css">
+    <% } %>
+    <link rel="stylesheet" href="css/landing.opentok.css" />
 
-    <!--[if IE]><link rel="shortcut icon" href="/favicon.ico"><![endif]-->
-    <link rel="icon" href="/favicon.png">
+    <!--[if IE]><link rel="shortcut icon" href="/favicon.ico"/><![endif]-->
+    <link rel="icon" href="/favicon.png" />
 
     <% if (supportIE) { %>
-    <script defer type="text/javascript" src="/js/vendor/es6-promise.min.js"></script>
+    <script
+      defer
+      type="text/javascript"
+      src="/js/vendor/es6-promise.min.js"
+    ></script>
     <script defer type="text/javascript" src="/js/ie_polyfills.js"></script>
     <% } %>
     <script defer type="text/javascript" src="/js/components/modal.js"></script>
-    <script defer type="text/javascript" src="/js/vendor/lazy_loader.js"></script>
+    <script
+      defer
+      type="text/javascript"
+      src="/js/vendor/lazy_loader.js"
+    ></script>
     <script defer type="text/javascript" src="/js/rtcApp.js"></script>
 
     <script>
@@ -43,20 +56,26 @@
           <section id="main-content">
             <header>
               <% if (!isWebRTCVersion) { %>
-                <h1>OpenTok Demo by</h1>
+              <h1>OpenTok Demo by</h1>
               <% } else { %>
-                <h1>Vonage Free Conferencing</h1>
+              <h1>Vonage Free Conferencing</h1>
               <% } %>
-              <img src="images/vonage-logo.svg" alt="vonage transparent logo">
+              <img src="images/vonage-logo.svg" alt="vonage transparent logo" />
               <% if (isWebRTCVersion) { %>
-                <p>
-                  Free to use for everyone who unexpectedly needs to work from home, etc.
-                </p>
+              <p>
+                Free to use for everyone who unexpectedly needs to work from
+                home, etc.
+              </p>
               <% } %>
             </header>
             <form>
               <div>
-                <input id="room" class="text-input required" data-wd="roomname" maxlength="25">
+                <input
+                  id="room"
+                  class="text-input required"
+                  data-wd="roomname"
+                  maxlength="25"
+                />
                 <label id="room-label" class="visited">Meeting name</label>
                 <p class="error-room error-text">
                   <i data-icon="warning"></i>
@@ -64,28 +83,52 @@
                 </p>
               </div>
               <div>
-                <input id="user" class="text-input" data-wd="username" maxlength="25">
+                <input
+                  id="user"
+                  class="text-input"
+                  data-wd="username"
+                  maxlength="25"
+                />
                 <label id="user-label">Your name</label>
               </div>
             </form>
+            <button id="enter" data-wd="enterroom">Create Room</button>
             <div class="landing-more-info">
-              <a href="Vonage-Free-Conferencing-help.pdf"  target="_blank">Need help?</a>
+              <a href="Vonage-Free-Conferencing-help.pdf" target="_blank"
+                >Need help?</a
+              >
               <a href="https://vonage.com/" target="_blank">About Vonage</a>
             </div>
             <div class="safari-plug">
-              <a href="https://safari.opentokrtc.com/">Try the WebRTC Demo for Safari.</a>
+              <a href="https://safari.opentokrtc.com/"
+                >Try the WebRTC Demo for Safari.</a
+              >
             </div>
           </section>
-          <button id="enter" data-wd="enterroom"></button>
         </div>
       </div>
     </section>
 
     <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+      (function(i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        (i[r] =
+          i[r] ||
+          function() {
+            (i[r].q = i[r].q || []).push(arguments);
+          }),
+          (i[r].l = 1 * new Date());
+        (a = s.createElement(o)), (m = s.getElementsByTagName(o)[0]);
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m);
+      })(
+        window,
+        document,
+        'script',
+        'https://www.google-analytics.com/analytics.js',
+        'ga'
+      );
 
       ga('create', 'UA-462500-32', 'auto');
       ga('send', 'pageview');
