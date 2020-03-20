@@ -492,12 +492,6 @@ function ServerMethods(aLogLevel, aModules) {
     });
   }
 
-  function getUsage(aReq, aRes) {
-    getAppUsage().then((usage) => {
-      aRes.send(usage);
-    });
-  }
-
   function setAppUsage(date, meetings) {
     serverPersistence
       .setKey('APP_USAGE_', JSON.stringify({lastUpdate: date, meetings}));
