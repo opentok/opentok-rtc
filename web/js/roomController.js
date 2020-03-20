@@ -88,6 +88,8 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     }
   };
 
+  var isMobile = function () { return typeof window.orientation !== 'undefined'; };
+
   var SubscriberButtons = function (streamVideoType, phoneNumber) {
     var isScreenSharing = streamVideoType === 'screen';
 
@@ -157,7 +159,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       .replace(/'/g, '')
       .replace(/</g, '')
       .replace(/>/g, '');
-  };
+  }
 
   // We want to use media priorization on the subscriber streams. We're going to restrict the
   // maximum width and height to the one that's actually displayed. To do that, we're going to
@@ -210,7 +212,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
         height: elem.clientHeight
       };
       otHelper.setPreferredResolution(subscriber, parentDimension, subsDimension, numUsrsInRoom - 1,
-                                      resolutionAlgorithm);
+        resolutionAlgorithm);
     });
   };
   var _mutationObserver = exports.MutationObserver &&
@@ -240,13 +242,13 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
 
   var dialOut = function (phoneNumber) {
     var alreadyInCall = Object.keys(subscriberStreams)
-    .some(function (streamId) {
-      if (subscriberStreams[streamId]) {
-        var stream = subscriberStreams[streamId].stream;
-        return (stream.isSip && stream.name === phoneNumber);
-      }
-      return false;
-    });
+      .some(function (streamId) {
+        if (subscriberStreams[streamId]) {
+          var stream = subscriberStreams[streamId].stream;
+          return (stream.isSip && stream.name === phoneNumber);
+        }
+        return false;
+      });
 
     if (alreadyInCall) {
       console.log('The number is already in this call: ' + phoneNumber); // eslint-disable-line no-console
@@ -350,7 +352,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       if (streamId !== 'publisher') {
         var stream = subscriberStreams[streamId];
         stream && otHelper.toggleSubscribersVideo(stream.stream,
-                     getStatus(stream.buttons.video));
+          getStatus(stream.buttons.video));
       }
     },
     buttonClick: function (evt) {
@@ -447,7 +449,11 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       }
     },
     addToCall: function () {
-      showAddToCallModal();
+      if (isMobile() && navigator.share) {
+        showMobileShareUrl();
+      } else {
+        showAddToCallModal();
+      }
     },
     togglePublisherAudio: function (evt) {
       var newStatus = evt.detail.hasAudio;
@@ -585,27 +591,27 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
           _mutationObserver.observe(subsContainer, { attributes: true });
         subscriberStreams[streamId].subscriberPromise =
           otHelper.subscribe(evt.stream, subsDOMElem, subOptions, {}, enableAnnotations)
-          .then(function (subscriber) {
-            if (streamVideoType === 'screen') {
-              enableAnnotations && Utils.sendEvent('roomController:annotationStarted');
-              var subContainer = subscriber.element.parentElement;
-              Utils.sendEvent('layoutView:itemSelected', {
-                item: subContainer
-              });
-              return subscriber;
-            }
+            .then(function (subscriber) {
+              if (streamVideoType === 'screen') {
+                enableAnnotations && Utils.sendEvent('roomController:annotationStarted');
+                var subContainer = subscriber.element.parentElement;
+                Utils.sendEvent('layoutView:itemSelected', {
+                  item: subContainer
+                });
+                return subscriber;
+              }
 
-            Object.keys(_subscriberHandlers).forEach(function (name) {
-              subscriber.on(name, _subscriberHandlers[name]);
+              Object.keys(_subscriberHandlers).forEach(function (name) {
+                subscriber.on(name, _subscriberHandlers[name]);
+              });
+              if (enterWithVideoDisabled) {
+                pushSubscriberButton(streamId, 'video', true);
+              }
+              sendVideoEvent(evt.stream);
+              return subscriber;
+            }, function (error) {
+              debug.error('Error susbscribing new participant. ' + error.message);
             });
-            if (enterWithVideoDisabled) {
-              pushSubscriberButton(streamId, 'video', true);
-            }
-            sendVideoEvent(evt.stream);
-            return subscriber;
-          }, function (error) {
-            debug.error('Error susbscribing new participant. ' + error.message);
-          });
       });
     },
     streamDestroyed: function (evt) {
@@ -681,6 +687,15 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     }
   };
 
+  function showMobileShareUrl() {
+    navigator.share({
+      title: 'Invite Participant',
+      url: location.origin
+    })
+      .then(function () { console.log('Successful share'); })
+      .catch(function (error) { console.log('Error sharing', error); });
+  }
+
   function showAddToCallModal() {
     var selector = '.add-to-call-modal';
     return Modal.show(selector).then(function () {
@@ -726,17 +741,17 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     enableHangoutScroll = params.getFirstValue('enableHangoutScroll') !== undefined;
 
     return PrecallController.showCallSettingsPrompt(roomName, usrId, otHelper)
-    .then(function (info) {
-      info.roomURI = roomURI;
-      RoomView.showRoom();
-      RoomView.roomName = roomName;
-      RoomView.roomURI = roomURI;
-      publisherOptions.publishAudio = info.publisherOptions.publishAudio;
-      publisherOptions.publishVideo = info.publisherOptions.publishVideo;
-      publisherOptions.audioSource = info.publisherOptions.audioSource;
-      publisherOptions.videoSource = info.publisherOptions.videoSource;
-      return info;
-    });
+      .then(function (info) {
+        info.roomURI = roomURI;
+        RoomView.showRoom();
+        RoomView.roomName = roomName;
+        RoomView.roomURI = roomURI;
+        publisherOptions.publishAudio = info.publisherOptions.publishAudio;
+        publisherOptions.publishVideo = info.publisherOptions.publishVideo;
+        publisherOptions.audioSource = info.publisherOptions.audioSource;
+        publisherOptions.videoSource = info.publisherOptions.videoSource;
+        return info;
+      });
   }
 
   function getRoomInfo(aRoomParams) {
@@ -748,7 +763,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
               (aRoomInfo.enableArchiveManager &&
               (!aRoomInfo.firebaseToken || !aRoomInfo.firebaseURL))) {
           debug.error('Error getRoomParams [', aRoomInfo,
-                      '] without correct response');
+            '] without correct response');
           throw new Error('Error getting room parameters');
         }
         aRoomInfo.roomURI = aRoomParams.roomURI;
@@ -784,22 +799,22 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
 
   var init = function () {
     LazyLoader.load(modules)
-    .then(function () {
-      return PrecallController.init();
-    })
-    .then(function () {
-      return LazyLoader.load('/js/helpers/OTHelper.js');
-    })
-    .then(function () {
-      otHelper = new OTHelper({});
-      exports.otHelper = otHelper;
-    })
-    .then(getRoomParams)
-    .then(getRoomInfo)
-    .then(function (aParams) {
-      var loadAnnotations = Promise.resolve();
-      if (enableAnnotations) {
-        exports.OTKAnalytics = exports.OTKAnalytics ||
+      .then(function () {
+        return PrecallController.init();
+      })
+      .then(function () {
+        return LazyLoader.load('/js/helpers/OTHelper.js');
+      })
+      .then(function () {
+        otHelper = new OTHelper({});
+        exports.otHelper = otHelper;
+      })
+      .then(getRoomParams)
+      .then(getRoomInfo)
+      .then(function (aParams) {
+        var loadAnnotations = Promise.resolve();
+        if (enableAnnotations) {
+          exports.OTKAnalytics = exports.OTKAnalytics ||
           function () {
             return {
               addSessionInfo: function () {},
@@ -809,94 +824,94 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
             };
           };
 
-        loadAnnotations = LazyLoader.load([
-          aParams.jqueryUrl + '/3.3.1/jquery.min.js',
-          'https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js',
-          '/js/vendor/opentok-annotation.js'
-        ]);
-      }
-      return loadAnnotations.then(function () { return aParams; });
-    })
-  .then(function (aParams) {
-    Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
-    Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
-    RoomView.init(enableHangoutScroll, enableArchiveManager, enableSip);
-    // Init this controller before connect to the session
-    // to start receiving signals about archives updates
-    RecordingsController.init(enableArchiveManager);
-
-    roomURI = aParams.roomURI;
-    userName = aParams.username ? aParams.username.substring(0, 1000) : '';
-    userName = htmlEscape(userName.substring(0, 25));
-
-    var sessionInfo = {
-      apiKey: aParams.apiKey,
-      sessionId: aParams.sessionId,
-      token: aParams.token
-    };
-
-    var connect = otHelper.connect.bind(otHelper, sessionInfo);
-
-    RoomView.participantsNumber = 0;
-
-    _allHandlers = RoomStatus.init(_allHandlers, { room: _sharedStatus });
-
-    if (enableSip && requireGoogleAuth) {
-      GoogleAuth.init(aParams.googleId, aParams.googleHostedDomain, function (aGoogleAuth) {
-        googleAuth = aGoogleAuth;
-        if (googleAuth.isSignedIn.get()) {
-          document.body.data('google-signed-in', 'true');
+          loadAnnotations = LazyLoader.load([
+            aParams.jqueryUrl + '/3.3.1/jquery.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js',
+            '/js/vendor/opentok-annotation.js'
+          ]);
         }
-      });
-    }
+        return loadAnnotations.then(function () { return aParams; });
+      })
+      .then(function (aParams) {
+        Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
+        Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
+        RoomView.init(enableHangoutScroll, enableArchiveManager, enableSip);
+        // Init this controller before connect to the session
+        // to start receiving signals about archives updates
+        RecordingsController.init(enableArchiveManager);
 
-    ChatController
-        .init(userName, _allHandlers)
-        .then(connect)
-        .then(LayoutMenuController.init)
-        .then(function () {
-          var publisherElement = RoomView.createStreamView('publisher', {
-            name: userName,
-            type: 'publisher'
-          });
-          // If we have all audios disabled, we need to set the button status
-          // and don't publish audio
-          if (_sharedStatus.roomMuted) {
-            // Set visual status of button
-            sendStatus({
-              stream: {
-                streamId: 'Publisher'
-              },
-              reason: 'publishAudio'
-            }, 'audio', false);
-            // Don't publish audio
-            publisherOptions.publishAudio = false;
-          }
-          publisherOptions.name = userName;
-          // Remember previous device selection in IE:
-          if (Utils.isIE()) {
-            publisherOptions.usePreviousDeviceSelection = true;
-          }
-          return otHelper.publish(publisherElement, publisherOptions, {}).then(function () {
-            setPublisherReady();
-            RoomView.showPublisherButtons(publisherOptions);
-          }).catch(function (errInfo) {
-            if (errInfo.error.name === 'OT_CHROME_MICROPHONE_ACQUISITION_ERROR') {
-              Utils.sendEvent('roomController:chromePublisherError');
-              otHelper.disconnect();
+        roomURI = aParams.roomURI;
+        userName = aParams.username ? aParams.username.substring(0, 1000) : '';
+        userName = htmlEscape(userName.substring(0, 25));
+
+        var sessionInfo = {
+          apiKey: aParams.apiKey,
+          sessionId: aParams.sessionId,
+          token: aParams.token
+        };
+
+        var connect = otHelper.connect.bind(otHelper, sessionInfo);
+
+        RoomView.participantsNumber = 0;
+
+        _allHandlers = RoomStatus.init(_allHandlers, { room: _sharedStatus });
+
+        if (enableSip && requireGoogleAuth) {
+          GoogleAuth.init(aParams.googleId, aParams.googleHostedDomain, function (aGoogleAuth) {
+            googleAuth = aGoogleAuth;
+            if (googleAuth.isSignedIn.get()) {
+              document.body.data('google-signed-in', 'true');
             }
           });
-        })
-        .then(function () {
-          ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
-          FeedbackController.init(otHelper, aParams.reportIssueLevel);
-          PhoneNumberController.init(aParams.jqueryUrl);
-          Utils.sendEvent('roomController:controllersReady');
-        })
-        .catch(function (error) {
-          debug.error('Error Connecting to room. ' + error.message);
-        });
-  });
+        }
+
+        ChatController
+          .init(userName, _allHandlers)
+          .then(connect)
+          .then(LayoutMenuController.init)
+          .then(function () {
+            var publisherElement = RoomView.createStreamView('publisher', {
+              name: userName,
+              type: 'publisher'
+            });
+            // If we have all audios disabled, we need to set the button status
+            // and don't publish audio
+            if (_sharedStatus.roomMuted) {
+            // Set visual status of button
+              sendStatus({
+                stream: {
+                  streamId: 'Publisher'
+                },
+                reason: 'publishAudio'
+              }, 'audio', false);
+              // Don't publish audio
+              publisherOptions.publishAudio = false;
+            }
+            publisherOptions.name = userName;
+            // Remember previous device selection in IE:
+            if (Utils.isIE()) {
+              publisherOptions.usePreviousDeviceSelection = true;
+            }
+            return otHelper.publish(publisherElement, publisherOptions, {}).then(function () {
+              setPublisherReady();
+              RoomView.showPublisherButtons(publisherOptions);
+            }).catch(function (errInfo) {
+              if (errInfo.error.name === 'OT_CHROME_MICROPHONE_ACQUISITION_ERROR') {
+                Utils.sendEvent('roomController:chromePublisherError');
+                otHelper.disconnect();
+              }
+            });
+          })
+          .then(function () {
+            ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
+            FeedbackController.init(otHelper, aParams.reportIssueLevel);
+            PhoneNumberController.init(aParams.jqueryUrl);
+            Utils.sendEvent('roomController:controllersReady');
+          })
+          .catch(function (error) {
+            debug.error('Error Connecting to room. ' + error.message);
+          });
+      });
   };
 
   var RoomController = {

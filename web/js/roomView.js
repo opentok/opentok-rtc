@@ -532,6 +532,9 @@ BubbleFactory, Clipboard, LayoutManager */
             }
           });
           break;
+        case 'addToCall':
+          Utils.sendEvent('roomView:addToCall');
+          break;
         case 'startSharingDesktop':
         case 'stopSharingDesktop':
           Utils.sendEvent('roomView:shareScreen');
