@@ -1,6 +1,6 @@
 {
    "showTos": false,
-   "showUnavailable": false,
+   "meetingsRatePerMinute": 30,
    "OpenTok":{
       "apiKey": "<key>",
       "apiSecret": "<secret>",

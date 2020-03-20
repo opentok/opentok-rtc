@@ -330,26 +330,25 @@ function ServerMethods(aLogLevel, aModules) {
   }
 
   // Returns the personalized root page
-  function getRoot(aReq, aRes) {
-    isMeetingAllowed(aReq).then((allowed) => {
-      aRes
-        .render('index.ejs', {
-          roomName: haikunator.haikunate(),
-          isWebRTCVersion: aReq.tbConfig.isWebRTCVersion,
-          showTos: aReq.tbConfig.showTos,
-          showUnavailable: !allowed,
-          useGoogleFonts: aReq.tbConfig.useGoogleFonts,
-          supportIE: aReq.tbConfig.supportIE,
-        }, (err, html) => {
-          if (err) {
-            logger.error('getRoot. error: ', err);
-            aRes.status(500).send(new ErrorInfo(500, 'Invalid Template'));
-          } else {
-            aRes.set('X-XSS-Protection', '1; mode=block');
-            aRes.send(html);
-          }
-        });
-    });
+  async function getRoot(aReq, aRes) {
+    var meetingAllowed = await isMeetingAllowed(aReq);
+    aRes
+      .render('index.ejs', {
+        roomName: haikunator.haikunate(),
+        isWebRTCVersion: aReq.tbConfig.isWebRTCVersion,
+        showTos: aReq.tbConfig.showTos,
+        showUnavailable: !meetingAllowed,
+        useGoogleFonts: aReq.tbConfig.useGoogleFonts,
+        supportIE: aReq.tbConfig.supportIE,
+      }, (err, html) => {
+        if (err) {
+          logger.error('getRoot. error: ', err);
+          aRes.status(500).send(new ErrorInfo(500, 'Invalid Template'));
+        } else {
+          aRes.set('X-XSS-Protection', '1; mode=block');
+          aRes.send(html);
+        }
+      });
   }
 
   function isInBlacklist(name) {
@@ -357,70 +356,69 @@ function ServerMethods(aLogLevel, aModules) {
   }
 
   // Return the personalized HTML for a room.
-  function getRoom(aReq, aRes) {
-    isMeetingAllowed(aReq).then((meetingAllowed) => {
-      var query = aReq.query;
+  async function getRoom(aReq, aRes) {
+    var meetingAllowed = await isMeetingAllowed(aReq);
+    var query = aReq.query;
 
-      logger.log('getRoom serving ' + aReq.path, 'roomName:', aReq.params.roomName,
-                 'userName:', query && query.userName,
-                 'template:', query && query.template);
-      if (isInBlacklist(aReq.params.roomName)) {
-        logger.log('getRoom. error:', `Blacklist found '${aReq.params.roomName}'`);
-        return aRes.status(404).send(null);
-      }
-      var tbConfig = aReq.tbConfig;
-      var template = query && tbConfig.templatingSecret &&
-        (tbConfig.templatingSecret === query.template_auth) && query.template;
-      var userName = query && query.userName;
+    logger.log('getRoom serving ' + aReq.path, 'roomName:', aReq.params.roomName,
+               'userName:', query && query.userName,
+               'template:', query && query.template);
+    if (isInBlacklist(aReq.params.roomName)) {
+      logger.log('getRoom. error:', `Blacklist found '${aReq.params.roomName}'`);
+      return aRes.status(404).send(null);
+    }
+    var tbConfig = aReq.tbConfig;
+    var template = query && tbConfig.templatingSecret &&
+      (tbConfig.templatingSecret === query.template_auth) && query.template;
+    var userName = query && query.userName;
 
-      // Create a session ID and token for the network test
-      tbConfig.precallOtInstance.createSession({ mediaMode: 'routed' }, (error, testSession) => {
-        // We really don't want to cache this
-        aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
-        aRes.set('Pragma', 'no-cache');
-        aRes.set('Expires', 0);
-        aRes.set('X-XSS-Protection', '1; mode=block');
-        aRes
-          .render((template || tbConfig.defaultTemplate) + '.ejs',
-          {
-            userName: htmlEscape(userName || C.DEFAULT_USER_NAME),
-            roomName: htmlEscape(aReq.params.roomName),
-            chromeExtensionId: tbConfig.chromeExtId,
-            iosAppId: tbConfig.iosAppId,
-                   // iosUrlPrefix should have something like:
-                   // https://opentokdemo.tokbox.com/room/
-                   // or whatever other thing that should be before the roomName
-            iosURL: tbConfig.iosUrlPrefix + htmlEscape(aReq.params.roomName) + '?userName=' +
-                           (userName || C.DEFAULT_USER_NAME),
-            enableArchiving: tbConfig.enableArchiving,
-            enableArchiveManager: tbConfig.enableArchiveManager,
-            enableScreensharing: tbConfig.enableScreensharing,
-            enableAnnotation: tbConfig.enableAnnotations,
-            feedbackUrl: tbConfig.feedbackUrl,
-            precallSessionId: testSession.sessionId,
-            apiKey: tbConfig.apiKey,
-            precallApiKey: tbConfig.precallApiKey,
-            precallToken: tbConfig.precallOtInstance.generateToken(testSession.sessionId, {
-              role: 'publisher',
-            }),
-            hasSip: tbConfig.enableSip,
-            showTos: tbConfig.showTos,
-            showUnavailable: !meetingAllowed,
-            publisherResolution: tbConfig.publisherResolution,
-            opentokJsUrl: tbConfig.opentokJsUrl,
-            authDomain: tbConfig.googleHostedDomain,
-            useGoogleFonts: tbConfig.useGoogleFonts,
-            supportIE: tbConfig.supportIE,
-          }, (err, html) => {
-            if (err) {
-              logger.log('getRoom. error:', err);
-              aRes.status(400).send(new ErrorInfo(400, 'Unknown template.'));
-            } else {
-              aRes.send(html);
-            }
-          });
-      });
-    }); 
+    // Create a session ID and token for the network test
+    tbConfig.precallOtInstance.createSession({ mediaMode: 'routed' }, (error, testSession) => {
+      // We really don't want to cache this
+      aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+      aRes.set('Pragma', 'no-cache');
+      aRes.set('Expires', 0);
+      aRes.set('X-XSS-Protection', '1; mode=block');
+      aRes
+        .render((template || tbConfig.defaultTemplate) + '.ejs',
+        {
+          userName: htmlEscape(userName || C.DEFAULT_USER_NAME),
+          roomName: htmlEscape(aReq.params.roomName),
+          chromeExtensionId: tbConfig.chromeExtId,
+          iosAppId: tbConfig.iosAppId,
+                 // iosUrlPrefix should have something like:
+                 // https://opentokdemo.tokbox.com/room/
+                 // or whatever other thing that should be before the roomName
+          iosURL: tbConfig.iosUrlPrefix + htmlEscape(aReq.params.roomName) + '?userName=' +
+                         (userName || C.DEFAULT_USER_NAME),
+          enableArchiving: tbConfig.enableArchiving,
+          enableArchiveManager: tbConfig.enableArchiveManager,
+          enableScreensharing: tbConfig.enableScreensharing,
+          enableAnnotation: tbConfig.enableAnnotations,
+          feedbackUrl: tbConfig.feedbackUrl,
+          precallSessionId: testSession.sessionId,
+          apiKey: tbConfig.apiKey,
+          precallApiKey: tbConfig.precallApiKey,
+          precallToken: tbConfig.precallOtInstance.generateToken(testSession.sessionId, {
+            role: 'publisher',
+          }),
+          hasSip: tbConfig.enableSip,
+          showTos: tbConfig.showTos,
+          showUnavailable: !meetingAllowed,
+          publisherResolution: tbConfig.publisherResolution,
+          opentokJsUrl: tbConfig.opentokJsUrl,
+          authDomain: tbConfig.googleHostedDomain,
+          useGoogleFonts: tbConfig.useGoogleFonts,
+          supportIE: tbConfig.supportIE,
+        }, (err, html) => {
+          if (err) {
+            logger.log('getRoom. error:', err);
+            aRes.status(400).send(new ErrorInfo(400, 'Unknown template.'));
+          } else {
+            aRes.send(html);
+          }
+        });
+    });
   }
 
   // Given a sessionInfo (which might be empty or non usable) returns a promise than will fullfill
@@ -483,7 +481,7 @@ function ServerMethods(aLogLevel, aModules) {
     });
   }
 
-  function isMeetingAllowed(aReq) {
+  async function isMeetingAllowed(aReq) {
     return new Promise((resolve) => {
       getAppUsage().then((usage) => {
         if (aReq.tbConfig.meetingsRatePerMinute === 0) 
