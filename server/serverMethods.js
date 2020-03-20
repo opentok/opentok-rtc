@@ -472,11 +472,13 @@ function ServerMethods(aLogLevel, aModules) {
 
   function getAppUsage() {
     return new Promise((resolve, reject) => {
+      const initial = { lastUpdate: Date.now(), meetings: 0 };
       serverPersistence
         .getKey('APP_USAGE_').then((usage) => {
-          console.log(usage);
-          if (!usage) return resolve({lastUpdate: Date.now(), meetings: 0 });
+          if (!usage) return resolve(initial);
           else return resolve(JSON.parse(usage));
+        }).catch((e) => {
+          return resolve(initial);
         });
     });
   }
@@ -484,13 +486,10 @@ function ServerMethods(aLogLevel, aModules) {
   function isMeetingAllowed(aReq) {
     return new Promise((resolve) => {
       getAppUsage().then((usage) => {
-        if (aReq.tbConfig.meetingsRatePerMinute === 0) return resolve(false);
-
-        if (usage.lastUpdate + 60000 < Date.now() || usage.meetings < aReq.tbConfig.meetingsRatePerMinute)
-          return resolve(true);
-        else 
+        if (aReq.tbConfig.meetingsRatePerMinute === 0) 
           return resolve(false);
-
+        else
+          return resolve(usage.lastUpdate + 60000 < Date.now() || usage.meetings < aReq.tbConfig.meetingsRatePerMinute);
       });
     });
   }
