@@ -225,16 +225,19 @@ body {
 
   .landing-more-info {
     color: #ffffff;
-    font-size: 12px;
-    margin-top: 16px;
+    font-size: 14px;
+    margin-top: 69px;
     margin-bottom: 32px;
+    @media @smartphones {
+      position: fixed;
+      right: 20px;
+      bottom: 0;
+    }
 
     a {
-      color: @blueText;
+      color: #ffffff;
+      font-weight: bold;
       text-shadow: 1px 1px 2px #111;
-    }
-    a:first-child {
-      margin-right: 20px;
     }
   }
 
@@ -308,5 +311,21 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+
+    #righthand-container-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 90%;
+
+      .right-footer {
+        font-size: 14px;
+        color: #ffffff;
+
+        a {
+          color: #ffffff; 
+        }
+      }
+    }
   }
 }
