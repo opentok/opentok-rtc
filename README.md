@@ -140,6 +140,7 @@ These are the detailed configuration options:
 Environment Variable Names and Description:
 - `TB_API_KEY` (Required): Your OpenTok API key.
 - `TB_API_SECRET` (Required): Your OpenTok API Secret.
+- `PUBLISHER_RESOLUTION` (Optional): Desired resolution for publishers.
 - `TB_JS_URL` (Optional): The OpenTok.js URL to be loaded by the app. The default value is
   "https://static.opentok.com/v2/js/opentok.min.js". Enterprise partners should set this to the URL
   for the enterprise version of OpenTok.js ("https://enterprise.opentok.com/v2/js/opentok.min.js").
@@ -154,6 +155,7 @@ JSON example:
 "OpenTok": {
   "apiKey": "<key>",
   "apiSecret": "<secret>",
+  "publisherResolution": "640x480",
   "jsUrl": "https://static.opentok.com/v2/js/opentok.min.js",
   "maxSessionAge": 2
 }
@@ -380,6 +382,7 @@ The app lets the developer POST feedback data to an endpoint on your HTTP server
 * `SHOW_TOS` (Optional, default value: false): Whether the app will display the terms of service
   dialog box and require the user to agree to the terms before joining a room.
 
+* `SHOW_UNAVAILABLE` (Optional, default value: false): Determines if the app will allow new meetings to be created or not. If this setting is turned on, and a meeting already exists, users will be allowed to join. Otherwise a message will appear telling them that the service is not available at the moment.
 * `ALLOW_IFRAMING` (Optional, default value: 'never'): Controls the server-side restriction on
    allowing content to load inside an iframe. The allowed values are:
 

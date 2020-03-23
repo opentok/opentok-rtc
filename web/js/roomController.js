@@ -38,7 +38,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     width: '100%',
     height: '100%',
     showControls: true,
-    resolution: '1280x720',
+    resolution: publisherResolution,
     style: {
       audioLevelDisplayMode: 'auto',
       buttonDisplayMode: 'off',
@@ -87,6 +87,8 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       }
     }
   };
+
+  var isMobile = function () { return typeof window.orientation !== 'undefined'; };
 
   var SubscriberButtons = function (streamVideoType, phoneNumber) {
     var isScreenSharing = streamVideoType === 'screen';
@@ -149,6 +151,15 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
 
   var subscriberStreams = { };
   var dialedNumberTokens = {};
+
+  function htmlEscape(str) {
+    return String(str)
+      .replace(/&/g, '')
+      .replace(/"/g, '')
+      .replace(/'/g, '')
+      .replace(/</g, '')
+      .replace(/>/g, '');
+  };
 
   // We want to use media priorization on the subscriber streams. We're going to restrict the
   // maximum width and height to the one that's actually displayed. To do that, we're going to
@@ -438,7 +449,11 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       }
     },
     addToCall: function () {
-      showAddToCallModal();
+      if (isMobile() && navigator.share) {
+        showMobileShareUrl();
+      } else {
+        showAddToCallModal();
+      }
     },
     togglePublisherAudio: function (evt) {
       var newStatus = evt.detail.hasAudio;
@@ -576,27 +591,27 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
           _mutationObserver.observe(subsContainer, { attributes: true });
         subscriberStreams[streamId].subscriberPromise =
           otHelper.subscribe(evt.stream, subsDOMElem, subOptions, {}, enableAnnotations)
-          .then(function (subscriber) {
-            if (streamVideoType === 'screen') {
-              enableAnnotations && Utils.sendEvent('roomController:annotationStarted');
-              var subContainer = subscriber.element.parentElement;
-              Utils.sendEvent('layoutView:itemSelected', {
-                item: subContainer
-              });
-              return subscriber;
-            }
+            .then(function (subscriber) {
+              if (streamVideoType === 'screen') {
+                enableAnnotations && Utils.sendEvent('roomController:annotationStarted');
+                var subContainer = subscriber.element.parentElement;
+                Utils.sendEvent('layoutView:itemSelected', {
+                  item: subContainer
+                });
+                return subscriber;
+              }
 
-            Object.keys(_subscriberHandlers).forEach(function (name) {
-              subscriber.on(name, _subscriberHandlers[name]);
+              Object.keys(_subscriberHandlers).forEach(function (name) {
+                subscriber.on(name, _subscriberHandlers[name]);
+              });
+              if (enterWithVideoDisabled) {
+                pushSubscriberButton(streamId, 'video', true);
+              }
+              sendVideoEvent(evt.stream);
+              return subscriber;
+            }, function (error) {
+              debug.error('Error susbscribing new participant. ' + error.message);
             });
-            if (enterWithVideoDisabled) {
-              pushSubscriberButton(streamId, 'video', true);
-            }
-            sendVideoEvent(evt.stream);
-            return subscriber;
-          }, function (error) {
-            debug.error('Error susbscribing new participant. ' + error.message);
-          });
       });
     },
     streamDestroyed: function (evt) {
@@ -671,6 +686,15 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       Utils.sendEvent('roomController:archiveUpdates', evt);
     }
   };
+
+  function showMobileShareUrl() {
+    navigator.share({
+      title: 'Invite Participant',
+      url: location.href
+    })
+      .then(function () { console.log('Successful share'); })
+      .catch(function (error) { console.log('Error sharing', error); });
+  }
 
   function showAddToCallModal() {
     var selector = '.add-to-call-modal';
@@ -819,6 +843,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
 
     roomURI = aParams.roomURI;
     userName = aParams.username ? aParams.username.substring(0, 1000) : '';
+    userName = htmlEscape(userName.substring(0, 25));
 
     var sessionInfo = {
       apiKey: aParams.apiKey,
@@ -887,7 +912,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
         .catch(function (error) {
           debug.error('Error Connecting to room. ' + error.message);
         });
-  });
+    });
   };
 
   var RoomController = {

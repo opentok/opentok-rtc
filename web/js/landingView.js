@@ -1,4 +1,4 @@
-/* global EJSTemplate, Modal, showTos, roomName */
+/* global EJSTemplate, Modal, showTos, showUnavailable, roomName */
 
 !(function (global) {
   'use strict';
@@ -11,9 +11,28 @@
     userLabelElem,
     errorMessage;
 
+  function htmlEscape(str) {
+    return String(str)
+      .replace(/&/g, '')
+      .replace(/"/g, '')
+      .replace(/'/g, '')
+      .replace(/</g, '')
+      .replace(/>/g, '');
+  };
+
   var loadTosTemplate = function () {
     return new Promise(function (resolve) {
       var tosTemplate = new EJSTemplate({ url: '/templates/tos.ejs' });
+      tosTemplate.render().then(function (aHTML) {
+        document.body.innerHTML += aHTML;
+        resolve();
+      });
+    });
+  };
+
+  var loadUnavailableTemplate = function () {
+    return new Promise(function (resolve) {
+      var tosTemplate = new EJSTemplate({ url: '/templates/unavailable.ejs' });
       tosTemplate.render().then(function (aHTML) {
         document.body.innerHTML += aHTML;
         resolve();
@@ -39,7 +58,9 @@
   };
 
   var init = function () {
-    if (showTos) {
+    if (showUnavailable) {
+      loadUnavailableTemplate().then(performInit);
+    } else if (showTos) {
       loadTosTemplate().then(performInit);
     } else {
       performInit();
@@ -66,16 +87,16 @@
     Array.prototype.map.call(fields, function (field) {
       field.value = '';
       field.checked = false;
-      room.focus();
-      room.addEventListener('keyup', onKeyup);
+      user.focus();
+      user.addEventListener('keyup', onKeyup);
       room.addEventListener('focus', onFocus);
       user.addEventListener('focus', onFocus);
     });
   };
 
   var onKeyup = function () {
-    roomLabelElem.classList.add('visited');
-    room.removeEventListener('keyup', onFocus);
+    userLabelElem.classList.add('visited');
+    user.removeEventListener('keyup', onFocus);
   };
 
   var onFocus = function () {
@@ -92,6 +113,11 @@
         roomLabelElem.classList.remove('visited');
       }
     }
+  };
+
+  var showUnavailableMessage = function () {
+    var selector = '.tc-modal.unavailable';
+    return Modal.show(selector);
   };
 
   var showContract = function () {
@@ -119,8 +145,8 @@
 
   var navigateToRoom = function () {
     var base = window.location.href.replace(/([^/]+)\.[^/]+$/, '');
-    var url = base.concat('room/', encodeURIComponent(room.value));
-    var userName = encodeURIComponent(user.value.trim());
+    var url = base.concat('room/', encodeURIComponent(htmlEscape(room.value)));
+    var userName = encodeURIComponent(htmlEscape(user.value.trim()));
     if (userName) {
       url = url.concat('?userName=', userName);
     }
@@ -152,7 +178,9 @@
       form.classList.remove('error');
       enterButton.removeEventListener('click', onEnterClicked);
 
-      if (showTos) {
+      if (showUnavailable) {
+        showUnavailableMessage();
+      } else if (showTos) {
         showContract().then(function (accepted) {
           if (accepted) {
             sessionStorage.setItem('tosAccepted', true);

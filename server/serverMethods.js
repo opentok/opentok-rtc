@@ -24,6 +24,15 @@ var cognitoConfig;
 var cognitoExpress;
 var cognitoBaseUrl;
 
+function htmlEscape(str) {
+  return String(str)
+    .replace(/&/g, '')
+    .replace(/"/g, '')
+    .replace(/'/g, '')
+    .replace(/</g, '')
+    .replace(/>/g, '');
+};
+
 function ServerMethods(aLogLevel, aModules) {
   aModules = aModules || {};
 
@@ -149,6 +158,8 @@ function ServerMethods(aLogLevel, aModules) {
 
       var isWebRTCVersion = config.get(C.DEFAULT_INDEX_PAGE) === 'opentokrtc';
       var showTos = config.get(C.SHOW_TOS);
+      var showUnavailable = config.get(C.SHOW_UNAVAILABLE);
+      var publisherResolution = config.get(C.PUBLISHER_RESOLUTION);
       var supportIE = config.get(C.SUPPORT_IE);
 
       var firebaseConfigured =
@@ -206,11 +217,13 @@ function ServerMethods(aLogLevel, aModules) {
                 enableSip,
                 opentokJsUrl,
                 showTos,
+                showUnavailable,
                 sipUri,
                 sipUsername,
                 sipPassword,
                 sipRequireGoogleAuth,
                 supportIE,
+                publisherResolution,
                 googleId,
                 googleHostedDomain,
                 reportIssueLevel,
@@ -349,6 +362,7 @@ function ServerMethods(aLogLevel, aModules) {
         roomName: haikunator.haikunate(),
         isWebRTCVersion: aReq.tbConfig.isWebRTCVersion,
         showTos: aReq.tbConfig.showTos,
+        showUnavailable: aReq.tbConfig.showUnavailable,
         useGoogleFonts: aReq.tbConfig.useGoogleFonts,
         supportIE: aReq.tbConfig.supportIE,
       }, (err, html) => {
@@ -369,6 +383,7 @@ function ServerMethods(aLogLevel, aModules) {
   // Return the personalized HTML for a room.
   function getRoom(aReq, aRes) {
     var query = aReq.query;
+
     logger.log('getRoom serving ' + aReq.path, 'roomName:', aReq.params.roomName,
                'userName:', query && query.userName,
                'template:', query && query.template);
@@ -391,14 +406,14 @@ function ServerMethods(aLogLevel, aModules) {
       aRes
         .render((template || tbConfig.defaultTemplate) + '.ejs',
         {
-          userName: userName || C.DEFAULT_USER_NAME,
-          roomName: aReq.params.roomName,
+          userName: htmlEscape(userName || C.DEFAULT_USER_NAME),
+          roomName: htmlEscape(aReq.params.roomName),
           chromeExtensionId: tbConfig.chromeExtId,
           iosAppId: tbConfig.iosAppId,
                  // iosUrlPrefix should have something like:
                  // https://opentokdemo.tokbox.com/room/
                  // or whatever other thing that should be before the roomName
-          iosURL: tbConfig.iosUrlPrefix + aReq.params.roomName + '?userName=' +
+          iosURL: tbConfig.iosUrlPrefix + htmlEscape(aReq.params.roomName) + '?userName=' +
                          (userName || C.DEFAULT_USER_NAME),
           enableArchiving: tbConfig.enableArchiving,
           enableArchiveManager: tbConfig.enableArchiveManager,
@@ -413,6 +428,8 @@ function ServerMethods(aLogLevel, aModules) {
           }),
           hasSip: tbConfig.enableSip,
           showTos: tbConfig.showTos,
+          showUnavailable: tbConfig.showUnavailable,
+          publisherResolution: tbConfig.publisherResolution,
           opentokJsUrl: tbConfig.opentokJsUrl,
           authDomain: tbConfig.googleHostedDomain,
           useGoogleFonts: tbConfig.useGoogleFonts,
@@ -463,6 +480,12 @@ function ServerMethods(aLogLevel, aModules) {
         });
       }
     });
+  }
+
+  function roomExists(aReq, aRes) {
+    var roomName = aReq.params.roomName.toLowerCase();
+    serverPersistence
+      .getKey(redisRoomPrefix + roomName).then(room => aRes.send({exists: !!room}));
   }
 
   // Get the information needed to connect to a session
@@ -943,6 +966,7 @@ function ServerMethods(aLogLevel, aModules) {
     postHangUp,
     getHealth,
     oldVersionCompat,
+    roomExists,
     saveConnectionFirebase,
     deleteConnectionFirebase,
     auth,

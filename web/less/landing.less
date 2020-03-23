@@ -224,16 +224,19 @@ body {
 
   .landing-more-info {
     color: #ffffff;
-    font-size: 12px;
+    font-size: 14px;
     margin-top: 69px;
     margin-bottom: 32px;
     @media @smartphones {
       position: fixed;
       right: 20px;
-      bottom: 0;
+      bottom: 42px;
     }
+
     a {
-      color: @blueText;
+      color: #ffffff;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px #111;
     }
   }
 
@@ -269,10 +272,18 @@ body {
     .flex(1);
     position: relative;
     width: 305px;
+    min-height: 420px; // fix for Safari flex issue
     @media @smartphonesPortrait {
       margin-right: 0;
       width: 100%;
       height: 100%;
+      header {
+        margin-left: 12px;
+        p {
+          text-align: left;
+          margin-right: 50px;
+        }
+      }
     }
   }
 
@@ -318,5 +329,24 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+
+    #righthand-container-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 90%;
+
+      .right-footer {
+        font-size: 14px;
+        color: #ffffff;
+
+        a {
+          color: #ffffff; 
+        }
+        @media @smartphones {
+          padding: 0 10px;
+        }
+      }
+    }
   }
 }

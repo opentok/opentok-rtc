@@ -99,6 +99,29 @@ paths:
       responses:
         '200':
           description: OK
+  '/room/{roomName}/exists':
+    get:
+      summary: Boolean telling if the room already exists or not.
+      x-implemented-in: roomExists
+      produces:
+        - 'application/json,'
+      description: >-
+        Returns if the room is active.
+      parameters:
+        - name: roomName
+          in: path
+          description: Name of the room.
+          required: true
+          type: string
+      tags:
+        - Rooms
+      responses:
+        '200':
+          description: Boolean telling if the room exists
+        '400':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/ErrorInfo'
   '/room/{roomName}/info':
     get:
       summary: Information needed to connect to the TB servers.
