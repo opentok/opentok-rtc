@@ -925,7 +925,8 @@ function ServerMethods(aLogLevel, aModules) {
   };
 
   function auth(aReq, aRes, aNext) {
-    var redirectUrl = 'http://'+ aReq.headers.host;
+    var protocol = aReq.headers.host.indexOf('localhost') === -1 ? 'https': 'http';
+    var redirectUrl = protocol + '://'+ aReq.headers.host;
     var cognitoLoginUrl = cognitoBaseUrl + '&redirect_uri=' + redirectUrl;
     return aRes.redirect(cognitoLoginUrl);
   }
