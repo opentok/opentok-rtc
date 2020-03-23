@@ -240,24 +240,7 @@ BubbleFactory, Clipboard, LayoutManager */
     // is reduced, so we have to fix the height to avoid this ugly effect during transition.
     // var title = dock.querySelector('.info h1');
     // title.style.height = title.clientHeight + 'px';
-
-    // Verify Cognito token
-    if (document.cookie.indexOf('id_token=') === -1) {
-      if (window.location.hash) {
-        var hash = window.location.hash.substring(1);
-        var id_token = hash.split('&')[0]
-        document.cookie = id_token;
-      } else {
-        authenticate();
-      }
-    }
   }
-
-  var authenticate = function () {
-    var base = window.location.href.replace(/([^/]+)\.[^/]+$/, '');
-    var url = base.concat('auth/');
-    window.location.href = url;
-  };
 
   function createStreamView(streamId, type, controlBtns, name) {
     return LayoutManager.append(streamId, type, controlBtns, name);
