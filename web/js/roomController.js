@@ -774,6 +774,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
   ];
 
   var init = function () {
+    Utils.verifyToken();
     LazyLoader.load(modules)
     .then(function () {
       return PrecallController.init();

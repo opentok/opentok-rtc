@@ -392,6 +392,24 @@ paths:
       responses:
         '200':
           description: OK
+  '/auth':
+    get:
+      summary: Set auth cookie
+      x-implemented-in: auth
+      description: >-
+        Create a cookie with the auth toke
+      responses:
+        '200':
+          description: OK
+  '/validateToken':
+    get:
+      summary: Validate the auth token
+      x-implemented-in: validateToken
+      description: >-
+        Validate the auth token stored in the client
+      responses:
+        '200':
+          description: OK
 definitions:
   RoomHTML:
     type: string

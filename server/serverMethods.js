@@ -18,6 +18,11 @@ var FirebaseArchives = require('./firebaseArchives');
 var GoogleAuth = require('./googleAuthStrategies');
 var testHealth = require('./testHealth');
 var Haikunator = require('haikunator');
+var CognitoExpress = require("cognito-express");
+
+var cognitoConfig;
+var cognitoExpress;
+var cognitoBaseUrl;
 
 function ServerMethods(aLogLevel, aModules) {
   aModules = aModules || {};
@@ -212,6 +217,27 @@ function ServerMethods(aLogLevel, aModules) {
                 useGoogleFonts,
                 jqueryUrl,
               }));
+    });
+  }
+
+  function _cognitoConfig() {
+    configLoader.readConfigJson().then((config) => {
+      cognitoConfig = {
+        region: config.get(C.COGNITO_REGION),
+        cognitoUserPoolId: config.get(C.COGNITO_POOL_ID),
+        tokenUse: "id",
+        tokenExpiration: 3600000,
+        clientId: config.get(C.COGNITO_CLIENT_ID),
+        domain: config.get(C.COGNITO_DOMAIN)
+      };
+
+      cognitoExpress = new CognitoExpress(cognitoConfig);
+    
+      cognitoBaseUrl = 'https://' + cognitoConfig.domain + '.auth.' +
+        cognitoConfig.region +
+        '.amazoncognito.com/login?response_type=token&client_id=' +
+        cognitoConfig.clientId +
+        '&scope=openid';
     });
   }
 
@@ -781,6 +807,7 @@ function ServerMethods(aLogLevel, aModules) {
 
   function loadConfig() {
     tbConfigPromise = _initialTBConfig();
+    _cognitoConfig();
     return tbConfigPromise;
   }
 
@@ -865,6 +892,39 @@ function ServerMethods(aLogLevel, aModules) {
     aRes.send({});
   }
 
+  var get_cookies = function(request) {
+    var cookies = {};
+    request.headers && request.headers.cookie && request.headers.cookie.split(';').forEach(function(cookie) {
+      var parts = cookie.match(/(.*?)=(.*)$/)
+      cookies[ parts[1].trim() ] = (parts[2] || '').trim();
+    });
+    return cookies;
+  };
+
+  function auth(aReq, aRes, aNext) {
+    var redirectUrl = 'http://'+ aReq.headers.host;
+    var cognitoLoginUrl = cognitoBaseUrl + '&redirect_uri=' + redirectUrl;
+    return aRes.redirect(cognitoLoginUrl);
+  }
+
+  function validateToken(aReq, aRes, aNext) {
+    var accessTokenFromClient = get_cookies(aReq)['id_token'];
+
+    if (!accessTokenFromClient) {
+      return aRes.status(401).send("Access Token cookie missing");
+    }
+
+    cognitoExpress.validate(accessTokenFromClient, function(err, response) {
+      // If it is not authenticated send Unauthorized error
+      if (err) {
+        return aRes.status(401).send(err);
+      }
+      // Else it has been authenticated send a Ok response
+      aRes.locals.user = response;
+      aRes.status(200).send('authenticated');
+    });
+  }
+
   return {
     logger,
     configReady,
@@ -885,6 +945,8 @@ function ServerMethods(aLogLevel, aModules) {
     oldVersionCompat,
     saveConnectionFirebase,
     deleteConnectionFirebase,
+    auth,
+    validateToken,
   };
 }
 

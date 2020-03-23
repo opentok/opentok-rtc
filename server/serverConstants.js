@@ -116,3 +116,11 @@ E.GOOGLE_HOSTED_DOMAIN = { envVar: 'GOOGLE_HOSTED_DOMAIN', jsonPath: 'Google.hos
 E.BLACKLIST = { envVar: 'BLACKLIST', jsonPath: 'blacklist', defaultValue: '' };
 
 E.SUPPORT_IE = { envVar: 'SUPPORT_IE', jsonPath: 'supportIE', defaultValue: true, parser: parseBool };
+
+E.COGNITO_DOMAIN = { envVar: 'COGNITO_DOMAIN', jsonPath: 'cognito.domain', defaultValue: '' };
+
+E.COGNITO_REGION = { envVar: 'COGNITO_REGION', jsonPath: 'cognito.region', defaultValue: '' };
+
+E.COGNITO_POOL_ID = { envVar: 'COGNITO_POOL_ID', jsonPath: 'cognito.poolId', defaultValue: '' };
+
+E.COGNITO_CLIENT_ID = { envVar: 'COGNITO_CLIENT_ID', jsonPath: 'cognito.clientId', defaultValue: '' };

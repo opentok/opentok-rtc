@@ -188,6 +188,65 @@
     return userAgent.match(/iPad/i) || userAgent.match(/iPhone/i);
   }
 
+  function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
+  }
+
+  // Verify Cognito token
+  function verifyToken() {
+    var authenticate = function () {
+      var protocol = window.location.protocol;
+      var host = window.location.host;
+      var base = protocol + '//' + host;
+      var url = base.concat('/auth/');
+      window.location.href = url;
+    };
+
+    var validate = function () {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "/validateToken", true);
+      xhr.onload = function (e) {
+        if (xhr.readyState === 4) {
+          if (xhr.status !== 200) {
+            // Invalidate any previous cookie
+            document.cookie = "id_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            // Authenticate again
+            authenticate();
+          }
+        }
+      };
+
+      xhr.send(null);
+    };
+
+    //document.cookie = 'prev_url=' + window.location.href;
+
+    if (document.cookie.indexOf('id_token=') === -1) {
+      if (window.location.hash) {
+        var hash = window.location.hash.substring(1);
+        var id_token = hash.split('&')[0]
+        document.cookie = id_token;
+        validate();
+      } else {
+        authenticate();
+      }
+    } else {
+      validate();
+    }
+  }
+
   var Utils = {
     isSafariMac: isSafariMac,
     isSafariIOS: isSafariIOS,
@@ -222,7 +281,9 @@
     },
     setDisabled: setDisabled,
     getLabelText: getLabelText,
-    isIE: isIE
+    isIE: isIE,
+    verifyToken: verifyToken,
+    getCookie: getCookie
   };
 
   // Just replacing global.utils might not be safe... let's just expand it...
