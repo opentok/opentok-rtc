@@ -690,7 +690,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
   function showMobileShareUrl() {
     navigator.share({
       title: 'Invite Participant',
-      url: location.origin
+      url: location.href
     })
       .then(function () { console.log('Successful share'); })
       .catch(function (error) { console.log('Error sharing', error); });
