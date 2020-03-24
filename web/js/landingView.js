@@ -199,7 +199,6 @@
         }
       });
     });
-  };
 
     room.addEventListener('keypress', function onKeypress() {
       errorMessage.classList.remove('show');
