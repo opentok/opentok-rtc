@@ -146,12 +146,19 @@
   };
 
   var navigateToRoom = function () {
-    var base = window.location.href.replace(/([^/]+)\.[^/]+$/, '');
+    var currentQueryParams =  window.location.search.slice(1);
+    var base = window.location.href.replace(/([^/]+)\.[^/]+$/, '').split('/')[0];
     var url = base.concat('room/', encodeURIComponent(htmlEscape(room.value)));
     var userName = encodeURIComponent(htmlEscape(user.value.trim()));
+
     if (userName) {
       url = url.concat('?userName=', userName);
     }
+
+    if(currentQueryParams) {
+      url = url.concat(userName ? '&' + currentQueryParams: '?' + currentQueryParams);
+    }
+    
     resetForm();
     window.location.href = url;
   };
