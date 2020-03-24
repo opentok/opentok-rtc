@@ -163,6 +163,7 @@ function ServerMethods(aLogLevel, aModules) {
       var enableArchiving = config.get(C.ENABLE_ARCHIVING, config);
       var enableArchiveManager = enableArchiving && config.get(C.ENABLE_ARCHIVE_MANAGER);
       var enableScreensharing = config.get(C.ENABLE_SCREENSHARING);
+      var enablePrecallTest = config.get(C.ENABLE_PRECALL_TEST);
       var enableAnnotations = enableScreensharing && config.get(C.ENABLE_ANNOTATIONS);
       var feedbackUrl = config.get(C.FEEDBACK_URL);
       var reportIssueLevel = config.get(C.REPORT_ISSUE_LEVEL);
@@ -208,6 +209,7 @@ function ServerMethods(aLogLevel, aModules) {
                 enableArchiveManager,
                 enableScreensharing,
                 enableAnnotations,
+                enablePrecallTest,
                 feedbackUrl,
                 enableSip,
                 opentokJsUrl,
@@ -393,6 +395,7 @@ function ServerMethods(aLogLevel, aModules) {
           enableArchiveManager: tbConfig.enableArchiveManager,
           enableScreensharing: tbConfig.enableScreensharing,
           enableAnnotation: tbConfig.enableAnnotations,
+          enablePrecallTest: tbConfig.enablePrecallTest,
           feedbackUrl: tbConfig.feedbackUrl,
           precallSessionId: testSession.sessionId,
           apiKey: tbConfig.apiKey,

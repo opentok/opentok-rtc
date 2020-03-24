@@ -147,7 +147,7 @@
               });
               // You cannot use the network test in IE or Safari because you cannot use two
               // publishers (the preview publisher and the network test publisher) simultaneously.
-              if (!Utils.isIE() && !Utils.isSafariIOS()) {
+              if (!Utils.isIE() && !Utils.isSafariIOS() && !enablePrecallTest) {
                 PrecallView.startPrecallTestMeter();
                 otNetworkTest = new OTNetworkTest(previewOptions);
                 otNetworkTest.startNetworkTest(function (error, result) {

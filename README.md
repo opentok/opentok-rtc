@@ -373,6 +373,16 @@ The app lets the developer POST feedback data to an endpoint on your HTTP server
  },
  ```
 
+ #### Pre-call test
+
+ You can disable the pre-call test by setting the `ENABLE_PRECALL_TEST` variable
+ to `false`. Or you can disable it using the config file:
+  ```json
+  "precall-test": {
+      "enabled": false
+  },
+  ```
+
  #### SIP connection
 
   See the [Phone dial-out](#phone-dial-out) section.

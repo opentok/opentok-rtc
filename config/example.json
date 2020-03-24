@@ -20,6 +20,9 @@
      "url": "",
      "reportIssueLevel": 0
    },
+   "precall-test": {
+     "enabled": true
+   },
    "Screensharing":{
       "enabled":false,
       "chromeExtensionId":null,
