@@ -306,6 +306,32 @@ body {
     cursor: pointer;
   }
 
+  #enter-arrow {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    top: calc(~"50% - 25px");
+    right: 0;
+    @media @smartphones {
+      right: 0;
+      position: fixed;
+    }
+    background-color: #ffffff;
+    border: 0;
+    transition: width 0.5s ease-out;
+    background-image: url(/images/icons/ctaarrow-black.png);
+    background-size: 12.5px 21px;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    transition: opacity 0.5s;
+    &:hover {
+      opacity: 1;
+    }
+    mix-blend-mode: normal;
+    border-radius: 2px 0px 0px 2px;
+  }
+
   #righthand-container {
     height: 100%;
     width: 554px;

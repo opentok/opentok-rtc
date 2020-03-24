@@ -6,6 +6,7 @@
   var room,
     user,
     enterButton,
+    enterButtonArrow,
     form,
     roomLabelElem,
     userLabelElem,
@@ -42,6 +43,7 @@
 
   var performInit = function () {
     enterButton = document.getElementById('enter');
+    enterButtonArrow = document.getElementById('enter-arrow');
     room = document.getElementById('room');
     user = document.getElementById('user');
     form = document.querySelector('form');
@@ -164,35 +166,40 @@
   }
 
   var addHandlers = function () {
-    enterButton.addEventListener('click', function onEnterClicked(event) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
+    var enterRoomButtons = document.querySelectorAll('.enter-room-buttons');
 
-      if (!isValid()) {
-        form.classList.add('error');
-        room.blur();
-        document.getElementById('room-label').style.opacity = 0;
-        return;
-      }
-
-      form.classList.remove('error');
-      enterButton.removeEventListener('click', onEnterClicked);
-
-      if (showUnavailable) {
-        showUnavailableMessage();
-      } else if (showTos) {
-        showContract().then(function (accepted) {
-          if (accepted) {
-            sessionStorage.setItem('tosAccepted', true);
-            navigateToRoom();
-          } else {
-            addHandlers();
-          }
-        });
-      } else {
-        navigateToRoom();
-      }
+    enterRoomButtons.forEach((button) => {
+      button.addEventListener('click', function onEnterClicked(event) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+    
+        if (!isValid()) {
+          form.classList.add('error');
+          room.blur();
+          document.getElementById('room-label').style.opacity = 0;
+          return;
+        }
+    
+        form.classList.remove('error');
+        button.removeEventListener('click', onEnterClicked);
+    
+        if (showUnavailable) {
+          showUnavailableMessage();
+        } else if (showTos) {
+          showContract().then(function (accepted) {
+            if (accepted) {
+              sessionStorage.setItem('tosAccepted', true);
+              navigateToRoom();
+            } else {
+              addHandlers();
+            }
+          });
+        } else {
+          navigateToRoom();
+        }
+      });
     });
+  };
 
     room.addEventListener('keypress', function onKeypress() {
       errorMessage.classList.remove('show');
