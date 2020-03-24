@@ -146,7 +146,6 @@
   };
 
   var navigateToRoom = function () {
-    var currentQueryParams =  window.location.search.slice(1);
     var url = window.location.origin
       .concat('/room/', encodeURIComponent(htmlEscape(room.value)));
     var userName = encodeURIComponent(htmlEscape(user.value.trim()));
@@ -155,10 +154,6 @@
       url = url.concat('?userName=', userName);
     }
 
-    if (currentQueryParams) {
-      url = url.concat(userName ? '&' + currentQueryParams: '?' + currentQueryParams);
-    }
-    
     resetForm();
     window.location.href = url;
   };
