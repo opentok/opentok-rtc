@@ -149,11 +149,9 @@
     var url = window.location.origin
       .concat('/room/', encodeURIComponent(htmlEscape(room.value)));
     var userName = encodeURIComponent(htmlEscape(user.value.trim()));
-
     if (userName) {
       url = url.concat('?userName=', userName);
     }
-
     resetForm();
     window.location.href = url;
   };
