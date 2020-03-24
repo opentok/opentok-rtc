@@ -1,4 +1,4 @@
-/* globals EJSTemplate, Modal, setTimeout, showTos, showUnavailable */
+/* globals EJSTemplate, Modal, setTimeout, showTos, showUnavailable, enablePrecallTest */
 !(function (exports) {
   'use strict';
 
@@ -119,6 +119,10 @@
         document.body.innerHTML += aHTML;
       });
       addHandlers();
+      if (enablePrecallTest) {
+        document.getElementById('pre-call-test').style.display = 'flex';
+        document.getElementById('precall-test-meter').style.display = 'block';
+      }
       resolve();
     });
   }
