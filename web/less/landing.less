@@ -83,7 +83,7 @@ body {
     margin: 20px 0 0 0;
     height: 100px;
     @media @smartphonesPortrait {
-      max-width: calc(~"100% - 60px");
+      max-width: calc(~"100% - 14px");
       margin: 0;
       margin: 20px 30px 0 24px;
     }
@@ -102,7 +102,7 @@ body {
       color: white;
       outline: none;
       @media @smartphonesPortrait {
-        width: calc(~"100% - 180px");
+        width: 100%;
       }
       text-shadow: black 1px 1px 12px;
     }
@@ -122,6 +122,10 @@ body {
       font-weight: normal;
       position: relative;
       transition: all 0.5s;
+      @media @smartphonesPortrait {
+        font-size: 12px;
+        color: #F7D3EC;
+      }
     }
 
     label.visited {
@@ -129,17 +133,31 @@ body {
       color: #F7D3EC;
     }
 
+    #room-label {
+      @media @smartphonesPortrait {
+        left: 4px;
+        bottom: 70px;
+      }
+    }
+
     #room-label.visited {
       left: 360px;
       @media @smartphonesPortrait {
-        left: calc(~"100% - 80px");
+        left: 4px;
+      }
+    }
+
+    #user-label {
+      @media @smartphonesPortrait {
+        left: 4px;
+        bottom: 70px;
       }
     }
 
     #user-label.visited {
       left: 380px;
       @media @smartphonesPortrait {
-        left: calc(~"100% - 60px");
+        left: 4px;
       }
     }
 
@@ -179,7 +197,7 @@ body {
       position: relative;
       font-size: 16px;
       width: 100%;
-      bottom: 45px;
+      bottom: 98px;
       border-bottom: solid 1px #ed5654;
       line-height: 38px;
     }
@@ -212,13 +230,16 @@ body {
       position: absolute;
       z-index: 100;
 
-      @media @smartphonesPortrait {
-        margin-left: 22px;
+      @media @smartphonesLandscape {
         font-size: 14px;
       }
 
-      @media @smartphonesLandscape {
-        font-size: 14px;
+      @media @smartphonesPortrait {
+        left: -26px;
+        position: relative;
+        bottom: -6px;
+        margin-left: 22px;
+        font-size: 13px;
       }
     }
   }
