@@ -382,6 +382,7 @@ The app lets the developer POST feedback data to an endpoint on your HTTP server
 * `SHOW_TOS` (Optional, default value: false): Whether the app will display the terms of service
   dialog box and require the user to agree to the terms before joining a room.
 
+* `SHOW_UNAVAILABLE` (Optional, default value: false): Determines if the app will allow new meetings to be created or not. If this setting is turned on, and a meeting already exists, users will be allowed to join. Otherwise a message will appear telling them that the service is not available at the moment.
 * `ALLOW_IFRAMING` (Optional, default value: 'never'): Controls the server-side restriction on
    allowing content to load inside an iframe. The allowed values are:
 

@@ -106,6 +106,27 @@ body {
       }
     }
   }
+  .invite-btn {
+    background: #871FFF;
+    border-radius: 5px;
+    border: none;
+    margin-right: 20px;
+    width: 140px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    @media @smartphonesPortrait {
+      margin-right: 14px;
+    }
+    i {
+      margin-right: 10px;
+    }
+  }
   .right-container {
     float: right;
     display: flex;
@@ -118,7 +139,7 @@ body {
       float: left;
       width: unset;
       min-width: calc(~"100% - 190px");
-      height: 92px;
+      // height: 92px;
     }
     div {
         float: left;
@@ -277,6 +298,14 @@ body {
     max-width: 564px;
     border-radius: 10px;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+
+    @media @smartphonesPortrait {
+      position: absolute;
+      width: 98%;
+      top: 150px;
+      left: 1%;
+      margin: 0;
+    }
 
     header {
       .close {
@@ -872,6 +901,25 @@ body {
       padding: 0 50px 0 50px;
     }
   }
+
+  .info-links {
+    margin-top: 40px;
+    font-size: 14px;
+    color: #ffffff;
+
+    a {
+      color: #ffffff;
+      text-decoration: none;
+    }
+
+    .faq-link {
+      margin-bottom: 20px;
+
+      a {
+        font-weight: bold;
+      }
+    }
+  }
 }
 
 #pre-call-test-results {
@@ -1070,7 +1118,6 @@ body {
     height: 50px;
     line-height: 50px;
     margin-top: 35px;
-
   }
 
   .btn-blue {
