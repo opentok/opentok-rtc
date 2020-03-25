@@ -40,7 +40,7 @@ You will need these dependencies installed on your machine:
 
 - [NodeJS v8+](https://nodejs.org): This version of OpenTokRTC is tested with NodeJS v8 LTS.
 - [Redis](https://redis.io): A `redis` server running on `localhost`.
-- [Grunt](http://gruntjs.com): Used for bundling assets and running tests. You can install the Grunt CLI globally by running: `# npm i -g grunt-cli`.
+- [Grunt](http://gruntjs.com): Used for bundling assets and running tests. You can install the Grunt CLI globally by running:<br/>   `# npm i -g grunt-cli`.
 
 You will also need these API subscriptions:
 
