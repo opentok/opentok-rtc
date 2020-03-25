@@ -446,6 +446,7 @@ function ServerMethods(aLogLevel, aModules) {
               sessionId: session.sessionId,
               lastUsage: Date.now(),
               inProgressArchiveId: undefined,
+              isLocked: false
             });
           });
       } else {
@@ -454,15 +455,32 @@ function ServerMethods(aLogLevel, aModules) {
           sessionId: aSessionInfo.sessionId,
           lastUsage: Date.now(),
           inProgressArchiveId: aSessionInfo.inProgressArchiveId,
+          isLocked: aSessionInfo.isLocked
         });
       }
     });
   }
 
-  function roomExists(aReq, aRes) {
+  function getRoomRawInfo(aReq, aRes) {
     var roomName = aReq.params.roomName.toLowerCase();
     serverPersistence
-      .getKey(redisRoomPrefix + roomName).then(room => aRes.send({exists: !!room}));
+      .getKey(redisRoomPrefix + roomName).then((room) => {
+        if (!room) return aRes.status(404).send(null);
+        aRes.send(JSON.parse(room));
+      });
+  }
+
+  function lockRoom(aReq, aRes) {
+    var roomName = aReq.params.roomName.toLowerCase();
+    serverPersistence
+      .getKey(redisRoomPrefix + roomName).then((room) => {
+        if (!room) return aRes.status(404).send(null);
+        room = JSON.parse(room);
+        room.isLocked = aReq.body.state === 'locked';
+        serverPersistence
+          .setKey(redisRoomPrefix + roomName, room);
+        aRes.send(room);
+      });
   }
 
   // Get the information needed to connect to a session
@@ -897,6 +915,7 @@ function ServerMethods(aLogLevel, aModules) {
     iframingOptions,
     featureEnabled,
     loadConfig,
+    lockRoom,
     getRoot,
     getRoom,
     getRoomInfo,
@@ -909,7 +928,7 @@ function ServerMethods(aLogLevel, aModules) {
     postHangUp,
     getHealth,
     oldVersionCompat,
-    roomExists,
+    getRoomRawInfo,
     saveConnectionFirebase,
     deleteConnectionFirebase,
   };

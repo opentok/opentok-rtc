@@ -99,10 +99,33 @@ paths:
       responses:
         '200':
           description: OK
-  '/room/{roomName}/exists':
+  '/room/{roomName}/state':
+    post:
+      summary: Sets room state to locked or unlocked
+      x-implemented-in: lockRoom
+      produces:
+        - 'application/json,'
+      description: >-
+        Returns if the room is active.
+      parameters:
+        - name: roomName
+          in: path
+          description: Name of the room.
+          required: true
+          type: string
+      tags:
+        - Rooms
+      responses:
+        '200':
+          description: Boolean telling if the room exists
+        '400':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/ErrorInfo'
+  '/room/{roomName}/rawInfo':
     get:
       summary: Boolean telling if the room already exists or not.
-      x-implemented-in: roomExists
+      x-implemented-in: getRoomRawInfo
       produces:
         - 'application/json,'
       description: >-

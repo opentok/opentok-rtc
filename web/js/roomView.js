@@ -476,6 +476,12 @@ BubbleFactory, Clipboard, LayoutManager */
       }
     });
 
+    var lockRoom = document.getElementById('lockRoomContainer');
+
+    lockRoom.addEventListener('click', function (e) {
+      alert("clicked");
+    });
+
     var switchMic = document.getElementById('pickMicContainer');
 
     switchMic.addEventListener('click', function (e) {

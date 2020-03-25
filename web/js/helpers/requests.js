@@ -56,12 +56,12 @@
       });
   }
 
-  function roomExists(roomName) {
-    return sendXHR('GET', server + '/room/' + roomName + '/exists').
+  function getRoomRawInfo(roomName) {
+    return sendXHR('GET', server + '/room/' + roomName + '/rawInfo').
       then(function(resp) {
-        return resp.exists;
+        return resp;
       }).catch(function(error) {
-        return false;
+        return null;
       });
   }
 
@@ -117,7 +117,7 @@
 
   var Request = {
     getRoomInfo,
-    roomExists,
+    getRoomRawInfo,
     sendArchivingOperation,
     dialOut,
     hangUp,

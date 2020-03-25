@@ -107,11 +107,11 @@
         function submitForm() {
           function isAllowedToJoin() {
             return new Promise((resolve, reject) => {
-              if (!showUnavailable) return resolve();
               Request
-                .roomExists(roomName).then((exists) => {
-                  if (exists) return resolve();
-                  else return reject();
+                .getRoomRawInfo(roomName).then((room) => {
+                  if (room && !room.isLocked) return resolve();
+                  else if (!room) return reject('Not Found');
+                  else if (room.isLocked) return reject('locked');
                 })
             });
           }
@@ -123,7 +123,8 @@
               hidePrecall();
             }
           }).catch((e) => {
-            PrecallView.showUnavailableMessage();
+            if (e === 'locked') alert("LOCKED");
+            else PrecallView.showUnavailableMessage();
           });
         }
 
