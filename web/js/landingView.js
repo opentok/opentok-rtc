@@ -1,4 +1,4 @@
-/* global EJSTemplate, Modal, showTos, showUnavailable, roomName */
+/* global EJSTemplate, Modal, showTos, showUnavailable, roomName, Utils */
 
 !(function (global) {
   'use strict';
@@ -10,15 +10,6 @@
     roomLabelElem,
     userLabelElem,
     errorMessage;
-
-  function htmlEscape(str) {
-    return String(str)
-      .replace(/&/g, '')
-      .replace(/"/g, '')
-      .replace(/'/g, '')
-      .replace(/</g, '')
-      .replace(/>/g, '');
-  };
 
   var loadTosTemplate = function () {
     return new Promise(function (resolve) {
@@ -145,8 +136,8 @@
 
   var navigateToRoom = function () {
     var base = window.location.href.replace(/([^/]+)\.[^/]+$/, '');
-    var url = base.concat('room/', encodeURIComponent(htmlEscape(room.value)));
-    var userName = encodeURIComponent(htmlEscape(user.value.trim()));
+    var url = base.concat('room/', encodeURIComponent(Utils.htmlEscape(room.value)));
+    var userName = encodeURIComponent(Utils.htmlEscape(user.value.trim()));
     if (userName) {
       url = url.concat('?userName=', userName);
     }

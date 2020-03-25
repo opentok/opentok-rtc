@@ -25,7 +25,12 @@ function htmlEscape(str) {
     .replace(/"/g, '')
     .replace(/'/g, '')
     .replace(/</g, '')
-    .replace(/>/g, '');
+    .replace(/>/g, '')
+    .replace(/\(/g, '')
+    .replace(/\)/g, '')
+    .replace(/'/g, '')
+    .replace(/\\/g, '')
+    .replace(/;/g, '');
 };
 
 function ServerMethods(aLogLevel, aModules) {
