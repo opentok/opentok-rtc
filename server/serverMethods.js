@@ -892,6 +892,8 @@ function ServerMethods(aLogLevel, aModules) {
     aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
     aRes.set('Pragma', 'no-cache');
     aRes.set('Expires', 0);
+    aRes.set('X-Content-Type-Options', 'nosniff');
+
     aNext();
   }
 
