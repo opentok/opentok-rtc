@@ -73,7 +73,7 @@ body {
     float: left;
     flex-grow: 1;
     height: 100%;
-    padding-left: 30px;
+    padding: 0 30px;
 
     @media @smartphonesPortrait {
       padding: 0;
@@ -89,12 +89,15 @@ body {
       color: #7a8b93;
       min-width: 60px;
       .room-name {
+        display: flex;
+        flex-direction: column;
+        margin-top: 8px;
         font-size: 22px;
         text-overflow: ellipsis;
-        height: 26px;
+        height: 54px;
         overflow: hidden;
         white-space: nowrap;
-        line-height: 22px;
+        line-height: 26px;
         margin-bottom: 8px;
         color: #ffffff;
         @media @smartphonesPortrait {
@@ -674,10 +677,8 @@ body {
 
   .publish-settings {
     padding-top: 20px;
-    span {
-      margin-right: 20px;
-    }
   }
+
   #video-preview {
     width: 360px;
     height: 212px;
@@ -1151,7 +1152,6 @@ footer.main {
   display: block;
   text-overflow: ellipsis;
   overflow: hidden;
-  max-width: 290px;
   color: #131415;
 }
 

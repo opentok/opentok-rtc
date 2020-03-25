@@ -333,7 +333,7 @@ function ServerMethods(aLogLevel, aModules) {
   function getRoot(aReq, aRes) {
     aRes
       .render('index.ejs', {
-        roomName: haikunator.haikunate(),
+        roomName: `${haikunator.haikunate({ tokenLength: 0 })}-${haikunator.haikunate()}`,
         isWebRTCVersion: aReq.tbConfig.isWebRTCVersion,
         showTos: aReq.tbConfig.showTos,
         showUnavailable: aReq.tbConfig.showUnavailable,
