@@ -6,6 +6,11 @@
       "apiSecret": "<secret>",
       "publisherResolution": "640x480"
    },
+   "precallTest": {
+       "enabled": true,
+       "apiKey": "46049502",
+       "apiSecret": "0f4a63f629cec64ebdc5552974fe2566d2eb2835"
+   },
    "Firebase":{
       "dataUrl":"<firebase_url>",
       "authSecret":"<firebase_secret>"
