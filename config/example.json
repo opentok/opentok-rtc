@@ -43,5 +43,6 @@
   },
   "useGoogleFonts": true,
   "jqueryUrl": "https://ajax.googleapis.com/ajax/libs/jquery",
-  "supportIE": true
+  "supportIE": true,
+  "minMeetingNameLength": 0
 }
