@@ -159,6 +159,7 @@ function ServerMethods(aLogLevel, aModules) {
       var isWebRTCVersion = config.get(C.DEFAULT_INDEX_PAGE) === 'opentokrtc';
       var showTos = config.get(C.SHOW_TOS);
       var showUnavailable = config.get(C.SHOW_UNAVAILABLE);
+      var minMeetingNameLength = config.get(C.MIN_MEETING_NAME_LENGTH);
       var publisherResolution = config.get(C.PUBLISHER_RESOLUTION);
       var supportIE = config.get(C.SUPPORT_IE);
 
@@ -231,6 +232,7 @@ function ServerMethods(aLogLevel, aModules) {
                 reportIssueLevel,
                 useGoogleFonts,
                 jqueryUrl,
+                minMeetingNameLength,
               }));
     });
   }
@@ -361,8 +363,9 @@ function ServerMethods(aLogLevel, aModules) {
   function getRoot(aReq, aRes) {
     aRes
       .render('index.ejs', {
-        roomName: haikunator.haikunate(),
+        roomName: `${haikunator.haikunate({ tokenLength: 0 })}-${haikunator.haikunate()}`,
         isWebRTCVersion: aReq.tbConfig.isWebRTCVersion,
+        minMeetingNameLength: aReq.tbConfig.minMeetingNameLength,
         showTos: aReq.tbConfig.showTos,
         showUnavailable: aReq.tbConfig.showUnavailable,
         useGoogleFonts: aReq.tbConfig.useGoogleFonts,

@@ -103,6 +103,8 @@ E.SHOW_TOS = { envVar: 'SHOW_TOS', jsonPath: 'showTos', defaultValue: false, par
 
 E.SHOW_UNAVAILABLE = { envVar: 'SHOW_UNAVAILABLE', jsonPath: 'showUnavailable', defaultValue: false, parser: parseBool };
 
+E.MIN_MEETING_NAME_LENGTH = { envVar: 'MIN_MEETING_NAME_LENGTH', jsonPath: 'minMeetingNameLength', defaultValue: 0 };
+
 E.PUBLISHER_RESOLUTION = { envVar: 'PUBLISHER_RESOLUTION', jsonPath: 'OpenTok.publisherResolution', defaultValue: '1280x720' };
 
 E.SIP_ENABLED = { envVar: 'SIP_ENABLED', jsonPath: 'SIP.enabled', defaultValue: false, parser: parseBool };

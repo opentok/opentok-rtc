@@ -32,6 +32,7 @@
       window.isWebRTCVersion=<%=isWebRTCVersion%>;
       window.showTos=<%=showTos%> && !sessionStorage.tosAccepted;
       window.showUnavailable=<%=showUnavailable%>;
+      window.minMeetingNameLength=<%=minMeetingNameLength%>;
       window.roomName="<%=roomName%>";
     </script>
   </head>
@@ -56,11 +57,11 @@
             </header>
             <form>
               <div>
-                <input id="room" class="text-input required" data-wd="roomname" maxlength="25">
+                <input id="room" class="text-input required" data-wd="roomname" maxlength="46">
                 <label id="room-label" class="visited">Meeting name</label>
                 <p class="error-room error-text">
                   <i data-icon="warning"></i>
-                  Please enter a meeting name.
+                  <span>Please enter a meeting name.</span>
                 </p>
               </div>
               <div>
