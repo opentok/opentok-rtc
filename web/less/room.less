@@ -73,12 +73,12 @@ body {
     float: left;
     flex-grow: 1;
     height: 100%;
-    padding-left: 30px;
+    padding: 0 30px;
 
     @media @smartphonesPortrait {
       padding: 0;
-      padding-left: 17px;
-      max-width: 130px;
+      padding-left: 4px;
+      max-width: 180px;
     }
 
     .room-info {
@@ -89,19 +89,24 @@ body {
       color: #7a8b93;
       min-width: 60px;
       .room-name {
+        display: flex;
+        flex-direction: column;
+        margin-top: 8px;
         font-size: 22px;
         text-overflow: ellipsis;
-        height: 26px;
+        height: 54px;
         overflow: hidden;
         white-space: nowrap;
-        line-height: 22px;
+        line-height: 26px;
         margin-bottom: 8px;
         color: #ffffff;
         @media @smartphonesPortrait {
-          font-size: 16px;
+          font-size: 12px;
+          line-height: 17px;
           margin: 4px 0 0 12px;
           margin-left: 0;
-          width: 116px;
+          width: 190px;
+          height: 36px;
         }
       }
     }
@@ -121,10 +126,15 @@ body {
     font-size: 16px;
     cursor: pointer;
     @media @smartphonesPortrait {
-      margin-right: 14px;
+      margin-right: 26px;
+      width: 124px;
+      font-size: 14px;
     }
     i {
       margin-right: 10px;
+      @media @smartphonesPortrait {
+        margin-right: 2px;
+      }
     }
   }
   .invite-btn {
@@ -142,7 +152,7 @@ body {
     @media @smartphonesPortrait {
       float: left;
       width: unset;
-      min-width: calc(~"100% - 190px");
+      min-width: calc(~"100% - 220px");
       // height: 92px;
     }
     div {
@@ -674,10 +684,8 @@ body {
 
   .publish-settings {
     padding-top: 20px;
-    span {
-      margin-right: 20px;
-    }
   }
+
   #video-preview {
     width: 360px;
     height: 212px;
@@ -1147,13 +1155,12 @@ footer.main {
 
 .room-name {
   font-size: 16px;
-  word-break: break-all;
-  white-space: nowrap;
+  word-break: break-word;
   display: block;
   text-overflow: ellipsis;
   overflow: hidden;
-  max-width: 290px;
   color: #131415;
+  line-height: 18px;
 }
 
 #enter.btn {
