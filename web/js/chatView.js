@@ -100,6 +100,8 @@
     }
     if (isMobile()) {
       document.activeElement.blur(); // Hide the virtual keyboard.
+    } else {
+      chatMsgInput.focus();
     }
     Utils.sendEvent('chatView:outgoingMessage', {
       sender: usrId,
