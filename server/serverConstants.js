@@ -67,6 +67,8 @@ E.REPORT_ISSUE_LEVEL = { envVar: 'REPORT_ISSUE_LEVEL', jsonPath: 'Feedback.repor
 
 E.ENABLE_SCREENSHARING = { envVar: 'ENABLE_SCREENSHARING', jsonPath: 'Screensharing.enabled', defaultValue: false, parser: parseBool };
 
+E.ENABLE_PRECALL_TEST = { envVar: 'ENABLE_PRECALL_TEST', jsonPath: 'precallTest.enabled', defaultValue: true, parser: parseBool };
+
 E.USE_GOOGLE_FONTS = { envVar: 'USE_GOOGLE_FONTS', jsonPath: 'useGoogleFonts', required: false, defaultValue: true, parser: parseBool };
 
 E.JQUERY_URL = { envVar: 'JQUERY_URL', jsonPath: 'jqueryUrl', required: false, defaultValue: 'https://ajax.googleapis.com/ajax/libs/jquery' };

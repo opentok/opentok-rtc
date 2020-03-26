@@ -373,6 +373,31 @@ The app lets the developer POST feedback data to an endpoint on your HTTP server
  },
  ```
 
+ #### Pre-call test
+
+ Set the the `TB_PRECALL_API_KEY` and `TB_PRECALL_API_SECRET` environment variables
+ to the the OpenTok API key and secret to use for the test session used by
+ the precall-test. Or set these in the config file:
+  
+  ```json
+  "precallTest": {
+      "apiKey": "46049502",
+      "apiSecret": "0f4a63f629cec64ebdc5552974fe2566d2eb2835"
+  },
+  ```
+
+  These are optional. If you do not set these, the pre-call test will use the same
+  API key and secret that is used for the main OpenTok session used in the room.
+
+  You can disable the pre-call test by setting the `ENABLE_PRECALL_TEST`
+  environment variable to `false`. Or you can disable it using the config file:
+
+   ```json
+   "precallTest": {
+       "enabled": false
+   },
+   ```
+
  #### SIP connection
 
   See the [Phone dial-out](#phone-dial-out) section.
