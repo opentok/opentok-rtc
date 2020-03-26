@@ -444,7 +444,7 @@ function ServerMethods(aLogLevel, aModules) {
           if (usage.lastUpdate + 60000 < Date.now()) {
             setAppUsage(Date.now(), 1);
           } else {
-            setAppUsage(usage.lastUpdate, ++ usage.meetings);
+            setAppUsage(usage.lastUpdate, ++usage.meetings);
           }
         });
 

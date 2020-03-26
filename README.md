@@ -382,7 +382,8 @@ The app lets the developer POST feedback data to an endpoint on your HTTP server
 * `SHOW_TOS` (Optional, default value: false): Whether the app will display the terms of service
   dialog box and require the user to agree to the terms before joining a room.
 
-* `MEETINGS_RATE_PER_MINUTE` (Optional, default value: -1): Determines the maximum amount of new meetings that can be created in a minute. Users will be allowed to join a meeting that already exists. Otherwise a message will appear telling them that the service is not available at the moment. If the value is set to any negative number, rate limiting will be turned off and all meetings will be allowed.
+* `MEETINGS_RATE_PER_MINUTE` (Optional, default value: -1): Determines the maximum amount of new meetings that can be created in a minute. Users will be allowed to join a meeting that already exists. Otherwise a message will appear telling them that the service is not available at the moment. If the value is set to any negative number, rate limiting will be turned off and all meetings will be allowed. If this value is set to 0, all new meetings will be rejected.
+
 * `ALLOW_IFRAMING` (Optional, default value: 'never'): Controls the server-side restriction on
    allowing content to load inside an iframe. The allowed values are:
 
