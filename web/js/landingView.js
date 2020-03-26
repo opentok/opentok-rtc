@@ -1,4 +1,4 @@
-/* global EJSTemplate, Modal, showTos, showUnavailable, roomName, Utils */
+/* global EJSTemplate, Modal, showTos, showUnavailable, roomName, minMeetingNameLength, Utils */
 
 !(function (global) {
   'use strict';
@@ -63,10 +63,10 @@
   var isValid = function () {
     var formValid = true;
 
-    if (room.value.length < 14) {
+    if (room.value.length < minMeetingNameLength) {
       var messageText = (room.value.length === 0) ?
         'Please enter a meeting name' :
-        'The meeting name must be at least 14 characters';
+        'The meeting name must be at least ' + minMeetingNameLength + ' characters';
       errorMessage.querySelector('span').innerHTML = messageText;
       errorMessage.classList.add('show');
       formValid = false;

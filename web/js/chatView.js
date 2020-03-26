@@ -16,6 +16,8 @@
 
   var _visibilityChanging = Promise.resolve();
 
+  function isMobile() { return typeof window.orientation !== 'undefined'; }
+
   function isVisible() {
     return _visibilityChanging.then(function () {
       return Chat.visible;
@@ -96,7 +98,9 @@
     if (!chatMsgInput.value.trim().length) {
       return;
     }
-    document.activeElement.blur(); // Hide the virtual keyboard.
+    if (isMobile()) {
+      document.activeElement.blur(); // Hide the virtual keyboard.
+    }
     Utils.sendEvent('chatView:outgoingMessage', {
       sender: usrId,
       time: Utils.getCurrentTime(),
