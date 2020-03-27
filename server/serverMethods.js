@@ -340,6 +340,7 @@ function ServerMethods(aLogLevel, aModules) {
         roomName: `${haikunator.haikunate({ tokenLength: 0 })}-${haikunator.haikunate()}`,
         isWebRTCVersion: aReq.tbConfig.isWebRTCVersion,
         minMeetingNameLength: aReq.tbConfig.minMeetingNameLength,
+        publisherResolution: aReq.tbConfig.publisherResolution,
         showTos: aReq.tbConfig.showTos,
         showUnavailable: aReq.tbConfig.showUnavailable,
         useGoogleFonts: aReq.tbConfig.useGoogleFonts,
