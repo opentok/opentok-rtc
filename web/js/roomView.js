@@ -479,7 +479,21 @@ BubbleFactory, Clipboard, LayoutManager */
     var lockRoom = document.getElementById('lockRoomContainer');
 
     lockRoom.addEventListener('click', function (e) {
-      Utils.sendEvent('roomView:setRoomLockState', true);
+
+      var lockIcon = document.getElementById('lock-room-icon');
+      var lockState = lockIcon.getAttribute('data-icon');
+      var text = document.getElementById('lock-msg');
+      alert (lockState);
+      if (lockState == 'openLock') {
+        text.innerHTML = 'Unlock Room'
+        lockIcon.setAttribute('data-icon', 'closedLock');
+        Utils.sendEvent('roomView:setRoomLockState', true);
+      }
+      if (lockState == 'closedLock') {
+        text.innerHTML = 'Lock Room'
+        lockIcon.setAttribute('data-icon', 'openLock');
+        Utils.sendEvent('roomView:setRoomLockState', false);
+      }
     });
 
     var switchMic = document.getElementById('pickMicContainer');
