@@ -1,6 +1,7 @@
 /* global Utils, Request, RoomStatus, RoomView, LayoutManager, LazyLoader, Modal,
 ChatController, GoogleAuth, LayoutMenuController, OTHelper, PrecallController,
-RecordingsController, ScreenShareController, FeedbackController, PhoneNumberController */
+RecordingsController, ScreenShareController, FeedbackController,
+PhoneNumberController, ResizeSensor */
 
 !(function (exports) {
   'use strict';
@@ -585,10 +586,13 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
 
         subOptions.subscribeToVideo = !enterWithVideoDisabled;
 
+        /* Use ResizeSensor instead of mutationObserver
         // We want to observe the container where the actual suscriber will live
         var subsContainer = LayoutManager.getItemById(streamId);
         subsContainer && _mutationObserver &&
           _mutationObserver.observe(subsContainer, { attributes: true });
+        */
+
         subscriberStreams[streamId].subscriberPromise =
           otHelper.subscribe(evt.stream, subsDOMElem, subOptions, {}, enableAnnotations)
             .then(function (subscriber) {
@@ -607,6 +611,15 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
               if (enterWithVideoDisabled) {
                 pushSubscriberButton(streamId, 'video', true);
               }
+
+              ResizeSensor(subsDOMElem, function () {
+                var subsDimension = {
+                  width: subsDOMElem.clientWidth,
+                  height: subsDOMElem.clientHeight
+                };
+                otHelper.setPreferredResolution(subscriber, null, subsDimension, null, null);
+              });
+
               sendVideoEvent(evt.stream);
               return subscriber;
             }, function (error) {
@@ -794,7 +807,8 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     '/js/screenShareController.js',
     '/js/feedbackController.js',
     '/js/googleAuth.js',
-    '/js/phoneNumberController.js'
+    '/js/phoneNumberController.js',
+    '/js/vendor/ResizeSensor.js'
   ];
 
   var init = function () {
