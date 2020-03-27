@@ -175,11 +175,11 @@ BubbleFactory, Clipboard, LayoutManager */
       var lockState = evt.detail;
       var lockIcon = document.getElementById('lock-room-icon');
       var text = document.getElementById('lock-msg');
-      if (lockState == 'locked') {
+      if (lockState === 'locked') {
         text.innerHTML = 'Unlock Room'
         lockIcon.setAttribute('data-icon', 'closedLock');
       }
-      if (lockState == 'unlocked') {
+      if (lockState === 'unlocked') {
         text.innerHTML = 'Lock Room'
         lockIcon.setAttribute('data-icon', 'openLock');
       }
