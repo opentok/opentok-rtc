@@ -15,6 +15,7 @@
   var logger =
         new Utils.MultiLevelLogger('OTHelper.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
 
+  var requestedResolutions = {};
   var otLoaded = otPromise.then(function() {
     var hasRequirements = OT.checkSystemRequirements();
     if (!hasRequirements) {
@@ -589,8 +590,21 @@
       var streamDimension = aSubscriber.stream.videoDimensions;
       var newDimension =
         algorithm(streamDimension, aTotalDimension, aSubsDimension, aSubsNumber);
+
+      if (!requestedResolutions[aSubscriber.id]) {
+        // Set the initial subscriber stream resolution
+        requestedResolutions[aSubscriber.id] = aSubscriber.stream.videoDimensions;
+      }
+
+      var existingResolution = requestedResolutions[aSubscriber.id];
+      if (newDimension.width === existingResolution.width && newDimension.height === existingResolution.height ) {
+        return; // No need to request a new resolution
+      }
+
       logger.log('setPreferedResolution -', chosenAlgorithm, ':', aSubscriber.stream.streamId,
-                 'of', aSubsNumber, ': Existing:', streamDimension, 'Requesting:', newDimension);
+                 'of', aSubsNumber, ': Existing:', existingResolution, 'Requesting:', newDimension);
+
+      requestedResolutions[aSubscriber.id] = newDimension;
       aSubscriber.setPreferredResolution(newDimension);
     }
 

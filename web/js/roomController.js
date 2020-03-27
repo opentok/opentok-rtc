@@ -603,7 +603,7 @@ PhoneNumberController, ResizeSensor */
                 pushSubscriberButton(streamId, 'video', true);
               }
 
-              ResizeSensor(subsDOMElem, function () {
+              new ResizeSensor(subsDOMElem, function () { // eslint-disable-line no-new
                 var subsDimension = {
                   width: subsDOMElem.clientWidth,
                   height: subsDOMElem.clientHeight
