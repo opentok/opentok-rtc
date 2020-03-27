@@ -109,9 +109,10 @@
             return new Promise((resolve, reject) => {
               Request
                 .getRoomRawInfo(roomName).then((room) => {
-                  if (room && !room.isLocked) return resolve();
-                  else if (!room) return reject('Not Found');
-                  else if (room.isLocked) return reject('locked');
+                  if (showUnavailable && !room) return reject('New rooms not allowed');
+                  else if (room && !room.isLocked) return resolve();
+                  else if (!showUnavailable && !room) return resolve();
+                  else if (room && room.isLocked) return reject('locked');
                 })
             });
           }

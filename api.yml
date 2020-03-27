@@ -113,6 +113,11 @@ paths:
           description: Name of the room.
           required: true
           type: string
+        - name: state
+          in: body
+          description: state of the room.  Can be 'locked' or 'unlocked'.
+          required: true
+          type: string
       tags:
         - Rooms
       responses:
@@ -124,12 +129,12 @@ paths:
             $ref: '#/definitions/ErrorInfo'
   '/room/{roomName}/rawInfo':
     get:
-      summary: Boolean telling if the room already exists or not.
+      summary: Return room data if exists. Returns not found if it does not exist.
       x-implemented-in: getRoomRawInfo
       produces:
         - 'application/json,'
       description: >-
-        Returns if the room is active.
+        Returns room data.
       parameters:
         - name: roomName
           in: path
