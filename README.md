@@ -443,6 +443,14 @@ The app lets the developer POST feedback data to an endpoint on your HTTP server
    (When OpenTok.js 2.16 is no longer supported, we will remove this config settings
    and remove these polyfill scripts.)
 
+ * `ENABLE_MUTE_ALL` (Optional, default value: true): Whether to show the Mute All
+   control in the top menu of the room. (You can set this in the config file
+   using the `enableMuteAll` setting.)
+
+ * `ENABLE_STOP_RECEIVING_VIDEO` (Optional, default value: true): Whether to show
+   the Stop Receiving Video control in the top menu of the room. (You can set this
+   in the config file using the `enableStopReceivingVideo` setting.)
+
 ## Customizing the UI
 
 For information on how to customize OpenTokRTC's UI, see [CUSTOMIZING-UI.md](CUSTOMIZING-UI.md).
