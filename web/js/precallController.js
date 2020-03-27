@@ -109,10 +109,14 @@
             return new Promise((resolve, reject) => {
               Request
                 .getRoomRawInfo(roomName).then((room) => {
-                  if (showUnavailable && !room) return reject('New rooms not allowed');
-                  else if (room && !room.isLocked) return resolve();
-                  else if (!showUnavailable && !room) return resolve();
-                  else if (room && room.isLocked) return reject('locked');
+                  if (showUnavailable && !room) 
+                    return reject(new Error('New rooms not allowed'));
+                  else if (room && !room.isLocked) 
+                    return resolve();
+                  else if (!showUnavailable && !room) 
+                    return resolve();
+                  else if (room && room.isLocked) 
+                    return reject(new Error('Room locked'));
                 })
             });
           }
@@ -124,7 +128,7 @@
               hidePrecall();
             }
           }).catch((e) => {
-            if (e === 'locked')
+            if (e.message === 'Room locked')
               PrecallView.showLockedMessage();
             else 
               PrecallView.showUnavailableMessage();
