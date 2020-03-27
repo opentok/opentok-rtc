@@ -603,7 +603,6 @@ body {
   background: url(/images/background-rebrand.png) no-repeat center center fixed;
   background-size: cover;
   height: 100%;
-  overflow: hidden;
   #logo {
     position: absolute;
     top: 40px;
@@ -689,6 +688,7 @@ body {
   #video-preview {
     width: 360px;
     height: 212px;
+    margin-top: 40px;
     background-color: #222;
     border-radius: 5px;
     .OT_publisher .OT_widget-container {
@@ -889,12 +889,12 @@ body {
 
 .precall-right {
   position: absolute;
+  overflow: auto;
   top: 0;
   right: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   height: 100%;
   width: 554px;
   background: rgba(19, 20, 21, 0.5);
@@ -918,6 +918,7 @@ body {
 
   .info-links {
     margin-top: 40px;
+    margin-bottom:40px;
     font-size: 14px;
     color: #ffffff;
 
