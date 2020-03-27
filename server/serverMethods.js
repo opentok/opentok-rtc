@@ -25,7 +25,12 @@ function htmlEscape(str) {
     .replace(/"/g, '')
     .replace(/'/g, '')
     .replace(/</g, '')
-    .replace(/>/g, '');
+    .replace(/>/g, '')
+    .replace(/\(/g, '')
+    .replace(/\)/g, '')
+    .replace(/'/g, '')
+    .replace(/\\/g, '')
+    .replace(/;/g, '');
 };
 
 function ServerMethods(aLogLevel, aModules) {
@@ -350,7 +355,6 @@ function ServerMethods(aLogLevel, aModules) {
           logger.error('getRoot. error: ', err);
           aRes.status(500).send(new ErrorInfo(500, 'Invalid Template'));
         } else {
-          aRes.set('X-XSS-Protection', '1; mode=block');
           aRes.send(html);
         }
       });
@@ -382,7 +386,6 @@ function ServerMethods(aLogLevel, aModules) {
       aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
       aRes.set('Pragma', 'no-cache');
       aRes.set('Expires', 0);
-      aRes.set('X-XSS-Protection', '1; mode=block');
       aRes
         .render((template || tbConfig.defaultTemplate) + '.ejs',
         {
@@ -895,6 +898,17 @@ function ServerMethods(aLogLevel, aModules) {
     aRes.send({});
   }
 
+  function setSecurityHeaders(aReq, aRes, aNext) {
+    aRes.set('X-XSS-Protection', '1; mode=block');
+    aRes.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+    aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    aRes.set('Pragma', 'no-cache');
+    aRes.set('Expires', 0);
+    aRes.set('X-Content-Type-Options', 'nosniff');
+
+    aNext();
+  }
+
   return {
     logger,
     configReady,
@@ -916,6 +930,7 @@ function ServerMethods(aLogLevel, aModules) {
     roomExists,
     saveConnectionFirebase,
     deleteConnectionFirebase,
+    setSecurityHeaders,
   };
 }
 

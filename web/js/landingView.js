@@ -1,4 +1,4 @@
-/* global EJSTemplate, Modal, showTos, showUnavailable, roomName, minMeetingNameLength */
+/* global EJSTemplate, Modal, showTos, showUnavailable, roomName, minMeetingNameLength, Utils */
 
 !(function (global) {
   'use strict';
@@ -11,15 +11,6 @@
     roomLabelElem,
     userLabelElem,
     errorMessage;
-
-  function htmlEscape(str) {
-    return String(str)
-      .replace(/&/g, '')
-      .replace(/"/g, '')
-      .replace(/'/g, '')
-      .replace(/</g, '')
-      .replace(/>/g, '');
-  };
 
   var loadTosTemplate = function () {
     return new Promise(function (resolve) {
@@ -147,8 +138,8 @@
 
   var navigateToRoom = function () {
     var url = window.location.origin
-      .concat('/room/', encodeURIComponent(htmlEscape(room.value)));
-    var userName = encodeURIComponent(htmlEscape(user.value.trim()));
+      .concat('/room/', encodeURIComponent(Utils.htmlEscape(room.value)));
+    var userName = encodeURIComponent(Utils.htmlEscape(user.value.trim()));
     if (userName) {
       url = url.concat('?userName=', userName);
     }
