@@ -673,10 +673,6 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       Utils.sendEvent('archiving', { status: 'stopped' });
     },
     'signal:roomLocked': function (evt) {
-      if (!otHelper.isMyself(evt.from)) {
-        alert("RECEIVED LOCK REQ");
-      }
-
       Utils.sendEvent('roomController:roomLocked'); 
     },
     'signal:muteAll': function (evt) {

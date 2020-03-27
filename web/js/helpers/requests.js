@@ -81,7 +81,6 @@
   }
 
   function sendLockingOperation(data) {
-    alert("locking" + data.roomName);
     return sendXHR('POST', server + '/room/' + data.roomName + '/state',
                     JSON.stringify(data), 'application/json');
   }
