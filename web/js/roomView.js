@@ -172,18 +172,16 @@ BubbleFactory, Clipboard, LayoutManager */
       }
     },
     roomLocked: function (evt) {
+      var lockState = evt.detail;
       var lockIcon = document.getElementById('lock-room-icon');
-      var lockState = lockIcon.getAttribute('data-icon');
       var text = document.getElementById('lock-msg');
-      if (lockState == 'openLock') {
+      if (lockState == 'locked') {
         text.innerHTML = 'Unlock Room'
         lockIcon.setAttribute('data-icon', 'closedLock');
-        //Utils.sendEvent('roomView:setRoomLockState', true);
       }
-      if (lockState == 'closedLock') {
+      if (lockState == 'unlocked') {
         text.innerHTML = 'Lock Room'
         lockIcon.setAttribute('data-icon', 'openLock');
-        //Utils.sendEvent('roomView:setRoomLockState', false);
       }
     },
     roomMuted: function (evt) {
@@ -497,10 +495,10 @@ BubbleFactory, Clipboard, LayoutManager */
       var lockIcon = document.getElementById('lock-room-icon');
       var lockState = lockIcon.getAttribute('data-icon');
       if (lockState == 'openLock') {
-        Utils.sendEvent('roomView:setRoomLockState', true);
+        Utils.sendEvent('roomView:setRoomLockState', 'locked');
       }
       if (lockState == 'closedLock') {
-        Utils.sendEvent('roomView:setRoomLockState', false);
+        Utils.sendEvent('roomView:setRoomLockState', 'unlocked');
       }
     });
 

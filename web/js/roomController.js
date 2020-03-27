@@ -324,7 +324,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
   }
 
   function sendSignalLock(status) {
-    otHelper.sendSignal('roomLocked', { status: status });
+    otHelper.sendSignal('roomLocked', { status });
   }
 
   var viewEventHandlers = {
@@ -472,16 +472,16 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       }
     },
     setRoomLockState: function (evt) {
-      var lockState = evt.detail;
+      var state = evt.detail;
 
       var data = {
         userName: userName,
         roomName: roomURI,
-        state: lockState ? 'locked' : 'unlocked'
+        state
       };
 
       Request.sendLockingOperation(data);
-      sendSignalLock(lockState);
+      sendSignalLock(state);
     }
   };
 
@@ -673,7 +673,8 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       Utils.sendEvent('archiving', { status: 'stopped' });
     },
     'signal:roomLocked': function (evt) {
-      Utils.sendEvent('roomController:roomLocked'); 
+      var roomState = JSON.parse(evt.data).status;
+      Utils.sendEvent('roomController:roomLocked', roomState); 
     },
     'signal:muteAll': function (evt) {
       var statusData = JSON.parse(evt.data);
