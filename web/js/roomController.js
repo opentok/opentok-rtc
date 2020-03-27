@@ -323,6 +323,10 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     otHelper.sendSignal('muteAll', { status: status, onlyChangeSwitch: onlyChangeSwitch });
   }
 
+  function sendSignalLock(status) {
+    otHelper.sendSignal('roomLocked', { status: status });
+  }
+
   var viewEventHandlers = {
     endCall: function () {
       otHelper.disconnect();
@@ -478,7 +482,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
 
       console.log(data);
       Request.sendLockingOperation(data);
-
+      sendSignalLock(true);
       alert("pt catalan");
     }
   };
@@ -669,6 +673,12 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     archiveStopped: function () {
       // Dispatched when an archive recording of the session stops
       Utils.sendEvent('archiving', { status: 'stopped' });
+    },
+    'signal:roomLocked': function (evt) {
+      if (!otHelper.isMyself(evt.from)) {
+        alert("RECEIVED LOCK REQ");
+      }
+        
     },
     'signal:muteAll': function (evt) {
       var statusData = JSON.parse(evt.data);
