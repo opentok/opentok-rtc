@@ -73,12 +73,12 @@ body {
     float: left;
     flex-grow: 1;
     height: 100%;
-    padding-left: 30px;
+    padding: 0 30px;
 
     @media @smartphonesPortrait {
       padding: 0;
-      padding-left: 17px;
-      max-width: 130px;
+      padding-left: 4px;
+      max-width: 180px;
     }
 
     .room-info {
@@ -89,22 +89,57 @@ body {
       color: #7a8b93;
       min-width: 60px;
       .room-name {
+        display: flex;
+        flex-direction: column;
+        margin-top: 8px;
         font-size: 22px;
         text-overflow: ellipsis;
-        height: 26px;
+        height: 54px;
         overflow: hidden;
         white-space: nowrap;
-        line-height: 22px;
+        line-height: 26px;
         margin-bottom: 8px;
         color: #ffffff;
         @media @smartphonesPortrait {
-          font-size: 16px;
+          font-size: 12px;
+          line-height: 17px;
           margin: 4px 0 0 12px;
           margin-left: 0;
-          width: 116px;
+          width: 190px;
+          height: 36px;
         }
       }
     }
+  }
+  .invite-btn {
+    background: #871FFF;
+    border-radius: 5px;
+    border: none;
+    margin-right: 20px;
+    width: 140px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    @media @smartphonesPortrait {
+      margin-right: 26px;
+      width: 124px;
+      font-size: 14px;
+    }
+    i {
+      margin-right: 10px;
+      @media @smartphonesPortrait {
+        margin-right: 2px;
+      }
+    }
+  }
+  .invite-btn {
+    background: #871FFF;
+    border-radius: 5px;
   }
   .right-container {
     float: right;
@@ -117,8 +152,8 @@ body {
     @media @smartphonesPortrait {
       float: left;
       width: unset;
-      min-width: calc(~"100% - 190px");
-      height: 92px;
+      min-width: calc(~"100% - 220px");
+      // height: 92px;
     }
     div {
         float: left;
@@ -139,7 +174,7 @@ body {
       display: none;
     }
   }
-  .layout-container {
+  .options-container {
     width: 114px;
     height: 98px;
     border-left: 1px solid #455b66;
@@ -154,11 +189,11 @@ body {
       display: none;
     }
 
-    #layout-icon {
+    #options-icon {
       height: 22px;
       float: none;
     }
-    #layout-label {
+    #options-label {
       margin-top: 8px;
       float: none;
       font-size: 12px;
@@ -277,6 +312,14 @@ body {
     max-width: 564px;
     border-radius: 10px;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+
+    @media @smartphonesPortrait {
+      position: absolute;
+      width: 98%;
+      top: 150px;
+      left: 1%;
+      margin: 0;
+    }
 
     header {
       .close {
@@ -560,7 +603,6 @@ body {
   background: url(/images/background-rebrand.png) no-repeat center center fixed;
   background-size: cover;
   height: 100%;
-  overflow: hidden;
   #logo {
     position: absolute;
     top: 40px;
@@ -641,13 +683,12 @@ body {
 
   .publish-settings {
     padding-top: 20px;
-    span {
-      margin-right: 20px;
-    }
   }
+
   #video-preview {
     width: 360px;
     height: 212px;
+    margin-top: 40px;
     background-color: #222;
     border-radius: 5px;
     .OT_publisher .OT_widget-container {
@@ -719,6 +760,7 @@ body {
     }
   }
   #enter-name-prompt {
+    margin-top:10px;
     padding: 0;
     border-bottom: #788492 1px solid;
     div {
@@ -775,7 +817,7 @@ body {
   }
 
   #pre-call-test {
-    display: flex;
+    display: none;
     align-items: center;
     font-weight: 400;
     span {
@@ -814,6 +856,7 @@ body {
   }
 
   #precall-test-meter {
+    display: none;
     position: absolute;
     width: 330px;
     margin-top: 8px;
@@ -846,12 +889,12 @@ body {
 
 .precall-right {
   position: absolute;
+  overflow: auto;
   top: 0;
   right: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   height: 100%;
   width: 554px;
   background: rgba(19, 20, 21, 0.5);
@@ -870,6 +913,26 @@ body {
     img {
       width: 138px;
       padding: 0 50px 0 50px;
+    }
+  }
+
+  .info-links {
+    margin-top: 40px;
+    margin-bottom:40px;
+    font-size: 14px;
+    color: #ffffff;
+
+    a {
+      color: #ffffff;
+      text-decoration: none;
+    }
+
+    .faq-link {
+      margin-bottom: 20px;
+
+      a {
+        font-weight: bold;
+      }
     }
   }
 }
@@ -1070,7 +1133,6 @@ body {
     height: 50px;
     line-height: 50px;
     margin-top: 35px;
-
   }
 
   .btn-blue {
@@ -1094,13 +1156,12 @@ footer.main {
 
 .room-name {
   font-size: 16px;
-  word-break: break-all;
-  white-space: nowrap;
+  word-break: break-word;
   display: block;
   text-overflow: ellipsis;
   overflow: hidden;
-  max-width: 290px;
   color: #131415;
+  line-height: 18px;
 }
 
 #enter.btn {

@@ -34,6 +34,7 @@
       window.precallSessionId='<%=precallSessionId%>';
       window.precallToken='<%=precallToken%>';
       window.showTos=<%=showTos%> && !sessionStorage.tosAccepted;
+      window.enablePrecallTest=<%=enablePrecallTest%>
       window.showUnavailable=<%=showUnavailable%>;
       window.opentokJsUrl='<%=opentokJsUrl%>';
       window.feedbackUrl = '<%=feedbackUrl%>';
@@ -74,7 +75,9 @@
 
     <div id="top-banner">
       <div class="icon-container">
-        <i data-icon="vonage_logo"></i>
+        <a href="https://vonage.com" title="Vonage" target="_blank">
+          <i data-icon="vonage_logo"></i>
+        </a>
       </div>
       <div class="center-container">
         <div class="room-info">
@@ -84,10 +87,16 @@
       </div>
       <div class="right-container">
         <div class="videoSwitch">
-          <a id="videoSwitch" disabled><i data-icon="videoSwitch"></i><span>Stop receiving video</span></a>
+          <a id="videoSwitch" disabled>
+            <span>Stop receiving video</span>
+            <i data-icon="videoSwitch"></i>
+          </a>
         </div>
         <div class="audioSwitch" disabled>
-          <a id="audioSwitch"><i data-icon="audioSwitch"></i><span>Mute all participants</span></a>
+          <a id="audioSwitch">
+            <span>Mute all participants</span>
+            <i data-icon="audioSwitch"></i>
+          </a>
         </div>
         <%   if(enableArchiving) { %>
         <div id="toggleArchiving" disabled>
@@ -99,14 +108,18 @@
           <a id="viewRecordings"  class="btn btn-blue btn-padding"><span id="recordings">0</span></a>
         </div>
         <% } } %>
-        <div class="layout-container">
+        <a class="invite-btn" id="addToCall">
+          <i data-icon="add"></i>
+          Invite
+        </a>
+        <div class="options-container">
           <div>
-            <div id="layout-icon">
+            <div id="options-icon">
               <a id="chooseLayout">
-                <i data-icon="layout-icon"></i>
+                <i data-icon="options-icon"></i>
               </a>
             </div>
-            <div id="layout-label">Layout</div>
+            <div id="options-label">Options</div>
           </div>
         </div>
       </div>
@@ -248,6 +261,8 @@
               <span>Switch Camera</span>
             </div>
           </div>
+          <br>
+            <span> Layouts </span>
           <hr>
           <ul>
             <li><a data-layout-type="float"></a></li>

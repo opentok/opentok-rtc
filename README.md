@@ -373,6 +373,31 @@ The app lets the developer POST feedback data to an endpoint on your HTTP server
  },
  ```
 
+ #### Pre-call test
+
+ Set the the `TB_PRECALL_API_KEY` and `TB_PRECALL_API_SECRET` environment variables
+ to the the OpenTok API key and secret to use for the test session used by
+ the precall-test. Or set these in the config file:
+  
+  ```json
+  "precallTest": {
+      "apiKey": "46049502",
+      "apiSecret": "0f4a63f629cec64ebdc5552974fe2566d2eb2835"
+  },
+  ```
+
+  These are optional. If you do not set these, the pre-call test will use the same
+  API key and secret that is used for the main OpenTok session used in the room.
+
+  You can disable the pre-call test by setting the `ENABLE_PRECALL_TEST`
+  environment variable to `false`. Or you can disable it using the config file:
+
+   ```json
+   "precallTest": {
+       "enabled": false
+   },
+   ```
+
  #### SIP connection
 
   See the [Phone dial-out](#phone-dial-out) section.
@@ -382,7 +407,15 @@ The app lets the developer POST feedback data to an endpoint on your HTTP server
 * `SHOW_TOS` (Optional, default value: false): Whether the app will display the terms of service
   dialog box and require the user to agree to the terms before joining a room.
 
-* `MEETINGS_RATE_PER_MINUTE` (Optional, default value: -1): Determines the maximum amount of new meetings that can be created in a minute. Users will be allowed to join a meeting that already exists. Otherwise a message will appear telling them that the service is not available at the moment. If the value is set to any negative number, rate limiting will be turned off and all meetings will be allowed. If this value is set to 0, all new meetings will be rejected.
+* `MEETINGS_RATE_PER_MINUTE` (Optional, default value: -1): Determines the maximum amount of new meetings that
+  can be created in a minute. Users will be allowed to join a meeting that already exists. Otherwise a message
+  will appear telling them that the service is not available at the moment. If the value is set to any negative
+  number, rate limiting will be turned off and all meetings will be allowed. If this value is set to 0, all new
+  meetings will be rejected.
+
+* `MIN_MEETING_NAME_LENGTH` (Optional, default value: 0): The minimum length of
+  meeting names created. The default value, 0, indicates that there is no minimum
+  length. (You can set this in the config file using the `minMeetingNameLength` setting.)
 
 * `ALLOW_IFRAMING` (Optional, default value: 'never'): Controls the server-side restriction on
    allowing content to load inside an iframe. The allowed values are:

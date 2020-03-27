@@ -1,4 +1,4 @@
-/* global EJSTemplate, Modal, showTos, showUnavailable, roomName */
+/* global EJSTemplate, Modal, showTos, showUnavailable, roomName, minMeetingNameLength, Utils */
 
 !(function (global) {
   'use strict';
@@ -6,19 +6,11 @@
   var room,
     user,
     enterButton,
+    enterButtonArrow,
     form,
     roomLabelElem,
     userLabelElem,
     errorMessage;
-
-  function htmlEscape(str) {
-    return String(str)
-      .replace(/&/g, '')
-      .replace(/"/g, '')
-      .replace(/'/g, '')
-      .replace(/</g, '')
-      .replace(/>/g, '');
-  };
 
   var loadTosTemplate = function () {
     return new Promise(function (resolve) {
@@ -42,6 +34,7 @@
 
   var performInit = function () {
     enterButton = document.getElementById('enter');
+    enterButtonArrow = document.getElementById('enter-arrow');
     room = document.getElementById('room');
     user = document.getElementById('user');
     form = document.querySelector('form');
@@ -70,14 +63,14 @@
   var isValid = function () {
     var formValid = true;
 
-    var fields = document.querySelectorAll('form input.required');
-
-    Array.prototype.map.call(fields, function (field) {
-      errorMessage = document.querySelector('.error-' + field.id);
-      var valid = field.type === 'checkbox' ? field.checked : field.value.trim();
-      valid ? errorMessage.classList.remove('show') : errorMessage.classList.add('show');
-      formValid = formValid && valid;
-    });
+    if (room.value.length < minMeetingNameLength) {
+      var messageText = (room.value.length === 0) ?
+        'Please enter a meeting name' :
+        'The meeting name must be at least ' + minMeetingNameLength + ' characters';
+      errorMessage.querySelector('span').innerHTML = messageText;
+      errorMessage.classList.add('show');
+      formValid = false;
+    }
 
     return formValid;
   };
@@ -144,9 +137,9 @@
   };
 
   var navigateToRoom = function () {
-    var base = window.location.href.replace(/([^/]+)\.[^/]+$/, '');
-    var url = base.concat('room/', encodeURIComponent(htmlEscape(room.value)));
-    var userName = encodeURIComponent(htmlEscape(user.value.trim()));
+    var url = window.location.origin
+      .concat('/room/', encodeURIComponent(Utils.htmlEscape(room.value)));
+    var userName = encodeURIComponent(Utils.htmlEscape(user.value.trim()));
     if (userName) {
       url = url.concat('?userName=', userName);
     }
@@ -164,34 +157,38 @@
   }
 
   var addHandlers = function () {
-    enterButton.addEventListener('click', function onEnterClicked(event) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
+    var enterRoomButtons = document.querySelectorAll('.enter-room-buttons');
 
-      if (!isValid()) {
-        form.classList.add('error');
-        room.blur();
-        document.getElementById('room-label').style.opacity = 0;
-        return;
-      }
-
-      form.classList.remove('error');
-      enterButton.removeEventListener('click', onEnterClicked);
-
-      if (showUnavailable) {
-        showUnavailableMessage();
-      } else if (showTos) {
-        showContract().then(function (accepted) {
-          if (accepted) {
-            sessionStorage.setItem('tosAccepted', true);
-            navigateToRoom();
-          } else {
-            addHandlers();
-          }
-        });
-      } else {
-        navigateToRoom();
-      }
+    enterRoomButtons.forEach((button) => {
+      button.addEventListener('click', function onEnterClicked(event) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+    
+        if (!isValid()) {
+          form.classList.add('error');
+          room.blur();
+          document.getElementById('room-label').style.opacity = 0;
+          return;
+        }
+    
+        form.classList.remove('error');
+        button.removeEventListener('click', onEnterClicked);
+    
+        if (showUnavailable) {
+          showUnavailableMessage();
+        } else if (showTos) {
+          showContract().then(function (accepted) {
+            if (accepted) {
+              sessionStorage.setItem('tosAccepted', true);
+              navigateToRoom();
+            } else {
+              addHandlers();
+            }
+          });
+        } else {
+          navigateToRoom();
+        }
+      });
     });
 
     room.addEventListener('keypress', function onKeypress() {

@@ -32,7 +32,9 @@
       window.isWebRTCVersion=<%=isWebRTCVersion%>;
       window.showTos=<%=showTos%> && !sessionStorage.tosAccepted;
       window.showUnavailable=<%=showUnavailable%>;
+      window.minMeetingNameLength=<%=minMeetingNameLength%>;
       window.roomName="<%=roomName%>";
+      window.publisherResolution="<%=publisherResolution%>";
     </script>
   </head>
 
@@ -56,11 +58,11 @@
             </header>
             <form>
               <div>
-                <input id="room" class="text-input required" data-wd="roomname" maxlength="25">
+                <input id="room" class="text-input required" data-wd="roomname" maxlength="46">
                 <label id="room-label" class="visited">Meeting name</label>
                 <p class="error-room error-text">
                   <i data-icon="warning"></i>
-                  Please enter a meeting name.
+                  <span>Please enter a meeting name.</span>
                 </p>
               </div>
               <div>
@@ -68,15 +70,19 @@
                 <label id="user-label">Your name</label>
               </div>
             </form>
+            <button id="enter" class="enter-room-buttons" data-wd="enterroom">Join Meeting</button>
             <div class="landing-more-info">
-              <a href="Vonage-Free-Conferencing-help.pdf"  target="_blank">Need help?</a>
-              <a href="https://vonage.com/" target="_blank">About Vonage</a>
+              Need help? <a href="Vonage-Free-Conferencing-help.pdf" target="_blank">Read our FAQs</a>
             </div>
             <div class="safari-plug">
               <a href="https://safari.opentokrtc.com/">Try the WebRTC Demo for Safari.</a>
             </div>
           </section>
-          <button id="enter" data-wd="enterroom"></button>
+          <button id="enter-arrow" class="enter-room-buttons" data-wd="enterroom"></button>
+          <div class="right-footer">
+            <a href="http://www.vonage.com" target="_blank">About Vonage</a> |
+            <a href="https://www.vonage.com/solutions/" target="_blank">Communications are crucial during COVID-19</a>
+          </div>
         </div>
       </div>
     </section>

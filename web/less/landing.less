@@ -11,7 +11,7 @@ body {
   background: url(/images/background-rebrand.png) no-repeat center center fixed;
   background-size: cover;
   height: 100%;
-  overflow: hidden;
+  margin: 0;
 }
 
 .main {
@@ -82,7 +82,7 @@ body {
     margin: 20px 0 0 0;
     height: 100px;
     @media @smartphonesPortrait {
-      max-width: calc(~"100% - 60px");
+      max-width: calc(~"100% - 14px");
       margin: 0;
       margin: 20px 30px 0 24px;
     }
@@ -97,11 +97,11 @@ body {
       position: absolute;
       left: 0;
       border: none;
-      width: 233px;
+      width: 350px;
       color: white;
       outline: none;
       @media @smartphonesPortrait {
-        width: calc(~"100% - 180px");
+        width: 100%;
       }
       text-shadow: black 1px 1px 12px;
     }
@@ -121,6 +121,10 @@ body {
       font-weight: normal;
       position: relative;
       transition: all 0.5s;
+      @media @smartphonesPortrait {
+        font-size: 12px;
+        color: #F7D3EC;
+      }
     }
 
     label.visited {
@@ -128,17 +132,31 @@ body {
       color: #F7D3EC;
     }
 
-    #room-label.visited {
-      left: 220px;
+    #room-label {
       @media @smartphonesPortrait {
-        left: calc(~"100% - 80px");
+        left: 4px;
+        bottom: 70px;
+      }
+    }
+
+    #room-label.visited {
+      left: 360px;
+      @media @smartphonesPortrait {
+        left: 4px;
+      }
+    }
+
+    #user-label {
+      @media @smartphonesPortrait {
+        left: 4px;
+        bottom: 70px;
       }
     }
 
     #user-label.visited {
-      left: 240px;
+      left: 380px;
       @media @smartphonesPortrait {
-        left: calc(~"100% - 60px");
+        left: 4px;
       }
     }
 
@@ -155,6 +173,7 @@ body {
 
       @media @smartphonesPortrait {
         font-size: 12px;
+        background-color: #00000099;
       }
 
       @media @smartphonesLandscape {
@@ -172,15 +191,19 @@ body {
 
     .error-room {
       margin: 0 356px 0 0;
-      @media @smartphonesPortrait {
-        margin: 0 0 0 0;
-      }
       position: relative;
       font-size: 16px;
       width: 100%;
-      bottom: 45px;
+      bottom: 98px;
       border-bottom: solid 1px #ed5654;
       line-height: 38px;
+      @media @smartphonesPortrait {
+        margin: 0 0 0 0;
+        font-size: 13px;
+        line-height: 17px;
+        border-bottom: none;
+        bottom: 120px;
+      }
     }
 
     &.error {
@@ -211,33 +234,37 @@ body {
       position: absolute;
       z-index: 100;
 
-      @media @smartphonesPortrait {
-        margin-left: 22px;
+      @media @smartphonesLandscape {
         font-size: 14px;
       }
 
-      @media @smartphonesLandscape {
-        font-size: 14px;
+      @media @smartphonesPortrait {
+        left: -26px;
+        position: relative;
+        bottom: -6px;
+        margin-left: 22px;
+        font-size: 13px;
       }
     }
   }
 
   .landing-more-info {
+    min-height: 160px;
+    display: block;
     color: #ffffff;
-    font-size: 12px;
+    font-size: 14px;
     margin-top: 69px;
     margin-bottom: 32px;
     @media @smartphones {
       position: fixed;
       right: 20px;
-      bottom: 0;
+      bottom: 42px;
     }
+
     a {
-      color: @blueText;
+      color: #ffffff;
+      font-weight: bold;
       text-shadow: 1px 1px 2px #111;
-    }
-    a:first-child {
-      margin-right: 20px;
     }
   }
 
@@ -272,11 +299,19 @@ body {
     .justify-content(center);
     .flex(1);
     position: relative;
-    width: 305px;
+    width: 440px;
+    min-height: 420px; // fix for Safari flex issue
     @media @smartphonesPortrait {
       margin-right: 0;
       width: 100%;
       height: 100%;
+      header {
+        margin-left: 12px;
+        p {
+          text-align: left;
+          margin-right: 50px;
+        }
+      }
     }
   }
 
@@ -285,6 +320,20 @@ body {
   }
 
   #enter {
+    width: 100%;
+    height: 40px;
+    border-radius: 6px;
+    background-color: #871FFF;
+    border: none;
+    margin-top: 30px;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 24px;
+    cursor: pointer;
+  }
+
+  #enter-arrow {
     position: absolute;
     width: 50px;
     height: 50px;
@@ -318,9 +367,31 @@ body {
     }
     right: 0;
     position: absolute;
-    background: rgba(19, 20, 21, 0.5);
+    backdrop-filter: blur(50px);
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
+
+    #righthand-container-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 90%;
+
+      .right-footer {
+        display: block;
+        font-size: 14px;
+        color: #ffffff;
+        margin-bottom: 40px;
+
+        a {
+          color: #ffffff; 
+        }
+        @media @smartphones {
+          padding: 0 10px;
+        }
+      }
+    }
   }
 }

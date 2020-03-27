@@ -188,6 +188,20 @@
     return userAgent.match(/iPad/i) || userAgent.match(/iPhone/i);
   }
 
+  function htmlEscape(str) {
+    return String(str)
+      .replace(/&/g, '')
+      .replace(/"/g, '')
+      .replace(/'/g, '')
+      .replace(/</g, '')
+      .replace(/>/g, '')
+      .replace(/\(/g, '')
+      .replace(/\)/g, '')
+      .replace(/'/g, '')
+      .replace(/\\/g, '')
+      .replace(/;/g, '');
+  };
+
   var Utils = {
     isSafariMac: isSafariMac,
     isSafariIOS: isSafariIOS,
@@ -222,7 +236,8 @@
     },
     setDisabled: setDisabled,
     getLabelText: getLabelText,
-    isIE: isIE
+    isIE: isIE,
+    htmlEscape: htmlEscape,
   };
 
   // Just replacing global.utils might not be safe... let's just expand it...

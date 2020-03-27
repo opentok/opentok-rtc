@@ -67,6 +67,8 @@ E.REPORT_ISSUE_LEVEL = { envVar: 'REPORT_ISSUE_LEVEL', jsonPath: 'Feedback.repor
 
 E.ENABLE_SCREENSHARING = { envVar: 'ENABLE_SCREENSHARING', jsonPath: 'Screensharing.enabled', defaultValue: false, parser: parseBool };
 
+E.ENABLE_PRECALL_TEST = { envVar: 'ENABLE_PRECALL_TEST', jsonPath: 'precallTest.enabled', defaultValue: true, parser: parseBool };
+
 E.USE_GOOGLE_FONTS = { envVar: 'USE_GOOGLE_FONTS', jsonPath: 'useGoogleFonts', required: false, defaultValue: true, parser: parseBool };
 
 E.JQUERY_URL = { envVar: 'JQUERY_URL', jsonPath: 'jqueryUrl', required: false, defaultValue: 'https://ajax.googleapis.com/ajax/libs/jquery' };
@@ -100,6 +102,8 @@ E.DEFAULT_INDEX_PAGE = { envVar: 'DEFAULT_INDEX_PAGE', jsonPath: 'defaultPageInd
 E.SHOW_TOS = { envVar: 'SHOW_TOS', jsonPath: 'showTos', defaultValue: false, parser: parseBool };
 
 E.MEETINGS_RATE_PER_MINUTE = { envVar: 'MEETINGS_RATE_PER_MINUTE', jsonPath: 'meetingsRatePerMinute', defaultValue: -1 };
+
+E.MIN_MEETING_NAME_LENGTH = { envVar: 'MIN_MEETING_NAME_LENGTH', jsonPath: 'minMeetingNameLength', defaultValue: 0 };
 
 E.PUBLISHER_RESOLUTION = { envVar: 'PUBLISHER_RESOLUTION', jsonPath: 'OpenTok.publisherResolution', defaultValue: '1280x720' };
 
