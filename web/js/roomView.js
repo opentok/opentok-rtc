@@ -479,7 +479,7 @@ BubbleFactory, Clipboard, LayoutManager */
     var lockRoom = document.getElementById('lockRoomContainer');
 
     lockRoom.addEventListener('click', function (e) {
-      alert("clicked");
+      Utils.sendEvent('roomView:setRoomLockState', true);
     });
 
     var switchMic = document.getElementById('pickMicContainer');

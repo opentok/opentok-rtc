@@ -80,6 +80,12 @@
     return composed.join('');
   }
 
+  function sendLockingOperation(data) {
+    alert("locking" + data.roomName);
+    return sendXHR('POST', server + '/room/' + data.roomName + '/state',
+                    JSON.stringify(data), 'application/json');
+  }
+
   function sendArchivingOperation(data) {
     return sendXHR('POST', server + '/room/' + data.roomName + '/archive',
                     composeDate(data), 'application/x-www-form-urlencoded');
@@ -119,6 +125,7 @@
     getRoomInfo,
     getRoomRawInfo,
     sendArchivingOperation,
+    sendLockingOperation,
     dialOut,
     hangUp,
     deleteArchive,

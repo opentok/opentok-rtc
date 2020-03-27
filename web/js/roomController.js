@@ -466,6 +466,20 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       if (!otHelper.isPublisherReady || otHelper.publisherHas('video') !== newStatus) {
         otHelper.togglePublisherVideo(newStatus);
       }
+    },
+    setRoomLockState: function (evt) {
+      console.log(evt);
+
+      var data = {
+        userName: userName,
+        roomName: roomURI,
+        state: 'locked'
+      };
+
+      console.log(data);
+      Request.sendLockingOperation(data);
+
+      alert("pt catalan");
     }
   };
 
