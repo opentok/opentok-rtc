@@ -171,6 +171,21 @@ BubbleFactory, Clipboard, LayoutManager */
         setSwitchStatus(false, false, audioSwitch, 'roomView:muteAllSwitch');
       }
     },
+    roomLocked: function (evt) {
+      var lockIcon = document.getElementById('lock-room-icon');
+      var lockState = lockIcon.getAttribute('data-icon');
+      var text = document.getElementById('lock-msg');
+      if (lockState == 'openLock') {
+        text.innerHTML = 'Unlock Room'
+        lockIcon.setAttribute('data-icon', 'closedLock');
+        //Utils.sendEvent('roomView:setRoomLockState', true);
+      }
+      if (lockState == 'closedLock') {
+        text.innerHTML = 'Lock Room'
+        lockIcon.setAttribute('data-icon', 'openLock');
+        //Utils.sendEvent('roomView:setRoomLockState', false);
+      }
+    },
     roomMuted: function (evt) {
       var isJoining = evt.detail.isJoining;
       setAudioSwitchRemotely(true);
@@ -479,19 +494,10 @@ BubbleFactory, Clipboard, LayoutManager */
     var lockRoom = document.getElementById('lockRoomContainer');
 
     lockRoom.addEventListener('click', function (e) {
-
-      var lockIcon = document.getElementById('lock-room-icon');
-      var lockState = lockIcon.getAttribute('data-icon');
-      var text = document.getElementById('lock-msg');
-      alert (lockState);
       if (lockState == 'openLock') {
-        text.innerHTML = 'Unlock Room'
-        lockIcon.setAttribute('data-icon', 'closedLock');
         Utils.sendEvent('roomView:setRoomLockState', true);
       }
       if (lockState == 'closedLock') {
-        text.innerHTML = 'Lock Room'
-        lockIcon.setAttribute('data-icon', 'openLock');
         Utils.sendEvent('roomView:setRoomLockState', false);
       }
     });

@@ -678,7 +678,8 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       if (!otHelper.isMyself(evt.from)) {
         alert("RECEIVED LOCK REQ");
       }
-        
+
+      Utils.sendEvent('roomController:roomLocked'); 
     },
     'signal:muteAll': function (evt) {
       var statusData = JSON.parse(evt.data);
