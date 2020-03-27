@@ -494,6 +494,8 @@ BubbleFactory, Clipboard, LayoutManager */
     var lockRoom = document.getElementById('lockRoomContainer');
 
     lockRoom.addEventListener('click', function (e) {
+      var lockIcon = document.getElementById('lock-room-icon');
+      var lockState = lockIcon.getAttribute('data-icon');
       if (lockState == 'openLock') {
         Utils.sendEvent('roomView:setRoomLockState', true);
       }

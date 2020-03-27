@@ -472,18 +472,16 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       }
     },
     setRoomLockState: function (evt) {
-      console.log(evt);
+      var lockState = evt.detail;
 
       var data = {
         userName: userName,
         roomName: roomURI,
-        state: 'locked'
+        state: lockState ? 'locked' : 'unlocked'
       };
 
-      console.log(data);
       Request.sendLockingOperation(data);
-      sendSignalLock(true);
-      alert("pt catalan");
+      sendSignalLock(lockState);
     }
   };
 
