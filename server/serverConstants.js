@@ -58,6 +58,10 @@ E.ARCHIVE_POLLING_TIMEOUT_MULTIPLIER = { envVar: 'TIMEOUT_MULTIPLIER', jsonPath:
 
 E.ENABLE_ARCHIVE_MANAGER = { envVar: 'ENABLE_ARCHIVE_MANAGER', jsonPath: 'Archiving.archiveManager.enabled', defaultValue: false, parser: parseBool };
 
+E.ENABLE_MUTE_ALL = { envVar: 'ENABLE_MUTE_ALL', jsonPath: 'enableMuteAll', defaultValue: true, parser: parseBool };
+
+E.ENABLE_STOP_RECEIVING_VIDEO = { envVar: 'ENABLE_STOP_RECEIVING_VIDEO', jsonPath: 'enableStopReceivingVideo', defaultValue: true, parser: parseBool };
+
 // Maximum time an empty room will keep it's history alive, in minutes.
 E.EMPTY_ROOM_LIFETIME = { envVar: 'EMPTY_ROOM_LIFETIME', jsonPath: 'Archiving.archiveManager.emptyRoomMaxLifetime', defaultValue: 3 };
 

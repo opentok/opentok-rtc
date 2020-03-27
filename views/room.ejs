@@ -86,18 +86,22 @@
         </div>
       </div>
       <div class="right-container">
+        <% if (enableStopReceivingVideo) { %>
         <div class="videoSwitch">
           <a id="videoSwitch" disabled>
             <span>Stop receiving video</span>
             <i data-icon="videoSwitch"></i>
           </a>
         </div>
+        <% } %>
+        <% if (enableMuteAll) { %>
         <div class="audioSwitch" disabled>
           <a id="audioSwitch">
             <span>Mute all participants</span>
             <i data-icon="audioSwitch"></i>
           </a>
         </div>
+        <% } %>
         <%   if(enableArchiving) { %>
         <div id="toggleArchiving" disabled>
           <a id="startArchiving" class="btn btn-blue btn-padding">Record</a>

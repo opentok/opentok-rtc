@@ -168,6 +168,8 @@ function ServerMethods(aLogLevel, aModules) {
 
       var enableArchiving = config.get(C.ENABLE_ARCHIVING, config);
       var enableArchiveManager = enableArchiving && config.get(C.ENABLE_ARCHIVE_MANAGER);
+      var enableMuteAll = config.get(C.ENABLE_MUTE_ALL);
+      var enableStopReceivingVideo = config.get(C.ENABLE_STOP_RECEIVING_VIDEO);
       var enableScreensharing = config.get(C.ENABLE_SCREENSHARING);
       var enablePrecallTest = config.get(C.ENABLE_PRECALL_TEST);
       var enableAnnotations = enableScreensharing && config.get(C.ENABLE_ANNOTATIONS);
@@ -213,6 +215,8 @@ function ServerMethods(aLogLevel, aModules) {
                 isWebRTCVersion,
                 enableArchiving,
                 enableArchiveManager,
+                enableMuteAll,
+                enableStopReceivingVideo,
                 enableScreensharing,
                 enableAnnotations,
                 enablePrecallTest,
@@ -400,6 +404,8 @@ function ServerMethods(aLogLevel, aModules) {
                          (userName || C.DEFAULT_USER_NAME),
           enableArchiving: tbConfig.enableArchiving,
           enableArchiveManager: tbConfig.enableArchiveManager,
+          enableMuteAll: tbConfig.enableMuteAll,
+          enableStopReceivingVideo: tbConfig.enableStopReceivingVideo,
           enableScreensharing: tbConfig.enableScreensharing,
           enableAnnotation: tbConfig.enableAnnotations,
           enablePrecallTest: tbConfig.enablePrecallTest,
