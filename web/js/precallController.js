@@ -124,8 +124,10 @@
               hidePrecall();
             }
           }).catch((e) => {
-            if (e === 'locked') alert("LOCKED");
-            else PrecallView.showUnavailableMessage();
+            if (e === 'locked')
+              PrecallView.showLockedMessage();
+            else 
+              PrecallView.showUnavailableMessage();
           });
         }
 
