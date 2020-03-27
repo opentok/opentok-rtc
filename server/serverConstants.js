@@ -101,7 +101,7 @@ E.DEFAULT_INDEX_PAGE = { envVar: 'DEFAULT_INDEX_PAGE', jsonPath: 'defaultPageInd
 
 E.SHOW_TOS = { envVar: 'SHOW_TOS', jsonPath: 'showTos', defaultValue: false, parser: parseBool };
 
-E.SHOW_UNAVAILABLE = { envVar: 'SHOW_UNAVAILABLE', jsonPath: 'showUnavailable', defaultValue: false, parser: parseBool };
+E.MEETINGS_RATE_PER_MINUTE = { envVar: 'MEETINGS_RATE_PER_MINUTE', jsonPath: 'meetingsRatePerMinute', defaultValue: -1 };
 
 E.MIN_MEETING_NAME_LENGTH = { envVar: 'MIN_MEETING_NAME_LENGTH', jsonPath: 'minMeetingNameLength', defaultValue: 0 };
 
