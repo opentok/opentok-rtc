@@ -1,7 +1,7 @@
 /* global Utils, Request, RoomStatus, RoomView, LayoutManager, LazyLoader, Modal,
 ChatController, GoogleAuth, LayoutMenuController, OTHelper, PrecallController,
 RecordingsController, ScreenShareController, FeedbackController,
-PhoneNumberController, ResizeSensor */
+PhoneNumberController, ResizeSensor, maxUsersPerRoom */
 
 !(function (exports) {
   'use strict';
@@ -856,6 +856,21 @@ PhoneNumberController, ResizeSensor */
     };
 
     var connect = otHelper.connect.bind(otHelper, sessionInfo);
+    
+    var waitForConnectionCount = function() {
+      return new Promise(function (resolve) {
+        if (!maxUsersPerRoom) {
+          return resolve();
+        }
+        return setTimeout(function () {
+          if (numUsrsInRoom > maxUsersPerRoom) {
+            Utils.sendEvent('roomController:meetingFullError');
+            return;
+          }
+          resolve();
+        }, 500);
+      });
+    }
 
     RoomView.participantsNumber = 0;
 
@@ -874,6 +889,7 @@ PhoneNumberController, ResizeSensor */
         .init(userName, _allHandlers)
         .then(connect)
         .then(LayoutMenuController.init)
+        .then(waitForConnectionCount)
         .then(function () {
           var publisherElement = RoomView.createStreamView('publisher', {
             name: userName,

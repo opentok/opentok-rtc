@@ -46,5 +46,6 @@
   "supportIE": true,
   "minMeetingNameLength": 0,
   "enableMuteAll": true,
-  "enableStopReceivingVideo": true
+  "enableStopReceivingVideo": true,
+  "maxUsersPerRoom": 0
 }

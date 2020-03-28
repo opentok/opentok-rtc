@@ -450,6 +450,11 @@ The app lets the developer POST feedback data to an endpoint on your HTTP server
  * `ENABLE_STOP_RECEIVING_VIDEO` (Optional, default value: true): Whether to show
    the Stop Receiving Video control in the top menu of the room. (You can set this
    in the config file using the `enableStopReceivingVideo` setting.)
+   
+  * `MAX_USERS_PER_ROOM` (Optional, default value: 0): The maximum number of users
+    allowed in a room at the same time. Set this to 0, the default, to allow
+    any number of users. (You can set this in the config file using
+    the `maxUsersPerRoom` setting.)
 
 ## Customizing the UI
 
