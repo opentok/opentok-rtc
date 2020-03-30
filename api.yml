@@ -106,7 +106,7 @@ paths:
       produces:
         - 'application/json,'
       description: >-
-        Returns if the room is active.
+        Returns the room info after locking operation.
       parameters:
         - name: roomName
           in: path
@@ -118,11 +118,16 @@ paths:
           description: state of the room.  Can be 'locked' or 'unlocked'.
           required: true
           type: string
+        - name: token
+          in: body
+          description: Opentok token tied to the room.
+          required: true
+          type: string
       tags:
         - Rooms
       responses:
         '200':
-          description: Boolean telling if the room exists
+          description: Room data after successful operation
         '400':
           description: Unexpected error
           schema:
@@ -145,7 +150,7 @@ paths:
         - Rooms
       responses:
         '200':
-          description: Boolean telling if the room exists
+          description: Room data
         '400':
           description: Unexpected error
           schema:
