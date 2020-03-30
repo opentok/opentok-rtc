@@ -129,6 +129,8 @@ paths:
       responses:
         '200':
           description: Room data after successful operation
+          schema:
+            $ref: '#/definitions/RoomInfo'
         '400':
           description: Unexpected error
           schema:
@@ -152,6 +154,8 @@ paths:
       responses:
         '200':
           description: Room data
+          schema:
+            $ref: '#/definitions/RoomInfo'
         '400':
           description: Unexpected error
           schema:
@@ -468,6 +472,8 @@ definitions:
         type: string
       firebaseToken:
         type: string
+      isLocked:
+        type: boolean
   ArchiveInfo:
     type: object
     properties:
