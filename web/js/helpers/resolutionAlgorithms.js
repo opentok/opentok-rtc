@@ -46,9 +46,35 @@
         width: Math.ceil(totalWidth * percentW),
         height: Math.ceil(totalHeight * percentH)
       };
+    },
+
+    // Fit resolution to subscriber dimensions.
+    fitToSubscriberDimensions: function(aStreamDimension, aTotalDimension, aSubsDimension) {
+      if (
+        ((aSubsDimension.width <= 320) && (aSubsDimension.height <= 240)) ||
+        (publisherResolution === '320x240')
+      ) {
+        return {
+          width: 320,
+          height: 240
+        };
+      } else if (
+        ((aSubsDimension.width <= 640) && (aSubsDimension.height <= 480)) ||
+        (publisherResolution === '640x480')
+      ) {
+        return {
+          width: 640,
+          height: 480
+        };
+      }
+      return {
+        width: 1280,
+        height: 720
+      };
     }
+
   };
-  var defaultAlgorithm = 'biasedPercent';
+  var defaultAlgorithm = 'fitToSubscriberDimensions';
 
   exports.PreferredResolutionAlgorithmProvider = {
     getAlg: function(aAlgorithm) {

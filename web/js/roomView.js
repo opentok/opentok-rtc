@@ -666,7 +666,17 @@ BubbleFactory, Clipboard, LayoutManager */
     init: init,
 
     set roomName(value) {
-      HTMLElems.addText(roomNameElem, value);
+      var matchesDefault = value.match(/(.*?-.*?-)(.*?-.*?-\d+)/);
+      if (matchesDefault) {
+        var span = document.createElement('span');
+        roomNameElem.appendChild(span);
+        HTMLElems.addText(span, matchesDefault[1]);
+        span = document.createElement('span');
+        roomNameElem.appendChild(span);
+        HTMLElems.addText(span, matchesDefault[2]);
+      } else {
+        HTMLElems.addText(roomNameElem, value);
+      }
     },
 
     set participantsNumber(value) {

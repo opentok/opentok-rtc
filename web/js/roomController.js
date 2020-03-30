@@ -1,6 +1,7 @@
 /* global Utils, Request, RoomStatus, RoomView, LayoutManager, LazyLoader, Modal,
 ChatController, GoogleAuth, LayoutMenuController, OTHelper, PrecallController,
-RecordingsController, ScreenShareController, FeedbackController, PhoneNumberController */
+RecordingsController, ScreenShareController, FeedbackController,
+PhoneNumberController, ResizeSensor */
 
 !(function (exports) {
   'use strict';
@@ -152,15 +153,6 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
 
   var subscriberStreams = { };
   var dialedNumberTokens = {};
-
-  function htmlEscape(str) {
-    return String(str)
-      .replace(/&/g, '')
-      .replace(/"/g, '')
-      .replace(/'/g, '')
-      .replace(/</g, '')
-      .replace(/>/g, '');
-  };
 
   // We want to use media priorization on the subscriber streams. We're going to restrict the
   // maximum width and height to the one that's actually displayed. To do that, we're going to
@@ -601,10 +593,13 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
 
         subOptions.subscribeToVideo = !enterWithVideoDisabled;
 
+        /* Use ResizeSensor instead of mutationObserver
         // We want to observe the container where the actual suscriber will live
         var subsContainer = LayoutManager.getItemById(streamId);
         subsContainer && _mutationObserver &&
           _mutationObserver.observe(subsContainer, { attributes: true });
+        */
+
         subscriberStreams[streamId].subscriberPromise =
           otHelper.subscribe(evt.stream, subsDOMElem, subOptions, {}, enableAnnotations)
             .then(function (subscriber) {
@@ -623,6 +618,15 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
               if (enterWithVideoDisabled) {
                 pushSubscriberButton(streamId, 'video', true);
               }
+
+              new ResizeSensor(subsDOMElem, function () { // eslint-disable-line no-new
+                var subsDimension = {
+                  width: subsDOMElem.clientWidth,
+                  height: subsDOMElem.clientHeight
+                };
+                otHelper.setPreferredResolution(subscriber, null, subsDimension, null, null);
+              });
+
               sendVideoEvent(evt.stream);
               return subscriber;
             }, function (error) {
@@ -814,7 +818,8 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     '/js/screenShareController.js',
     '/js/feedbackController.js',
     '/js/googleAuth.js',
-    '/js/phoneNumberController.js'
+    '/js/phoneNumberController.js',
+    '/js/vendor/ResizeSensor.js'
   ];
 
   var init = function () {
@@ -862,7 +867,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
 
     roomURI = aParams.roomURI;
     userName = aParams.username ? aParams.username.substring(0, 1000) : '';
-    userName = htmlEscape(userName.substring(0, 25));
+    userName = Utils.htmlEscape(userName.substring(0, 25));
     token = aParams.token;
 
     var sessionInfo = {

@@ -1,6 +1,6 @@
 {
    "showTos": false,
-   "showUnavailable": false,
+   "meetingsRatePerMinute": 30,
    "OpenTok":{
       "apiKey": "<key>",
       "apiSecret": "<secret>",
@@ -43,5 +43,8 @@
   },
   "useGoogleFonts": true,
   "jqueryUrl": "https://ajax.googleapis.com/ajax/libs/jquery",
-  "supportIE": true
+  "supportIE": true,
+  "minMeetingNameLength": 0,
+  "enableMuteAll": true,
+  "enableStopReceivingVideo": true
 }

@@ -1,4 +1,4 @@
-/* global EJSTemplate, Modal, showTos, showUnavailable, roomName */
+/* global EJSTemplate, Modal, showTos, showUnavailable, roomName, minMeetingNameLength, Utils */
 
 !(function (global) {
   'use strict';
@@ -11,15 +11,6 @@
     roomLabelElem,
     userLabelElem,
     errorMessage;
-
-  function htmlEscape(str) {
-    return String(str)
-      .replace(/&/g, '')
-      .replace(/"/g, '')
-      .replace(/'/g, '')
-      .replace(/</g, '')
-      .replace(/>/g, '');
-  };
 
   var loadTosTemplate = function () {
     return new Promise(function (resolve) {
@@ -72,14 +63,14 @@
   var isValid = function () {
     var formValid = true;
 
-    var fields = document.querySelectorAll('form input.required');
-
-    Array.prototype.map.call(fields, function (field) {
-      errorMessage = document.querySelector('.error-' + field.id);
-      var valid = field.type === 'checkbox' ? field.checked : field.value.trim();
-      valid ? errorMessage.classList.remove('show') : errorMessage.classList.add('show');
-      formValid = formValid && valid;
-    });
+    if (room.value.length < minMeetingNameLength) {
+      var messageText = (room.value.length === 0) ?
+        'Please enter a meeting name' :
+        'The meeting name must be at least ' + minMeetingNameLength + ' characters';
+      errorMessage.querySelector('span').innerHTML = messageText;
+      errorMessage.classList.add('show');
+      formValid = false;
+    }
 
     return formValid;
   };
@@ -147,8 +138,8 @@
 
   var navigateToRoom = function () {
     var url = window.location.origin
-      .concat('/room/', encodeURIComponent(htmlEscape(room.value)));
-    var userName = encodeURIComponent(htmlEscape(user.value.trim()));
+      .concat('/room/', encodeURIComponent(Utils.htmlEscape(room.value)));
+    var userName = encodeURIComponent(Utils.htmlEscape(user.value.trim()));
     if (userName) {
       url = url.concat('?userName=', userName);
     }

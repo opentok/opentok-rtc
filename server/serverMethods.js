@@ -27,7 +27,12 @@ function htmlEscape(str) {
     .replace(/"/g, '')
     .replace(/'/g, '')
     .replace(/</g, '')
-    .replace(/>/g, '');
+    .replace(/>/g, '')
+    .replace(/\(/g, '')
+    .replace(/\)/g, '')
+    .replace(/'/g, '')
+    .replace(/\\/g, '')
+    .replace(/;/g, '');
 };
 
 function ServerMethods(aLogLevel, aModules) {
@@ -155,7 +160,8 @@ function ServerMethods(aLogLevel, aModules) {
 
       var isWebRTCVersion = config.get(C.DEFAULT_INDEX_PAGE) === 'opentokrtc';
       var showTos = config.get(C.SHOW_TOS);
-      var showUnavailable = config.get(C.SHOW_UNAVAILABLE);
+      var meetingsRatePerMinute = config.get(C.MEETINGS_RATE_PER_MINUTE);
+      var minMeetingNameLength = config.get(C.MIN_MEETING_NAME_LENGTH);
       var publisherResolution = config.get(C.PUBLISHER_RESOLUTION);
       var supportIE = config.get(C.SUPPORT_IE);
 
@@ -164,6 +170,8 @@ function ServerMethods(aLogLevel, aModules) {
 
       var enableArchiving = config.get(C.ENABLE_ARCHIVING, config);
       var enableArchiveManager = enableArchiving && config.get(C.ENABLE_ARCHIVE_MANAGER);
+      var enableMuteAll = config.get(C.ENABLE_MUTE_ALL);
+      var enableStopReceivingVideo = config.get(C.ENABLE_STOP_RECEIVING_VIDEO);
       var enableScreensharing = config.get(C.ENABLE_SCREENSHARING);
       var enablePrecallTest = config.get(C.ENABLE_PRECALL_TEST);
       var enableAnnotations = enableScreensharing && config.get(C.ENABLE_ANNOTATIONS);
@@ -209,6 +217,8 @@ function ServerMethods(aLogLevel, aModules) {
                 isWebRTCVersion,
                 enableArchiving,
                 enableArchiveManager,
+                enableMuteAll,
+                enableStopReceivingVideo,
                 enableScreensharing,
                 enableAnnotations,
                 enablePrecallTest,
@@ -216,18 +226,19 @@ function ServerMethods(aLogLevel, aModules) {
                 enableSip,
                 opentokJsUrl,
                 showTos,
-                showUnavailable,
                 sipUri,
                 sipUsername,
                 sipPassword,
                 sipRequireGoogleAuth,
                 supportIE,
+                meetingsRatePerMinute,
                 publisherResolution,
                 googleId,
                 googleHostedDomain,
                 reportIssueLevel,
                 useGoogleFonts,
                 jqueryUrl,
+                minMeetingNameLength,
               }));
     });
   }
@@ -334,13 +345,16 @@ function ServerMethods(aLogLevel, aModules) {
   }
 
   // Returns the personalized root page
-  function getRoot(aReq, aRes) {
+  async function getRoot(aReq, aRes) {
+    var meetingAllowed = await isMeetingAllowed(aReq);
     aRes
       .render('index.ejs', {
-        roomName: haikunator.haikunate(),
+        roomName: `${haikunator.haikunate({ tokenLength: 0 })}-${haikunator.haikunate()}`,
         isWebRTCVersion: aReq.tbConfig.isWebRTCVersion,
+        minMeetingNameLength: aReq.tbConfig.minMeetingNameLength,
+        publisherResolution: aReq.tbConfig.publisherResolution,
         showTos: aReq.tbConfig.showTos,
-        showUnavailable: aReq.tbConfig.showUnavailable,
+        showUnavailable: !meetingAllowed,
         useGoogleFonts: aReq.tbConfig.useGoogleFonts,
         supportIE: aReq.tbConfig.supportIE,
       }, (err, html) => {
@@ -348,7 +362,6 @@ function ServerMethods(aLogLevel, aModules) {
           logger.error('getRoot. error: ', err);
           aRes.status(500).send(new ErrorInfo(500, 'Invalid Template'));
         } else {
-          aRes.set('X-XSS-Protection', '1; mode=block');
           aRes.send(html);
         }
       });
@@ -359,7 +372,8 @@ function ServerMethods(aLogLevel, aModules) {
   }
 
   // Return the personalized HTML for a room.
-  function getRoom(aReq, aRes) {
+  async function getRoom(aReq, aRes) {
+    var meetingAllowed = await isMeetingAllowed(aReq);
     var query = aReq.query;
 
     logger.log('getRoom serving ' + aReq.path, 'roomName:', aReq.params.roomName,
@@ -380,7 +394,6 @@ function ServerMethods(aLogLevel, aModules) {
       aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
       aRes.set('Pragma', 'no-cache');
       aRes.set('Expires', 0);
-      aRes.set('X-XSS-Protection', '1; mode=block');
       aRes
         .render((template || tbConfig.defaultTemplate) + '.ejs',
         {
@@ -395,6 +408,8 @@ function ServerMethods(aLogLevel, aModules) {
                          (userName || C.DEFAULT_USER_NAME),
           enableArchiving: tbConfig.enableArchiving,
           enableArchiveManager: tbConfig.enableArchiveManager,
+          enableMuteAll: tbConfig.enableMuteAll,
+          enableStopReceivingVideo: tbConfig.enableStopReceivingVideo,
           enableScreensharing: tbConfig.enableScreensharing,
           enableAnnotation: tbConfig.enableAnnotations,
           enablePrecallTest: tbConfig.enablePrecallTest,
@@ -407,7 +422,7 @@ function ServerMethods(aLogLevel, aModules) {
           }),
           hasSip: tbConfig.enableSip,
           showTos: tbConfig.showTos,
-          showUnavailable: tbConfig.showUnavailable,
+          showUnavailable: !meetingAllowed,
           publisherResolution: tbConfig.publisherResolution,
           opentokJsUrl: tbConfig.opentokJsUrl,
           authDomain: tbConfig.googleHostedDomain,
@@ -442,6 +457,15 @@ function ServerMethods(aLogLevel, aModules) {
         if (aArchiveAlways) {
           sessionOptions.archiveMode = 'always';
         }
+
+        getAppUsage().then((usage) => {
+          if (usage.lastUpdate + 60000 < Date.now()) {
+            setAppUsage(Date.now(), 1);
+          } else {
+            setAppUsage(usage.lastUpdate, ++usage.meetings);
+          }
+        });
+
         this
           .createSession(sessionOptions, (error, session) => {
             resolve({
@@ -461,6 +485,36 @@ function ServerMethods(aLogLevel, aModules) {
         });
       }
     });
+  }
+  
+  function getAppUsage() {
+    return new Promise((resolve) => {
+      const initial = { lastUpdate: Date.now(), meetings: 0 };
+      serverPersistence
+        .getKey('APP_USAGE_').then((usage) => {
+          if (!usage) return resolve(initial);
+          else return resolve(JSON.parse(usage));
+        }).catch((e) => {
+          return resolve(initial);
+        });
+    });
+  }
+
+  async function isMeetingAllowed(aReq) {
+    return new Promise((resolve) => {
+      if (aReq.tbConfig.meetingsRatePerMinute === 0) 
+        return resolve(false);
+      else if (aReq.tbConfig.meetingsRatePerMinute < 0)
+        return resolve(true);
+      getAppUsage().then((usage) => {
+        return resolve(usage.lastUpdate + 60000 < Date.now() || usage.meetings < aReq.tbConfig.meetingsRatePerMinute);
+      });
+    });
+  }
+
+  function setAppUsage(date, meetings) {
+    serverPersistence
+      .setKey('APP_USAGE_', JSON.stringify({lastUpdate: date, meetings}));
   }
 
   function getRoomRawInfo(aReq, aRes) {
@@ -928,6 +982,17 @@ function ServerMethods(aLogLevel, aModules) {
     aRes.send({});
   }
 
+  function setSecurityHeaders(aReq, aRes, aNext) {
+    aRes.set('X-XSS-Protection', '1; mode=block');
+    aRes.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+    aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    aRes.set('Pragma', 'no-cache');
+    aRes.set('Expires', 0);
+    aRes.set('X-Content-Type-Options', 'nosniff');
+
+    aNext();
+  }
+
   return {
     logger,
     configReady,
@@ -950,6 +1015,7 @@ function ServerMethods(aLogLevel, aModules) {
     getRoomRawInfo,
     saveConnectionFirebase,
     deleteConnectionFirebase,
+    setSecurityHeaders,
   };
 }
 
