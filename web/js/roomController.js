@@ -32,6 +32,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
   var roomURI = null;
   var resolutionAlgorithm = null;
   var debugPreferredResolution = null;
+  var token = null;
 
   var publisherOptions = {
     insertMode: 'append',
@@ -473,15 +474,14 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     },
     setRoomLockState: function (evt) {
       var state = evt.detail;
-
       var data = {
-        userName: userName,
-        roomName: roomURI,
-        state
+        userName,
+        token,
+        state,
+        roomURI
       };
 
-      Request.sendLockingOperation(data);
-      sendSignalLock(state);
+      Request.sendLockingOperation(data).then(() => sendSignalLock(state));
     }
   };
 
@@ -863,6 +863,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     roomURI = aParams.roomURI;
     userName = aParams.username ? aParams.username.substring(0, 1000) : '';
     userName = htmlEscape(userName.substring(0, 25));
+    token = aParams.token;
 
     var sessionInfo = {
       apiKey: aParams.apiKey,

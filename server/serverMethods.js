@@ -18,6 +18,8 @@ var FirebaseArchives = require('./firebaseArchives');
 var GoogleAuth = require('./googleAuthStrategies');
 var testHealth = require('./testHealth');
 var Haikunator = require('haikunator');
+var _ = require('lodash');
+var qs = require('qs');
 
 function htmlEscape(str) {
   return String(str)
@@ -470,12 +472,29 @@ function ServerMethods(aLogLevel, aModules) {
       });
   }
 
+  function decodeOtToken(token) { 
+    var parsed = {};
+    var encoded = token.substring(4);   // remove 'T1=='
+    var decoded = new Buffer(encoded, "base64").toString("ascii");
+    var tokenParts = decoded.split(':');
+    tokenParts.forEach(function(part) {
+      _.merge(parsed, qs.parse(part));
+    });
+    return parsed;
+  }
+
   function lockRoom(aReq, aRes) {
     var roomName = aReq.params.roomName.toLowerCase();
     serverPersistence
       .getKey(redisRoomPrefix + roomName).then((room) => {
         if (!room) return aRes.status(404).send(null);
+
+        var decToken = decodeOtToken(aReq.body.token);
         room = JSON.parse(room);
+
+        if (decToken.expire_time * 1000 < Date.now() || decToken.session_id !== room.sessionId)
+          return aRes.status(403).send(new Error('Unauthorized'));
+        
         room.isLocked = aReq.body.state === 'locked';
         serverPersistence
           .setKey(redisRoomPrefix + roomName, room);
