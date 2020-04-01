@@ -185,7 +185,7 @@ BubbleFactory, Clipboard, LayoutManager */
       if (lockState === 'unlocked') {
         menuLockText.innerHTML = 'Lock Meeting'
         menuLockIcon.setAttribute('data-icon', 'openLock');
-        navBarStateIcon.style.display = 'hidden';
+        navBarStateIcon.style.display = 'none';
       }
     },
     roomMuted: function (evt) {
