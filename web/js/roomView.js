@@ -173,15 +173,19 @@ BubbleFactory, Clipboard, LayoutManager */
     },
     roomLocked: function (evt) {
       var lockState = evt.detail;
-      var lockIcon = document.getElementById('lock-room-icon');
-      var text = document.getElementById('lock-msg');
+      var menuLockIcon = document.getElementById('lock-room-icon');
+      var menuLockText = document.getElementById('lock-msg');
+      var navBarStateIcon = document.getElementById('room-locked-state');
+      
       if (lockState === 'locked') {
-        text.innerHTML = 'Unlock Room'
-        lockIcon.setAttribute('data-icon', 'closedLock');
+        menuLockText.innerHTML = 'Unlock Meeting'
+        menuLockIcon.setAttribute('data-icon', 'closedLock');
+        navBarStateIcon.style.display = 'block';
       }
       if (lockState === 'unlocked') {
-        text.innerHTML = 'Lock Room'
-        lockIcon.setAttribute('data-icon', 'openLock');
+        menuLockText.innerHTML = 'Lock Meeting'
+        menuLockIcon.setAttribute('data-icon', 'openLock');
+        navBarStateIcon.style.display = 'hidden';
       }
     },
     roomMuted: function (evt) {
