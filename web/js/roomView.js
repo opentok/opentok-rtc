@@ -59,6 +59,12 @@ BubbleFactory, Clipboard, LayoutManager */
               'unmute just yourself by clicking the microphone icon in the bottom menu.',
       button: 'I understand'
     },
+    lock: {
+      head: 'Lock Meeting',
+      detail: 'When a room is locked no additional participants will be allowed to join the room.' + 
+              'Current participants who leave the room will not be allowed back in.',
+      button: 'Lock Meeting'
+    },
     endCall: {
       head: 'Exit the Meeting',
       detail: 'You are going to exit the Vonage Free Conferencing Meeting Room. The call will continue with the ' +
@@ -499,7 +505,11 @@ BubbleFactory, Clipboard, LayoutManager */
       var lockIcon = document.getElementById('lock-room-icon');
       var lockState = lockIcon.getAttribute('data-icon');
       if (lockState == 'openLock') {
-        Utils.sendEvent('roomView:setRoomLockState', 'locked');
+        Modal.showConfirm(MODAL_TXTS.lock).then(function (lock) {
+          if (lock) {
+            Utils.sendEvent('roomView:setRoomLockState', 'locked');
+          }
+        });
       }
       if (lockState == 'closedLock') {
         Utils.sendEvent('roomView:setRoomLockState', 'unlocked');
