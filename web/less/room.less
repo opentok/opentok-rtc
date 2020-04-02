@@ -91,17 +91,19 @@ body {
       .room-name {
         display: flex;
         flex-direction: column;
-        margin-top: 8px;
+        margin-top: 16px;
         font-size: 22px;
         text-overflow: ellipsis;
-        height: 54px;
+        height: 42px;
         overflow: hidden;
-        white-space: nowrap;
-        line-height: 26px;
+        white-space: normal;
+        line-height: 20px;
         margin-bottom: 8px;
         color: #ffffff;
+        width: 100%;
+        min-width: 200px;
+        word-break: break-word;
         @media @smartphonesPortrait {
-          font-size: 12px;
           line-height: 17px;
           margin: 4px 0 0 12px;
           margin-left: 0;

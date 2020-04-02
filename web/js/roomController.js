@@ -830,7 +830,6 @@ PhoneNumberController, ResizeSensor */
           };
 
         loadAnnotations = LazyLoader.load([
-          aParams.jqueryUrl + '/3.3.1/jquery.min.js',
           'https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js',
           '/js/vendor/opentok-annotation.js'
         ]);
@@ -910,7 +909,7 @@ PhoneNumberController, ResizeSensor */
         .then(function () {
           ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
           FeedbackController.init(otHelper, aParams.reportIssueLevel);
-          PhoneNumberController.init(aParams.jqueryUrl);
+          PhoneNumberController.init();
           Utils.sendEvent('roomController:controllersReady');
         })
         .catch(function (error) {
