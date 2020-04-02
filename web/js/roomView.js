@@ -505,8 +505,10 @@ BubbleFactory, Clipboard, LayoutManager, $ */
           Modal.showConfirm(modalTxt).then(function (accept) {
             if (accept.altHasAccepted) {
               Utils.sendEvent('roomView:setRoomLockState', 'unlocked');
-              RoomView.participantsNumber = 0;
-              Utils.sendEvent('roomView:endCall');         
+              setTimeout(function() {
+                RoomView.participantsNumber = 0;
+                Utils.sendEvent('roomView:endCall'); 
+              }, 1000);         
             }
             else if (accept) {
               RoomView.participantsNumber = 0;
@@ -697,10 +699,18 @@ BubbleFactory, Clipboard, LayoutManager, $ */
     },
 
     set participantsNumber(value) {
+
+      if (value === 1 && RoomView.lockState !== 'locked') {
+        document.getElementById('lockRoomContainer').style.display = 'none';
+      } else {
+        document.getElementById('lockRoomContainer').style.removeProperty('display');
+      }
+
       if (value === 1 && RoomView.lockState === 'locked') {
         Modal.showConfirm(MODAL_TXTS.oneUserInLockedMeeting).then(function (unlock) {
           if (unlock) {
             Utils.sendEvent('roomView:setRoomLockState', 'unlocked');
+            document.getElementById('lockRoomContainer').style.display = 'none';
           }
         });
       }
