@@ -62,7 +62,7 @@ BubbleFactory, Clipboard, LayoutManager, $ */
     lock: {
       head: 'Lock Meeting',
       detail: 'When a meeting room is locked no additional participants will be allowed to join the meeting. ' +
-              'Current participants who leave the meeting will not be allowed back in.'
+              'Current participants who leave the meeting will not be allowed back in.',
       button: 'Lock Meeting'
     },
     oneUserInLockedMeeting: {
