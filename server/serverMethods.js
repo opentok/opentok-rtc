@@ -426,6 +426,7 @@ function ServerMethods(aLogLevel, aModules) {
           authDomain: tbConfig.googleHostedDomain,
           useGoogleFonts: tbConfig.useGoogleFonts,
           supportIE: tbConfig.supportIE,
+          jqueryUrl: tbConfig.jqueryUrl,
         }, (err, html) => {
           if (err) {
             logger.log('getRoom. error:', err);
@@ -583,7 +584,6 @@ function ServerMethods(aLogLevel, aModules) {
           googleId: tbConfig.googleId,
           googleHostedDomain: tbConfig.googleHostedDomain,
           reportIssueLevel: tbConfig.reportIssueLevel,
-          jqueryUrl: tbConfig.jqueryUrl,
         };
         answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId;
         aRes.send(answer);
