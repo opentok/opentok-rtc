@@ -66,8 +66,8 @@ BubbleFactory, Clipboard, LayoutManager */
       button: 'Lock Meeting'
     },
     oneUserInLockedMeeting: {
-      head: 'Meeting is locked and you are the only one',
-      detail: 'Do you want to unlock the meeting to allow new participants to join?',
+      head: 'Meeting is locked',
+      detail: 'You are the only participant in a locked room. No additional participants may join.',
       button: 'Unlock Meeting'
     },
     endCall: {
@@ -75,6 +75,12 @@ BubbleFactory, Clipboard, LayoutManager */
       detail: 'You are going to exit the Vonage Free Conferencing Meeting Room. The call will continue with the ' +
               'remaining participants.',
       button: 'End meeting'
+    },
+    endLockedCall: {
+      head: 'Exit the Meeting',
+      detail: 'You are going to exit the Vonage Free Conferencing Meeting Room. The room is locked. Do you want to unlock it before leaving?',
+      button: 'End',
+      altButton: 'Unlock and end'
     },
     sessionDisconnected: {
       head: 'Session disconected',
@@ -573,8 +579,14 @@ BubbleFactory, Clipboard, LayoutManager */
           setChatStatus(elem.id === 'startChat');
           break;
         case 'endCall':
-          Modal.showConfirm(MODAL_TXTS.endCall).then(function (endCall) {
-            if (endCall) {
+          var modalTxt = RoomView.lockState === 'locked' ? MODAL_TXTS.endLockedCall : MODAL_TXTS.endCall;
+          Modal.showConfirm(modalTxt).then(function (accept) {
+            if (accept.altHasAccepted) {
+              Utils.sendEvent('roomView:setRoomLockState', 'unlocked');
+              RoomView.participantsNumber = 0;
+              Utils.sendEvent('roomView:endCall');         
+            }
+            else if (accept) {
               RoomView.participantsNumber = 0;
               Utils.sendEvent('roomView:endCall');
             }

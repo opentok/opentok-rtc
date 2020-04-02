@@ -97,6 +97,18 @@
       ui.querySelector(' header .msg').textContent = txt.head;
       ui.querySelector(' p.detail').innerHTML = txt.detail;
       ui.querySelector(' footer button.accept').textContent = txt.button;
+      var altButton = ui.querySelector(' footer button.alt-accept');
+
+      //Add extra button if we include text for it
+      if (txt.altButton) {
+        var footer = ui.querySelector('footer')
+        var newBtn = document.createElement("button");
+        newBtn.className = "btn btn-blue btn-padding ctaarrow-white alt-accept";
+        newBtn.textContent = txt.altButton;
+        footer.appendChild(newBtn);
+      } else if (altButton) {
+        altButton.parentNode.removeChild(altButton);
+      }
     }
 
     return show(selector, loadModalText, allowMultiple)
@@ -105,13 +117,17 @@
           ui.addEventListener('click', function onClicked(evt) {
             var classList = evt.target.classList;
             var hasAccepted = classList.contains('accept');
-            if (evt.target.id !== 'switchAlerts' && !hasAccepted && !classList.contains('close')) {
+            var altHasAccepted = classList.contains('alt-accept');
+            if (evt.target.id !== 'switchAlerts' && !hasAccepted && !altHasAccepted && !classList.contains('close')) {
               return;
             }
             evt.stopImmediatePropagation();
             evt.preventDefault();
             ui.removeEventListener('click', onClicked);
-            hide(selector).then(function () { resolve(hasAccepted); });
+            hide(selector).then(function () {
+              if (altHasAccepted) return resolve({altHasAccepted});
+              else return resolve(hasAccepted);
+            });
           });
         });
       });
