@@ -65,6 +65,11 @@ BubbleFactory, Clipboard, LayoutManager */
               'Current participants who leave the room will not be allowed back in.',
       button: 'Lock Meeting'
     },
+    oneUserInLockedMeeting: {
+      head: 'Meeting is locked and you are the only one',
+      detail: 'Do you want to unlock the meeting to allow new participants to join?',
+      button: 'Unlock Meeting'
+    },
     endCall: {
       head: 'Exit the Meeting',
       detail: 'You are going to exit the Vonage Free Conferencing Meeting Room. The call will continue with the ' +
@@ -179,6 +184,7 @@ BubbleFactory, Clipboard, LayoutManager */
     },
     roomLocked: function (evt) {
       var lockState = evt.detail;
+      RoomView.lockState = lockState;
       var menuLockIcon = document.getElementById('lock-room-icon');
       var menuLockText = document.getElementById('lock-msg');
       var navBarStateIcon = document.getElementById('room-locked-state');
@@ -696,6 +702,13 @@ BubbleFactory, Clipboard, LayoutManager */
     },
 
     set participantsNumber(value) {
+      if (value === 1 && RoomView.lockState === 'locked') {
+        Modal.showConfirm(MODAL_TXTS.oneUserInLockedMeeting).then(function (unlock) {
+          if (unlock) {
+            Utils.sendEvent('roomView:setRoomLockState', 'unlocked');
+          }
+        });
+      }
       HTMLElems.replaceText(participantsStrElem, value);
     },
 
