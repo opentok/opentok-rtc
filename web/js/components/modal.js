@@ -103,7 +103,7 @@
       if (txt.altButton) {
         var footer = ui.querySelector('footer')
         var newBtn = document.createElement("button");
-        newBtn.className = "btn btn-blue btn-padding ctaarrow-white alt-accept";
+        newBtn.className = "btn btn-purple btn-padding ctaarrow-white alt-accept";
         newBtn.textContent = txt.altButton;
         footer.appendChild(newBtn);
       } else if (altButton) {
