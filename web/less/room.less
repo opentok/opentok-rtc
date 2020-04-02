@@ -176,7 +176,10 @@ body {
       display: none;
     }
   }
-  .options-container {
+  #options-container {
+    &:hover {
+      background-color: #303234;
+    }
     width: 114px;
     height: 98px;
     border-left: 1px solid #455b66;
@@ -186,11 +189,10 @@ body {
     .flex-direction(row);
     .align-items(center);
     .justify-content(center);
-
+    cursor: pointer;
     @media @smartphonesPortrait {
       display: none;
     }
-
     #options-icon {
       height: 22px;
       float: none;
@@ -1162,14 +1164,14 @@ footer.main {
   display: block;
   text-overflow: ellipsis;
   overflow: hidden;
-  color: #131415;
+  color: #fff;
   line-height: 18px;
 }
 
 #enter.btn {
   overflow: hidden;
   width: 100%;
-  background-color: #FFF;
+  background-color: #871FFF;
   &.accept {
     background-color: #131415;
   }

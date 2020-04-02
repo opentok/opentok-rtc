@@ -502,17 +502,19 @@ BubbleFactory, Clipboard, LayoutManager, $ */
     var menu = document.getElementById('top-banner');
 
     menu.addEventListener('click', function (e) {
-      var elem = e.target;
-      elem.blur();
+      var elem = HTMLElems.getAncestorByTagName(e.target, 'a') || e.target;
       // pointer-events is not working on IE so we can receive as target a child
-      elem = HTMLElems.getAncestorByTagName(elem, 'a');
+      elem.blur();
+
       if (!elem) {
         return;
       }
+
       switch (elem.id) {
         case 'viewRecordings':
           BubbleFactory.get('viewRecordings').toggle();
           break;
+        case 'options-container':
         case 'chooseLayout':
           BubbleFactory.get('chooseLayout').toggle();
           break;

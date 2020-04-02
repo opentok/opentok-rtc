@@ -118,15 +118,10 @@
           <i data-icon="add"></i>
           Invite
         </a>
-        <div class="options-container">
-          <div>
-            <div id="options-icon">
-              <a id="chooseLayout">
-                <i data-icon="options-icon"></i>
-              </a>
-            </div>
-            <div id="options-label">Options</div>
-          </div>
+        <div id="options-container">
+          <a id="chooseLayout">
+            <i id="options-icon" data-icon="options-icon"></i>
+          </a>
         </div>
       </div>
     </div>
@@ -241,35 +236,24 @@
       </div>
     </section>
 
-    <section class="bubbles">
-      <section for="viewRecordings" class="bubble" data-recordings="loading">
-        <div class="bubble-content top-arrow">
-          <p class="title recordings">Your recordings</p>
-          <p class="title no-recordings">No recordings</p>
-          <p class="title loading">Loading archived recordings...</p>
-          <div class="tc-list videos">
-            <ul></ul>
-          </div>
-        </div>
-      </section>
-
-      <section for="chooseLayout" class="bubble">
-        <div class="bubble-content top-arrow">
+    <section for="chooseLayout" class="bubble">
+      <div class="bubble-content top-arrow">
+        <div id="top-icons-container">
           <div class="source-pick-container">
             <div id="pickMicContainer" class="sourcePick icon-with-text">
               <a id="pickMic"><i data-icon="pmic"></i></a>
               <span>Switch Microphone</span>
             </div>
           </div>
-          <div id="pickCamContainer" class="source-pick-container">
-            <div class="sourcePick icon-with-text">
+          <div class="source-pick-container">
+            <div id="pickCamContainer" class="sourcePick icon-with-text">
               <a id="toggleFacingMode"><i data-icon="cycleVideo"></i></a>
               <span>Switch Camera</span>
             </div>
           </div>
-          <br>
-            <span> Layouts </span>
-          <hr>
+        </div>
+        <div id="layout-manager">
+          <span id="layout-title">Layout Manager</span>
           <ul>
             <li><a data-layout-type="float"></a></li>
             <li><a data-layout-type="f2f_horizontal"></a></li>
@@ -279,9 +263,9 @@
             <li><a data-layout-type="hangout_vertical"></a></li>
           </ul>
         </div>
-      </section>
+      </div>
     </section>
-
+   
     <section class="tc-modal feedback-report">
       <div class="tc-dialog">
       <header>
