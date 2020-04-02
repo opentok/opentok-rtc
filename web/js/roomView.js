@@ -1,5 +1,5 @@
 /* global RoomView, Cronograph, FirebaseModel, RecordingsController, Modal,
-BubbleFactory, Clipboard, LayoutManager */
+BubbleFactory, Clipboard, LayoutManager, $ */
 
 !(function (exports) {
   'use strict';
@@ -700,17 +700,8 @@ BubbleFactory, Clipboard, LayoutManager */
     init: init,
 
     set roomName(value) {
-      var matchesDefault = value.match(/(.*?-.*?-)(.*?-.*?-\d+)/);
-      if (matchesDefault) {
-        var span = document.createElement('span');
-        roomNameElem.appendChild(span);
-        HTMLElems.addText(span, matchesDefault[1]);
-        span = document.createElement('span');
-        roomNameElem.appendChild(span);
-        HTMLElems.addText(span, matchesDefault[2]);
-      } else {
-        HTMLElems.addText(roomNameElem, value);
-      }
+      HTMLElems.addText(roomNameElem, value);
+      $('.room-name').fitText(2, { minFontSize: '12px', maxFontSize: '18px' });
     },
 
     set participantsNumber(value) {
