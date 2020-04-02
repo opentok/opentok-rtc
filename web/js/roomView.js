@@ -501,8 +501,14 @@ BubbleFactory, Clipboard, LayoutManager, $ */
           setChatStatus(!messageButtonElem.classList.contains('activated'));
           break;
         case 'endCall':
-          Modal.showConfirm(MODAL_TXTS.endCall).then(function (endCall) {
-            if (endCall) {
+          var modalTxt = RoomView.lockState === 'locked' ? MODAL_TXTS.endLockedCall : MODAL_TXTS.endCall;
+          Modal.showConfirm(modalTxt).then(function (accept) {
+            if (accept.altHasAccepted) {
+              Utils.sendEvent('roomView:setRoomLockState', 'unlocked');
+              RoomView.participantsNumber = 0;
+              Utils.sendEvent('roomView:endCall');         
+            }
+            else if (accept) {
               RoomView.participantsNumber = 0;
               Utils.sendEvent('roomView:endCall');
             }
@@ -577,21 +583,7 @@ BubbleFactory, Clipboard, LayoutManager, $ */
         case 'startChat':
         case 'stopChat':
           setChatStatus(elem.id === 'startChat');
-          break;
-        case 'endCall':
-          var modalTxt = RoomView.lockState === 'locked' ? MODAL_TXTS.endLockedCall : MODAL_TXTS.endCall;
-          Modal.showConfirm(modalTxt).then(function (accept) {
-            if (accept.altHasAccepted) {
-              Utils.sendEvent('roomView:setRoomLockState', 'unlocked');
-              RoomView.participantsNumber = 0;
-              Utils.sendEvent('roomView:endCall');         
-            }
-            else if (accept) {
-              RoomView.participantsNumber = 0;
-              Utils.sendEvent('roomView:endCall');
-            }
-          });
-          break;
+          break;          
         case 'addToCall':
           Utils.sendEvent('roomView:addToCall');
           break;
