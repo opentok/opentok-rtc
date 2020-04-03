@@ -12,6 +12,10 @@ body {
   background-size: cover;
   height: 100%;
   margin: 0;
+  @media @smartphones {
+    background: url(/images/background-rebrand.png) no-repeat fixed;
+    background-size: cover;
+  }
 }
 
 .main {
@@ -29,7 +33,6 @@ body {
     img {
       @media @smartphonesPortrait {
         top: 37px;
-        width: 240px;
       }
     }
 
@@ -60,6 +63,10 @@ body {
     font-weight: 200;
     line-height: 60px;
     margin: 10px 0;
+    @media @smartphonesPortrait {
+      line-height: 12px;
+      margin: 0;
+    }
   }
 
   h2 {
@@ -256,9 +263,12 @@ body {
     margin-top: 69px;
     margin-bottom: 32px;
     @media @smartphones {
-      position: fixed;
+      position: relative;
       right: 20px;
-      bottom: 42px;
+      margin-top: 20px;
+      margin-bottom: unset;
+      min-height: unset;
+      font-size: 12px;
     }
 
     a {
@@ -305,11 +315,16 @@ body {
       margin-right: 0;
       width: 100%;
       height: 100%;
+      .justify-content(unset);
       header {
         margin-left: 12px;
         p {
           text-align: left;
           margin-right: 50px;
+          @media @smartphonesPortrait {
+            text-align: center;
+            margin: 30px 44px 60px 44px;
+          }
         }
       }
     }
@@ -331,6 +346,9 @@ body {
     font-size: 14px;
     line-height: 50px;
     cursor: pointer;
+    @media @smartphonesPortrait {
+      width: 300px;
+    }
   }
 
   #enter-arrow {
@@ -343,6 +361,9 @@ body {
     @media @smartphones {
       right: 0;
       position: fixed;
+    }
+    @media @smartphonesPortrait {
+      display: none;
     }
     background-color: #ffffff;
     border: 0;
@@ -373,7 +394,10 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-
+    @media @smartphones {
+      background: unset;
+      backdrop-filter: none;
+    }
     #righthand-container-cell {
       display: flex;
       flex-direction: column;
@@ -390,7 +414,10 @@ body {
           color: #ffffff; 
         }
         @media @smartphones {
-          padding: 0 10px;
+          position: absolute;
+          bottom: 12px;
+          font-size: 10px;
+          margin-bottom: 0;
         }
       }
     }
