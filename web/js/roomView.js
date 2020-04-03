@@ -707,12 +707,8 @@ BubbleFactory, Clipboard, LayoutManager, $ */
       }
 
       if (value === 1 && RoomView.lockState === 'locked') {
-        Modal.showConfirm(MODAL_TXTS.oneUserInLockedMeeting).then(function (unlock) {
-          if (unlock) {
-            Utils.sendEvent('roomView:setRoomLockState', 'unlocked');
-            document.getElementById('lockRoomContainer').style.display = 'none';
-          }
-        });
+        Utils.sendEvent('roomView:setRoomLockState', 'unlocked');
+        document.getElementById('lockRoomContainer').style.display = 'none';
       }
       HTMLElems.replaceText(participantsStrElem, value);
     },
