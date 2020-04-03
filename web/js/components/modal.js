@@ -71,6 +71,13 @@
     });
   }
 
+  function flashMessage(selector) {
+    Modal.show(selector);
+    setTimeout(function(){
+      Modal.hide(selector);
+    }, 2000);
+  }
+
   function hide(selector) {
     return new Promise(function (resolve) {
       var modal = document.querySelector(selector);
@@ -136,6 +143,7 @@
   }
 
   global.Modal = {
+    flashMessage: flashMessage,
     show: show,
     hide: hide,
     showConfirm: showConfirm
