@@ -99,6 +99,10 @@
       ui.querySelector(' footer button.accept').textContent = txt.button;
       var altButton = ui.querySelector(' footer button.alt-accept');
 
+      // Remove extra button if its there to avoid duplicates
+      if (altButton) {
+        altButton.parentNode.removeChild(altButton);
+      }
       //Add extra button if we include text for it
       if (txt.altButton) {
         var footer = ui.querySelector('footer')
@@ -106,9 +110,7 @@
         newBtn.className = "btn btn-purple btn-padding ctaarrow-white alt-accept";
         newBtn.textContent = txt.altButton;
         footer.appendChild(newBtn);
-      } else if (altButton) {
-        altButton.parentNode.removeChild(altButton);
-      }
+      } 
     }
 
     return show(selector, loadModalText, allowMultiple)
