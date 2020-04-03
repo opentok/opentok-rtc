@@ -519,6 +519,12 @@ BubbleFactory, Clipboard, LayoutManager, $ */
       }
     });
 
+    var optionIcons = document.getElementById('top-icons-container');
+
+    optionIcons.addEventListener('click', function (e) {
+      BubbleFactory.get('chooseLayout').hide();
+    });
+
     var lockRoom = document.getElementById('lockRoomContainer');
 
     lockRoom.addEventListener('click', function (e) {

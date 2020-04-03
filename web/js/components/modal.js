@@ -127,7 +127,6 @@
             evt.preventDefault();
             ui.removeEventListener('click', onClicked);
             hide(selector).then(function () {
-              BubbleFactory.get('chooseLayout').hide();
               if (altHasAccepted) return resolve({altHasAccepted});
               else return resolve(hasAccepted);
             });
