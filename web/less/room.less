@@ -727,7 +727,7 @@ body {
   }
   #video-settings, #audio-settings, #enter-name-prompt {
     display: flex;
-    .justify-content(space-between);
+    .justify-content(space-around);
     padding-bottom: 18px;
     img {
       float: left;
@@ -745,13 +745,19 @@ body {
         color: #8e99a5;
       }
     }
+    @media @smartphonesPortrait  {
+      .justify-content(space-around);
+    }
+  }
+  #audio-settings > div > img {
+    margin-left: 10px;
   }
   #video-settings, #audio-settings {
     #audio-switch {
       margin-right: 20px;
     }
     #video-switch {
-      margin-left: 55px;
+      margin-left: 70px;
     }
     .switch-button {
       #preToggleFacingMode, #prePickMic {
@@ -773,8 +779,9 @@ body {
   }
   #enter-name-prompt {
     margin-top:10px;
-    padding: 0;
+    padding: 0 6px;
     border-bottom: #788492 1px solid;
+    .justify-content(space-between);
     div {
       display: flex;
       align-items: center;
@@ -788,7 +795,7 @@ body {
       width: 190px;
       height: 26px;
       color: white;
-      padding-left: 0;
+      padding-left: 4px;
       margin-left: 0;
     }
     input:focus {
@@ -797,10 +804,14 @@ body {
       background: none;
     }
     label {
+      left: 12px;
       position: absolute;
       color: #fff;
       font-size: 16px;
       transition: all 0.5s;
+      @media @smartphonesPortrait  {
+        left: 24px;
+      }
     }
     label.visited {
       left: 236px;
