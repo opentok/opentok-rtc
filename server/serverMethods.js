@@ -18,6 +18,8 @@ var FirebaseArchives = require('./firebaseArchives');
 var GoogleAuth = require('./googleAuthStrategies');
 var testHealth = require('./testHealth');
 var Haikunator = require('haikunator');
+var _ = require('lodash');
+var qs = require('qs');
 
 function htmlEscape(str) {
   return String(str)
@@ -471,6 +473,7 @@ function ServerMethods(aLogLevel, aModules) {
               sessionId: session.sessionId,
               lastUsage: Date.now(),
               inProgressArchiveId: undefined,
+              isLocked: false
             });
           });
       } else {
@@ -479,11 +482,12 @@ function ServerMethods(aLogLevel, aModules) {
           sessionId: aSessionInfo.sessionId,
           lastUsage: Date.now(),
           inProgressArchiveId: aSessionInfo.inProgressArchiveId,
+          isLocked: aSessionInfo.isLocked
         });
       }
     });
   }
-
+  
   function getAppUsage() {
     return new Promise((resolve) => {
       const initial = { lastUpdate: Date.now(), meetings: 0 };
@@ -514,10 +518,43 @@ function ServerMethods(aLogLevel, aModules) {
       .setKey('APP_USAGE_', JSON.stringify({lastUpdate: date, meetings}));
   }
 
-  function roomExists(aReq, aRes) {
+  function getRoomRawInfo(aReq, aRes) {
     var roomName = aReq.params.roomName.toLowerCase();
     serverPersistence
-      .getKey(redisRoomPrefix + roomName).then(room => aRes.send({exists: !!room}));
+      .getKey(redisRoomPrefix + roomName).then((room) => {
+        if (!room) return aRes.status(404).send(null);
+        aRes.send(JSON.parse(room));
+      });
+  }
+
+  function decodeOtToken(token) { 
+    var parsed = {};
+    var encoded = token.substring(4);   // remove 'T1=='
+    var decoded = new Buffer(encoded, "base64").toString("ascii");
+    var tokenParts = decoded.split(':');
+    tokenParts.forEach(function(part) {
+      _.merge(parsed, qs.parse(part));
+    });
+    return parsed;
+  }
+
+  function lockRoom(aReq, aRes) {
+    var roomName = aReq.params.roomName.toLowerCase();
+    serverPersistence
+      .getKey(redisRoomPrefix + roomName).then((room) => {
+        if (!room) return aRes.status(404).send(null);
+
+        var decToken = decodeOtToken(aReq.body.token);
+        room = JSON.parse(room);
+
+        if (decToken.expire_time * 1000 < Date.now() || decToken.session_id !== room.sessionId)
+          return aRes.status(403).send(new Error('Unauthorized'));
+        
+        room.isLocked = aReq.body.state === 'locked';
+        serverPersistence
+          .setKey(redisRoomPrefix + roomName, room);
+        aRes.send(room);
+      });
   }
 
   // Get the information needed to connect to a session
@@ -962,6 +999,7 @@ function ServerMethods(aLogLevel, aModules) {
     iframingOptions,
     featureEnabled,
     loadConfig,
+    lockRoom,
     getRoot,
     getRoom,
     getRoomInfo,
@@ -974,7 +1012,7 @@ function ServerMethods(aLogLevel, aModules) {
     postHangUp,
     getHealth,
     oldVersionCompat,
-    roomExists,
+    getRoomRawInfo,
     saveConnectionFirebase,
     deleteConnectionFirebase,
     setSecurityHeaders,
