@@ -515,7 +515,7 @@ BubbleFactory, Clipboard, LayoutManager, $ */
               setTimeout(function() {
                 RoomView.participantsNumber = 0;
                 Utils.sendEvent('roomView:endCall'); 
-              }, 1000);         
+              }, 3000);         
             }
             else if (accept) {
               RoomView.participantsNumber = 0;
