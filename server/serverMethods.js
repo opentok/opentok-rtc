@@ -172,6 +172,7 @@ function ServerMethods(aLogLevel, aModules) {
       var enableArchiveManager = enableArchiving && config.get(C.ENABLE_ARCHIVE_MANAGER);
       var enableMuteAll = config.get(C.ENABLE_MUTE_ALL);
       var enableStopReceivingVideo = config.get(C.ENABLE_STOP_RECEIVING_VIDEO);
+      var maxUsersPerRoom = config.get(C.MAX_USERS_PER_ROOM);
       var enableScreensharing = config.get(C.ENABLE_SCREENSHARING);
       var enablePrecallTest = config.get(C.ENABLE_PRECALL_TEST);
       var enableAnnotations = enableScreensharing && config.get(C.ENABLE_ANNOTATIONS);
@@ -241,6 +242,7 @@ function ServerMethods(aLogLevel, aModules) {
                 useGoogleFonts,
                 jqueryUrl,
                 minMeetingNameLength,
+                maxUsersPerRoom,
               }));
     });
   }
@@ -412,6 +414,7 @@ function ServerMethods(aLogLevel, aModules) {
           enableArchiveManager: tbConfig.enableArchiveManager,
           enableMuteAll: tbConfig.enableMuteAll,
           enableStopReceivingVideo: tbConfig.enableStopReceivingVideo,
+          maxUsersPerRoom: tbConfig.maxUsersPerRoom,
           enableScreensharing: tbConfig.enableScreensharing,
           enableAnnotation: tbConfig.enableAnnotations,
           enablePrecallTest: tbConfig.enablePrecallTest,

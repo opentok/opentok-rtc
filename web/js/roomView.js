@@ -88,6 +88,11 @@ BubbleFactory, Clipboard, LayoutManager, $ */
       detail: 'Failed to acquire microphone. This is a known Chrome bug. Please completely quit ' +
               'and restart your browser.',
       button: 'Reload'
+    },
+    meetingFullError: {
+      head: 'Meeting Full',
+      detail: 'This meeting has reached the full capacity of 16 participants. Try&nbsp;joining later.',
+      button: 'OK'
     }
   };
 
@@ -230,6 +235,11 @@ BubbleFactory, Clipboard, LayoutManager, $ */
     },
     chromePublisherError: function () {
       Modal.showConfirm(MODAL_TXTS.chromePublisherError).then(function () {
+        document.location.reload();
+      });
+    },
+    meetingFullError: function () {
+      Modal.showConfirm(MODAL_TXTS.meetingFullError).then(function () {
         document.location.reload();
       });
     }
