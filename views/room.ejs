@@ -34,7 +34,8 @@
       window.precallSessionId='<%=precallSessionId%>';
       window.precallToken='<%=precallToken%>';
       window.showTos=<%=showTos%> && !sessionStorage.tosAccepted;
-      window.enablePrecallTest=<%=enablePrecallTest%>
+      window.enablePrecallTest=<%=enablePrecallTest%>;
+      window.enableRoomLocking=<%=enableRoomLocking%>;
       window.showUnavailable=<%=showUnavailable%>;
       window.opentokJsUrl='<%=opentokJsUrl%>';
       window.feedbackUrl = '<%=feedbackUrl%>';
@@ -240,12 +241,14 @@
     <section for="chooseLayout" class="bubble">
       <div class="bubble-content top-arrow">
         <div id="top-icons-container">
-          <div class="source-pick-container">
-            <div id="lockRoomContainer" class="sourcePick icon-with-text">
-              <a id="lockRoom"><i id="lock-room-icon" data-icon="openLock"></i></a>
-              <span id="lock-msg">Lock Meeting</span>
+          <% if (enableRoomLocking) { %>
+            <div class="source-pick-container">
+              <div id="lockRoomContainer" class="sourcePick icon-with-text">
+                <a id="lockRoom"><i id="lock-room-icon" data-icon="openLock"></i></a>
+                <span id="lock-msg">Lock Meeting</span>
+              </div>
             </div>
-          </div>
+          <% } %>
           <div class="source-pick-container">
             <div id="pickMicContainer" class="sourcePick icon-with-text">
               <a id="pickMic"><i data-icon="pmic"></i></a>

@@ -82,6 +82,8 @@ E.CHROME_EXTENSION_ID = { envVar: 'CHROME_EXTENSION_ID', jsonPath: 'Screensharin
 
 E.ENABLE_ANNOTATIONS = { envVar: 'ENABLE_ANNOTATIONS', jsonPath: 'Screensharing.annotations.enabled', defaultValue: true, parser: parseBool };
 
+E.ENABLE_ROOM_LOCKING = { envVar: 'ENABLE_ROOM_LOCKING', jsonPath: 'enableRoomLocking', defaultValue: true, parser: parseBool };
+
 
 // Do we want to allow being used inside an iframe?
 // This can be:
