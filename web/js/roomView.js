@@ -1,5 +1,5 @@
 /* global RoomView, Cronograph, FirebaseModel, RecordingsController, Modal,
-BubbleFactory, Clipboard, LayoutManager, $ */
+BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
 
 !(function (exports) {
   'use strict';
@@ -59,11 +59,23 @@ BubbleFactory, Clipboard, LayoutManager, $ */
               'unmute just yourself by clicking the microphone icon in the bottom menu.',
       button: 'I understand'
     },
+    lock: {
+      head: 'Lock Meeting',
+      detail: 'When a meeting room is locked no additional participants will be allowed to join the meeting. ' +
+              'Current participants who leave the meeting will not be allowed back in.',
+      button: 'Lock Meeting'
+    },
     endCall: {
       head: 'Exit the Meeting',
       detail: 'You are going to exit the Vonage Free Conferencing Meeting Room. The call will continue with the ' +
               'remaining participants.',
       button: 'End meeting'
+    },
+    endLockedCall: {
+      head: 'Exit the Meeting',
+      detail: 'The Vonage Free Conferencing Meeting Room you are leaving is locked. Do you want to unlock it before leaving?',
+      button: 'End',
+      altButton: 'Unlock and end'
     },
     sessionDisconnected: {
       head: 'Session disconected',
@@ -76,6 +88,12 @@ BubbleFactory, Clipboard, LayoutManager, $ */
       detail: 'Failed to acquire microphone. This is a known Chrome bug. Please completely quit ' +
               'and restart your browser.',
       button: 'Reload'
+    },
+    meetingFullError: {
+      head: 'Meeting Full',
+      detail: 'This meeting has reached the full capacity of ' + maxUsersPerRoom +
+        ' participants. Try&nbsp;joining later.',
+      button: 'OK'
     }
   };
 
@@ -171,6 +189,26 @@ BubbleFactory, Clipboard, LayoutManager, $ */
         setSwitchStatus(false, false, audioSwitch, 'roomView:muteAllSwitch');
       }
     },
+    roomLocked: function (evt) {
+      var lockState = evt.detail;
+      RoomView.lockState = lockState;
+      var menuLockIcon = document.getElementById('lock-room-icon');
+      var menuLockText = document.getElementById('lock-msg');
+      var navBarStateIcon = document.getElementById('room-locked-state');
+      
+      if (lockState === 'locked') {
+        menuLockText.innerHTML = 'Unlock Meeting'
+        menuLockIcon.setAttribute('data-icon', 'closedLock');
+        navBarStateIcon.style.display = 'block';
+      }
+      if (lockState === 'unlocked') {
+        menuLockText.innerHTML = 'Lock Meeting'
+        menuLockIcon.setAttribute('data-icon', 'openLock');
+        navBarStateIcon.style.display = 'none';
+
+        Modal.flashMessage('.room-unlocked-modal');
+      }
+    },
     roomMuted: function (evt) {
       var isJoining = evt.detail.isJoining;
       setAudioSwitchRemotely(true);
@@ -198,6 +236,11 @@ BubbleFactory, Clipboard, LayoutManager, $ */
     },
     chromePublisherError: function () {
       Modal.showConfirm(MODAL_TXTS.chromePublisherError).then(function () {
+        document.location.reload();
+      });
+    },
+    meetingFullError: function () {
+      Modal.showConfirm(MODAL_TXTS.meetingFullError).then(function () {
         document.location.reload();
       });
     }
@@ -466,8 +509,16 @@ BubbleFactory, Clipboard, LayoutManager, $ */
           setChatStatus(!messageButtonElem.classList.contains('activated'));
           break;
         case 'endCall':
-          Modal.showConfirm(MODAL_TXTS.endCall).then(function (endCall) {
-            if (endCall) {
+          var modalTxt = RoomView.lockState === 'locked' ? MODAL_TXTS.endLockedCall : MODAL_TXTS.endCall;
+          Modal.showConfirm(modalTxt).then(function (accept) {
+            if (accept.altHasAccepted) {
+              Utils.sendEvent('roomView:setRoomLockState', 'unlocked');
+              setTimeout(function() {
+                RoomView.participantsNumber = 0;
+                Utils.sendEvent('roomView:endCall'); 
+              }, 3000);         
+            }
+            else if (accept) {
               RoomView.participantsNumber = 0;
               Utils.sendEvent('roomView:endCall');
             }
@@ -476,6 +527,31 @@ BubbleFactory, Clipboard, LayoutManager, $ */
       }
     });
 
+    var optionIcons = document.getElementById('top-icons-container');
+
+    optionIcons.addEventListener('click', function (e) {
+      BubbleFactory.get('chooseLayout').hide();
+    });
+
+    if (enableRoomLocking) {
+      var lockRoom = document.getElementById('lockRoomContainer');
+
+      lockRoom.addEventListener('click', function (e) {
+        var lockIcon = document.getElementById('lock-room-icon');
+        var lockState = lockIcon.getAttribute('data-icon');
+        if (lockState == 'openLock') {
+          Modal.showConfirm(MODAL_TXTS.lock).then(function (lock) {
+            if (lock) {
+              Utils.sendEvent('roomView:setRoomLockState', 'locked');
+            }
+          });
+        }
+        if (lockState == 'closedLock') {
+          Utils.sendEvent('roomView:setRoomLockState', 'unlocked');
+        }
+      });
+    }
+    
     var switchMic = document.getElementById('pickMicContainer');
 
     switchMic.addEventListener('click', function (e) {
@@ -525,15 +601,7 @@ BubbleFactory, Clipboard, LayoutManager, $ */
         case 'startChat':
         case 'stopChat':
           setChatStatus(elem.id === 'startChat');
-          break;
-        case 'endCall':
-          Modal.showConfirm(MODAL_TXTS.endCall).then(function (endCall) {
-            if (endCall) {
-              RoomView.participantsNumber = 0;
-              Utils.sendEvent('roomView:endCall');
-            }
-          });
-          break;
+          break;          
         case 'addToCall':
           Utils.sendEvent('roomView:addToCall');
           break;
@@ -648,6 +716,18 @@ BubbleFactory, Clipboard, LayoutManager, $ */
 
     set participantsNumber(value) {
       HTMLElems.replaceText(participantsStrElem, value);
+      if (!enableRoomLocking) {
+        return;
+      }
+      if (value === 1 && RoomView.lockState !== 'locked') {
+        document.getElementById('lockRoomContainer').style.display = 'none';
+      } else {
+        document.getElementById('lockRoomContainer').style.removeProperty('display');
+      }
+      if (value === 1 && RoomView.lockState === 'locked') {
+        Utils.sendEvent('roomView:setRoomLockState', 'unlocked');
+        document.getElementById('lockRoomContainer').style.display = 'none';
+      }
     },
 
     set recordingsNumber(value) {

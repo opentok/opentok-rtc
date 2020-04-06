@@ -454,6 +454,45 @@
   }
 }
 
+.room-info {
+  [data-icon="closedLock"] {
+    background-image: url("/images/icons/closed-lock.svg");
+    filter: invert(1);
+    width: 14px;
+    height: 16px;
+    position: absolute;
+    left: 22px;
+    top: 18px;
+    display: none;
+  }
+}
+
+#room-unlocked-alert {
+  [data-icon="openLock"] {
+    background-image: url("/images/icons/open-lock.svg");
+    filter: invert(1);
+    width: 26px;
+    height: 26px;
+    margin-right: 10px;
+  }
+}
+
+#lockRoom {
+  [data-icon="openLock"] {
+    background-image: url("/images/icons/open-lock.svg");
+    width: 35px;
+    height: 25px;
+    vertical-align: text-bottom;
+  }
+
+  [data-icon="closedLock"] {
+    background-image: url("/images/icons/closed-lock.svg");
+    width: 35px;
+    height: 25px;
+    vertical-align: text-bottom;
+  }
+}
+
 #toggleFacingMode {
   [data-icon="cycleVideo"] {
     background-image: url("/images/icons/cam.svg");

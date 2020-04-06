@@ -73,7 +73,8 @@ body {
     float: left;
     flex-grow: 1;
     height: 100%;
-    padding: 0 30px;
+    padding: 0 30px 0 55px;
+    position: relative;
 
     @media @smartphonesPortrait {
       padding: 0;
@@ -87,7 +88,7 @@ body {
       line-height: 0.5;
       letter-spacing: 1.1px;
       color: #7a8b93;
-      min-width: 60px;
+      min-width: 166px;
       .name-wrapper {
          display: table;
          margin-top: 14px;
@@ -104,7 +105,7 @@ body {
            height: 44px;
            overflow: hidden;
            white-space: normal;
-           line-height: 18px;
+           line-height: 22px;
            margin-bottom: 8px;
            color: #ffffff;
            width: 100%;
@@ -205,12 +206,6 @@ body {
       height: 22px;
       float: none;
     }
-    #options-label {
-      margin-top: 8px;
-      float: none;
-      font-size: 12px;
-      color: #c0c0c0;
-    }
   }
   #toggleArchiving, #manageRecordings {
     margin: 28px 0;
@@ -304,6 +299,18 @@ body {
 #screen.streams {
   @media @smartphonesPortrait {
     height: 100%;
+  }
+}
+
+#room-unlocked-alert {
+  color: white;
+  border-radius: 100px;
+  background-color: #131415;
+  opacity: 0.7;
+  font-size: 16px;
+  span {
+    position: relative;
+    top: -4px;
   }
 }
 
@@ -1164,6 +1171,10 @@ body {
 
   .btn-blue {
     background-color: #319cca;
+  }
+
+  .btn-purple {
+    background-color: #871fff;
   }
 }
 

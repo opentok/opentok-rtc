@@ -7,6 +7,8 @@
   var _tosTemplateSrc = '/templates/tos.ejs';
   var _unavailableTemplateSrc = '/templates/unavailable.ejs';
   var _unavailableTemplate;
+  var _lockedTemplateSrc = '/templates/locked.ejs';
+  var _lockedTemplate;
   var _tosTemplate;
   var _model;
   var testMeterInterval;
@@ -110,7 +112,7 @@
   };
 
   function render(resolve) {
-    var templatePromises = [_precallTemplate.render(), _unavailableTemplate.render()];
+    var templatePromises = [_precallTemplate.render(), _unavailableTemplate.render(), _lockedTemplate.render()];
     if (showTos) {
       templatePromises.push(_tosTemplate.render());
     }
@@ -184,6 +186,7 @@
         _tosTemplate = new EJSTemplate({ url: _tosTemplateSrc });
       }
       _unavailableTemplate = new EJSTemplate({ url: _unavailableTemplateSrc });
+      _lockedTemplate = new EJSTemplate({ url: _lockedTemplateSrc });
       alreadyInitialized = true;
       return render(resolve);
     });
@@ -196,6 +199,11 @@
 
   var showUnavailableMessage = function () {
     var selector = '.tc-modal.unavailable';
+    return Modal.show(selector, null, true);
+  };
+
+  var showLockedMessage = function () {
+    var selector = '.tc-modal.locked';
     return Modal.show(selector, null, true);
   };
 
@@ -323,6 +331,7 @@
     setVolumeMeterLevel,
     showContract,
     showUnavailableMessage,
+    showLockedMessage,
     startPrecallTestMeter,
     displayNetworkTestResults,
     hideConnectivityTest
