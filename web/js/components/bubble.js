@@ -155,7 +155,7 @@
       var rectObject = this.associatedWith.getBoundingClientRect();
       var container = this.container;
       if (this.topArrow) {
-        container.style.right = (window.innerWidth - rectObject.right - 20) + 'px';
+        container.style.right = (window.innerWidth - rectObject.right + 25) + 'px';
         container.style.top = rectObject.bottom + VERTICAL_OFFSET + 'px';
       } else {
         container.style.left = rectObject.right + HORIZONTAL_OFFSET + 'px';
