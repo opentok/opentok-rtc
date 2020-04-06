@@ -522,23 +522,25 @@ BubbleFactory, Clipboard, LayoutManager, $ */
       BubbleFactory.get('chooseLayout').hide();
     });
 
-    var lockRoom = document.getElementById('lockRoomContainer');
+    if (enableRoomLocking) {
+      var lockRoom = document.getElementById('lockRoomContainer');
 
-    lockRoom.addEventListener('click', function (e) {
-      var lockIcon = document.getElementById('lock-room-icon');
-      var lockState = lockIcon.getAttribute('data-icon');
-      if (lockState == 'openLock') {
-        Modal.showConfirm(MODAL_TXTS.lock).then(function (lock) {
-          if (lock) {
-            Utils.sendEvent('roomView:setRoomLockState', 'locked');
-          }
-        });
-      }
-      if (lockState == 'closedLock') {
-        Utils.sendEvent('roomView:setRoomLockState', 'unlocked');
-      }
-    });
-
+      lockRoom.addEventListener('click', function (e) {
+        var lockIcon = document.getElementById('lock-room-icon');
+        var lockState = lockIcon.getAttribute('data-icon');
+        if (lockState == 'openLock') {
+          Modal.showConfirm(MODAL_TXTS.lock).then(function (lock) {
+            if (lock) {
+              Utils.sendEvent('roomView:setRoomLockState', 'locked');
+            }
+          });
+        }
+        if (lockState == 'closedLock') {
+          Utils.sendEvent('roomView:setRoomLockState', 'unlocked');
+        }
+      });
+    }
+    
     var switchMic = document.getElementById('pickMicContainer');
 
     switchMic.addEventListener('click', function (e) {
@@ -702,18 +704,19 @@ BubbleFactory, Clipboard, LayoutManager, $ */
     },
 
     set participantsNumber(value) {
-
+      HTMLElems.replaceText(participantsStrElem, value);
+      if (!enableRoomLocking) {
+        return;
+      }
       if (value === 1 && RoomView.lockState !== 'locked') {
         document.getElementById('lockRoomContainer').style.display = 'none';
       } else {
         document.getElementById('lockRoomContainer').style.removeProperty('display');
       }
-
       if (value === 1 && RoomView.lockState === 'locked') {
         Utils.sendEvent('roomView:setRoomLockState', 'unlocked');
         document.getElementById('lockRoomContainer').style.display = 'none';
       }
-      HTMLElems.replaceText(participantsStrElem, value);
     },
 
     set recordingsNumber(value) {

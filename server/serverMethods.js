@@ -175,6 +175,7 @@ function ServerMethods(aLogLevel, aModules) {
       var enableScreensharing = config.get(C.ENABLE_SCREENSHARING);
       var enablePrecallTest = config.get(C.ENABLE_PRECALL_TEST);
       var enableAnnotations = enableScreensharing && config.get(C.ENABLE_ANNOTATIONS);
+      var enableRoomLocking = config.get(C.ENABLE_ROOM_LOCKING);
       var feedbackUrl = config.get(C.FEEDBACK_URL);
       var reportIssueLevel = config.get(C.REPORT_ISSUE_LEVEL);
 
@@ -222,6 +223,7 @@ function ServerMethods(aLogLevel, aModules) {
                 enableScreensharing,
                 enableAnnotations,
                 enablePrecallTest,
+                enableRoomLocking,
                 feedbackUrl,
                 enableSip,
                 opentokJsUrl,
@@ -413,6 +415,7 @@ function ServerMethods(aLogLevel, aModules) {
           enableScreensharing: tbConfig.enableScreensharing,
           enableAnnotation: tbConfig.enableAnnotations,
           enablePrecallTest: tbConfig.enablePrecallTest,
+          enableRoomLocking: tbConfig.enableRoomLocking,
           feedbackUrl: tbConfig.feedbackUrl,
           precallSessionId: testSession.sessionId,
           apiKey: tbConfig.apiKey,

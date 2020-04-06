@@ -25,11 +25,13 @@
       <a id="viewRecordings"  class="btn btn-purple btn-padding"><span id="recordings">0</span></a>
     </div>
     <% } } %>
-    <a id="chooseLayout">
-      <div id="options-container">
-        <i id="options-icon" data-icon="options-icon"></i>
-      </div>
-    </a>
+    <% if (enableRoomLocking) { %>
+      <a id="chooseLayout">
+        <div id="options-container">
+          <i id="options-icon" data-icon="options-icon"></i>
+        </div>
+      </a>
+    <% } %>
   </div>
 </div>
 <section id="screen">
