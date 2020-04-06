@@ -33,6 +33,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
   var roomURI = null;
   var resolutionAlgorithm = null;
   var debugPreferredResolution = null;
+  var token = null;
 
   var publisherOptions = {
     insertMode: 'append',
@@ -315,6 +316,10 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     otHelper.sendSignal('muteAll', { status: status, onlyChangeSwitch: onlyChangeSwitch });
   }
 
+  function sendSignalLock(status) {
+    otHelper.sendSignal('roomLocked', { status });
+  }
+
   var viewEventHandlers = {
     endCall: function () {
       otHelper.disconnect();
@@ -458,6 +463,17 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
       if (!otHelper.isPublisherReady || otHelper.publisherHas('video') !== newStatus) {
         otHelper.togglePublisherVideo(newStatus);
       }
+    },
+    setRoomLockState: function (evt) {
+      var state = evt.detail;
+      var data = {
+        userName,
+        token,
+        state,
+        roomURI
+      };
+
+      Request.sendLockingOperation(data).then(() => sendSignalLock(state));
     }
   };
 
@@ -660,6 +676,10 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
       // Dispatched when an archive recording of the session stops
       Utils.sendEvent('archiving', { status: 'stopped' });
     },
+    'signal:roomLocked': function (evt) {
+      var roomState = JSON.parse(evt.data).status;
+      Utils.sendEvent('roomController:roomLocked', roomState); 
+    },
     'signal:muteAll': function (evt) {
       var statusData = JSON.parse(evt.data);
       var muteAllSwitch = statusData.status;
@@ -830,7 +850,6 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
           };
 
         loadAnnotations = LazyLoader.load([
-          aParams.jqueryUrl + '/3.3.1/jquery.min.js',
           'https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js',
           '/js/vendor/opentok-annotation.js'
         ]);
@@ -848,6 +867,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     roomURI = aParams.roomURI;
     userName = aParams.username ? aParams.username.substring(0, 1000) : '';
     userName = Utils.htmlEscape(userName.substring(0, 25));
+    token = aParams.token;
 
     var sessionInfo = {
       apiKey: aParams.apiKey,
@@ -926,7 +946,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
         .then(function () {
           ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
           FeedbackController.init(otHelper, aParams.reportIssueLevel);
-          PhoneNumberController.init(aParams.jqueryUrl);
+          PhoneNumberController.init();
           Utils.sendEvent('roomController:controllersReady');
         })
         .catch(function (error) {

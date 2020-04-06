@@ -53,6 +53,7 @@
     "ioredis": "^4.6.3",
     "lodash": "^4.17.13",
     "opentok": "^2.3.0",
+    "qs": "^6.9.3",
     "swagger-boilerplate": "^0.0.16",
     "yamljs": "^0.2.10"
   },
