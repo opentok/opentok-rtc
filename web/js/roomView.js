@@ -1,5 +1,5 @@
 /* global RoomView, Cronograph, FirebaseModel, RecordingsController, Modal,
-BubbleFactory, Clipboard, LayoutManager, $ */
+BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
 
 !(function (exports) {
   'use strict';
@@ -91,7 +91,8 @@ BubbleFactory, Clipboard, LayoutManager, $ */
     },
     meetingFullError: {
       head: 'Meeting Full',
-      detail: 'This meeting has reached the full capacity of 16 participants. Try&nbsp;joining later.',
+      detail: 'This meeting has reached the full capacity of ' + maxUsersPerRoom +
+        ' participants. Try&nbsp;joining later.',
       button: 'OK'
     }
   };
