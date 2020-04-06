@@ -451,6 +451,7 @@ The app lets the developer POST feedback data to an endpoint on your HTTP server
    the Stop Receiving Video control in the top menu of the room. (You can set this
    in the config file using the `enableStopReceivingVideo` setting.)
 
+  * `ENABLE_ROOM_LOCKING` (Optional, defautl value: true). Wheter or not to show the Lock Meeting icon to users in the options menu. This setting allows users to avoid new participants to join a locked meeting.
 ## Customizing the UI
 
 For information on how to customize OpenTokRTC's UI, see [CUSTOMIZING-UI.md](CUSTOMIZING-UI.md).
