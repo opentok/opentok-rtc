@@ -65,41 +65,56 @@ body {
     text-align: center;
     border-right: 1px solid #455b66;
     @media @smartphonesPortrait {
-      width: 56px;
-      min-width: 56px;
+      width: 52px;
+      min-width: 52px;
     }
   }
   .center-container {
     float: left;
     flex-grow: 1;
     height: 100%;
-    padding: 0 30px 0 55px;
     position: relative;
 
     @media @smartphonesPortrait {
       padding: 0;
       padding-left: 4px;
-      max-width: 180px;
+      width: 100%;
     }
 
     .room-info {
+      display: flex;
+      height: 100%;
       font-size: 13px;
       font-weight: 600;
-      line-height: 0.5;
+      line-height: 1.5;
       letter-spacing: 1.1px;
       color: #7a8b93;
-      min-width: 166px;
+      min-width: 200px;
+      .left-icon-wrapper {
+        height: 50px;
+        margin: 24px 10px 0 12px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        @media @smartphonesPortrait {
+          height: 44px;
+          margin: 8px 4px 0 4px
+        }
+      }
+      .participants-wrapper {
+        display: flex;
+      }
       .name-wrapper {
          display: table;
-         margin-top: 14px;
+         margin-top: 24px;
          @media @smartphonesPortrait {
-           margin-top: 2px;
+           margin-top: 10px;
          }
          .room-name {
            vertical-align: middle;
            display: table-cell;
            flex-direction: column;
-           margin-top: 16px;
+           margin-top: 28px;
            font-size: 22px;
            text-overflow: ellipsis;
            height: 44px;
@@ -109,12 +124,12 @@ body {
            margin-bottom: 8px;
            color: #ffffff;
            width: 100%;
-           min-width: 214px;
+           min-width: 186px;
            word-break: break-word;
            @media @smartphonesPortrait {
              line-height: 17px;
              margin: 4px 0 0 12px;
-             margin-left: 0;
+             margin-left: 6px;
              width: 190px;
              height: 36px;
           }
@@ -137,9 +152,10 @@ body {
     font-size: 16px;
     cursor: pointer;
     @media @smartphonesPortrait {
-      margin-right: 26px;
+      margin-right: 8px;
       width: 124px;
       font-size: 14px;
+      width: 40px;
     }
     i {
       margin-right: 10px;
@@ -147,10 +163,11 @@ body {
         margin-right: 2px;
       }
     }
-  }
-  .invite-btn {
-    background: #871FFF;
-    border-radius: 5px;
+    span {
+      @media @smartphonesPortrait {
+        display: none;
+      }
+    }
   }
   .right-container {
     float: right;
@@ -163,8 +180,6 @@ body {
     @media @smartphonesPortrait {
       float: left;
       width: unset;
-      min-width: calc(~"100% - 220px");
-      // height: 92px;
     }
     div {
         float: left;
@@ -200,7 +215,8 @@ body {
     .justify-content(center);
     cursor: pointer;
     @media @smartphonesPortrait {
-      display: none;
+      width: 49px;
+      height: 56px;
     }
     #options-icon {
       height: 22px;

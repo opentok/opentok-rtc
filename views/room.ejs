@@ -85,9 +85,15 @@
       </div>
       <div class="center-container">
         <div class="room-info">
-          <i id="room-locked-state" data-icon="closedLock" title="This room is locked. No additional participants may join the room."></i>
-          <p class="room-name"></p>
-          <i data-icon="participants"></i><span id="participantsStr"></span>
+          <div class="left-icon-wrapper">
+            <i id="room-locked-state" data-icon="closedLock" title="This room is locked. No additional participants may join the room."></i>
+            <div class="participants-wrapper">
+              <i data-icon="participants"></i><span id="participantsStr"></span>
+            </div>
+          </div>
+          <div class="name-wrapper">
+            <p class="room-name"></p>
+          </div>
         </div>
       </div>
       <div class="right-container">
@@ -119,7 +125,7 @@
         <% } } %>
         <a class="invite-btn" id="addToCall">
           <i data-icon="add"></i>
-          Invite
+          <span>Invite</span>
         </a>
         <a id="chooseLayout">
           <div id="options-container">
