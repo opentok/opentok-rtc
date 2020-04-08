@@ -193,6 +193,11 @@ function ServerMethods(aLogLevel, aModules) {
                                     config.get(C.EMPTY_ROOM_LIFETIME), aLogLevel);
       _shutdownOldInstance(oldFirebaseArchivesPromise, firebaseArchivesPromise);
 
+      // Adobe tracking
+      var adobeTrackingUrl = config.get(C.ADOBE_TRACKING_URL);
+      var ATPrimaryCategory = config.get(C.ADOBE_TRACKING_PRIMARY_CATEGORY);
+      var ATSiteIdentifier = config.get(C.ADOBE_TRACKING_SITE_IDENTIFIER);
+
       return firebaseArchivesPromise
               .then(firebaseArchives => ({
                 otInstance,
@@ -237,6 +242,9 @@ function ServerMethods(aLogLevel, aModules) {
                 useGoogleFonts,
                 jqueryUrl,
                 minMeetingNameLength,
+                adobeTrackingUrl,
+                ATPrimaryCategory,
+                ATSiteIdentifier
               }));
     });
   }
@@ -355,6 +363,9 @@ function ServerMethods(aLogLevel, aModules) {
         showUnavailable: !meetingAllowed,
         useGoogleFonts: aReq.tbConfig.useGoogleFonts,
         supportIE: aReq.tbConfig.supportIE,
+        adobeTrackingUrl: aReq.tbConfig.adobeTrackingUrl,
+        ATPrimaryCategory: aReq.tbConfig.ATPrimaryCategory,
+        ATSiteIdentifier: aReq.tbConfig.ATSiteIdentifier,
       }, (err, html) => {
         if (err) {
           logger.error('getRoot. error: ', err);
