@@ -296,6 +296,7 @@ Web client allows to be configured in some of its features. You can enable or di
 #### Screen sharing configuration
 
 - `ENABLE_SCREENSHARING`:(Optional, default value: false) Whether to enable screen sharing.
+- `CHROME_EXTENSION_ID` :(Optional, LEGACY, default value: 'null'): The Chrome AddOn extension ID for screen sharing. Note: the Chrome extension is no longer required for screensharing.
 - `ENABLE_ANNOTATIONS`: (Optional, default value: true) Whether to enable annotations in screen sharing. This is only meaningful if screen sharing is not disabled.
 
 ```json
