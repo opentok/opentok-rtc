@@ -71,11 +71,9 @@ body {
     }
   }
   .center-container {
-    float: left;
-    flex-grow: 1;
-    height: 100%;
-    position: relative;
-
+    justify-content: center;
+    flex-direction: column;
+    display: flex;
     @media @smartphonesPortrait {
       padding: 0;
       padding-left: 4px;
@@ -84,13 +82,16 @@ body {
 
     .room-info {
       display: flex;
-      height: 100%;
+      flex-direction: column;
+      margin: 0 12px;
       font-size: 13px;
       font-weight: 600;
-      line-height: 1.5;
       letter-spacing: 1.1px;
       color: #7a8b93;
       min-width: 200px;
+      @media @smartphonesPortrait {
+        min-width: unset;
+      }
       .left-icon-wrapper {
         height: 50px;
         margin: 24px 10px 0 12px;
@@ -108,30 +109,27 @@ body {
         display: flex;
       }
       .name-wrapper {
-         margin-top: 10px;
+         margin-bottom: 6px;
          min-width: 200px;
+         display: grid;
+         grid-template-columns: auto auto;
          @media @smartphonesPortrait {
            margin: 0;
-           width: calc(100% - 21px);
+           width: 100%;
            padding: 0 4px;
            min-width: unset;
-           display: grid;
          }
          .room-name {
-           vertical-align: top;
            flex-direction: column;
            font-size: 14px;
            text-overflow: ellipsis;
-           height: 44px;
            overflow: hidden;
            white-space: nowrap;
-           line-height: 22px;
            color: #ffffff;
            width: 100%;
-           word-break: break-word;
+           margin: 0;
            @media @smartphonesPortrait {
-             line-height: 17px;
-             height: 36px;
+             height: 22px;
           }
         }
       }
@@ -153,9 +151,8 @@ body {
     cursor: pointer;
     @media @smartphonesPortrait {
       margin-right: 8px;
-      width: 124px;
-      font-size: 14px;
-      width: 40px;
+      padding: 0 8px;
+      width: 24px;
     }
     i {
       margin-right: 10px;
@@ -172,6 +169,7 @@ body {
   .right-container {
     float: right;
     display: flex;
+    flex-grow: 1;
     .flex-direction(row);
     .align-items(center);
     .justify-content(flex-end);
