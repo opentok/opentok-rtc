@@ -667,9 +667,10 @@ body {
   text-shadow: black 1px 1px 8px;
   background: transparent;
   box-shadow: unset;
-
+  display: flex;
+  flex-direction: column;
   @media @smartphonesPortrait {
-    width: 100%;
+    width: calc(100% - 40px);
     height: 100%;
     padding: 10px;
     margin: 0;
@@ -696,7 +697,7 @@ body {
   }
 
   button#enter {
-    margin-top: 12px;
+    margin: 12px 0 0 0;
   }
 
   p {
@@ -732,9 +733,8 @@ body {
     @media @smartphonesPortrait {
       position: relative;
       max-height: 40%;
-      max-width: calc(~"100% - 20px");
+      width: 100%;
       top: 0;
-      left: 10px;
     }
   }
   #video-preview-name {
@@ -750,7 +750,7 @@ body {
   }
   #video-settings, #audio-settings, #enter-name-prompt {
     display: flex;
-    .justify-content(space-around);
+    .justify-content(space-between);
     padding-bottom: 18px;
     img {
       float: left;
@@ -768,19 +768,13 @@ body {
         color: #8e99a5;
       }
     }
-    @media @smartphonesPortrait  {
-      .justify-content(space-around);
-    }
   }
   #audio-settings > div > img {
-    margin-left: 10px;
+    margin-right: 18px;
   }
   #video-settings, #audio-settings {
     #audio-switch {
       margin-right: 20px;
-    }
-    #video-switch {
-      margin-left: 70px;
     }
     .switch-button {
       #preToggleFacingMode, #prePickMic {
@@ -791,7 +785,7 @@ body {
       }
       width: 59px;
       height: 20px;
-      margin-top: 4px;
+      margin-right: 24px;
       object-fit: contain;
       border-radius: 4px;
       border: 1px #979797 solid;
@@ -803,11 +797,11 @@ body {
   }
   #enter-name-prompt {
     margin-top: 10px;
-    padding: 0 6px;
+    padding: 0;
     border-bottom: #788492 1px solid;
     .justify-content(space-between);
     @media @smartphonesPortrait {
-      margin: 10px 10px 0 10px;
+      margin: 10px 0 0 0;
     }
     div {
       display: flex;
@@ -822,7 +816,7 @@ body {
       width: 190px;
       height: 26px;
       color: white;
-      padding-left: 4px;
+      padding-left: 0;
       margin-left: 0;
     }
     input:focus {
@@ -831,23 +825,22 @@ body {
       background: none;
     }
     label {
-      left: 12px;
+      left: 0;
       position: absolute;
       color: #fff;
       font-size: 16px;
       transition: all 0.5s;
       @media @smartphonesPortrait  {
-        left: 32px;
+        left: 10px;
       }
     }
     label.visited {
-      left: 236px;
+      left: calc(100% - 134px);
       font-size: 12px;
       color: #757575;
     }
   }
   #audio-meter-container {
-    margin-right: 50px;
     display: inline !important;
   }
   #audio-meter, #precall-test-meter {
@@ -971,6 +964,9 @@ body {
     margin-bottom:40px;
     font-size: 14px;
     color: #ffffff;
+    @media @smartphonesPortrait {
+      font-size: 13px;
+    }
 
     a {
       color: #ffffff;
@@ -1209,7 +1205,7 @@ footer.main {
 }
 
 .room-name {
-  font-size: 14px;
+  font-size: 13px;
   margin-top: 6px;
   word-break: break-word;
   display: block;
@@ -1225,11 +1221,6 @@ footer.main {
   background-color: #871FFF;
   &.accept {
     background-color: #131415;
-  }
-  @media @smartphonesPortrait {
-    left: 10px;
-    min-width: 196px;
-    width: calc(~"100% - 20px");
   }
 }
 
