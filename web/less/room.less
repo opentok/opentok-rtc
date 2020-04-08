@@ -51,6 +51,7 @@ body {
 
   @media @smartphonesPortrait {
     height: 56px;
+    justify-content: space-between;
   }
 
   .icon-container {
@@ -98,39 +99,38 @@ body {
         justify-content: space-around;
         @media @smartphonesPortrait {
           height: 44px;
-          margin: 8px 4px 0 4px
+          margin: 8px 4px 0 4px;
+          justify-content: space-between;
+          width: 20px;
         }
       }
       .participants-wrapper {
         display: flex;
       }
       .name-wrapper {
-         display: table;
-         margin-top: 24px;
+         margin-top: 10px;
+         min-width: 200px;
          @media @smartphonesPortrait {
-           margin-top: 10px;
+           margin: 0;
+           width: calc(100% - 21px);
+           padding: 0 4px;
+           min-width: unset;
+           display: grid;
          }
          .room-name {
-           vertical-align: middle;
-           display: table-cell;
+           vertical-align: top;
            flex-direction: column;
-           margin-top: 28px;
-           font-size: 22px;
+           font-size: 14px;
            text-overflow: ellipsis;
            height: 44px;
            overflow: hidden;
-           white-space: normal;
+           white-space: nowrap;
            line-height: 22px;
-           margin-bottom: 8px;
            color: #ffffff;
            width: 100%;
-           min-width: 186px;
            word-break: break-word;
            @media @smartphonesPortrait {
              line-height: 17px;
-             margin: 4px 0 0 12px;
-             margin-left: 6px;
-             width: 190px;
              height: 36px;
           }
         }
@@ -178,8 +178,7 @@ body {
     right: 0;
 
     @media @smartphonesPortrait {
-      float: left;
-      width: unset;
+      padding-left: 4px;
     }
     div {
         float: left;
