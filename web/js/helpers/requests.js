@@ -56,12 +56,12 @@
       });
   }
 
-  function roomExists(roomName) {
-    return sendXHR('GET', server + '/room/' + roomName + '/exists').
+  function getRoomRawInfo(roomName) {
+    return sendXHR('GET', server + '/room/' + roomName + '/rawInfo').
       then(function(resp) {
-        return resp.exists;
+        return resp;
       }).catch(function(error) {
-        return false;
+        return null;
       });
   }
 
@@ -78,6 +78,11 @@
     composed.length && composed.pop();
 
     return composed.join('');
+  }
+
+  function sendLockingOperation(data) {
+    return sendXHR('POST', server + '/room/' + data.roomURI + '/state',
+                    JSON.stringify(data), 'application/json');
   }
 
   function sendArchivingOperation(data) {
@@ -117,8 +122,9 @@
 
   var Request = {
     getRoomInfo,
-    roomExists,
+    getRoomRawInfo,
     sendArchivingOperation,
+    sendLockingOperation,
     dialOut,
     hangUp,
     deleteArchive,

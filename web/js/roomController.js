@@ -1,7 +1,7 @@
 /* global Utils, Request, RoomStatus, RoomView, LayoutManager, LazyLoader, Modal,
 ChatController, GoogleAuth, LayoutMenuController, OTHelper, PrecallController,
 RecordingsController, ScreenShareController, FeedbackController,
-PhoneNumberController, ResizeSensor */
+PhoneNumberController, ResizeSensor, maxUsersPerRoom */
 
 !(function (exports) {
   'use strict';
@@ -33,6 +33,7 @@ PhoneNumberController, ResizeSensor */
   var roomURI = null;
   var resolutionAlgorithm = null;
   var debugPreferredResolution = null;
+  var token = null;
 
   var publisherOptions = {
     insertMode: 'append',
@@ -315,6 +316,10 @@ PhoneNumberController, ResizeSensor */
     otHelper.sendSignal('muteAll', { status: status, onlyChangeSwitch: onlyChangeSwitch });
   }
 
+  function sendSignalLock(status) {
+    otHelper.sendSignal('roomLocked', { status });
+  }
+
   var viewEventHandlers = {
     endCall: function () {
       otHelper.disconnect();
@@ -458,6 +463,17 @@ PhoneNumberController, ResizeSensor */
       if (!otHelper.isPublisherReady || otHelper.publisherHas('video') !== newStatus) {
         otHelper.togglePublisherVideo(newStatus);
       }
+    },
+    setRoomLockState: function (evt) {
+      var state = evt.detail;
+      var data = {
+        userName,
+        token,
+        state,
+        roomURI
+      };
+
+      Request.sendLockingOperation(data).then(() => sendSignalLock(state));
     }
   };
 
@@ -660,6 +676,10 @@ PhoneNumberController, ResizeSensor */
       // Dispatched when an archive recording of the session stops
       Utils.sendEvent('archiving', { status: 'stopped' });
     },
+    'signal:roomLocked': function (evt) {
+      var roomState = JSON.parse(evt.data).status;
+      Utils.sendEvent('roomController:roomLocked', roomState); 
+    },
     'signal:muteAll': function (evt) {
       var statusData = JSON.parse(evt.data);
       var muteAllSwitch = statusData.status;
@@ -830,7 +850,6 @@ PhoneNumberController, ResizeSensor */
           };
 
         loadAnnotations = LazyLoader.load([
-          aParams.jqueryUrl + '/3.3.1/jquery.min.js',
           'https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js',
           '/js/vendor/opentok-annotation.js'
         ]);
@@ -848,6 +867,7 @@ PhoneNumberController, ResizeSensor */
     roomURI = aParams.roomURI;
     userName = aParams.username ? aParams.username.substring(0, 1000) : '';
     userName = Utils.htmlEscape(userName.substring(0, 25));
+    token = aParams.token;
 
     var sessionInfo = {
       apiKey: aParams.apiKey,
@@ -856,6 +876,21 @@ PhoneNumberController, ResizeSensor */
     };
 
     var connect = otHelper.connect.bind(otHelper, sessionInfo);
+    
+    var waitForConnectionCount = function() {
+      return new Promise(function (resolve) {
+        if (!maxUsersPerRoom) {
+          return resolve();
+        }
+        return setTimeout(function () {
+          if (numUsrsInRoom > maxUsersPerRoom) {
+            Utils.sendEvent('roomController:meetingFullError');
+            return;
+          }
+          resolve();
+        }, 500);
+      });
+    }
 
     RoomView.participantsNumber = 0;
 
@@ -874,6 +909,7 @@ PhoneNumberController, ResizeSensor */
         .init(userName, _allHandlers)
         .then(connect)
         .then(LayoutMenuController.init)
+        .then(waitForConnectionCount)
         .then(function () {
           var publisherElement = RoomView.createStreamView('publisher', {
             name: userName,
@@ -910,7 +946,7 @@ PhoneNumberController, ResizeSensor */
         .then(function () {
           ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
           FeedbackController.init(otHelper, aParams.reportIssueLevel);
-          PhoneNumberController.init(aParams.jqueryUrl);
+          PhoneNumberController.init();
           Utils.sendEvent('roomController:controllersReady');
         })
         .catch(function (error) {

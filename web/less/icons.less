@@ -147,8 +147,9 @@
 
 [data-icon="vonage_logo"] {
   background-image: url("/images/vonage-logo.svg");
-  width: 228px;
-  height: 50px;
+  width: 250px;
+  height: 45px;
+  margin-left: 20px;
   @media @smartphonesPortrait {
     background-image: url("/images/vonage-v-logo.svg");
     width: 32px;
@@ -351,8 +352,8 @@
 
 [data-icon="add"] {
   background-image: url("/images/icons/add.svg");
-  width: 27px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
   @media @smartphonesPortrait {
     width: 18px;
     height: 18px;
@@ -407,8 +408,8 @@
 }
 
 [data-icon="options-icon"] {
-  background-image: url("/images/icons/layout-icon.svg");
-  width: 21.1px;
+  background-image: url("/images/icons/hamburger.svg");
+  width: 32px;
   height: 22.4px;
 }
 
@@ -450,6 +451,45 @@
       margin-top: -36px;
       margin-right: 7px;
     }
+  }
+}
+
+.room-info {
+  [data-icon="closedLock"] {
+    background-image: url("/images/icons/closed-lock.svg");
+    filter: invert(1);
+    width: 14px;
+    height: 16px;
+    position: absolute;
+    left: 22px;
+    top: 18px;
+    display: none;
+  }
+}
+
+#room-unlocked-alert {
+  [data-icon="openLock"] {
+    background-image: url("/images/icons/open-lock.svg");
+    filter: invert(1);
+    width: 26px;
+    height: 26px;
+    margin-right: 10px;
+  }
+}
+
+#lockRoom {
+  [data-icon="openLock"] {
+    background-image: url("/images/icons/open-lock.svg");
+    width: 35px;
+    height: 25px;
+    vertical-align: text-bottom;
+  }
+
+  [data-icon="closedLock"] {
+    background-image: url("/images/icons/closed-lock.svg");
+    width: 35px;
+    height: 25px;
+    vertical-align: text-bottom;
   }
 }
 

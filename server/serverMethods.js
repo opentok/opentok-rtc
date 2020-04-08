@@ -18,6 +18,8 @@ var FirebaseArchives = require('./firebaseArchives');
 var GoogleAuth = require('./googleAuthStrategies');
 var testHealth = require('./testHealth');
 var Haikunator = require('haikunator');
+var _ = require('lodash');
+var qs = require('qs');
 
 function htmlEscape(str) {
   return String(str)
@@ -170,9 +172,11 @@ function ServerMethods(aLogLevel, aModules) {
       var enableArchiveManager = enableArchiving && config.get(C.ENABLE_ARCHIVE_MANAGER);
       var enableMuteAll = config.get(C.ENABLE_MUTE_ALL);
       var enableStopReceivingVideo = config.get(C.ENABLE_STOP_RECEIVING_VIDEO);
+      var maxUsersPerRoom = config.get(C.MAX_USERS_PER_ROOM);
       var enableScreensharing = config.get(C.ENABLE_SCREENSHARING);
       var enablePrecallTest = config.get(C.ENABLE_PRECALL_TEST);
       var enableAnnotations = enableScreensharing && config.get(C.ENABLE_ANNOTATIONS);
+      var enableRoomLocking = config.get(C.ENABLE_ROOM_LOCKING);
       var feedbackUrl = config.get(C.FEEDBACK_URL);
       var reportIssueLevel = config.get(C.REPORT_ISSUE_LEVEL);
 
@@ -225,6 +229,7 @@ function ServerMethods(aLogLevel, aModules) {
                 enableScreensharing,
                 enableAnnotations,
                 enablePrecallTest,
+                enableRoomLocking,
                 feedbackUrl,
                 enableSip,
                 opentokJsUrl,
@@ -242,9 +247,10 @@ function ServerMethods(aLogLevel, aModules) {
                 useGoogleFonts,
                 jqueryUrl,
                 minMeetingNameLength,
+                maxUsersPerRoom,
                 adobeTrackingUrl,
                 ATPrimaryCategory,
-                ATSiteIdentifier
+                ATSiteIdentifier,
               }));
     });
   }
@@ -419,9 +425,11 @@ function ServerMethods(aLogLevel, aModules) {
           enableArchiveManager: tbConfig.enableArchiveManager,
           enableMuteAll: tbConfig.enableMuteAll,
           enableStopReceivingVideo: tbConfig.enableStopReceivingVideo,
+          maxUsersPerRoom: tbConfig.maxUsersPerRoom,
           enableScreensharing: tbConfig.enableScreensharing,
           enableAnnotation: tbConfig.enableAnnotations,
           enablePrecallTest: tbConfig.enablePrecallTest,
+          enableRoomLocking: tbConfig.enableRoomLocking,
           feedbackUrl: tbConfig.feedbackUrl,
           precallSessionId: testSession.sessionId,
           apiKey: tbConfig.apiKey,
@@ -437,6 +445,7 @@ function ServerMethods(aLogLevel, aModules) {
           authDomain: tbConfig.googleHostedDomain,
           useGoogleFonts: tbConfig.useGoogleFonts,
           supportIE: tbConfig.supportIE,
+          jqueryUrl: tbConfig.jqueryUrl,
         }, (err, html) => {
           if (err) {
             logger.log('getRoom. error:', err);
@@ -481,6 +490,7 @@ function ServerMethods(aLogLevel, aModules) {
               sessionId: session.sessionId,
               lastUsage: Date.now(),
               inProgressArchiveId: undefined,
+              isLocked: false
             });
           });
       } else {
@@ -489,11 +499,12 @@ function ServerMethods(aLogLevel, aModules) {
           sessionId: aSessionInfo.sessionId,
           lastUsage: Date.now(),
           inProgressArchiveId: aSessionInfo.inProgressArchiveId,
+          isLocked: aSessionInfo.isLocked
         });
       }
     });
   }
-
+  
   function getAppUsage() {
     return new Promise((resolve) => {
       const initial = { lastUpdate: Date.now(), meetings: 0 };
@@ -524,10 +535,43 @@ function ServerMethods(aLogLevel, aModules) {
       .setKey('APP_USAGE_', JSON.stringify({lastUpdate: date, meetings}));
   }
 
-  function roomExists(aReq, aRes) {
+  function getRoomRawInfo(aReq, aRes) {
     var roomName = aReq.params.roomName.toLowerCase();
     serverPersistence
-      .getKey(redisRoomPrefix + roomName).then(room => aRes.send({exists: !!room}));
+      .getKey(redisRoomPrefix + roomName).then((room) => {
+        if (!room) return aRes.status(404).send(null);
+        aRes.send(JSON.parse(room));
+      });
+  }
+
+  function decodeOtToken(token) { 
+    var parsed = {};
+    var encoded = token.substring(4);   // remove 'T1=='
+    var decoded = new Buffer(encoded, "base64").toString("ascii");
+    var tokenParts = decoded.split(':');
+    tokenParts.forEach(function(part) {
+      _.merge(parsed, qs.parse(part));
+    });
+    return parsed;
+  }
+
+  function lockRoom(aReq, aRes) {
+    var roomName = aReq.params.roomName.toLowerCase();
+    serverPersistence
+      .getKey(redisRoomPrefix + roomName).then((room) => {
+        if (!room) return aRes.status(404).send(null);
+
+        var decToken = decodeOtToken(aReq.body.token);
+        room = JSON.parse(room);
+
+        if (decToken.expire_time * 1000 < Date.now() || decToken.session_id !== room.sessionId)
+          return aRes.status(403).send(new Error('Unauthorized'));
+        
+        room.isLocked = aReq.body.state === 'locked';
+        serverPersistence
+          .setKey(redisRoomPrefix + roomName, room);
+        aRes.send(room);
+      });
   }
 
   // Get the information needed to connect to a session
@@ -594,7 +638,6 @@ function ServerMethods(aLogLevel, aModules) {
           googleId: tbConfig.googleId,
           googleHostedDomain: tbConfig.googleHostedDomain,
           reportIssueLevel: tbConfig.reportIssueLevel,
-          jqueryUrl: tbConfig.jqueryUrl,
         };
         answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId;
         aRes.send(answer);
@@ -973,6 +1016,7 @@ function ServerMethods(aLogLevel, aModules) {
     iframingOptions,
     featureEnabled,
     loadConfig,
+    lockRoom,
     getRoot,
     getRoom,
     getRoomInfo,
@@ -985,7 +1029,7 @@ function ServerMethods(aLogLevel, aModules) {
     postHangUp,
     getHealth,
     oldVersionCompat,
-    roomExists,
+    getRoomRawInfo,
     saveConnectionFirebase,
     deleteConnectionFirebase,
     setSecurityHeaders,
