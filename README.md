@@ -217,7 +217,7 @@ to OpenTok. (You can also use the OpenTok SIP API to connect to other SIP endpoi
 
 To enable this feature:
 
-1. Sign up for a [Nexmo/Vonage API](https://dashboard.nexmo.com/sign-up) account.
+1. Sign up for a [Nexmo/Vonage](https://dashboard.nexmo.com/sign-up) account.
 
 2. Edit config/config.json file in this application, and add the following properties:
 
