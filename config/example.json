@@ -5,8 +5,8 @@
       "apiSecret": "<secret>"
    },
    "Firebase":{
-      "dataUrl":"",
-      "authSecret":""
+      "dataUrl":"<firebase_url>",
+      "authSecret":"<firebase_secret>"
    },
    "Archiving":{
       "enabled":true,
