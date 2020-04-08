@@ -44,7 +44,7 @@ You will need these dependencies installed on your machine:
 
 You will also need these API subscriptions:
 
-- [OpenTok](https://tokbox.com): An OpenTok API key and secret. You can obtain these by signing up with [Opentok/Vonage API](https://tokbox.com/account/user/signup).
+- [OpenTok](https://tokbox.com): An OpenTok API key and secret. You can obtain these by signing up with [Opentok/Vonage](https://tokbox.com/account/user/signup).
 - [Firebase](https://firebase.google.com) (Optional): A Firebase app and secret. Firebase is used for storing archive data of video conferences. You will need this only if you want to enable Archive Management (In-app playback and download of recordings) of conference rooms.
 
 ### Setting up
