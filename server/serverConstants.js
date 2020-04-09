@@ -138,3 +138,5 @@ E.ADOBE_TRACKING_URL = { envVar: 'ADOBE_TRACKING_URL', jsonPath: 'adobeTracking.
 E.ADOBE_TRACKING_PRIMARY_CATEGORY = { envVar: 'ADOBE_TRACKING_PRIMARY_CATEGORY', jsonPath: 'adobeTracking.primaryCategory', defaultValue: '' };
 
 E.ADOBE_TRACKING_SITE_IDENTIFIER = { envVar: 'ADOBE_TRACKING_SITE_IDENTIFIER', jsonPath: 'adobeTracking.siteIdentifier', defaultValue: '' };
+
+E.ADOBE_TRACKING_FUNCTION_DEPT = { envVar: 'ADOBE_TRACKING_FUNCTION_DEPT', jsonPath: 'adobeTracking.functionDept', defaultValue: '' };
