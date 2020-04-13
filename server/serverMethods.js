@@ -57,7 +57,7 @@ function getUserCountry(req) {
   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   const geo = geoip.lookup(ip) || {};
 
-  return geo.country ? geo.country.toLowerCase() : '';
+  return _.get(geo, 'country', '').toLowerCase();
 }
 
 function ServerMethods(aLogLevel, aModules) {
