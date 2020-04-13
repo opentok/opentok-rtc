@@ -711,7 +711,6 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
 
     set roomName(value) {
       HTMLElems.addText(roomNameElem, value);
-      $('.room-name').fitText(2, { minFontSize: '12px', maxFontSize: '18px' });
     },
 
     set participantsNumber(value) {

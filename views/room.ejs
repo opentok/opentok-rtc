@@ -72,7 +72,6 @@
     <script defer src="/js/vendor/lazy_loader.js"></script>
     <script defer src="/js/rtcApp.js"></script>
     <script src="<%= jqueryUrl %>/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FitText.js/1.1/jquery.fittext.js"></script>
   </head>
 
   <body class="forbidden">
@@ -85,9 +84,13 @@
       </div>
       <div class="center-container">
         <div class="room-info">
-          <i id="room-locked-state" data-icon="closedLock" title="This room is locked. No additional participants may join the room."></i>
-          <p class="room-name"></p>
-          <i data-icon="participants"></i><span id="participantsStr"></span>
+          <div class="name-wrapper">
+            <i id="room-locked-state" data-icon="closedLock" title="This room is locked. No additional participants may join the room."></i>
+            <p class="room-name"></p>
+          </div>
+          <div class="participants-wrapper">
+            <i data-icon="participants"></i><span id="participantsStr"></span>
+          </div>
         </div>
       </div>
       <div class="right-container">
@@ -119,7 +122,7 @@
         <% } } %>
         <a class="invite-btn" id="addToCall">
           <i data-icon="add"></i>
-          Invite
+          <span>Invite</span>
         </a>
         <a id="chooseLayout">
           <div id="options-container">
