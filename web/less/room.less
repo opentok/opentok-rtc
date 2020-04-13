@@ -1261,6 +1261,12 @@ body[data-annotation-visible=true]  {
 
 #switchAlerts {
   z-index: 2147483647; /* Keep modal always on top */
+  form > footer > button {
+    @media @smartphonesPortrait {
+      width: calc(100% - 10px);
+      margin-bottom: 6px;
+    }
+  }
 }
 
 .dark-mode {
