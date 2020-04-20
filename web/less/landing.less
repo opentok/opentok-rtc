@@ -25,7 +25,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 222px;
-    padding-top: 58px;
+    padding-top: 168px;
 
     @media @smartphonesPortrait {
       min-height: 66px;
@@ -33,6 +33,14 @@ body {
     }
 
     img {
+      @media @smartphonesPortrait {
+        top: 37px;
+      }
+    }
+
+    h2 {
+      font-size: 15px;
+      margin-top: 76px;
       @media @smartphonesPortrait {
         top: 37px;
       }
