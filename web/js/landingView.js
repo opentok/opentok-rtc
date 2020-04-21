@@ -141,7 +141,6 @@
     if (userName) {
       url = url.concat('?userName=', userName);
     }
-    resetForm();
     window.location.href = url;
   };
 
