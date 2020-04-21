@@ -322,7 +322,7 @@ body {
     .flex(1);
     position: relative;
     width: 440px;
-    min-height: 420px; // fix for Safari flex issue
+    min-height: 538px;
     @media @smartphonesPortrait {
       margin-right: 0;
       width: 100%;
@@ -349,17 +349,18 @@ body {
   #enter {
     width: 100%;
     height: 50px;
+    min-height: 50px; // Fix for Safari flex issue
     border-radius: 6px;
     background-color: #871FFF;
     border: none;
     margin-top: 30px;
     color: white;
     font-weight: 600;
-    font-size: 14px;
     line-height: 50px;
     cursor: pointer;
     @media @smartphonesPortrait {
       width: 300px;
+      font-size: 14px;
     }
   }
 
