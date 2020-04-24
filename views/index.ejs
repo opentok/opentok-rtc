@@ -7,11 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <link rel="stylesheet" href="css/buttons.css" />
-<% if (useGoogleFonts) { %>
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
-<% } else { %>
     <link href="/css/fonts.css" rel="stylesheet">
-<% } %>
 <% if (isWebRTCVersion) { %>
     <link rel="stylesheet" href="css/checkboxes.css" />
 <% } %>
@@ -44,8 +40,11 @@
         <div id="righthand-container-cell">
           <section id="main-content">
             <header>
-              <img src="images/vonage-logo.svg" alt="vonage transparent logo">
+              <img src="images/vonage-logo-no-text.svg" alt="vonage transparent logo">
               <% if (isWebRTCVersion) { %>
+                <h2>
+                  Vonage Video Conferencing
+                </h2>
                 <p>
                   Free to use for everyone who unexpectedly needs to work from home.
                 </p>
@@ -65,7 +64,7 @@
                 <label id="user-label">Your name</label>
               </div>
             </form>
-            <button id="enter" data-wd="enterroom">Join Meeting</button>
+            <button id="enter" class="btn" data-wd="enterroom">Join Meeting</button>
             <div class="landing-more-info">
               Need help? <a href="Vonage-Free-Conferencing-help.pdf" target="_blank">Read our FAQs</a>
             </div>

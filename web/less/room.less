@@ -712,6 +712,7 @@ body {
 
   .btn {
     font-size: 16px;
+    font-weight: 600;
     height: 50px;
     line-height: 50px;
     border-radius: 4px;
@@ -724,7 +725,6 @@ body {
   #video-preview {
     width: 360px;
     height: 212px;
-    margin-top: 40px;
     background-color: #222;
     border-radius: 5px;
     .OT_publisher .OT_widget-container {
@@ -774,7 +774,7 @@ body {
   }
   #video-settings, #audio-settings {
     #audio-switch {
-      margin-right: 20px;
+      margin-right: 24px;
     }
     .switch-button {
       #preToggleFacingMode, #prePickMic {
@@ -901,7 +901,6 @@ body {
 
   #precall-test-meter {
     display: none;
-    position: absolute;
     width: 330px;
     margin-top: 8px;
     margin-left: 28px;
@@ -938,6 +937,7 @@ body {
   right: 0;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   height: 100%;
   width: 554px;
@@ -982,6 +982,18 @@ body {
       }
     }
   }
+  .about-link {
+    font-size: 14px;
+    color: #ffffff;
+    @media @smartphonesPortrait {
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+    a {
+      color: #ffffff;
+      text-decoration: none;
+    }
+  }
 }
 
 #pre-call-test-results {
@@ -996,10 +1008,7 @@ body {
   color: #494747;
   font-size: 14px;
   padding: 35px;
-
-  @media @smartphonesPortrait  {
-    left: calc(~"50% - 152px");
-  }
+  left: calc(~"50% - 152px");
 
   p {
     font-size: 14px;

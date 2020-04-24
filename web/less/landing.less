@@ -25,7 +25,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 222px;
-    padding-top: 58px;
+    padding-top: 168px;
 
     @media @smartphonesPortrait {
       min-height: 66px;
@@ -38,13 +38,20 @@ body {
       }
     }
 
+    h2 {
+      font-size: 15px;
+      margin-top: 76px;
+      @media @smartphonesPortrait {
+        top: 37px;
+      }
+    }
+
     p {
-      font-weight: 600;
-      font-size: 13px;
+      font-size: 14px;
       line-height: 21px;
       text-align: center;
       color: #FFFFFF;
-      margin-top: 25px;
+      margin-top: 9px;
       width: 270px;
     }
   }
@@ -74,9 +81,9 @@ body {
 
   h2 {
     font-size: 20px;
-    font-weight: 400;
+    font-weight: 600;
     margin: 6px 0;
-    color: @grey4;
+    color: #fff;
   }
 
   h3 {
@@ -315,7 +322,7 @@ body {
     .flex(1);
     position: relative;
     width: 440px;
-    min-height: 420px; // fix for Safari flex issue
+    min-height: 538px;
     @media @smartphonesPortrait {
       margin-right: 0;
       width: 100%;
@@ -342,17 +349,18 @@ body {
   #enter {
     width: 100%;
     height: 50px;
+    min-height: 50px; // Fix for Safari flex issue
     border-radius: 6px;
     background-color: #871FFF;
     border: none;
     margin-top: 30px;
     color: white;
     font-weight: 600;
-    font-size: 14px;
     line-height: 50px;
     cursor: pointer;
     @media @smartphonesPortrait {
       width: 300px;
+      font-size: 14px;
     }
   }
 
