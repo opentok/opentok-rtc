@@ -5,11 +5,11 @@
       "apiSecret": "<secret>"
    },
    "Firebase":{
-      "dataUrl":"<firebase_url>",
-      "authSecret":"<firebase_secret>"
+      "dataUrl":"",
+      "authSecret":""
    },
    "Archiving":{
-      "enabled":true,
+      "enabled":false,
       "archiveManager":{
          "enabled":false
       }
@@ -19,7 +19,7 @@
      "reportIssueLevel": 0
    },
    "Screensharing":{
-      "enabled":false,
+      "enabled":true,
       "chromeExtensionId":null,
       "annotations":{
          "enabled":true
