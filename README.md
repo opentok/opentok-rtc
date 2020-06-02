@@ -40,11 +40,11 @@ You will need these dependencies installed on your machine:
 
 - [NodeJS v8+](https://nodejs.org): This version of OpenTokRTC is tested with NodeJS v8 LTS.
 - [Redis](https://redis.io): A `redis` server running on `localhost`.
-- [Grunt](http://gruntjs.com): Used for bundling assets and running tests. You can install the Grunt CLI globally by running: `# npm i -g grunt-cli`.
+- [Grunt](http://gruntjs.com): Used for bundling assets and running tests. You can install the Grunt CLI globally by running:<br/>   `# npm i -g grunt-cli`.
 
 You will also need these API subscriptions:
 
-- [OpenTok](https://tokbox.com): An OpenTok API key and secret. You can obtain these by signing up with [TokBox](https://tokbox.com).
+- [OpenTok](https://tokbox.com): An OpenTok API key and secret. You can obtain these by signing up with [Opentok/Vonage](https://tokbox.com/account/user/signup).
 - [Firebase](https://firebase.google.com) (Optional): A Firebase app and secret. Firebase is used for storing archive data of video conferences. You will need this only if you want to enable Archive Management (In-app playback and download of recordings) of conference rooms.
 
 ### Setting up
@@ -208,49 +208,6 @@ If you want to ensure that the archive list is kept secure (as in only the actua
 }
 ```
 
-### Screen sharing
-
-The screen-sharing-extension-chrome directory includes sample files for developing a
-Chrome extension for enabling screen-sharing for this app. See the
-[OpenTok screen sharing developer guide](https://tokbox.com/developer/guides/screen-sharing/js/)
-for more information.
-
-Follow these steps to use the chrome extension included in this repository.
-
-1. Edit the `manifest.json` file:
-
-    * Set the `matches` property to match only your web domains. (When developing in
-      the localhost environment, you can use ```"matches": ["http://localhost/*"]```).
-
-    * Change the `name` and `author` settings
-
-    * Replace the icon files (logo16.png, logo48.png, logo128.png, and logo128transparent.png)
-    with your own website logos.
-
-    * Change the `version` setting with each new version of your extension.
-
-    * You may want to change the `description`.
-
-    For more information, see the [Chrome extension manifest
-    documentation](https://developer.chrome.com/extensions/manifest).
-
-2. Load the extension into Chrome:
-
-    Open [chrome://extensions](chrome://extensions) and drag the screen-sharing-extension-chrome
-    directory onto the page, or click 'Load unpacked extension...'. For more information see
-    [Chrome's documentation on loading unpacked
-    extensions](https://developer.chrome.com/extensions/getstarted#unpacked).
-
-3. Add the `extensionId` to application configuration:
-
-   You can get the ID of the extension in the [chrome://extensions](chrome://extensions) page.
-   (It looks like `ffngmcfincpecmcgfdpacbdbdlfeeokh`).
-   Add the value to the configuration, see [Configuration Options: Screen sharing](#screen-sharing).
-
-For more information and how to use your extension in production see the documentation at the
-[opentok/screensharing-extensions](https://github.com/opentok/screensharing-extensions/blob/master/chrome/ScreenSharing/README.md#customizing-the-extension-for-your-website)
-repo on GitHub.
-
 ### Phone dial-out
 
 The app can dial out and add a phone-based end user to the OpenTok session, using the OpenTok
@@ -260,7 +217,7 @@ to OpenTok. (You can also use the OpenTok SIP API to connect to other SIP endpoi
 
 To enable this feature:
 
-1. Sign up for a [Nexmo](https://www.nexmo.com/) account.
+1. Sign up for a [Nexmo/Vonage](https://dashboard.nexmo.com/sign-up) account.
 
 2. Edit config/config.json file in this application, and add the following properties:
 
@@ -339,7 +296,7 @@ Web client allows to be configured in some of its features. You can enable or di
 #### Screen sharing configuration
 
 - `ENABLE_SCREENSHARING`:(Optional, default value: false) Whether to enable screen sharing.
-- `CHROME_EXTENSION_ID` (Optional, default value: 'null'): The Chrome AddOn extension ID for screen sharing. Note that while the default value allows the server to run, it doesn't actually enable screen sharing in Chrome. See [Screen sharing](#screen-sharing).
+- `CHROME_EXTENSION_ID` :(Optional, LEGACY, default value: 'null'): The Chrome AddOn extension ID for screen sharing. Note: the Chrome extension is no longer required for screensharing.
 - `ENABLE_ANNOTATIONS`: (Optional, default value: true) Whether to enable annotations in screen sharing. This is only meaningful if screen sharing is not disabled.
 
 ```json
