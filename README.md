@@ -1,6 +1,7 @@
-![logo](./tokbox-logo.png)
-
 # OpenTokRTC
+
+<img src="https://assets.tokbox.com/img/vonage/Vonage_VideoAPI_black.svg" height="48px" alt="Tokbox is now known as Vonage" />
+
 [![Build Status](https://travis-ci.com/opentok/opentok-rtc.svg?token=qPpN1jG8Wftsn1cafKif&branch=master)](https://travis-ci.com/opentok/opentok-rtc)
 [![codecov](https://codecov.io/gh/opentok/opentok-rtc/branch/master/graph/badge.svg)](https://codecov.io/gh/opentok/opentok-rtc/branch/master)
 
@@ -126,7 +127,7 @@ To start the server with HTTPS enabled, pass `-S` flag to launch a secure server
 $ node server -S -C sampleCerts
 ```
 
-The server expects SSL certificate file to be named  `serverCert.pem` and SSL private key file to be named `serverKey.pem`. There is a pre-generated, self-signed SSL certificate pair in the `./sampleCerts` directory.
+The server expects SSL certificate file to be named `serverCert.pem` and SSL private key file to be named `serverKey.pem`. There is a pre-generated, self-signed SSL certificate pair in the `./sampleCerts` directory.
 
 For detailed information on available options, run `$ node server -h`.
 
@@ -138,15 +139,16 @@ These are the detailed configuration options:
 ### OpenTok configuration
 
 Environment Variable Names and Description:
+
 - `TB_API_KEY` (Required): Your OpenTok API key.
 - `TB_API_SECRET` (Required): Your OpenTok API Secret.
 - `TB_JS_URL` (Optional): The OpenTok.js URL to be loaded by the app. The default value is
   "https://static.opentok.com/v2/js/opentok.min.js". Enterprise partners should set this to the URL
   for the enterprise version of OpenTok.js ("https://enterprise.opentok.com/v2/js/opentok.min.js").
-- `TB_MAX_SESSION_AGE` (Optional, default value 2):  Sessions should not live forever. So we'll store
-   the last time a session was used and if when we fetch it from Redis we determine it's older than
-   this max age (in days). This is the key where that value (in days) should be stored.
-   By default, sessions live two days.
+- `TB_MAX_SESSION_AGE` (Optional, default value 2): Sessions should not live forever. So we'll store
+  the last time a session was used and if when we fetch it from Redis we determine it's older than
+  this max age (in days). This is the key where that value (in days) should be stored.
+  By default, sessions live two days.
 
 JSON example:
 
@@ -221,15 +223,16 @@ To enable this feature:
 
 2. Edit config/config.json file in this application, and add the following properties:
 
-  * `SIP.enabled` -- Set this to `true`.
+- `SIP.enabled` -- Set this to `true`.
 
-  * `SIP.username` -- Set this to the apiKey for the Nexmo account you created.
+- `SIP.username` -- Set this to the apiKey for the Nexmo account you created.
 
-  * `SIP.password` -- Set this to the apiSecret for the Nexmo account you created.
+- `SIP.password` -- Set this to the apiSecret for the Nexmo account you created.
 
-  * `SIP.requireGoogleAuth` -- See [Google Authentication for Phone dial-out](#google-authentication-for-phone-dial-out) for instructions on how to limit this functionality to users authenticated by their google account.
+- `SIP.requireGoogleAuth` -- See [Google Authentication for Phone dial-out](#google-authentication-for-phone-dial-out) for instructions on how to limit this functionality to users authenticated by their google account.
 
-  For example, the new lines in the config.json file should look like this:
+For example, the new lines in the config.json file should look like this:
+
 ```json
        "SIP": {
          "sipUri" : "sip:phoneumber@sip.nexmo.com",
@@ -238,6 +241,7 @@ To enable this feature:
          "requireGoogleAuth": false
        }
 ```
+
 You can also add these settings as `SIP_ENABLED`, `SIP_URL`, `SIP_USERNAME`, `SIP_PASSWORD` and `SIP_REQUIRE_GOOGLE_AUTH` environment variables (instead of config.json settings).
 
 #### Google Authentication for Phone dial-out
@@ -249,19 +253,20 @@ To enable this feature:
 
 2. Edit the config/config.json file in this application, and add the following properties:
 
-  * `Google.clientId` -- Set this to your client ID.
-  * `Google.hostedDomain` -- If you wish to limit sign in to accounts associated with a hosted domain, set the domain here.
-  * `Sip.requireGoogleAuth` -- `true` to require auth for SIP dial-out as detailed in [Phone dial-out](#phone-dial-out).
+- `Google.clientId` -- Set this to your client ID.
+- `Google.hostedDomain` -- If you wish to limit sign in to accounts associated with a hosted domain, set the domain here.
+- `Sip.requireGoogleAuth` -- `true` to require auth for SIP dial-out as detailed in [Phone dial-out](#phone-dial-out).
 
-  For example, the new lines in the config.json file should look like this:
- ```json
-   "Google": {
-     "clientId": "yourClientId.apps.googleusercontent.com>",
-     "hostedDomain": "yourhosteddomain.com"
-   }
- ```
+For example, the new lines in the config.json file should look like this:
 
- You can also add these as `GOOGLE_CLIENT_ID` and `GOOGLE_HOSTED_DOMAIN` environment variables instead of config.json setings.
+```json
+  "Google": {
+    "clientId": "yourClientId.apps.googleusercontent.com>",
+    "hostedDomain": "yourhosteddomain.com"
+  }
+```
+
+You can also add these as `GOOGLE_CLIENT_ID` and `GOOGLE_HOSTED_DOMAIN` environment variables instead of config.json setings.
 
 ### Web client configuration
 
@@ -273,12 +278,12 @@ Web client allows to be configured in some of its features. You can enable or di
 - `ARCHIVE_ALWAYS`:(Optional, default value: false) Record all sessions.
 - `ARCHIVE_TIMEOUT`: (Optional, default value: 5000): The initial polling timeout (in milliseconds) for archive status change updates. Set this to 0 to disable polling.
 - `TIMEOUT_MULTIPLIER` (Optional, default value: 1.5) : Timeout multiplier. If the first archive status update polling fails, subsequent polling intervals will apply this multiplier
-   successively. Set to a lower number to poll more often.
+  successively. Set to a lower number to poll more often.
 
 ##### Archive Manager
 
 - `ENABLE_ARCHIVE_MANAGER`: (Optional, default value: false) Enable Archive Manager. Only meaningful if `archiving` is not disabled (Manage Recordings, requires firebase to be configured)
-- `EMPTY_ROOM_LIFETIME`: (Optional, default value 3): Maximum time, in minutes,  an empty room
+- `EMPTY_ROOM_LIFETIME`: (Optional, default value 3): Maximum time, in minutes, an empty room
 
 ```json
 "Archiving": {
@@ -316,48 +321,48 @@ sharing](tokbox.com/developer/guides/screen-sharing/).
 
 The app lets the developer POST feedback data to an endpoint on your HTTP server:
 
- `FEEDBACK_URL`: The URL to send a POST request with feedback data. Leave this as an empty string or
- undefined to disable issue reporting.
- 
- `REPORT_ISSUE_LEVEL`: The audio and video scores in the feedback form are between 1 (awful) and 5 (excellent). When the feedback form is submitted, if an audio or video score is less than or equal to the report issue level, the app calls `OT.reportIssue()`. This reports an issue, which you can view in OpenTok Inspector. (For more information, see [Reporting an issue](https://tokbox.com/developer/guides/debugging/js/#report-issue) in the OpenTok developer Guides.) The default value is 3, set to 0 to disable issue reporting.
+`FEEDBACK_URL`: The URL to send a POST request with feedback data. Leave this as an empty string or
+undefined to disable issue reporting.
 
- ```json
- "Feedback": {
-     "url": "",
-     "reportIssueLevel": 0
- },
- ```
+`REPORT_ISSUE_LEVEL`: The audio and video scores in the feedback form are between 1 (awful) and 5 (excellent). When the feedback form is submitted, if an audio or video score is less than or equal to the report issue level, the app calls `OT.reportIssue()`. This reports an issue, which you can view in OpenTok Inspector. (For more information, see [Reporting an issue](https://tokbox.com/developer/guides/debugging/js/#report-issue) in the OpenTok developer Guides.) The default value is 3, set to 0 to disable issue reporting.
 
- #### SIP connection
+```json
+"Feedback": {
+    "url": "",
+    "reportIssueLevel": 0
+},
+```
 
-  See the [Phone dial-out](#phone-dial-out) section.
+#### SIP connection
+
+See the [Phone dial-out](#phone-dial-out) section.
 
 ### Additional configuration options
 
-* `SHOW_TOS` (Optional, default value: false): Whether the app will display the terms of service
+- `SHOW_TOS` (Optional, default value: false): Whether the app will display the terms of service
   dialog box and require the user to agree to the terms before joining a room.
 
-* `ALLOW_IFRAMING` (Optional, default value: 'never'): Controls the server-side restriction on
-   allowing content to load inside an iframe. The allowed values are:
+- `ALLOW_IFRAMING` (Optional, default value: 'never'): Controls the server-side restriction on
+  allowing content to load inside an iframe. The allowed values are:
 
-   - 'always': Allow iframing unconditionally (note that rtcApp.js should also be changed
-     to reflect this, this option only changes what the server allows)
+  - 'always': Allow iframing unconditionally (note that rtcApp.js should also be changed
+    to reflect this, this option only changes what the server allows)
 
-   - 'never': Set X-Frame-Options to 'DENY' (Deny loading content in any iframe)
+  - 'never': Set X-Frame-Options to 'DENY' (Deny loading content in any iframe)
 
-   - 'sameorigin': Set X-Frame-Options to 'SAMEORIGIN' (Only allow iframe content to be loaded
-     from pages in the same origin)
+  - 'sameorigin': Set X-Frame-Options to 'SAMEORIGIN' (Only allow iframe content to be loaded
+    from pages in the same origin)
 
-   We don't allow restricting iframe loading to specific URIs because it doesn't work on Chrome.
+  We don't allow restricting iframe loading to specific URIs because it doesn't work on Chrome.
 
-* `USE_GOOGLE_FONTS` (Optional, default value: true): Whether the client app will load
-   the Open Sans font (the main font used in the user interface) from the Google font library
-   (fonts.googleapis.com) or not.
+- `USE_GOOGLE_FONTS` (Optional, default value: true): Whether the client app will load
+  the Open Sans font (the main font used in the user interface) from the Google font library
+  (fonts.googleapis.com) or not.
 
-* `JQUERY_URL` (Optional, default value: 'https://ajax.googleapis.com/ajax/libs/jquery/'):
-   Route of the CDN that will be used to load JQuery scripts.
+- `JQUERY_URL` (Optional, default value: 'https://ajax.googleapis.com/ajax/libs/jquery/'):
+  Route of the CDN that will be used to load JQuery scripts.
 
-* `MEDIA_MODE` (Optional, default value: 'routed'): Whether the OpenTok sessions should be `relayed` or `routed`.
+- `MEDIA_MODE` (Optional, default value: 'routed'): Whether the OpenTok sessions should be `relayed` or `routed`.
 
 ## Customizing the UI
 
@@ -413,23 +418,23 @@ endpoint sends a response with the HTTP status code set to 200 and the JSON like
 
 The JSON includes the following properties:
 
-* `name` -- `"ot-embed"`
+- `name` -- `"ot-embed"`
 
-* `version` -- The version number deployed (from package.json)
+- `version` -- The version number deployed (from package.json)
 
-* `git_hash` -- The git commit deployed
+- `git_hash` -- The git commit deployed
 
-* `opentok` -- Whether the OpenTok API check passed. The app uses the OpenTok Node.js SDK,
+- `opentok` -- Whether the OpenTok API check passed. The app uses the OpenTok Node.js SDK,
   which connects to the OpenTok API server to create OpenTok sessions.
 
-* `firebase` -- Whether the Firebase check passed. The app uses Firebase to store
+- `firebase` -- Whether the Firebase check passed. The app uses Firebase to store
   embed data.
 
-* `googleAuth` -- Whether the Google Authentication check passed. This check is only run if the app
+- `googleAuth` -- Whether the Google Authentication check passed. This check is only run if the app
   uses Google Authentication for making outbound SIP calls. (See [Google Authentication for
   Phone dial-out](#google-authentication-for-phone-dial-out).)
 
-* `status` -- "pass" (if all checks pass) or "fail" (if any check fails)
+- `status` -- "pass" (if all checks pass) or "fail" (if any check fails)
 
 On failure, the health status check endpoint returns a response with
 the HTTP status code set 400 and JSON like the following:
@@ -449,3 +454,21 @@ the HTTP status code set 400 and JSON like the following:
 Note that upon failure, the `status` property is set to `"fail"` and the `error` property
 is set to an error message. Also, the property for the failing test, such as `firebase`,
 will be set to `false`. If a test fails, the health check will not run subsequent tests.
+
+## Development and Contributing
+
+Interested in contributing? We :heart: pull requests! See the
+[Contribution](CONTRIBUTING.md) guidelines.
+
+## Getting Help
+
+We love to hear from you so if you have questions, comments or find a bug in the project, let us know! You can either:
+
+- Open an issue on this repository
+- See <https://support.tokbox.com/> for support options
+- Tweet at us! We're [@VonageDev](https://twitter.com/VonageDev) on Twitter
+- Or [join the Vonage Developer Community Slack](https://developer.nexmo.com/community/slack)
+
+## Further Reading
+
+- Check out the Developer Documentation at <https://tokbox.com/developer/>
