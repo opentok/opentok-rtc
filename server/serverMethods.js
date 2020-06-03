@@ -859,7 +859,27 @@ function ServerMethods(aLogLevel, aModules) {
     aRes.send({});
   }
 
+  function getRedirectPage(aReq, aRes) {
+    aRes.send(`
+      <html>
+        <head>
+          <script>
+            window.location = 'https://www.vonage.com/communications-apis/video/vonage-free-conferencing/';
+          </script>
+        </head>
+        <body style="font-family: sans-serif">
+          Redirecting to
+            <a href="https://www.vonage.com/communications-apis/video/vonage-free-conferencing/">
+              Vonage Free Conferencing
+            </a>
+          .
+        </body>      
+      </html>
+    `);
+  }
+
   return {
+    getRedirectPage,
     logger,
     configReady,
     iframingOptions,
