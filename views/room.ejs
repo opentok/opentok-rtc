@@ -69,7 +69,7 @@
     <script defer src="/js/rtcApp.js"></script>
     <script src="<%= jqueryUrl %>/3.3.1/jquery.min.js"></script>
 
-    <% if (enableFeedback) { %>
+    <% if (enableFeedback && hotjarId && hotjarVersion ) { %>
     <script>
         (function(h,o,t,j,a,r){
          h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
