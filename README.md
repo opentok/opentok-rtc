@@ -366,10 +366,19 @@ The app lets the developer POST feedback data to an endpoint on your HTTP server
  
  `REPORT_ISSUE_LEVEL`: The audio and video scores in the feedback form are between 1 (awful) and 5 (excellent). When the feedback form is submitted, if an audio or video score is less than or equal to the report issue level, the app calls `OT.reportIssue()`. This reports an issue, which you can view in OpenTok Inspector. (For more information, see [Reporting an issue](https://tokbox.com/developer/guides/debugging/js/#report-issue) in the OpenTok developer Guides.) The default value is 3, set to 0 to disable issue reporting.
 
+ `HOTJAR_ID`: (Optional, default value: null) Unique site Id for the application. This helps hot jar tracking code to collect feedback data.
+
+ `HOTJAR_VERSION`: (Optional, default value: null) Version of the Tracking Code using with hjsv
+
+ `ENABLE_FEEDBACK`: (Optional, default value: false) Enables Feedback Form 
+
  ```json
  "Feedback": {
      "url": "",
-     "reportIssueLevel": 0
+     "reportIssueLevel": 0,
+     "hotjarId": "",
+     "hotjarVersion": "",
+     "enableFeedback": false,
  },
  ```
 
