@@ -65,14 +65,13 @@
 
     return new Promise(function (resolve) {
       function loadModalText() {
-        PrecallView.setRoomName(roomName);
-        PrecallView.setUsername(username);
         PrecallView.setFocus(username);
 
         if (Utils.isIE() || Utils.isSafariIOS()) {
           PrecallView.hideConnectivityTest();
         }
 
+        /* Jeff fix this
         document.querySelector('.user-name-modal #enter').disabled = false;
         document.querySelector('.user-name-modal').addEventListener('keypress', function (event) {
           if (event.which === 13) {
@@ -85,6 +84,7 @@
           event.preventDefault();
           submitForm();
         });
+        */
 
         function hidePrecall() {
           PrecallView.hide();

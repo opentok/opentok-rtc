@@ -8,115 +8,142 @@
 @import 'buttons.less';
 
 body {
-  background: url(/images/background-rebrand.png) no-repeat center center fixed;
+  background: url(/images/background.svg) no-repeat center center fixed;
   background-size: cover;
   height: 100%;
   margin: 0;
   @media @smartphones {
-    background: url(/images/background-rebrand.png) no-repeat fixed;
+    background: url(/images/background.svg) no-repeat fixed;
     background-size: cover;
   }
 }
 
+h1, h2, h3 {
+  font-family: @baseFontFamily;
+  padding: 0;
+  @media @smartphonesPortrait {
+    visibility: hidden;
+  }
+}
+
+h1 {
+  font-family: @baseFontFamily;
+  font-size: 14px;
+  color: #8794a2;
+  letter-spacing: 1px;
+  font-weight: 200;
+  line-height: 60px;
+  margin: 10px 0;
+  @media @smartphonesPortrait {
+    line-height: 12px;
+    margin: 0;
+  }
+}
+
+h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 6px 0;
+  color: #fff;
+}
+
+h3 {
+  font-size: 14px;
+  margin: 5px 0;
+  font-weight: 600;
+  color: @grey3;
+  padding: 10px;
+}
+
+a {
+  text-decoration: none;
+  color: #ffffff; 
+}
+
+
 .main {
   height: 100%;
-
-  header {
-    display: flex;
-    flex-direction: column;
-    min-height: 222px;
-    padding-top: 168px;
-
-    @media @smartphonesPortrait {
-      min-height: 66px;
-      padding-top: 0;
-    }
-
-    img {
-      @media @smartphonesPortrait {
-        top: 37px;
-      }
-    }
-
-    h2 {
-      font-size: 15px;
-      margin-top: 76px;
-      @media @smartphonesPortrait {
-        top: 37px;
-      }
-    }
-
-    p {
-      font-size: 14px;
-      line-height: 21px;
-      text-align: center;
-      color: #FFFFFF;
-      margin-top: 9px;
-      width: 270px;
-    }
-  }
-
-  h1, h2, h3 {
-    font-family: @baseFontFamily;
-    padding: 0;
-    text-align: center;
-    @media @smartphonesPortrait {
-      visibility: hidden;
-    }
-  }
-
-  h1 {
-    font-family: @baseFontFamily;
-    font-size: 14px;
-    color: #8794a2;
-    letter-spacing: 1px;
-    font-weight: 200;
-    line-height: 60px;
-    margin: 10px 0;
-    @media @smartphonesPortrait {
-      line-height: 12px;
-      margin: 0;
-    }
-  }
-
-  h2 {
-    font-size: 20px;
-    font-weight: 600;
-    margin: 6px 0;
-    color: #fff;
-  }
-
-  h3 {
-    font-size: 14px;
-    margin: 5px 0;
-    font-weight: 600;
-    color: @grey3;
-    padding: 10px;
-  }
+  display: flex;
+  justify-content: space-around;
+  padding: 0 58px;
 
   form {
-    width: 100%;
-    margin: 20px 0 0 0;
-    height: 100px;
+    display: flex;
+    flex-direction: column;
+
     @media @smartphonesPortrait {
       max-width: calc(~"100% - 14px");
       margin: 0;
       margin: 20px 30px 0 24px;
     }
 
-    div {
-      border-bottom: solid 1px #434d5a;
-      height: 50%;
+    #video-preview {
+      height: 264px;
+      margin-bottom: 24px;
+    }
+
+    #video-settings, #audio-settings {
+      display: flex;
+      justify-content: space-between;
+      div {
+        margin: auto 0;
+        span {
+          color: #fff;
+          margin-left: 15px;
+        }
+      }
+      .right-settings {
+        a i {
+          vertical-align: middle;
+          margin-left: 4px;
+        }
+        .switch-button {
+          border: 1px solid #871FFF;
+          padding: 8px;
+          font-size: 12px;
+          font-weight: 600;
+          box-sizing: border-box;
+          border-radius: 6px;
+        }
+        label {
+          font-size: 14px;
+          color: #f3e9ff;
+        }
+      }
+      #audio-meter-container {
+        margin-top: 4.5px;
+      }
+    }
+
+    #video-settings {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    #audio-meter, #audio-meter-level {
+      height: 5px;
+    }
+
+    #audio-meter {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    #audio-meter-level {
+      background: #fff;
+    }
+
+    .user-name-input-container {
+      margin-bottom: 36px;
     }
 
     input {
       background: none;
       position: absolute;
-      left: 0;
       border: none;
       width: 350px;
       color: white;
-      outline: none;
+      border: 1px solid #FFFFFF;
+      box-sizing: border-box;
+      border-radius: 6px;
       @media @smartphonesPortrait {
         width: 100%;
       }
@@ -128,7 +155,7 @@ body {
     }
 
     label {
-      color: #fff;
+      color: #9B9DA3;
       font-size: 16px;
       line-height: 57px;
       width: 100%;
@@ -268,12 +295,10 @@ body {
   }
 
   .landing-more-info {
-    min-height: 160px;
     display: block;
     color: #ffffff;
     font-size: 14px;
-    margin-top: 69px;
-    margin-bottom: 32px;
+    margin-bottom: 12px;
     @media @smartphones {
       position: relative;
       right: 20px;
@@ -287,14 +312,6 @@ body {
       color: #ffffff;
       font-weight: bold;
       text-shadow: 1px 1px 2px #111;
-    }
-  }
-
-  .safari-plug {
-    display: none;
-    margin-top: 24px;
-    a {
-      color: @blueText;
     }
   }
 
@@ -315,11 +332,6 @@ body {
   }
 
   #main-content {
-    display: flex;
-    .align-items(center);
-    .flex-direction(column);
-    .justify-content(center);
-    .flex(1);
     position: relative;
     width: 440px;
     min-height: 538px;
@@ -342,10 +354,6 @@ body {
     }
   }
 
-  a {
-    text-decoration: none;
-  }
-
   #enter {
     width: 100%;
     height: 50px;
@@ -364,40 +372,57 @@ body {
     }
   }
 
-  #righthand-container {
-    height: 100%;
-    width: 554px;
+  #lefthand-container {
+    display: flex;
+    margin-top: 131px;
+    flex-direction: column;
+    min-width: 430px;
+
+    header {
+      img {
+        height: 33.3px;
+        margin-bottom: 110px;
+        @media @smartphonesPortrait {
+          top: 37px;
+        }
+      }
+
+      h2 {
+        font-size: 44px;
+        line-height: 50px;
+        letter-spacing: -2px;
+        font-weight: 500;
+        @media @smartphonesPortrait {
+          top: 37px;
+        }
+      }
+
+      p {
+        font-size: 16px;
+        line-height: 28px;
+        color: #FFFFFF;
+        margin-top: 12px;
+        width: 297px;
+      }
+    }
+
+    footer {
+      margin-top: 126px;
+      a {
+        text-decoration: underline;
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 14px;
+      }
+    }
+
     @media @smartphonesPortrait {
       width: 100%;
     }
-    right: 0;
-    position: absolute;
-    background: #13141580;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    #righthand-container-cell {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      height: 90%;
+  }
 
-      .right-footer {
-        display: block;
-        font-size: 14px;
-        color: #ffffff;
-        margin-bottom: 40px;
-
-        a {
-          color: #ffffff; 
-        }
-        @media @smartphones {
-          position: absolute;
-          bottom: 12px;
-          font-size: 10px;
-          margin-bottom: 0;
-        }
-      }
-    }
+  #righthand-container {
+    height: 100%;
+    margin-top: 102px;
   }
 }

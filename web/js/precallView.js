@@ -101,14 +101,6 @@
       }
     });
 
-    var videoPreviewElement = document.getElementById('video-preview');
-    var videoPreviewNameElement = document.getElementById('video-preview-name');
-    videoPreviewElement.addEventListener('mouseover', function () {
-      videoPreviewNameElement.style.opacity = 1;
-    });
-    videoPreviewElement.addEventListener('mouseout', function () {
-      videoPreviewNameElement.style.opacity = 0;
-    });
   };
 
   function render(resolve) {
@@ -139,18 +131,8 @@
     }
   };
 
-  var setRoomName = function (roomName) {
-    document.querySelector('.user-name-modal .room-name').textContent = roomName;
-  };
-
-  var setUsername = function (username) {
-    document.getElementById('video-preview-name').textContent = username;
-    setTimeout(function () {
-      document.getElementById('video-preview-name').style.opacity = 0;
-    }, 2000);
-  };
-
   var setFocus = function (username) {
+    return; // Jeff fix
     var focusElement = username ? document.getElementById('enter') :
       document.getElementById('user-name-input');
     focusElement.focus();
@@ -163,6 +145,7 @@
 
   var populateAudioDevicesDropdown = function (audioDevices, selectedDevId) {
     var select = document.getElementById('select-devices');
+    return; // Jeff fix this
     audioDevices.forEach(function (device) {
       var option = document.createElement('option');
       option.text = device.label;
@@ -325,8 +308,6 @@
     init,
     hide,
     populateAudioDevicesDropdown,
-    setRoomName,
-    setUsername,
     setFocus,
     setVolumeMeterLevel,
     showContract,

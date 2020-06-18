@@ -370,6 +370,8 @@ function ServerMethods(aLogLevel, aModules) {
         hotjarId: aReq.tbConfig.hotjarId,
         hotjarVersion: aReq.tbConfig.hotjarVersion,
         enableFeedback: aReq.tbConfig.enableFeedback,
+        opentokJsUrl: aReq.tbConfig.opentokJsUrl,
+        enablePrecallTest: aReq.tbConfig.enablePrecallTest,
       }, (err, html) => {
         if (err) {
           logger.error('getRoot. error: ', err);
