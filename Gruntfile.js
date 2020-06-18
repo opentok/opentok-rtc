@@ -94,7 +94,7 @@ module.exports = function(grunt) {
           'web/css/endMeeting.opentok.css': 'web/less/endMeeting.less',
           'web/css/annotation.opentok.css': 'web/less/annotation.less',
           'web/css/hangoutScroll.css': 'web/less/hangoutScroll.less',
-          'web/css/completeMeeting.opentok.css': 'web/less/completeMeeting.opentok.less',
+          'web/css/completeMeeting.opentok.css': 'web/less/completeMeeting.less',
         }
       }
     },

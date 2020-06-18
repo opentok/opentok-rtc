@@ -323,8 +323,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
   var viewEventHandlers = {
     endCall: function () {
       otHelper.disconnect();
-      var url = window.location.origin
-      .concat('/thanks');
+      var url = window.location.origin.concat('/thanks');
       window.location.href = url;
       
     },
