@@ -18,41 +18,16 @@ body {
   }
 }
 
-h1, h2, h3 {
+h2 {
   font-family: @baseFontFamily;
   padding: 0;
-  @media @smartphonesPortrait {
-    visibility: hidden;
-  }
-}
-
-h1 {
-  font-family: @baseFontFamily;
-  font-size: 14px;
-  color: #8794a2;
-  letter-spacing: 1px;
-  font-weight: 200;
-  line-height: 60px;
-  margin: 10px 0;
-  @media @smartphonesPortrait {
-    line-height: 12px;
-    margin: 0;
-  }
-}
-
-h2 {
   font-size: 20px;
   font-weight: 600;
   margin: 6px 0;
   color: #fff;
-}
-
-h3 {
-  font-size: 14px;
-  margin: 5px 0;
-  font-weight: 600;
-  color: @grey3;
-  padding: 10px;
+  @media @smartphonesPortrait {
+    visibility: hidden;
+  }
 }
 
 a {
@@ -66,6 +41,7 @@ a {
   display: flex;
   justify-content: space-around;
   padding: 0 58px;
+  overflow-y: scroll;
 
   form {
     display: flex;
@@ -84,6 +60,7 @@ a {
 
     #video-settings, #audio-settings {
       display: flex;
+      padding: 20px 0;
       justify-content: space-between;
       div {
         margin: auto 0;
@@ -132,13 +109,22 @@ a {
     }
 
     .user-name-input-container {
-      margin-bottom: 36px;
+      margin-bottom: 34px;
+      position: relative;
+      label {
+        position: absolute;
+        z-index: 1;
+        top: -8px;
+        left: 12px;
+      }
     }
 
     input {
       background: none;
-      position: absolute;
-      border: none;
+      font-size: 14px;
+      margin: 0;
+      padding-top: 18px;
+      padding-bottom: 8px;
       width: 350px;
       color: white;
       border: 1px solid #FFFFFF;
@@ -160,20 +146,17 @@ a {
       line-height: 57px;
       width: 100%;
       bottom: 0;
-      left: 15px;
       text-align: left;
       font-weight: normal;
-      position: relative;
-      transition: all 0.5s;
       @media @smartphonesPortrait {
         font-size: 11px;
-        color: #F7D3EC;
       }
     }
 
     label.visited {
+      top: -17px;
       font-size: 12px;
-      color: #F7D3EC;
+      color: #909298;
     }
 
     #room-label {

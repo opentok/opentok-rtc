@@ -39,6 +39,7 @@ body {
 
 #top-banner {
   visibility: hidden;
+  display: none;
   height: 98px;
   width: 100%;
   background: #131415;
@@ -299,7 +300,7 @@ body {
 }
 
 #screen {
-  visibility: hidden;
+  display: none;
   position: relative;
   overflow: hidden;
   @media @smartphonesPortrait {
@@ -826,9 +827,9 @@ body {
       background: none;
     }
     label {
-      left: 0;
+      top: 0;
       position: absolute;
-      color: #fff;
+      color: #9B9DA3;
       font-size: 16px;
       transition: all 0.5s;
       @media @smartphonesPortrait  {
@@ -836,9 +837,9 @@ body {
       }
     }
     label.visited {
-      left: calc(100% - 134px);
+      top: -12px;
       font-size: 12px;
-      color: #757575;
+      color: #909298;
     }
   }
   #audio-meter-container {

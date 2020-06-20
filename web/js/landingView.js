@@ -31,18 +31,7 @@
     });
   };
 
-  var loadPrecallTemplate = function () {
-    return new Promise(function (resolve) {
-      var tosTemplate = new EJSTemplate({ url: '/templates/precall.ejs' });
-      tosTemplate.render().then(function (aHTML) {
-        document.getElementById('righthand-container').innerHTML += aHTML;
-        resolve();
-      });
-    });
-  };
-
   var performInit = function () {
-    loadPrecallTemplate();
     enterButton = document.getElementById('enter');
     user = document.getElementById('user');
     form = document.querySelector('form');

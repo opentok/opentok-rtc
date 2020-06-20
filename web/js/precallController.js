@@ -71,7 +71,6 @@
           PrecallView.hideConnectivityTest();
         }
 
-        /* Jeff fix this
         document.querySelector('.user-name-modal #enter').disabled = false;
         document.querySelector('.user-name-modal').addEventListener('keypress', function (event) {
           if (event.which === 13) {
@@ -80,11 +79,10 @@
           }
         });
 
-        document.querySelector('.user-name-modal .tc-dialog').addEventListener('submit', function (event) {
+        document.querySelector('.user-name-modal').addEventListener('submit', function (event) {
           event.preventDefault();
           submitForm();
         });
-        */
 
         function hidePrecall() {
           PrecallView.hide();
@@ -104,7 +102,7 @@
             });
         }
 
-        function submitForm() {
+        function submitRoomForm() {
           function isAllowedToJoin() {
             return new Promise((resolve, reject) => {
               Request
@@ -133,6 +131,14 @@
             else 
               PrecallView.showUnavailableMessage();
           });
+        }
+
+        function submitForm() {
+          if (window.location.href.indexOf('room') > -1) {
+            submitRoomForm();
+          } else {
+            window.location = '/room/' + window.roomName;
+          }
         }
 
         otHelper.initPublisher('video-preview', publisherOptions)

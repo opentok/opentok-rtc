@@ -15,6 +15,7 @@
       LandingView.init();
       var otHelper = new OTHelper({});
       PrecallController.showCallSettingsPrompt('', '', otHelper);
+      PrecallView.init();
     });
   };
 

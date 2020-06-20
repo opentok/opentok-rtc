@@ -14,30 +14,32 @@
   var testMeterInterval;
 
   var addHandlers = function () {
-    var preCallTestResults = document.getElementById('pre-call-test-results');
+    if (window.enablePrecallTest) {
+      var preCallTestResults = document.getElementById('pre-call-test-results');
 
-    preCallTestResults.addEventListener('click', function (e) {
-      var elem = e.target;
-      switch (elem.id) {
-        case 'precall-close':
-          preCallTestResults.style.display = 'none';
-          break;
-        case 'retest':
-          preCallTestResults.style.display = 'none';
-          document.getElementById('connectivity-cancel').style.display = 'inline-block';
-          Utils.sendEvent('roomView:retest');
-          break;
-      }
-    });
+      preCallTestResults.addEventListener('click', function (e) {
+        var elem = e.target;
+        switch (elem.id) {
+          case 'precall-close':
+            preCallTestResults.style.display = 'none';
+            break;
+          case 'retest':
+            preCallTestResults.style.display = 'none';
+            document.getElementById('connectivity-cancel').style.display = 'inline-block';
+            Utils.sendEvent('roomView:retest');
+            break;
+        }
+      });
 
-    var connectivityCancelElement = document.getElementById('connectivity-cancel');
-    connectivityCancelElement.addEventListener('click', function (event) {
-      event.preventDefault();
-      Utils.sendEvent('roomView:cancelTest');
-      connectivityCancelElement.style.display = 'none';
-      preCallTestResults.style.display = 'none';
-      hideConnectivityTest();
-    });
+      var connectivityCancelElement = document.getElementById('connectivity-cancel');
+      connectivityCancelElement.addEventListener('click', function (event) {
+        event.preventDefault();
+        Utils.sendEvent('roomView:cancelTest');
+        connectivityCancelElement.style.display = 'none';
+        preCallTestResults.style.display = 'none';
+        hideConnectivityTest();
+      });
+    }
 
     var userNameInputElement = document.getElementById('user-name-input');
     userNameInputElement.addEventListener('keyup', function keyupHandler() {
@@ -113,7 +115,7 @@
         document.body.innerHTML += aHTML;
       });
       addHandlers();
-      if (enablePrecallTest) {
+      if (window.enablePrecallTest) {
         document.getElementById('pre-call-test').style.display = 'flex';
         document.getElementById('precall-test-meter').style.display = 'block';
       }
@@ -132,7 +134,6 @@
   };
 
   var setFocus = function (username) {
-    return; // Jeff fix
     var focusElement = username ? document.getElementById('enter') :
       document.getElementById('user-name-input');
     focusElement.focus();
@@ -145,7 +146,6 @@
 
   var populateAudioDevicesDropdown = function (audioDevices, selectedDevId) {
     var select = document.getElementById('select-devices');
-    return; // Jeff fix this
     audioDevices.forEach(function (device) {
       var option = document.createElement('option');
       option.text = device.label;
