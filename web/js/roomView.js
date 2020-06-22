@@ -66,16 +66,16 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
       button: 'Lock Meeting'
     },
     endCall: {
-      head: 'Exit the Meeting',
-      detail: 'You are going to exit the Vonage Free Conferencing Meeting Room. The call will continue with the ' +
-              'remaining participants.',
-      button: 'End meeting'
+      head: 'Leave the Meeting',
+      detail: 'Are you sure you want to leave the Vonage Free Conferencing meeting room? <br>' +
+              'The call will continue with the remaining participants.',
+      button: 'Leave meeting'
     },
     endLockedCall: {
-      head: 'Exit the Meeting',
+      head: 'Leave the Meeting',
       detail: 'The Vonage Free Conferencing Meeting Room you are leaving is locked. Do you want to unlock it before leaving?',
-      button: 'End',
-      altButton: 'Unlock and end'
+      button: 'Leave',
+      altButton: 'Unlock and Leave'
     },
     sessionDisconnected: {
       head: 'Session disconected',
