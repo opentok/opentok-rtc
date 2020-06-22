@@ -1,10 +1,11 @@
-/* global LandingView, PrecallController, OTHelper */
+/* global LandingView, PrecallController, PrecallView, OTHelper */
 
 !(function (global) {
   'use strict';
 
   var init = function () {
     LazyLoader.dependencyLoad([
+      '/js/components/htmlElems.js',
       '/js/vendor/ejs_production.js',
       '/js/helpers/ejsTemplate.js',
       '/js/landingView.js',

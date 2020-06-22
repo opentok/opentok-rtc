@@ -36,6 +36,10 @@ label {
   opacity: 0;
   transition: opacity @transitionTime;
 
+  &.visible {
+    z-index: 2000000;
+  }
+
   &.show {
     display: block;
     opacity: 1;

@@ -372,6 +372,7 @@ function ServerMethods(aLogLevel, aModules) {
         enableFeedback: aReq.tbConfig.enableFeedback,
         opentokJsUrl: aReq.tbConfig.opentokJsUrl,
         enablePrecallTest: aReq.tbConfig.enablePrecallTest,
+        enterButtonLabel: 'Start Meeting',
       }, (err, html) => {
         if (err) {
           logger.error('getRoot. error: ', err);
@@ -449,6 +450,7 @@ function ServerMethods(aLogLevel, aModules) {
           hotjarId: tbConfig.hotjarId,
           hotjarVersion: tbConfig.hotjarVersion,
           enableFeedback: tbConfig.enableFeedback,
+          enterButtonLabel: 'Join Meeting',
         }, (err, html) => {
           if (err) {
             logger.log('getRoom. error:', err);

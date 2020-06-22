@@ -8,7 +8,7 @@
 @import 'buttons.less';
 
 body {
-  background: url(/images/background.svg) no-repeat center center fixed;
+  background: url(/images/background.svg) no-repeat fixed;
   background-size: cover;
   height: 100%;
   margin: 0;
@@ -46,6 +46,7 @@ a {
   form {
     display: flex;
     flex-direction: column;
+    width: 350px;
 
     @media @smartphonesPortrait {
       max-width: calc(~"100% - 14px");
@@ -60,7 +61,7 @@ a {
 
     #video-settings, #audio-settings {
       display: flex;
-      padding: 20px 0;
+      padding: 10px 0;
       justify-content: space-between;
       div {
         margin: auto 0;
@@ -85,10 +86,12 @@ a {
         label {
           font-size: 14px;
           color: #f3e9ff;
+          padding: 0;
+          margin-left: 20px;
         }
       }
       #audio-meter-container {
-        margin-top: 4.5px;
+        margin-top: 12px;
       }
     }
 
@@ -109,7 +112,6 @@ a {
     }
 
     .user-name-input-container {
-      margin-bottom: 34px;
       position: relative;
       label {
         position: absolute;
@@ -280,8 +282,9 @@ a {
   .landing-more-info {
     display: block;
     color: #ffffff;
-    font-size: 14px;
+    font-size: 12px;
     margin-bottom: 12px;
+    text-align: right;
     @media @smartphones {
       position: relative;
       right: 20px;
@@ -294,7 +297,7 @@ a {
     a {
       color: #ffffff;
       font-weight: bold;
-      text-shadow: 1px 1px 2px #111;
+      text-decoration-line: underline;
     }
   }
 

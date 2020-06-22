@@ -1,4 +1,4 @@
-/* globals EJSTemplate, Modal, setTimeout, showTos, showUnavailable, enablePrecallTest */
+/* globals EJSTemplate, Modal, setTimeout, showTos, showUnavailable, enablePrecallTest, enterButtonLabel */
 !(function (exports) {
   'use strict';
 
@@ -210,7 +210,7 @@
   };
 
   var hide = function () {
-    document.getElementById('video-preview').style.visibility = 'hidden';
+    document.querySelector('.main').style.display = 'none';
     Utils.removeEventHandlers('modal:', { close: showModal });
   };
 
