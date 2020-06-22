@@ -825,6 +825,14 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
   var init = function () {
     LazyLoader.load(modules)
     .then(function () {
+      Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
+      Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
+      Utils.addEventsHandlers('precallView:', {
+        submit: function () {
+          // Jeff to do: The room logic should go here, not in PrecallController.
+        }
+      });
+
       return PrecallController.init();
     })
     .then(function () {
@@ -857,8 +865,6 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
       return loadAnnotations.then(function () { return aParams; });
     })
   .then(function (aParams) {
-    Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
-    Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
     RoomView.init(enableHangoutScroll, enableArchiveManager, enableSip);
     // Init this controller before connect to the session
     // to start receiving signals about archives updates

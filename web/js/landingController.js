@@ -3,6 +3,13 @@
 !(function (global) {
   'use strict';
 
+  var addEventHandlers = function () {
+    Utils.addEventsHandlers('precallView:', { submit: function () {
+      // Jeff to do: submit form data (camera ID, mic ID, user name)
+      window.location = '/room/' + window.roomName;
+    } });
+  };
+
   var init = function () {
     LazyLoader.dependencyLoad([
       '/js/components/htmlElems.js',
@@ -17,6 +24,7 @@
       var otHelper = new OTHelper({});
       PrecallController.showCallSettingsPrompt('', '', otHelper);
       PrecallView.init();
+      addEventHandlers();
     });
   };
 

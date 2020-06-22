@@ -90,16 +90,13 @@
           if (!Utils.isIE()) {
             otNetworkTest && otNetworkTest.stopTest();
           }
-          Modal.hide(selector)
-            .then(function () {
-              publisherOptions.name = document.querySelector(selector + ' input').value.trim();
-              setTimeout(function () {
-                resolve({
-                  username: document.querySelector(selector + ' input').value.trim(),
-                  publisherOptions: publisherOptions
-                });
-              }, 1);
+          publisherOptions.name = document.querySelector(selector + ' input').value.trim();
+          setTimeout(function () {
+            resolve({
+              username: document.querySelector(selector + ' input').value.trim(),
+              publisherOptions: publisherOptions
             });
+          }, 1);
         }
 
         function submitRoomForm() {
@@ -135,9 +132,16 @@
 
         function submitForm() {
           if (window.location.href.indexOf('room') > -1) {
+            // Jeff to do: This code should move to RoomController and be event-driven 
             submitRoomForm();
           } else {
-            window.location = '/room/' + window.roomName;
+            if (showTos) {
+              PrecallView.showContract().then(function () {
+                Utils.sendEvent('precallView:submit');
+              });
+            } else {
+              Utils.sendEvent('precallView:submit');
+            }
           }
         }
 
