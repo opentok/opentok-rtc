@@ -720,6 +720,23 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
       .catch(function (error) { console.log('Error sharing', error); });
   }
 
+  function addClipBoardFeature(selector) {
+    const writeBtn = document.getElementById('copyInviteLinkBtn');
+    const inputValue = document.getElementById('current-url').value.trim();
+    if (inputValue) {
+      navigator.clipboard.writeText(inputValue)
+        .then(() => {
+          if (writeBtn.innerText !== 'Copied!') {
+            const originalText = writeBtn.innerText;
+            writeBtn.innerText = 'Copied!';
+            setTimeout(() => {
+              Modal.hide(selector);
+              writeBtn.innerText = originalText;
+            }, 2000)
+          }
+        });
+    }
+  }
   function showAddToCallModal() {
     var selector = '.add-to-call-modal';
     return Modal.show(selector).then(function () {
@@ -728,14 +745,14 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
         enterButton && enterButton.addEventListener('click', function onClicked(event) {
           event.preventDefault();
           enterButton.removeEventListener('click', onClicked);
-          return Modal.hide(selector)
-            .then(function () {
-              resolve(document.querySelector(selector + ' input').value.trim());
-            });
-        });
+          if (enterButton.id = "copyInviteLinkBtn") {
+            addClipBoardFeature(selector);
+          }
+          resolve();
       });
     });
-  }
+  });
+}
 
   function getRoomParams() {
     if (!exports.RoomController) {

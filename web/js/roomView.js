@@ -679,21 +679,9 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
   }
 
   var getURLtoShare = function () {
-    return window.location.origin + window.location.pathname;
-  };
-
-  var addClipboardFeature = function () {
-    var input = document.getElementById('current-url');
-    input.addEventListener('click', function () {
-      input.select();
-    });
-    var urlToShare = getURLtoShare();
-    input.value = urlToShare;
-    var clipboard = new Clipboard(document.querySelector('#addToCall'), { // eslint-disable-line no-unused-vars
-      text: function () {
-        return urlToShare;
-      }
-    });
+    var textArea = document.getElementById('current-url');
+    var urlToShare = window.location.origin + window.location.pathname;
+    textArea.value = urlToShare.replace('room/', 'room/ \n ');
   };
 
   var init = function (enableHangoutScroll, aEnableArchiveManager, aEnableSip) {
@@ -702,7 +690,7 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
     dock.style.visibility = 'visible';
     enableSip = aEnableSip;
     addHandlers();
-    addClipboardFeature();
+    getURLtoShare();
     LayoutManager.init('.streams', enableHangoutScroll);
   };
 

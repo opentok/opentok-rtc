@@ -360,11 +360,10 @@
           </div>
         </header>
         <secton class="dialog-content">
+          <span>Copy the link below and send it to a family member, friend, or coworker!</span>
           <div class="meeting-link">
-            <input class="current-url" readonly id="current-url">
-            <div class="copied-message">
-              <span>copied to clipboard!</span>
-            </div>
+            <textarea class="current-url" readonly id="current-url"></textarea>
+              <button id="copyInviteLinkBtn" class="copied-message">Copy</button>
           </div>
           <%   if(hasSip) { %>
           <div class="google-sign-in-note-container">
