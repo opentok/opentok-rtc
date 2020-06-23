@@ -12,6 +12,10 @@ body {
   background-size: cover;
   height: 100%;
   margin: 0;
+  @media @smartphones {
+    background: url(/images/background-rebrand.png) no-repeat fixed;
+    background-size: cover;
+  }
 }
 
 .main {
@@ -21,25 +25,34 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 222px;
+    padding-top: 168px;
 
     @media @smartphonesPortrait {
       min-height: 66px;
+      padding-top: 0;
     }
 
     img {
       @media @smartphonesPortrait {
         top: 37px;
-        width: 240px;
+      }
+    }
+
+    h2 {
+      font-size: 15px;
+      margin-top: 76px;
+      @media @smartphonesPortrait {
+        top: 37px;
       }
     }
 
     p {
-      font-weight: 600;
       font-size: 14px;
       line-height: 21px;
       text-align: center;
       color: #FFFFFF;
-      margin-top: 25px;
+      margin-top: 9px;
+      width: 270px;
     }
   }
 
@@ -60,13 +73,17 @@ body {
     font-weight: 200;
     line-height: 60px;
     margin: 10px 0;
+    @media @smartphonesPortrait {
+      line-height: 12px;
+      margin: 0;
+    }
   }
 
   h2 {
     font-size: 20px;
-    font-weight: 400;
+    font-weight: 600;
     margin: 6px 0;
-    color: @grey4;
+    color: #fff;
   }
 
   h3 {
@@ -122,7 +139,7 @@ body {
       position: relative;
       transition: all 0.5s;
       @media @smartphonesPortrait {
-        font-size: 12px;
+        font-size: 11px;
         color: #F7D3EC;
       }
     }
@@ -134,29 +151,31 @@ body {
 
     #room-label {
       @media @smartphonesPortrait {
-        left: 4px;
-        bottom: 70px;
+        left: 6px;
+        bottom: 50px;
       }
     }
 
     #room-label.visited {
       left: 360px;
       @media @smartphonesPortrait {
-        left: 4px;
+        left: 6px;
+        bottom: 70px;
       }
     }
 
     #user-label {
       @media @smartphonesPortrait {
-        left: 4px;
-        bottom: 70px;
+        left: 6px;
+        bottom: 50px;
       }
     }
 
     #user-label.visited {
       left: 380px;
       @media @smartphonesPortrait {
-        left: 4px;
+        left: 6px;
+        bottom: 70px;
       }
     }
 
@@ -256,9 +275,12 @@ body {
     margin-top: 69px;
     margin-bottom: 32px;
     @media @smartphones {
-      position: fixed;
+      position: relative;
       right: 20px;
-      bottom: 42px;
+      margin-top: 20px;
+      margin-bottom: unset;
+      min-height: unset;
+      font-size: 12px;
     }
 
     a {
@@ -300,16 +322,21 @@ body {
     .flex(1);
     position: relative;
     width: 440px;
-    min-height: 420px; // fix for Safari flex issue
+    min-height: 538px;
     @media @smartphonesPortrait {
       margin-right: 0;
       width: 100%;
       height: 100%;
+      .justify-content(unset);
       header {
         margin-left: 12px;
         p {
           text-align: left;
           margin-right: 50px;
+          @media @smartphonesPortrait {
+            text-align: center;
+            margin: 30px 0 60px 0;
+          }
         }
       }
     }
@@ -322,42 +349,19 @@ body {
   #enter {
     width: 100%;
     height: 50px;
+    min-height: 50px; // Fix for Safari flex issue
     border-radius: 6px;
     background-color: #871FFF;
     border: none;
     margin-top: 30px;
     color: white;
     font-weight: 600;
-    font-size: 14px;
     line-height: 50px;
     cursor: pointer;
-  }
-
-  #enter-arrow {
-    position: absolute;
-    width: 50px;
-    height: 50px;
-    top: calc(~"50% - 25px");
-    right: 0;
-    z-index: 3000;
-    @media @smartphones {
-      right: 0;
-      position: fixed;
+    @media @smartphonesPortrait {
+      width: 300px;
+      font-size: 14px;
     }
-    background-color: #ffffff;
-    border: 0;
-    transition: width 0.5s ease-out;
-    background-image: url(/images/icons/ctaarrow-black.png);
-    background-size: 12.5px 21px;
-    background-repeat: no-repeat;
-    background-position: center;
-    cursor: pointer;
-    transition: opacity 0.5s;
-    &:hover {
-      opacity: 1;
-    }
-    mix-blend-mode: normal;
-    border-radius: 2px 0px 0px 2px;
   }
 
   #righthand-container {
@@ -368,12 +372,10 @@ body {
     }
     right: 0;
     position: absolute;
-    backdrop-filter: blur(50px);
-    background: rgba(0, 0, 0, 0.5);
+    background: #13141580;
     display: flex;
     justify-content: center;
     align-items: center;
-
     #righthand-container-cell {
       display: flex;
       flex-direction: column;
@@ -390,7 +392,10 @@ body {
           color: #ffffff; 
         }
         @media @smartphones {
-          padding: 0 10px;
+          position: absolute;
+          bottom: 12px;
+          font-size: 10px;
+          margin-bottom: 0;
         }
       }
     }

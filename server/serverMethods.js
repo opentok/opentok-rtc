@@ -204,6 +204,9 @@ function ServerMethods(aLogLevel, aModules) {
       var enableRoomLocking = config.get(C.ENABLE_ROOM_LOCKING);
       var feedbackUrl = config.get(C.FEEDBACK_URL);
       var reportIssueLevel = config.get(C.REPORT_ISSUE_LEVEL);
+      var hotjarId = config.get(C.HOTJAR_ID);
+      var hotjarVersion = config.get(C.HOTJAR_VERSION);
+      var enableFeedback = config.get(C.ENABLE_FEEDBACK);
 
       if (!firebaseConfigured && enableArchiveManager) {
         logger.error('Firebase not configured. Please provide firebase credentials or disable archive_manager');
@@ -257,6 +260,9 @@ function ServerMethods(aLogLevel, aModules) {
                 enablePrecallTest,
                 enableRoomLocking,
                 feedbackUrl,
+                hotjarId,
+                hotjarVersion,
+                enableFeedback,
                 enableSip,
                 opentokJsUrl,
                 showTos,
@@ -405,6 +411,9 @@ function ServerMethods(aLogLevel, aModules) {
         ATFunctionDept: aReq.tbConfig.ATFunctionDept,
         userLanguage: language,
         userCountry: country,
+        hotjarId: aReq.tbConfig.hotjarId,
+        hotjarVersion: aReq.tbConfig.hotjarVersion,
+        enableFeedback: aReq.tbConfig.enableFeedback,
       }, (err, html) => {
         if (err) {
           logger.error('getRoot. error: ', err);
@@ -487,6 +496,9 @@ function ServerMethods(aLogLevel, aModules) {
           ATFunctionDept: aReq.tbConfig.ATFunctionDept,
           userLanguage: language,
           userCountry: country,
+          hotjarId: tbConfig.hotjarId,
+          hotjarVersion: tbConfig.hotjarVersion,
+          enableFeedback: tbConfig.enableFeedback,
         }, (err, html) => {
           if (err) {
             logger.log('getRoom. error:', err);
@@ -846,6 +858,9 @@ function ServerMethods(aLogLevel, aModules) {
         aRes.render('archivePreview.ejs', {
           archiveName: aArchive.name,
           archiveURL: aArchive.url,
+          hotjarId: aReq.tbConfig.hotjarId,
+          hotjarVersion: aReq.tbConfig.hotjarVersion,
+          enableFeedback: aReq.tbConfig.enableFeedback,
         });
       }).catch((e) => {
         logger.error('getArchive error:', e);

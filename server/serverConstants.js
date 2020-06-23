@@ -71,6 +71,12 @@ E.FEEDBACK_URL = { envVar: 'FEEDBACK_URL', jsonPath: 'Feedback.url', defaultValu
 
 E.REPORT_ISSUE_LEVEL = { envVar: 'REPORT_ISSUE_LEVEL', jsonPath: 'Feedback.reportIssueLevel', defaultValue: 3 };
 
+E.HOTJAR_ID = { envVar: 'HOTJAR_ID', jsonPath: 'Feedback.hotjarId', defaultValue: '' };
+
+E.HOTJAR_VERSION = { envVar: 'HOTJAR_VERSION', jsonPath: 'Feedback.hotjarVersion', defaultValue: '' };
+
+E.ENABLE_FEEDBACK = { envVar: 'ENABLE_FEEDBACK', jsonPath: 'Feedback.enabled', defaultValue: false, parser: parseBool };
+
 E.ENABLE_SCREENSHARING = { envVar: 'ENABLE_SCREENSHARING', jsonPath: 'Screensharing.enabled', defaultValue: false, parser: parseBool };
 
 E.ENABLE_PRECALL_TEST = { envVar: 'ENABLE_PRECALL_TEST', jsonPath: 'precallTest.enabled', defaultValue: true, parser: parseBool };

@@ -140,7 +140,7 @@
   };
 
   var setRoomName = function (roomName) {
-    document.querySelector('.user-name-modal button .room-name').textContent = 'Join "' + roomName + '"';
+    document.querySelector('.user-name-modal .room-name').textContent = roomName;
   };
 
   var setUsername = function (username) {

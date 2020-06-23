@@ -6,7 +6,6 @@
   var room,
     user,
     enterButton,
-    enterButtonArrow,
     form,
     roomLabelElem,
     userLabelElem,
@@ -34,7 +33,6 @@
 
   var performInit = function () {
     enterButton = document.getElementById('enter');
-    enterButtonArrow = document.getElementById('enter-arrow');
     room = document.getElementById('room');
     user = document.getElementById('user');
     form = document.querySelector('form');
@@ -143,7 +141,6 @@
     if (userName) {
       url = url.concat('?userName=', userName);
     }
-    resetForm();
     window.location.href = url;
   };
 
@@ -157,38 +154,34 @@
   }
 
   var addHandlers = function () {
-    var enterRoomButtons = document.querySelectorAll('.enter-room-buttons');
+    enterButton.addEventListener('click', function onEnterClicked(event) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
 
-    enterRoomButtons.forEach((button) => {
-      button.addEventListener('click', function onEnterClicked(event) {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-    
-        if (!isValid()) {
-          form.classList.add('error');
-          room.blur();
-          document.getElementById('room-label').style.opacity = 0;
-          return;
-        }
-    
-        form.classList.remove('error');
-        button.removeEventListener('click', onEnterClicked);
-    
-        if (showUnavailable) {
-          showUnavailableMessage();
-        } else if (showTos) {
-          showContract().then(function (accepted) {
-            if (accepted) {
-              sessionStorage.setItem('tosAccepted', true);
-              navigateToRoom();
-            } else {
-              addHandlers();
-            }
-          });
-        } else {
-          navigateToRoom();
-        }
-      });
+      if (!isValid()) {
+        form.classList.add('error');
+        room.blur();
+        document.getElementById('room-label').style.opacity = 0;
+        return;
+      }
+
+      form.classList.remove('error');
+      enterButton.removeEventListener('click', onEnterClicked);
+
+      if (showUnavailable) {
+        showUnavailableMessage();
+      } else if (showTos) {
+        showContract().then(function (accepted) {
+          if (accepted) {
+            sessionStorage.setItem('tosAccepted', true);
+            navigateToRoom();
+          } else {
+            addHandlers();
+          }
+        });
+      } else {
+        navigateToRoom();
+      }
     });
 
     room.addEventListener('keypress', function onKeypress() {
