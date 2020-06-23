@@ -51,6 +51,7 @@ body {
 
   @media @smartphonesPortrait {
     height: 56px;
+    justify-content: space-between;
   }
 
   .icon-container {
@@ -65,58 +66,71 @@ body {
     text-align: center;
     border-right: 1px solid #455b66;
     @media @smartphonesPortrait {
-      width: 56px;
-      min-width: 56px;
+      width: 52px;
+      min-width: 52px;
     }
   }
   .center-container {
-    float: left;
-    flex-grow: 1;
-    height: 100%;
-    padding: 0 30px 0 55px;
-    position: relative;
-
+    justify-content: center;
+    flex-direction: column;
+    display: flex;
     @media @smartphonesPortrait {
       padding: 0;
       padding-left: 4px;
-      max-width: 180px;
+      width: 100%;
     }
 
     .room-info {
+      display: flex;
+      flex-direction: column;
+      margin: 0 24px;
       font-size: 13px;
       font-weight: 600;
-      line-height: 0.5;
       letter-spacing: 1.1px;
       color: #7a8b93;
-      min-width: 166px;
+      min-width: 200px;
+      @media @smartphonesPortrait {
+        min-width: unset;
+        max-width: 100%;
+        margin: 0 12px;
+      }
+      .left-icon-wrapper {
+        height: 50px;
+        margin: 24px 10px 0 12px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        @media @smartphonesPortrait {
+          height: 44px;
+          margin: 8px 4px 0 4px;
+          justify-content: space-between;
+          width: 20px;
+        }
+      }
+      .participants-wrapper {
+        display: flex;
+      }
       .name-wrapper {
-         display: table;
-         margin-top: 14px;
+         margin-bottom: 6px;
+         min-width: 200px;
+         display: grid;
+         grid-template-columns: auto auto;
          @media @smartphonesPortrait {
-           margin-top: 2px;
+           margin: 0;
+           width: 100%;
+           padding: 0 4px;
+           min-width: unset;
+           max-width: 100%;
          }
          .room-name {
-           vertical-align: middle;
-           display: table-cell;
-           flex-direction: column;
-           margin-top: 16px;
-           font-size: 22px;
+           font-size: 14px;
            text-overflow: ellipsis;
-           height: 44px;
            overflow: hidden;
-           white-space: normal;
-           line-height: 22px;
-           margin-bottom: 8px;
+           white-space: nowrap;
            color: #ffffff;
-           width: 100%;
-           min-width: 214px;
-           word-break: break-word;
+           margin: 0;
            @media @smartphonesPortrait {
-             line-height: 17px;
-             margin: 4px 0 0 12px;
-             margin-left: 0;
-             width: 190px;
-             height: 36px;
+             height: 22px;
           }
         }
       }
@@ -137,9 +151,9 @@ body {
     font-size: 16px;
     cursor: pointer;
     @media @smartphonesPortrait {
-      margin-right: 26px;
-      width: 124px;
-      font-size: 14px;
+      margin-right: 8px;
+      padding: 0 8px;
+      width: 24px;
     }
     i {
       margin-right: 10px;
@@ -147,24 +161,23 @@ body {
         margin-right: 2px;
       }
     }
-  }
-  .invite-btn {
-    background: #871FFF;
-    border-radius: 5px;
+    span {
+      @media @smartphonesPortrait {
+        display: none;
+      }
+    }
   }
   .right-container {
     float: right;
     display: flex;
+    flex-grow: 1;
     .flex-direction(row);
     .align-items(center);
     .justify-content(flex-end);
     right: 0;
 
     @media @smartphonesPortrait {
-      float: left;
-      width: unset;
-      min-width: calc(~"100% - 220px");
-      // height: 92px;
+      padding-left: 4px;
     }
     div {
         float: left;
@@ -200,7 +213,8 @@ body {
     .justify-content(center);
     cursor: pointer;
     @media @smartphonesPortrait {
-      display: none;
+      width: 49px;
+      height: 56px;
     }
     #options-icon {
       height: 22px;
@@ -289,9 +303,9 @@ body {
   position: relative;
   overflow: hidden;
   @media @smartphonesPortrait {
-    margin-top: 64px;
+    margin-top: 58px;
     margin-bottom: 2px;
-    height: calc(~"100% - 68px");
+    height: calc(~"100% - 62px");
     padding: 2px;
   }
 }
@@ -484,6 +498,8 @@ body {
   transition: all @transitionTime;
 
   @media @smartphonesPortrait {
+    opacity: 1;
+    bottom: 0;
     width: (100% + 2px);
     right: 0;
     left: 0;
@@ -651,9 +667,10 @@ body {
   text-shadow: black 1px 1px 8px;
   background: transparent;
   box-shadow: unset;
-
+  display: flex;
+  flex-direction: column;
   @media @smartphonesPortrait {
-    width: 100%;
+    width: calc(100% - 40px);
     height: 100%;
     padding: 10px;
     margin: 0;
@@ -680,7 +697,7 @@ body {
   }
 
   button#enter {
-    margin: 32px 0 0 0;
+    margin: 12px 0 0 0;
   }
 
   p {
@@ -695,6 +712,7 @@ body {
 
   .btn {
     font-size: 16px;
+    font-weight: 600;
     height: 50px;
     line-height: 50px;
     border-radius: 4px;
@@ -707,7 +725,6 @@ body {
   #video-preview {
     width: 360px;
     height: 212px;
-    margin-top: 40px;
     background-color: #222;
     border-radius: 5px;
     .OT_publisher .OT_widget-container {
@@ -716,9 +733,8 @@ body {
     @media @smartphonesPortrait {
       position: relative;
       max-height: 40%;
-      max-width: calc(~"100% - 20px");
-      top: 10px;
-      left: 10px;
+      width: 100%;
+      top: 0;
     }
   }
   #video-preview-name {
@@ -753,12 +769,12 @@ body {
       }
     }
   }
+  #audio-settings > div > img {
+    margin-right: 18px;
+  }
   #video-settings, #audio-settings {
     #audio-switch {
-      margin-right: 20px;
-    }
-    #video-switch {
-      margin-left: 55px;
+      margin-right: 24px;
     }
     .switch-button {
       #preToggleFacingMode, #prePickMic {
@@ -769,6 +785,7 @@ body {
       }
       width: 59px;
       height: 20px;
+      margin-right: 24px;
       object-fit: contain;
       border-radius: 4px;
       border: 1px #979797 solid;
@@ -779,9 +796,14 @@ body {
     }
   }
   #enter-name-prompt {
-    margin-top:10px;
+    margin-top: 10px;
     padding: 0;
     border-bottom: #788492 1px solid;
+    .justify-content(space-between);
+    @media @smartphonesPortrait {
+      margin: 10px 0 0 0;
+      min-height: 44px;
+    }
     div {
       display: flex;
       align-items: center;
@@ -804,19 +826,22 @@ body {
       background: none;
     }
     label {
+      left: 0;
       position: absolute;
       color: #fff;
       font-size: 16px;
       transition: all 0.5s;
+      @media @smartphonesPortrait  {
+        left: 10px;
+      }
     }
     label.visited {
-      left: 236px;
+      left: calc(100% - 134px);
       font-size: 12px;
       color: #757575;
     }
   }
   #audio-meter-container {
-    margin-right: 50px;
     display: inline !important;
   }
   #audio-meter, #precall-test-meter {
@@ -876,7 +901,6 @@ body {
 
   #precall-test-meter {
     display: none;
-    position: absolute;
     width: 330px;
     margin-top: 8px;
     margin-left: 28px;
@@ -913,6 +937,7 @@ body {
   right: 0;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   height: 100%;
   width: 554px;
@@ -936,10 +961,13 @@ body {
   }
 
   .info-links {
-    margin-top: 40px;
+    margin-top: 14px;
     margin-bottom:40px;
     font-size: 14px;
     color: #ffffff;
+    @media @smartphonesPortrait {
+      font-size: 13px;
+    }
 
     a {
       color: #ffffff;
@@ -952,6 +980,18 @@ body {
       a {
         font-weight: bold;
       }
+    }
+  }
+  .about-link {
+    font-size: 14px;
+    color: #ffffff;
+    @media @smartphonesPortrait {
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+    a {
+      color: #ffffff;
+      text-decoration: none;
     }
   }
 }
@@ -968,10 +1008,7 @@ body {
   color: #494747;
   font-size: 14px;
   padding: 35px;
-
-  @media @smartphonesPortrait  {
-    left: calc(~"50% - 152px");
-  }
+  left: calc(~"50% - 152px");
 
   p {
     font-size: 14px;
@@ -1178,26 +1215,22 @@ footer.main {
 }
 
 .room-name {
-  font-size: 16px;
+  font-size: 13px;
+  margin: 6px 0 20px;
   word-break: break-word;
   display: block;
   text-overflow: ellipsis;
   overflow: hidden;
-  color: #fff;
-  line-height: 18px;
 }
 
 #enter.btn {
+  color: #fff;
+  line-height: 18px;
   overflow: hidden;
   width: 100%;
   background-color: #871FFF;
   &.accept {
     background-color: #131415;
-  }
-  @media @smartphonesPortrait {
-    left: 10px;
-    min-width: 196px;
-    width: calc(~"100% - 20px");
   }
 }
 
@@ -1237,6 +1270,12 @@ body[data-annotation-visible=true]  {
 
 #switchAlerts {
   z-index: 2147483647; /* Keep modal always on top */
+  form > footer > button {
+    @media @smartphonesPortrait {
+      width: calc(100% - 10px);
+      margin-bottom: 6px;
+    }
+  }
 }
 
 .dark-mode {

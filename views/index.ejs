@@ -7,11 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <link rel="stylesheet" href="css/buttons.css" />
-<% if (useGoogleFonts) { %>
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
-<% } else { %>
     <link href="/css/fonts.css" rel="stylesheet">
-<% } %>
 <% if (isWebRTCVersion) { %>
     <link rel="stylesheet" href="css/checkboxes.css" />
 <% } %>
@@ -43,6 +39,19 @@
     function OptanonWrapper() { }
     </script>
     <!-- OneTrust Cookies Consent Notice end -->
+    
+     <% if (enableFeedback && hotjarId && hotjarVersion ) { %>
+    <script>
+       (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid: <%=hotjarId%>,hjsv: <%=hotjarVersion%>};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+    </script>
+    <% } %>
   </head>
 
   <body class="forbidden">
@@ -51,15 +60,13 @@
         <div id="righthand-container-cell">
           <section id="main-content">
             <header>
-              <% if (!isWebRTCVersion) { %>
-                <h1>OpenTok Demo by</h1>
-              <% } else { %>
-                <h1>Vonage Free Conferencing</h1>
-              <% } %>
-              <img src="images/vonage-logo.svg" alt="vonage transparent logo">
+              <img src="images/vonage-logo-no-text.svg" alt="vonage transparent logo">
               <% if (isWebRTCVersion) { %>
+                <h2>
+                  Vonage Video Conferencing
+                </h2>
                 <p>
-                  Free to use for everyone who unexpectedly needs to work from home, etc.
+                  Free to use for everyone who unexpectedly needs to work from home.
                 </p>
               <% } %>
             </header>
@@ -77,7 +84,7 @@
                 <label id="user-label">Your name</label>
               </div>
             </form>
-            <button id="enter" class="enter-room-buttons" data-wd="enterroom">Join Meeting</button>
+            <button id="enter" class="btn" data-wd="enterroom">Join Meeting</button>
             <div class="landing-more-info">
               Need help? <a href="Vonage-Free-Conferencing-help.pdf" target="_blank">Read our FAQs</a>
             </div>
@@ -85,7 +92,6 @@
               <a href="https://safari.opentokrtc.com/">Try the WebRTC Demo for Safari.</a>
             </div>
           </section>
-          <button id="enter-arrow" class="enter-room-buttons" data-wd="enterroom"></button>
           <div class="right-footer">
             <a href="http://www.vonage.com" target="_blank">About Vonage</a> |
             <a href="https://www.vonage.com/solutions/" target="_blank">Communications are crucial during COVID-19</a>

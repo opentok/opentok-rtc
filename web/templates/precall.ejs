@@ -19,13 +19,15 @@
             <img src="/images/icons/video-icon.svg" />
             <span>Camera</span>
           </div>
-          <div class="sourcePick switch-button" id="video-switch">
-            <a id="preToggleFacingMode"> Switch </a>
+          <div class="right-settings">
+            <div class="sourcePick switch-button" id="video-switch">
+              <a id="preToggleFacingMode"> Switch </a>
+            </div>
+            <a id="initialVideoSwitch" class="activated">
+              <label>On</label>
+              <i data-icon="videoSwitch"></i>
+            </a>
           </div>
-          <a id="initialVideoSwitch" class="activated">
-            <label>On</label>
-            <i data-icon="videoSwitch"></i>
-          </a>
         </div>
         <div id="audio-settings">
           <div>
@@ -38,14 +40,15 @@
               </div>
             </div>
           </div>
-          <div class="sourcePick switch-button" id="audio-switch">
-            <a id="prePickMic"> Switch </a>
+          <div class="right-settings">
+            <div class="sourcePick switch-button" id="audio-switch">
+              <a id="prePickMic"> Switch </a>
+            </div>
+            <a id="initialAudioSwitch" class="activated">
+              <label>On</label>
+              <i data-icon="audioSwitch"></i>
+            </a>
           </div>
-          <a id="initialAudioSwitch" class="activated">
-            <label>On</label>
-            <i data-icon="audioSwitch"></i>
-          </a>
-          <br>
         </div>
         <div id="pre-call-test">
           <div id="precall-test-labels">
@@ -64,17 +67,14 @@
           </div>
         </div>
         <button id="enter" class="btn" type="submit" disabled>
-          <span class="room-name"></span>
+          <span>Join Meeting</span>
         </button>
+        <div class="room-name"></div>
       </div>
     </form>
     <div class="info-links">
       <div class="faq-link">
        Need help? <a href="../Vonage-Free-Conferencing-help.pdf" target="_blank">Read our FAQs</a>
-      </div>
-      <div class="about-link">
-        <a href="http://www.vonage.com" target="_blank">About Vonage</a> |
-        <a href="https://www.vonage.com/solutions/" target="_blank">Communications are crucial during COVID-19</a>
       </div>
     </div>
     <div id="pre-call-test-results">
@@ -115,6 +115,10 @@
         <i data-icon="precall-retest" id="precall-retest"></i>
         Re-test
       </div>
+    </div>
+    <div class="about-link">
+      <a href="http://www.vonage.com" target="_blank">About Vonage</a> |
+      <a href="https://www.vonage.com/solutions/" target="_blank">Communications are crucial during COVID-19</a>
     </div>
   </div>
 </section>

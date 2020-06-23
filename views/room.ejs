@@ -17,11 +17,7 @@
     <link rel="stylesheet" href="/css/room.opentok.css">
     <link rel="stylesheet" href="/css/buttons.css" />
 
-    <% if (useGoogleFonts) { %>
-      <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
-    <% } else { %>
-      <link href="/css/fonts.css" rel="stylesheet">
-    <% } %>
+    <link href="/css/fonts.css" rel="stylesheet">
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/<%=chromeExtensionId%>">
     <link rel="stylesheet" href="https://assets.tokbox.com/solutions/css/style.css">
     <link rel="stylesheet" href="/css/annotation.opentok.css">
@@ -80,6 +76,19 @@
     function OptanonWrapper() { }
     </script>
     <!-- OneTrust Cookies Consent Notice end -->
+
+    <% if (enableFeedback && hotjarId && hotjarVersion ) { %>
+    <script>
+        (function(h,o,t,j,a,r){
+         h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+         h._hjSettings={hjid: <%=hotjarId%>,hjsv: <%=hotjarVersion%>};
+         a=o.getElementsByTagName('head')[0];
+         r=o.createElement('script');r.async=1;
+         r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+         a.appendChild(r);
+     })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+     </script>
+      <% } %>
   </head>
 
   <body class="forbidden">
@@ -92,9 +101,13 @@
       </div>
       <div class="center-container">
         <div class="room-info">
-          <i id="room-locked-state" data-icon="closedLock" title="This room is locked. No additional participants may join the room."></i>
-          <p class="room-name"></p>
-          <i data-icon="participants"></i><span id="participantsStr"></span>
+          <div class="name-wrapper">
+            <i id="room-locked-state" data-icon="closedLock" title="This room is locked. No additional participants may join the room."></i>
+            <p class="room-name"></p>
+          </div>
+          <div class="participants-wrapper">
+            <i data-icon="participants"></i><span id="participantsStr"></span>
+          </div>
         </div>
       </div>
       <div class="right-container">
@@ -126,7 +139,7 @@
         <% } } %>
         <a class="invite-btn" id="addToCall">
           <i data-icon="add"></i>
-          Invite
+          <span>Invite</span>
         </a>
         <a id="chooseLayout">
           <div id="options-container">
@@ -146,7 +159,7 @@
           <button id="endCall" disabled>
             <i data-icon="end_call"></i>
           </button>
-          <p>Leave Call</p>
+          <p>Leave</p>
         </div>
         <div>
           <button id="toggle-publisher-video" class="selected" disabled>
