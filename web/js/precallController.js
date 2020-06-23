@@ -64,6 +64,14 @@
     };
 
     return new Promise(function (resolve) {
+      if (window.routedFromStartMeeting) {
+        publisherOptions.name = window.userName || document.querySelector(selector + ' input').value.trim();
+        return resolve({
+          username: window.userName || document.querySelector(selector + ' input').value.trim(),
+          publisherOptions: publisherOptions
+        });
+      }
+
       function loadModalText() {
         PrecallView.setFocus(username);
 
@@ -104,7 +112,9 @@
             return new Promise((resolve, reject) => {
               Request
                 .getRoomRawInfo(roomName).then((room) => {
-                  if (showUnavailable && !room) 
+                  if (window.routedFromStartMeeting)
+                    return resolve();
+                  else if (showUnavailable && !room)
                     return reject(new Error('New rooms not allowed'));
                   else if (room && !room.isLocked) 
                     return resolve();

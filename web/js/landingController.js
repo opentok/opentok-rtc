@@ -5,8 +5,9 @@
 
   var addEventHandlers = function () {
     Utils.addEventsHandlers('precallView:', { submit: function () {
-      // Jeff to do: submit form data (camera ID, mic ID, user name)
-      window.location = '/room/' + window.roomName;
+      var form = document.querySelector('.main form');
+      form.action = '/room/' + window.roomName;
+      form.submit();
     } });
   };
 

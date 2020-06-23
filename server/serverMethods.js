@@ -387,14 +387,11 @@ function ServerMethods(aLogLevel, aModules) {
     return roomBlackList.includes(name.trim().toLowerCase());
   }
 
-  // Return the personalized HTML for a room.
-  async function getRoom(aReq, aRes) {
+  // Finish the call to getRoom and postRoom
+  async function finshGetPostRoom(aReq, aRes, routedFromStartMeeting) {
     var meetingAllowed = await isMeetingAllowed(aReq);
     var query = aReq.query;
 
-    logger.log('getRoom serving ' + aReq.path, 'roomName:', aReq.params.roomName,
-               'userName:', query && query.userName,
-               'template:', query && query.template);
     if (isInBlacklist(aReq.params.roomName)) {
       logger.log('getRoom. error:', `Blacklist found '${aReq.params.roomName}'`);
       return aRes.status(404).send(null);
@@ -402,7 +399,7 @@ function ServerMethods(aLogLevel, aModules) {
     var tbConfig = aReq.tbConfig;
     var template = query && tbConfig.templatingSecret &&
       (tbConfig.templatingSecret === query.template_auth) && query.template;
-    var userName = query && query.userName;
+    var userName = (aReq.body && aReq.body.userName) || (query && query.userName) || '';
 
     // Create a session ID and token for the network test
     tbConfig.precallOtInstance.createSession({ mediaMode: 'routed' }, (error, testSession) => {
@@ -451,6 +448,8 @@ function ServerMethods(aLogLevel, aModules) {
           hotjarVersion: tbConfig.hotjarVersion,
           enableFeedback: tbConfig.enableFeedback,
           enterButtonLabel: 'Join Meeting',
+          routedFromStartMeeting: Boolean(routedFromStartMeeting),
+          userName,
         }, (err, html) => {
           if (err) {
             logger.log('getRoom. error:', err);
@@ -460,6 +459,24 @@ function ServerMethods(aLogLevel, aModules) {
           }
         });
     });
+  }
+
+  // Finish the call to getRoom and postRoom
+  function getRoom(aReq, aRes, routedFromStartMeeting) {
+    var query = aReq.query;
+
+    logger.log('getRoom serving ' + aReq.path, 'roomName:', aReq.params.roomName,
+               'userName:', query && query.userName,
+               'template:', query && query.template);
+
+    finshGetPostRoom(aReq, aRes, false);
+  };
+  
+  // Return the personalized HTML for a room when directed from the root.
+  function postRoom(aReq, aRes) {
+    logger.log('postRoom serving ' + aReq.path, 'roomName:', aReq.params.roomName,
+      'body:', aReq.body);
+    finshGetPostRoom(aReq, aRes, true);
   }
 
   // Given a sessionInfo (which might be empty or non usable) returns a promise than will fullfill
@@ -1027,6 +1044,7 @@ function ServerMethods(aLogLevel, aModules) {
     lockRoom,
     getRoot,
     getRoom,
+    postRoom,
     getRoomInfo,
     postRoomArchive,
     postUpdateArchiveInfo,

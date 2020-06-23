@@ -29,7 +29,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     roomMuted: false
   };
 
-  var userName = null;
+  var userName = window.userName;
   var roomURI = null;
   var resolutionAlgorithm = null;
   var debugPreferredResolution = null;
@@ -759,7 +759,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
 
     // Recover user identifier
     var params = Utils.parseSearch(document.location.search);
-    var usrId = params.getFirstValue('userName');
+    var usrId = window.userName || params.getFirstValue('userName');
     resolutionAlgorithm = params.getFirstValue('resolutionAlgorithm');
     debugPreferredResolution = params.getFirstValue('debugPreferredResolution');
     enableHangoutScroll = params.getFirstValue('enableHangoutScroll') !== undefined;
