@@ -13,6 +13,8 @@
   var _model;
   var testMeterInterval;
 
+  var isMobile = function () { return typeof window.orientation !== 'undefined'; };
+
   var addHandlers = function () {
     if (window.enablePrecallTest) {
       var preCallTestResults = document.getElementById('pre-call-test-results');
@@ -114,6 +116,16 @@
       htmlStrings.forEach(function (aHTML) {
         document.body.innerHTML += aHTML;
       });
+
+      if (isMobile()) {
+        setTimeout(function () {
+          document.querySelector('#lefthand-container').classList.add('mobile-fade');
+        }, 2000);
+        setTimeout(function () {
+          document.querySelector('#lefthand-container').classList.add('mobile-hide');
+        }, 2300);
+      }
+
       if (window.routedFromStartMeeting) {
         document.querySelector('.main').style.display = 'none';
         resolve();

@@ -76,7 +76,7 @@
         PrecallView.setFocus(username);
 
         if (Utils.isIE() || Utils.isSafariIOS()) {
-          PrecallView.hideConnectivityTest();
+          if (window.enablePrecallTest) PrecallView.hideConnectivityTest();
         }
 
         document.querySelector('.user-name-modal #enter').disabled = false;

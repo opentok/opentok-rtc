@@ -26,7 +26,8 @@ h2 {
   margin: 6px 0;
   color: #fff;
   @media @smartphonesPortrait {
-    visibility: hidden;
+    font-size: 39px;
+    line-height: 43px;
   }
 }
 
@@ -49,9 +50,9 @@ a {
     width: 350px;
 
     @media @smartphonesPortrait {
-      max-width: calc(~"100% - 14px");
+      width: 100%;
       margin: 0;
-      margin: 20px 30px 0 24px;
+      margin: 0;
     }
 
     #video-preview {
@@ -289,10 +290,9 @@ a {
     margin-bottom: 12px;
     text-align: right;
     @media @smartphones {
-      position: relative;
-      right: 20px;
-      margin-top: 20px;
-      margin-bottom: unset;
+      position: absolute;
+      right: calc(50% - 80px);
+      bottom: 45px;
       min-height: unset;
       font-size: 12px;
     }
@@ -356,7 +356,7 @@ a {
     line-height: 50px;
     cursor: pointer;
     @media @smartphonesPortrait {
-      width: 300px;
+      width: 100%;
       font-size: 14px;
     }
   }
@@ -372,7 +372,7 @@ a {
         height: 33.3px;
         margin-bottom: 110px;
         @media @smartphonesPortrait {
-          top: 37px;
+          margin-bottom: 26px;
         }
       }
 
@@ -382,7 +382,10 @@ a {
         letter-spacing: -2px;
         font-weight: 500;
         @media @smartphonesPortrait {
+          font-size: 39px;
+          line-height: 43px;
           top: 37px;
+          width: 280px;
         }
       }
 
@@ -392,6 +395,13 @@ a {
         color: #FFFFFF;
         margin-top: 12px;
         width: 297px;
+        @media @smartphonesPortrait {
+          line-height: 23px;
+          width: unset;
+        }
+      }
+      @media @smartphonesPortrait {
+        margin-top: 0;
       }
     }
 
@@ -403,15 +413,44 @@ a {
         font-weight: 600;
         font-size: 14px;
       }
+      @media @smartphonesPortrait {
+        display: none;
+      }
     }
 
     @media @smartphonesPortrait {
       width: 100%;
+      background: url(/images/background.svg) no-repeat fixed;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin-top: 0;
+      z-index: 2000000;
+      padding: 0 46px;
+      justify-content: center;
+      transition: opacity 0.3s;
+      width: unset;
+      min-width: unset;
+      &.mobile-fade {
+        opacity: 0;
+      }
+      &.mobile-hide {
+        display: none;
+      }
     }
+    
   }
 
   #righthand-container {
     height: 100%;
-    margin-top: 102px;
+    margin-top: 0;
+  }
+
+  @media @smartphonesPortrait {
+    display: block;
+    margin-top: 0;
+    padding: 0 25px;
   }
 }
