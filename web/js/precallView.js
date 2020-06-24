@@ -152,7 +152,7 @@
   var setFocus = function (username) {
     var focusElement = username ? document.getElementById('enter') :
       document.getElementById('user-name-input');
-    focusElement.focus();
+    focusElement && focusElement.focus();
   };
 
   var hideConnectivityTest = function () {
