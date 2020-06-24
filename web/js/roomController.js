@@ -768,7 +768,6 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     .then(function (info) {
       info.roomURI = roomURI;
       RoomView.showRoom();
-      RoomView.roomName = roomName;
       RoomView.roomURI = roomURI;
       publisherOptions.publishAudio = info.publisherOptions.publishAudio;
       publisherOptions.publishVideo = info.publisherOptions.publishVideo;
