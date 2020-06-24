@@ -227,4 +227,11 @@ describe('OpenTokRTC server', () => {
       done();
     });
   });
+  it('GET /thanks should return post meeting screen', (done) => {
+    request(app)
+      .get('/thanks')
+      .set('Accept', 'text/html')
+      .expect('Content-Type', new RegExp('text/html'))
+      .expect(200, done);
+  });
 });
