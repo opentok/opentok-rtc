@@ -392,6 +392,17 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/ErrorInfo'
+  '/thanks':
+    get:
+      summary: Gets the meeting post completion page.
+      x-implemented-in: getMeetingCompletion
+      produces:
+        - 'text/html'
+      description: >-
+        Returns a customized post completion page when the /thanks is accessed.
+      responses:
+        '200':
+          description: The HTML for the meeting completion page
   '/server/health':
     get:
       summary: >-

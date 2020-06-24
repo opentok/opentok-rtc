@@ -1,0 +1,110 @@
+@import 'base.less';
+html {
+  background-color: #131415;
+  mix-blend-mode: normal;
+  background-image: url("/images/vonage-v-logo-background.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 100%;
+  height: 100%;
+}
+
+.completeMeeting {
+  margin-left: 100px;
+  font-family: "Spezia", arial !important;
+  color: white;
+  .completeMeeting-box-container {
+    display: flex;
+    justify-content: flex-start;
+  }
+  .completeMeeting-box {
+    min-height: 222px;
+    float: left;
+    padding: 0 130px 10px 0;
+    word-wrap: normal;
+    margin: 27px 0 20px 0;
+    max-width: 452px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    h2 {
+      font-size: 20px;
+      line-height: 32px;
+      margin: 0;
+      font-weight: normal;
+    }
+    p {
+      font-size: 14px;
+      line-height: 21px;
+      margin: 20px 0px 40px 0px;
+      letter-spacing: -0.01em;
+    }
+  }
+  a {
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-block;
+  }
+  p {
+    font-size: 16px;
+  }
+  header {
+    p {
+      font-size: 39px;
+    }
+    img {
+      padding: 60px 0px;
+    }
+  }
+  footer {
+    margin: 70px 0px 40px;
+  }
+  .btn {
+    background-color: #871FFF;
+    border-radius: 5px;
+    padding: 10px 30px;
+    margin-top: auto;
+    font-size: 12px;
+    cursor: pointer;
+    text-align: center;
+    width: fit-content;
+  }
+}
+
+@media @smartphonesPortrait {
+  .completeMeeting {
+    margin-left: 24px;
+    margin-right: 32px;
+    .completeMeeting-box-container {
+      -ms-flex-direction: column;
+      flex-direction: column;
+    }
+    .completeMeeting-box {
+      margin: 0px;
+      width: 100%;
+      h2 {
+        font-size: 20px;
+      }
+    }
+    header {
+      p {
+        font-size: 24px;
+      }
+      img {
+        padding: 30px 0px;
+      }
+    }
+    footer {
+      margin: 50px 0px 30px;
+    }
+    .btn {
+      padding: 10px 20px;
+      font-size: 10px;
+      cursor: pointer;
+      margin: 20px 0px 50px;
+      text-align: center;
+      display: inline-block;
+    }
+  }
+}
