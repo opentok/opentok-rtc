@@ -10,6 +10,8 @@ html {
   color: @text;
   font-family: @baseFontFamily;
   font-weight: @baseFontWeight;
+  background-color: #151515;
+
 }
 
 body.forbidden {
@@ -33,6 +35,10 @@ label {
   visibility: hidden;
   opacity: 0;
   transition: opacity @transitionTime;
+
+  &.visible {
+    z-index: 2000000;
+  }
 
   &.show {
     display: block;

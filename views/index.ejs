@@ -31,6 +31,9 @@
       window.minMeetingNameLength=<%=minMeetingNameLength%>;
       window.roomName="<%=roomName%>";
       window.publisherResolution="<%=publisherResolution%>";
+      window.opentokJsUrl='<%=opentokJsUrl%>';
+      window.enablePrecallTest=<%=enablePrecallTest%>;
+      window.enterButtonLabel="<%=enterButtonLabel%>";
     </script>
     
      <% if (enableFeedback && hotjarId && hotjarVersion ) { %>
@@ -48,49 +51,17 @@
   </head>
 
   <body class="forbidden">
-    <section class="main">
-      <div id="righthand-container">
-        <div id="righthand-container-cell">
-          <section id="main-content">
-            <header>
-              <img src="images/vonage-logo-no-text.svg" alt="vonage transparent logo">
-              <% if (isWebRTCVersion) { %>
-                <h2>
-                  Vonage Video Conferencing
-                </h2>
-                <p>
-                  Free to use for everyone who unexpectedly needs to work from home.
-                </p>
-              <% } %>
-            </header>
-            <form>
-              <div>
-                <input id="room" class="text-input required" data-wd="roomname" maxlength="46">
-                <label id="room-label" class="visited">Meeting name</label>
-                <p class="error-room error-text">
-                  <i data-icon="warning"></i>
-                  <span>Please enter a meeting name.</span>
-                </p>
-              </div>
-              <div>
-                <input id="user" class="text-input" data-wd="username" maxlength="25">
-                <label id="user-label">Your name</label>
-              </div>
-            </form>
-            <button id="enter" class="btn" data-wd="enterroom">Join Meeting</button>
-            <div class="landing-more-info">
-              Need help? <a href="Vonage-Free-Conferencing-help.pdf" target="_blank">Read our FAQs</a>
-            </div>
-            <div class="safari-plug">
-              <a href="https://safari.opentokrtc.com/">Try the WebRTC Demo for Safari.</a>
-            </div>
-          </section>
-          <div class="right-footer">
-            <a href="http://www.vonage.com" target="_blank">About Vonage</a> |
-            <a href="https://www.vonage.com/solutions/" target="_blank">Communications are crucial during COVID-19</a>
-          </div>
-        </div>
-      </div>
+    <section id="switchAlerts" class="tc-modal switch-alert-modal">
+      <form class="tc-dialog">
+        <i data-icon="close_gray" class="close"></i>
+        <header><span class="msg"></span></header>
+        <hr>
+        <p class="detail"></p>
+        <select id="select-devices" class="devices"></select>
+        <footer>
+          <button class="btn btn-purple btn-padding ctaarrow-white accept"></button>
+        </footer>
+      </form>
     </section>
 
     <script>

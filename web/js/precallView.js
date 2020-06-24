@@ -1,4 +1,4 @@
-/* globals EJSTemplate, Modal, setTimeout, showTos, showUnavailable, enablePrecallTest */
+/* globals EJSTemplate, Modal, setTimeout, showTos, showUnavailable, enablePrecallTest, enterButtonLabel */
 !(function (exports) {
   'use strict';
 
@@ -13,31 +13,35 @@
   var _model;
   var testMeterInterval;
 
+  var isMobile = function () { return typeof window.orientation !== 'undefined'; };
+
   var addHandlers = function () {
-    var preCallTestResults = document.getElementById('pre-call-test-results');
+    if (window.enablePrecallTest) {
+      var preCallTestResults = document.getElementById('pre-call-test-results');
 
-    preCallTestResults.addEventListener('click', function (e) {
-      var elem = e.target;
-      switch (elem.id) {
-        case 'precall-close':
-          preCallTestResults.style.display = 'none';
-          break;
-        case 'retest':
-          preCallTestResults.style.display = 'none';
-          document.getElementById('connectivity-cancel').style.display = 'inline-block';
-          Utils.sendEvent('roomView:retest');
-          break;
-      }
-    });
+      preCallTestResults.addEventListener('click', function (e) {
+        var elem = e.target;
+        switch (elem.id) {
+          case 'precall-close':
+            preCallTestResults.style.display = 'none';
+            break;
+          case 'retest':
+            preCallTestResults.style.display = 'none';
+            document.getElementById('connectivity-cancel').style.display = 'inline-block';
+            Utils.sendEvent('roomView:retest');
+            break;
+        }
+      });
 
-    var connectivityCancelElement = document.getElementById('connectivity-cancel');
-    connectivityCancelElement.addEventListener('click', function (event) {
-      event.preventDefault();
-      Utils.sendEvent('roomView:cancelTest');
-      connectivityCancelElement.style.display = 'none';
-      preCallTestResults.style.display = 'none';
-      hideConnectivityTest();
-    });
+      var connectivityCancelElement = document.getElementById('connectivity-cancel');
+      connectivityCancelElement.addEventListener('click', function (event) {
+        event.preventDefault();
+        Utils.sendEvent('roomView:cancelTest');
+        connectivityCancelElement.style.display = 'none';
+        preCallTestResults.style.display = 'none';
+        hideConnectivityTest();
+      });
+    }
 
     var userNameInputElement = document.getElementById('user-name-input');
     userNameInputElement.addEventListener('keyup', function keyupHandler() {
@@ -101,14 +105,6 @@
       }
     });
 
-    var videoPreviewElement = document.getElementById('video-preview');
-    var videoPreviewNameElement = document.getElementById('video-preview-name');
-    videoPreviewElement.addEventListener('mouseover', function () {
-      videoPreviewNameElement.style.opacity = 1;
-    });
-    videoPreviewElement.addEventListener('mouseout', function () {
-      videoPreviewNameElement.style.opacity = 0;
-    });
   };
 
   function render(resolve) {
@@ -120,8 +116,22 @@
       htmlStrings.forEach(function (aHTML) {
         document.body.innerHTML += aHTML;
       });
+
+      if (isMobile()) {
+        setTimeout(function () {
+          document.querySelector('#lefthand-container').classList.add('mobile-fade');
+        }, 2000);
+        setTimeout(function () {
+          document.querySelector('#lefthand-container').classList.add('mobile-hide');
+        }, 2300);
+      }
+
+      if (window.routedFromStartMeeting) {
+        document.querySelector('.main').style.display = 'none';
+        resolve();
+      }
       addHandlers();
-      if (enablePrecallTest) {
+      if (window.enablePrecallTest) {
         document.getElementById('pre-call-test').style.display = 'flex';
         document.getElementById('precall-test-meter').style.display = 'block';
       }
@@ -137,17 +147,6 @@
     'PrecallController:audioOnly': function () {
       setSwitchStatus(false, 'Video', 'roomView:initialVideoSwitch');
     }
-  };
-
-  var setRoomName = function (roomName) {
-    document.querySelector('.user-name-modal .room-name').textContent = roomName;
-  };
-
-  var setUsername = function (username) {
-    document.getElementById('video-preview-name').textContent = username;
-    setTimeout(function () {
-      document.getElementById('video-preview-name').style.opacity = 0;
-    }, 2000);
   };
 
   var setFocus = function (username) {
@@ -227,7 +226,7 @@
   };
 
   var hide = function () {
-    document.getElementById('video-preview').style.visibility = 'hidden';
+    document.querySelector('.main').style.display = 'none';
     Utils.removeEventHandlers('modal:', { close: showModal });
   };
 
@@ -325,8 +324,6 @@
     init,
     hide,
     populateAudioDevicesDropdown,
-    setRoomName,
-    setUsername,
     setFocus,
     setVolumeMeterLevel,
     showContract,
