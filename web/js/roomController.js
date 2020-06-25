@@ -726,8 +726,8 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
   function addClipBoardFeature(selector) {
     const inviteLinkBtn = document.getElementById('copyInviteLinkBtn');
     const inputElem = document.getElementById('current-url');
-    if (inputElem && inputElem.value) {
-      navigator.clipboard.writeText(inputElem.value.trim())
+    if (inputElem && inputElem.textContent) {
+      navigator.clipboard.writeText(inputElem.textContent.trim())
         .then(() => {
           if (inviteLinkBtn.innerText !== 'Copied!') {
             const originalText = inviteLinkBtn.innerText;

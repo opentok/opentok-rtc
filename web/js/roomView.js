@@ -681,7 +681,7 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
   var getURLtoShare = function () {
     var textArea = document.getElementById('current-url');
     var urlToShare = window.location.origin + window.location.pathname;
-    textArea.value = urlToShare.replace('room/', 'room/ \n ');
+    textArea.textContent = urlToShare;
   };
 
   var init = function (enableHangoutScroll, aEnableArchiveManager, aEnableSip) {
