@@ -339,70 +339,23 @@ body {
   }
 
   .tc-dialog {
-    padding: 0;
-    min-height: 350px;
-    width: 564px;
-    max-width: 564px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
-
-    @media @smartphonesPortrait {
-      position: absolute;
-      width: 98%;
-      top: 150px;
-      left: 1%;
-      margin: 0;
-    }
-
-    header {
-      .close {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        cursor: pointer;
-      }
-
-      .title {
-        font-size: 24px;
-        color: #404040;
-        height: 89px;
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-      }
-    }
-
-    .dialog-content {
-      padding: 35px;
-    }
-
-    .meeting-link {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      height: 110px;
-      border: 1px solid #e8e8e8;
-      box-sizing: border-box;
-      background-color: #fafbfc;
-      input {
-        background: none;
-      }
-    }
-    .current-url {
+    
+    
+   .current-url {
       border: none;
-      text-align: center;
-      font-weight: @boldFontWeight;
-      width: 490px;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 21px;
+      text-decoration-line: underline;
+      color: #871FFF;
+      margin-bottom: 25px;
     }
 
-    .copied-message {
-      color: white;
-      width: 140px;
-      height: 26px;
-      border-radius: 10px;
-      background-color: #871FFF;
-      padding: 4px;
-      cursor: pointer;
+    .btn-img-copy {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      margin-left: -20px;
     }
 
     .google-sign-in-note-container {

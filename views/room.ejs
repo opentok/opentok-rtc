@@ -346,7 +346,7 @@
         <p>Are you sure you want to delete this archive?</p>
         <footer>
           <button class="btn btn-white btn-padding ctaarrow-blue">Cancel</button>
-          <button class="btn btn-purple btn-padding ctaarrow-white delete-archive">Delete</button>
+          <button class="btn btn-black btn-padding ctaarrow-white delete-archive">Delete</button>
         </footer>
       </form>
     </section>
@@ -359,12 +359,11 @@
             <span>Invite Participants</span>
           </div>
         </header>
+        <hr>
         <secton class="dialog-content">
-          <span>Copy the link below and send it to a family member, friend, or coworker!</span>
-          <div class="meeting-link">
-            <textarea class="current-url" readonly id="current-url"></textarea>
-              <button id="copyInviteLinkBtn" class="copied-message">Copy</button>
-          </div>
+          <p>Copy the link below and send it to a family member, friend, or coworker!</p>
+          <textarea class="current-url" readonly id="current-url"></textarea><br/>
+          <button id="copyInviteLinkBtn" class="btn btn-black btn-padding"> <i data-icon="copy" class="btn-img-copy"></i>Copy</button>
           <%   if(hasSip) { %>
           <div class="google-sign-in-note-container">
             <div class="google-sign-in-note">
@@ -374,7 +373,7 @@
           </div>
           <form id="dialOutForm">
             <input id="dialOutNumber" class="phoneNumber" required>
-            <button id="dialOutBtn" class="btn btn-purple btn-padding">Dial</button>
+            <button id="dialOutBtn" class="btn btn-black btn-padding">Dial</button>
           </form>
           <% } %>
       </secton>
@@ -389,7 +388,7 @@
         <p class="detail"></p>
         <select id="select-devices" class="devices"></select>
         <footer>
-          <button class="btn btn-purple btn-padding ctaarrow-white accept"></button>
+          <button class="btn btn-black btn-padding ctaarrow-white accept"></button>
         </footer>
       </form>
     </section>
