@@ -724,22 +724,23 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
   }
 
   function addClipBoardFeature(selector) {
-    const writeBtn = document.getElementById('copyInviteLinkBtn');
+    const inviteLinkBtn = document.getElementById('copyInviteLinkBtn');
     const inputValue = document.getElementById('current-url').value.trim();
     if (inputValue) {
       navigator.clipboard.writeText(inputValue)
         .then(() => {
-          if (writeBtn.innerText !== 'Copied!') {
-            const originalText = writeBtn.innerText;
-            writeBtn.innerText = 'Copied!';
+          if (inviteLinkBtn.innerText !== 'Copied!') {
+            const originalText = inviteLinkBtn.innerText;
+            inviteLinkBtn.innerText = 'Copied!';
             setTimeout(() => {
               Modal.hide(selector);
-              writeBtn.innerText = originalText;
+              inviteLinkBtn.innerText = originalText;
             }, 2000)
           }
         });
     }
   }
+
   function showAddToCallModal() {
     var selector = '.add-to-call-modal';
     return Modal.show(selector).then(function () {
