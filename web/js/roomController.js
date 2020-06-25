@@ -751,6 +751,8 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
           enterButton.removeEventListener('click', onClicked);
           if (enterButton.id = "copyInviteLinkBtn") {
             addClipBoardFeature(selector);
+          } else {
+            Modal.hide(selector);
           }
           resolve();
       });
