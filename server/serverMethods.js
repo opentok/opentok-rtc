@@ -289,7 +289,21 @@ function ServerMethods(aLogLevel, aModules) {
       aNext();
     }
   }
-
+  function getMeetingCompletion(aReq, aRes) {
+    logger.log('getMeetingCompletion ' + aReq.path);
+    aRes.render('meetingComplete.ejs', {
+      hotjarId: aReq.tbConfig.hotjarId,
+      hotjarVersion: aReq.tbConfig.hotjarVersion,
+      enableFeedback: aReq.tbConfig.enableFeedback,
+    }, (err, html) => {
+      if (err) {
+        logger.error('getMeetingCompletion. error: ', err);
+        aRes.status(500).send(new ErrorInfo(500, 'Invalid Template'));
+      } else {
+        aRes.send(html);
+      }
+    });
+  }
   function getRoomArchive(aReq, aRes) {
     logger.log('getRoomArchive ' + aReq.path, 'roomName: ' + aReq.params.roomName);
     var tbConfig = aReq.tbConfig;
@@ -1059,6 +1073,7 @@ function ServerMethods(aLogLevel, aModules) {
     saveConnectionFirebase,
     deleteConnectionFirebase,
     setSecurityHeaders,
+    getMeetingCompletion,
   };
 }
 
