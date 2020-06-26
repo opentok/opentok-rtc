@@ -709,10 +709,6 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
   exports.RoomView = {
     init: init,
 
-    set roomName(value) {
-      HTMLElems.addText(roomNameElem, value);
-    },
-
     set participantsNumber(value) {
       HTMLElems.replaceText(participantsStrElem, value);
       if (!enableRoomLocking) {

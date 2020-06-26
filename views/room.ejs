@@ -16,6 +16,7 @@
 
     <link rel="stylesheet" href="/css/room.opentok.css">
     <link rel="stylesheet" href="/css/buttons.css" />
+    <link rel="stylesheet" href="/css/landing.opentok.css">
 
     <link href="/css/fonts.css" rel="stylesheet">
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/<%=chromeExtensionId%>">
@@ -31,12 +32,15 @@
       window.precallToken='<%=precallToken%>';
       window.showTos=<%=showTos%> && !sessionStorage.tosAccepted;
       window.enablePrecallTest=<%=enablePrecallTest%>;
+      window.enterButtonLabel='<%=enterButtonLabel%>';
       window.enableRoomLocking=<%=enableRoomLocking%>;
       window.showUnavailable=<%=showUnavailable%>;
       window.opentokJsUrl='<%=opentokJsUrl%>';
       window.feedbackUrl = '<%=feedbackUrl%>';
       window.publisherResolution = '<%=publisherResolution%>';
       window.maxUsersPerRoom = <%=maxUsersPerRoom%>;
+      window.routedFromStartMeeting = <%=routedFromStartMeeting%>;
+      window.userName = "<%=userName%>";
       var isMobile = function() { return typeof window.orientation !== 'undefined'; }
 
       var mobileSettings = function() {
@@ -95,7 +99,7 @@
         <div class="room-info">
           <div class="name-wrapper">
             <i id="room-locked-state" data-icon="closedLock" title="This room is locked. No additional participants may join the room."></i>
-            <p class="room-name"></p>
+            <p class="room-name">Vonage Video Conferencing</p>
           </div>
           <div class="participants-wrapper">
             <i data-icon="participants"></i><span id="participantsStr"></span>

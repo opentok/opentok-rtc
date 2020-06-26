@@ -64,13 +64,19 @@
     };
 
     return new Promise(function (resolve) {
+      if (window.routedFromStartMeeting) {
+        publisherOptions.name = window.userName || document.querySelector(selector + ' input').value.trim();
+        return resolve({
+          username: window.userName || document.querySelector(selector + ' input').value.trim(),
+          publisherOptions: publisherOptions
+        });
+      }
+
       function loadModalText() {
-        PrecallView.setRoomName(roomName);
-        PrecallView.setUsername(username);
         PrecallView.setFocus(username);
 
         if (Utils.isIE() || Utils.isSafariIOS()) {
-          PrecallView.hideConnectivityTest();
+          if (window.enablePrecallTest) PrecallView.hideConnectivityTest();
         }
 
         document.querySelector('.user-name-modal #enter').disabled = false;
@@ -81,7 +87,7 @@
           }
         });
 
-        document.querySelector('.user-name-modal .tc-dialog').addEventListener('submit', function (event) {
+        document.querySelector('.user-name-modal').addEventListener('submit', function (event) {
           event.preventDefault();
           submitForm();
         });
@@ -92,24 +98,23 @@
           if (!Utils.isIE()) {
             otNetworkTest && otNetworkTest.stopTest();
           }
-          Modal.hide(selector)
-            .then(function () {
-              publisherOptions.name = document.querySelector(selector + ' input').value.trim();
-              setTimeout(function () {
-                resolve({
-                  username: document.querySelector(selector + ' input').value.trim(),
-                  publisherOptions: publisherOptions
-                });
-              }, 1);
+          publisherOptions.name = document.querySelector(selector + ' input').value.trim();
+          setTimeout(function () {
+            resolve({
+              username: document.querySelector(selector + ' input').value.trim(),
+              publisherOptions: publisherOptions
             });
+          }, 1);
         }
 
-        function submitForm() {
+        function submitRoomForm() {
           function isAllowedToJoin() {
             return new Promise((resolve, reject) => {
               Request
                 .getRoomRawInfo(roomName).then((room) => {
-                  if (showUnavailable && !room) 
+                  if (window.routedFromStartMeeting)
+                    return resolve();
+                  else if (showUnavailable && !room)
                     return reject(new Error('New rooms not allowed'));
                   else if (room && !room.isLocked) 
                     return resolve();
@@ -133,6 +138,21 @@
             else 
               PrecallView.showUnavailableMessage();
           });
+        }
+
+        function submitForm() {
+          if (window.location.href.indexOf('room') > -1) {
+            // Jeff to do: This code should move to RoomController and be event-driven 
+            submitRoomForm();
+          } else {
+            if (showTos) {
+              PrecallView.showContract().then(function () {
+                Utils.sendEvent('precallView:submit');
+              });
+            } else {
+              Utils.sendEvent('precallView:submit');
+            }
+          }
         }
 
         otHelper.initPublisher('video-preview', publisherOptions)

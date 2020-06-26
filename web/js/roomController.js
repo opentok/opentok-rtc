@@ -29,7 +29,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     roomMuted: false
   };
 
-  var userName = null;
+  var userName = window.userName;
   var roomURI = null;
   var resolutionAlgorithm = null;
   var debugPreferredResolution = null;
@@ -762,7 +762,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
 
     // Recover user identifier
     var params = Utils.parseSearch(document.location.search);
-    var usrId = params.getFirstValue('userName');
+    var usrId = window.userName || params.getFirstValue('userName');
     resolutionAlgorithm = params.getFirstValue('resolutionAlgorithm');
     debugPreferredResolution = params.getFirstValue('debugPreferredResolution');
     enableHangoutScroll = params.getFirstValue('enableHangoutScroll') !== undefined;
@@ -771,7 +771,6 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     .then(function (info) {
       info.roomURI = roomURI;
       RoomView.showRoom();
-      RoomView.roomName = roomName;
       RoomView.roomURI = roomURI;
       publisherOptions.publishAudio = info.publisherOptions.publishAudio;
       publisherOptions.publishVideo = info.publisherOptions.publishVideo;
@@ -828,6 +827,14 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
   var init = function () {
     LazyLoader.load(modules)
     .then(function () {
+      Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
+      Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
+      Utils.addEventsHandlers('precallView:', {
+        submit: function () {
+          // Jeff to do: The room logic should go here, not in PrecallController.
+        }
+      });
+
       return PrecallController.init();
     })
     .then(function () {
@@ -860,8 +867,6 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
       return loadAnnotations.then(function () { return aParams; });
     })
   .then(function (aParams) {
-    Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
-    Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
     RoomView.init(enableHangoutScroll, enableArchiveManager, enableSip);
     // Init this controller before connect to the session
     // to start receiving signals about archives updates
