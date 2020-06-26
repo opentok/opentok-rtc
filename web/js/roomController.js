@@ -714,19 +714,6 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     }
   };
 
-  function loadHotjar () {
-    if (enableFeedback && hotjarId && hotjarVersion) {
-      (function (h, o, t, j, a, r) {
-        h.hj = h.hj || function () { (h.hj.q = h.hj.q || []).push(arguments) };
-        h._hjSettings = { hjid: hotjarId, hjsv: hotjarVersion };
-        a = o.getElementsByTagName('head')[0];
-        r = o.createElement('script'); r.async = 1;
-        r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
-        a.appendChild(r);
-      })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
-    }
-  }
-
   function showMobileShareUrl() {
     navigator.share({
       title: 'Invite Participant',
@@ -968,8 +955,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
         .catch(function (error) {
           debug.error('Error Connecting to room. ' + error.message);
         });
-    })
-  .then(loadHotjar());
+    });
   };
 
   var RoomController = {
