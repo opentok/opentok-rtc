@@ -114,7 +114,7 @@
     }
     Promise.all(templatePromises).then(function (htmlStrings) {
       htmlStrings.forEach(function (aHTML) {
-        document.body.innerHTML += aHTML;
+        document.body.insertAdjacentHTML('afterbegin', aHTML);
       });
 
       if (isMobile()) {
