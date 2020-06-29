@@ -33,6 +33,7 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
 
   var _unreadMsg = 0;
   var _chatHasBeenShown = false;
+  var chatVisible = false;
 
   var MODAL_TXTS = {
     mute: {
@@ -104,13 +105,14 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
   };
 
   function setUnreadMessages(count) {
-    _unreadMsg = count;
-    // document.getElementById('unreadMsg').style.display = count === 0 ? 'none' : 'block';
-    unreadCountElem.textContent = count;
-    // HTMLElems.flush(unreadCountElem.parentElement);
+    if (!chatVisible) {
+      _unreadMsg = count;
+      unreadCountElem.textContent = (count === 0) ? '' : '(' + count + ')';
+    }
   }
 
   function setChatStatus(visible) {
+    chatVisible = visible;
     if (visible) {
       _chatHasBeenShown = true;
       setUnreadMessages(0);
@@ -129,10 +131,10 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
 
   var chatViews = {
     unreadMessage: function () {
-      setUnreadMessages(_unreadMsg + 1);
       if (!_chatHasBeenShown) {
         setChatStatus(true);
       }
+      setUnreadMessages(_unreadMsg + 1);
     },
     hidden: function () {
       Utils.sendEvent('roomView:screenChange');
