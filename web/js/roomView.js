@@ -9,7 +9,6 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
   var handler;
   var callControlsElem;
   var feedbackButton;
-  var roomNameElem;
   var togglePublisherVideoElem;
   var togglePublisherAudioElem;
   var startArchivingElem;
@@ -264,7 +263,6 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
     handler = dock;
     callControlsElem = document.querySelector('.call-controls');
     feedbackButton = document.querySelector('.feedbackButton');
-    roomNameElem = dock.querySelector('.room-name');
     participantsStrElem = document.getElementById('participantsStr');
     recordingsNumberElem = dock.querySelector('#recordings');
     videoSwitch = dock.querySelector('#videoSwitch');
