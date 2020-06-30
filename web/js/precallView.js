@@ -44,9 +44,13 @@
     }
 
     var userNameInputElement = document.getElementById('user-name-input');
-    userNameInputElement.addEventListener('keyup', function keyupHandler() {
-      document.querySelector('#enter-name-prompt label').classList.add('visited');
-      userNameInputElement.removeEventListener('keyup', keyupHandler);
+    userNameInputElement.addEventListener('keypress', function keypressHandler(event) {
+      document.querySelector('.user-name-input-container').classList.add('visited');
+      userNameInputElement.removeEventListener('keypress', keypressHandler);
+    });
+
+    userNameInputElement.addEventListener('change', function changeHandler() {
+      // sconsole.lgo
     });
 
     document.querySelector('.user-name-modal').addEventListener('click', function () {
