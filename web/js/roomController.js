@@ -723,6 +723,24 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
       .catch(function (error) { console.log('Error sharing', error); });
   }
 
+  function addClipBoardFeature(selector) {
+    const inviteLinkBtn = document.getElementById('copyInviteLinkBtn');
+    const inputElem = document.getElementById('current-url');
+    if (inputElem && inputElem.textContent) {
+      navigator.clipboard.writeText(inputElem.textContent.trim())
+        .then(() => {
+          if (inviteLinkBtn.innerText !== 'Copied!') {
+            const originalText = inviteLinkBtn.innerText;
+            inviteLinkBtn.innerText = 'Copied!';
+            setTimeout(() => {
+              Modal.hide(selector);
+              inviteLinkBtn.innerText = originalText;
+            }, 2000)
+          }
+        });
+    }
+  }
+
   function showAddToCallModal() {
     var selector = '.add-to-call-modal';
     return Modal.show(selector).then(function () {
@@ -731,14 +749,16 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
         enterButton && enterButton.addEventListener('click', function onClicked(event) {
           event.preventDefault();
           enterButton.removeEventListener('click', onClicked);
-          return Modal.hide(selector)
-            .then(function () {
-              resolve(document.querySelector(selector + ' input').value.trim());
-            });
-        });
+          if (enterButton.id = "copyInviteLinkBtn") {
+            addClipBoardFeature(selector);
+          } else {
+            Modal.hide(selector);
+          }
+          resolve();
       });
     });
-  }
+  });
+}
 
   function getRoomParams() {
     if (!exports.RoomController) {

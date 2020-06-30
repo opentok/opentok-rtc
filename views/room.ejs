@@ -232,24 +232,21 @@
         <i data-icon="close_gray" class="close"></i>
         <section id="screenShareErrorMsg">
           <header class="errorTitle"></header>
-          <hr>
           <p class="errorDescription"></p>
         </section>
         <section id="screenShareErrorInstall">
           <header>You need a Chrome extension to share your screen.</header>
-            <hr>
             <p>Once you have installed it, refresh your browser and click 'share screen' again.</p>
             <footer>
-              <button class="btn btn-purple btn-padding ctaarrow-white delete-archive">Install extension</button>
+              <button class="btn btn-purple btn-padding delete-archive">Install extension</button>
             </footer>
         </section>
         <section id="extInstallationSuccessful">
           <header>You need a Chrome extension to share your screen.</header>
-          <hr>
           <p>Once you have installed it, refresh your browser and click 'share screen' again.</p>
           <footer>
-            <button id="scrShrLater" class="btn btn-white btn-padding ctaarrow-blue">Later</button>
-            <button id="scrShrReload" class="btn btn-purple btn-padding ctaarrow-white">Reload</button>
+            <button id="scrShrLater" class="btn btn-white btn-padding">Later</button>
+            <button id="scrShrReload" class="btn btn-purple btn-padding">Reload</button>
           </footer>
         </section>
       </div>
@@ -346,11 +343,10 @@
       <form class="tc-dialog">
         <i data-icon="close_gray" class="close"></i>
         <header>Delete <span class="username"></span>'s Archive</header>
-        <hr>
         <p>Are you sure you want to delete this archive?</p>
         <footer>
-          <button class="btn btn-white btn-padding ctaarrow-blue">Cancel</button>
-          <button class="btn btn-purple btn-padding ctaarrow-white delete-archive">Delete</button>
+          <button class="btn btn-white btn-padding">Cancel</button>
+          <button class="btn btn-black btn-padding delete-archive">Delete</button>
         </footer>
       </form>
     </section>
@@ -364,12 +360,9 @@
           </div>
         </header>
         <secton class="dialog-content">
-          <div class="meeting-link">
-            <input class="current-url" readonly id="current-url">
-            <div class="copied-message">
-              <span>copied to clipboard!</span>
-            </div>
-          </div>
+          <p>Copy the link below and send it to a family member, friend, or coworker!</p>
+          <p class="current-url" readonly id="current-url"></p>
+          <button id="copyInviteLinkBtn" class="btn btn-black btn-padding"> Copy</button>
           <%   if(hasSip) { %>
           <div class="google-sign-in-note-container">
             <div class="google-sign-in-note">
@@ -379,7 +372,7 @@
           </div>
           <form id="dialOutForm">
             <input id="dialOutNumber" class="phoneNumber" required>
-            <button id="dialOutBtn" class="btn btn-purple btn-padding">Dial</button>
+            <button id="dialOutBtn" class="btn btn-black btn-padding">Dial</button>
           </form>
           <% } %>
       </secton>
@@ -390,11 +383,10 @@
       <form class="tc-dialog">
         <i data-icon="close_gray" class="close"></i>
         <header><span class="msg"></span></header>
-        <hr>
         <p class="detail"></p>
         <select id="select-devices" class="devices"></select>
         <footer>
-          <button class="btn btn-purple btn-padding ctaarrow-white accept"></button>
+          <button class="btn btn-black btn-padding accept"></button>
         </footer>
       </form>
     </section>

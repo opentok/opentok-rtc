@@ -61,13 +61,13 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
     },
     lock: {
       head: 'Lock Meeting',
-      detail: 'When a meeting room is locked no additional participants will be allowed to join the meeting. ' +
+      detail: 'When a meeting room is locked, no additional participants will be allowed to join the meeting. ' +
               'Current participants who leave the meeting will not be allowed back in.',
       button: 'Lock Meeting'
     },
     endCall: {
       head: 'Leave the Meeting',
-      detail: 'Are you sure you want to leave the Vonage Free Conferencing meeting room? <br>' +
+      detail: 'Are you sure you want to leave the Vonage Free Conferencing meeting room? ' +
               'The call will continue with the remaining participants.',
       button: 'Leave meeting'
     },
@@ -679,21 +679,9 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
   }
 
   var getURLtoShare = function () {
-    return window.location.origin + window.location.pathname;
-  };
-
-  var addClipboardFeature = function () {
-    var input = document.getElementById('current-url');
-    input.addEventListener('click', function () {
-      input.select();
-    });
-    var urlToShare = getURLtoShare();
-    input.value = urlToShare;
-    var clipboard = new Clipboard(document.querySelector('#addToCall'), { // eslint-disable-line no-unused-vars
-      text: function () {
-        return urlToShare;
-      }
-    });
+    var textArea = document.getElementById('current-url');
+    var urlToShare = window.location.origin + window.location.pathname;
+    textArea.innerHTML = urlToShare;
   };
 
   var init = function (enableHangoutScroll, aEnableArchiveManager, aEnableSip) {
@@ -702,7 +690,7 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
     dock.style.visibility = 'visible';
     enableSip = aEnableSip;
     addHandlers();
-    addClipboardFeature();
+    getURLtoShare();
     LayoutManager.init('.streams', enableHangoutScroll);
   };
 
