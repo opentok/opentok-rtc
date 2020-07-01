@@ -15,7 +15,7 @@
     return new Promise(function (resolve) {
       var tosTemplate = new EJSTemplate({ url: '/templates/tos.ejs' });
       tosTemplate.render().then(function (aHTML) {
-        document.body.innerHTML += aHTML;
+        document.body.insertAdjacentHTML('afterbegin', aHTML);
         resolve();
       });
     });
@@ -25,7 +25,7 @@
     return new Promise(function (resolve) {
       var tosTemplate = new EJSTemplate({ url: '/templates/unavailable.ejs' });
       tosTemplate.render().then(function (aHTML) {
-        document.body.innerHTML += aHTML;
+        document.body.insertAdjacentHTML('afterbegin', aHTML);
         resolve();
       });
     });
