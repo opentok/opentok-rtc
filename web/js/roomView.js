@@ -60,15 +60,14 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
       button: 'I understand'
     },
     lock: {
-      head: 'Lock Meeting',
+      head: 'Do you want to lock the meeting?',
       detail: 'When a meeting room is locked, no additional participants will be allowed to join the meeting. ' +
               'Current participants who leave the meeting will not be allowed back in.',
       button: 'Lock Meeting'
     },
     endCall: {
-      head: 'Leave the Meeting',
-      detail: 'Are you sure you want to leave the Vonage Free Conferencing meeting room? ' +
-              'The call will continue with the remaining participants.',
+      head: 'Do you want to leave the meeting?',
+      detail: 'The call will continue with the remaining participants.',
       button: 'Leave meeting'
     },
     endLockedCall: {
