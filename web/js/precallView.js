@@ -49,10 +49,6 @@
       userNameInputElement.removeEventListener('keypress', keypressHandler);
     });
 
-    userNameInputElement.addEventListener('change', function changeHandler() {
-      // sconsole.lgo
-    });
-
     document.querySelector('.user-name-modal').addEventListener('click', function () {
       userNameInputElement.focus();
     });
