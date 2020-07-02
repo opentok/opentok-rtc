@@ -508,19 +508,27 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
           setChatStatus(!messageButtonElem.classList.contains('activated'));
           break;
         case 'endCall':
-          var modalTxt = RoomView.lockState === 'locked' ? MODAL_TXTS.endLockedCall : MODAL_TXTS.endCall;
-          Modal.showConfirm(modalTxt).then(function (accept) {
-            if (accept.altHasAccepted) {
-              RoomView.participantsNumber = 0;
-              Utils.sendEvent('roomView:endCall');                   
-            } else if (accept) {
-              Utils.sendEvent('roomView:setRoomLockState', 'unlocked');
-              setTimeout(function() {
+          if (RoomView.lockState === 'locked') {
+            Modal.showConfirm(MODAL_TXTS.endLockedCall).then(function (accept) {
+              if (accept.altHasAccepted) {
                 RoomView.participantsNumber = 0;
-                Utils.sendEvent('roomView:endCall'); 
-              }, 3000);  
-            }
-          });
+                Utils.sendEvent('roomView:endCall');
+              } else if (accept) {
+                Utils.sendEvent('roomView:setRoomLockState', 'unlocked');
+                setTimeout(function () {
+                  RoomView.participantsNumber = 0;
+                  Utils.sendEvent('roomView:endCall');
+                }, 3000);
+              }
+            });
+          } else {
+            Modal.showConfirm(MODAL_TXTS.endCall).then(function (accept) {
+              if (accept) {
+                RoomView.participantsNumber = 0;
+                Utils.sendEvent('roomView:endCall');
+              }
+            });
+          }
           break;
       }
     });
