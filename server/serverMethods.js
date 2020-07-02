@@ -291,7 +291,7 @@ function ServerMethods(aLogLevel, aModules) {
   }
   function getMeetingCompletion(aReq, aRes) {
     logger.log('getMeetingCompletion ' + aReq.path);
-    aRes.render('meetingComplete.ejs', {
+    aRes.render('endMeeting.ejs', {
       hotjarId: aReq.tbConfig.hotjarId,
       hotjarVersion: aReq.tbConfig.hotjarVersion,
       enableFeedback: aReq.tbConfig.enableFeedback,
