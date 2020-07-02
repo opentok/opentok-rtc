@@ -42,8 +42,13 @@ a {
   display: flex;
   justify-content: space-around;
   padding: 0 58px;
-  overflow-y: scroll;
-
+  overflow: scroll;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE 10+ */
+  &::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* Chrome/Safari/Webkit */
+    }
   form {
     display: flex;
     flex-direction: column;
