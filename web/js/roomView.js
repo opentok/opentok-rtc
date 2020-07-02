@@ -523,13 +523,7 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
             });
           } else {
             Modal.showConfirm(MODAL_TXTS.endCall).then(function (accept) {
-              if (accept.altHasAccepted) {
-                Utils.sendEvent('roomView:setRoomLockState', 'unlocked');
-                setTimeout(function () {
-                  RoomView.participantsNumber = 0;
-                  Utils.sendEvent('roomView:endCall');
-                }, 3000);
-              } else if (accept) {
+              if (accept) {
                 RoomView.participantsNumber = 0;
                 Utils.sendEvent('roomView:endCall');
               }
