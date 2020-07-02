@@ -60,22 +60,21 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
       button: 'I understand'
     },
     lock: {
-      head: 'Lock Meeting',
-      detail: 'When a meeting room is locked, no additional participants will be allowed to join the meeting. ' +
+      head: 'Do you want to lock the meeting?',
+      detail: 'When a meeting room is locked, no one else will be allowed to join the meeting. ' +
               'Current participants who leave the meeting will not be allowed back in.',
       button: 'Lock Meeting'
     },
     endCall: {
-      head: 'Leave the Meeting',
-      detail: 'Are you sure you want to leave the Vonage Free Conferencing meeting room? ' +
-              'The call will continue with the remaining participants.',
+      head: 'Do you want to leave the meeting?',
+      detail: 'The meeting will continue with the remaining participants.',
       button: 'Leave meeting'
     },
     endLockedCall: {
-      head: 'Leave the Meeting',
-      detail: 'The Vonage Free Conferencing Meeting Room you are leaving is locked. Do you want to unlock it before leaving?',
-      button: 'Leave',
-      altButton: 'Unlock and Leave'
+      head: 'Do you want to unlock the meeting before leaving?',
+      detail: 'The meeting will continue with the remaining participants. When a meeting room is locked, no one else will be allowed to join or re-join the meeting.',
+      button: 'Unlock and Leave',
+      altButton: 'Leave Without Unlocking'
     },
     sessionDisconnected: {
       head: 'Session disconected',
@@ -512,15 +511,14 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
           var modalTxt = RoomView.lockState === 'locked' ? MODAL_TXTS.endLockedCall : MODAL_TXTS.endCall;
           Modal.showConfirm(modalTxt).then(function (accept) {
             if (accept.altHasAccepted) {
+              RoomView.participantsNumber = 0;
+              Utils.sendEvent('roomView:endCall');                   
+            } else if (accept) {
               Utils.sendEvent('roomView:setRoomLockState', 'unlocked');
               setTimeout(function() {
                 RoomView.participantsNumber = 0;
                 Utils.sendEvent('roomView:endCall'); 
-              }, 3000);         
-            }
-            else if (accept) {
-              RoomView.participantsNumber = 0;
-              Utils.sendEvent('roomView:endCall');
+              }, 3000);  
             }
           });
           break;
