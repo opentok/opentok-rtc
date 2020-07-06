@@ -75,10 +75,12 @@
     Array.prototype.map.call(fields, function (field) {
       field.value = '';
       field.checked = false;
-      user.focus();
-      user.addEventListener('keyup', onKeyup);
-      room.addEventListener('focus', onFocus);
-      user.addEventListener('focus', onFocus);
+      if (user) {
+        user.focus();
+        user.addEventListener('keyup', onKeyup);
+        user.addEventListener('focus', onFocus);
+      }
+      if (room) room.addEventListener('focus', onFocus);
     });
   };
 

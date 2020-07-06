@@ -325,11 +325,19 @@ function ServerMethods(aLogLevel, aModules) {
     }
   }
   function getMeetingCompletion(aReq, aRes) {
+    var language = getUserLanguage(accepts(aReq).languages());
+    var country = getUserCountry(aReq);
     logger.log('getMeetingCompletion ' + aReq.path);
     aRes.render('endMeeting.ejs', {
       hotjarId: aReq.tbConfig.hotjarId,
       hotjarVersion: aReq.tbConfig.hotjarVersion,
       enableFeedback: aReq.tbConfig.enableFeedback,
+      adobeTrackingUrl: aReq.tbConfig.adobeTrackingUrl,
+      ATPrimaryCategory: aReq.tbConfig.ATPrimaryCategory,
+      ATSiteIdentifier: aReq.tbConfig.ATSiteIdentifier,
+      ATFunctionDept: aReq.tbConfig.ATFunctionDept,
+      userLanguage: language,
+      userCountry: country,
     }, (err, html) => {
       if (err) {
         logger.error('getMeetingCompletion. error: ', err);
