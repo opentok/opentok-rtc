@@ -20,11 +20,6 @@ var server =
      extensions: ['jpg'],
      index: false,
      redirect: false,
-     setHeaders: function(res, path) {
-       if (path.indexOf('/images/background.jpg') > -1) {
-         res.set('Cache-Control', 'max-age=31536000')
-       }
-     }
    }
  });
 

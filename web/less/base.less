@@ -10,6 +10,8 @@ html {
   color: @text;
   font-family: @baseFontFamily;
   font-weight: @baseFontWeight;
+  background-color: #151515;
+
 }
 
 body.forbidden {
@@ -34,6 +36,10 @@ label {
   opacity: 0;
   transition: opacity @transitionTime;
 
+  &.visible {
+    z-index: 2000000;
+  }
+
   &.show {
     display: block;
     opacity: 1;
@@ -47,14 +53,17 @@ label {
     transform: translateY(100%);
     transition: transform @transitionTime;
     padding: 40px;
-    text-align: center;
+    text-align: left;
+    font-family: @baseFontFamily;
+    font-style: normal;
+    margin-left: 55px;
 
     // Fixed maximum width in the pop up containers of 280px + 180px of padding
-    max-width: 460px;
+    max-width: 470px;
 
     .close {
-      width: 20px;
-      height: 20px;
+      width: 12px;
+      height: 12px;
       position: absolute;
       top: 21px;
       right: 18.9px;
@@ -62,20 +71,19 @@ label {
     }
 
     header {
-      font-size: 16px;
-      color: #4f4f4f;
-    }
-
-    header, p {
-      margin: 0;
-      padding: 0;
+      font-weight: 500;
+      font-size: 23px;
+      line-height: 26px;
+      letter-spacing: -1px;
+      color: #404040;
+      margin-bottom: 10px;
     }
 
     hr {
       border: 0;
       background: @blueText;
       height: 1px;
-      width: 60%;
+      width: 100%;
       margin-top: 15px;
       margin-bottom: 15px;
     }
@@ -85,13 +93,20 @@ label {
     }
 
     p {
-      color: #9b9b9b;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 21px;
+      color: #131415;
+      margin-bottom: 10px;
     }
 
     .btn {
       height: 35px;
       line-height: 35px;
-      margin: 0 10px;
+      font-weight: 600;
+      font-size: 12px;
+      line-height: 16px;
+      color: #FFFFFF;
     }
   }
 }
@@ -102,22 +117,21 @@ label {
 }
 
 .bold {
-  font-weight: 700;
+  font-weight: 600;
 }
 
 input, textarea {
   font-family: @baseFontFamily;
-
-  display: inline-block;
-
-  border: 1px solid #c5bbb4;
   resize: none;
-  margin: 5px;
-  padding: 12px 10px;
+  display: inline-block;
+  border: 1px solid #c5bbb4;
   width: 270px;
   font-size: 16px;
+  @media @smartphonesPortrait {
+    font-size: 10px;
+    width: 200px;
+  }
 }
-
 .hidden {
   display: none !important;
 }
@@ -150,7 +164,6 @@ input, textarea {
 
   .btn {
     font-size: 14px;
-    margin: 0px;
     text-align: left;
     background: #131415;
     border-radius: 6px;

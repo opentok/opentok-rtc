@@ -15,7 +15,7 @@
     return new Promise(function (resolve) {
       var tosTemplate = new EJSTemplate({ url: '/templates/tos.ejs' });
       tosTemplate.render().then(function (aHTML) {
-        document.body.innerHTML += aHTML;
+        document.body.insertAdjacentHTML('afterbegin', aHTML);
         resolve();
       });
     });
@@ -25,7 +25,7 @@
     return new Promise(function (resolve) {
       var tosTemplate = new EJSTemplate({ url: '/templates/unavailable.ejs' });
       tosTemplate.render().then(function (aHTML) {
-        document.body.innerHTML += aHTML;
+        document.body.insertAdjacentHTML('afterbegin', aHTML);
         resolve();
       });
     });
@@ -33,16 +33,13 @@
 
   var performInit = function () {
     enterButton = document.getElementById('enter');
-    room = document.getElementById('room');
     user = document.getElementById('user');
     form = document.querySelector('form');
     roomLabelElem = document.getElementById('room-label');
     userLabelElem = document.getElementById('user-label');
     errorMessage = document.querySelector('.error-room');
     resetForm();
-    roomLabelElem.classList.add('visited');
-    room.value = roomName;
-    addHandlers();
+    // addHandlers();
     if (window.location.hostname.indexOf('opentokrtc.com') === 0) {
       document.querySelector('.safari-plug').style.display = 'block';
     }

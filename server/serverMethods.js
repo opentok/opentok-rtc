@@ -324,7 +324,21 @@ function ServerMethods(aLogLevel, aModules) {
       aNext();
     }
   }
-
+  function getMeetingCompletion(aReq, aRes) {
+    logger.log('getMeetingCompletion ' + aReq.path);
+    aRes.render('endMeeting.ejs', {
+      hotjarId: aReq.tbConfig.hotjarId,
+      hotjarVersion: aReq.tbConfig.hotjarVersion,
+      enableFeedback: aReq.tbConfig.enableFeedback,
+    }, (err, html) => {
+      if (err) {
+        logger.error('getMeetingCompletion. error: ', err);
+        aRes.status(500).send(new ErrorInfo(500, 'Invalid Template'));
+      } else {
+        aRes.send(html);
+      }
+    });
+  }
   function getRoomArchive(aReq, aRes) {
     logger.log('getRoomArchive ' + aReq.path, 'roomName: ' + aReq.params.roomName);
     var tbConfig = aReq.tbConfig;
@@ -414,6 +428,9 @@ function ServerMethods(aLogLevel, aModules) {
         hotjarId: aReq.tbConfig.hotjarId,
         hotjarVersion: aReq.tbConfig.hotjarVersion,
         enableFeedback: aReq.tbConfig.enableFeedback,
+        opentokJsUrl: aReq.tbConfig.opentokJsUrl,
+        enablePrecallTest: aReq.tbConfig.enablePrecallTest,
+        enterButtonLabel: 'Start Meeting',
       }, (err, html) => {
         if (err) {
           logger.error('getRoot. error: ', err);
@@ -428,14 +445,11 @@ function ServerMethods(aLogLevel, aModules) {
     return roomBlackList.includes(name.trim().toLowerCase());
   }
 
-  // Return the personalized HTML for a room.
-  async function getRoom(aReq, aRes) {
+  // Finish the call to getRoom and postRoom
+  async function finshGetPostRoom(aReq, aRes, routedFromStartMeeting) {
     var meetingAllowed = await isMeetingAllowed(aReq);
     var query = aReq.query;
 
-    logger.log('getRoom serving ' + aReq.path, 'roomName:', aReq.params.roomName,
-               'userName:', query && query.userName,
-               'template:', query && query.template);
     if (isInBlacklist(aReq.params.roomName)) {
       logger.log('getRoom. error:', `Blacklist found '${aReq.params.roomName}'`);
       return aRes.status(404).send(null);
@@ -443,7 +457,7 @@ function ServerMethods(aLogLevel, aModules) {
     var tbConfig = aReq.tbConfig;
     var template = query && tbConfig.templatingSecret &&
       (tbConfig.templatingSecret === query.template_auth) && query.template;
-    var userName = query && query.userName;
+    var userName = (aReq.body && aReq.body.userName) || (query && query.userName) || '';
     var language = getUserLanguage(accepts(aReq).languages());
     var country = getUserCountry(aReq);
 
@@ -499,6 +513,9 @@ function ServerMethods(aLogLevel, aModules) {
           hotjarId: tbConfig.hotjarId,
           hotjarVersion: tbConfig.hotjarVersion,
           enableFeedback: tbConfig.enableFeedback,
+          enterButtonLabel: 'Join Meeting',
+          routedFromStartMeeting: Boolean(routedFromStartMeeting),
+          userName,
         }, (err, html) => {
           if (err) {
             logger.log('getRoom. error:', err);
@@ -508,6 +525,24 @@ function ServerMethods(aLogLevel, aModules) {
           }
         });
     });
+  }
+
+  // Finish the call to getRoom and postRoom
+  function getRoom(aReq, aRes, routedFromStartMeeting) {
+    var query = aReq.query;
+
+    logger.log('getRoom serving ' + aReq.path, 'roomName:', aReq.params.roomName,
+               'userName:', query && query.userName,
+               'template:', query && query.template);
+
+    finshGetPostRoom(aReq, aRes, false);
+  };
+  
+  // Return the personalized HTML for a room when directed from the root.
+  function postRoom(aReq, aRes) {
+    logger.log('postRoom serving ' + aReq.path, 'roomName:', aReq.params.roomName,
+      'body:', aReq.body);
+    finshGetPostRoom(aReq, aRes, true);
   }
 
   // Given a sessionInfo (which might be empty or non usable) returns a promise than will fullfill
@@ -1075,6 +1110,7 @@ function ServerMethods(aLogLevel, aModules) {
     lockRoom,
     getRoot,
     getRoom,
+    postRoom,
     getRoomInfo,
     postRoomArchive,
     postUpdateArchiveInfo,
@@ -1089,6 +1125,7 @@ function ServerMethods(aLogLevel, aModules) {
     saveConnectionFirebase,
     deleteConnectionFirebase,
     setSecurityHeaders,
+    getMeetingCompletion,
   };
 }
 

@@ -85,6 +85,34 @@ paths:
           description: Unknown template
           schema:
             $ref: '#/definitions/ErrorInfo'
+    post:
+      summary: Connects to a new room when routed from the root page.
+      x-implemented-in: postRoom
+      consumes:
+        - application/json
+      produces:
+        - 'text/html,'
+      description: >-
+        Returns an HTML document that shows the defined UI for a chat 'room'
+        where the user may or may not have specified an identity. The document
+        returned will NOT have any of the information needed to connect to the
+        Tokbox servers already factored in. 
+      parameters:
+        - name: roomName
+          description: Name of the room.
+          in: path
+          type: string
+          required: true
+        - name: userName
+          description: Name/Id of the user that is connecting.
+          in: formData
+          type: string
+          required: true
+      responses:
+        '200':
+          description: The HTML for the room
+          schema:
+            $ref: '#/definitions/RoomHTML'
   /updateArchiveInfo:
     post:
       summary: Callback for the OpenTok Archive API.
@@ -392,6 +420,17 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/ErrorInfo'
+  '/thanks':
+    get:
+      summary: Gets the meeting post completion page.
+      x-implemented-in: getMeetingCompletion
+      produces:
+        - 'text/html'
+      description: >-
+        Returns a customized post completion page when the /thanks is accessed.
+      responses:
+        '200':
+          description: The HTML for the meeting completion page
   '/server/health':
     get:
       summary: >-

@@ -1,124 +1,135 @@
-<section class="tc-modal user-name-modal">
-  <a href="https://vonage.com" title="Vonage" target="_blank">
-    <img id="logo" src="../images/vonage-logo.svg" alt="vonage transparent logo">
-  </a>
-  <div class="precall-right">
-    <form class="tc-dialog">
-      <div id="video-preview">
-        <div id="video-preview-name"></div>
+<div class="main">
+  <div id="lefthand-container">
+    <header>
+      <a href="http://www.vonage.com" target="_blank">
+        <img src="/images/vonage-logo-no-text.svg" alt="Vonage logo">
+      </a>
+      <h2>
+        Vonage
+        <br>
+        Free Conferencing
+      </h2>
+      <p>
+        Host free group video calls with friends, family, teammates&mdash;anyone!
+      </p>
+    </header>
+    <footer>
+      <a href="https://www.vonage.com/solutions/" target="_blank">Solutions for when the unexpected happens</a>
+    </footer>
+</div>
+<div id="righthand-container" class="user-name-modal">
+  <div class="landing-more-info">
+    Need help? <a href="Vonage-Free-Conferencing-help.pdf" target="_blank">Read our FAQs</a>
+  </div>
+  <form method="post">
+    <div id="video-preview">
+    </div>
+    <div id="enter-name-prompt">
+      <div class="user-name-input-container">
+        <input id="user-name-input" class="block username" name="userName" autocomplete="off" autofocus maxlength="46">
+        <label>Your name (optional)</label>
       </div>
-      <div id="enter-name-prompt">
+    </div>
+    <div class="publish-settings">
+      <div id="video-settings">
         <div>
-          <input id="user-name-input" class="block username" autocomplete="off" autofocus maxlength="25">
-          <label>Your Name (Optional)</label>
+          <img src="/images/icons/Vlt-icon-video-active-full.svg" />
+          <span>Camera</span>
+        </div>
+        <div class="right-settings">
+          <div class="sourcePick switch-button" id="video-switch">
+            <a id="preToggleFacingMode"> Switch </a>
+          </div>
+          <a id="initialVideoSwitch" class="activated">
+            <label>On</label>
+            <i data-icon="videoSwitch"></i>
+          </a>
         </div>
       </div>
-      <div class="publish-settings">
-        <div id="video-settings">
-          <div>
-            <img src="/images/icons/video-icon.svg" />
-            <span>Camera</span>
-          </div>
-          <div class="right-settings">
-            <div class="sourcePick switch-button" id="video-switch">
-              <a id="preToggleFacingMode"> Switch </a>
-            </div>
-            <a id="initialVideoSwitch" class="activated">
-              <label>On</label>
-              <i data-icon="videoSwitch"></i>
-            </a>
-          </div>
-        </div>
-        <div id="audio-settings">
-          <div>
-            <img src="/images/icons/mic-icon.svg" />
-            <div id=audio-meter-container>
-              <span>Microphone</span>
-              <div id="audio-meter">
-                <div id="audio-meter-level">
-                </div>
+      <div id="audio-settings">
+        <div>
+          <img src="/images/icons/Vlt-icon-microphone-full.svg" />
+          <span>Microphone</span>
+          <div id=audio-meter-container>
+            <div id="audio-meter">
+              <div id="audio-meter-level">
               </div>
             </div>
           </div>
-          <div class="right-settings">
-            <div class="sourcePick switch-button" id="audio-switch">
-              <a id="prePickMic"> Switch </a>
-            </div>
-            <a id="initialAudioSwitch" class="activated">
-              <label>On</label>
-              <i data-icon="audioSwitch"></i>
-            </a>
-          </div>
         </div>
-        <div id="pre-call-test">
-          <div id="precall-test-labels">
-            <img src="/images/icons/connectivity-icon.svg" />
-            <span>Connectivity test</span>
-            <span id="test-status">
-              <label></label>
-              <button id="connectivity-cancel">
-                <i data-icon="connectivity-cancel"></i>
-              </button>
-            </span>
+        <div class="right-settings">
+          <div class="sourcePick switch-button" id="audio-switch">
+            <a id="prePickMic"> Switch </a>
           </div>
+          <a id="initialAudioSwitch" class="activated">
+            <label>On</label>
+            <i data-icon="audioSwitch"></i>
+          </a>
         </div>
-        <div id="precall-test-meter">
-          <div id="precall-test-meter-level">
-          </div>
-        </div>
-        <button id="enter" class="btn" type="submit" disabled>
-          <span>Join Meeting</span>
-        </button>
-        <div class="room-name"></div>
       </div>
-    </form>
-    <div class="info-links">
-      <div class="faq-link">
-       Need help? <a href="../Vonage-Free-Conferencing-help.pdf" target="_blank">Read our FAQs</a>
+      <% if (enablePrecallTest) { %>
+      <div id="pre-call-test">
+        <div id="precall-test-labels">
+          <img src="/images/icons/connectivity-icon.svg" />
+          <span>Connectivity test</span>
+          <span id="test-status">
+            <label></label>
+            <button id="connectivity-cancel">
+              <i data-icon="connectivity-cancel"></i>
+            </button>
+          </span>
+        </div>
+      </div>
+      <div id="precall-test-meter">
+        <div id="precall-test-meter-level">
+        </div>
+      </div>
+      <% } %>
+      <button id="enter" class="btn" type="submit" disabled>
+        <span><%=enterButtonLabel%></span>
+      </button>
+    </div>
+  </form>
+  <% if (enablePrecallTest) { %>
+  <div id="pre-call-test-results">
+    <i data-icon="close-box" id="precall-close"></i>
+    <i data-icon="precall-tick" id="precall-icon"></i>
+    <p id="pre-call-heading">Precall Test Results</p>
+    <p id="pre-call-description">
+      You can expect a great experience on your video call!
+    </p>
+    <div id="results">
+      <div id="precall-video-results" class="precall-media-results">
+        <p class="media-heading">
+          VIDEO QUALITY
+        </p>
+        <p class="bitrate">
+          <span id="video-bitrate"></span> Kbps
+        </p>
+        <p id="precall-resolution">
+        </p>
+        <p id="precall-framerate">
+        </p>
+        <p id="precall-video-packet-loss">
+        </p>
+      </div>
+      <div id="precall-audio-results" class="precall-media-results">
+        <p class="media-heading">
+          AUDIO QUALITY
+        </p>
+        <p class="bitrate">
+          <span id="audio-bitrate">40</span> Kbps
+        </p>
+        <p id="precall-audio-packet-loss">
+          0% packet loss
+        </p>
       </div>
     </div>
-    <div id="pre-call-test-results">
-      <i data-icon="close-box" id="precall-close"></i>
-      <i data-icon="precall-tick" id="precall-icon"></i>
-      <p id="pre-call-heading">Precall Test Results</p>
-      <p id="pre-call-description">
-        You can expect a great experience on your video call!
-      </p>
-      <div id="results">
-        <div id="precall-video-results" class="precall-media-results">
-          <p class="media-heading">
-            VIDEO QUALITY
-          </p>
-          <p class="bitrate">
-            <span id="video-bitrate"></span> Kbps
-          </p>
-          <p id="precall-resolution">
-          </p>
-          <p id="precall-framerate">
-          </p>
-          <p id="precall-video-packet-loss">
-          </p>
-        </div>
-        <div id="precall-audio-results" class="precall-media-results">
-          <p class="media-heading">
-            AUDIO QUALITY
-          </p>
-          <p class="bitrate">
-            <span id="audio-bitrate">40</span> Kbps
-          </p>
-          <p id="precall-audio-packet-loss">
-            0% packet loss
-          </p>
-        </div>
-      </div>
-      <div id="retest">
-        <i data-icon="precall-retest" id="precall-retest"></i>
-        Re-test
-      </div>
-    </div>
-    <div class="about-link">
-      <a href="http://www.vonage.com" target="_blank">About Vonage</a> |
-      <a href="https://www.vonage.com/solutions/" target="_blank">Communications are crucial during COVID-19</a>
+    <div id="retest">
+      <i data-icon="precall-retest" id="precall-retest"></i>
+      Re-test
     </div>
   </div>
-</section>
+  <% } %>
+</div>
+</div>
