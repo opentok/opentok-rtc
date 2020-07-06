@@ -48,5 +48,11 @@
   "enableMuteAll": true,
   "enableStopReceivingVideo": true,
   "maxUsersPerRoom": 0,
-  "enableRoomLocking": true
+  "enableRoomLocking": true,
+  "adobeTracking": {
+    "url": "",
+    "primaryCategory": "",
+    "siteIdentifier": "",
+    "functionDept": ""
+  }
 }

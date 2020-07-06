@@ -24,6 +24,10 @@
     <script defer type="text/javascript" src="/js/vendor/lazy_loader.js"></script>
     <script defer type="text/javascript" src="/js/rtcApp.js"></script>
 
+    <% if (adobeTrackingUrl) { %>
+    <script src="<%=adobeTrackingUrl%>" async></script>
+    <% } %>
+
     <script>
       window.isWebRTCVersion=<%=isWebRTCVersion%>;
       window.showTos=<%=showTos%> && !sessionStorage.tosAccepted;
@@ -80,5 +84,80 @@
       ga('create', 'UA-462500-32', 'auto');
       ga('send', 'pageview');
     </script>
+    <% if (adobeTrackingUrl) { %>
+    <script type="text/javascript">
+      var digitalData = {
+        page: {
+          pageInfo: {
+            pageName: '',
+            lob: 'biz',
+            functionDept: '<%=ATFunctionDept%>',
+            subCategory1: '',
+            subCategory2:'',
+            subCategory3: '',
+            primaryCategory: '<%=ATPrimaryCategory%>',
+            internalSearchTerm: '',
+            internalSearchResults: '',
+            error: '',
+            pageType: '',
+            language: '<%=userLanguage%>',
+            country: '<%=userCountry%>',
+            fileGatedType: '',
+            tollFreeNumber: '',
+            siteIdentifier: '<%=ATSiteIdentifier%>',
+            type: '',
+            pageCategory: '',
+            pageSubCategory: '',
+          },
+          content: {
+            name: '',
+            category: '',
+            author: '',
+            type: '',
+            publishDate: '',
+            subCategory: '',
+            topic: '',
+            industry: '',
+            businessSize: '',
+            profRole: '',
+            company: '',
+            product: '',
+          },
+        },
+        user: {
+          profile: {
+            profileInfo: {
+              targetExperience: '',
+              responsiveSiteVersion: 'desktop',
+              visitorType: 'prospect',
+              gaCampaign: '',
+            },
+          },
+        },
+        transaction: {
+          item: {
+            quantity: '',
+            price: '',
+            productInfo: '',
+          },
+        },
+        eventData: {
+          fIndustry: '',
+          fName: '',
+          fCTA: '',
+          fLines: '',
+          linesSlider: '',
+          interactionType: '',
+          events: '',
+        },
+      };
+      (function(){
+        var width = window.screen.width;
+        var responsive = ( width < 768 ) ? "mobile" : ( width < 960 ) ? "tablet" : "desktop";
+        digitalData.user.profile.profileInfo.responsiveSiteVersion = responsive;
+      })();
+      if (typeof _satellite !== "undefined") _satellite.pageBottom();
+    </script>
+    <% } %>
   </body>
 </html>
