@@ -21,19 +21,12 @@
       '/js/precallController.js',
       '/js/helpers/OTHelper.js'
     ]).then(function () {
-<<<<<<< HEAD
-      LandingView.init();
-      var otHelper = new OTHelper({});
-      PrecallController.showCallSettingsPrompt('', '', otHelper);
-      PrecallView.init();
-=======
       return LandingView.init();
     }).then(function () {
       return PrecallView.init();
     }).then(function () {
       var otHelper = new OTHelper({});
       PrecallController.showCallSettingsPrompt('', '', otHelper);
->>>>>>> upstream/rebrand
       addEventHandlers();
     });
   };
