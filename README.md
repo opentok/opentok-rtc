@@ -411,6 +411,21 @@ The app lets the developer POST feedback data to an endpoint on your HTTP server
 
   See the [Phone dial-out](#phone-dial-out) section.
 
+#### Adobe Analytics
+
+  The app lets the developer configure Adobe Analytics to track user information, the next env vars are needed:
+
+* `ADOBE_TRACKING_URL` (Optional, default value: ''): URL to download the custom embed code.
+
+* `ADOBE_TRACKING_PRIMARY_CATEGORY` (Optional, default value: ''): Value that will be included in Adobe Analytics
+  object field: `digitalData.page.pageInfo.primaryCategory`.
+
+* `ADOBE_TRACKING_SITE_IDENTIFIER` (Optional, default value: ''): Value that will be included in Adobe Analytics
+  object field: `digitalData.page.pageInfo.siteIdentifier`.
+
+* `ADOBE_TRACKING_FUNCTION_DEPT` (Optional, default value: ''): Value that will be included in Adobe Analytics
+  object field: `digitalData.page.pageInfo.functionDept`.
+
 ### Additional configuration options
 
 * `SHOW_TOS` (Optional, default value: false): Whether the app will display the terms of service

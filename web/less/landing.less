@@ -42,8 +42,18 @@ a {
   display: flex;
   justify-content: space-around;
   padding: 0 58px;
+<<<<<<< HEAD
   overflow-y: scroll;
 
+=======
+  overflow: scroll;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE 10+ */
+  &::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* Chrome/Safari/Webkit */
+  }
+>>>>>>> upstream/rebrand
   form {
     display: flex;
     flex-direction: column;
@@ -51,8 +61,14 @@ a {
 
     @media @smartphonesPortrait {
       width: 100%;
+<<<<<<< HEAD
       margin: 0;
       margin: 0;
+=======
+      height: 100%;
+      margin: 0;
+      margin-top: 35px;
+>>>>>>> upstream/rebrand
     }
 
     #video-preview {
@@ -127,10 +143,18 @@ a {
 
     input {
       background: none;
+<<<<<<< HEAD
       font-size: 14px;
       margin: 0;
       padding-top: 18px;
       padding-bottom: 8px;
+=======
+      font-size: 20px;
+      margin: 0;
+      padding-top: 10px;
+      padding-bottom: 8px;
+      padding-left: 10px;
+>>>>>>> upstream/rebrand
       width: 350px;
       color: white;
       border: 1px solid #FFFFFF;
@@ -140,6 +164,19 @@ a {
         width: 100%;
       }
       text-shadow: black 1px 1px 12px;
+    }
+
+    .user-name-input-container.visited {
+      input {
+        font-size: 14px;
+        padding-top: 18px;
+      }
+
+      label {
+        top: -17px;
+        font-size: 12px;
+        color: #909298;
+      }
     }
 
     textarea {
@@ -159,12 +196,15 @@ a {
       }
     }
 
+<<<<<<< HEAD
     label.visited {
       top: -17px;
       font-size: 12px;
       color: #909298;
     }
 
+=======
+>>>>>>> upstream/rebrand
     #room-label {
       @media @smartphonesPortrait {
         left: 6px;
@@ -290,7 +330,11 @@ a {
     margin-bottom: 12px;
     text-align: right;
     @media @smartphones {
+<<<<<<< HEAD
       position: absolute;
+=======
+      margin: 0 auto;
+>>>>>>> upstream/rebrand
       right: calc(50% - 80px);
       bottom: 45px;
       min-height: unset;
@@ -357,6 +401,10 @@ a {
     cursor: pointer;
     @media @smartphonesPortrait {
       width: 100%;
+<<<<<<< HEAD
+=======
+      margin: 0 0 12px 0;
+>>>>>>> upstream/rebrand
       font-size: 14px;
     }
   }
@@ -444,9 +492,18 @@ a {
   }
 
   #righthand-container {
+<<<<<<< HEAD
     height: 100%;
     margin-top: 102px;
     @media @smartphonesPortrait {
+=======
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin-top: 102px;
+    @media @smartphonesPortrait {
+      flex-direction: column-reverse;
+>>>>>>> upstream/rebrand
       margin-top: 35px;
     }
   }

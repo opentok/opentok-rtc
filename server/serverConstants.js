@@ -138,3 +138,11 @@ E.GOOGLE_HOSTED_DOMAIN = { envVar: 'GOOGLE_HOSTED_DOMAIN', jsonPath: 'Google.hos
 E.BLACKLIST = { envVar: 'BLACKLIST', jsonPath: 'blacklist', defaultValue: '' };
 
 E.SUPPORT_IE = { envVar: 'SUPPORT_IE', jsonPath: 'supportIE', defaultValue: true, parser: parseBool };
+
+E.ADOBE_TRACKING_URL = { envVar: 'ADOBE_TRACKING_URL', jsonPath: 'adobeTracking.url', defaultValue: '' };
+
+E.ADOBE_TRACKING_PRIMARY_CATEGORY = { envVar: 'ADOBE_TRACKING_PRIMARY_CATEGORY', jsonPath: 'adobeTracking.primaryCategory', defaultValue: '' };
+
+E.ADOBE_TRACKING_SITE_IDENTIFIER = { envVar: 'ADOBE_TRACKING_SITE_IDENTIFIER', jsonPath: 'adobeTracking.siteIdentifier', defaultValue: '' };
+
+E.ADOBE_TRACKING_FUNCTION_DEPT = { envVar: 'ADOBE_TRACKING_FUNCTION_DEPT', jsonPath: 'adobeTracking.functionDept', defaultValue: '' };

@@ -15,7 +15,7 @@
     return new Promise(function (resolve) {
       var tosTemplate = new EJSTemplate({ url: '/templates/tos.ejs' });
       tosTemplate.render().then(function (aHTML) {
-        document.body.innerHTML += aHTML;
+        document.body.insertAdjacentHTML('afterbegin', aHTML);
         resolve();
       });
     });
@@ -25,7 +25,7 @@
     return new Promise(function (resolve) {
       var tosTemplate = new EJSTemplate({ url: '/templates/unavailable.ejs' });
       tosTemplate.render().then(function (aHTML) {
-        document.body.innerHTML += aHTML;
+        document.body.insertAdjacentHTML('afterbegin', aHTML);
         resolve();
       });
     });
@@ -75,10 +75,12 @@
     Array.prototype.map.call(fields, function (field) {
       field.value = '';
       field.checked = false;
-      user.focus();
-      user.addEventListener('keyup', onKeyup);
-      room.addEventListener('focus', onFocus);
-      user.addEventListener('focus', onFocus);
+      if (user) {
+        user.focus();
+        user.addEventListener('keyup', onKeyup);
+        user.addEventListener('focus', onFocus);
+      }
+      if (room) room.addEventListener('focus', onFocus);
     });
   };
 

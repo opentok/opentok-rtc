@@ -299,6 +299,7 @@ body {
 
 #screen {
   position: relative;
+  visibility: hidden; 
   overflow: hidden;
   @media @smartphonesPortrait {
     margin-top: 58px;
@@ -337,69 +338,23 @@ body {
   }
 
   .tc-dialog {
-    padding: 0;
-    min-height: 350px;
-    width: 564px;
-    max-width: 564px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
-
-    @media @smartphonesPortrait {
-      position: absolute;
-      width: 98%;
-      top: 150px;
-      left: 1%;
-      margin: 0;
-    }
-
-    header {
-      .close {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        cursor: pointer;
-      }
-
-      .title {
-        font-size: 24px;
-        color: #404040;
-        height: 89px;
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-      }
-    }
-
-    .dialog-content {
-      padding: 35px;
-    }
-
-    .meeting-link {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      height: 100px;
-      border: 1px solid #e8e8e8;
-      box-sizing: border-box;
-      background-color: #fafbfc;
-      input {
-        background: none;
-      }
-    }
-    .current-url {
+    max-width: 710px;
+   .current-url {
       border: none;
-      text-align: center;
-      font-weight: @boldFontWeight;
-      width: 490px;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 21px;
+      text-decoration-line: underline;
+      color: #871FFF;
+      margin-bottom: 25px;
     }
-
-    .copied-message {
-      color: white;
-      width: 140px;
-      height: 26px;
-      border-radius: 10px;
-      background-color: #871FFF;
-      padding: 4px;
+    .btn {
+      min-width: 80px;
+      padding: 0px 20px 0px 30px;
+      background: url(../images/icons/Vlt-icon-copy.svg) 10px 50% no-repeat;
+      background-color: black;
+      cursor: pointer;
+      width: fit-content;
     }
 
     .google-sign-in-note-container {
@@ -671,11 +626,6 @@ body {
     padding: 10px;
     margin: 0;
     max-width: unset;
-  }
-
-  header, p {
-    margin: 0;
-    padding: 0;
   }
 
   header {
@@ -1210,15 +1160,6 @@ footer.main {
   text-align: right;
 }
 
-.room-name {
-  font-size: 13px;
-  margin: 6px 0 20px;
-  word-break: break-word;
-  display: block;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-
 #enter.btn {
   color: #fff;
   line-height: 18px;
@@ -1271,6 +1212,9 @@ body[data-annotation-visible=true]  {
       width: calc(100% - 10px);
       margin-bottom: 6px;
     }
+  }
+  .accept {
+    margin-right: 20px;
   }
 }
 

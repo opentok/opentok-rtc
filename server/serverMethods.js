@@ -20,6 +20,8 @@ var testHealth = require('./testHealth');
 var Haikunator = require('haikunator');
 var _ = require('lodash');
 var qs = require('qs');
+var accepts = require('accepts');
+var geoip = require('geoip-lite');
 
 function htmlEscape(str) {
   return String(str)
@@ -34,6 +36,29 @@ function htmlEscape(str) {
     .replace(/\\/g, '')
     .replace(/;/g, '');
 };
+
+function getUserLanguage(acceptedLanguages) {
+  let language = '';
+
+  if (acceptedLanguages && acceptedLanguages[0]) {
+    language = acceptedLanguages[0];
+
+    if (language.indexOf('-') !== -1) {
+      language = language.split('-')[0];
+    } else if (language.indexOf('_') !== -1) {
+      language = language.split('_')[0];
+    }
+  }
+
+  return language;
+}
+
+function getUserCountry(req) {
+  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  const geo = geoip.lookup(ip) || {};
+
+  return _.get(geo, 'country', '').toLowerCase();
+}
 
 function ServerMethods(aLogLevel, aModules) {
   aModules = aModules || {};
@@ -200,6 +225,12 @@ function ServerMethods(aLogLevel, aModules) {
                                     config.get(C.EMPTY_ROOM_LIFETIME), aLogLevel);
       _shutdownOldInstance(oldFirebaseArchivesPromise, firebaseArchivesPromise);
 
+      // Adobe tracking
+      var adobeTrackingUrl = config.get(C.ADOBE_TRACKING_URL);
+      var ATPrimaryCategory = config.get(C.ADOBE_TRACKING_PRIMARY_CATEGORY);
+      var ATSiteIdentifier = config.get(C.ADOBE_TRACKING_SITE_IDENTIFIER);
+      var ATFunctionDept = config.get(C.ADOBE_TRACKING_FUNCTION_DEPT);
+
       return firebaseArchivesPromise
               .then(firebaseArchives => ({
                 otInstance,
@@ -249,6 +280,10 @@ function ServerMethods(aLogLevel, aModules) {
                 jqueryUrl,
                 minMeetingNameLength,
                 maxUsersPerRoom,
+                adobeTrackingUrl,
+                ATPrimaryCategory,
+                ATSiteIdentifier,
+                ATFunctionDept,
               }));
     });
   }
@@ -290,11 +325,19 @@ function ServerMethods(aLogLevel, aModules) {
     }
   }
   function getMeetingCompletion(aReq, aRes) {
+    var language = getUserLanguage(accepts(aReq).languages());
+    var country = getUserCountry(aReq);
     logger.log('getMeetingCompletion ' + aReq.path);
-    aRes.render('meetingComplete.ejs', {
+    aRes.render('endMeeting.ejs', {
       hotjarId: aReq.tbConfig.hotjarId,
       hotjarVersion: aReq.tbConfig.hotjarVersion,
       enableFeedback: aReq.tbConfig.enableFeedback,
+      adobeTrackingUrl: aReq.tbConfig.adobeTrackingUrl,
+      ATPrimaryCategory: aReq.tbConfig.ATPrimaryCategory,
+      ATSiteIdentifier: aReq.tbConfig.ATSiteIdentifier,
+      ATFunctionDept: aReq.tbConfig.ATFunctionDept,
+      userLanguage: language,
+      userCountry: country,
     }, (err, html) => {
       if (err) {
         logger.error('getMeetingCompletion. error: ', err);
@@ -371,6 +414,9 @@ function ServerMethods(aLogLevel, aModules) {
   // Returns the personalized root page
   async function getRoot(aReq, aRes) {
     var meetingAllowed = await isMeetingAllowed(aReq);
+    var language = getUserLanguage(accepts(aReq).languages());
+    var country = getUserCountry(aReq);
+
     aRes
       .render('index.ejs', {
         roomName: `${haikunator.haikunate({ tokenLength: 0 })}-${haikunator.haikunate()}`,
@@ -381,6 +427,12 @@ function ServerMethods(aLogLevel, aModules) {
         showUnavailable: !meetingAllowed,
         useGoogleFonts: aReq.tbConfig.useGoogleFonts,
         supportIE: aReq.tbConfig.supportIE,
+        adobeTrackingUrl: aReq.tbConfig.adobeTrackingUrl,
+        ATPrimaryCategory: aReq.tbConfig.ATPrimaryCategory,
+        ATSiteIdentifier: aReq.tbConfig.ATSiteIdentifier,
+        ATFunctionDept: aReq.tbConfig.ATFunctionDept,
+        userLanguage: language,
+        userCountry: country,
         hotjarId: aReq.tbConfig.hotjarId,
         hotjarVersion: aReq.tbConfig.hotjarVersion,
         enableFeedback: aReq.tbConfig.enableFeedback,
@@ -414,6 +466,8 @@ function ServerMethods(aLogLevel, aModules) {
     var template = query && tbConfig.templatingSecret &&
       (tbConfig.templatingSecret === query.template_auth) && query.template;
     var userName = (aReq.body && aReq.body.userName) || (query && query.userName) || '';
+    var language = getUserLanguage(accepts(aReq).languages());
+    var country = getUserCountry(aReq);
 
     // Create a session ID and token for the network test
     tbConfig.precallOtInstance.createSession({ mediaMode: 'routed' }, (error, testSession) => {
@@ -458,6 +512,12 @@ function ServerMethods(aLogLevel, aModules) {
           useGoogleFonts: tbConfig.useGoogleFonts,
           supportIE: tbConfig.supportIE,
           jqueryUrl: tbConfig.jqueryUrl,
+          adobeTrackingUrl: aReq.tbConfig.adobeTrackingUrl,
+          ATPrimaryCategory: aReq.tbConfig.ATPrimaryCategory,
+          ATSiteIdentifier: aReq.tbConfig.ATSiteIdentifier,
+          ATFunctionDept: aReq.tbConfig.ATFunctionDept,
+          userLanguage: language,
+          userCountry: country,
           hotjarId: tbConfig.hotjarId,
           hotjarVersion: tbConfig.hotjarVersion,
           enableFeedback: tbConfig.enableFeedback,

@@ -24,6 +24,10 @@
     <script defer type="text/javascript" src="/js/vendor/lazy_loader.js"></script>
     <script defer type="text/javascript" src="/js/rtcApp.js"></script>
 
+    <% if (adobeTrackingUrl) { %>
+    <script src="<%=adobeTrackingUrl%>" async></script>
+    <% } %>
+
     <script>
       window.isWebRTCVersion=<%=isWebRTCVersion%>;
       window.showTos=<%=showTos%> && !sessionStorage.tosAccepted;
@@ -34,7 +38,17 @@
       window.opentokJsUrl='<%=opentokJsUrl%>';
       window.enablePrecallTest=<%=enablePrecallTest%>;
       window.enterButtonLabel="<%=enterButtonLabel%>";
+<<<<<<< HEAD
+=======
     </script>
+
+    <!-- OneTrust Cookies Consent Notice start -->
+    <script src="https://cdn.cookielaw.org/consent/bede0017-0962-4a07-829e-a25b103d453c.js" type="text/javascript" charset="UTF-8"></script>
+    <script type="text/javascript">
+    function OptanonWrapper() { }
+>>>>>>> upstream/rebrand
+    </script>
+    <!-- OneTrust Cookies Consent Notice end -->
     
      <% if (enableFeedback && hotjarId && hotjarVersion ) { %>
     <script>
@@ -73,5 +87,80 @@
       ga('create', 'UA-462500-32', 'auto');
       ga('send', 'pageview');
     </script>
+    <% if (adobeTrackingUrl) { %>
+    <script type="text/javascript">
+      var digitalData = {
+        page: {
+          pageInfo: {
+            pageName: '',
+            lob: 'biz',
+            functionDept: '<%=ATFunctionDept%>',
+            subCategory1: '',
+            subCategory2:'',
+            subCategory3: '',
+            primaryCategory: '<%=ATPrimaryCategory%>',
+            internalSearchTerm: '',
+            internalSearchResults: '',
+            error: '',
+            pageType: '',
+            language: '<%=userLanguage%>',
+            country: '<%=userCountry%>',
+            fileGatedType: '',
+            tollFreeNumber: '',
+            siteIdentifier: '<%=ATSiteIdentifier%>',
+            type: '',
+            pageCategory: '',
+            pageSubCategory: '',
+          },
+          content: {
+            name: '',
+            category: '',
+            author: '',
+            type: '',
+            publishDate: '',
+            subCategory: '',
+            topic: '',
+            industry: '',
+            businessSize: '',
+            profRole: '',
+            company: '',
+            product: '',
+          },
+        },
+        user: {
+          profile: {
+            profileInfo: {
+              targetExperience: '',
+              responsiveSiteVersion: 'desktop',
+              visitorType: 'prospect',
+              gaCampaign: '',
+            },
+          },
+        },
+        transaction: {
+          item: {
+            quantity: '',
+            price: '',
+            productInfo: '',
+          },
+        },
+        eventData: {
+          fIndustry: '',
+          fName: '',
+          fCTA: '',
+          fLines: '',
+          linesSlider: '',
+          interactionType: '',
+          events: '',
+        },
+      };
+      (function(){
+        var width = window.screen.width;
+        var responsive = ( width < 768 ) ? "mobile" : ( width < 960 ) ? "tablet" : "desktop";
+        digitalData.user.profile.profileInfo.responsiveSiteVersion = responsive;
+      })();
+      if (typeof _satellite !== "undefined") _satellite.pageBottom();
+    </script>
+    <% } %>
   </body>
 </html>

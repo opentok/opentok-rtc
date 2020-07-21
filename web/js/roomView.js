@@ -9,7 +9,6 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
   var handler;
   var callControlsElem;
   var feedbackButton;
-  var roomNameElem;
   var togglePublisherVideoElem;
   var togglePublisherAudioElem;
   var startArchivingElem;
@@ -33,6 +32,7 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
 
   var _unreadMsg = 0;
   var _chatHasBeenShown = false;
+  var chatVisible = false;
 
   var MODAL_TXTS = {
     mute: {
@@ -60,22 +60,21 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
       button: 'I understand'
     },
     lock: {
-      head: 'Lock Meeting',
-      detail: 'When a meeting room is locked no additional participants will be allowed to join the meeting. ' +
+      head: 'Do you want to lock the meeting?',
+      detail: 'When a meeting room is locked, no one else will be allowed to join the meeting. ' +
               'Current participants who leave the meeting will not be allowed back in.',
       button: 'Lock Meeting'
     },
     endCall: {
-      head: 'Leave the Meeting',
-      detail: 'Are you sure you want to leave the Vonage Free Conferencing meeting room? <br>' +
-              'The call will continue with the remaining participants.',
+      head: 'Do you want to leave the meeting?',
+      detail: 'The meeting will continue with the remaining participants.',
       button: 'Leave meeting'
     },
     endLockedCall: {
-      head: 'Leave the Meeting',
-      detail: 'The Vonage Free Conferencing Meeting Room you are leaving is locked. Do you want to unlock it before leaving?',
-      button: 'Leave',
-      altButton: 'Unlock and Leave'
+      head: 'Do you want to unlock the meeting before leaving?',
+      detail: 'The meeting will continue with the remaining participants. When a meeting room is locked, no one else will be allowed to join or re-join the meeting.',
+      button: 'Unlock and Leave',
+      altButton: 'Leave Without Unlocking'
     },
     sessionDisconnected: {
       head: 'Session disconected',
@@ -104,13 +103,14 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
   };
 
   function setUnreadMessages(count) {
-    _unreadMsg = count;
-    // document.getElementById('unreadMsg').style.display = count === 0 ? 'none' : 'block';
-    unreadCountElem.textContent = count;
-    // HTMLElems.flush(unreadCountElem.parentElement);
+    if (!chatVisible) {
+      _unreadMsg = count;
+      unreadCountElem.textContent = (count === 0) ? '' : '(' + count + ')';
+    }
   }
 
   function setChatStatus(visible) {
+    chatVisible = visible;
     if (visible) {
       _chatHasBeenShown = true;
       setUnreadMessages(0);
@@ -129,10 +129,10 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
 
   var chatViews = {
     unreadMessage: function () {
-      setUnreadMessages(_unreadMsg + 1);
       if (!_chatHasBeenShown) {
         setChatStatus(true);
       }
+      setUnreadMessages(_unreadMsg + 1);
     },
     hidden: function () {
       Utils.sendEvent('roomView:screenChange');
@@ -262,7 +262,6 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
     handler = dock;
     callControlsElem = document.querySelector('.call-controls');
     feedbackButton = document.querySelector('.feedbackButton');
-    roomNameElem = dock.querySelector('.room-name');
     participantsStrElem = document.getElementById('participantsStr');
     recordingsNumberElem = dock.querySelector('#recordings');
     videoSwitch = dock.querySelector('#videoSwitch');
@@ -509,20 +508,27 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
           setChatStatus(!messageButtonElem.classList.contains('activated'));
           break;
         case 'endCall':
-          var modalTxt = RoomView.lockState === 'locked' ? MODAL_TXTS.endLockedCall : MODAL_TXTS.endCall;
-          Modal.showConfirm(modalTxt).then(function (accept) {
-            if (accept.altHasAccepted) {
-              Utils.sendEvent('roomView:setRoomLockState', 'unlocked');
-              setTimeout(function() {
+          if (RoomView.lockState === 'locked') {
+            Modal.showConfirm(MODAL_TXTS.endLockedCall).then(function (accept) {
+              if (accept.altHasAccepted) {
                 RoomView.participantsNumber = 0;
-                Utils.sendEvent('roomView:endCall'); 
-              }, 3000);         
-            }
-            else if (accept) {
-              RoomView.participantsNumber = 0;
-              Utils.sendEvent('roomView:endCall');
-            }
-          });
+                Utils.sendEvent('roomView:endCall');
+              } else if (accept) {
+                Utils.sendEvent('roomView:setRoomLockState', 'unlocked');
+                setTimeout(function () {
+                  RoomView.participantsNumber = 0;
+                  Utils.sendEvent('roomView:endCall');
+                }, 3000);
+              }
+            });
+          } else {
+            Modal.showConfirm(MODAL_TXTS.endCall).then(function (accept) {
+              if (accept) {
+                RoomView.participantsNumber = 0;
+                Utils.sendEvent('roomView:endCall');
+              }
+            });
+          }
           break;
       }
     });
@@ -679,21 +685,9 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
   }
 
   var getURLtoShare = function () {
-    return window.location.origin + window.location.pathname;
-  };
-
-  var addClipboardFeature = function () {
-    var input = document.getElementById('current-url');
-    input.addEventListener('click', function () {
-      input.select();
-    });
-    var urlToShare = getURLtoShare();
-    input.value = urlToShare;
-    var clipboard = new Clipboard(document.querySelector('#addToCall'), { // eslint-disable-line no-unused-vars
-      text: function () {
-        return urlToShare;
-      }
-    });
+    var textArea = document.getElementById('current-url');
+    var urlToShare = window.location.origin + window.location.pathname;
+    textArea.innerHTML = urlToShare;
   };
 
   var init = function (enableHangoutScroll, aEnableArchiveManager, aEnableSip) {
@@ -702,7 +696,7 @@ BubbleFactory, Clipboard, LayoutManager, $, maxUsersPerRoom */
     dock.style.visibility = 'visible';
     enableSip = aEnableSip;
     addHandlers();
-    addClipboardFeature();
+    getURLtoShare();
     LayoutManager.init('.streams', enableHangoutScroll);
   };
 

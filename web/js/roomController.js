@@ -714,19 +714,6 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     }
   };
 
-  function loadHotjar () {
-    if (enableFeedback && hotjarId && hotjarVersion) {
-      (function (h, o, t, j, a, r) {
-        h.hj = h.hj || function () { (h.hj.q = h.hj.q || []).push(arguments) };
-        h._hjSettings = { hjid: hotjarId, hjsv: hotjarVersion };
-        a = o.getElementsByTagName('head')[0];
-        r = o.createElement('script'); r.async = 1;
-        r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
-        a.appendChild(r);
-      })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
-    }
-  }
-
   function showMobileShareUrl() {
     navigator.share({
       title: 'Invite Participant',
@@ -734,6 +721,24 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     })
       .then(function () { console.log('Successful share'); })
       .catch(function (error) { console.log('Error sharing', error); });
+  }
+
+  function addClipBoardFeature(selector) {
+    const inviteLinkBtn = document.getElementById('copyInviteLinkBtn');
+    const inputElem = document.getElementById('current-url');
+    if (inputElem && inputElem.textContent) {
+      navigator.clipboard.writeText(inputElem.textContent.trim())
+        .then(() => {
+          if (inviteLinkBtn.innerText !== 'Copied!') {
+            const originalText = inviteLinkBtn.innerText;
+            inviteLinkBtn.innerText = 'Copied!';
+            setTimeout(() => {
+              Modal.hide(selector);
+              inviteLinkBtn.innerText = originalText;
+            }, 2000)
+          }
+        });
+    }
   }
 
   function showAddToCallModal() {
@@ -744,14 +749,16 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
         enterButton && enterButton.addEventListener('click', function onClicked(event) {
           event.preventDefault();
           enterButton.removeEventListener('click', onClicked);
-          return Modal.hide(selector)
-            .then(function () {
-              resolve(document.querySelector(selector + ' input').value.trim());
-            });
-        });
+          if (enterButton.id = "copyInviteLinkBtn") {
+            addClipBoardFeature(selector);
+          } else {
+            Modal.hide(selector);
+          }
+          resolve();
       });
     });
-  }
+  });
+}
 
   function getRoomParams() {
     if (!exports.RoomController) {
@@ -973,8 +980,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
         .catch(function (error) {
           debug.error('Error Connecting to room. ' + error.message);
         });
-    })
-  .then(loadHotjar());
+    });
   };
 
   var RoomController = {

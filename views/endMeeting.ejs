@@ -6,11 +6,14 @@
     <meta http-equiv="content-type" content="text/html;charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="stylesheet" href="/css/completeMeeting.opentok.css" />
+    <link rel="stylesheet" href="/css/endMeeting.opentok.css" />
     <link rel="stylesheet" href="css/buttons.css" />
     <link href="/css/fonts.css" rel="stylesheet">
-    <% if (enableFeedback && hotjarId && hotjarVersion ) { %>
-      <script>
+  <% if (adobeTrackingUrl) { %>
+    <script src="<%=adobeTrackingUrl%>" async></script>
+  <% } %>
+  <% if (enableFeedback && hotjarId && hotjarVersion ) { %>
+    <script>
           (function(h,o,t,j,a,r){
            h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
            h._hjSettings={hjid: <%=hotjarId%>, hjsv: <%=hotjarVersion%>};
@@ -19,19 +22,19 @@
            r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
            a.appendChild(r);
        })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-       </script>
-        <% } %>
+    </script>
+  <% } %>
   </head>
   <body>
-    <section class="completeMeeting">
+    <section class="endMeeting">
         <header>
            <a href="https://vonage.com" title="Vonage" target="_blank">
             <img id="logo" src="../images/vonage-logo-no-text.svg" alt="vonage transparent logo">
           </a>
               <p>Thanks for using<br>Vonage Free Conferencing!</p>
           </header>
-        <div class="completeMeeting-box-container">
-          <div class="completeMeeting-box">
+        <div class="endMeeting-box-container">
+          <div class="endMeeting-box">
             <h2>Built on the Vonage Video API</h2>
             <p>
              Did you know that Vonage Free Conferencing is open source and built on the top of the Vonage Video API? 
@@ -43,7 +46,7 @@
             </p>
             <a class="btn" style="text-decoration: none;" href= "https://tokbox.com/account/user/signup" target="_blank">Start Building for Free</a>
           </div>
-          <div class="completeMeeting-box">
+          <div class="endMeeting-box">
             <h2>We’ve got you covered</h2>
             <p>
              Vonage can also help you with Unified Communications, like business phone and messaging systems, and Contact Centers with integration to Salesforce and other CRMs.
@@ -52,7 +55,7 @@
           </div>
           </div>
           <footer>
-            <a href="/index.html" target="_blank">Start a new meeting</a>
+            <a href="/index.html">Start a new meeting</a>
           </footer>
     </section>
 
@@ -66,5 +69,80 @@
       ga('send', 'pageview');
 
     </script>
+  <% if (adobeTrackingUrl) { %>
+    <script type="text/javascript">
+        var digitalData = {
+          page: {
+            pageInfo: {
+              pageName: '',
+              lob: 'biz',
+              functionDept: '<%=ATFunctionDept%>',
+              subCategory1: '',
+              subCategory2:'',
+              subCategory3: '',
+              primaryCategory: '<%=ATPrimaryCategory%>',
+              internalSearchTerm: '',
+              internalSearchResults: '',
+              error: '',
+              pageType: '',
+              language: '<%=userLanguage%>',
+              country: '<%=userCountry%>',
+              fileGatedType: '',
+              tollFreeNumber: '',
+              siteIdentifier: '<%=ATSiteIdentifier%>',
+              type: '',
+              pageCategory: '',
+              pageSubCategory: '',
+            },
+            content: {
+              name: '',
+              category: '',
+              author: '',
+              type: '',
+              publishDate: '',
+              subCategory: '',
+              topic: '',
+              industry: '',
+              businessSize: '',
+              profRole: '',
+              company: '',
+              product: '',
+            },
+          },
+          user: {
+            profile: {
+              profileInfo: {
+                targetExperience: '',
+                responsiveSiteVersion: 'desktop',
+                visitorType: 'prospect',
+                gaCampaign: '',
+              },
+            },
+          },
+          transaction: {
+            item: {
+              quantity: '',
+              price: '',
+              productInfo: '',
+            },
+          },
+          eventData: {
+            fIndustry: '',
+            fName: '',
+            fCTA: '',
+            fLines: '',
+            linesSlider: '',
+            interactionType: '',
+            events: '',
+          },
+        };
+        (function(){
+          var width = window.screen.width;
+          var responsive = ( width < 768 ) ? "mobile" : ( width < 960 ) ? "tablet" : "desktop";
+          digitalData.user.profile.profileInfo.responsiveSiteVersion = responsive;
+        })();
+        if (typeof _satellite !== "undefined") _satellite.pageBottom();
+    </script>
+  <% } %>
   </body>
 </html>

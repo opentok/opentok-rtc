@@ -211,11 +211,7 @@
           userNameInputElement.setAttribute('readonly', true);
         }
       }
-      otHelper.otLoaded.then(function () {
-        return Modal.show(selector, loadModalText).then(function () {
-          PrecallView.setFocus(username);
-        });
-      });
+      otHelper.otLoaded.then(loadModalText);
     });
   }
 
