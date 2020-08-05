@@ -19,7 +19,6 @@ x-implementation-module: serverMethods.js
 x-implementation-middleware:
   - setSecurityHeaders
   - configReady
-  - oldVersionCompat
   - iframingOptions
   - featureEnabled
 x-implementation-configuration: loadConfig
