@@ -1017,20 +1017,6 @@ function ServerMethods(aLogLevel, aModules) {
     return tbConfigPromise;
   }
 
-  function oldVersionCompat(aReq, aRes, aNext) {
-    if (!aReq.tbConfig.isWebRTCVersion) {
-      aNext();
-      return;
-    }
-    var matches = aReq.path.match(/^\/([^/]+)\.json$/);
-    if (matches) {
-      aReq.url = '/room/' + matches[1] + '/info';
-      aReq.sessionIdField = 'sid';
-      logger.log('oldVersionCompat: Rewrote path to: ' + aReq.url);
-    }
-    aNext();
-  }
-
   // /health
   // Checks the ability to connect to external services used by the app
   function getHealth(aReq, aRes) {
@@ -1128,7 +1114,6 @@ function ServerMethods(aLogLevel, aModules) {
     postRoomDial,
     postHangUp,
     getHealth,
-    oldVersionCompat,
     getRoomRawInfo,
     saveConnectionFirebase,
     deleteConnectionFirebase,
