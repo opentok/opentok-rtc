@@ -30,6 +30,11 @@
     userLabelElem = document.getElementById('user-label');
     errorMessage = document.querySelector('.error-room');
     resetForm();
+    var storedUsername = window.localStorage.getItem('username');
+    if (storedUsername) {
+      user.value = storedUsername;
+      userLabelElem.classList.add('visited');
+    }
     addHandlers();
     if (window.location.hostname.indexOf('opentokrtc.com') === 0) {
       document.querySelector('.safari-plug').style.display = 'block';

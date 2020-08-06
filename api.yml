@@ -18,7 +18,6 @@ produces:
 x-implementation-module: serverMethods.js
 x-implementation-middleware:
   - configReady
-  - oldVersionCompat
   - iframingOptions
   - featureEnabled
 x-implementation-configuration: loadConfig
