@@ -62,19 +62,6 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
         showArchiveStatus: false
       }
     },
-    noVideo: {
-      height: '100%',
-      width: '100%',
-      inserMode: 'append',
-      showControls: true,
-      style: {
-        audioLevelDisplayMode: 'auto',
-        buttonDisplayMode: 'off',
-        nameDisplayMode: 'off',
-        videoDisabledDisplayMode: 'auto',
-        showArchiveStatus: false
-      }
-    },
     screen: {
       height: '100%',
       width: '100%',
@@ -883,12 +870,12 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
           if (Utils.isIE()) {
             publisherOptions.usePreviousDeviceSelection = true;
           }
-          return new Promise(function(resolve, reject) {
-            otHelper.initPublisher(publisherElement, publisherOptions, {}).then(function() {
+          return new Promise(function (resolve, reject) {
+            otHelper.initPublisher(publisherElement, publisherOptions, {}).then(function () {
               setPublisherReady();
               RoomView.showPublisherButtons(publisherOptions);
               resolve();
-            }).catch(function(errInfo) {
+            }).catch(function (errInfo) {
               if (errInfo.error.name === 'OT_CHROME_MICROPHONE_ACQUISITION_ERROR') {
                 otHelper.disconnect();
                 Utils.sendEvent('roomController:chromePublisherError');
@@ -898,16 +885,16 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
             });
           });
         })
-        .then(function() {
-          return new Promise(function(resolve) {
+        .then(function () {
+          return new Promise(function (resolve) {
             ChatController.setHelper(otHelper);
-            otHelper.connect(sessionInfo, _allHandlers).then(function() {
+            otHelper.connect(sessionInfo, _allHandlers).then(function () {
               resolve();
             });
           });
         })
         .then(publish)
-        .then(function(publisher) {
+        .then(function (publisher) {
           if (!publisher.stream.videoType) {
             RoomView.deleteVideoButton('publisher');
           }
