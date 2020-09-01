@@ -262,13 +262,13 @@
 
           aHandlers && _setHandlers(self, self.session, aHandlers);
 
-            _session.connect(token, function(error) {
-              if (error) {
-                reject(error);
-              } else {
-                self.sendSignal = sendSignal.bind(_session);
-                resolve(_session);
-             }
+          _session.connect(token, function(error) {
+            if (error) {
+              reject(error);
+            } else {
+              self.sendSignal = sendSignal.bind(_session);
+              resolve(_session);
+            }
           });
         });
       });
