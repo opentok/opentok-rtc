@@ -1,22 +1,10 @@
 !function(global) {
   'use strict';
 
-  var dynamicOTLoad = true;
   var otPromise = Promise.resolve();
+  var annotation;
 
-  var preReqSources = [
-  ];
-
-  // in IE dynamic loading the library doesn't work. For the time being, as a stopgap measure,
-  // loading it statically.
-  if (dynamicOTLoad) {
-    var OPENTOK_API = 'https://static.opentok.com/webrtc/v2/js/opentok.min.js';
-    preReqSources.unshift(OPENTOK_API);
-  }
-
-  if (preReqSources.length) {
-    otPromise = LazyLoader.load(preReqSources);
-  }
+  otPromise = LazyLoader.load([opentokJsUrl]);
 
   var MSG_MULTIPART = 'signal';
   var SIZE_MAX = 7800;
@@ -29,7 +17,6 @@
 
   var otLoaded = otPromise.then(function() {
     var hasRequirements = OT.checkSystemRequirements();
-    logger.log('checkSystemRequirements:', hasRequirements);
     if (!hasRequirements) {
       OT.upgradeSystemRequirements();
       throw new Error('Unsupported browser, probably needs upgrade');
@@ -141,8 +128,9 @@
     function parseMultiPartMsg(aEvt) {
       var dataParsed;
       dataParsed = JSON.parse(aEvt.data);
+      var fromConnectionId = aEvt.from !== null ? aEvt.from.connectionId : 'server';
       return {
-        connectionId: aEvt.from.connectionId,
+        connectionId: fromConnectionId,
         head: dataParsed._head,
         data: dataParsed.data
       };
@@ -183,6 +171,11 @@
         msg.data[parsedMsg.head.seq] = parsedMsg.data;
         msg.have++;
       }
+
+      if (parsedMsg.connectionId === 'server') {
+        msg.promiseSolver(parsedMsg.data);
+      }
+
       // If we have completed the message, fulfill the promise
       if (msg.have >= parsedMsg.head.tot ) {
         aEvt.data = msg.data.join('');
@@ -230,12 +223,10 @@
   }
 
   // aSessionInfo must have sessionId, apiKey, token
-  function OTHelper(aSessionInfo) {
+  function OTHelper() {
     var _session;
     var _publisher;
     var _publisherInitialized = false;
-    var _sessionInfo = aSessionInfo;
-
 
     function disconnect() {
       if (_session) {
@@ -249,11 +240,11 @@
 
     // aHandlers is either an object with the handlers for each event type
     // or an array of objects
-    function connect(aHandlers) {
+    function connect(sessionInfo, aHandlers) {
       var self = this;
-      var apiKey = _sessionInfo.apiKey;
-      var sessionId = _sessionInfo.sessionId;
-      var token = _sessionInfo.token;
+      var apiKey = sessionInfo.apiKey;
+      var sessionId = sessionInfo.sessionId;
+      var token = sessionInfo.token;
       if (!Array.isArray(aHandlers)) {
         aHandlers = [aHandlers];
       }
@@ -297,7 +288,22 @@
     });
 
     function initPublisher(aDOMElement, aProperties, aHandlers) {
-      console.log('aDOMElement', aDOMElement)
+      return new Promise(function(resolve, reject) {
+        otLoaded.then(function() {
+          getFilteredSources({
+            audioSource: aProperties.audioSource,
+            videoSource: aProperties.videoSource
+          }).then(function(mediaSources) {
+            Object.assign(aProperties, mediaSources);
+            _publisher = OT.initPublisher(aDOMElement, aProperties);
+            return resolve(_publisher);
+          });
+          
+        });
+      });
+    }
+
+    function publish(aDOMElement, aProperties, aHandlers) {
       var self = this;
       _publishOptions = null;
       var propCopy = {};
@@ -387,6 +393,14 @@
       subscribeTo(aStream, 'Audio', value);
     }
 
+    function toggleFacingMode() {
+      return _publisher.cycleVideo();
+    }
+
+    function setAudioSource(deviceId) {
+      _publisher.setAudioSource(deviceId)
+    }
+
     var _screenShare;
 
     const FAKE_OTK_ANALYTICS = global.OTKAnalytics ||
@@ -413,11 +427,18 @@
       };
       return new AnnotationAccPack(options);
     }
+    function resizeAnnotationCanvas () {
+      annotation && annotation.resizeCanvas();
+    }
 
     function startAnnotation(aAccPack) {
       if (!aAccPack) {
         return Promise.resolve();
       }
+      annotation = aAccPack;
+      Utils.addEventsHandlers('roomView:', {
+        screenChange: resizeAnnotationCanvas
+      });
       return aAccPack.start(_session, {
         imageAssets: IMAGE_ASSETS,
         backgroundColor: TOOLBAR_BG_COLOR
@@ -428,6 +449,10 @@
     function endAnnotation(aElement) {
       var annPack =  aElement && aElement._ANNOTATION_PACK || aElement;
       annPack && annPack.end && annPack.end();
+      Utils.removeEventHandlers('roomView:', {
+        screenChange: resizeAnnotationCanvas
+      });
+      annotation = null;
     }
 
     function setupAnnotation(aAccPack, aPubSub, aParentElement) {
@@ -441,6 +466,53 @@
       aAccPack.linkCanvas(aPubSub, container, canvasOptions);
       aPubSub._ANNOTATION_PACK = aAccPack;
     }
+
+    function getDevices(kind = 'all') {
+      return new Promise(function(resolve, reject) {
+        OT.getDevices(function (error, devices) {
+          if (error) return reject(error);
+          devices = devices.filter(function (device) { return device.kind === kind || kind === 'all' });
+          return resolve(devices);
+        });
+      });  
+    }
+
+    function getVideoDeviceNotInUse(selectedDeviceId) {
+      return new Promise(function(resolve, reject) {
+        getDevices('videoInput').then(function(videoDevices) {
+          var matchingDevice = videoDevices.find(function(device) {
+            return device.deviceId !== selectedDeviceId;
+          });
+
+          return resolve(matchingDevice || selectedDeviceId);
+        });
+      });
+    }
+
+    function getFallbackMediaDeviceId(devices, kind) {
+      kind = kind.replace('Source', 'Input');
+      var matchingDevice = devices.find(function(device) {
+        return device.kind === kind;
+      });  
+      return matchingDevice ? matchingDevice.deviceId : null;
+    }
+
+    function getFilteredSources(mediaDeviceIds) {
+      return new Promise(function(resolve, reject) {
+        getDevices().then(function (devices) {          
+          for (var source in mediaDeviceIds) {
+            var matchingDevice = devices.find(function(device) {
+              return device.deviceId === mediaDeviceIds[source];
+            });
+
+            if (!matchingDevice) mediaDeviceIds[source] = getFallbackMediaDeviceId(devices, source);
+          }
+          return resolve(mediaDeviceIds);
+      }).catch(function(e) {
+        return reject(e);
+      });
+    })
+   }  
 
     function subscribe(aStream, aTargetElement, aProperties, aHandlers, aEnableAnnotation) {
       var self = this;
@@ -534,15 +606,20 @@
         return _session;
       },
       connect: connect,
-      off: off,
+      getDevices: getDevices,
+      getVideoDeviceNotInUse: getVideoDeviceNotInUse,
       initPublisher: initPublisher,
+      off: off,
+      otLoaded: otLoaded,
       publish: publish,
-      subscribe: subscribe,
       toggleSubscribersAudio: toggleSubscribersAudio,
       toggleSubscribersVideo: toggleSubscribersVideo,
       togglePublisherAudio: togglePublisherAudio,
       togglePublisherVideo: togglePublisherVideo,
+      toggleFacingMode: toggleFacingMode,
+      setAudioSource: setAudioSource,
       shareScreen: shareScreen,
+      subscribe: subscribe,
       stopShareScreen: stopShareScreen,
       get isPublisherReady() {
         return _publisherInitialized;
@@ -593,3 +670,4 @@
   global.OTHelper = OTHelper;
 
 }(this);
+    

@@ -1,18 +1,35 @@
-!(function(exports) {
+/* global RoomView, Cronograph, FirebaseModel, RecordingsController, Modal,
+BubbleFactory, Clipboard, LayoutManager */
+
+!(function (exports) {
   'use strict';
 
   // HTML elements for the view
   var dock;
   var handler;
+  var callControlsElem;
+  var feedbackButton;
   var roomNameElem;
-  var participantsNumberElem;
+  var togglePublisherVideoElem;
+  var togglePublisherAudioElem;
+  var startArchivingElem;
+  var stopArchivingElem;
+  var annotateBtnElem;
+  var manageRecordingsElem;
+  var messageButtonElem;
   var participantsStrElem;
   var recordingsNumberElem;
   var videoSwitch;
   var audioSwitch;
-  var startChatElem;
+  var topBannerElem;
+  var screenElem;
   var unreadCountElem;
   var enableArchiveManager;
+  var enableSip;
+  var hideCallControlsTimer;
+  var hideFeedbackButtonTimer;
+  var overCallControls = false;
+  var overFeedbackButton = false;
 
   var _unreadMsg = 0;
   var _chatHasBeenShown = false;
@@ -20,33 +37,27 @@
   var MODAL_TXTS = {
     mute: {
       head: 'Mute all participants, including yourself',
-      detail: 'Everyone will be notified and can click their <i data-icon="no_mic"></i> to ' +
-              'unmute themselves.',
+      detail: 'Everyone will be notified and can click their <i data-icon="no_mic"></i> button' +
+              ' to unmute themselves.',
       button: 'Mute all participants'
     },
     muteRemotely: {
-      head: 'All participants microphones are going to be disabled in the call',
-      detail: 'If you want to keep talking , ' +
-              'you must enable manually your own microphone',
+      head: 'All participants microphones are being disabled in the call',
+      detail: 'If you want to keep talking, ' +
+              'you must manually enable your own microphone.',
       button: 'I understand'
     },
     unmutedRemotely: {
-      head: 'Your microphone is going to be enabled in the call',
-      detail: 'If you want to keep muted , ' +
-              'you must disable manually your own microphone',
+      head: 'Your microphone is now enabled in the call',
+      detail: 'If you want to remain muted, ' +
+              'you must manually disable your own microphone.',
       button: 'I understand'
     },
     join: {
       head: 'All participants are muted',
       detail: 'You can unmute everyone by toggling the Mute all participants option. Or you can ' +
-              'unmute just yourself by clicking your <microphone icon> icon',
+              'unmute just yourself by clicking the microphone icon in the bottom menu.',
       button: 'I understand'
-    },
-    disabledVideos: {
-      head: 'Stop receiving video from other participants',
-      detail: 'This option can help to improve or preserve call quality in situations of poor ' +
-              'bandwidth or other resource constraints.',
-      button: 'Stop receiving video'
     },
     endCall: {
       head: 'Exit the Meeting',
@@ -76,67 +87,83 @@
 
   function setUnreadMessages(count) {
     _unreadMsg = count;
+    // document.getElementById('unreadMsg').style.display = count === 0 ? 'none' : 'block';
     unreadCountElem.textContent = count;
-    startChatElem.data('unreadMessages', count);
-    HTMLElems.flush(startChatElem);
+    // HTMLElems.flush(unreadCountElem.parentElement);
   }
 
   function setChatStatus(visible) {
     if (visible) {
       _chatHasBeenShown = true;
       setUnreadMessages(0);
-      document.body.data('chatStatus', 'visible');
+      messageButtonElem.classList.add('activated');
+
+      // hide call controls on small screens
+      if (window.innerWidth <= 480) {
+        hideCallControls();
+      }
     } else {
-      document.body.data('chatStatus', 'hidden');
+      messageButtonElem.classList.remove('activated');
     }
     Utils.sendEvent('roomView:chatVisibility', visible);
     HTMLElems.flush('#toggleChat');
   }
 
   var chatViews = {
-    unreadMessage: function(evt) {
+    unreadMessage: function () {
       setUnreadMessages(_unreadMsg + 1);
       if (!_chatHasBeenShown) {
         setChatStatus(true);
       }
+    },
+    hidden: function () {
+      Utils.sendEvent('roomView:screenChange');
+    },
+    shown: function () {
+      Utils.sendEvent('roomView:screenChange');
     }
   };
 
   var chatEvents = {
-    hidden: function(evt) {
+    hidden: function () {
       document.body.data('chatStatus', 'hidden');
+      messageButtonElem.classList.remove('activated');
       setUnreadMessages(0);
       HTMLElems.flush('#toggleChat');
     }
   };
 
   var hangoutEvents = {
-    screenOnStage: function(event) {
+    screenOnStage: function (event) {
       var status = event.detail.status;
       if (status === 'on') {
         dock.data('previouslyCollapsed', dock.classList.contains('collapsed'));
         dock.classList.add('collapsed');
       } else if (dock.data('previouslyCollapsed') !== null) {
         dock.data('previouslyCollapsed') === 'true' ? dock.classList.add('collapsed') :
-                                                        dock.classList.remove('collapsed');
+          dock.classList.remove('collapsed');
         dock.data('previouslyCollapsed', null);
       }
+    },
+    rearranged: function () {
+      Utils.sendEvent('roomView:screenChange');
     }
   };
 
   var screenShareCtrEvents = {
     changeScreenShareStatus: toggleScreenSharing,
     destroyed: toggleScreenSharing.bind(undefined, NOT_SHARING),
-    annotationStarted: function(evt) {
-      document.body.data('annotationVisible', 'true');
+    annotationStarted: function () {
+      Utils.setDisabled(annotateBtnElem, false);
     },
-    annotationEnded: function(evt) {
+    annotationEnded: function () {
       document.body.data('annotationVisible', 'false');
+      Utils.setDisabled(annotateBtnElem, true);
     }
   };
 
   var roomControllerEvents = {
-    userChangeStatus: function(evt) {
+    userChangeStatus: function (evt) {
       // If user changed the status we need to reset the switch
       if (evt.detail.name === 'video') {
         setSwitchStatus(false, false, videoSwitch, 'roomView:videoSwitch');
@@ -144,29 +171,33 @@
         setSwitchStatus(false, false, audioSwitch, 'roomView:muteAllSwitch');
       }
     },
-    roomMuted: function(evt) {
+    roomMuted: function (evt) {
       var isJoining = evt.detail.isJoining;
       setAudioSwitchRemotely(true);
-      showConfirm(isJoining ? MODAL_TXTS.join : MODAL_TXTS.muteRemotely);
+      Modal.showConfirm(isJoining ? MODAL_TXTS.join : MODAL_TXTS.muteRemotely);
     },
-    sessionDisconnected: function(evt) {
+    sessionDisconnected: function () {
       RoomView.participantsNumber = 0;
       LayoutManager.removeAll();
     },
-    controllersReady: function() {
-      var elements = dock.querySelectorAll('.menu [disabled]');
-      Array.prototype.forEach.call(elements, function(element) {
+    controllersReady: function () {
+      var selectorStr = '#top-banner [disabled], .call-controls [disabled]'
+        + ':not(#toggle-publisher-video):not(#toggle-publisher-audio)'
+        + ':not(#annotate)';
+      var elements = document.querySelectorAll(selectorStr);
+      Array.prototype.forEach.call(elements, function (element) {
         Utils.setDisabled(element, false);
       });
     },
-    annotationStarted: function(evt) {
-      document.body.data('annotationVisible', 'true');
+    annotationStarted: function () {
+      Utils.setDisabled(annotateBtnElem, false);
     },
-    annotationEnded: function(evt) {
+    annotationEnded: function () {
       document.body.data('annotationVisible', 'false');
+      Utils.setDisabled(annotateBtnElem, true);
     },
-    chromePublisherError: function(evt) {
-      showConfirm(MODAL_TXTS.chromePublisherError).then(function() {
+    chromePublisherError: function () {
+      Modal.showConfirm(MODAL_TXTS.chromePublisherError).then(function () {
         document.location.reload();
       });
     }
@@ -174,30 +205,41 @@
 
   function setAudioSwitchRemotely(isMuted) {
     setSwitchStatus(isMuted, false, audioSwitch, 'roomView:muteAllSwitch');
+    isMuted ?
+      setPublisherAudioSwitchStatus('muted') :
+      setPublisherAudioSwitchStatus('activated');
   }
 
   function showConfirmChangeMicStatus(isMuted) {
-    return showConfirm(isMuted ? MODAL_TXTS.muteRemotely : MODAL_TXTS.unmutedRemotely);
+    return Modal.showConfirm(isMuted ? MODAL_TXTS.muteRemotely : MODAL_TXTS.unmutedRemotely);
   }
 
   function initHTMLElements() {
-    dock = document.getElementById('dock');
-    handler = dock.querySelector('#handler');
-
-    roomNameElem = dock.querySelector('#roomName');
-    participantsNumberElem = dock.querySelectorAll('.participants');
-    participantsStrElem = dock.querySelector('.participantsStr');
+    dock = document.getElementById('top-banner');
+    handler = dock;
+    callControlsElem = document.querySelector('.call-controls');
+    feedbackButton = document.querySelector('.feedbackButton');
+    roomNameElem = dock.querySelector('.room-name');
+    participantsStrElem = document.getElementById('participantsStr');
     recordingsNumberElem = dock.querySelector('#recordings');
     videoSwitch = dock.querySelector('#videoSwitch');
     audioSwitch = dock.querySelector('#audioSwitch');
-    startChatElem = dock.querySelector('#startChat');
-    unreadCountElem = dock.querySelector('#unreadCount');
+    unreadCountElem = document.getElementById('unreadCount');
+    togglePublisherAudioElem = document.getElementById('toggle-publisher-audio');
+    togglePublisherVideoElem = document.getElementById('toggle-publisher-video');
+    startArchivingElem = document.getElementById('startArchiving');
+    stopArchivingElem = document.getElementById('stopArchiving');
+    annotateBtnElem = document.getElementById('annotate');
+    manageRecordingsElem = document.getElementById('manageRecordings');
+    messageButtonElem = document.getElementById('message-btn');
+    topBannerElem = document.getElementById('top-banner');
+    screenElem = document.getElementById('screen');
 
     // The title takes two lines maximum when the dock is expanded. When the title takes
     // one line with expanded mode, it ends taking two lines while is collapsing because the witdh
     // is reduced, so we have to fix the height to avoid this ugly effect during transition.
-    var title = dock.querySelector('.info h1');
-    title.style.height = title.clientHeight + 'px';
+    // var title = dock.querySelector('.info h1');
+    // title.style.height = title.clientHeight + 'px';
   }
 
   function createStreamView(streamId, type, controlBtns, name) {
@@ -211,6 +253,74 @@
   function deleteVideoButton(id) {
     document.querySelector('li[data-id="' + id + '"] .controls .buttons .video-action')
       .style.display = 'none';
+  }
+
+  function showRoom() {
+    initHTMLElements();
+    topBannerElem.style.visibility = 'visible';
+    screenElem.style.visibility = 'visible';
+    screenElem.addEventListener('mousemove', showControls);
+    callControlsElem.addEventListener('mouseover', function () {
+      clearTimeout(hideCallControlsTimer);
+      overCallControls = true;
+    });
+    callControlsElem.addEventListener('mouseout', function () {
+      overCallControls = false;
+      hideCallControls();
+    });
+    feedbackButton && feedbackButton.addEventListener('mouseover', function () {
+      clearTimeout(hideFeedbackButtonTimer);
+      overFeedbackButton = true;
+    });
+    feedbackButton && feedbackButton.addEventListener('mouseout', function () {
+      overFeedbackButton = false;
+      hideFeedbackButton();
+    });
+  }
+
+  function showControls() {
+    showCallControls();
+    showFeedbackButton();
+  }
+
+  function showCallControls() {
+    callControlsElem.classList.add('visible');
+    if (!overCallControls && !hideCallControlsTimer) {
+      hideCallControlsTimer = setTimeout(hideCallControls, 3000);
+    }
+  }
+
+  function hideCallControls() {
+    hideCallControlsTimer = null;
+    callControlsElem.classList.remove('visible');
+  }
+
+  function showFeedbackButton() {
+    if (!feedbackButton) {
+      return;
+    }
+    feedbackButton.classList.add('visible');
+    if (!overFeedbackButton && !hideFeedbackButtonTimer) {
+      hideFeedbackButtonTimer = setTimeout(hideFeedbackButton, 3000);
+    }
+  }
+
+  function hideFeedbackButton() {
+    hideFeedbackButtonTimer = null;
+    feedbackButton.classList.remove('visible');
+  }
+
+
+  function showPublisherButtons(publisherOptions) {
+    Utils.setDisabled(togglePublisherVideoElem, false);
+    Utils.setDisabled(togglePublisherAudioElem, false);
+    if (publisherOptions.publishVideo) {
+      togglePublisherVideoElem.classList.add('activated');
+      togglePublisherVideoElem.querySelector('i').data('icon', 'video_icon');
+    }
+    if (publisherOptions.publishAudio) {
+      setPublisherAudioSwitchStatus('activated');
+    }
   }
 
   function setSwitchStatus(status, bubbleUp, domElem, evtName) {
@@ -229,6 +339,16 @@
     bubbleUp && newStatus !== oldStatus && Utils.sendEvent(evtName, { status: newStatus });
   }
 
+  function setPublisherAudioSwitchStatus(status) {
+    if (status === 'activated') {
+      togglePublisherAudioElem.classList.add('activated');
+      togglePublisherAudioElem.querySelector('i').data('icon', 'mic');
+    } else {
+      togglePublisherAudioElem.classList.remove('activated');
+      togglePublisherAudioElem.querySelector('i').data('icon', 'mic-muted');
+    }
+  }
+
   var cronograph = null;
 
   function getCronograph() {
@@ -237,18 +357,21 @@
     }
     return LazyLoader.dependencyLoad([
       '/js/components/cronograph.js'
-    ]).then(function() {
+    ]).then(function () {
       cronograph = Cronograph;
       return cronograph;
     });
   }
 
   function onStartArchiving(data) {
-    getCronograph().then(function(cronograph) { // eslint-disable-line consistent-return
-      var start = function(archive) {
+    getCronograph().then(function (cronograph) { // eslint-disable-line consistent-return
+      var start = function (archive) {
         var duration = 0;
         archive && (duration = Math.round((Date.now() - archive.createdAt) / 1000));
         cronograph.start(duration);
+        startArchivingElem.style.display = 'none';
+        stopArchivingElem.style.display = 'block';
+        manageRecordingsElem.classList.add('recording');
       };
 
       if (!enableArchiveManager) {
@@ -256,7 +379,7 @@
         return start(null);
       }
 
-      var onModel = function(model) { // eslint-disable-line consistent-return
+      var onModel = function () { // eslint-disable-line consistent-return
         var archives = FirebaseModel.archives;
         var archiveId = data.id;
 
@@ -277,7 +400,7 @@
         return onModel(model);
       }
 
-      cronograph.init('Calculating...');
+      cronograph.init('Recording');
       exports.addEventListener('recordings-model-ready', function gotModel() {
         exports.removeEventListener('recordings-model-ready', gotModel);
         onModel(RecordingsController.model);
@@ -286,47 +409,81 @@
   }
 
   function onStopArchiving() {
-    getCronograph().then(function(cronograph) {
-      cronograph.reset();
+    getCronograph().then(function (cronograph) {
+      stopArchivingElem.style.display = 'none';
+      startArchivingElem.style.display = 'inline-block';
+      manageRecordingsElem.classList.remove('recording');
+      cronograph.stop();
     });
   }
 
-  function showConfirm(txt) {
-    var selector = '.switch-alert-modal';
-    var ui = document.querySelector(selector);
-    function loadModalText() {
-      ui.querySelector(' header .msg').textContent = txt.head;
-      ui.querySelector(' p.detail').innerHTML = txt.detail;
-      ui.querySelector(' footer button.accept').textContent = txt.button;
-    }
-
-    return Modal.show(selector, loadModalText)
-      .then(function() {
-        return new Promise(function(resolve, reject) {
-          ui.addEventListener('click', function onClicked(evt) {
-            var classList = evt.target.classList;
-            var hasAccepted = classList.contains('accept');
-            if (evt.target.id !== 'switchAlerts' && !hasAccepted && !classList.contains('close')) {
-              return;
-            }
-            evt.stopImmediatePropagation();
-            evt.preventDefault();
-            ui.removeEventListener('click', onClicked);
-            Modal.hide(selector).then(function() { resolve(hasAccepted); });
-          });
-        });
-      });
-  }
-
-  var addHandlers = function() {
-    handler.addEventListener('click', function(e) {
+  var addHandlers = function () {
+    handler.addEventListener('click', function () {
       dock.classList.toggle('collapsed');
       dock.data('previouslyCollapsed', null);
     });
 
-    var menu = document.querySelector('.menu ul');
+    callControlsElem.addEventListener('click', function (e) {
+      var elem = e.target;
+      elem = HTMLElems.getAncestorByTagName(elem, 'button');
+      if (elem === null) {
+        return;
+      }
+      switch (elem.id) {
+        case 'addToCall':
+          Utils.sendEvent('roomView:addToCall');
+          break;
+        case 'toggle-publisher-video':
+          var hasVideo;
+          if (elem.classList.contains('activated')) {
+            elem.classList.remove('activated');
+            elem.querySelector('i').data('icon', 'no_video');
+            hasVideo = false;
+          } else {
+            elem.classList.add('activated');
+            elem.querySelector('i').data('icon', 'video_icon');
+            hasVideo = true;
+          }
+          Utils.sendEvent('roomView:togglePublisherVideo', { hasVideo: hasVideo });
+          break;
+        case 'toggle-publisher-audio':
+          var hasAudio;
+          if (elem.classList.contains('activated')) {
+            elem.classList.remove('activated');
+            elem.querySelector('i').data('icon', 'mic-muted');
+            hasAudio = false;
+          } else {
+            elem.classList.add('activated');
+            elem.querySelector('i').data('icon', 'mic');
+            hasAudio = true;
+          }
+          Utils.sendEvent('roomView:togglePublisherAudio', { hasAudio: hasAudio });
+          break;
+        case 'screen-share':
+          Utils.sendEvent('roomView:shareScreen');
+          break;
+        case 'annotate':
+          document.body.data('annotationVisible') === 'true' ?
+            document.body.data('annotationVisible', 'false') : document.body.data('annotationVisible', 'true');
+          Utils.sendEvent('roomView:screenChange');
+          break;
+        case 'message-btn':
+          setChatStatus(!messageButtonElem.classList.contains('activated'));
+          break;
+        case 'endCall':
+          Modal.showConfirm(MODAL_TXTS.endCall).then(function (endCall) {
+            if (endCall) {
+              RoomView.participantsNumber = 0;
+              Utils.sendEvent('roomView:endCall');
+            }
+          });
+          break;
+      }
+    });
 
-    menu.addEventListener('click', function(e) {
+    var menu = document.getElementById('top-banner');
+
+    menu.addEventListener('click', function (e) {
       var elem = e.target;
       elem.blur();
       // pointer-events is not working on IE so we can receive as target a child
@@ -335,8 +492,22 @@
         return;
       }
       switch (elem.id) {
-        case 'addToCall':
-          BubbleFactory.get('addToCall').toggle();
+        case 'toggleFacingMode':
+          Utils.sendEvent('roomView:toggleFacingMode');
+          break;
+        case 'pickMic':
+          var select = document.getElementById('select-devices');
+          select.style.display = 'inline-block';
+          Modal.showConfirm({
+            head: 'Set mic input',
+            detail: 'Please identify the audio source in the following list:',
+            button: 'Change'
+          }).then(function (start) {
+            if (start) {
+              Utils.sendEvent('roomView:setAudioSource', select.value);
+            }
+            select.style.display = 'none';
+          });
           break;
         case 'viewRecordings':
           BubbleFactory.get('viewRecordings').toggle();
@@ -353,7 +524,7 @@
           setChatStatus(elem.id === 'startChat');
           break;
         case 'endCall':
-          showConfirm(MODAL_TXTS.endCall).then(function(endCall) {
+          Modal.showConfirm(MODAL_TXTS.endCall).then(function (endCall) {
             if (endCall) {
               RoomView.participantsNumber = 0;
               Utils.sendEvent('roomView:endCall');
@@ -366,26 +537,44 @@
           break;
         case 'videoSwitch':
           if (!videoSwitch.classList.contains('activated')) {
-            showConfirm(MODAL_TXTS.disabledVideos).then(function(shouldDisable) {
-              shouldDisable && setSwitchStatus(true, true, videoSwitch, 'roomView:videoSwitch');
-            });
+            setSwitchStatus(true, true, videoSwitch, 'roomView:videoSwitch');
           } else {
             setSwitchStatus(false, true, videoSwitch, 'roomView:videoSwitch');
           }
           break;
         case 'audioSwitch':
           if (!audioSwitch.classList.contains('activated')) {
-            showConfirm(MODAL_TXTS.mute).then(function(shouldDisable) {
-              shouldDisable &&
+            Modal.showConfirm(MODAL_TXTS.mute).then(function (shouldDisable) {
+              if (shouldDisable) {
                 setSwitchStatus(true, true, audioSwitch, 'roomView:muteAllSwitch');
+                togglePublisherAudioElem.classList.remove('activated');
+              }
             });
           } else {
             setSwitchStatus(false, true, audioSwitch, 'roomView:muteAllSwitch');
+            togglePublisherAudioElem.classList.add('activated');
           }
       }
     });
 
-    exports.addEventListener('archiving', function(e) {
+    if (enableSip) {
+      var dialOutBtn = document.getElementById('dialOutBtn');
+      // Send event to get phonenumber from phoneNumberView
+      dialOutBtn.addEventListener('click', function (event) {
+        event.preventDefault();
+        Utils.sendEvent('roomView:verifyDialOut');
+      });
+
+      // Listen for PhoneNumberView event
+      Utils.addEventsHandlers('phoneNumberView:', {
+        dialOut: function (evt) {
+          var phonenumber = evt.detail;
+          Utils.sendEvent('roomView:dialOut', phonenumber);
+        }
+      });
+    }
+
+    exports.addEventListener('archiving', function (e) {
       var detail = e.detail;
 
       switch (detail.status) {
@@ -395,7 +584,6 @@
           break;
         case 'stopped':
           onStopArchiving();
-
           break;
       }
 
@@ -416,24 +604,29 @@
     HTMLElems.flush('#toggleSharing');
   }
 
-  var getURLtoShare = function() {
+  var getURLtoShare = function () {
     return window.location.origin + window.location.pathname;
   };
 
-  var addClipboardFeature = function() {
-    var input = document.querySelector('.bubble[for="addToCall"] input');
+  var addClipboardFeature = function () {
+    var input = document.getElementById('current-url');
+    input.addEventListener('click', function () {
+      input.select();
+    });
     var urlToShare = getURLtoShare();
     input.value = urlToShare;
     var clipboard = new Clipboard(document.querySelector('#addToCall'), { // eslint-disable-line no-unused-vars
-      text: function() {
+      text: function () {
         return urlToShare;
       }
     });
   };
 
-  var init = function(enableHangoutScroll, aEnableArchiveManager) {
+  var init = function (enableHangoutScroll, aEnableArchiveManager, aEnableSip) {
     enableArchiveManager = aEnableArchiveManager;
     initHTMLElements();
+    dock.style.visibility = 'visible';
+    enableSip = aEnableSip;
     addHandlers();
     addClipboardFeature();
     LayoutManager.init('.streams', enableHangoutScroll);
@@ -447,16 +640,25 @@
     },
 
     set participantsNumber(value) {
-      for (var i = 0, l = participantsNumberElem.length; i < l; i++) {
-        HTMLElems.replaceText(participantsNumberElem[i], value);
-      }
-      HTMLElems.replaceText(participantsStrElem, value === 1 ? 'participant' : 'participants');
+      HTMLElems.replaceText(participantsStrElem, value);
     },
 
     set recordingsNumber(value) {
-      recordingsNumberElem && (recordingsNumberElem.textContent = value);
+      if (!manageRecordingsElem) {
+        return;
+      }
+      if (value === 0) {
+        manageRecordingsElem.style.display = 'none';
+        document.getElementById('toggleArchiving').classList.remove('manage-recordings');
+      } else {
+        manageRecordingsElem.style.display = 'block';
+        recordingsNumberElem && (recordingsNumberElem.textContent = value);
+        document.getElementById('toggleArchiving').classList.add('manage-recordings');
+      }
     },
 
+    showRoom: showRoom,
+    showPublisherButtons: showPublisherButtons,
     createStreamView: createStreamView,
     deleteStreamView: deleteStreamView,
     deleteVideoButton: deleteVideoButton,

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="13px" height="13px" viewBox="0 0 13 13" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
+    <title>stop button for connectivity progress bar</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Welcome" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="5-OpenTok-pre-call" transform="translate(-1226.000000, -673.000000)" fill="#A0A0A0">
+            <g id="Group-8" transform="translate(120.000000, 179.000000)">
+                <g id="Group-3">
+                    <g id="Group" transform="translate(767.000000, 38.000000)">
+                        <g id="Group-7" transform="translate(10.000000, 327.000000)">
+                            <g id="progress-bar" transform="translate(36.000000, 127.000000)">
+                                <path d="M301.798156,10.2225 C301.957,10.3809375 301.957,10.6409375 301.798156,10.799375 C301.639719,10.9578125 301.382156,10.9578125 301.223312,10.799375 L299.502437,9.076875 L297.769375,10.8115625 C297.609312,10.97 297.350125,10.97 297.190063,10.8115625 C297.030406,10.6490625 297.030406,10.3890625 297.190063,10.230625 L298.923125,8.4959375 L297.20225,6.7775 C297.043406,6.6190625 297.043406,6.3590625 297.20225,6.200625 C297.360281,6.0421875 297.617844,6.0421875 297.776688,6.200625 L299.497563,7.923125 L301.243625,6.17625 C301.403687,6.0178125 301.662469,6.0178125 301.822531,6.17625 C301.982188,6.33875 301.982188,6.5946875 301.822531,6.7571875 L300.076875,8.5040625 L301.798156,10.2225 L301.798156,10.2225 Z M299.5,2 C295.909969,2 293,4.90875 293,8.5 C293,12.09125 295.909969,15 299.5,15 C303.090031,15 306,12.09125 306,8.5 C306,4.90875 303.090031,2 299.5,2 L299.5,2 Z" id="stop-button-for-connectivity-progress-bar"></path>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

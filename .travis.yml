@@ -13,11 +13,13 @@ before_install:
  - sudo dpkg -i google-chrome*.deb
 install:
   - npm install;
-     npm install travis-github-lint-status;
+  - npm install travis-github-lint-status;
 script:
-  - eval $CMD
+  - ./node_modules/travis-github-lint-status/index.js
+  - npm run test && bash <(curl -s https://codecov.io/bash)
 env:
-  - CMD="./node_modules/travis-github-lint-status/index.js"
-  - CMD="npm run test" TB_API_SECRET=123 TB_API_KEY=123
+  - TB_API_SECRET=123 TB_API_KEY=123 SAUCE_USERNAME=opentok
 addons:
-  firefox: "54.0"
+  firefox: "latest"
+  jwt:
+    secure: "ZJYdMZDsBINdNmyj0mbK/qC11eKa80MACgiNWzy7HxtFuxYwEtkTD4zgGTfI8re7s3Va68dbxWSbhIW0iuZGRTddWMqTmp+Aw6d+zgilO8G7ps0VRy1imRWvXAoTx1UFgV5DCHX/uUpejjF/YB18jZ9qKOIzTS8F5uKnFV1eyL+arMfUE8aie/3nR7uGvlpPhmS6A1rSrAXXb16f8bKv/X2Op5tg9z5nBpOLAs4e12v2plL+9LFD1Fu31KdGeonp97QBskxPpm0uZi7YSSsnbcCpIRshXJtFMKF0+y2hCxesbpFJXLpE8kcpEenVyxuGZpdhkguIgc1WGLDAJw4pdc/ro7xOnFtDMTRv+B7NU6xPFJiszQZGE29yIJDgIWKQCj+y+Yv4oCM848YuMvp7cJ39RkaOpDBgpJHBa0iWBcEjX21Id486oCTzqi56UCumrEuI8znWoR6krUM1m4I9rHcCZAKDYtdu25Cuv74iq8/OgGuVyiZ27dWda4TvHnsmm0Rm373mlFEdQ1y85qWVoeY9U4yUVeoCd3NMn1U7PSysahc1OXuaprm/1n0/K/qjv0bzRp9UGak63BBJ+wixEBUrcjjVfiJ4YRfF1lJkWJKv5uyv3L0OS2TqUGvieO7KSEPJ/LW0FcIwc2Mq3nMdyEb0oc9vkJ0Pnl/kQqs+uX0="

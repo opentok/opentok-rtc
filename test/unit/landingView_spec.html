@@ -1,18 +1,45 @@
 <section class="main">
-  <section>
-    <header>
-      <img src="images/opentok-logo.png" alt="opentok transparent logo">
-    </header>
-    <h1>The OpenTok Platform Demo</h1>
+  <div id="righthand-container">
+    <div id="righthand-container-cell">
+  <section id="main-content">
 
+    <header>
+      <% if (!isWebRTCVersion) { %>
+              <h1>OpenTok Demo by</h1>
+      <% } else { %>
+              <h1>WebRTC Demo</h1>
+      <% } %>
+      <img src="images/tokbox-nexmo-logo.svg" alt="opentok transparent logo">
+      <% if (isWebRTCVersion) { %>
+              <h2>Built by TokBox on the OpenTok Platform</h2>
+              <h3>This WebRTC Demo enables group video conferencing, text chat, screen sharing, and more.</h3>
+      <% } %>
+    </header>
     <form>
-      <p>
-        <input id="room" class="required" placeholder="Type the name of the meeting">
-        <input id="user" placeholder="Type your name">
-        <p class="error-room error-text">Please enter a meeting name</p>
-      </p>
-      <button id="enter" class="btn btn-blue btn-padding ctaarrow-white">Create Meeting</button>
-      <p class="error-title">Please fill in required information</p>
+      <div>
+        <input id="room" class="text-input required" data-wd="roomname">
+        <label id="room-label">Meeting name</label>
+        <p class="error-room error-text">
+          <i data-icon="warning"></i>
+          Please enter a meeting name.
+        </p>
+      </div>
+      <div>
+        <input id="user" class="text-input" data-wd="username">
+        <label id="user-label">Your name</label>
+      </div>
+      <button id="enter" data-wd="enterroom"></button>
     </form>
+    <div class="landing-more-info">
+      Need help?
+        <a href="https://tokbox.com/" target="_blank">About TokBox</a>
+      /
+        <a href="https://tokbox.com/contact/sales" target="_blank">Contact Sales</a>
+    </div>
+    <div class="safari-plug">
+      <a href="https://safari.opentokrtc.com/">Try the WebRTC Demo for Safari.</a>
+    </div>
   </section>
+</div>
+</div>
 </section>

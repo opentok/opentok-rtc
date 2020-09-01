@@ -46,7 +46,7 @@ describe('ChatController', () => {
     });
 
     function verifyInit(done, handlerShouldHave, handlersName) {
-      ChatController.init('testRoomName', 'testUserName', [], handlersName)
+      ChatController.init('testUserName', [], handlersName)
         .then((aHandlers) => {
           expect(aHandlers.length).to.be.equals(1);
           var chatHandlers = aHandlers[0];
@@ -116,17 +116,18 @@ describe('ChatController', () => {
       it('should inform that a incoming message has been received', sinon.test((done) => {
         var signalEvt = {
           data: JSON.stringify(data),
-          from: 'from',
+          from: { connectionId: 'myConnId' },
           type: 'chat',
         };
         var handlers = [];
         window.addEventListener('chatController:incomingMessage', function handlerTest(evt) {
           window.removeEventListener('chatController:incomingMessage', handlerTest);
+          data.senderId = 'myConnId';
           expect(evt.detail.data).to.be.deep.equal(data);
           done();
         });
 
-        ChatController.init('testRoomName', 'testUserName', handlers).then((aHandlers) => {
+        ChatController.init('testUserName', handlers).then((aHandlers) => {
           var chatHndls = aHandlers[0];
           chatHndls['signal:chat'](signalEvt);
         });
@@ -140,7 +141,7 @@ describe('ChatController', () => {
       var chatHndls;
 
       before((done) => {
-        ChatController.init(room, usr, handlers).then((aHandlers) => {
+        ChatController.init(usr, handlers).then((aHandlers) => {
           handlers = aHandlers;
           chatHndls = window.MockOTHelper.bindHandlers(aHandlers[0]);
           done();
@@ -151,7 +152,7 @@ describe('ChatController', () => {
          sinon.test((done) => {
            var connData = {
              userName: 'otherUser',
-             text: '(has connected)',
+             text: 'has joined the call',
            };
 
            OTHelper._myConnId = 'myConnId';
@@ -169,7 +170,7 @@ describe('ChatController', () => {
          sinon.test(function () {
            var connData = {
              userName: 'mySelf',
-             text: '(has connected)',
+             text: 'has joined the call',
            };
 
            OTHelper._myConnId = 'myConnId';
@@ -184,12 +185,12 @@ describe('ChatController', () => {
       it('should add a line informing that a user has disconnected', sinon.test((done) => {
         var handlers = [];
 
-        ChatController.init('testRoomName', 'mySelf', handlers).then((aHandlers) => {
+        ChatController.init('mySelf', handlers).then((aHandlers) => {
           var chatHndls = window.MockOTHelper.bindHandlers(aHandlers[0]);
 
           var disconnData = {
             userName: 'otherUsr',
-            text: '(left the room)',
+            text: 'has left the call',
           };
 
           OTHelper._myConnId = 'myConnId';
@@ -243,7 +244,7 @@ describe('ChatController', () => {
 
       window.addEventListener('chatController:incomingMessage', loadHistoryTest);
 
-      ChatController.init('testRoomName', 'testUserName', handlers).then((aHandlers) => {
+      ChatController.init('testUserName', handlers).then((aHandlers) => {
         window.dispatchEvent(new CustomEvent('roomStatus:updatedRemotely'));
       });
     }));
@@ -264,7 +265,7 @@ describe('ChatController', () => {
         resolver();
       });
 
-      ChatController.init('testRoomName', 'testUserName', handlers).then((aHandlers) => {
+      ChatController.init('testUserName', handlers).then((aHandlers) => {
         window.dispatchEvent(new CustomEvent('chatView:outgoingMessage', { detail: data }));
 
         expect(OTHelper.sendSignal.calledWith('chat', data)).to.be.true;

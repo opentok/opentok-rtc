@@ -1,7 +1,9 @@
 #screen {
   flex: 1;
-  height: calc(~"100% - 15px");
+  margin-top: 98px;
+  height: calc(~"100% - 112px");
   padding: 15px 15px 0 20px;
+  background-color: #5f6062;
 
   .streams[data-current-layout-type=hangout_vertical] .tc-list li.on-stage,
   .streams[data-current-layout-type=hangout_horizontal] .tc-list li.on-stage,
@@ -27,7 +29,7 @@
     overflow: hidden;
     border-radius: 12px;
     top: 30px;
-    right: 40px;
+    right: 30px;
     width: 20% !important;
     height: 20% !important;
     border: 0;
@@ -130,6 +132,7 @@
     .tc-list {
       width: 100%;
       height: 100%;
+      position: relative;
 
       ul {
         width: 100%;
@@ -273,4 +276,9 @@
   i[data-icon="record"] {
     display: inline-block;
   }
+}
+
+select#select-devices {
+  max-width: 100%;
+  display: none;
 }

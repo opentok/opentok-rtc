@@ -1,12 +1,12 @@
-!(function(global) {
+/* global OT, FeedbackView */
+
+!(function (global) {
   'use strict';
 
-  var debug =
-    new Utils.MultiLevelLogger('feedbackController.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
   var otHelper;
 
   var eventHandlers = {
-    sendFeedback: function(evt) {
+    sendFeedback: function (evt) {
       var report = evt.detail;
       var loggedEvent = {
         action: 'SessionQuality',
@@ -16,12 +16,16 @@
         publisherId: otHelper.publisherId,
         audioScore: report.audioScore,
         videoScore: report.videoScore,
-        description: report.description
+        description: report.description,
+        clientSystemTime: new Date().getTime(),
+        source: document.location.href
       };
-      debug.log('feedbackView:sendFeedback', loggedEvent);
-      OT.analytics.logEvent(loggedEvent);
+      var xhr = new XMLHttpRequest();
+      var url = window.feedbackUrl;
+      xhr.open('POST', url, true);
+      xhr.send(JSON.stringify(loggedEvent));
     },
-    reportIssue: function() {
+    reportIssue: function () {
       var loggedEvent = {
         action: 'ReportIssue',
         partnerId: otHelper.session.apiKey,
@@ -29,24 +33,21 @@
         connectionId: otHelper.session.connection.id,
         publisherId: otHelper.publisherId
       };
-      OT.reportIssue(function(error, reportId) {
-        if (error) {
-          debug.error('feedbackView:reportIssue', loggedEvent);
-        } else {
+      OT.reportIssue(function (error, reportId) {
+        if (!error) {
           loggedEvent.reportIssueId = reportId;
-          debug.log('feedbackView:reportIssue', loggedEvent);
         }
       });
     }
   };
 
-  var init = function(aOTHelper) {
+  var init = function (aOTHelper, aReportIssueLevel) {
     return LazyLoader.load([
       '/js/feedbackView.js'
-    ]).then(function() {
+    ]).then(function () {
       otHelper = aOTHelper;
       Utils.addEventsHandlers('feedbackView:', eventHandlers, global);
-      FeedbackView.init();
+      FeedbackView.init(aReportIssueLevel);
     });
   };
 

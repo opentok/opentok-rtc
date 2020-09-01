@@ -1,26 +1,39 @@
 {
+   "showTos": false,
    "OpenTok":{
       "apiKey": "<key>",
       "apiSecret": "<secret>"
    },
    "Firebase":{
-      "dataUrl":"<firebase_url>",
-      "authSecret":"<firebase_secret>"
+      "dataUrl":"",
+      "authSecret":""
    },
    "Archiving":{
-      "enabled":true,
+      "enabled":false,
       "archiveManager":{
          "enabled":false
       }
    },
    "Feedback":{
-      "enabled":false
+     "url": "",
+     "reportIssueLevel": 0
    },
    "Screensharing":{
-      "enabled":false,
+      "enabled":true,
       "chromeExtensionId":null,
       "annotations":{
          "enabled":true
       }
-   }
+   },
+   "SIP": {
+     "enabled": false,
+     "username": "nexmoApiKey",
+     "password": "nexmoApiSecret"
+   },
+  "Google": {
+    "clientId": "yourClientId.apps.googleusercontent.com",
+    "hostedDomain": "yourhosteddomain.com"
+  },
+  "useGoogleFonts": true,
+  "jqueryUrl": "https://ajax.googleapis.com/ajax/libs/jquery"
 }

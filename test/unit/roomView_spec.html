@@ -1,63 +1,123 @@
-<section id="dock">
-  <header class="info">
-    <div id="handler">
-      <span></span>
-      <span></span>
-      <span></span>
+<div id="top-banner">
+  <div class="icon-container">
+    <i data-icon="tokbox_logo"></i>
+  </div>
+  <div class="center-container">
+    <div class="room-info">
+      <p class="room-name"></p>
+      <i data-icon="participants"></i><span id="participantsStr"></span>
     </div>
-    <h1>
-      <span id="roomName"><%= roomName %></span>
-    </h1>
-    <hr>
-    <h2><span class="participants"></span></h2>
-    <h3>
-      <i data-icon="participants"></i><span class="participants"></span><span class="participantsStr"></span>
-    </h3>
-  </header>
-  <nav class="menu tc-sidebar">
-    <div class="tc-list">
-      <ul>
-        <li>
-          <a id="addToCall"><i data-icon="add"></i><span>Add participants</span></a>
-        </li>
-        <li disabled>
-          <a id="startArchiving"><i data-icon="archive"></i><span>Start recording</span></a>
-          <a id="stopArchiving"><i data-icon="archive_saving"></i><span class="duration"></span><span>Stop recording</span></a>
-        </li>
-        <li>
-          <a id="viewRecordings"><i data-icon="recordings"></i><span>Manage recordings (<span id="recordings">0</span>)</span></a>
-        </li>
-        <li disabled>
-          <a id="startSharingDesktop"><i data-icon="screen"></i><span>Share your screen</span></a>
-          <a id="stopSharingDesktop"><i data-icon="screen_sharing"></i><span>Stop sharing your screen</span></a>
-        </li>
-        <li>
-          <a id="chooseLayout"><i data-icon="layouts"></i><span>Change layout</span></a>
-        </li>
-        <li>
-          <a id="startChat" data-unread-messages="0"><i data-icon="chat"></i><span>Open text chat<span id="unreadMsg">(<span id="unreadCount">0</span>)</span></span></a>
-          <a id="stopChat"><i data-icon="chat"></i><span>Close text chat</span></a>
-        </li>
-        <li>
-          <a id="endCall" class="danger"><i data-icon="end"></i><span>End meeting</span></a>
-        </li>
-        <li class="surrounded bottom tight tooltip" tooltip="Stop receiving video">
-          <a id="videoSwitch"><i data-icon="videoSwitch"></i><span>Stop receiving video</span></a>
-        </li>
-        <li class="tight tooltip" tooltip="Mute all participants">
-          <a id="audioSwitch"><i data-icon="audioSwitch"></i><span>Mute all participants</span></a>
-        </li>
-      </ul>
+  </div>
+  <div class="right-container">
+    <div class="videoSwitch">
+      <a id="videoSwitch" disabled><i data-icon="videoSwitch"></i><span>Stop receiving video</span></a>
     </div>
-  </nav>
-</section>
-
+    <div class="audioSwitch" disabled>
+      <a id="audioSwitch"><i data-icon="audioSwitch"></i><span>Mute all participants</span></a>
+    </div>
+    <%   if(enableArchiving) { %>
+    <div id="toggleArchiving" disabled>
+      <a id="startArchiving" class="btn btn-blue btn-padding">Record</a>
+      <a id="stopArchiving" class="btn btn-blue btn-padding duration">Stop Recording</a>
+    </div>
+    <%      if(enableArchiveManager) { %>
+    <div id="manageRecordings">
+      <a id="viewRecordings"  class="btn btn-blue btn-padding"><span id="recordings">0</span></a>
+    </div>
+    <% } } %>
+    <div class="layout-container">
+      <div>
+        <div id="layout-icon">
+          <a id="chooseLayout">
+            <i data-icon="layout-icon"></i>
+          </a>
+        </div>
+        <div id="layout-label">Layout</div>
+      </div>
+    </div>
+  </div>
+</div>
 <section id="screen">
   <div class="streams">
     <div class="tc-list">
       <ul></ul>
     </div>
   </div>
+  <div class="call-controls" id="call-controls">
+    <div>
+      <button id="endCall" disabled>
+        <i data-icon="end_call"></i>
+      </button>
+      <p>Leave Call</p>
+    </div>
+    <div>
+      <button id="toggle-publisher-video" class="selected" disabled>
+        <i data-icon="no_video" data-event-name="roomView:buttonClick" data-action="video" data-stream-id="publisher" data-stream-type="publisher"></i>
+      </button>
+      <p>Your Video</p>
+    </div>
+    <div>
+      <button id="toggle-publisher-audio" disabled>
+        <i data-icon="mic-muted"></i>
+      </button>
+      <p>Your Mic</p>
+    </div>
+    <div id="addToCall-container">
+      <button id="addToCall">
+        <i data-icon="add"></i>
+      </button>
+      <p>Invite</p>
+    </div>
+    <% if (enableScreensharing) { %>
+    <div id="screen-share-container">
+      <button id="screen-share" disabled>
+        <i data-icon="screenshare"></i>
+      </button>
+      <p>Share Screen</p>
+    </div>
+    <% if (enableAnnotation) { %>
+    <div id="annotate-button-container">
+      <button id="annotate" disabled>
+        <i data-icon="annotate"></i>
+      </button>
+      <p>Annotate</p>
+    </div>
+    <% } } %>
+    <div>
+      <button id="message-btn" disabled>
+        <i data-icon="message"></i>
+      </button>
+      <p>Message
+        <span id="unreadMsg">(<span id="unreadCount">0</span>)</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<% if (feedbackUrl) { %>
+  <section class="feedbackButton">
+    <span id="showFeedback">Feedback / Report a Bug</span>
+  </section>
+<% } %>
+
+<section id="chat">
+  <form class="dialog-chat" id="chatForm">
+    <header>
+      <div class="chat-title">
+        <i data-icon="message_blue"></i>
+        <span>Messaging</span>
+      </div>
+      <i id="closeChat" data-icon="close_blue"></i>
+    </header>
+    <div id="chatMsgs" class="tc-list">
+      <ul>
+      </ul>
+    </div>
+    <footer>
+      <textarea id="msgText" placeholder="Type your message..." required></textarea>
+      <button id="sendTxt" type="submit" data-icon="send" class="btn btn-blue btn-padding btn-padding-small"></button>
+    </footer>
+  </form>
 </section>
 
 <section id="screenShareErrors" class="screen-modal tc-modal">
@@ -77,9 +137,9 @@
         </footer>
     </section>
     <section id="extInstallationSuccessful">
-      <header>Chrome extension was installed successfully.</header>
+      <header>You need a Chrome extension to share your screen.</header>
       <hr>
-      <p>You need to refresh your browser in order to use it.</p>
+      <p>Once you have installed it, refresh your browser and click 'share screen' again.</p>
       <footer>
         <button id="scrShrLater" class="btn btn-white btn-padding ctaarrow-blue">Later</button>
         <button id="scrShrReload" class="btn btn-blue btn-padding ctaarrow-white">Reload</button>
@@ -89,19 +149,11 @@
 </section>
 
 <section class="bubbles">
-  <section for="addToCall" class="bubble">
-    <div class="bubble-content">
-      <p>Meeting link has been copied.</p>
-      <p>Share link to add others to the meeting.</p>
-      <input class="block" onclick="this.select();">
-    </div>
-  </section>
-
-  <section for="viewRecordings" class="bubble">
-    <div class="bubble-content">
-      <p class="title">Your archived recordings</p>
-      <p>This archive will only stick around 3 days.<br>Please download your recording if you need it.</p>
-      <hr>
+  <section for="viewRecordings" class="bubble" data-recordings="loading">
+    <div class="bubble-content top-arrow">
+      <p class="title recordings">Your recordings</p>
+      <p class="title no-recordings">No recordings</p>
+      <p class="title loading">Loading archived recordings...</p>
       <div class="tc-list videos">
         <ul></ul>
       </div>
@@ -109,7 +161,7 @@
   </section>
 
   <section for="chooseLayout" class="bubble">
-    <div class="bubble-content">
+    <div class="bubble-content top-arrow">
       <ul>
         <li><a data-layout-type="float"></a></li>
         <li><a data-layout-type="f2f_horizontal"></a></li>
@@ -120,4 +172,109 @@
       </ul>
     </div>
   </section>
+</section>
+
+<section class="tc-modal feedback-report">
+  <div class="tc-dialog">
+  <header>
+    <i data-icon="close_gray_full" class="close"></i>
+    <div class="title-container">
+        <div class="title" data-tab="feedback">
+          <span>Share Your Feedback</span>
+        </div>
+      </div>
+  </header>
+  <section data-tab="feedback">
+    <form>
+    <div class="call-quality-feedback">
+      <span class="feedback-title">How was the audio quality?</span>
+      <div class="audio-feedback">
+        <div class="feedback-dropdown">
+          <select class="audio-score">
+              <option value="5">Excellent! No issues.</option>
+              <option value="4">Good! Not perfect but not annoying.</option>
+              <option value="3" selected="selected">It was ok. I had a few issues.</option>
+              <option value="2">Poor. Annoying.</option>
+              <option value="1">I'm disappointed.</option>
+          </select>
+        </div>
+      </div>
+      <div class="video-feedback">
+        <span class="feedback-title">How was the video quality?</span>
+        <div class="feedback-dropdown">
+            <select class="video-score">
+                <option value="5">Excellent! No issues.</option>
+                <option value="4">Good! Not perfect but not annoying.</option>
+                <option value="3" selected="selected">It was ok. I had a few issues.</option>
+                <option value="2">Poor. Annoying.</option>
+                <option value="1">I'm disappointed.</option>
+            </select>
+        </div>
+      </div>
+    </div>
+    <div class="feedback-suggestion">
+        <span class="feedback-title suggestion-title">Any other info?</span>
+        <input class="other-info" placeholder="What's on your mind?" />
+    </div>
+    <button class="btn btn-blue btn-padding send-feedback">Send Feedback</button>
+  </form>
+  </section>
+
+</div>
+</section>
+
+<section class="tc-modal archive-delete-modal">
+  <form class="tc-dialog">
+    <i data-icon="close_gray" class="close"></i>
+    <header>Delete <span class="username"></span>'s Archive</header>
+    <hr>
+    <p>Are you sure you want to delete this archive?</p>
+    <footer>
+      <button class="btn btn-white btn-padding ctaarrow-blue">Cancel</button>
+      <button class="btn btn-blue btn-padding ctaarrow-white delete-archive">Delete</button>
+    </footer>
+  </form>
+</section>
+
+<section class="tc-modal add-to-call-modal">
+  <div class="tc-dialog">
+    <header>
+      <i data-icon="close_gray_full" class="close"></i>
+      <div class="title" data-tab="feedback">
+        <span>Invite Participants</span>
+      </div>
+    </header>
+    <secton class="dialog-content">
+      <div class="meeting-link">
+        <input class="current-url" readonly id="current-url">
+        <div class="copied-message">
+          <span>copied to clipboard!</span>
+        </div>
+      </div>
+      <%   if(hasSip) { %>
+      <div class="google-sign-in-note-container">
+        <div class="google-sign-in-note">
+          <span class=title>Note:</span><br/>
+          <span>This function requires you to sign in with your <b>@tokbox.com</b> Google account</span>
+        </div>
+      </div>
+      <form id="dialOutForm">
+        <input id="dialOutNumber" class="phoneNumber" required>
+        <button id="dialOutBtn" class="btn btn-blue btn-padding">Dial</button>
+      </form>
+      <% } %>
+  </secton>
+  </div>
+</section>
+
+<section id="switchAlerts" class="tc-modal switch-alert-modal">
+  <form class="tc-dialog">
+    <i data-icon="close_gray" class="close"></i>
+    <header><span class="msg"></span></header>
+    <hr>
+    <p class="detail"></p>
+    <footer>
+      <button class="btn btn-blue btn-padding ctaarrow-white accept"></button>
+    </footer>
+  </form>
 </section>

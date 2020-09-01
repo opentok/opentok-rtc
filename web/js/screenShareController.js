@@ -1,4 +1,6 @@
-!(function(globals) {
+/* global RoomView, OTHelper, ScreenShareView */
+
+!(function (globals) {
   'use strict';
 
   var debug;
@@ -24,7 +26,7 @@
   };
 
   var streamHandlers = {
-    destroyed: function(evt) {
+    destroyed: function () {
       _isSharing = false;
       Utils.sendEvent('screenShareController:destroyed');
       enableAnnotations && Utils.sendEvent('screenShareController:annotationEnded');
@@ -32,7 +34,7 @@
   };
 
   var roomViewEvents = {
-    shareScreen: function(evt) {
+    shareScreen: function () {
       if (_hasPendingOperation) {
         return;
       }
@@ -50,14 +52,14 @@
         _hasPendingOperation = true;
         otHelper.shareScreen(desktopElement, screenPublisherOptions, streamHandlers,
                              enableAnnotations)
-          .then(function() {
+          .then(function () {
             _isSharing = true;
             _hasPendingOperation = false;
             Utils.sendEvent('screenShareController:changeScreenShareStatus',
                             { isSharing: _isSharing });
             enableAnnotations && Utils.sendEvent('screenShareController:annotationStarted');
           })
-          .catch(function(error) {
+          .catch(function (error) {
             _hasPendingOperation = false;
             if (error.code === OTHelper.screenShareErrorCodes.accessDenied) {
               RoomView.deleteStreamView('desktop');
@@ -71,21 +73,15 @@
   };
 
   var screenShareViewEvents = {
-    installExtension: function(evt) {
-      try {
-        chrome.webstore.install('https://chrome.google.com/webstore/detail/' + _chromeExtId,
-          function() {
-            Utils.sendEvent('screenShareController:extInstallationResult',
-                            { error: false });
-          }, function(err) {
-            Utils.sendEvent('screenShareController:extInstallationResult',
-                            { error: true, message: err });
-          });
-      } catch (e) {
-        // WARNING!! This shouldn't happen
-        // If this message is displayed it could be because the extensionId is not
-        // registred and, in this case, we have a bug because this was already controlled
-        debug.error('Error installing extension:', e);
+    installExtension: function () {
+      var newTab = window.open('https://chrome.google.com/webstore/detail/' + _chromeExtId, '_blank');
+      var error = !newTab || typeof newTab !== 'object';
+      Utils.sendEvent('screenShareController:extInstallationResult', {
+        error: error,
+        message: error ? 'It seems you have a Pop-Up blocker enabled. Please disabled it and try again.' : null
+      });
+      if (error) {
+        debug.error('Error opening Chrome Webstore');
       }
     }
   };
@@ -93,7 +89,7 @@
   function init(aUserName, aChromeExtId, aOTHelper, aEnableAnnotations) {
     return LazyLoader.dependencyLoad([
       '/js/screenShareView.js'
-    ]).then(function() {
+    ]).then(function () {
       enableAnnotations = aEnableAnnotations;
       otHelper = aOTHelper;
       debug = new Utils.MultiLevelLogger('screenShareController.js',

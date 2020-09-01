@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="196" height="49" viewBox="0 0 196 49">
+    <svg>
+    <defs>
+        <linearGradient id="c" x1="20.185%" y1="34.963%" y2="34.963%">
+            <stop offset="0%" stop-color="#0199CC"/>
+            <stop offset="100%" stop-color="#087BA1"/>
+        </linearGradient>
+        <path id="b" d="M22.662 0h141.116c10.269 0 19.031 7.425 20.716 17.554l3.319 19.954a3 3 0 0 1-2.96 3.492H3a3 3 0 0 1-2.987-3.278l1.74-18.67C2.757 8.255 11.818 0 22.661 0z"/>
+        <filter id="a" width="107.5%" height="134.1%" x="-3.7%" y="-12.2%" filterUnits="objectBoundingBox">
+            <feOffset dy="2" in="SourceAlpha" result="shadowOffsetOuter1"/>
+            <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation="2"/>
+            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"/>
+            <feColorMatrix in="shadowBlurOuter1" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.331719882 0"/>
+        </filter>
+        <filter id="d" width="104.3%" height="119.5%" x="-2.1%" y="-4.9%" filterUnits="objectBoundingBox">
+            <feOffset in="SourceAlpha" result="shadowOffsetInner1"/>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" k2="-1" k3="1" operator="arithmetic" result="shadowInnerInner1"/>
+            <feColorMatrix in="shadowInnerInner1" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0"/>
+        </filter>
+    </defs>
+    <g fill="none" fill-rule="evenodd" transform="translate(4 2)">
+        <use fill="#000" filter="url(#a)" xlink:href="#b"/>
+        <use fill="url(#c)" fill-opacity=".8" xlink:href="#b"/>
+        <use fill="#000" filter="url(#d)" xlink:href="#b"/>
+    </g>
+    </svg>
+</svg>

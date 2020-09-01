@@ -45,7 +45,7 @@
 
     var userName = aRoomParams.username ? '?userName=' + aRoomParams.username : '';
 
-    return sendXHR('GET', server + '/room/' + aRoomParams.roomName + '/info' + userName).
+    return sendXHR('GET', server + '/room/' + aRoomParams.roomURI + '/info' + userName).
       then(function(roomInfo) {
         if (!(roomInfo && roomInfo.sessionId)) {
           throw new Error('Room\'s data could not be recovered');
@@ -76,15 +76,45 @@
                     composeDate(data), 'application/x-www-form-urlencoded');
   }
 
+  function dialOut(roomURI, data) {
+    return sendXHR('POST', server + '/room/' + roomURI + '/dial',
+                    JSON.stringify(data), 'application/json');
+  }
+
+  function hangUp(phoneNumber, token) {
+    return sendXHR('POST', server + '/hang-up/', JSON.stringify({
+        phoneNumber:phoneNumber,
+        googleIdToken: token
+      }), 'application/json');
+  }
+
   function deleteArchive(id) {
     return sendXHR('DELETE', server + '/archive/' + id);
+  }
+
+  function saveConnection(connection, sessionId) {
+    return sendXHR('POST', server + '/saveConnection/', JSON.stringify({
+      connection: connection,
+      sessionId: sessionId
+    }), 'application/json');
+  }
+
+  function deleteConnection(connection, sessionId) {
+    return sendXHR('POST', server + '/deleteConnection/', JSON.stringify({
+      connection: connection,
+      sessionId: sessionId
+    }), 'application/json');
   }
 
   var Request = {
     getRoomInfo: getRoomInfo,
     sendArchivingOperation: sendArchivingOperation,
+    dialOut: dialOut,
+    hangUp: hangUp,
     deleteArchive: deleteArchive,
-    sendXHR: sendXHR
+    sendXHR: sendXHR,
+    saveConnection: saveConnection,
+    deleteConnection: deleteConnection
   };
 
   exports.Request = Request;

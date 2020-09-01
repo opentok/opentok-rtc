@@ -18,8 +18,49 @@
   background-image: url("/images/icons/close_gray.svg");
 }
 
+[data-icon="close_gray_full"] {
+  background-image: url("/images/icons/close_gray_full.svg");
+}
+[data-icon="close_blue"] {
+  background-image: url("/images/icons/close_blue.svg");
+}
+
+[data-icon="close-box"] {
+  background-image: url("/images/icons/close-box.svg");
+}
+
+[data-icon="connectivity-cancel"] {
+  background-image: url("/images/icons/connectivity-cancel.svg");
+  height: 13px;
+  width: 13px;
+}
+
+[data-icon="precall-tick"] {
+  background-image: url("/images/icons/precall/tick.svg");
+}
+
+[data-icon="precall-warning"] {
+  background-image: url("/images/icons/precall/warning.svg");
+}
+
+[data-icon="precall-error"] {
+  background-image: url("/images/icons/precall/error.svg");
+}
+
+[data-icon="precall-retest"] {
+  background-image: url("/images/icons/precall/retest.svg");
+  width: 21px;
+  height: 18.4px;
+}
+
 [data-icon="record"] {
   background-image: url("/images/icons/record.svg");
+}
+
+[data-icon="record-solid"] {
+  background-image: url("/images/icons/record-solid.svg");
+  width: 12.2px;
+  height: 12.2px;
 }
 
 [data-icon="collapse"] {
@@ -104,6 +145,77 @@
   background-image: url("/images/icons/layouts/hangout_vertical_disabled.svg");
 }
 
+[data-icon="tokbox_logo"] {
+  background-image: url("/images/tokbox-nexmo-logo.svg");
+  width: 235px;
+  height: 41px;
+  @media @smartphonesPortrait {
+    background-image: url("/images/tokbox-logo-bug.svg");
+    width: 27px;
+    height: 27px;
+  }
+}
+
+[data-icon="warning"] {
+  background-image: url("/images/icons/warning.svg");
+  width: 18px;
+  height: 18px;
+}
+
+[data-icon="end_call"] {
+  background-image: url("/images/icons/hang-up.svg");
+  width: 34px;
+  height: 21px;
+}
+
+[data-icon="video_icon"] {
+  background-image: url("/images/icons/video-icon.svg");
+  width: 26px;
+  height: 15.4px;
+}
+
+[data-icon="no_video"] {
+  background-image: url("/images/icons/no_video.svg");
+  width: 30px;
+  height: 30px;
+}
+
+[data-icon="mic"] {
+  background-image: url("/images/icons/mic.svg");
+  width: 18px;
+  height: 30px;
+  margin-top: 6px;
+}
+
+[data-icon="mic-muted"] {
+  background-image: url("/images/icons/mic-muted.svg");
+  width: 31px;
+  height: 30px;
+  margin-left: 3px;
+}
+
+[data-icon="screenshare"] {
+  background-image: url("/images/icons/screenshare.svg");
+  width: 37px;
+  height: 29px;
+}
+
+[data-icon="message"] {
+  background-image: url("/images/icons/message.svg");
+  width: 24px;
+  height: 20px;
+}
+
+[data-icon="message_blue"] {
+  background-image: url("/images/icons/message_blue.svg");
+  width: 24px;
+  height: 20px;
+}
+
+[data-icon="send"] {
+  background-image: url("/images/icons/send.svg");
+}
+
 /* Archives */
 
 .bubble [data-icon] {
@@ -174,6 +286,26 @@
   }
 }
 
+[data-icon="hangup"] {
+  background-image: url("/images/icons/hang-up.svg");
+  background-size: 26px 21px;
+  width: 26px !important;
+  height: 21px !important;
+  margin-top: 8px;
+  margin-left: -26px;
+}
+
+.hangup-action {
+  background-image: url("/images/icons/red-circle.svg");
+  background-size: 40px 40px;
+  background-repeat: no-repeat;
+  width: 40px;
+  height: 40px;
+  vertical-align: middle;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
 [data-icon="no_mic"] {
   background-image: url("/images/icons/no_mic_hover.svg");
   width: 20px;
@@ -204,11 +336,10 @@
 
 [data-icon="participants"] {
   background-image: url("/images/icons/participants.svg");
-  width: 20px;
-  @media @smartphones {
-    width: 16px;
-  }  
-  height: 16px;
+  width: 25px;
+  height: 13px;
+  margin-right: -4px;
+  margin-bottom: -1px;
 }
 
 /* Menu */
@@ -220,7 +351,16 @@
 
 [data-icon="add"] {
   background-image: url("/images/icons/add.svg");
+  width: 27px;
+  height: 28px;
 }
+
+[data-icon="annotate"] {
+  background-image: url("/images/icons/annotate.svg");
+  width: 22px;
+  height: 22px;
+}
+
 
 [data-icon="archive"] {
   background-image: url("/images/icons/archive.svg");
@@ -262,6 +402,12 @@
   background-image: url("/images/icons/layouts_hover.svg");
 }
 
+[data-icon="layout-icon"] {
+  background-image: url("/images/icons/layout-icon.svg");
+  width: 21.1px;
+  height: 22.4px;
+}
+
 [data-icon="chat"] {
   background-image: url("/images/icons/chat.svg");
 }
@@ -280,22 +426,66 @@
 
 #videoSwitch, #audioSwitch {
   [data-icon="videoSwitch"], [data-icon="audioSwitch"] {
-    background-image: url("/images/icons/switch_off.svg");
-    width: 30px;
-    height: 24px;
+    background-image: url("/images/icons/switch_off_blue.svg");
+    width: 51px;
+    height: 30.4px;
     vertical-align: text-bottom;
   }
 }
 
-:hover > #videoSwitch, :hover > #audioSwitch {
-  [data-icon="videoSwitch"], [data-icon="audioSwitch"] {
-    background-image: url("/images/icons/switch_off_hover.svg");
+.sourcePick {
+  min-width: 70px;
+  cursor: pointer;
+  display: inline-block; 
+  text-align: center;
+}
+
+.right-container {
+  .sourcePick {
+    @media @smartphonesPortrait {
+      margin-top: -36px;
+      margin-right: 7px;
+    }
+  }
+}
+
+#toggleFacingMode {
+  [data-icon="cycleVideo"] {
+    background-image: url("/images/icons/toggleVideo.svg");
+    width: 51px;
+    height: 30.4px;
+    vertical-align: text-bottom;
+  }
+}
+
+#pickMic {
+  [data-icon="pmic"] {
+    background-image: url("/images/icons/mic.svg");
+    background-position: center; 
+    width: 51px;
+    height: 30.4px;
+    vertical-align: text-bottom;
   }
 }
 
 #videoSwitch.activated,
 #audioSwitch.activated {
   [data-icon="videoSwitch"], [data-icon="audioSwitch"] {
-    background-image: url("/images/icons/switch_on.svg");
+    background-image: url("/images/icons/switch_on_blue.svg");
+  }
+}
+
+#initialVideoSwitch, #initialAudioSwitch {
+  [data-icon="videoSwitch"], [data-icon="audioSwitch"] {
+    background-image: url("/images/icons/switch_off_blue.svg");
+    width: 51px;
+    height: 30.4px;
+    vertical-align: text-bottom;
+  }
+}
+
+#initialVideoSwitch.activated, #initialAudioSwitch.activated {
+  [data-icon="videoSwitch"], [data-icon="audioSwitch"] {
+    background-image: url("/images/icons/switch_on_blue.svg");
   }
 }

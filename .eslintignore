@@ -5,3 +5,5 @@
 /web/js/helpers/*
 
 /test/lib/*
+/test/regression_tests/*
+wdio.conf.js

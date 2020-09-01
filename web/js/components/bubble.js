@@ -32,23 +32,24 @@
  *
  */
 
-!(function(global) {
+!(function (global) {
   'use strict';
 
   var transEndEventName =
     ('WebkitTransition' in document.documentElement.style) ?
-     'webkitTransitionEnd' : 'transitionend';
+      'webkitTransitionEnd' : 'transitionend';
 
   var HORIZONTAL_OFFSET = 10;
+  var VERTICAL_OFFSET = 4;
 
   var bubbles = {};
 
   /*
    * Closes all bubbles clicking outside them
    */
-  var onBodyClicked = function(evt) {
+  var onBodyClicked = function (evt) {
     document.body.removeEventListener('click', onBodyClicked);
-    Object.keys(bubbles).forEach(function(id) {
+    Object.keys(bubbles).forEach(function (id) {
       var bubble = bubbles[id];
       var target = evt.target;
       if (bubble.associatedWith !== target) {
@@ -62,7 +63,7 @@
     });
   };
 
-  var addGlobalHandlers = function() {
+  var addGlobalHandlers = function () {
     document.body.addEventListener('click', onBodyClicked);
   };
 
@@ -71,23 +72,24 @@
    *
    * @param {String} Id of the element which is associated with the bubble
    */
-  var Bubble = function(id) {
+  var Bubble = function (id) {
     this.container = document.querySelector('.bubble[for="' + id + '"]');
+    this.topArrow = this.container.querySelector('.top-arrow');
     this.associatedWith = document.getElementById(id);
     this._onHidden = this._onHidden.bind(this);
 
     // Bubbles consumes 'click' events in order not to be closed automatically
-    this.container.addEventListener('click', function(e) {
+    this.container.addEventListener('click', function (e) {
       e.stopImmediatePropagation();
     });
   };
 
   Bubble.prototype = {
-    show: function() {
+    show: function () {
       var bubble = this;
 
       this.bubbleShown =
-        this.bubbleShown || new Promise(function(resolve, reject) {
+        this.bubbleShown || new Promise(function (resolve) {
           var container = bubble.container;
 
           container.removeEventListener(transEndEventName, bubble._onHidden);
@@ -99,7 +101,7 @@
 
           bubble._takePlace();
           bubble._visible = true;
-          setTimeout(function() {
+          setTimeout(function () {
             container.classList.add('show');
           }, 50); // Give the chance to paint the UI element before fading in
         });
@@ -107,11 +109,11 @@
       return this.bubbleShown;
     },
 
-    hide: function() {
+    hide: function () {
       var bubble = this;
 
       this.bubbleHidden =
-        this.bubbleHidden || new Promise(function(resolve, reject) {
+        this.bubbleHidden || new Promise(function (resolve) {
           var container = bubble.container;
 
           container.removeEventListener(transEndEventName, bubble._onShown);
@@ -122,7 +124,7 @@
             resolve();
           });
 
-          setTimeout(function() {
+          setTimeout(function () {
             container.classList.remove('show');
           }, 50); // Give the chance to paint the UI element before fading out
         });
@@ -130,16 +132,16 @@
       return this.bubbleHidden;
     },
 
-    toggle: function() {
+    toggle: function () {
       var bubble = this;
       return (bubble.bubbleShown) ? bubble.hide() : bubble.show();
     },
 
-    _onShown: function(e) {
+    _onShown: function () {
       addGlobalHandlers();
     },
 
-    _onHidden: function(e) {
+    _onHidden: function (e) {
       e.target.removeEventListener(transEndEventName, this._onHidden);
       this._visible = false;
     },
@@ -149,14 +151,16 @@
       value ? classList.add('visible') : classList.remove('visible');
     },
 
-    _takePlace: function() {
+    _takePlace: function () {
       var rectObject = this.associatedWith.getBoundingClientRect();
-      var x = rectObject.right + HORIZONTAL_OFFSET;
-      var y = rectObject.top - rectObject.height;
-
       var container = this.container;
-      container.style.left = x + 'px';
-      container.style.top = y + 'px';
+      if (this.topArrow) {
+        container.style.right = (window.innerWidth - rectObject.right - 20) + 'px';
+        container.style.top = rectObject.bottom + VERTICAL_OFFSET + 'px';
+      } else {
+        container.style.left = rectObject.right + HORIZONTAL_OFFSET + 'px';
+        container.style.top = (rectObject.top - rectObject.height) + 'px';
+      }
     }
   };
 
@@ -166,7 +170,7 @@
      *
      * @param {String} Id of the element which is associated with the bubble
      */
-    get: function(id) {
+    get: function (id) {
       var instance = bubbles[id];
 
       if (!instance) {

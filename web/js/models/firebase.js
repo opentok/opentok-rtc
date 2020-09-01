@@ -1,40 +1,26 @@
-!(function(exports) {
+/* globals Firebase */
+
+!(function (exports) {
   'use strict';
 
   var archives = null;
   var listeners = {};
 
-  function init(aUrl, aToken) {
-    var self = this;
-    return LazyLoader.dependencyLoad([
-      'https://cdn.firebase.com/js/client/2.3.1/firebase.js'
-    ]).then(function() {
-      return new Promise(function(resolve, reject) {
-        // url points to the session root
-        var sessionRef = new Firebase(aUrl);
-        sessionRef.authWithCustomToken(aToken, function() {
-          var archivesRef = sessionRef.child('archives');
-          archivesRef.on('value', function updateArchiveHistory(snapshot) {
-            var handlers = listeners.value;
-            archives = snapshot.val();
-            var archiveValues = Promise.resolve(archives || {});
-            handlers && handlers.forEach(function(aHandler) {
-              archiveValues.then(aHandler.method.bind(aHandler.context));
-            });
-          }, function onCancel(err) {
-            // We should get called here only if we lose permission...
-            // which should only happen if the branch is erased.
-            var handlers = listeners.value;
-            console.error('Lost connection to Firebase. Reason: ', err); // eslint-disable-line no-console
-            var archiveValues = Promise.resolve({});
-            handlers && handlers.forEach(function(aHandler) {
-              archiveValues.then(aHandler.method.bind(aHandler.context));
-            });
-          });
-          sessionRef.child('connections').push(new Date().getTime()).onDisconnect().remove();
-          resolve(self);
-        });
+  var archiveHandler = {
+    archiveUpdates: function (evt) {
+      var handlers = listeners.value;
+      var archiveValues = Promise.resolve(evt.detail || {});
+      handlers && handlers.forEach(function (aHandler) {
+        archiveValues.then(aHandler.method.bind(aHandler.context));
       });
+    }
+  };
+
+  function init() {
+    var self = this;
+    return new Promise(function (resolve) {
+      Utils.addEventsHandlers('roomController:', archiveHandler, exports);
+      resolve(self);
     });
   }
 

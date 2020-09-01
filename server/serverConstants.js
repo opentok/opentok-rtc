@@ -21,12 +21,19 @@ E.DEFAULT_USER_NAME = 'Anonymous User';
 // (and in fact it would be more robust if we didn't!) because we can just call listArchives
 // to get that, it's more efficient if we cache it locally.
 E.REDIS_ROOM_PREFIX = 'otrtc_room__';
+E.REDIS_PHONE_PREFIX = 'otrtc_phone_';
 
 E.REDIS_ROOM_MATCHES = E.REDIS_ROOM_PREFIX + '*';
 
 E.OPENTOK_API_KEY = { envVar: 'TB_API_KEY', jsonPath: 'OpenTok.apiKey', required: true };
 
 E.OPENTOK_API_SECRET = { envVar: 'TB_API_SECRET', jsonPath: 'OpenTok.apiSecret', required: true };
+
+E.OPENTOK_PRECALL_API_KEY = { envVar: 'TB_PRECALL_API_KEY', jsonPath: 'precallTest.apiKey' };
+
+E.OPENTOK_PRECALL_API_SECRET = { envVar: 'TB_PRECALL_API_SECRET', jsonPath: 'precallTest.apiSecret' };
+
+E.OPENTOK_JS_URL = { envVar: 'TB_JS_URL', jsonPath: 'OpenTok.jsUrl', required: false, defaultValue: 'https://static.opentok.com/v2/js/opentok.min.js' };
 
 E.FIREBASE_DATA_URL = { envVar: 'FB_DATA_URL', jsonPath: 'Firebase.dataUrl' };
 
@@ -35,7 +42,7 @@ E.FIREBASE_AUTH_SECRET = { envVar: 'FB_AUTH_SECRET', jsonPath: 'Firebase.authSec
 // Sessions should not live forever. So we'll store the last time a session was used and if when
 // we fetch it from Redis we determine it's older than this max age (in days). This is the key
 // where that value (in days) should be stored. By default, sessions live two days.
-E.OPENTOK_MAX_SESSION_AGE = { envVar: 'TB_MAX_SESSION_AGE', jsonPath: 'OpenTok.maxSessionAge', defaultValue: 2, parser: parseInt };
+E.OPENTOK_MAX_SESSION_AGE = { envVar: 'TB_MAX_SESSION_AGE', jsonPath: 'OpenTok.maxSessionAge', defaultValue: 2, parser: parseFloat };
 
 E.ENABLE_ARCHIVING = { envVar: 'ENABLE_ARCHIVING', jsonPath: 'Archiving.enabled', defaultValue: true, parser: parseBool };
 
@@ -54,11 +61,15 @@ E.ENABLE_ARCHIVE_MANAGER = { envVar: 'ENABLE_ARCHIVE_MANAGER', jsonPath: 'Archiv
 // Maximum time an empty room will keep it's history alive, in minutes.
 E.EMPTY_ROOM_LIFETIME = { envVar: 'EMPTY_ROOM_LIFETIME', jsonPath: 'Archiving.archiveManager.emptyRoomMaxLifetime', defaultValue: 3 };
 
-E.ENABLE_FEEDBACK = { envVar: 'ENABLE_FEEDBACK', jsonPath: 'Feedback.enabled', defaultValue: false, parser: parseBool };
+E.FEEDBACK_URL = { envVar: 'FEEDBACK_URL', jsonPath: 'Feedback.url', defaultValue: '' };
 
+E.REPORT_ISSUE_LEVEL = { envVar: 'REPORT_ISSUE_LEVEL', jsonPath: 'Feedback.reportIssueLevel', defaultValue: 3 };
 
 E.ENABLE_SCREENSHARING = { envVar: 'ENABLE_SCREENSHARING', jsonPath: 'Screensharing.enabled', defaultValue: false, parser: parseBool };
 
+E.USE_GOOGLE_FONTS = { envVar: 'USE_GOOGLE_FONTS', jsonPath: 'useGoogleFonts', required: false, defaultValue: true, parser: parseBool };
+
+E.JQUERY_URL = { envVar: 'JQUERY_URL', jsonPath: 'jqueryUrl', required: false, defaultValue: 'https://ajax.googleapis.com/ajax/libs/jquery' };
 
 // Chrome AddOn extension Id for sharing screen
 E.CHROME_EXTENSION_ID = { envVar: 'CHROME_EXTENSION_ID', jsonPath: 'Screensharing.chromeExtensionId' };
@@ -85,3 +96,23 @@ E.IOS_APP_ID = { envVar: 'IOS_APP_ID', jsonPath: 'IOSAppId' };
 E.IOS_URL_PREFIX = { envVar: 'IOS_URL_PREFIX', jsonPath: 'IOSUrlPrefix', defaultValue: '' };
 
 E.DEFAULT_INDEX_PAGE = { envVar: 'DEFAULT_INDEX_PAGE', jsonPath: 'defaultPageIndex', defaultValue: undefined };
+
+E.SHOW_TOS = { envVar: 'SHOW_TOS', jsonPath: 'showTos', defaultValue: false, parser: parseBool };
+
+E.SIP_ENABLED = { envVar: 'SIP_ENABLED', jsonPath: 'SIP.enabled', defaultValue: false, parser: parseBool };
+
+E.SIP_URI = { envVar: 'SIP_URI', jsonPath: 'SIP.uri', defaultValue: '' };
+
+E.SIP_USERNAME = { envVar: 'SIP_USERNAME', jsonPath: 'SIP.username', defaultValue: '' };
+
+E.SIP_PASSWORD = { envVar: 'SIP_PASSWORD', jsonPath: 'SIP.password', defaultValue: '' };
+
+E.SIP_REQUIRE_GOOGLE_AUTH = { envVar: 'SIP_REQUIRE_GOOGLE_AUTH', jsonPath: 'SIP.requireGoogleAuth', defaultValue: false, parser: parseBool };
+
+E.GOOGLE_CLIENT_ID = { envVar: 'GOOGLE_CLIENT_ID', jsonPath: 'Google.clientId', defaultValue: '' };
+
+E.GOOGLE_HOSTED_DOMAIN = { envVar: 'GOOGLE_HOSTED_DOMAIN', jsonPath: 'Google.hostedDomain', defaultValue: '' };
+
+E.BLACKLIST = { envVar: 'BLACKLIST', jsonPath: 'blacklist', defaultValue: '' };
+
+E.MEDIA_MODE = { envVar: 'MEDIA_MODE', jsonPath: 'mediaMode', defaultValue: 'routed'};

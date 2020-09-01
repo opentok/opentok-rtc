@@ -6,8 +6,6 @@ module.exports = function(grunt) {
   [
     'grunt-autoprefixer',
     'grunt-contrib-clean',
-//    'grunt-contrib-compress',
-//    'grunt-contrib-connect',
     'grunt-contrib-less',
     'grunt-contrib-watch',
     'grunt-mocha-test', // Server side test runner
@@ -93,7 +91,6 @@ module.exports = function(grunt) {
           'web/css/landing.opentok.css': 'web/less/landing.less',
           'web/css/room.opentok.css': 'web/less/room.less',
           'web/css/min.opentok.css': 'web/less/min.less',
-          'web/css/webrtc.opentok.css': 'web/less/webrtc.less',
           'web/css/endMeeting.opentok.css': 'web/less/endMeeting.less',
           'web/css/annotation.opentok.css': 'web/less/annotation.less',
           'web/css/hangoutScroll.css': 'web/less/hangoutScroll.less'

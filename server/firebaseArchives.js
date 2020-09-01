@@ -51,6 +51,10 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
       updateArchive: () => Promise.resolve(),
       removeArchive: () => Promise.resolve(),
       shutdown: () => {},
+      ping: () => {},
+      subscribeArchiveUpdates: () => Promise.resolve(),
+      saveConnection: () => Promise.resolve(),
+      deleteConnection: () => Promise.resolve(),
     });
   }
 
@@ -103,6 +107,32 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
         fbRootRef.unauth();
         Object.keys(_timers).forEach((sessionId) => {
           clearTimeout(_timers[sessionId]);
+        });
+      },
+      ping() {
+        return new Promise((resolve, reject) => {
+          fbRootRef.child('ping').set(true)
+            .then(resolve)
+            .catch((error) => {
+              reject(error);
+            });
+        });
+      },
+      subscribeArchiveUpdates(sessionId, sendSignalCallback) {
+        return new Promise((resolve) => {
+          fbRootRef.child(sessionId + '/archives').on('value', sendSignalCallback);
+          resolve();
+        });
+      },
+      saveConnection(connection, sessionId) {
+        return new Promise((resolve) => {
+          fbRootRef.child(sessionId + '/connections/' + connection).set(connection)
+          .then(resolve);
+        });
+      },
+      deleteConnection(connection, sessionId) {
+        return new Promise((resolve) => {
+          fbRootRef.child(sessionId + '/connections/' + connection).remove(resolve);
         });
       },
     };

@@ -1,0 +1,105 @@
+<section class="tc-modal user-name-modal">
+  <img id="logo" src="/images/tokbox-nexmo-logo.svg" alt="opentok transparent logo">
+
+  <p id="name-heading" class='room-name'></p>
+
+  <div class="precall-right">
+  <form class="tc-dialog">
+    <div id="video-preview">
+      <div id="video-preview-name">foo</div>
+    </div>
+    <div id="enter-name-prompt">
+      <div>
+        <input id="user-name-input" class="block username" autofocus>
+        <label>Your Name (Optional)</label>
+      </div>
+    </div>
+    <div class="publish-settings">
+      <div id="video-settings">
+        <div>
+          <img src="/images/icons/video-icon.svg" />
+          <span>Video</span>
+        </div>
+        <a id="initialVideoSwitch" class="activated">
+          <label>On</label>
+          <i data-icon="videoSwitch"></i>
+        </a>
+      </div>
+      <div id="audio-settings">
+        <div>
+          <img src="/images/icons/mic-icon.svg" />
+          <span>Audio</span>
+          <div id="audio-meter">
+            <div id="audio-meter-level">
+            </div>
+          </div>
+        </div>
+
+        <a id="initialAudioSwitch" class="activated">
+          <label>On</label>
+          <i data-icon="audioSwitch"></i>
+        </a>
+      </div>
+      <div id="pre-call-test">
+        <div id="precall-test-labels">
+          <img src="/images/icons/connectivity-icon.svg" />
+          <span>Connectivity test</span>
+          <span id="test-status">
+            <label></label>
+            <button id="connectivity-cancel">
+              <i data-icon="connectivity-cancel"></i>
+            </button>
+          </span>
+        </div>
+      </div>
+      <div id="precall-test-meter">
+        <div id="precall-test-meter-level">
+        </div>
+      </div>
+      <button id="enter" class="btn btn-blue btn-padding" type="submit" disabled>
+        <span class="room-name"></span>
+      </button>
+    </form>
+  </div>
+  <div id="pre-call-test-results">
+    <i data-icon="close-box" id="precall-close"></i>
+    <i data-icon="precall-tick" id="precall-icon"></i>
+    <p id="pre-call-heading">Precall Test Results</p>
+    <p id="pre-call-description">
+      You can expect a great experience on your video call!
+    </p>
+    <div id="results">
+      <div id="precall-video-results" class="precall-media-results">
+        <p class="media-heading">
+          VIDEO QUALITY
+        </p>
+        <p class="bitrate">
+          <span id="video-bitrate"></span> Kbps
+        </p>
+        <p id="precall-resolution">
+        </p>
+        <p id="precall-framerate">
+        </p>
+        <p id="precall-video-packet-loss">
+        </p>
+      </div>
+      <div id="precall-audio-results" class="precall-media-results">
+        <p class="media-heading">
+          AUDIO QUALITY
+        </p>
+        <p class="bitrate">
+          <span id="audio-bitrate">40</span> Kbps
+        </p>
+        <p id="precall-audio-packet-loss">
+          0% packet loss
+        </p>
+      </div>
+    </div>
+    <div id="retest">
+      <i data-icon="precall-retest" id="precall-retest"></i>
+      Re-test
+    </div>
+  </div>
+  </div>
+
+</section>

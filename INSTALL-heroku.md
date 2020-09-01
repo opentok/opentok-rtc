@@ -12,7 +12,7 @@ You will need a validated Heroku account (with the ability to use free add-ons).
 To easily deploy this repository to Heroku, sign up for a Heroku account and click this
 button:
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/opentok/OpenTokRTC-V2)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/opentok/opentok-rtc)
 
 If you prefer to deploy to Heroku manually instead, follow the procedure described next.
 
@@ -20,8 +20,8 @@ Heroku will prompt you to add your OpenTok API key and OpenTok API secret, which
 
 You have to set the following environment variables on your Heroku instance:
 
-- `TB_API_KEY`: Your Opentok api key.
-- `TB_API_SECRET`: Your Opentok api secret.
+- `TB_API_KEY`: Your OpenTok API key.
+- `TB_API_SECRET`: Your OpenTok API secret.
 
 The following environment are optional and required only if you enable Archive Manager.
 

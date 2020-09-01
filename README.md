@@ -1,7 +1,9 @@
-![logo](./tokbox-logo.png)
+# OpenTokRTC
 
-# OpenTokRTC v2
-[![Build Status](https://travis-ci.com/opentok/OpenTokRTC-V2.svg?token=qPpN1jG8Wftsn1cafKif&branch=master)](https://travis-ci.com/opentok/OpenTokRTC-V2)
+<img src="https://assets.tokbox.com/img/vonage/Vonage_VideoAPI_black.svg" height="48px" alt="Tokbox is now known as Vonage" />
+
+[![Build Status](https://travis-ci.com/opentok/opentok-rtc.svg?token=qPpN1jG8Wftsn1cafKif&branch=master)](https://travis-ci.com/opentok/opentok-rtc)
+[![codecov](https://codecov.io/gh/opentok/opentok-rtc/branch/master/graph/badge.svg)](https://codecov.io/gh/opentok/opentok-rtc/branch/master)
 
 OpenTokRTC is your private web-based video conferencing solution. It is based on the TokBox
 [OpenTok platform](https://tokbox.com/developer/) and uses the OpenTok SDKs and API. You can deploy
@@ -19,10 +21,13 @@ This repository contains a Node.js server and a web client application.
   - [OpenTok configuration](#opentok-configuration)
   - [Firebase configuration](#firebase-configuration)
   - [Screen sharing](#screen-sharing)
+  - [Phone dial-out](#phone-dial-out)
+  - [Google Authentication for Phone dial-out](#google-authentication-for-phone-dial-out)
   - [Web client configuration](#web-client-configuration)
   - [Additional configuration options](#additional-configuration-options)
-- [Customizing UI](#customizing-ui)
+- [Customizing the UI](#customizing-the-ui)
 - [Troubleshooting](#troubleshooting)
+- [Health status check](#health-status-check)
 
 ---
 
@@ -34,13 +39,13 @@ If you want to install OpenTokRTC on your own server, read on. If you want to de
 
 You will need these dependencies installed on your machine:
 
-- [NodeJS v4+](https://nodejs.org): This version of OpenTokRTC is tested with NodeJS v4 LTS.
+- [NodeJS v8+](https://nodejs.org): This version of OpenTokRTC is tested with NodeJS v8 LTS.
 - [Redis](https://redis.io): A `redis` server running on `localhost`.
-- [Grunt](http://gruntjs.com): Used for bundling assets and running tests. You can install the Grunt CLI globally by running: `# npm i -g grunt-cli`.
+- [Grunt](http://gruntjs.com): Used for bundling assets and running tests. You can install the Grunt CLI globally by running:<br/>   `# npm i -g grunt-cli`.
 
 You will also need these API subscriptions:
 
-- [OpenTok](https://tokbox.com): An OpenTok API key and secret. You can obtain these by signing up with [TokBox](https://tokbox.com).
+- [OpenTok](https://tokbox.com): An OpenTok API key and secret. You can obtain these by signing up with [Opentok/Vonage](https://tokbox.com/account/user/signup).
 - [Firebase](https://firebase.google.com) (Optional): A Firebase app and secret. Firebase is used for storing archive data of video conferences. You will need this only if you want to enable Archive Management (In-app playback and download of recordings) of conference rooms.
 
 ### Setting up
@@ -50,7 +55,7 @@ Once all the dependencies are in place, you will need to set some configuration 
 First, change directory to where you have downloaded OpenTokRTC. Then create create the file `config.json` in the `config` folder. You can copy `config/example.json` to `config/config.json`
 
 ```sh
-$ cd <path-to-OpenTokRTC>
+$ cd <path-to-opentok-rtc>
 $ cp config/example.json config/config.json
 ```
 
@@ -122,7 +127,7 @@ To start the server with HTTPS enabled, pass `-S` flag to launch a secure server
 $ node server -S -C sampleCerts
 ```
 
-The server expects SSL certificate file to be named  `serverCert.pem` and SSL private key file to be named `serverKey.pem`. There is a pre-generated, self-signed SSL certificate pair in the `./sampleCerts` directory.
+The server expects SSL certificate file to be named `serverCert.pem` and SSL private key file to be named `serverKey.pem`. There is a pre-generated, self-signed SSL certificate pair in the `./sampleCerts` directory.
 
 For detailed information on available options, run `$ node server -h`.
 
@@ -134,20 +139,25 @@ These are the detailed configuration options:
 ### OpenTok configuration
 
 Environment Variable Names and Description:
+
 - `TB_API_KEY` (Required): Your OpenTok API key.
 - `TB_API_SECRET` (Required): Your OpenTok API Secret.
-- `TB_MAX_SESSION_AGE` (Optional, default value 2):  Sessions should not live forever. So we'll store
-   the last time a session was used and if when we fetch it from Redis we determine it's older than
-   this max age (in days). This is the key where that value (in days) should be stored.
-   By default, sessions live two days.
+- `TB_JS_URL` (Optional): The OpenTok.js URL to be loaded by the app. The default value is
+  "https://static.opentok.com/v2/js/opentok.min.js". Enterprise partners should set this to the URL
+  for the enterprise version of OpenTok.js ("https://enterprise.opentok.com/v2/js/opentok.min.js").
+- `TB_MAX_SESSION_AGE` (Optional, default value 2): Sessions should not live forever. So we'll store
+  the last time a session was used and if when we fetch it from Redis we determine it's older than
+  this max age (in days). This is the key where that value (in days) should be stored.
+  By default, sessions live two days.
 
 JSON example:
 
 ```json
 "OpenTok": {
-	"apiKey": "<key>",
-	"apiSecret": "<secret>",
-	"maxSessionAge": 2,
+  "apiKey": "<key>",
+  "apiSecret": "<secret>",
+  "jsUrl": "https://static.opentok.com/v2/js/opentok.min.js",
+  "maxSessionAge": 2
 }
 ```
 
@@ -200,48 +210,63 @@ If you want to ensure that the archive list is kept secure (as in only the actua
 }
 ```
 
-### Screen sharing
+### Phone dial-out
 
-The screen-sharing-extension-chrome directory includes sample files for developing a
-Chrome extension for enabling screen-sharing for this app. See the
-[OpenTok screen sharing developer guide](https://tokbox.com/developer/guides/screen-sharing/js/)
-for more information.
+The app can dial out and add a phone-based end user to the OpenTok session, using the OpenTok
+[SIP API](https://tokbox.com/developer/rest/#sip_call). This app uses
+[Nexmo](https://www.nexmo.com/) as the SIP application that connects
+to OpenTok. (You can also use the OpenTok SIP API to connect to other SIP endpoints.)
 
-Follow these steps to use the chrome extension included in this repository.
+To enable this feature:
 
-1. Edit the `manifest.json` file:
+1. Sign up for a [Nexmo/Vonage](https://dashboard.nexmo.com/sign-up) account.
 
-    * Set the `matches` property to match only your web domains. (When developing in
-      the localhost environment, you can use ```"matches": ["http://localhost/*"]```).
+2. Edit config/config.json file in this application, and add the following properties:
 
-    * Change the `name` and `author` settings
+- `SIP.enabled` -- Set this to `true`.
 
-    * Replace the icon files (logo16.png, logo48.png, logo128.png, and logo128transparent.png)
-    with your own website logos.
+- `SIP.username` -- Set this to the apiKey for the Nexmo account you created.
 
-    * Change the `version` setting with each new version of your extension.
+- `SIP.password` -- Set this to the apiSecret for the Nexmo account you created.
 
-    * You may want to change the `description`.
+- `SIP.requireGoogleAuth` -- See [Google Authentication for Phone dial-out](#google-authentication-for-phone-dial-out) for instructions on how to limit this functionality to users authenticated by their google account.
 
-    For more information, see the [Chrome extension manifest
-    documentation](https://developer.chrome.com/extensions/manifest).
+For example, the new lines in the config.json file should look like this:
 
-2. Load the extension into Chrome:
+```json
+       "SIP": {
+         "sipUri" : "sip:phoneumber@sip.nexmo.com",
+         "sipUsername" : "nexmoApiKey",
+         "sipPassword" : "nexmoApiSecret",
+         "requireGoogleAuth": false
+       }
+```
 
-    Open [chrome://extensions](chrome://extensions) and drag the screen-sharing-extension-chrome
-    directory onto the page, or click 'Load unpacked extension...'. For more information see
-    [Chrome's documentation on loading unpacked
-    extensions](https://developer.chrome.com/extensions/getstarted#unpacked).
+You can also add these settings as `SIP_ENABLED`, `SIP_URL`, `SIP_USERNAME`, `SIP_PASSWORD` and `SIP_REQUIRE_GOOGLE_AUTH` environment variables (instead of config.json settings).
 
-3. Add the `extensionId` to application configuration:
+#### Google Authentication for Phone dial-out
 
-   You can get the ID of the extension in the [chrome://extensions](chrome://extensions) page.
-   (It looks like `ffngmcfincpecmcgfdpacbdbdlfeeokh`).
-   Add the value to the configuration, see [Configuration Options: Screen sharing](#screen-sharing).
+You can limit the ability to place outgoing calls to those authenticated by google.
+To enable this feature:
 
-For more information and how to use your extension in production see the documentation at the
-[opentok/screensharing-extensions](https://github.com/opentok/screensharing-extensions/blob/master/chrome/ScreenSharing/README.md#customizing-the-extension-for-your-website)
-repo on GitHub.
+1. Create a Google API Console Project and client ID following the steps detailed here: https://developers.google.com/identity/sign-in/web/devconsole-project
+
+2. Edit the config/config.json file in this application, and add the following properties:
+
+- `Google.clientId` -- Set this to your client ID.
+- `Google.hostedDomain` -- If you wish to limit sign in to accounts associated with a hosted domain, set the domain here.
+- `Sip.requireGoogleAuth` -- `true` to require auth for SIP dial-out as detailed in [Phone dial-out](#phone-dial-out).
+
+For example, the new lines in the config.json file should look like this:
+
+```json
+  "Google": {
+    "clientId": "yourClientId.apps.googleusercontent.com>",
+    "hostedDomain": "yourhosteddomain.com"
+  }
+```
+
+You can also add these as `GOOGLE_CLIENT_ID` and `GOOGLE_HOSTED_DOMAIN` environment variables instead of config.json setings.
 
 ### Web client configuration
 
@@ -253,12 +278,12 @@ Web client allows to be configured in some of its features. You can enable or di
 - `ARCHIVE_ALWAYS`:(Optional, default value: false) Record all sessions.
 - `ARCHIVE_TIMEOUT`: (Optional, default value: 5000): The initial polling timeout (in milliseconds) for archive status change updates. Set this to 0 to disable polling.
 - `TIMEOUT_MULTIPLIER` (Optional, default value: 1.5) : Timeout multiplier. If the first archive status update polling fails, subsequent polling intervals will apply this multiplier
-   successively. Set to a lower number to poll more often.
+  successively. Set to a lower number to poll more often.
 
 ##### Archive Manager
 
 - `ENABLE_ARCHIVE_MANAGER`: (Optional, default value: false) Enable Archive Manager. Only meaningful if `archiving` is not disabled (Manage Recordings, requires firebase to be configured)
-- `EMPTY_ROOM_LIFETIME`: (Optional, default value 3): Maximum time, in minutes,  an empty room
+- `EMPTY_ROOM_LIFETIME`: (Optional, default value 3): Maximum time, in minutes, an empty room
 
 ```json
 "Archiving": {
@@ -276,7 +301,7 @@ Web client allows to be configured in some of its features. You can enable or di
 #### Screen sharing configuration
 
 - `ENABLE_SCREENSHARING`:(Optional, default value: false) Whether to enable screen sharing.
-- `CHROME_EXTENSION_ID` (Optional, default value: 'null'): The Chrome AddOn extension ID for screen sharing. Note that while the default value allows the server to run, it doesn't actually enable screen sharing in Chrome. See [Screen sharing](#screen-sharing).
+- `CHROME_EXTENSION_ID` :(Optional, LEGACY, default value: 'null'): The Chrome AddOn extension ID for screen sharing. Note: the Chrome extension is no longer required for screensharing.
 - `ENABLE_ANNOTATIONS`: (Optional, default value: true) Whether to enable annotations in screen sharing. This is only meaningful if screen sharing is not disabled.
 
 ```json
@@ -294,30 +319,52 @@ sharing](tokbox.com/developer/guides/screen-sharing/).
 
 #### Feedback
 
- `ENABLE_FEEDBACK`: Enable the "Give Demo Feedback" form.
+The app lets the developer POST feedback data to an endpoint on your HTTP server:
 
- ```json
- "Feedback": {
-     "enabled": false
- },
- ```
+`FEEDBACK_URL`: The URL to send a POST request with feedback data. Leave this as an empty string or
+undefined to disable issue reporting.
+
+`REPORT_ISSUE_LEVEL`: The audio and video scores in the feedback form are between 1 (awful) and 5 (excellent). When the feedback form is submitted, if an audio or video score is less than or equal to the report issue level, the app calls `OT.reportIssue()`. This reports an issue, which you can view in OpenTok Inspector. (For more information, see [Reporting an issue](https://tokbox.com/developer/guides/debugging/js/#report-issue) in the OpenTok developer Guides.) The default value is 3, set to 0 to disable issue reporting.
+
+```json
+"Feedback": {
+    "url": "",
+    "reportIssueLevel": 0
+},
+```
+
+#### SIP connection
+
+See the [Phone dial-out](#phone-dial-out) section.
 
 ### Additional configuration options
 
-* `ALLOW_IFRAMING` (Optional, default value: 'never'): Controls the server-side restriction on
-   allowing content to load inside an iframe. The allowed values are:
+- `SHOW_TOS` (Optional, default value: false): Whether the app will display the terms of service
+  dialog box and require the user to agree to the terms before joining a room.
 
-   - 'always': Allow iframing unconditionally (note that rtcApp.js should also be changed
-     to reflect this, this option only changes what the server allows)
+- `ALLOW_IFRAMING` (Optional, default value: 'never'): Controls the server-side restriction on
+  allowing content to load inside an iframe. The allowed values are:
 
-   - 'never': Set X-Frame-Options to 'DENY' (Deny loading content in any iframe)
+  - 'always': Allow iframing unconditionally (note that rtcApp.js should also be changed
+    to reflect this, this option only changes what the server allows)
 
-   - 'sameorigin': Set X-Frame-Options to 'SAMEORIGIN' (Only allow iframe content to be loaded
-     from pages in the same origin)
+  - 'never': Set X-Frame-Options to 'DENY' (Deny loading content in any iframe)
 
-   We don't allow restricting iframe loading to specific URIs because it doesn't work on Chrome
+  - 'sameorigin': Set X-Frame-Options to 'SAMEORIGIN' (Only allow iframe content to be loaded
+    from pages in the same origin)
 
-## Customizing UI
+  We don't allow restricting iframe loading to specific URIs because it doesn't work on Chrome.
+
+- `USE_GOOGLE_FONTS` (Optional, default value: true): Whether the client app will load
+  the Open Sans font (the main font used in the user interface) from the Google font library
+  (fonts.googleapis.com) or not.
+
+- `JQUERY_URL` (Optional, default value: 'https://ajax.googleapis.com/ajax/libs/jquery/'):
+  Route of the CDN that will be used to load JQuery scripts.
+
+- `MEDIA_MODE` (Optional, default value: 'routed'): Whether the OpenTok sessions should be `relayed` or `routed`.
+
+## Customizing the UI
 
 For information on how to customize OpenTokRTC's UI, see [CUSTOMIZING-UI.md](CUSTOMIZING-UI.md).
 
@@ -345,8 +392,83 @@ $ bower install
 $ grunt clientBuild
 ```
 
-We recommend that you run the application as a non-root user. Howerver, if you are running the application as the `root` user, you will additionally need to tell `bower` to allow root user to install dependencies, else bower will refuse to work:
+We recommend that you run the application as a non-root user. However, if you are running the application as the `root` user, you will additionally need to tell `bower` to allow root user to install dependencies, else bower will refuse to work:
 
 ```
 $ bower install --allow-root
 ```
+
+### Health status check
+
+There is a health status check endpoint at /server/health. You can load this URL to check whether
+the app is able to connect to all required external services. On success, this health check
+endpoint sends a response with the HTTP status code set to 200 and the JSON like the following:
+
+```json
+{
+  "name": "opentok-rtc",
+  "version": "4.1.1",
+  "gitHash": "312903cd043d5267bc11639718c47a9b313c1663",
+  "opentok": true,
+  "firebase": true,
+  "googleAuth": true,
+  "status": "pass"
+}
+```
+
+The JSON includes the following properties:
+
+- `name` -- `"ot-embed"`
+
+- `version` -- The version number deployed (from package.json)
+
+- `git_hash` -- The git commit deployed
+
+- `opentok` -- Whether the OpenTok API check passed. The app uses the OpenTok Node.js SDK,
+  which connects to the OpenTok API server to create OpenTok sessions.
+
+- `firebase` -- Whether the Firebase check passed. The app uses Firebase to store
+  embed data.
+
+- `googleAuth` -- Whether the Google Authentication check passed. This check is only run if the app
+  uses Google Authentication for making outbound SIP calls. (See [Google Authentication for
+  Phone dial-out](#google-authentication-for-phone-dial-out).)
+
+- `status` -- "pass" (if all checks pass) or "fail" (if any check fails)
+
+On failure, the health status check endpoint returns a response with
+the HTTP status code set 400 and JSON like the following:
+
+```json
+{
+  "name": "opentok-rtc",
+  "version": "4.1.1",
+  "git_hash": "312903cd043d5267bc11639718c47a9b313c1663",
+  "opentok": true,
+  "firebase": false,
+  "error": "10-second Firebase timeout reached.",
+  "status": "fail"
+}
+```
+
+Note that upon failure, the `status` property is set to `"fail"` and the `error` property
+is set to an error message. Also, the property for the failing test, such as `firebase`,
+will be set to `false`. If a test fails, the health check will not run subsequent tests.
+
+## Development and Contributing
+
+Interested in contributing? We :heart: pull requests! See the
+[Contribution](CONTRIBUTING.md) guidelines.
+
+## Getting Help
+
+We love to hear from you so if you have questions, comments or find a bug in the project, let us know! You can either:
+
+- Open an issue on this repository
+- See <https://support.tokbox.com/> for support options
+- Tweet at us! We're [@VonageDev](https://twitter.com/VonageDev) on Twitter
+- Or [join the Vonage Developer Community Slack](https://developer.nexmo.com/community/slack)
+
+## Further Reading
+
+- Check out the Developer Documentation at <https://tokbox.com/developer/>

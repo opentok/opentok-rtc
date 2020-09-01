@@ -1,12 +1,14 @@
-!(function(global) {
+/* global Modal */
+
+!(function (global) {
   'use strict';
 
   var showFeedback,
     sendButton,
-    audioScore,
-    videoScore,
+    audioScoreSelect,
+    videoScoreSelect,
     otherInfo,
-    reportButton;
+    reportIssueScore;
 
   var feedbackReportSelector = '.feedback-report';
 
@@ -19,37 +21,34 @@
     return Modal.hide(feedbackReportSelector);
   }
 
-  var init = function() {
+  var init = function (aReportIssueLevel) {
+    reportIssueScore = aReportIssueLevel;
     showFeedback = document.querySelector('#showFeedback');
     sendButton = document.querySelector('.feedback-report .send-feedback');
-    audioScore = document.querySelector('.feedback-report .audio-score');
-    videoScore = document.querySelector('.feedback-report .video-score');
+    audioScoreSelect = document.querySelector('.feedback-report .audio-score');
+    videoScoreSelect = document.querySelector('.feedback-report .video-score');
     otherInfo = document.querySelector('.feedback-report .other-info');
-    reportButton = document.querySelector('.feedback-report .report-issue');
     addHandlers();
   };
 
-  var resetForm = function() {
+  var resetForm = function () {
     otherInfo.value = '';
   };
 
-  var addHandlers = function() {
-    sendButton.addEventListener('click', function(event) {
+  var addHandlers = function () {
+    sendButton.addEventListener('click', function (event) {
       event.preventDefault();
-
+      var audioScore = audioScoreSelect.options[audioScoreSelect.selectedIndex].value;
+      var videoScore = videoScoreSelect.options[videoScoreSelect.selectedIndex].value;
       Utils.sendEvent('feedbackView:sendFeedback', {
-        audioScore: audioScore.options[audioScore.selectedIndex].value,
-        videoScore: videoScore.options[videoScore.selectedIndex].value,
+        audioScore: audioScore,
+        videoScore: videoScore,
         description: otherInfo.value
       });
 
-      hideForm();
-    });
-
-    reportButton.addEventListener('click', function(event) {
-      event.preventDefault();
-
-      Utils.sendEvent('feedbackView:reportIssue');
+      if (audioScore <= reportIssueScore || videoScore <= reportIssueScore) {
+        Utils.sendEvent('feedbackView:reportIssue');
+      }
 
       hideForm();
     });

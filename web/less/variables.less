@@ -3,11 +3,10 @@
 //
 
 // Fonts
-@baseFontFamily: "Muli", arial;
+@baseFontFamily: "Open Sans", arial;
 @baseFontWeight: 100;
 @boldFontWeight: 700;
 
-@muliRegularFont: "Muli", regular;
 
 // Theme colors
 @color: #007486;
@@ -21,7 +20,7 @@
 @colorActive: darken(@color,10%);
 @textActive: @textHover;
 @borderActive: @colorActive;
-@mainBackgroundColor: #F2F1EE;
+@mainBackgroundColor: #5f6062;
 
 @positive: #00c607;
 @positiveText: @text;
@@ -101,5 +100,6 @@
 @gutter: 16px;
 @columnGutter: @gutter / 2;
 
-@smartphones: ~"only screen and (max-width: 768px)";
-@smartphonesLandscape: @smartphones + ~" and (orientation:landscape)";
+@smartphones: ~"only screen and (max-width: 480px), only screen and (-webkit-min-device-pixel-ratio: 1.5, -o-min-device-pixel-ratio: 3/2, min--moz-device-pixel-ratio: 1.5, min-device-pixel-ratio: 1.5)";
+@smartphonesLandscape: ~"@{smartphones} only screen and (orientation:landscape) and (max-width: 480px), only screen and (orientation:landscape) and (-webkit-min-device-pixel-ratio: 1.5, -o-min-device-pixel-ratio: 3/2, min--moz-device-pixel-ratio: 1.5, min-device-pixel-ratio: 1.5)";
+@smartphonesPortrait: ~"@{smartphones} only screen and (orientation:portrait) and (max-width: 480px), only screen and (orientation:portrait) and (-webkit-min-device-pixel-ratio: 1.5, -o-min-device-pixel-ratio: 3/2, min--moz-device-pixel-ratio: 1.5, min-device-pixel-ratio: 1.5)";

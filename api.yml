@@ -1,8 +1,8 @@
 swagger: '2.0'
 info:
-  title: OpenTokRTC_v2 API
+  title: OpenTokRTC API
   description: >-
-    OpenTok Demo App, v2.0 path and API description. TO-DO: Add here a general
+    OpenTokRTC App, path and API description. TO-DO: Add here a general
     description of the page navigation.
   version: 1.0.0
 host: opentokdemo.tokbox.com
@@ -18,7 +18,6 @@ produces:
 x-implementation-module: serverMethods.js
 x-implementation-middleware:
   - configReady
-  - oldVersionCompat
   - iframingOptions
   - featureEnabled
 x-implementation-configuration: loadConfig
@@ -222,7 +221,7 @@ paths:
           in: query
           description: >-
             If the parameter is present (the value is irrelevant) the server
-            should generate and return an HTML page that embeds the video 
+            should generate and return an HTML page that embeds the video
             instead of returning the video directly.
           required: false
           type: string
@@ -262,6 +261,136 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/ErrorInfo'
+  '/room/{roomName}/dial':
+    post:
+      summary: Starts a SIP dial-out call
+      x-implemented-in: postRoomDial
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      description: Starts dialing a phone via a SIP gatway.
+      tags:
+        - Dial
+      parameters:
+        - name: roomName
+          in: path
+          description: Name of the room.
+          required: true
+          type: string
+        - name: phoneNumber
+          in: body
+          description: The phone number to dial.
+          required: true
+          type: string
+        - name: googleIdToken
+          in: body
+          description: Authenticated google user token to be verified before call.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Information about the SIP call
+          schema:
+            $ref: '#/definitions/DialInfo'
+        '400':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/ErrorInfo'
+        '401':
+          description: Unauthorized, problem with authentication credentials.
+        '403':
+          description: Forbidden. Operation not valid for user token with this domain.
+  '/hang-up':
+    post:
+      summary: Call hang-up callback for web client (to disconnect SIP connection)
+      x-implemented-in: postHangUp
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      description: Starts dialing a phone via a SIP gatway.
+      tags:
+        - Dial
+      parameters:
+        - phoneNumber: phoneNumber
+          in: body
+          description: The phone number for the connection to disconnect.
+          required: true
+          type: string
+        - name: googleIdToken
+          in: body
+          description: The google authentication token used to identify the client connecting.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Information about the SIP call
+        '400':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/ErrorInfo'
+  '/server/health':
+    get:
+      summary: >-
+        A health check endpoint, reporting the ability of the app to connect to external services
+      x-implemented-in: getHealth
+      produces:
+        - application/json
+      description: Starts dialing a phone via a SIP gatway.
+      tags:
+        - Health
+      responses:
+        '200':
+          description: Passed health check  
+          schema:
+            $ref: '#/definitions/HealthInfo'
+        '400':
+          description: Failed health check
+          schema:
+            $ref: '#/definitions/HealthInfo'
+  /saveConnection:
+    post:
+      summary: Callback to store a new connection in Firebase.
+      x-implemented-in: saveConnectionFirebase
+      description: Adds a new connection in the corresponding session in Firebase.
+      parameters:
+        - name: connection
+          in: body
+          description: The connection to be stored.
+          required: true
+          type: string
+        - name: sessionId
+          in: body
+          description: The sessionId of the connection.
+          required: true
+          type: string
+      tags:
+        - Firebase
+      responses:
+        '200':
+          description: OK
+  /deleteConnection:
+    post:
+      summary: Callback to delete a inactive connection from Firebase.
+      x-implemented-in: deleteConnectionFirebase
+      description: Deletes a connection in the corresponding session in Firebase.
+      parameters:
+        - name: connection
+          in: body
+          description: The connection to be deleted.
+          required: true
+          type: string
+        - name: sessionId
+          in: body
+          description: The sessionId of the connection.
+          required: true
+          type: string
+      tags:
+        - Firebase
+      responses:
+        '200':
+          description: OK
 definitions:
   RoomHTML:
     type: string
@@ -351,3 +480,30 @@ definitions:
           to null. The download URL is obfuscated, and the file is only
           available from the URL for 10 minutes. To generate a new URL, use the
           REST API for retrieving archive information or listing archives.
+  DialInfo:
+    type: object
+    properties:
+      id:
+        type: string
+      connectionId:
+        type: string
+      streamId:
+        type: string
+  HealthInfo:
+    type: object
+    properties:
+      name:
+        type: string
+      version:
+        type: string
+      gitHash:
+        type: string
+      opentok:
+        type: boolean
+      firebase:
+        type: boolean
+      googleAuth:
+        type: boolean
+      status:
+        type: string
+        enum: [pass, fail]

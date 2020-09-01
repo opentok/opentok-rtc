@@ -11,44 +11,56 @@ body {
   background-color: #FFF;
   color: @text;
   overflow: hidden;
+  background-color: black;
+  background-image: url(/images/background.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  transition: none;
+  padding: 0;
+  margin: 0;
 }
 
 .main {
 
-  display: flex;
-  .flex-direction(column);
   height: 100%;
+  .justify-content(center);
+  text-shadow: black 1px 1px 12px;
 
   header {
-    padding-bottom: 25px;
-    @media @smartphones {
-      padding-bottom: 0px;
+    min-height: 222px;
+    @media @smartphonesPortrait {
+      min-height: 66px;
     }
+    img {
+      @media @smartphonesPortrait {
+        top: 37px;
+        width: 240px;
+      }
+    }
+
   }
 
   h1, h2, h3 {
-    font-family: @muliRegularFont, arial;
+    font-family: @baseFontFamily;
     padding: 0;
     text-align: center;
+    @media @smartphonesPortrait {
+      visibility: hidden;
+    }
   }
 
   h1 {
-    font-family: @muliRegularFont, arial;
-    font-size: 48px;
-    @media @smartphones {
-      font-size: 36px;
-    }
+    font-family: @baseFontFamily;
+    font-size: 14px;
+    color: #8794a2;
+    letter-spacing: 1px;
     font-weight: 200;
     line-height: 60px;
-    color: @blueText;
     margin: 10px 0;
   }
 
   h2 {
     font-size: 20px;
-    @media @smartphones {
-      font-size: 14px;
-    }
     font-weight: 400;
     margin: 6px 0;
     color: @grey4;
@@ -56,9 +68,6 @@ body {
 
   h3 {
     font-size: 14px;
-    @media @smartphones {
-      font-size: 12px;
-    }
     margin: 5px 0;
     font-weight: 600;
     color: @grey3;
@@ -68,13 +77,64 @@ body {
   form {
     width: 100%;
     margin: 20px 0 0 0;
-    @media @smartphones {
-      margin: 5px 0 40px 0;
+    height: 100px;
+    @media @smartphonesPortrait {
+      max-width: calc(~"100% - 60px");
+      margin: 0;
+      margin: 20px 30px 0 24px;
     }
-    @media @smartphonesLandscape {
-      margin: 7px 0 40px 0;
+
+    div {
+      border-bottom: solid 1px #434d5a;
+      height: 50%;
     }
-    text-align: center;
+
+    input {
+      background: none;
+      position: absolute;
+      left: 0;
+      border: none;
+      width: 233px;
+      color: white;
+      outline: none;
+      @media @smartphonesPortrait {
+        width: calc(~"100% - 180px");
+      }
+      text-shadow: black 1px 1px 12px;
+    }
+    textarea {
+      padding: 12px 20px 10px 0;
+    }
+
+    label {
+      color: #fff;
+      font-size: 16px;
+      line-height: 57px;
+      width: 100%;
+      bottom: 0;
+      left: 8px;
+      text-align: left;
+      font-weight: normal;
+      position: relative;
+      transition: all 0.5s;
+    }
+    label.visited {
+      font-size: 12px;
+    }
+    #room-label.visited {
+      color: #748393;
+      left: 278px;
+      @media @smartphonesPortrait {
+        left: calc(~"100% - 80px");
+      }
+    }
+    #user-label.visited {
+      color: #748393;
+      left: 296px;
+      @media @smartphonesPortrait {
+        left: calc(~"100% - 60px");
+      }
+    }
 
     p {
       margin: 0;
@@ -84,10 +144,10 @@ body {
     .error-text {
       display: block;
       font-size: 14px;
-      color: #C40D49;
+      color: #ed5654;
       opacity: 0;
 
-      @media @smartphones {
+      @media @smartphonesPortrait {
         font-size: 12px;
       }
 
@@ -106,9 +166,15 @@ body {
 
     .error-room {
       margin: 0 356px 0 0;
-      @media @smartphones {
-        margin: 0 100px 0 0;
+      @media @smartphonesPortrait {
+        margin: 0 0 0 0;
       }
+      position: relative;
+      font-size: 16px;
+      width: 100%;
+      bottom: 45px;
+      border-bottom: solid 1px #ed5654;
+      line-height: 38px;
     }
 
     &.error {
@@ -123,9 +189,9 @@ body {
     }
 
     .tb.btn {
-      font-family: @muliRegularFont, arial;
+      font-family: @baseFontFamily;
       font-size: 16px;
-      @media @smartphones {
+      @media @smartphonesPortrait {
         font-size: 14px;
       }
       font-weight: normal;
@@ -135,13 +201,32 @@ body {
     }
 
     .text-input {
-      @media @smartphones {
+      font-size: 16px;
+      position: absolute;
+      left: 12px;
+      z-index: 100;
+      @media @smartphonesPortrait {
+        position: fixed;
+        left: 0;
         font-size: 14px;
       }
       @media @smartphonesLandscape {
         font-size: 14px;
-        padding: 8px 10px;
       }
+    }
+  }
+  .landing-more-info {
+    color: #748393;
+    font-size: 12px;
+    margin-top: 69px;
+    margin-bottom: 32px;
+    @media @smartphones {
+      position: fixed;
+      right: 20px;
+      bottom: 0;
+    }
+    a {
+      color: @blueText;
     }
   }
 
@@ -175,43 +260,65 @@ body {
     .flex-direction(column);
     .justify-content(center);
     .flex(1);
+    right: 2px;
+    position: relative;
+    float: right;
+    margin-right: 80px;
+    padding: 20px;
+    width: 360px;
+    @media @smartphonesPortrait {
+      margin-right: 0;
+      width: 100%;
+      height: 100%;
+    }
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   }
 
   a {
     text-decoration: none;
   }
 
-}
-
-.tc-modal.contract {
-  header {
-    font-size: 24px;
+  #enter {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    right: -82px;
+    top: calc(~"50% - 25px");
     @media @smartphones {
-      font-size: 20px;
+      right: 0;
+      position: fixed;
     }
-    color: @blueText;
-    padding-bottom: 10px;
-  }
-
-  p {
-    font-family: "Muli", arial;
-    color: @text;
-    font-weight: 300;
-    font-size: 16px;
-
-    @media @smartphones {
-      font-size: 12px;
-    }
-
-    a {
-      color: @blueText;
-      text-decoration: none;
-      font-weight: 600;
+    background-color: #0099cc;
+    opacity: 0.7;
+    margin-left: 0;
+    border: 0;
+    border-radius: 0;
+    transition: width 0.5s ease-out;
+    background-image: url(/images/icons/ctaarrow_white@2x.png);   
+    background-size: 12.5px 21px;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    transition: opacity 0.5s;
+    &:hover {
+      opacity: 1;
     }
   }
-
-  .btn {
-    font-size: 14px;
-    margin: 0px;
+  #righthand-container {
+    height: 100%;
+    display: table;
+    width: 498px;
+    @media @smartphonesPortrait {
+      width: 100%;
+    }
+    right: 0;
+    position: absolute;
+  }
+  #righthand-container-cell {
+    vertical-align: middle;
+    display: table-cell;
   }
 }

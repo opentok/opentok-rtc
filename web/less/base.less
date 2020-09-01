@@ -1,7 +1,5 @@
 @import 'flexbox.less';
 
-@import 'fonts.less';
-
 @import 'variables.less';
 
 @import 'animations.less';
@@ -58,8 +56,9 @@ label {
       width: 20px;
       height: 20px;
       position: absolute;
-      top: 5px;
-      right: 5px;
+      top: 21px;
+      right: 18.9px;
+      cursor: pointer;
     }
 
     header {
@@ -107,7 +106,7 @@ label {
 }
 
 input, textarea {
-  font-family: @muliRegularFont, arial;
+  font-family: @baseFontFamily;
 
   display: inline-block;
 
@@ -121,4 +120,37 @@ input, textarea {
 
 .hidden {
   display: none !important;
+}
+
+.tc-modal.contract {
+  header {
+    font-size: 24px;
+    @media @smartphonesPortrait {
+      font-size: 20px;
+    }
+    color: @blueText;
+    padding-bottom: 10px;
+  }
+
+  p {
+    font-family: "Open Sans", arial;
+    color: @text;
+    font-weight: 300;
+    font-size: 16px;
+
+    @media @smartphones {
+      font-size: 12px;
+    }
+
+    a {
+      color: @blueText;
+      text-decoration: none;
+      font-weight: 600;
+    }
+  }
+
+  .btn {
+    font-size: 14px;
+    margin: 0px;
+  }
 }

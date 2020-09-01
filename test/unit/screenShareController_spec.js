@@ -128,8 +128,6 @@ describe('ScreenShareController', () => {
   it('should respond correctly to screenShareView:installExtension when ' +
      'installation works', (done) => {
     var event = new CustomEvent('screenShareView:installExtension');
-    window.chrome.isGoingToWork = true;
-
     window.addEventListener('screenShareController:extInstallationResult',
                              function handlerTest(evt) {
                                window.removeEventListener('screenShareController:extInstallationResult', handlerTest);
@@ -145,14 +143,15 @@ describe('ScreenShareController', () => {
   it('should respond correctly to screenShareView:installExtension when ' +
      'installation does not work', (done) => {
     var event = new CustomEvent('screenShareView:installExtension');
-    window.chrome.isGoingToWork = false;
+    var realWindowOpen = window.open;
+    window.open = () => null;
 
     window.addEventListener('screenShareController:extInstallationResult',
                             function handlerTest(evt) {
                               window.removeEventListener('screenShareController:extInstallationResult', handlerTest);
                               expect(evt.detail.error).to.be.true;
-                              expect(evt.detail.message).to.be.equal(window.chrome.error);
                               done();
+                              window.open = realWindowOpen;
                             });
 
     ScreenShareController.init('usr', chromeExtId, otHelper).then(() => {

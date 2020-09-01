@@ -1,10 +1,14 @@
-!(function(global) {
+/* global LandingView */
+
+!(function (global) {
   'use strict';
 
-  var init = function() {
+  var init = function () {
     LazyLoader.dependencyLoad([
+      '/js/vendor/ejs_production.js',
+      '/js/helpers/ejsTemplate.js',
       '/js/landingView.js'
-    ]).then(function() {
+    ]).then(function () {
       LandingView.init();
     });
   };
