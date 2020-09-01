@@ -303,42 +303,6 @@
       });
     }
 
-    function publish(aDOMElement, aProperties, aHandlers) {
-      var self = this;
-      _publishOptions = null;
-      var propCopy = {};
-      Object.keys(aProperties).forEach(function(aKey) {
-        propCopy[aKey] = aProperties[aKey];
-      });
-      return new Promise(function(resolve, reject) {
-        function processError(error) {
-          _publishOptions = {
-            elem: aDOMElement,
-            properties: propCopy,
-            handlers: aHandlers
-          };
-          reject({ error: error, publisherPromise: _publisherPromise });
-        }
-
-        _publisher = OT.initPublisher(aDOMElement, aProperties, function(error) {
-          if (error) {
-            processError({
-              name: error.name,
-              message: 'Error initializing publisher. ' + error.message
-            });
-            _publisher.destroy();
-            aDOMElement.parent.style.display = 'none';
-            reject(error);
-          } else {
-            Object.keys(aHandlers).forEach(function(name) {
-              _publisher.on(name, aHandlers[name].bind(self));
-            });
-            resolve(_publisher);
-          }
-        });
-      });
-    }
-
     function publish() {
       return new Promise(function(resolve, reject) {
         _session.publish(_publisher, function(error) {
