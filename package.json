@@ -49,6 +49,7 @@
     "grunt-html-build": "^0.7.1",
     "grunt-karma": "^0.12.2",
     "grunt-mocha-test": "^0.12.7",
+    "helmet": "^4.1.0",
     "ioredis": "^4.6.3",
     "lodash": "^4.17.19",
     "opentok": "^2.3.0",

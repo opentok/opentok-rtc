@@ -12,11 +12,18 @@
 'use strict';
 
 var SwaggerBP = require('swagger-boilerplate');
+var helmet = require('helmet');
 var C = require('./serverConstants');
 var configLoader = require('./configLoader');
 var FirebaseArchives = require('./firebaseArchives');
 var GoogleAuth = require('./googleAuthStrategies');
 var testHealth = require('./testHealth');
+
+var securityHeaders = helmet({
+  referrerPolicy: { policy: 'no-referrer-when-downgrade' },
+  contentSecurityPolicy: false,
+  frameGuard: false, // configured by tbConfig.allowIframing
+});
 
 function ServerMethods(aLogLevel, aModules) {
   aModules = aModules || {};
@@ -848,6 +855,7 @@ function ServerMethods(aLogLevel, aModules) {
   return {
     logger,
     configReady,
+    securityHeaders,
     iframingOptions,
     featureEnabled,
     loadConfig,
