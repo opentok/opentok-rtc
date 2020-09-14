@@ -55,6 +55,12 @@ body {
     justify-content: space-between;
   }
 
+  @media @iphoneAll @Landscape {
+     height: 56px;
+     justify-content: space-between;
+     min-height: 50px;
+  }
+
   .icon-container {
     display: flex;
     .flex-direction(row);
@@ -70,6 +76,11 @@ body {
       width: 52px;
       min-width: 52px;
     }
+
+     @media @iphoneAll @Landscape {
+          width: 100px;
+          min-width: 52px;
+        }
   }
   .center-container {
     justify-content: center;
@@ -154,18 +165,33 @@ body {
     @media @smartphonesPortrait {
       display: none;
     }
+
     i {
       margin-right: 10px;
       @media @smartphonesPortrait {
         margin-right: 2px;
       }
+      @media @iphoneAll @Landscape {
+        margin-right: 0px;
+      }
     }
+
+    @media @iphoneAll @Landscape{
+       width:54px;
+    }
+
     span {
       @media @smartphonesPortrait {
         display: none;
       }
+
+      @media @iphoneAll @Landscape {
+          display: none;
+      }
     }
+
   }
+
   .right-container {
     float: right;
     display: flex;
@@ -196,6 +222,11 @@ body {
     @media @smartphonesPortrait {
       display: none;
     }
+
+     @media @iphoneAll @Landscape {
+             width: 2px;
+             min-width: 2px;
+     }
   }
   #options-container {
     &:hover {
@@ -464,6 +495,10 @@ body {
   #addToCall-container, #screen-share-container, #annotate-button-container {
     @media @smartphonesPortrait {
       display: none;
+    }
+
+    @media @iphoneAll @Landscape {
+     display: none;
     }
   }
 
