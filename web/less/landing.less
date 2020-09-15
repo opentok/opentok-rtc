@@ -64,6 +64,19 @@ a {
     #video-preview {
       height: 264px;
       margin-bottom: 24px;
+      @media @iphoneAll @Landscape {
+        min-width: 40vw;
+      }
+    }
+
+    .publish-settings{
+      @media @iphoneAll @Landscape {
+    min-width: 55vw;
+    position: relative;
+    margin-left: -53vw;
+
+    top: 35px;
+      }
     }
 
     #video-settings, #audio-settings {
@@ -123,6 +136,9 @@ a {
 
     .user-name-input-container {
       position: relative;
+      @media @iphoneAll @Landscape {
+        left: 17px;
+      }
       label {
         position: absolute;
         z-index: 1;
@@ -146,6 +162,11 @@ a {
       @media @smartphonesPortrait {
         width: 100%;
       }
+
+      @media @iphoneAll @Landscape {
+              width: 56vw;
+      }
+
       text-shadow: black 1px 1px 12px;
     }
 
@@ -295,6 +316,14 @@ a {
         font-size: 13px;
       }
     }
+
+
+     @media @iphoneAll @Landscape {
+         flex-direction: row;
+         margin-left:10px;
+         margin: auto 0px;
+       }
+
   }
 
   .landing-more-info {
@@ -309,6 +338,9 @@ a {
       bottom: 45px;
       min-height: unset;
       font-size: 12px;
+    }
+    @media @iphoneAll @Landscape {
+    text-align: center;
     }
 
     a {
@@ -382,6 +414,7 @@ a {
     flex-direction: column;
     min-width: 430px;
 
+
     header {
       img {
         height: 33.3px;
@@ -389,6 +422,10 @@ a {
         @media @smartphonesPortrait {
           margin-bottom: 26px;
         }
+
+        @media @iphoneAll @Landscape {
+                  margin-bottom: 26px;
+         }
       }
 
       h2 {
@@ -455,6 +492,29 @@ a {
         display: none;
       }
     }
+
+     @media @iphoneAll @Landscape {
+         width: 100%;
+         background: url(/images/background.svg) no-repeat fixed;
+         position: absolute;
+         top: 0;
+         bottom: 0;
+         left: 0;
+         right: 0;
+         margin-top: 0;
+         z-index: 2000000;
+         padding: 0 46px;
+         justify-content: center;
+         transition: opacity 0.3s;
+         width: unset;
+         min-width: unset;
+         &.mobile-fade {
+           opacity: 0;
+         }
+         &.mobile-hide {
+           display: none;
+         }
+     }
     
   }
 
@@ -467,6 +527,11 @@ a {
       flex-direction: column-reverse;
       margin-top: 35px;
     }
+    @media @iphoneAll @Landscape {
+        flex-direction: row;
+        flex-direction: column-reverse;
+        margin-top: 12px;
+    }
   }
 
   @media @smartphonesPortrait {
@@ -474,4 +539,10 @@ a {
     margin-top: 0;
     padding: 0 25px;
   }
+
+    @media @iphoneAll @Landscape {
+      display: block;
+      margin-top: 0;
+      padding: 0 5px;
+    }
 }
