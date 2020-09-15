@@ -1,8 +1,8 @@
-@import 'flexbox.less';
+@import "flexbox.less";
 
-@import 'variables.less';
+@import "variables.less";
 
-@import 'animations.less';
+@import "animations.less";
 
 html {
   width: 100%;
@@ -11,11 +11,10 @@ html {
   font-family: @baseFontFamily;
   font-weight: @baseFontWeight;
   background-color: #151515;
-    @media @iphoneAll @Landscape {
-     overflow:hidden;
-     overscroll-behavior: none;
-      }
-
+  @media @iphoneAll @Landscape {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
 }
 
 body.forbidden {
@@ -92,7 +91,8 @@ label {
       margin-bottom: 15px;
     }
 
-    p, .btn {
+    p,
+    .btn {
       font-size: 12px;
     }
 
@@ -110,7 +110,7 @@ label {
       font-weight: 600;
       font-size: 12px;
       line-height: 16px;
-      color: #FFFFFF;
+      color: #ffffff;
     }
   }
 }
@@ -124,7 +124,8 @@ label {
   font-weight: 600;
 }
 
-input, textarea {
+input,
+textarea {
   font-family: @baseFontFamily;
   resize: none;
   display: inline-block;
@@ -152,7 +153,7 @@ input, textarea {
   }
 
   p {
-    font-family: 'Spezia', arial;
+    font-family: "Spezia", arial;
     color: #131415;
     font-weight: normal;
     font-size: 10px;
