@@ -12,7 +12,8 @@
     "dev": "concurrently \"npm run start\" \"grunt clientDev\"",
     "postinstall": "bower install && grunt clientBuild",
     "test": "grunt test",
-    "regression-test": "wdio wdio.conf.js"
+    "regression-test": "wdio wdio.conf.js",
+    "lint": "./node_modules/eslint/bin/eslint.js ."
   },
   "repository": {
     "type": "git",

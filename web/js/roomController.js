@@ -568,6 +568,10 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
           controlElems: subscriberStreams[streamId].buttons
         });
 
+        if (streamVideoType === 'noVideo') {
+          RoomView.deleteVideoButton(streamId);
+        }
+
         subOptions.subscribeToVideo = !enterWithVideoDisabled;
 
         // We want to observe the container where the actual suscriber will live
@@ -825,7 +829,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       token: aParams.token
     };
 
-    var connect = otHelper.connect.bind(otHelper, sessionInfo);
+    var publish = otHelper.publish.bind(otHelper);
 
     RoomView.participantsNumber = 0;
 
@@ -841,8 +845,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     }
 
     ChatController
-        .init(userName, _allHandlers)
-        .then(connect)
+        .init(aParams.roomName, userName, _allHandlers)
         .then(LayoutMenuController.init)
         .then(function () {
           var publisherElement = RoomView.createStreamView('publisher', {
@@ -867,17 +870,36 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
           if (Utils.isIE()) {
             publisherOptions.usePreviousDeviceSelection = true;
           }
-          return otHelper.publish(publisherElement, publisherOptions, {}).then(function () {
-            setPublisherReady();
-            RoomView.showPublisherButtons(publisherOptions);
-          }).catch(function (errInfo) {
-            if (errInfo.error.name === 'OT_CHROME_MICROPHONE_ACQUISITION_ERROR') {
-              Utils.sendEvent('roomController:chromePublisherError');
-              otHelper.disconnect();
-            }
+          return new Promise(function (resolve, reject) {
+            otHelper.initPublisher(publisherElement, publisherOptions, {}).then(function () {
+              setPublisherReady();
+              RoomView.showPublisherButtons(publisherOptions);
+              resolve();
+            }).catch(function (errInfo) {
+              if (errInfo.error.name === 'OT_CHROME_MICROPHONE_ACQUISITION_ERROR') {
+                otHelper.disconnect();
+                Utils.sendEvent('roomController:chromePublisherError');
+              }
+              RoomView.deleteStreamView('publisher');
+              reject();
+            });
           });
         })
         .then(function () {
+          return new Promise(function (resolve) {
+            ChatController.setHelper(otHelper);
+            otHelper.connect(sessionInfo, _allHandlers).then(function () {
+              resolve();
+            });
+          });
+        })
+        .then(publish)
+        .then(function (publisher) {
+          if (!publisher.stream.videoType) {
+            RoomView.deleteVideoButton('publisher');
+          }
+          RecordingsController.init(enableArchiveManager, aParams.firebaseURL,
+                                    aParams.firebaseToken, aParams.sessionId);
           ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
           FeedbackController.init(otHelper, aParams.reportIssueLevel);
           PhoneNumberController.init(aParams.jqueryUrl);

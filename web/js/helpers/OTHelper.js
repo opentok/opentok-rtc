@@ -248,10 +248,10 @@
       if (!Array.isArray(aHandlers)) {
         aHandlers = [aHandlers];
       }
-      return otLoaded.then(function() {
-        return new Promise(function(resolve, reject) {
+      return new Promise(function(resolve, reject) {
+        return otLoaded.then(function() {
           if (!(apiKey && sessionId && token)) {
-            return reject({
+            reject({
               message: 'Invalid parameters received. ' +
                 'ApiKey, sessionId and Token are mandatory'
             });
@@ -262,7 +262,7 @@
 
           aHandlers && _setHandlers(self, self.session, aHandlers);
 
-          return _session.connect(token, function(error) {
+          _session.connect(token, function(error) {
             if (error) {
               reject(error);
             } else {
@@ -303,45 +303,16 @@
       });
     }
 
-    function publish(aDOMElement, aProperties, aHandlers) {
-      var self = this;
-      _publishOptions = null;
-      var propCopy = {};
-      Object.keys(aProperties).forEach(function(aKey) {
-        propCopy[aKey] = aProperties[aKey];
-      });
+    function publish() {
       return new Promise(function(resolve, reject) {
-        function processError(error) {
-          _publishOptions = {
-            elem: aDOMElement,
-            properties: propCopy,
-            handlers: aHandlers
-          };
-          _publisher = null;
-          reject({ error: error, publisherPromise: _publisherPromise });
-        }
-
-        _publisher = OT.initPublisher(aDOMElement, aProperties, function(error) {
+        _session.publish(_publisher, function(error) {
           if (error) {
-            processError({
-              name: error.name,
-              message: 'Error initializing publisher. ' + error.message
-            });
-           return;
+            reject({ error: error, publisherPromise: _publisherPromise });
+          } else {
+            _publisherInitialized = true;
+            _solvePublisherPromise(_publisher);
+            resolve(_publisher);
           }
-          _session.publish(_publisher, function(error) {
-            if (error) {
-              processError(error);
-            } else {
-              _publisherInitialized = true;
-              Object.keys(aHandlers).forEach(function(name) {
-                _publisher.on(name, aHandlers[name].bind(self));
-              });
-
-              _solvePublisherPromise(_publisher);
-              resolve(_publisher);
-            }
-          });
         });
       });
     }
