@@ -4,6 +4,16 @@
 
 @import "animations.less";
 
+@viewport{
+    zoom: 1.0;
+    width: extend-to-zoom;
+}
+
+@-ms-viewport{
+    width: extend-to-zoom;
+    zoom: 1.0;
+}
+
 html {
   width: 100%;
   height: 100%;
@@ -15,6 +25,11 @@ html {
     overflow: hidden;
     overscroll-behavior: none;
   }
+}
+
+body {
+//disbale pull to refresh decoration chrome
+    overscroll-behavior-y: contain;
 }
 
 body.forbidden {
@@ -184,4 +199,18 @@ textarea {
     text-align: left;
     margin-top: 40px;
   }
+}
+
+// for handling safe areas
+
+  @media @iphoneAll @Landscape {
+@supports(padding: max(0px)) {
+    #top-banner {
+        padding-left: max(12px, env(safe-area-inset-left));
+    }
+    #top-banner .right-container {
+        padding-right: max(12px, env(safe-area-inset-right));
+    }
+}
+
 }
