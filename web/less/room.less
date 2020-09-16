@@ -1,19 +1,19 @@
 // Components
-@import '../bower_components/utils/reset.less';
-@import '../bower_components/utils/mixins.less';
-@import '../bower_components/modals/modals.less';
-@import '../bower_components/sidebars/sidebars.less';
-@import '../bower_components/dropdowns/dropdowns.less';
-@import '../bower_components/lists/lists.less';
+@import "../bower_components/utils/reset.less";
+@import "../bower_components/utils/mixins.less";
+@import "../bower_components/modals/modals.less";
+@import "../bower_components/sidebars/sidebars.less";
+@import "../bower_components/dropdowns/dropdowns.less";
+@import "../bower_components/lists/lists.less";
 
-@import 'chat.less';
-@import 'base.less';
-@import 'buttons.less';
-@import 'icons.less';
-@import 'bubble.less';
-@import 'layout.less';
-@import 'tooltips.less';
-@import 'flexbox.less';
+@import "chat.less";
+@import "base.less";
+@import "buttons.less";
+@import "icons.less";
+@import "bubble.less";
+@import "layout.less";
+@import "tooltips.less";
+@import "flexbox.less";
 
 body {
   margin: 0;
@@ -56,9 +56,9 @@ body {
   }
 
   @media @iphoneAll @Landscape {
-     height: 56px;
-     justify-content: space-between;
-     min-height: 50px;
+    height: 56px;
+    justify-content: space-between;
+    min-height: 50px;
   }
 
   .icon-container {
@@ -77,10 +77,10 @@ body {
       min-width: 52px;
     }
 
-     @media @iphoneAll @Landscape {
-          width: 100px;
-          min-width: 52px;
-        }
+    @media @iphoneAll @Landscape {
+      width: 100px;
+      min-width: 52px;
+    }
   }
   .center-container {
     justify-content: center;
@@ -123,33 +123,33 @@ body {
         display: flex;
       }
       .name-wrapper {
-         margin-bottom: 6px;
-         min-width: 200px;
-         display: grid;
-         grid-template-columns: auto auto;
-         @media @smartphonesPortrait {
-           margin: 0;
-           width: 100%;
-           padding: 0 4px;
-           min-width: unset;
-           max-width: 100%;
-         }
-         .room-name {
-           font-size: 14px;
-           text-overflow: ellipsis;
-           overflow: hidden;
-           white-space: nowrap;
-           color: #ffffff;
-           margin: 0;
-           @media @smartphonesPortrait {
-             height: 22px;
+        margin-bottom: 6px;
+        min-width: 200px;
+        display: grid;
+        grid-template-columns: auto auto;
+        @media @smartphonesPortrait {
+          margin: 0;
+          width: 100%;
+          padding: 0 4px;
+          min-width: unset;
+          max-width: 100%;
+        }
+        .room-name {
+          font-size: 14px;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+          color: #ffffff;
+          margin: 0;
+          @media @smartphonesPortrait {
+            height: 22px;
           }
         }
       }
     }
   }
   .invite-btn {
-    background: #871FFF;
+    background: #871fff;
     border-radius: 5px;
     border: none;
     margin-right: 20px;
@@ -176,8 +176,8 @@ body {
       }
     }
 
-    @media @iphoneAll @Landscape{
-       width:54px;
+    @media @iphoneAll @Landscape {
+      width: 54px;
     }
 
     span {
@@ -186,10 +186,9 @@ body {
       }
 
       @media @iphoneAll @Landscape {
-          display: none;
+        display: none;
       }
     }
-
   }
 
   .right-container {
@@ -205,10 +204,11 @@ body {
       padding-left: 4px;
     }
     div {
-        float: left;
+      float: left;
     }
   }
-  .videoSwitch, .audioSwitch {
+  .videoSwitch,
+  .audioSwitch {
     width: 216px;
     min-width: 216px;
     span {
@@ -223,10 +223,10 @@ body {
       display: none;
     }
 
-     @media @iphoneAll @Landscape {
-             width: 2px;
-             min-width: 2px;
-     }
+    @media @iphoneAll @Landscape {
+      width: 2px;
+      min-width: 2px;
+    }
   }
   #options-container {
     &:hover {
@@ -246,17 +246,23 @@ body {
       width: 49px;
       height: 56px;
     }
+
+    @media @iphoneAll @Landscape {
+      width: 49px;
+      height: 56px;
+    }
     #options-icon {
       height: 22px;
       float: none;
     }
   }
-  #toggleArchiving, #manageRecordings {
+  #toggleArchiving,
+  #manageRecordings {
     margin: 28px 0;
     height: 40px;
     background-color: inherit !important;
     position: relative;
-    
+
     @media @smartphonesPortrait {
       top: -20px;
       right: 8px;
@@ -285,7 +291,8 @@ body {
     }
   }
   .manage-recordings {
-    #startArchiving, #stopArchiving {
+    #startArchiving,
+    #stopArchiving {
       padding: 0 57.5px 0 17.5px;
       @media @smartphonesPortrait {
         padding: 0 20px 0 0;
@@ -330,7 +337,7 @@ body {
 
 #screen {
   position: relative;
-  visibility: hidden; 
+  visibility: hidden;
   overflow: hidden;
   @media @smartphonesPortrait {
     margin-top: 58px;
@@ -362,7 +369,11 @@ body {
   .iti-flag {
     background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/img/flags.png");
   }
-  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+  @media only screen and (-webkit-min-device-pixel-ratio: 2),
+    only screen and (min--moz-device-pixel-ratio: 2),
+    only screen and (min-device-pixel-ratio: 2),
+    only screen and (min-resolution: 192dpi),
+    only screen and (min-resolution: 2dppx) {
     .iti-flag {
       background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/img/flags@2x.png");
     }
@@ -370,13 +381,13 @@ body {
 
   .tc-dialog {
     max-width: 710px;
-   .current-url {
+    .current-url {
       border: none;
       font-weight: 600;
       font-size: 14px;
       line-height: 21px;
       text-decoration-line: underline;
-      color: #871FFF;
+      color: #871fff;
       margin-bottom: 25px;
     }
     .btn {
@@ -412,17 +423,17 @@ body {
     }
 
     .intl-tel-input.allow-dropdown {
-        .selected-flag {
-          background: white;
+      .selected-flag {
+        background: white;
 
-          .selected-dial-code {
-            padding-left: 35px;
-          }
+        .selected-dial-code {
+          padding-left: 35px;
+        }
 
-          .iti-arrow {
-            top: 22px;
-            left: 35px;
-          }
+        .iti-arrow {
+          top: 22px;
+          left: 35px;
+        }
       }
 
       input {
@@ -439,11 +450,7 @@ body {
       input:focus {
         outline: none;
       }
-
-
     }
-
-
 
     input.phoneNumber::placeholder {
       color: #b6bfc8;
@@ -492,13 +499,15 @@ body {
     padding: 0;
   }
 
-  #addToCall-container, #screen-share-container, #annotate-button-container {
+  #addToCall-container,
+  #screen-share-container,
+  #annotate-button-container {
     @media @smartphonesPortrait {
       display: none;
     }
 
     @media @iphoneAll @Landscape {
-     display: none;
+      display: none;
     }
   }
 
@@ -510,7 +519,7 @@ body {
     text-align: center;
     color: #c0c0c0;
     button {
-      background-image: url('/images/icons/inactive-circle.svg');
+      background-image: url("/images/icons/inactive-circle.svg");
       width: 54.2px;
       height: 54.2px;
       vertical-align: top;
@@ -524,11 +533,11 @@ body {
     }
     button.activated {
       background-image: none;
-      border: 2px solid #871FFF;
+      border: 2px solid #871fff;
       border-radius: 50%;
     }
     button#endCall {
-      background-image: url('/images/icons/red-circle.svg');
+      background-image: url("/images/icons/red-circle.svg");
     }
     p {
       margin-top: 10px;
@@ -540,7 +549,7 @@ body {
 
 .feedbackButton.visible {
   opacity: 1;
-  left: 0
+  left: 0;
 }
 
 .feedbackButton {
@@ -591,7 +600,7 @@ body {
   }
   #screen-share {
     background-image: none;
-    border: 2px solid #871FFF;
+    border: 2px solid #871fff;
     border-radius: 50%;
   }
 }
@@ -608,17 +617,20 @@ body {
   }
 }
 
-#screenShareErrorInstall, #extInstallationSuccessful, #screenShareErrorMsg {
+#screenShareErrorInstall,
+#extInstallationSuccessful,
+#screenShareErrorMsg {
   display: none;
 }
 
-[data-screen-sharing-type=error-sharing] #screenShareErrorMsg,
-[data-screen-sharing-type=error-installing] #screenShareErrorInstall,
-[data-screen-sharing-type=successful-installation] #extInstallationSuccessful {
+[data-screen-sharing-type="error-sharing"] #screenShareErrorMsg,
+[data-screen-sharing-type="error-installing"] #screenShareErrorInstall,
+[data-screen-sharing-type="successful-installation"]
+  #extInstallationSuccessful {
   display: inline-block;
 }
 
-[data-screen-sharing-type=error-installing] .tc-dialog {
+[data-screen-sharing-type="error-installing"] .tc-dialog {
   max-width: 280px;
 }
 
@@ -638,8 +650,8 @@ body {
 }
 
 .user-name-modal #name-heading {
-    top: 34px;
-    text-shadow: black 1px 1px 8px;
+  top: 34px;
+  text-shadow: black 1px 1px 8px;
 }
 
 .user-name-modal .tc-dialog {
@@ -729,7 +741,9 @@ body {
     overflow: hidden;
     transition: opacity 0.5s;
   }
-  #video-settings, #audio-settings, #enter-name-prompt {
+  #video-settings,
+  #audio-settings,
+  #enter-name-prompt {
     display: flex;
     .justify-content(space-between);
     padding-bottom: 18px;
@@ -753,12 +767,14 @@ body {
   #audio-settings > div > img {
     margin-right: 18px;
   }
-  #video-settings, #audio-settings {
+  #video-settings,
+  #audio-settings {
     #audio-switch {
       margin-right: 24px;
     }
     .switch-button {
-      #preToggleFacingMode, #prePickMic {
+      #preToggleFacingMode,
+      #prePickMic {
         margin: auto;
         line-height: 0;
         font-style: normal;
@@ -785,6 +801,7 @@ body {
       margin: 10px 0 0 0;
       min-height: 44px;
     }
+
     div {
       display: flex;
       align-items: center;
@@ -809,10 +826,10 @@ body {
     label {
       top: 0;
       position: absolute;
-      color: #9B9DA3;
+      color: #9b9da3;
       font-size: 16px;
       transition: all 0.5s;
-      @media @smartphonesPortrait  {
+      @media @smartphonesPortrait {
         left: 10px;
       }
     }
@@ -825,7 +842,8 @@ body {
   #audio-meter-container {
     display: inline !important;
   }
-  #audio-meter, #precall-test-meter {
+  #audio-meter,
+  #precall-test-meter {
     background-color: #505050;
     height: 5px;
     width: 89px;
@@ -835,7 +853,8 @@ body {
     height: 100%;
   }
 
-  #audio-settings, #pre-call-test {
+  #audio-settings,
+  #pre-call-test {
     border-top: #434d5a 1px solid;
     padding-top: 17px;
     clear: both;
@@ -894,9 +913,36 @@ body {
     background-color: #ffffff;
     height: 100%;
     width: 0;
-    background-image: -webkit-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
-    background-image: -o-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
-    background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+    background-image: -webkit-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.15) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.15) 75%,
+      transparent 75%,
+      transparent
+    );
+    background-image: -o-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.15) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.15) 75%,
+      transparent 75%,
+      transparent
+    );
+    background-image: linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.15) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.15) 75%,
+      transparent 75%,
+      transparent
+    );
     -webkit-background-size: 40px 40px;
     background-size: 40px 40px;
     -webkit-animation: progress-bar-stripes 2s linear infinite;
@@ -906,8 +952,12 @@ body {
   }
 
   @keyframes progress-bar-stripes {
-      from {background-position-x: 0;}
-      to {background-position-x: 40px;}
+    from {
+      background-position-x: 0;
+    }
+    to {
+      background-position-x: 40px;
+    }
   }
 }
 
@@ -943,7 +993,7 @@ body {
 
   .info-links {
     margin-top: 14px;
-    margin-bottom:40px;
+    margin-bottom: 40px;
     font-size: 14px;
     color: #ffffff;
     @media @smartphonesPortrait {
@@ -1028,7 +1078,8 @@ body {
     font-size: 10px;
     font-weight: 600;
   }
-  #video-bitrate, #audio-bitrate {
+  #video-bitrate,
+  #audio-bitrate {
     font-size: 30px;
     margin: 0;
     font-weight: 600;
@@ -1052,11 +1103,13 @@ body {
     font-size: 10px;
     color: #9b9b9b;
   }
-  #precall-resolution, #precall-audio-packet-loss {
+  #precall-resolution,
+  #precall-audio-packet-loss {
     margin-top: 4px;
     margin-bottom: 0;
   }
-  #precall-framerate, #precall-video-packet-loss {
+  #precall-framerate,
+  #precall-video-packet-loss {
     margin: 0;
   }
   #retest {
@@ -1115,8 +1168,6 @@ body {
     }
   }
 
-
-
   section {
     font-family: @baseFontFamily;
     font-size: 16px;
@@ -1140,7 +1191,8 @@ body {
       margin-top: 33px;
     }
 
-    .other-info, .other-info:focus {
+    .other-info,
+    .other-info:focus {
       width: 436px;
       border: none;
       outline: none;
@@ -1181,7 +1233,6 @@ body {
   }
 }
 
-
 footer.main {
   position: fixed;
   bottom: 0;
@@ -1200,22 +1251,21 @@ footer.main {
   line-height: 18px;
   overflow: hidden;
   width: 100%;
-  background-color: #871FFF;
+  background-color: #871fff;
   &.accept {
     background-color: #131415;
   }
 }
 
-[data-chat-visible=true] footer.main {
+[data-chat-visible="true"] footer.main {
   background-color: @mainBackgroundColor;
 }
-
 
 #opentok_canvas {
   pointer-events: none;
 }
 
-body[data-annotation-visible=true]  {
+body[data-annotation-visible="true"] {
   #opentok_canvas {
     pointer-events: auto;
   }
@@ -1226,18 +1276,18 @@ body[data-annotation-visible=true]  {
 }
 
 .dragging:after {
-  content: '';
+  content: "";
   z-index: 1;
   position: absolute;
   left: 0;
   top: 0;
   bottom: 0;
   right: 0;
-  background-color: rgba(255, 255, 255, .6);
+  background-color: rgba(255, 255, 255, 0.6);
 }
 
 .main {
-  width: 100%
+  width: 100%;
 }
 
 #switchAlerts {

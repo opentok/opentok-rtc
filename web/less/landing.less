@@ -1,11 +1,11 @@
 // Components
-@import '../bower_components/utils/reset.less';
-@import '../bower_components/utils/mixins.less';
-@import '../bower_components/modals/modals.less';
+@import "../bower_components/utils/reset.less";
+@import "../bower_components/utils/mixins.less";
+@import "../bower_components/modals/modals.less";
 
-@import 'base.less';
-@import 'icons.less';
-@import 'buttons.less';
+@import "base.less";
+@import "icons.less";
+@import "buttons.less";
 
 body {
   background: url(/images/background.svg) no-repeat fixed;
@@ -33,9 +33,8 @@ h2 {
 
 a {
   text-decoration: none;
-  color: #ffffff; 
+  color: #ffffff;
 }
-
 
 .main {
   height: 100%;
@@ -44,7 +43,7 @@ a {
   padding: 0 58px;
   overflow: scroll;
   scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none;  /* IE 10+ */
+  -ms-overflow-style: none; /* IE 10+ */
   &::-webkit-scrollbar {
     width: 0px;
     background: transparent; /* Chrome/Safari/Webkit */
@@ -64,9 +63,23 @@ a {
     #video-preview {
       height: 264px;
       margin-bottom: 24px;
+      @media @iphoneAll @Landscape {
+        min-width: 40vw;
+      }
     }
 
-    #video-settings, #audio-settings {
+    .publish-settings {
+      @media @iphoneAll @Landscape {
+        min-width: 55vw;
+        position: relative;
+        margin-left: -53vw;
+
+        top: 35px;
+      }
+    }
+
+    #video-settings,
+    #audio-settings {
       display: flex;
       padding: 10px 0;
       justify-content: space-between;
@@ -86,7 +99,7 @@ a {
           margin-left: 4px;
         }
         .switch-button {
-          border: 1px solid #871FFF;
+          border: 1px solid #871fff;
           padding: 8px;
           font-size: 12px;
           font-weight: 600;
@@ -109,7 +122,8 @@ a {
       border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     }
 
-    #audio-meter, #audio-meter-level {
+    #audio-meter,
+    #audio-meter-level {
       height: 5px;
     }
 
@@ -123,6 +137,9 @@ a {
 
     .user-name-input-container {
       position: relative;
+      @media @iphoneAll @Landscape {
+        left: 17px;
+      }
       label {
         position: absolute;
         z-index: 1;
@@ -140,12 +157,17 @@ a {
       padding-left: 10px;
       width: 350px;
       color: white;
-      border: 1px solid #FFFFFF;
+      border: 1px solid #ffffff;
       box-sizing: border-box;
       border-radius: 6px;
       @media @smartphonesPortrait {
         width: 100%;
       }
+
+      @media @iphoneAll @Landscape {
+        width: 56vw;
+      }
+
       text-shadow: black 1px 1px 12px;
     }
 
@@ -167,7 +189,7 @@ a {
     }
 
     label {
-      color: #9B9DA3;
+      color: #9b9da3;
       font-size: 16px;
       line-height: 57px;
       width: 100%;
@@ -230,7 +252,8 @@ a {
       }
     }
 
-    .error-terms, .error-adult {
+    .error-terms,
+    .error-adult {
       display: inline-block;
     }
 
@@ -256,7 +279,8 @@ a {
     }
 
     &.error {
-      .show, .error-title {
+      .show,
+      .error-title {
         transition: opacity @transitionTime;
         opacity: 1;
       }
@@ -295,6 +319,12 @@ a {
         font-size: 13px;
       }
     }
+
+    @media @iphoneAll @Landscape {
+      flex-direction: row;
+      margin-left: 10px;
+      margin: auto 0px;
+    }
   }
 
   .landing-more-info {
@@ -309,6 +339,9 @@ a {
       bottom: 45px;
       min-height: unset;
       font-size: 12px;
+    }
+    @media @iphoneAll @Landscape {
+      text-align: center;
     }
 
     a {
@@ -362,7 +395,7 @@ a {
     height: 50px;
     min-height: 50px; // Fix for Safari flex issue
     border-radius: 6px;
-    background-color: #871FFF;
+    background-color: #871fff;
     border: none;
     margin-top: 30px;
     color: white;
@@ -389,6 +422,10 @@ a {
         @media @smartphonesPortrait {
           margin-bottom: 26px;
         }
+
+        @media @iphoneAll @Landscape {
+          margin-bottom: 26px;
+        }
       }
 
       h2 {
@@ -407,7 +444,7 @@ a {
       p {
         font-size: 16px;
         line-height: 28px;
-        color: #FFFFFF;
+        color: #ffffff;
         margin-top: 12px;
         width: 297px;
         @media @smartphonesPortrait {
@@ -455,7 +492,29 @@ a {
         display: none;
       }
     }
-    
+
+    @media @iphoneAll @Landscape {
+      width: 100%;
+      background: url(/images/background.svg) no-repeat fixed;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin-top: 0;
+      z-index: 2000000;
+      padding: 0 46px;
+      justify-content: center;
+      transition: opacity 0.3s;
+      width: unset;
+      min-width: unset;
+      &.mobile-fade {
+        opacity: 0;
+      }
+      &.mobile-hide {
+        display: none;
+      }
+    }
   }
 
   #righthand-container {
@@ -467,11 +526,22 @@ a {
       flex-direction: column-reverse;
       margin-top: 35px;
     }
+    @media @iphoneAll @Landscape {
+      flex-direction: row;
+      flex-direction: column-reverse;
+      margin-top: 12px;
+    }
   }
 
   @media @smartphonesPortrait {
     display: block;
     margin-top: 0;
     padding: 0 25px;
+  }
+
+  @media @iphoneAll @Landscape {
+    display: block;
+    margin-top: 0;
+    padding: 0 5px;
   }
 }
