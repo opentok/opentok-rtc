@@ -4,14 +4,14 @@
 
 @import "animations.less";
 
-@viewport{
-    zoom: 1.0;
-    width: extend-to-zoom;
+@viewport {
+  zoom: 1;
+  width: extend-to-zoom;
 }
 
-@-ms-viewport{
-    width: extend-to-zoom;
-    zoom: 1.0;
+@-ms-viewport {
+  width: extend-to-zoom;
+  zoom: 1;
 }
 
 html {
@@ -28,8 +28,8 @@ html {
 }
 
 body {
-//disbale pull to refresh decoration chrome
-    overscroll-behavior-y: contain;
+  //disbale pull to refresh decoration chrome
+  overscroll-behavior-y: contain;
 }
 
 body.forbidden {
@@ -203,14 +203,13 @@ textarea {
 
 // for handling safe areas
 
-  @media @iphoneAll @Landscape {
-@supports(padding: max(0px)) {
+@media @iphoneAll @Landscape {
+  @supports (padding: max(0px)) {
     #top-banner {
-        padding-left: max(12px, env(safe-area-inset-left));
+      padding-left: max(12px, env(safe-area-inset-left));
     }
     #top-banner .right-container {
-        padding-right: max(12px, env(safe-area-inset-right));
+      padding-right: max(12px, env(safe-area-inset-right));
     }
-}
-
+  }
 }
