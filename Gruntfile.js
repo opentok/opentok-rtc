@@ -87,6 +87,12 @@ module.exports = function(grunt) {
 
     less: {
       default: {
+
+              options: {
+                compress: true,
+                yuicompress: true,
+                optimization: 2
+              },
         files: {
           'web/css/landing.opentok.css': 'web/less/landing.less',
           'web/css/room.opentok.css': 'web/less/room.less',
