@@ -1,4 +1,4 @@
-@import 'base.less';
+@import "base.less";
 html {
   background-color: #131415;
   mix-blend-mode: normal;
@@ -61,7 +61,7 @@ html {
     margin: 70px 0px 40px;
   }
   .btn {
-    background-color: #871FFF;
+    background-color: #871fff;
     border-radius: 5px;
     padding: 10px 30px;
     margin-top: auto;
@@ -72,6 +72,22 @@ html {
   }
 }
 
+@media @iphoneAll @Landscape {
+  .endMeeting {
+    header {
+      p {
+        font-size: 16px !important;
+      }
+      img {
+        padding: 5px 0px !important;
+      }
+    }
+    .endMeeting-box {
+      margin: -2px 0 20px 0;
+      padding: 0 86px 10px 0;
+    }
+  }
+}
 @media @smartphonesPortrait {
   .endMeeting {
     margin-left: 24px;
@@ -106,5 +122,85 @@ html {
       text-align: center;
       display: inline-block;
     }
+  }
+}
+
+.back-to-top-wrapper {
+  display: none;
+  position: absolute;
+  top: 100vh;
+  right: 3rem;
+  bottom: -22em;
+  width: 3em;
+  pointer-events: none;
+  @media @smartphonesPortrait {
+    display: block;
+  }
+  @media @iphoneAll @Landscape {
+    display: block;
+  }
+}
+
+.back-to-top-link {
+  position: fixed;
+  position: -webkit-sticky;
+  position: sticky;
+  pointer-events: all;
+  top: calc(100vh - 5rem);
+  display: inline-block;
+  text-decoration: none;
+  font-size: 2rem;
+  line-height: 3rem;
+  text-align: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 5px;
+  padding: 0.25rem;
+  border: 1px solid #254568;
+  background-color: #d6e3f0;
+  -webkit-transition: -webkit-transform 80ms ease-in;
+  transition: -webkit-transform 80ms ease-in;
+  transition: transform 80ms ease-in;
+  transition: transform 80ms ease-in, -webkit-transform 80ms ease-in;
+}
+.back-to-top-link:hover,
+.back-to-top-link:focus {
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+}
+.back-to-top-link:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px #4e85c0;
+}
+
+.back-to-top-link::before {
+  content: "Scroll for more ... ";
+  position: absolute;
+  width: 126px;
+  top: -12vh;
+  left: -96px;
+
+  background: #831ff4;
+  border-radius: 5px;
+  -webkit-animation: fadeInOut 5s;
+  animation: fadeInOut 5s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+  16% {
+    opacity: 1;
+  }
+  32% {
+    opacity: 0;
+  }
+  64% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }
