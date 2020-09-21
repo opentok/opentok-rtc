@@ -20,9 +20,10 @@ html {
   color: @text;
   font-family: @baseFontFamily;
   font-weight: @baseFontWeight;
+  font-display: swap;
   background-color: #151515;
-  @media @iphoneAll @Landscape {
-    overflow: hidden;
+
+  @media @smartphonesLandscape{
     overscroll-behavior: none;
   }
 
