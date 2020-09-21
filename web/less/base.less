@@ -4,17 +4,34 @@
 
 @import "animations.less";
 
+@viewport {
+  zoom: 1;
+  width: extend-to-zoom;
+}
+
+@-ms-viewport {
+  width: extend-to-zoom;
+  zoom: 1;
+}
+
 html {
   width: 100%;
   height: 100%;
   color: @text;
   font-family: @baseFontFamily;
   font-weight: @baseFontWeight;
+  font-display: swap;
   background-color: #151515;
-  @media @iphoneAll @Landscape {
-    overflow: hidden;
+
+  @media @smartphonesLandscape{
     overscroll-behavior: none;
   }
+
+}
+
+body {
+  //disbale pull to refresh decoration chrome
+  overscroll-behavior-y: contain;
 }
 
 body.forbidden {
@@ -183,5 +200,18 @@ textarea {
   footer {
     text-align: left;
     margin-top: 40px;
+  }
+}
+
+// for handling safe areas
+
+@media @iphoneAll @Landscape {
+  @supports (padding: max(0px)) {
+    #top-banner {
+      padding-left: max(12px, env(safe-area-inset-left));
+    }
+    #top-banner .right-container {
+      padding-right: max(12px, env(safe-area-inset-right));
+    }
   }
 }

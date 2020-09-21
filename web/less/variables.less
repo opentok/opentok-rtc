@@ -100,10 +100,6 @@
 @columnGutter: @gutter / 2;
 
 @smartphones: ~"only screen and (max-width: 480px), only screen and (-webkit-min-device-pixel-ratio: 1.5, -o-min-device-pixel-ratio: 3/2, min--moz-device-pixel-ratio: 1.5, min-device-pixel-ratio: 1.5)";
-@smartphonesLandscape: ~"@{smartphones} only screen and (orientation:landscape) and (max-width: 480px), only screen and (orientation:landscape) and (-webkit-min-device-pixel-ratio: 1.5, -o-min-device-pixel-ratio: 3/2, min--moz-device-pixel-ratio: 1.5, min-device-pixel-ratio: 1.5)";
 @smartphonesPortrait: ~"@{smartphones} only screen and (orientation:portrait) and (max-width: 480px), only screen and (orientation:portrait) and (-webkit-min-device-pixel-ratio: 1.5, -o-min-device-pixel-ratio: 3/2, min--moz-device-pixel-ratio: 1.5, min-device-pixel-ratio: 1.5)";
+@smartphonesLandscape: ~"only screen and (min-device-width : 320px) and (max-device-width : 1024px) and (orientation : landscape) ";
 
-@iphoneAll: ~"only screen and (min-device-width : 320px) and (max-device-width : 1024px)";
-
-@Landscape: ~"and (orientation : landscape) ";
-@Portrait: ~"and (orientation : portrait) ";
