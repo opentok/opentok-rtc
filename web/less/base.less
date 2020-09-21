@@ -66,16 +66,7 @@ label {
 
     .tc-dialog {
       transform: translateY(0);
-        @media @smartphonesLandscape{
-            height: 60vh;
-            max-height: 292px;
-            overflow-y: auto;
-        }
-        @media @smartphonesPortrait{
-            height: 40vh;
-            max-height: 292px;
-            overflow-y: auto;
-        }
+
     }
   }
 
@@ -129,6 +120,16 @@ label {
       line-height: 21px;
       color: #131415;
       margin-bottom: 10px;
+      @media @smartphonesLandscape{
+          height: 50vh;
+          max-height: 120px;
+          overflow-y: auto;
+      }
+      @media @smartphonesPortrait{
+          height: 40vh;
+          max-height: 200px;
+          overflow-y: auto;
+      }
     }
 
     .btn {
@@ -175,7 +176,7 @@ textarea {
       font-size: 20px;
     }
     color: #404040;
-    padding-bottom: 20px;
+    padding-bottom: 1px;
     text-align: left;
   }
 
@@ -210,6 +211,12 @@ textarea {
   footer {
     text-align: left;
     margin-top: 40px;
+        @media @smartphonesLandscape{
+            margin-top: 20px;
+        }
+        @media @smartphonesPortrait{
+            margin-top: 20px;
+        }
   }
 }
 
