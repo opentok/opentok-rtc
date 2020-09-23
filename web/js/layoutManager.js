@@ -35,6 +35,42 @@ LayoutViewport, ItemsHandler */
     }
   };
 
+  var throttle = function(func, wait, options) {
+           var context, args, result;
+           var timeout = null;
+           var previous = 0;
+           if (!options) options = {};
+           var later = function() {
+             previous = options.leading === false ? 0 : _.now();
+             timeout = null;
+             result = func.apply(context, args);
+             if (!timeout) context = args = null;
+           };
+           return function() {
+             var now = _.now();
+             if (!previous && options.leading === false) previous = now;
+             var remaining = wait - (now - previous);
+             context = this;
+             args = arguments;
+             if (remaining <= 0 || remaining > wait) {
+               clearTimeout(timeout);
+               timeout = null;
+               previous = now;
+               result = func.apply(context, args);
+               if (!timeout) context = args = null;
+             } else if (!timeout && options.trailing !== false) {
+               timeout = setTimeout(later, remaining);
+             }
+             return result;
+           };
+     };
+
+   var adjustLayout = function(event) {
+        console.log(getTotal()+" the orientation of the device is now " + event.target.screen.orientation.angle);
+
+   };
+   var throttledAdjustLayout = throttle(adjustLayout, 500, { 'trailing': false });
+
   function init(selector, enableHangoutScroll) {
     layouts = {
       grid: Grid,
@@ -50,6 +86,9 @@ LayoutViewport, ItemsHandler */
     Utils.addEventsHandlers('layoutMenuView:', handlers, global);
     Utils.addEventsHandlers('layoutView:', handlers, global);
     Utils.addEventsHandlers('hangout:', handlers, global);
+    window.addEventListener("orientationchange", throttledAdjustLayout, false);
+    window.addEventListener('resize', throttledAdjustLayout, false);
+
     return enableHangoutScroll ? LazyLoader.load([
       '/js/layoutViewport.js', '/css/hangoutScroll.css'
     ]).then(function () {
