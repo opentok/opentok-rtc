@@ -66,6 +66,7 @@ label {
 
     .tc-dialog {
       transform: translateY(0);
+
     }
   }
 
@@ -119,6 +120,7 @@ label {
       line-height: 21px;
       color: #131415;
       margin-bottom: 10px;
+
     }
 
     .btn {
@@ -165,7 +167,7 @@ textarea {
       font-size: 20px;
     }
     color: #404040;
-    padding-bottom: 20px;
+    padding-bottom: 1px;
     text-align: left;
   }
 
@@ -176,6 +178,16 @@ textarea {
     font-size: 10px;
     text-align: left;
     line-height: 12px;
+      @media @smartphonesLandscape{
+          height: 50vh;
+          max-height: 120px;
+          overflow-y: auto;
+      }
+      @media @smartphonesPortrait{
+          height: 40vh;
+          max-height: 200px;
+          overflow-y: auto;
+      }
 
     a {
       color: #871fff;
@@ -200,6 +212,12 @@ textarea {
   footer {
     text-align: left;
     margin-top: 40px;
+        @media @smartphonesLandscape{
+            margin-top: 20px;
+        }
+        @media @smartphonesPortrait{
+            margin-top: 20px;
+        }
   }
 }
 
