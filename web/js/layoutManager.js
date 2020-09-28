@@ -8,11 +8,11 @@ LayoutViewport, ItemsHandler */
   var currentLayout = null;
   var container = null;
 
-  const items = {};
+  var items = {};
 
   var layouts;
-  const lcache = window.localStorage;
-  const HANGOUT_BY_DEFAULT = 'hangout_vertical';
+  var lcache = window.localStorage;
+  var HANGOUT_BY_DEFAULT = 'hangout_vertical';
 
   function isOnGoing(layout) {
     return Object.getPrototypeOf(currentLayout) === layout.prototype;
@@ -50,13 +50,17 @@ LayoutViewport, ItemsHandler */
     return isScreen ? HANGOUT_BY_DEFAULT : userSelectedLayout;
   }
 
-  function getLayoutByScreenCount(layout) {
-    return (getTotal() <= 2) ? layout : 'grid';
+  function getLayoutByScreenCount(layout , isScreenShared) {
+    if (isScreenShared) {
+        return layout
+    } else {
+        return (getTotal() <= 2) ? layout : 'grid';
+    }
   }
 
   function layoutModifier() {
-    const isScreenShared = lcache.getItem('opentokrtc-screenshare') != null;
-    userLayout = getLayoutByScreenCount(getDeviceLayout(isScreenShared));
+    var isScreenShared = lcache.getItem('opentokrtc-screenshare') != null;
+    userLayout = getLayoutByScreenCount(getDeviceLayout(isScreenShared), isScreenShared);
     rearrange();
   }
 
@@ -76,7 +80,7 @@ LayoutViewport, ItemsHandler */
     Utils.addEventsHandlers('layoutView:', handlers, global);
     Utils.addEventsHandlers('hangout:', handlers, global);
     lcache.setItem('opentokrtc-default', userLayout);
-    const smartphonePortrait = window.matchMedia('screen and (max-width: 480px) and (orientation : portrait)');
+    var smartphonePortrait = window.matchMedia('screen and (max-width: 480px) and (orientation : portrait)');
     if (smartphonePortrait.matches) {
       layoutModifier(smartphonePortrait);
     }
