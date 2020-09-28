@@ -2,13 +2,15 @@
 LayoutViewport, ItemsHandler */
 
 !(function (global) {
-  let userLayout = null;
-  let currentLayout = null;
-  let container = null;
+  'use strict';
+
+  var userLayout = null;
+  var currentLayout = null;
+  var container = null;
 
   const items = {};
 
-  let layouts;
+  var layouts;
   const lcache = window.localStorage;
   const HANGOUT_BY_DEFAULT = 'hangout_vertical';
 
@@ -16,19 +18,19 @@ LayoutViewport, ItemsHandler */
     return Object.getPrototypeOf(currentLayout) === layout.prototype;
   }
 
-  const handlers = {
-    layout(evt) {
+  var handlers = {
+    layout: function (evt) {
       userLayout = evt.detail.type;
       lcache.setItem('opentokrtc-layout', userLayout);
       rearrange();
     },
-    itemSelected(evt) {
+    itemSelected: function (evt) {
       if (isGroup() && isOnGoing(Grid)) {
         userLayout = HANGOUT_BY_DEFAULT;
         rearrange(evt.detail.item);
       }
     },
-    emptyStage() {
+    emptyStage: function () {
       userLayout = 'grid';
       rearrange();
     }
@@ -40,7 +42,7 @@ LayoutViewport, ItemsHandler */
     } else if (window.matchMedia('screen and (max-width: 480px) and (orientation : portrait)').matches) {
       return isScreen ? 'hangout_horizontal' : 'f2f_horizontal';
     }
-    let userSelectedLayout = null;
+    var userSelectedLayout = null;
     if (userLayout !== lcache.getItem('opentokrtc-default')) {
       // not mobile
       userSelectedLayout = lcache.getItem('opentokrtc-default');
@@ -82,7 +84,7 @@ LayoutViewport, ItemsHandler */
 
     return enableHangoutScroll ? LazyLoader.load([
       '/js/layoutViewport.js', '/css/hangoutScroll.css'
-    ]).then(() => {
+    ]).then(function() {
       LayoutViewport.init(container.querySelector('.tc-list ul'), '.stream');
     }) : Promise.resolve();
   }
@@ -95,7 +97,7 @@ LayoutViewport, ItemsHandler */
   }
 
   function append(id, options) {
-    const item = LayoutView.append(id, options);
+    var item = LayoutView.append(id, options);
     items[id] = item;
     if (isHangoutRequired(item)) {
       userLayout = getDeviceLayout(true);
@@ -105,13 +107,13 @@ LayoutViewport, ItemsHandler */
       rearrange();
     }
     Utils.sendEvent('layoutManager:itemAdded', {
-      item
+       item: item
     });
     return item.querySelector('.opentok-stream-container');
   }
 
   function remove(id) {
-    const item = items[id];
+    var item = items[id];
     if (!item) {
       return;
     }
@@ -123,7 +125,7 @@ LayoutViewport, ItemsHandler */
     LayoutView.remove(item);
     delete items[id];
     Utils.sendEvent('layoutManager:itemDeleted', {
-      item
+      item: item
     });
     layoutModifier();
   }
@@ -141,7 +143,7 @@ LayoutViewport, ItemsHandler */
   }
 
   function calculateCandidateLayout() {
-    let candidateLayout = null;
+    var candidateLayout = null;
 
     if (getTotal() > 2) {
       candidateLayout = GRP_LAYOUTS[userLayout] ? layouts[userLayout] : Grid;
@@ -152,13 +154,13 @@ LayoutViewport, ItemsHandler */
     return candidateLayout;
   }
 
-  const F2F_LAYOUTS = {
+  var F2F_LAYOUTS = {
     float: true,
     f2f_horizontal: true,
     f2f_vertical: true
   };
 
-  const GRP_LAYOUTS = {
+  var GRP_LAYOUTS = {
     grid: true,
     hangout_horizontal: true,
     hangout_vertical: true
@@ -175,7 +177,7 @@ LayoutViewport, ItemsHandler */
   }
 
   function rearrange(item) {
-    const CandidateLayout = calculateCandidateLayout();
+    var CandidateLayout = calculateCandidateLayout();
 
     if (!currentLayout || !isOnGoing(CandidateLayout)) {
       currentLayout && currentLayout.destroy();
@@ -188,10 +190,10 @@ LayoutViewport, ItemsHandler */
   }
 
   global.LayoutManager = {
-    init,
-    append,
-    remove,
-    removeAll,
-    getItemById
+    init: init,
+    append: append,
+    remove: remove,
+    removeAll: removeAll,
+    getItemById: getItemById
   };
 }(this));
