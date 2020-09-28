@@ -117,13 +117,6 @@
         document.body.insertAdjacentHTML('afterbegin', aHTML);
       });
 
-      setTimeout(function () {
-        document.querySelector('#lefthand-container').classList.add('mobile-fade');
-      }, 2000);
-      setTimeout(function () {
-        document.querySelector('#lefthand-container').classList.add('mobile-hide');
-      }, 2300);
-
       if (window.routedFromStartMeeting) {
         document.querySelector('.main').style.display = 'none';
         resolve();
