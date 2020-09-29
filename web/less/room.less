@@ -344,6 +344,12 @@ body {
     height: calc(~"100% - 62px");
     padding: 2px;
   }
+  @media @smartphonesLandscape {
+    margin-top: 56px;
+    margin-bottom: 2px;
+    height: calc( 100% - 62px);
+    padding: 2px;
+  }
 }
 
 #screen.streams {
@@ -380,6 +386,9 @@ body {
 
   .tc-dialog {
     max-width: 710px;
+    margin-left: 10px!important;
+    margin-right: 10px!important;
+    padding: 20px!important;
     .current-url {
       border: none;
       font-weight: 600;
@@ -498,7 +507,25 @@ body {
     padding: 0;
   }
 
-  #addToCall-container,
+    @media @smartphonesLandscape {
+      opacity: 1;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      background-color: rgba(0, 0, 0, 0.6);
+      background-image: none;
+      padding: 0;
+      width: 70%;
+      padding-left: 15%;
+      padding-right: 15%;
+    }
+
+  #addToCall-container {
+      @media @smartphonesLandscape{
+        display: none;
+      }
+  }
+
   #screen-share-container,
   #annotate-button-container {
     @media @smartphonesPortrait {

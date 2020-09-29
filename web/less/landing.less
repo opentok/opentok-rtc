@@ -421,10 +421,12 @@ a {
         margin-bottom: 110px;
         @media @smartphonesPortrait {
           margin-bottom: 26px;
+          margin-top: 3px;
         }
 
         @media @smartphonesLandscape{
           margin-bottom: 26px;
+          margin-top: 26px;
         }
       }
 
@@ -482,15 +484,9 @@ a {
       z-index: 2000000;
       padding: 0 46px;
       justify-content: center;
-      transition: opacity 0.3s;
+      .animation(fadeOutHide; 1.5s; 2.5s; forwards);
       width: unset;
       min-width: unset;
-      &.mobile-fade {
-        opacity: 0;
-      }
-      &.mobile-hide {
-        display: none;
-      }
     }
 
     @media @smartphonesLandscape{
@@ -505,15 +501,9 @@ a {
       z-index: 2000000;
       padding: 0 46px;
       justify-content: center;
-      transition: opacity 0.3s;
+      .animation(fadeOutHide; 1.5s; 2.5s; forwards);
       width: unset;
       min-width: unset;
-      &.mobile-fade {
-        opacity: 0;
-      }
-      &.mobile-hide {
-        display: none;
-      }
     }
   }
 

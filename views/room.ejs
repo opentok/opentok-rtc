@@ -7,8 +7,9 @@
       <meta name="apple-itunes-app" content="app-id=<%=iosAppId%>, app-argument=<%=iosURL%>">
     <% } %>
     <title>Vonage Free Conferencing</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no,viewport-fit=cover'"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover'"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
+
     <!--[if IE]><link rel="shortcut icon" href="/favicon.ico"><![endif]-->
     <link rel="icon" href="/favicon.png">
 
@@ -24,6 +25,11 @@
     <link rel="stylesheet" rel="prefetch" href="/css/annotation.opentok.css">
     <link rel="stylesheet prefetch" href="/css/checkboxes.css" />
     <link rel="stylesheet dns-prefetch" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/css/intlTelInput.css">
+
+    <link rel="preconnect" href="https://code.jquery.com">
+    <link rel="preconnect" href="https://hlg.tokbox.com">
+    <link rel="preconnect" href="https://in.hotjar.com">
+    <link rel="preconnect" href="https://www.google-analytics.com">
 
     <% if (adobeTrackingUrl) { %>
     <script src="<%=adobeTrackingUrl%>" async></script>
@@ -101,7 +107,7 @@
 
     <div id="top-banner">
       <div class="icon-container">
-        <a href="https://vonage.com" title="Vonage" target="_blank">
+        <a href="https://vonage.com" title="Vonage" target="_blank" rel="noopener">
           <i data-icon="vonage_logo"></i>
         </a>
       </div>
