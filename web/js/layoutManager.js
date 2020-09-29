@@ -88,7 +88,7 @@ LayoutViewport, ItemsHandler */
 
     return enableHangoutScroll ? LazyLoader.load([
       '/js/layoutViewport.js', '/css/hangoutScroll.css'
-    ]).then(function() {
+    ]).then(function () {
       LayoutViewport.init(container.querySelector('.tc-list ul'), '.stream');
     }) : Promise.resolve();
   }
@@ -111,7 +111,7 @@ LayoutViewport, ItemsHandler */
       rearrange();
     }
     Utils.sendEvent('layoutManager:itemAdded', {
-       item: item
+      item: item
     });
     return item.querySelector('.opentok-stream-container');
   }
