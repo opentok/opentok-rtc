@@ -50,12 +50,11 @@ LayoutViewport, ItemsHandler */
     return isScreen ? HANGOUT_BY_DEFAULT : userSelectedLayout;
   }
 
-  function getLayoutByScreenCount(layout , isScreenShared) {
+  function getLayoutByScreenCount(layout, isScreenShared) {
     if (isScreenShared) {
-        return layout
-    } else {
-        return (getTotal() <= 2) ? layout : 'grid';
+      return layout;
     }
+    return (getTotal() <= 2) ? layout : 'grid';
   }
 
   function layoutModifier() {
