@@ -48,3 +48,6 @@ resultsUnit.txt
 # node-config
 config/
 !config/example.json
+
+# test error images
+errorShots
