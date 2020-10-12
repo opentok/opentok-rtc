@@ -142,6 +142,7 @@ Environment Variable Names and Description:
 
 - `TB_API_KEY` (Required): Your OpenTok API key.
 - `TB_API_SECRET` (Required): Your OpenTok API Secret.
+- `PUBLISHER_RESOLUTION` (Optional): Desired resolution for publishers.
 - `TB_JS_URL` (Optional): The OpenTok.js URL to be loaded by the app. The default value is
   "https://static.opentok.com/v2/js/opentok.min.js". Enterprise partners should set this to the URL
   for the enterprise version of OpenTok.js ("https://enterprise.opentok.com/v2/js/opentok.min.js").
@@ -156,6 +157,7 @@ JSON example:
 "OpenTok": {
   "apiKey": "<key>",
   "apiSecret": "<secret>",
+  "publisherResolution": "640x480",
   "jsUrl": "https://static.opentok.com/v2/js/opentok.min.js",
   "maxSessionAge": 2
 }
@@ -333,20 +335,86 @@ undefined to disable issue reporting.
 },
 ```
 
+`HOTJAR_ID`: (Optional, default value: null) Unique site Id for the application. This helps hot jar tracking code to collect feedback data.
+
+`HOTJAR_VERSION`: (Optional, default value: null) Version of the Tracking Code using with hjsv
+
+`ENABLE_FEEDBACK`: (Optional, default value: false) Enables Feedback Form 
+
+ ```json
+ "Feedback": {
+     "url": "",
+     "reportIssueLevel": 0,
+     "hotjarId": "",
+     "hotjarVersion": "",
+     "enableFeedback": false,
+ },
+ ```
+
+ #### Pre-call test
+
+ Set the the `TB_PRECALL_API_KEY` and `TB_PRECALL_API_SECRET` environment variables
+ to the the OpenTok API key and secret to use for the test session used by
+ the precall-test. Or set these in the config file:
+  
+  ```json
+  "precallTest": {
+      "apiKey": "46049502",
+      "apiSecret": "0f4a63f629cec64ebdc5552974fe2566d2eb2835"
+  },
+  ```
+
+  These are optional. If you do not set these, the pre-call test will use the same
+  API key and secret that is used for the main OpenTok session used in the room.
+
+  You can disable the pre-call test by setting the `ENABLE_PRECALL_TEST`
+  environment variable to `false`. Or you can disable it using the config file:
+
+   ```json
+   "precallTest": {
+       "enabled": false
+   },
+   ```
+
 #### SIP connection
 
 See the [Phone dial-out](#phone-dial-out) section.
 
+#### Adobe Analytics
+
+  The app lets the developer configure Adobe Analytics to track user information, the next env vars are needed:
+
+* `ADOBE_TRACKING_URL` (Optional, default value: ''): URL to download the custom embed code.
+
+* `ADOBE_TRACKING_PRIMARY_CATEGORY` (Optional, default value: ''): Value that will be included in Adobe Analytics
+  object field: `digitalData.page.pageInfo.primaryCategory`.
+
+* `ADOBE_TRACKING_SITE_IDENTIFIER` (Optional, default value: ''): Value that will be included in Adobe Analytics
+  object field: `digitalData.page.pageInfo.siteIdentifier`.
+
+* `ADOBE_TRACKING_FUNCTION_DEPT` (Optional, default value: ''): Value that will be included in Adobe Analytics
+  object field: `digitalData.page.pageInfo.functionDept`.
+
 ### Additional configuration options
 
-- `SHOW_TOS` (Optional, default value: false): Whether the app will display the terms of service
+* `SHOW_TOS` (Optional, default value: false): Whether the app will display the terms of service
   dialog box and require the user to agree to the terms before joining a room.
 
-- `ALLOW_IFRAMING` (Optional, default value: 'never'): Controls the server-side restriction on
-  allowing content to load inside an iframe. The allowed values are:
+* `MEETINGS_RATE_PER_MINUTE` (Optional, default value: -1): Determines the maximum amount of new meetings that
+  can be created in a minute. Users will be allowed to join a meeting that already exists. Otherwise a message
+  will appear telling them that the service is not available at the moment. If the value is set to any negative
+  number, rate limiting will be turned off and all meetings will be allowed. If this value is set to 0, all new
+  meetings will be rejected.
+
+* `MIN_MEETING_NAME_LENGTH` (Optional, default value: 0): The minimum length of
+  meeting names created. The default value, 0, indicates that there is no minimum
+  length. (You can set this in the config file using the `minMeetingNameLength` setting.)
+
+* `ALLOW_IFRAMING` (Optional, default value: 'never'): Controls the server-side restriction on
+   allowing content to load inside an iframe. The allowed values are:
 
   - 'always': Allow iframing unconditionally (note that rtcApp.js should also be changed
-    to reflect this, this option only changes what the server allows)
+     to reflect this, this option only changes what the server allows)
 
   - 'never': Set X-Frame-Options to 'DENY' (Deny loading content in any iframe)
 
@@ -355,14 +423,40 @@ See the [Phone dial-out](#phone-dial-out) section.
 
   We don't allow restricting iframe loading to specific URIs because it doesn't work on Chrome.
 
-- `USE_GOOGLE_FONTS` (Optional, default value: true): Whether the client app will load
+* `USE_GOOGLE_FONTS` (Optional, default value: true): Whether the client app will load
   the Open Sans font (the main font used in the user interface) from the Google font library
   (fonts.googleapis.com) or not.
 
-- `JQUERY_URL` (Optional, default value: 'https://ajax.googleapis.com/ajax/libs/jquery/'):
+* `JQUERY_URL` (Optional, default value: 'https://ajax.googleapis.com/ajax/libs/jquery/'):
   Route of the CDN that will be used to load JQuery scripts.
 
-- `MEDIA_MODE` (Optional, default value: 'routed'): Whether the OpenTok sessions should be `relayed` or `routed`.
+* `USE_GOOGLE_FONTS` (Optional, default value: true): Whether the client app will load
+   the Open Sans font (the main font used in the user interface) from the Google font library
+   (fonts.googleapis.com) or not. *Note:* This version of the app uses Spezia, not Open Sans,
+   and it is not available from the Google font library. This setting is ignored.
+
+* `MEDIA_MODE` (Optional, default value: 'routed'): Whether the OpenTok sessions should be `relayed` or `routed`.
+
+* `SUPPORT_IE` (Optional, default value: true): Whether the app support Internet Explorer.
+ If you set this to `false`, the app will not load scripts that add polyfills for IE.
+ Note that OpenTok.js 2.17 removes support for IE, and you should set this to `false`.
+ (When OpenTok.js 2.16 is no longer supported, we will remove this config settings
+ and remove these polyfill scripts.)
+
+* `ENABLE_MUTE_ALL` (Optional, default value: true): Whether to show the Mute All
+ control in the top menu of the room. (You can set this in the config file
+ using the `enableMuteAll` setting.)
+
+* `ENABLE_STOP_RECEIVING_VIDEO` (Optional, default value: true): Whether to show
+ the Stop Receiving Video control in the top menu of the room. (You can set this
+ in the config file using the `enableStopReceivingVideo` setting.)
+ 
+* `MAX_USERS_PER_ROOM` (Optional, default value: 0): The maximum number of users
+  allowed in a room at the same time. Set this to 0, the default, to allow
+  any number of users. (You can set this in the config file using
+  the `maxUsersPerRoom` setting.)
+
+* `ENABLE_ROOM_LOCKING` (Optional, default value: true). Wheter or not to show the Lock Meeting icon to users in the options menu. This setting allows users to avoid new participants to join a locked meeting.
 
 ## Customizing the UI
 

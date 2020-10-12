@@ -3,10 +3,9 @@
 //
 
 // Fonts
-@baseFontFamily: "Open Sans", arial;
+@baseFontFamily: "Spezia", arial;
 @baseFontWeight: 100;
 @boldFontWeight: 700;
-
 
 // Theme colors
 @color: #007486;
@@ -14,10 +13,10 @@
 @blueText: #0099cc;
 @backgroundColor: #7fbfd6;
 @border: @color;
-@colorHover: darken(@color,5%);
+@colorHover: darken(@color, 5%);
 @textHover: #fff;
 @borderHover: @colorHover;
-@colorActive: darken(@color,10%);
+@colorActive: darken(@color, 10%);
 @textActive: @textHover;
 @borderActive: @colorActive;
 @mainBackgroundColor: #5f6062;
@@ -25,47 +24,47 @@
 @positive: #00c607;
 @positiveText: @text;
 @positiveBorder: @positive;
-@positiveHover: darken(@positive,5%);
+@positiveHover: darken(@positive, 5%);
 @positiveTextHover: @positiveText;
 @positiveBorderHover: @positiveHover;
-@positiveActive: darken(@positive,10%);
+@positiveActive: darken(@positive, 10%);
 @positiveTextActive: @positiveText;
 @positiveBorderActive: @positiveActive;
 
 @negative: #ca3430;
 @negativeText: @text;
 @negativeBorder: @negative;
-@negativeHover: darken(@negative,5%);
+@negativeHover: darken(@negative, 5%);
 @negativeTextHover: @negativeText;
 @negativeBorderHover: @negativeHover;
-@negativeActive: darken(@negative,10%);
+@negativeActive: darken(@negative, 10%);
 @negativeTextActive: @negativeText;
 @negativeBorderActive: @negativeActive;
 
 @subdued: #84959e;
 @subduedText: @text;
 @subduedBorder: @subdued;
-@subduedHover: darken(@subdued,5%);
+@subduedHover: darken(@subdued, 5%);
 @subduedTextHover: @subduedText;
 @subduedBorderHover: @subduedHover;
-@subduedActive: darken(@subdued,10%);
+@subduedActive: darken(@subdued, 10%);
 @subduedTextActive: @subduedText;
 @subduedBorderActive: @subduedActive;
 
 @significant: #00c6d7;
 @significantText: @text;
 @significantBorder: @significant;
-@significantHover: darken(@significant,5%);
+@significantHover: darken(@significant, 5%);
 @significantTextHover: @significantText;
 @significantBorderHover: @significantHover;
-@significantActive: darken(@significant,10%);
+@significantActive: darken(@significant, 10%);
 @significantTextActive: @significantText;
 @significantBorderActive: @significantActive;
 
 @warning: #f0ad4e;
 
 // Common colors
-@grey1: rgba(48,48,49,0.95);
+@grey1: rgba(48, 48, 49, 0.95);
 @grey2: #cfcece;
 @grey3: #b3b5b7;
 @grey4: #aeadad;
@@ -79,11 +78,11 @@
 @headerReverse: @headerNav;
 
 // Timing
-@transitionTime: .3s;
+@transitionTime: 0.3s;
 
 // Other properties
-@shadow: 0 2px 6px rgba(0,0,0,0.3);
-@shadowReverse: 0 -2px 6px rgba(0,0,0,0.3);
+@shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+@shadowReverse: 0 -2px 6px rgba(0, 0, 0, 0.3);
 @radius: 4px;
 
 // Breakpoints
@@ -101,5 +100,6 @@
 @columnGutter: @gutter / 2;
 
 @smartphones: ~"only screen and (max-width: 480px), only screen and (-webkit-min-device-pixel-ratio: 1.5, -o-min-device-pixel-ratio: 3/2, min--moz-device-pixel-ratio: 1.5, min-device-pixel-ratio: 1.5)";
-@smartphonesLandscape: ~"@{smartphones} only screen and (orientation:landscape) and (max-width: 480px), only screen and (orientation:landscape) and (-webkit-min-device-pixel-ratio: 1.5, -o-min-device-pixel-ratio: 3/2, min--moz-device-pixel-ratio: 1.5, min-device-pixel-ratio: 1.5)";
 @smartphonesPortrait: ~"@{smartphones} only screen and (orientation:portrait) and (max-width: 480px), only screen and (orientation:portrait) and (-webkit-min-device-pixel-ratio: 1.5, -o-min-device-pixel-ratio: 3/2, min--moz-device-pixel-ratio: 1.5, min-device-pixel-ratio: 1.5)";
+@smartphonesLandscape: ~"only screen and (min-device-width : 320px) and (max-device-width : 1024px) and (orientation : landscape) ";
+

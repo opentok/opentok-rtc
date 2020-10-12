@@ -58,6 +58,12 @@ E.ARCHIVE_POLLING_TIMEOUT_MULTIPLIER = { envVar: 'TIMEOUT_MULTIPLIER', jsonPath:
 
 E.ENABLE_ARCHIVE_MANAGER = { envVar: 'ENABLE_ARCHIVE_MANAGER', jsonPath: 'Archiving.archiveManager.enabled', defaultValue: false, parser: parseBool };
 
+E.ENABLE_MUTE_ALL = { envVar: 'ENABLE_MUTE_ALL', jsonPath: 'enableMuteAll', defaultValue: true, parser: parseBool };
+
+E.ENABLE_STOP_RECEIVING_VIDEO = { envVar: 'ENABLE_STOP_RECEIVING_VIDEO', jsonPath: 'enableStopReceivingVideo', defaultValue: true, parser: parseBool };
+
+E.MAX_USERS_PER_ROOM = { envVar: 'MAX_USERS_PER_ROOM', jsonPath: 'maxUsersPerRoom', defaultValue: 0, parser: parseInt };
+
 // Maximum time an empty room will keep it's history alive, in minutes.
 E.EMPTY_ROOM_LIFETIME = { envVar: 'EMPTY_ROOM_LIFETIME', jsonPath: 'Archiving.archiveManager.emptyRoomMaxLifetime', defaultValue: 3 };
 
@@ -65,7 +71,15 @@ E.FEEDBACK_URL = { envVar: 'FEEDBACK_URL', jsonPath: 'Feedback.url', defaultValu
 
 E.REPORT_ISSUE_LEVEL = { envVar: 'REPORT_ISSUE_LEVEL', jsonPath: 'Feedback.reportIssueLevel', defaultValue: 3 };
 
+E.HOTJAR_ID = { envVar: 'HOTJAR_ID', jsonPath: 'Feedback.hotjarId', defaultValue: '' };
+
+E.HOTJAR_VERSION = { envVar: 'HOTJAR_VERSION', jsonPath: 'Feedback.hotjarVersion', defaultValue: '' };
+
+E.ENABLE_FEEDBACK = { envVar: 'ENABLE_FEEDBACK', jsonPath: 'Feedback.enabled', defaultValue: false, parser: parseBool };
+
 E.ENABLE_SCREENSHARING = { envVar: 'ENABLE_SCREENSHARING', jsonPath: 'Screensharing.enabled', defaultValue: false, parser: parseBool };
+
+E.ENABLE_PRECALL_TEST = { envVar: 'ENABLE_PRECALL_TEST', jsonPath: 'precallTest.enabled', defaultValue: true, parser: parseBool };
 
 E.USE_GOOGLE_FONTS = { envVar: 'USE_GOOGLE_FONTS', jsonPath: 'useGoogleFonts', required: false, defaultValue: true, parser: parseBool };
 
@@ -75,6 +89,8 @@ E.JQUERY_URL = { envVar: 'JQUERY_URL', jsonPath: 'jqueryUrl', required: false, d
 E.CHROME_EXTENSION_ID = { envVar: 'CHROME_EXTENSION_ID', jsonPath: 'Screensharing.chromeExtensionId' };
 
 E.ENABLE_ANNOTATIONS = { envVar: 'ENABLE_ANNOTATIONS', jsonPath: 'Screensharing.annotations.enabled', defaultValue: true, parser: parseBool };
+
+E.ENABLE_ROOM_LOCKING = { envVar: 'ENABLE_ROOM_LOCKING', jsonPath: 'enableRoomLocking', defaultValue: true, parser: parseBool };
 
 
 // Do we want to allow being used inside an iframe?
@@ -99,6 +115,12 @@ E.DEFAULT_INDEX_PAGE = { envVar: 'DEFAULT_INDEX_PAGE', jsonPath: 'defaultPageInd
 
 E.SHOW_TOS = { envVar: 'SHOW_TOS', jsonPath: 'showTos', defaultValue: false, parser: parseBool };
 
+E.MEETINGS_RATE_PER_MINUTE = { envVar: 'MEETINGS_RATE_PER_MINUTE', jsonPath: 'meetingsRatePerMinute', defaultValue: -1 };
+
+E.MIN_MEETING_NAME_LENGTH = { envVar: 'MIN_MEETING_NAME_LENGTH', jsonPath: 'minMeetingNameLength', defaultValue: 0 };
+
+E.PUBLISHER_RESOLUTION = { envVar: 'PUBLISHER_RESOLUTION', jsonPath: 'OpenTok.publisherResolution', defaultValue: '1280x720' };
+
 E.SIP_ENABLED = { envVar: 'SIP_ENABLED', jsonPath: 'SIP.enabled', defaultValue: false, parser: parseBool };
 
 E.SIP_URI = { envVar: 'SIP_URI', jsonPath: 'SIP.uri', defaultValue: '' };
@@ -115,4 +137,14 @@ E.GOOGLE_HOSTED_DOMAIN = { envVar: 'GOOGLE_HOSTED_DOMAIN', jsonPath: 'Google.hos
 
 E.BLACKLIST = { envVar: 'BLACKLIST', jsonPath: 'blacklist', defaultValue: '' };
 
-E.MEDIA_MODE = { envVar: 'MEDIA_MODE', jsonPath: 'mediaMode', defaultValue: 'routed'};
+E.MEDIA_MODE = { envVar: 'MEDIA_MODE', jsonPath: 'mediaMode', defaultValue: 'routed' };
+
+E.SUPPORT_IE = { envVar: 'SUPPORT_IE', jsonPath: 'supportIE', defaultValue: true, parser: parseBool };
+
+E.ADOBE_TRACKING_URL = { envVar: 'ADOBE_TRACKING_URL', jsonPath: 'adobeTracking.url', defaultValue: '' };
+
+E.ADOBE_TRACKING_PRIMARY_CATEGORY = { envVar: 'ADOBE_TRACKING_PRIMARY_CATEGORY', jsonPath: 'adobeTracking.primaryCategory', defaultValue: '' };
+
+E.ADOBE_TRACKING_SITE_IDENTIFIER = { envVar: 'ADOBE_TRACKING_SITE_IDENTIFIER', jsonPath: 'adobeTracking.siteIdentifier', defaultValue: '' };
+
+E.ADOBE_TRACKING_FUNCTION_DEPT = { envVar: 'ADOBE_TRACKING_FUNCTION_DEPT', jsonPath: 'adobeTracking.functionDept', defaultValue: '' };

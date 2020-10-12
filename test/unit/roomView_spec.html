@@ -1,6 +1,6 @@
 <div id="top-banner">
   <div class="icon-container">
-    <i data-icon="tokbox_logo"></i>
+    <i data-icon="vonage_logo"></i>
   </div>
   <div class="center-container">
     <div class="room-info">
@@ -17,24 +17,21 @@
     </div>
     <%   if(enableArchiving) { %>
     <div id="toggleArchiving" disabled>
-      <a id="startArchiving" class="btn btn-blue btn-padding">Record</a>
-      <a id="stopArchiving" class="btn btn-blue btn-padding duration">Stop Recording</a>
+      <a id="startArchiving" class="btn btn-purple btn-padding">Record</a>
+      <a id="stopArchiving" class="btn btn-purple btn-padding duration">Stop Recording</a>
     </div>
     <%      if(enableArchiveManager) { %>
     <div id="manageRecordings">
-      <a id="viewRecordings"  class="btn btn-blue btn-padding"><span id="recordings">0</span></a>
+      <a id="viewRecordings"  class="btn btn-purple btn-padding"><span id="recordings">0</span></a>
     </div>
     <% } } %>
-    <div class="layout-container">
-      <div>
-        <div id="layout-icon">
-          <a id="chooseLayout">
-            <i data-icon="layout-icon"></i>
-          </a>
+    <% if (enableRoomLocking) { %>
+      <a id="chooseLayout">
+        <div id="options-container">
+          <i id="options-icon" data-icon="options-icon"></i>
         </div>
-        <div id="layout-label">Layout</div>
-      </div>
-    </div>
+      </a>
+    <% } %>
   </div>
 </div>
 <section id="screen">
@@ -48,7 +45,7 @@
       <button id="endCall" disabled>
         <i data-icon="end_call"></i>
       </button>
-      <p>Leave Call</p>
+      <p>Leave</p>
     </div>
     <div>
       <button id="toggle-publisher-video" class="selected" disabled>
@@ -87,8 +84,8 @@
       <button id="message-btn" disabled>
         <i data-icon="message"></i>
       </button>
-      <p>Message
-        <span id="unreadMsg">(<span id="unreadCount">0</span>)</span>
+      <p>Chat
+        <span id="unreadCount"></span>
       </p>
     </div>
   </div>
@@ -115,7 +112,7 @@
     </div>
     <footer>
       <textarea id="msgText" placeholder="Type your message..." required></textarea>
-      <button id="sendTxt" type="submit" data-icon="send" class="btn btn-blue btn-padding btn-padding-small"></button>
+      <button id="sendTxt" type="submit" data-icon="send" class="btn btn-purple btn-padding btn-padding-small"></button>
     </footer>
   </form>
 </section>
@@ -133,7 +130,7 @@
         <hr>
         <p>Once you have installed it, refresh your browser and click 'share screen' again.</p>
         <footer>
-          <button class="btn btn-blue btn-padding ctaarrow-white delete-archive">Install extension</button>
+          <button class="btn btn-purple btn-padding ctaarrow-white delete-archive">Install extension</button>
         </footer>
     </section>
     <section id="extInstallationSuccessful">
@@ -142,7 +139,7 @@
       <p>Once you have installed it, refresh your browser and click 'share screen' again.</p>
       <footer>
         <button id="scrShrLater" class="btn btn-white btn-padding ctaarrow-blue">Later</button>
-        <button id="scrShrReload" class="btn btn-blue btn-padding ctaarrow-white">Reload</button>
+        <button id="scrShrReload" class="btn btn-purple btn-padding ctaarrow-white">Reload</button>
       </footer>
     </section>
   </div>
@@ -216,7 +213,7 @@
         <span class="feedback-title suggestion-title">Any other info?</span>
         <input class="other-info" placeholder="What's on your mind?" />
     </div>
-    <button class="btn btn-blue btn-padding send-feedback">Send Feedback</button>
+    <button class="btn btn-purple btn-padding send-feedback">Send Feedback</button>
   </form>
   </section>
 
@@ -231,7 +228,7 @@
     <p>Are you sure you want to delete this archive?</p>
     <footer>
       <button class="btn btn-white btn-padding ctaarrow-blue">Cancel</button>
-      <button class="btn btn-blue btn-padding ctaarrow-white delete-archive">Delete</button>
+      <button class="btn btn-purple btn-padding ctaarrow-white delete-archive">Delete</button>
     </footer>
   </form>
 </section>
@@ -260,7 +257,7 @@
       </div>
       <form id="dialOutForm">
         <input id="dialOutNumber" class="phoneNumber" required>
-        <button id="dialOutBtn" class="btn btn-blue btn-padding">Dial</button>
+        <button id="dialOutBtn" class="btn btn-purple btn-padding">Dial</button>
       </form>
       <% } %>
   </secton>
@@ -274,7 +271,7 @@
     <hr>
     <p class="detail"></p>
     <footer>
-      <button class="btn btn-blue btn-padding ctaarrow-white accept"></button>
+      <button class="btn btn-purple btn-padding ctaarrow-white accept"></button>
     </footer>
   </form>
 </section>

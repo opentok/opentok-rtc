@@ -1,44 +1,52 @@
-/* globals EJSTemplate, Modal, setTimeout, showTos */
+/* globals EJSTemplate, Modal, setTimeout, showTos, showUnavailable, enablePrecallTest, enterButtonLabel */
 !(function (exports) {
   'use strict';
 
   var _precallTemplateSrc = '/templates/precall.ejs';
   var _precallTemplate;
   var _tosTemplateSrc = '/templates/tos.ejs';
+  var _unavailableTemplateSrc = '/templates/unavailable.ejs';
+  var _unavailableTemplate;
+  var _lockedTemplateSrc = '/templates/locked.ejs';
+  var _lockedTemplate;
   var _tosTemplate;
   var _model;
   var testMeterInterval;
 
+  var isMobile = function () { return typeof window.orientation !== 'undefined'; };
+
   var addHandlers = function () {
-    var preCallTestResults = document.getElementById('pre-call-test-results');
+    if (window.enablePrecallTest) {
+      var preCallTestResults = document.getElementById('pre-call-test-results');
 
-    preCallTestResults.addEventListener('click', function (e) {
-      var elem = e.target;
-      switch (elem.id) {
-        case 'precall-close':
-          preCallTestResults.style.display = 'none';
-          break;
-        case 'retest':
-          preCallTestResults.style.display = 'none';
-          document.getElementById('connectivity-cancel').style.display = 'inline-block';
-          Utils.sendEvent('roomView:retest');
-          break;
-      }
-    });
+      preCallTestResults.addEventListener('click', function (e) {
+        var elem = e.target;
+        switch (elem.id) {
+          case 'precall-close':
+            preCallTestResults.style.display = 'none';
+            break;
+          case 'retest':
+            preCallTestResults.style.display = 'none';
+            document.getElementById('connectivity-cancel').style.display = 'inline-block';
+            Utils.sendEvent('roomView:retest');
+            break;
+        }
+      });
 
-    var connectivityCancelElement = document.getElementById('connectivity-cancel');
-    connectivityCancelElement.addEventListener('click', function (event) {
-      event.preventDefault();
-      Utils.sendEvent('roomView:cancelTest');
-      connectivityCancelElement.style.display = 'none';
-      preCallTestResults.style.display = 'none';
-      hideConnectivityTest();
-    });
+      var connectivityCancelElement = document.getElementById('connectivity-cancel');
+      connectivityCancelElement.addEventListener('click', function (event) {
+        event.preventDefault();
+        Utils.sendEvent('roomView:cancelTest');
+        connectivityCancelElement.style.display = 'none';
+        preCallTestResults.style.display = 'none';
+        hideConnectivityTest();
+      });
+    }
 
     var userNameInputElement = document.getElementById('user-name-input');
-    userNameInputElement.addEventListener('keyup', function keyupHandler() {
-      document.querySelector('#enter-name-prompt label').classList.add('visited');
-      userNameInputElement.removeEventListener('keyup', keyupHandler);
+    userNameInputElement.addEventListener('keypress', function keypressHandler(event) {
+      document.querySelector('.user-name-input-container').classList.add('visited');
+      userNameInputElement.removeEventListener('keypress', keypressHandler);
     });
 
     document.querySelector('.user-name-modal').addEventListener('click', function () {
@@ -97,26 +105,27 @@
       }
     });
 
-    var videoPreviewElement = document.getElementById('video-preview');
-    var videoPreviewNameElement = document.getElementById('video-preview-name');
-    videoPreviewElement.addEventListener('mouseover', function () {
-      videoPreviewNameElement.style.opacity = 1;
-    });
-    videoPreviewElement.addEventListener('mouseout', function () {
-      videoPreviewNameElement.style.opacity = 0;
-    });
   };
 
   function render(resolve) {
-    var templatePromises = [_precallTemplate.render()];
+    var templatePromises = [_precallTemplate.render(), _unavailableTemplate.render(), _lockedTemplate.render()];
     if (showTos) {
       templatePromises.push(_tosTemplate.render());
     }
     Promise.all(templatePromises).then(function (htmlStrings) {
       htmlStrings.forEach(function (aHTML) {
-        document.body.innerHTML += aHTML;
+        document.body.insertAdjacentHTML('afterbegin', aHTML);
       });
+
+      if (window.routedFromStartMeeting) {
+        document.querySelector('.main').style.display = 'none';
+        resolve();
+      }
       addHandlers();
+      if (window.enablePrecallTest) {
+        document.getElementById('pre-call-test').style.display = 'flex';
+        document.getElementById('precall-test-meter').style.display = 'block';
+      }
       resolve();
     });
   }
@@ -131,22 +140,10 @@
     }
   };
 
-  var setRoomName = function (roomName) {
-    document.querySelector('.user-name-modal button .room-name').textContent = 'Join ' + roomName;
-    document.getElementById('name-heading').textContent = roomName;
-  };
-
-  var setUsername = function (username) {
-    document.getElementById('video-preview-name').textContent = username;
-    setTimeout(function () {
-      document.getElementById('video-preview-name').style.opacity = 0;
-    }, 2000);
-  };
-
   var setFocus = function (username) {
     var focusElement = username ? document.getElementById('enter') :
       document.getElementById('user-name-input');
-    focusElement.focus();
+    focusElement && focusElement.focus();
   };
 
   var hideConnectivityTest = function () {
@@ -178,6 +175,8 @@
       if (showTos) {
         _tosTemplate = new EJSTemplate({ url: _tosTemplateSrc });
       }
+      _unavailableTemplate = new EJSTemplate({ url: _unavailableTemplateSrc });
+      _lockedTemplate = new EJSTemplate({ url: _lockedTemplateSrc });
       alreadyInitialized = true;
       return render(resolve);
     });
@@ -186,6 +185,16 @@
   var showModal = function () {
     Utils.removeEventHandlers('modal:', { close: showModal });
     Modal.show('.user-name-modal');
+  };
+
+  var showUnavailableMessage = function () {
+    var selector = '.tc-modal.unavailable';
+    return Modal.show(selector, null, true);
+  };
+
+  var showLockedMessage = function () {
+    var selector = '.tc-modal.locked';
+    return Modal.show(selector, null, true);
   };
 
   var showContract = function () {
@@ -208,7 +217,7 @@
   };
 
   var hide = function () {
-    document.getElementById('video-preview').style.visibility = 'hidden';
+    document.querySelector('.main').style.display = 'none';
     Utils.removeEventHandlers('modal:', { close: showModal });
   };
 
@@ -303,16 +312,16 @@
   }
 
   exports.PrecallView = {
-    init: init,
-    hide: hide,
-    populateAudioDevicesDropdown: populateAudioDevicesDropdown,
-    setRoomName: setRoomName,
-    setUsername: setUsername,
-    setFocus: setFocus,
-    setVolumeMeterLevel: setVolumeMeterLevel,
-    showContract: showContract,
-    startPrecallTestMeter: startPrecallTestMeter,
-    displayNetworkTestResults: displayNetworkTestResults,
-    hideConnectivityTest: hideConnectivityTest
+    init,
+    hide,
+    populateAudioDevicesDropdown,
+    setFocus,
+    setVolumeMeterLevel,
+    showContract,
+    showUnavailableMessage,
+    showLockedMessage,
+    startPrecallTestMeter,
+    displayNetworkTestResults,
+    hideConnectivityTest
   };
 }(this));

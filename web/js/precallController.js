@@ -1,4 +1,4 @@
-/* global Modal, OTNetworkTest, PrecallView, showTos */
+/* global Modal, OTNetworkTest, PrecallView, showTos, showUnavailable */
 
 !(function (exports) {
   'use strict';
@@ -64,13 +64,19 @@
     };
 
     return new Promise(function (resolve) {
+      if (window.routedFromStartMeeting) {
+        publisherOptions.name = window.userName || document.querySelector(selector + ' input').value.trim();
+        return resolve({
+          username: window.userName || document.querySelector(selector + ' input').value.trim(),
+          publisherOptions: publisherOptions
+        });
+      }
+
       function loadModalText() {
-        PrecallView.setRoomName(roomName);
-        PrecallView.setUsername(username);
         PrecallView.setFocus(username);
 
         if (Utils.isIE() || Utils.isSafariIOS()) {
-          PrecallView.hideConnectivityTest();
+          if (window.enablePrecallTest) PrecallView.hideConnectivityTest();
         }
 
         document.querySelector('.user-name-modal #enter').disabled = false;
@@ -81,7 +87,7 @@
           }
         });
 
-        document.querySelector('.user-name-modal .tc-dialog').addEventListener('submit', function (event) {
+        document.querySelector('.user-name-modal').addEventListener('submit', function (event) {
           event.preventDefault();
           submitForm();
         });
@@ -92,25 +98,62 @@
           if (!Utils.isIE()) {
             otNetworkTest && otNetworkTest.stopTest();
           }
-          Modal.hide(selector)
-            .then(function () {
-              var username = document.querySelector(selector + ' input').value.trim();
-              window.localStorage.setItem('username', username);
-              publisherOptions.name = username;
-              setTimeout(function () {
-                resolve({
-                  username: username,
-                  publisherOptions: publisherOptions
-                });
-              }, 1);
+          var username = document.querySelector(selector + ' input').value.trim();
+          window.localStorage.setItem('username', username);
+          publisherOptions.name = username;
+          setTimeout(function () {
+            resolve({
+              username: username,
+              publisherOptions: publisherOptions
             });
+          }, 1);
+        }
+
+        function submitRoomForm() {
+          function isAllowedToJoin() {
+            return new Promise((resolve, reject) => {
+              Request
+                .getRoomRawInfo(roomName).then((room) => {
+                  if (window.routedFromStartMeeting)
+                    return resolve();
+                  else if (showUnavailable && !room)
+                    return reject(new Error('New rooms not allowed'));
+                  else if (room && !room.isLocked) 
+                    return resolve();
+                  else if (!showUnavailable && !room) 
+                    return resolve();
+                  else if (room && room.isLocked) 
+                    return reject(new Error('Room locked'));
+                })
+            });
+          }
+
+          isAllowedToJoin().then(() => {
+            if (showTos) {
+              PrecallView.showContract().then(hidePrecall);
+            } else {
+              hidePrecall();
+            }
+          }).catch((e) => {
+            if (e.message === 'Room locked')
+              PrecallView.showLockedMessage();
+            else 
+              PrecallView.showUnavailableMessage();
+          });
         }
 
         function submitForm() {
-          if (showTos) {
-            PrecallView.showContract().then(hidePrecall);
+          if (window.location.href.indexOf('room') > -1) {
+            // Jeff to do: This code should move to RoomController and be event-driven 
+            submitRoomForm();
           } else {
-            hidePrecall();
+            if (showTos) {
+              PrecallView.showContract().then(function () {
+                Utils.sendEvent('precallView:submit');
+              });
+            } else {
+              Utils.sendEvent('precallView:submit');
+            }
           }
         }
 
@@ -134,7 +177,7 @@
               });
               // You cannot use the network test in IE or Safari because you cannot use two
               // publishers (the preview publisher and the network test publisher) simultaneously.
-              if (!Utils.isIE() && !Utils.isSafariIOS()) {
+              if (!Utils.isIE() && !Utils.isSafariIOS() && enablePrecallTest) {
                 PrecallView.startPrecallTestMeter();
                 otNetworkTest = new OTNetworkTest(previewOptions);
                 otNetworkTest.startNetworkTest(function (error, result) {
@@ -173,11 +216,7 @@
           document.querySelector('#enter-name-prompt label').classList.add('visited');
         }
       }
-      otHelper.otLoaded.then(function () {
-        return Modal.show(selector, loadModalText).then(function () {
-          PrecallView.setFocus(username);
-        });
-      });
+      otHelper.otLoaded.then(loadModalText);
     });
   }
 

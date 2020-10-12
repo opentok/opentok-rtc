@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Thanks for using Vonage Free Conferencing!</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <link rel="stylesheet prefetch" href="/css/endMeeting.opentok.css" />
+    <link rel="stylesheet" href="css/buttons.css" />
+    <link href="/css/fonts.css" rel="stylesheet">
+  <% if (adobeTrackingUrl) { %>
+    <script src="<%=adobeTrackingUrl%>" async></script>
+  <% } %>
+  <% if (enableFeedback && hotjarId && hotjarVersion ) { %>
+    <script>
+          (function(h,o,t,j,a,r){
+           h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+           h._hjSettings={hjid: <%=hotjarId%>, hjsv: <%=hotjarVersion%>};
+           a=o.getElementsByTagName('head')[0];
+           r=o.createElement('script');r.async=1;
+           r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+           a.appendChild(r);
+       })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+    </script>
+  <% } %>
+  </head>
+  <body>
+    <section class="endMeeting">
+        <header>
+           <a href="https://vonage.com" title="Vonage" target="_blank" rel="noopener">
+            <img id="logo" src="../images/vonage-logo-no-text.svg" alt="vonage transparent logo">
+          </a>
+              <p>Thanks for using<br>Vonage Free Conferencing!</p>
+          </header>
+        <div class="endMeeting-box-container">
+          <div class="endMeeting-box">
+            <h2>Built on the Vonage Video API</h2>
+            <p>
+             Did you know that Vonage Free Conferencing is open source and built on the top of the Vonage Video API? 
+            <a  href="https://github.com/opentok/opentok-rtc" target="_blank" rel="noopener">
+             Check out the GitHub repo.
+            </a> </br></br>
+              Have a killer idea for how we can make this app even better?
+            <a  href="https://tokbox.com/account/user/signup?icid=startbuidlingforfree_freeconferencing_tokboxfreetrialsignup_btn" target="_blank" rel="noopener"> Sign up for a Vonage Video API account</a> and start hacking today!
+            </p>
+            <a class="btn" style="text-decoration: none;" href= "https://tokbox.com/account/user/signup?icid=startbuidlingforfree_freeconferencing_tokboxfreetrialsignup_btn" target="_blank" rel="noopener">Start Building for Free</a>
+          </div>
+          <div class="endMeeting-box">
+            <h2>We’ve got you covered</h2>
+            <p>
+             Vonage can also help you with Unified Communications, like business phone and messaging systems, and Contact Centers with integration to Salesforce and other CRMs.
+            </p>
+            <a class="btn" style="text-decoration: none;" href="https://www.vonage.com/communications-apis/contact-api/?icid=contactus_freeconferencing_comm-apis_btn" target="_blank" rel="noopener">Contact Us</a>
+          </div>
+          </div>
+           <div class="back-to-top-wrapper">
+                  <a href="#top" class="back-to-top-link" aria-label="Scroll to Top">🔝</a>
+           </div>
+          <footer>
+            <a href="/index.html">Start a new meeting</a>
+          </footer>
+    </section>
+
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-462500-32', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  <% if (adobeTrackingUrl) { %>
+    <script type="text/javascript">
+        var digitalData = {
+          page: {
+            pageInfo: {
+              pageName: 'biz:api:tokbox meetings:freeconferencing:post-meeting',
+              lob: 'biz',
+              functionDept: '<%=ATFunctionDept%>',
+              subCategory1: '',
+              subCategory2:'',
+              subCategory3: '',
+              primaryCategory: '<%=ATPrimaryCategory%>',
+              internalSearchTerm: '',
+              internalSearchResults: '',
+              error: '',
+              pageType: '',
+              language: '<%=userLanguage%>',
+              country: '<%=userCountry%>',
+              fileGatedType: '',
+              tollFreeNumber: '',
+              siteIdentifier: '<%=ATSiteIdentifier%>',
+              type: '',
+              pageCategory: '',
+              pageSubCategory: '',
+            },
+            content: {
+              name: '',
+              category: '',
+              author: '',
+              type: '',
+              publishDate: '',
+              subCategory: '',
+              topic: '',
+              industry: '',
+              businessSize: '',
+              profRole: '',
+              company: '',
+              product: '',
+            },
+          },
+          user: {
+            profile: {
+              profileInfo: {
+                targetExperience: '',
+                responsiveSiteVersion: 'desktop',
+                visitorType: 'prospect',
+                gaCampaign: '',
+              },
+            },
+          },
+          transaction: {
+            item: {
+              quantity: '',
+              price: '',
+              productInfo: '',
+            },
+          },
+          eventData: {
+            fIndustry: '',
+            fName: '',
+            fCTA: '',
+            fLines: '',
+            linesSlider: '',
+            interactionType: '',
+            events: '',
+          },
+        };
+        (function(){
+          var width = window.screen.width;
+          var responsive = ( width < 768 ) ? "mobile" : ( width < 960 ) ? "tablet" : "desktop";
+          digitalData.user.profile.profileInfo.responsiveSiteVersion = responsive;
+        })();
+        if (typeof _satellite !== "undefined") _satellite.pageBottom();
+    </script>
+  <% } %>
+  </body>
+</html>

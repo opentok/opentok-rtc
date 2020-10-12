@@ -1,19 +1,19 @@
 // Components
-@import '../bower_components/utils/reset.less';
-@import '../bower_components/utils/mixins.less';
-@import '../bower_components/modals/modals.less';
-@import '../bower_components/sidebars/sidebars.less';
-@import '../bower_components/dropdowns/dropdowns.less';
-@import '../bower_components/lists/lists.less';
+@import "../bower_components/utils/reset.less";
+@import "../bower_components/utils/mixins.less";
+@import "../bower_components/modals/modals.less";
+@import "../bower_components/sidebars/sidebars.less";
+@import "../bower_components/dropdowns/dropdowns.less";
+@import "../bower_components/lists/lists.less";
 
-@import 'chat.less';
-@import 'base.less';
-@import 'buttons.less';
-@import 'icons.less';
-@import 'bubble.less';
-@import 'layout.less';
-@import 'tooltips.less';
-@import 'flexbox.less';
+@import "chat.less";
+@import "base.less";
+@import "buttons.less";
+@import "icons.less";
+@import "bubble.less";
+@import "layout.less";
+@import "tooltips.less";
+@import "flexbox.less";
 
 body {
   margin: 0;
@@ -39,10 +39,11 @@ body {
 
 #top-banner {
   visibility: hidden;
+  display: none;
   height: 98px;
   width: 100%;
-  background-color: #293840;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+  background: #131415;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
   position: absolute;
   display: flex;
   top: 0;
@@ -51,6 +52,13 @@ body {
 
   @media @smartphonesPortrait {
     height: 56px;
+    justify-content: space-between;
+  }
+
+  @media @smartphonesLandscape{
+    height: 56px;
+    justify-content: space-between;
+    min-height: 50px;
   }
 
   .icon-container {
@@ -65,65 +73,142 @@ body {
     text-align: center;
     border-right: 1px solid #455b66;
     @media @smartphonesPortrait {
-      width: 56px;
-      min-width: 56px;
+      width: 52px;
+      min-width: 52px;
+    }
+
+    @media @smartphonesLandscape{
+      width: 100px;
+      min-width: 52px;
     }
   }
   .center-container {
-    float: left;
-    flex-grow: 1;
-    height: 100%;
-    padding-left: 30px;
-
+    justify-content: center;
+    flex-direction: column;
+    display: flex;
     @media @smartphonesPortrait {
       padding: 0;
-      padding-left: 17px;
-      max-width: 130px;
+      padding-left: 4px;
+      width: 100%;
     }
 
     .room-info {
+      display: flex;
+      flex-direction: column;
+      margin: 0 24px;
       font-size: 13px;
       font-weight: 600;
-      line-height: 0.5;
       letter-spacing: 1.1px;
       color: #7a8b93;
-      min-width: 60px;
-      .room-name {
-        font-size: 22px;
-        text-overflow: ellipsis;
-        height: 26px;
-        overflow: hidden;
-        white-space: nowrap;
-        line-height: 22px;
-        margin-bottom: 8px;
+      min-width: 200px;
+      @media @smartphonesPortrait {
+        min-width: unset;
+        max-width: 100%;
+        margin: 0 12px;
+      }
+      .left-icon-wrapper {
+        height: 50px;
+        margin: 24px 10px 0 12px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
         @media @smartphonesPortrait {
-          font-size: 16px;
-          margin: 4px 0 0 12px;
-          margin-left: 0;
-          width: 116px;
+          height: 44px;
+          margin: 8px 4px 0 4px;
+          justify-content: space-between;
+          width: 20px;
+        }
+      }
+      .participants-wrapper {
+        display: flex;
+      }
+      .name-wrapper {
+        margin-bottom: 6px;
+        min-width: 200px;
+        display: grid;
+        grid-template-columns: auto auto;
+        @media @smartphonesPortrait {
+          margin: 0;
+          width: 100%;
+          padding: 0 4px;
+          min-width: unset;
+          max-width: 100%;
+        }
+        .room-name {
+          font-size: 14px;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+          color: #ffffff;
+          margin: 0;
+          @media @smartphonesPortrait {
+            height: 22px;
+          }
         }
       }
     }
   }
+  .invite-btn {
+    background: #871fff;
+    border-radius: 5px;
+    border: none;
+    margin-right: 20px;
+    width: 140px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    @media @smartphonesPortrait {
+      display: none;
+    }
+
+    i {
+      margin-right: 10px;
+      @media @smartphonesPortrait {
+        margin-right: 2px;
+      }
+      @media @smartphonesLandscape{
+        margin-right: 0px;
+      }
+    }
+
+    @media @smartphonesLandscape{
+      width: 54px;
+    }
+
+    span {
+      @media @smartphonesPortrait {
+        display: none;
+      }
+
+      @media @smartphonesLandscape{
+        display: none;
+      }
+    }
+  }
+
   .right-container {
     float: right;
     display: flex;
+    flex-grow: 1;
     .flex-direction(row);
     .align-items(center);
     .justify-content(flex-end);
     right: 0;
 
     @media @smartphonesPortrait {
-      float: left;
-      width: unset;
-      min-width: calc(~"100% - 190px");
-      height: 92px;
+      padding-left: 4px;
     }
     div {
-        float: left;
+      float: left;
     }
   }
-  .videoSwitch, .audioSwitch {
+  .videoSwitch,
+  .audioSwitch {
     width: 216px;
     min-width: 216px;
     span {
@@ -137,8 +222,15 @@ body {
     @media @smartphonesPortrait {
       display: none;
     }
+
+    @media @smartphonesLandscape{
+      display: none;
+    }
   }
-  .layout-container {
+  #options-container {
+    &:hover {
+      background-color: #303234;
+    }
     width: 114px;
     height: 98px;
     border-left: 1px solid #455b66;
@@ -148,28 +240,28 @@ body {
     .flex-direction(row);
     .align-items(center);
     .justify-content(center);
-
+    cursor: pointer;
     @media @smartphonesPortrait {
-      display: none;
+      width: 49px;
+      height: 56px;
     }
 
-    #layout-icon {
+    @media @smartphonesLandscape {
+      width: 100px;
+      height: 56px;
+    }
+    #options-icon {
       height: 22px;
       float: none;
     }
-    #layout-label {
-      margin-top: 8px;
-      float: none;
-      font-size: 12px;
-      color: #c0c0c0;
-    }
   }
-  #toggleArchiving, #manageRecordings {
+  #toggleArchiving,
+  #manageRecordings {
     margin: 28px 0;
     height: 40px;
     background-color: inherit !important;
     position: relative;
-    
+
     @media @smartphonesPortrait {
       top: -20px;
       right: 8px;
@@ -198,7 +290,8 @@ body {
     }
   }
   .manage-recordings {
-    #startArchiving, #stopArchiving {
+    #startArchiving,
+    #stopArchiving {
       padding: 0 57.5px 0 17.5px;
       @media @smartphonesPortrait {
         padding: 0 20px 0 0;
@@ -242,13 +335,19 @@ body {
 }
 
 #screen {
-  visibility: hidden;
   position: relative;
+  visibility: hidden;
   overflow: hidden;
   @media @smartphonesPortrait {
-    margin-top: 64px;
+    margin-top: 58px;
     margin-bottom: 2px;
-    height: calc(~"100% - 68px");
+    height: calc(~"100% - 62px");
+    padding: 2px;
+  }
+  @media @smartphonesLandscape {
+    margin-top: 56px;
+    margin-bottom: 2px;
+    height: calc( 100% - 62px);
     padding: 2px;
   }
 }
@@ -259,70 +358,53 @@ body {
   }
 }
 
+#room-unlocked-alert {
+  color: white;
+  border-radius: 100px;
+  background-color: #131415;
+  opacity: 0.7;
+  font-size: 16px;
+  span {
+    position: relative;
+    top: -4px;
+  }
+}
+
 .add-to-call-modal {
   .iti-flag {
     background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/img/flags.png");
   }
-  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+  @media only screen and (-webkit-min-device-pixel-ratio: 2),
+    only screen and (min--moz-device-pixel-ratio: 2),
+    only screen and (min-device-pixel-ratio: 2),
+    only screen and (min-resolution: 192dpi),
+    only screen and (min-resolution: 2dppx) {
     .iti-flag {
       background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/img/flags@2x.png");
     }
   }
 
   .tc-dialog {
-    padding: 0;
-    min-height: 350px;
-    width: 564px;
-    max-width: 564px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
-
-    header {
-      .close {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        cursor: pointer;
-      }
-
-      .title {
-        font-size: 24px;
-        color: #404040;
-        height: 89px;
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-      }
-    }
-
-    .dialog-content {
-      padding: 35px;
-    }
-
-    .meeting-link {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      height: 100px;
-      border: 1px solid #e8e8e8;
-      box-sizing: border-box;
-      background-color: #fafbfc;
-      input {
-        background: none;
-      }
-    }
+    max-width: 710px;
+    margin-left: 10px!important;
+    margin-right: 10px!important;
+    padding: 20px!important;
     .current-url {
       border: none;
-      text-align: center;
-      font-weight: @boldFontWeight;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 21px;
+      text-decoration-line: underline;
+      color: #871fff;
+      margin-bottom: 25px;
     }
-
-    .copied-message {
-      color: white;
-      width: 140px;
-      height: 26px;
-      border-radius: 10px;
-      background-color: #00a8de;
+    .btn {
+      min-width: 80px;
+      padding: 0px 20px 0px 30px;
+      background: url(../images/icons/Vlt-icon-copy.svg) 10px 50% no-repeat;
+      background-color: black;
+      cursor: pointer;
+      width: fit-content;
     }
 
     .google-sign-in-note-container {
@@ -349,17 +431,17 @@ body {
     }
 
     .intl-tel-input.allow-dropdown {
-        .selected-flag {
-          background: white;
+      .selected-flag {
+        background: white;
 
-          .selected-dial-code {
-            padding-left: 35px;
-          }
+        .selected-dial-code {
+          padding-left: 35px;
+        }
 
-          .iti-arrow {
-            top: 22px;
-            left: 35px;
-          }
+        .iti-arrow {
+          top: 22px;
+          left: 35px;
+        }
       }
 
       input {
@@ -376,11 +458,7 @@ body {
       input:focus {
         outline: none;
       }
-
-
     }
-
-
 
     input.phoneNumber::placeholder {
       color: #b6bfc8;
@@ -419,6 +497,8 @@ body {
   transition: all @transitionTime;
 
   @media @smartphonesPortrait {
+    opacity: 1;
+    bottom: 0;
     width: (100% + 2px);
     right: 0;
     left: 0;
@@ -427,8 +507,32 @@ body {
     padding: 0;
   }
 
-  #addToCall-container, #screen-share-container, #annotate-button-container {
+    @media @smartphonesLandscape {
+      opacity: 1;
+      right: 0;
+      left: 0;
+      bottom: -86px;
+      background-color: rgba(0, 0, 0, 0.6);
+      background-image: none;
+      padding: 0;
+      width: 70%;
+      padding-left: 15%;
+      padding-right: 15%;
+    }
+
+  #addToCall-container {
+      @media @smartphonesLandscape{
+        display: none;
+      }
+  }
+
+  #screen-share-container,
+  #annotate-button-container {
     @media @smartphonesPortrait {
+      display: none;
+    }
+
+    @media @smartphonesLandscape{
       display: none;
     }
   }
@@ -441,7 +545,7 @@ body {
     text-align: center;
     color: #c0c0c0;
     button {
-      background-image: url('/images/icons/inactive-circle.svg');
+      background-image: url("/images/icons/inactive-circle.svg");
       width: 54.2px;
       height: 54.2px;
       vertical-align: top;
@@ -454,10 +558,12 @@ body {
       }
     }
     button.activated {
-      background-image: url('/images/icons/active-circle.svg');
+      background-image: none;
+      border: 2px solid #871fff;
+      border-radius: 50%;
     }
     button#endCall {
-      background-image: url('/images/icons/red-circle.svg');
+      background-image: url("/images/icons/red-circle.svg");
     }
     p {
       margin-top: 10px;
@@ -469,7 +575,7 @@ body {
 
 .feedbackButton.visible {
   opacity: 1;
-  left: 0
+  left: 0;
 }
 
 .feedbackButton {
@@ -519,7 +625,9 @@ body {
     }
   }
   #screen-share {
-      background-image: url('/images/icons/active-circle.svg');
+    background-image: none;
+    border: 2px solid #871fff;
+    border-radius: 50%;
   }
 }
 
@@ -535,26 +643,25 @@ body {
   }
 }
 
-#screenShareErrorInstall, #extInstallationSuccessful, #screenShareErrorMsg {
+#screenShareErrorInstall,
+#extInstallationSuccessful,
+#screenShareErrorMsg {
   display: none;
 }
 
-[data-screen-sharing-type=error-sharing] #screenShareErrorMsg,
-[data-screen-sharing-type=error-installing] #screenShareErrorInstall,
-[data-screen-sharing-type=successful-installation] #extInstallationSuccessful {
+[data-screen-sharing-type="error-sharing"] #screenShareErrorMsg,
+[data-screen-sharing-type="error-installing"] #screenShareErrorInstall,
+[data-screen-sharing-type="successful-installation"]
+  #extInstallationSuccessful {
   display: inline-block;
 }
 
-[data-screen-sharing-type=error-installing] .tc-dialog {
+[data-screen-sharing-type="error-installing"] .tc-dialog {
   max-width: 280px;
 }
 
 .user-name-modal {
-  background-color: black;
-  background-image: url(/images/background.jpg);
-  background-repeat: no-repeat;
-  background-size: cover;
-  padding: 0;
+  height: 100%;
   #logo {
     position: absolute;
     top: 40px;
@@ -569,36 +676,29 @@ body {
 }
 
 .user-name-modal #name-heading {
-    top: 34px;
-    text-shadow: black 1px 1px 8px;
+  top: 34px;
+  text-shadow: black 1px 1px 8px;
 }
 
 .user-name-modal .tc-dialog {
-  float: right;
-  margin-right: 41px;
-  margin-top: 46px;
-  padding: 20px;
+  padding: 0;
+  margin: 0;
   @media @smartphones {
     max-width: none;
     padding: 10px;
   }
-  max-width: 360px;
-  background: rgba(0,0,0,0.6);
-  transform: translateY(0);
   color: white;
   text-shadow: black 1px 1px 8px;
-
+  background: transparent;
+  box-shadow: unset;
+  display: flex;
+  flex-direction: column;
   @media @smartphonesPortrait {
-    width: 100%;
+    width: calc(100% - 40px);
     height: 100%;
     padding: 10px;
     margin: 0;
     max-width: unset;
-  }
-
-  header, p {
-    margin: 0;
-    padding: 0;
   }
 
   header {
@@ -616,7 +716,7 @@ body {
   }
 
   button#enter {
-    margin: 32px 0 0 0;
+    margin: 12px 0 0 0;
   }
 
   p {
@@ -631,30 +731,29 @@ body {
 
   .btn {
     font-size: 16px;
+    font-weight: 600;
     height: 50px;
     line-height: 50px;
     border-radius: 4px;
   }
+
   .publish-settings {
     padding-top: 20px;
-    span {
-      margin-right: 20px;
-    }
   }
+
   #video-preview {
     width: 360px;
-    height: 264px;
+    height: 212px;
     background-color: #222;
-    border-radius: 12px;
+    border-radius: 5px;
     .OT_publisher .OT_widget-container {
-      border-radius: 12px;
+      border-radius: 5px;
     }
     @media @smartphonesPortrait {
       position: relative;
       max-height: 40%;
-      max-width: calc(~"100% - 20px");
-      top: 10px;
-      left: 10px;
+      width: 100%;
+      top: 0;
     }
   }
   #video-preview-name {
@@ -668,7 +767,9 @@ body {
     overflow: hidden;
     transition: opacity 0.5s;
   }
-  #video-settings, #audio-settings, #enter-name-prompt {
+  #video-settings,
+  #audio-settings,
+  #enter-name-prompt {
     display: flex;
     .justify-content(space-between);
     padding-bottom: 18px;
@@ -689,15 +790,17 @@ body {
       }
     }
   }
-  #video-settings, #audio-settings {
+  #audio-settings > div > img {
+    margin-right: 18px;
+  }
+  #video-settings,
+  #audio-settings {
     #audio-switch {
-      margin-right: 20px;
-    }
-    #video-switch {
-      margin-left: 55px;
+      margin-right: 24px;
     }
     .switch-button {
-      #preToggleFacingMode, #prePickMic {
+      #preToggleFacingMode,
+      #prePickMic {
         margin: auto;
         line-height: 0;
         font-style: normal;
@@ -705,6 +808,7 @@ body {
       }
       width: 59px;
       height: 20px;
+      margin-right: 24px;
       object-fit: contain;
       border-radius: 4px;
       border: 1px #979797 solid;
@@ -715,8 +819,15 @@ body {
     }
   }
   #enter-name-prompt {
+    margin-top: 10px;
     padding: 0;
     border-bottom: #788492 1px solid;
+    .justify-content(space-between);
+    @media @smartphonesPortrait {
+      margin: 10px 0 0 0;
+      min-height: 44px;
+    }
+
     div {
       display: flex;
       align-items: center;
@@ -739,39 +850,44 @@ body {
       background: none;
     }
     label {
+      top: 0;
       position: absolute;
-      color: #fff;
+      color: #9b9da3;
       font-size: 16px;
       transition: all 0.5s;
+      @media @smartphonesPortrait {
+        left: 10px;
+      }
     }
     label.visited {
-      left: 236px;
+      top: -12px;
       font-size: 12px;
-      color: #757575;
+      color: #909298;
     }
   }
   #audio-meter-container {
-    margin-right: 50px;
     display: inline !important;
   }
-  #audio-meter, #precall-test-meter {
+  #audio-meter,
+  #precall-test-meter {
     background-color: #505050;
     height: 5px;
     width: 89px;
   }
   #audio-meter-level {
-    background-color: #10a9dc;
+    background-color: #ffffff;
     height: 100%;
   }
 
-  #audio-settings, #pre-call-test {
+  #audio-settings,
+  #pre-call-test {
     border-top: #434d5a 1px solid;
     padding-top: 17px;
     clear: both;
   }
 
   #pre-call-test {
-    display: flex;
+    display: none;
     align-items: center;
     font-weight: 400;
     span {
@@ -810,7 +926,7 @@ body {
   }
 
   #precall-test-meter {
-    position: absolute;
+    display: none;
     width: 330px;
     margin-top: 8px;
     margin-left: 28px;
@@ -820,12 +936,39 @@ body {
   }
 
   #precall-test-meter-level {
-    background-color: #10a9dc;
+    background-color: #ffffff;
     height: 100%;
     width: 0;
-    background-image: -webkit-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
-    background-image: -o-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
-    background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+    background-image: -webkit-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.15) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.15) 75%,
+      transparent 75%,
+      transparent
+    );
+    background-image: -o-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.15) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.15) 75%,
+      transparent 75%,
+      transparent
+    );
+    background-image: linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.15) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.15) 75%,
+      transparent 75%,
+      transparent
+    );
     -webkit-background-size: 40px 40px;
     background-size: 40px 40px;
     -webkit-animation: progress-bar-stripes 2s linear infinite;
@@ -835,28 +978,85 @@ body {
   }
 
   @keyframes progress-bar-stripes {
-      from {background-position-x: 0;}
-      to {background-position-x: 40px;}
+    from {
+      background-position-x: 0;
+    }
+    to {
+      background-position-x: 40px;
+    }
   }
 }
 
 .precall-right {
   position: absolute;
+  overflow: auto;
   top: 0;
   right: 0;
   display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
   height: 100%;
+  width: 554px;
+  background: rgba(19, 20, 21, 0.5);
   @media @smartphones {
     width: 100%;
     margin: 0;
+  }
+
+  .logo-container {
+    position: relative;
+    width: 100%;
+    margin-top: 60px;
+    display: flex;
+    justify-content: flex-end;
+
+    img {
+      width: 138px;
+      padding: 0 50px 0 50px;
+    }
+  }
+
+  .info-links {
+    margin-top: 14px;
+    margin-bottom: 40px;
+    font-size: 14px;
+    color: #ffffff;
+    @media @smartphonesPortrait {
+      font-size: 13px;
+    }
+
+    a {
+      color: #ffffff;
+      text-decoration: none;
+    }
+
+    .faq-link {
+      margin-bottom: 20px;
+
+      a {
+        font-weight: bold;
+      }
+    }
+  }
+  .about-link {
+    font-size: 14px;
+    color: #ffffff;
+    @media @smartphonesPortrait {
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+    a {
+      color: #ffffff;
+      text-decoration: none;
+    }
   }
 }
 
 #pre-call-test-results {
   position: absolute;
   display: none;
-  right: 456px;
+  right: 554px;
   width: 233px;
   height: 420.4px;
   background-color: white;
@@ -865,10 +1065,7 @@ body {
   color: #494747;
   font-size: 14px;
   padding: 35px;
-
-  @media @smartphonesPortrait  {
-    left: calc(~"50% - 152px");
-  }
+  left: calc(~"50% - 152px");
 
   p {
     font-size: 14px;
@@ -907,7 +1104,8 @@ body {
     font-size: 10px;
     font-weight: 600;
   }
-  #video-bitrate, #audio-bitrate {
+  #video-bitrate,
+  #audio-bitrate {
     font-size: 30px;
     margin: 0;
     font-weight: 600;
@@ -931,11 +1129,13 @@ body {
     font-size: 10px;
     color: #9b9b9b;
   }
-  #precall-resolution, #precall-audio-packet-loss {
+  #precall-resolution,
+  #precall-audio-packet-loss {
     margin-top: 4px;
     margin-bottom: 0;
   }
-  #precall-framerate, #precall-video-packet-loss {
+  #precall-framerate,
+  #precall-video-packet-loss {
     margin: 0;
   }
   #retest {
@@ -994,8 +1194,6 @@ body {
     }
   }
 
-
-
   section {
     font-family: @baseFontFamily;
     font-size: 16px;
@@ -1019,7 +1217,8 @@ body {
       margin-top: 33px;
     }
 
-    .other-info, .other-info:focus {
+    .other-info,
+    .other-info:focus {
       width: 436px;
       border: none;
       outline: none;
@@ -1049,14 +1248,16 @@ body {
     height: 50px;
     line-height: 50px;
     margin-top: 35px;
-
   }
 
   .btn-blue {
     background-color: #319cca;
   }
-}
 
+  .btn-purple {
+    background-color: #871fff;
+  }
+}
 
 footer.main {
   position: fixed;
@@ -1071,36 +1272,26 @@ footer.main {
   text-align: right;
 }
 
-.room-name {
-  font-size: 16px;
-  word-break: break-all;
-  white-space: nowrap;
-  display: block;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  max-width: 290px;
-  color: white;
-}
-
 #enter.btn {
+  color: #fff;
+  line-height: 18px;
   overflow: hidden;
   width: 100%;
-  @media @smartphonesPortrait {
-    left: 10px;
-    width: calc(~"100% - 20px");
+  background-color: #871fff;
+  &.accept {
+    background-color: #131415;
   }
 }
 
-[data-chat-visible=true] footer.main {
+[data-chat-visible="true"] footer.main {
   background-color: @mainBackgroundColor;
 }
-
 
 #opentok_canvas {
   pointer-events: none;
 }
 
-body[data-annotation-visible=true]  {
+body[data-annotation-visible="true"] {
   #opentok_canvas {
     pointer-events: auto;
   }
@@ -1111,22 +1302,31 @@ body[data-annotation-visible=true]  {
 }
 
 .dragging:after {
-  content: '';
+  content: "";
   z-index: 1;
   position: absolute;
   left: 0;
   top: 0;
   bottom: 0;
   right: 0;
-  background-color: rgba(255, 255, 255, .6);
+  background-color: rgba(255, 255, 255, 0.6);
 }
 
 .main {
-  width: 100%
+  width: 100%;
 }
 
 #switchAlerts {
   z-index: 2147483647; /* Keep modal always on top */
+  form > footer > button {
+    @media @smartphonesPortrait {
+      width: calc(100% - 10px);
+      margin-bottom: 6px;
+    }
+  }
+  .accept {
+    margin-right: 20px;
+  }
 }
 
 .dark-mode {

@@ -56,6 +56,15 @@
       });
   }
 
+  function getRoomRawInfo(roomName) {
+    return sendXHR('GET', server + '/room/' + roomName + '/rawInfo').
+      then(function(resp) {
+        return resp;
+      }).catch(function(error) {
+        return null;
+      });
+  }
+
   function composeDate(data) {
     var composed = [];
 
@@ -69,6 +78,11 @@
     composed.length && composed.pop();
 
     return composed.join('');
+  }
+
+  function sendLockingOperation(data) {
+    return sendXHR('POST', server + '/room/' + data.roomURI + '/state',
+                    JSON.stringify(data), 'application/json');
   }
 
   function sendArchivingOperation(data) {
@@ -107,14 +121,16 @@
   }
 
   var Request = {
-    getRoomInfo: getRoomInfo,
-    sendArchivingOperation: sendArchivingOperation,
-    dialOut: dialOut,
-    hangUp: hangUp,
-    deleteArchive: deleteArchive,
-    sendXHR: sendXHR,
-    saveConnection: saveConnection,
-    deleteConnection: deleteConnection
+    getRoomInfo,
+    getRoomRawInfo,
+    sendArchivingOperation,
+    sendLockingOperation,
+    dialOut,
+    hangUp,
+    deleteArchive,
+    sendXHR,
+    saveConnection,
+    deleteConnection
   };
 
   exports.Request = Request;

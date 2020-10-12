@@ -1,7 +1,6 @@
 'use strict';
 
-module.exports = function(grunt) {
-
+module.exports = function (grunt) {
   // To-Do check what we need and add/remove as needed...
   [
     'grunt-autoprefixer',
@@ -20,7 +19,6 @@ module.exports = function(grunt) {
   var TEST_BASE_DIR = 'test/';
 
   grunt.initConfig({
-
     mochaTest: {
       unit: {
         options: {
@@ -29,16 +27,19 @@ module.exports = function(grunt) {
           quiet: false,
           clearRequireCache: true
         },
-        src: ['test/server/**/*_spec.js', '!test/server/firebaseArchives_spec.js']
+        src: [
+          'test/server/**/*_spec.js',
+          '!test/server/firebaseArchives_spec.js'
+        ]
       },
       archives: {
-          options: {
-            reporter: 'spec',
-            captureFile: 'resultsUnit.txt',
-            quiet: false,
-            clearRequireCache: true
-          },
-          src: ['test/server/firebaseArchives_spec.js']
+        options: {
+          reporter: 'spec',
+          captureFile: 'resultsUnit.txt',
+          quiet: false,
+          clearRequireCache: true
+        },
+        src: ['test/server/firebaseArchives_spec.js']
       },
       rest: {
         options: {
@@ -51,7 +52,8 @@ module.exports = function(grunt) {
       }
     },
 
-    bower: {// grunt.file.setBase('test');
+    bower: {
+      // grunt.file.setBase('test');
       install: {
         options: {
           targetDir: './lib',
@@ -72,14 +74,14 @@ module.exports = function(grunt) {
       integration: {
         singleRun: true
       },
-      dev: {
-      }
+      dev: {}
     },
 
-    clean: { // To-Do: Configure or remove this!
+    clean: {
+      // To-Do: Configure or remove this!
     },
 
-    'gitinfo': {
+    gitinfo: {
       options: {
         cwd: '.'
       }
@@ -87,13 +89,20 @@ module.exports = function(grunt) {
 
     less: {
       default: {
+        options: {
+          compress: true,
+          yuicompress: true,
+          optimization: 2
+        },
         files: {
           'web/css/landing.opentok.css': 'web/less/landing.less',
           'web/css/room.opentok.css': 'web/less/room.less',
           'web/css/min.opentok.css': 'web/less/min.less',
           'web/css/endMeeting.opentok.css': 'web/less/endMeeting.less',
           'web/css/annotation.opentok.css': 'web/less/annotation.less',
-          'web/css/hangoutScroll.css': 'web/less/hangoutScroll.less'
+          'web/css/hangoutScroll.css': 'web/less/hangoutScroll.less',
+          'web/css/completeMeeting.opentok.css':
+            'web/less/completeMeeting.less'
         }
       }
     },
@@ -109,9 +118,7 @@ module.exports = function(grunt) {
 
     watch: {
       styles: {
-        files: [
-          './web/**/*.less'
-        ],
+        files: ['./web/**/*.less'],
         tasks: ['less', 'autoprefixer'],
         options: {
           nospawn: false
@@ -121,20 +128,16 @@ module.exports = function(grunt) {
         options: {
           nospawn: false
         },
-        files: [
-          './server.js',
-          'server/**/*.js',
-          'test/server/**/*.js'
-        ],
+        files: ['./server.js', 'server/**/*.js', 'test/server/**/*.js'],
         tasks: ['serverTest']
       }
-    },
+    }
   });
 
   // On watch events, if the changed file is a test file then configure mochaTest to only
   // run the tests from that file. Otherwise run all the tests
   var defaultTestSrc = grunt.config('mochaTest.unit.src');
-  grunt.event.on('watch', function(action, filepath) {
+  grunt.event.on('watch', function (action, filepath) {
     grunt.config('mochaTest.unit.src', defaultTestSrc);
     if (filepath.match('test/')) {
       grunt.config('mochaTest.unit.src', filepath);
@@ -151,9 +154,11 @@ module.exports = function(grunt) {
     'watch'
   ]);
 
-  grunt.registerTask('clientTest', 'Launch client unit tests in shell with Karma + PhantomJS', [
-    'karma:dev'
-  ]);
+  grunt.registerTask(
+    'clientTest',
+    'Launch client unit tests in shell with Karma + PhantomJS',
+    ['karma:dev']
+  );
 
   grunt.registerTask('precommit', 'Run precommit tests', [
     'karma:integration',
@@ -165,20 +170,18 @@ module.exports = function(grunt) {
     'mochaTest:unit'
   ]);
 
-  grunt.registerTask('apiTest', 'Launch server unit tests', [
-    'mochaTest:rest'
-  ]);
+  grunt.registerTask('apiTest', 'Launch server unit tests', ['mochaTest:rest']);
 
   grunt.registerTask('archivesTest', 'Launch server unit tests', [
     'mochaTest:archives'
   ]);
 
-  grunt.registerTask('test', 'Launch server unit tests', function() {
+  grunt.registerTask('test', 'Launch server unit tests', function () {
     grunt.task.run(['configTests', 'serverTest']);
     if (grunt.option('enable-archives-test')) {
-        grunt.task.run(['archivesTest']);
+      grunt.task.run(['archivesTest']);
     }
-    grunt.task.run(['apiTest','clientTest']);
+    grunt.task.run(['apiTest', 'clientTest']);
   });
 
   grunt.registerTask('configTests', [
@@ -187,10 +190,7 @@ module.exports = function(grunt) {
     'postBowerInstall'
   ]);
 
-  grunt.registerTask('initialConfig', [
-    'clientBuild',
-    'configTests'
-  ]);
+  grunt.registerTask('initialConfig', ['clientBuild', 'configTests']);
 
   grunt.registerTask('default', ['clientBuild']);
 };

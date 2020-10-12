@@ -1,6 +1,7 @@
 /* global Utils, Request, RoomStatus, RoomView, LayoutManager, LazyLoader, Modal,
 ChatController, GoogleAuth, LayoutMenuController, OTHelper, PrecallController,
-RecordingsController, ScreenShareController, FeedbackController, PhoneNumberController */
+RecordingsController, ScreenShareController, FeedbackController,
+PhoneNumberController, ResizeSensor, maxUsersPerRoom */
 
 !(function (exports) {
   'use strict';
@@ -28,17 +29,18 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     roomMuted: false
   };
 
-  var userName = null;
+  var userName = window.userName;
   var roomURI = null;
   var resolutionAlgorithm = null;
   var debugPreferredResolution = null;
+  var token = null;
 
   var publisherOptions = {
     insertMode: 'append',
     width: '100%',
     height: '100%',
     showControls: true,
-    resolution: '1280x720',
+    resolution: publisherResolution,
     style: {
       audioLevelDisplayMode: 'auto',
       buttonDisplayMode: 'off',
@@ -87,6 +89,8 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       }
     }
   };
+
+  var isMobile = function () { return typeof window.orientation !== 'undefined'; };
 
   var SubscriberButtons = function (streamVideoType, phoneNumber) {
     var isScreenSharing = streamVideoType === 'screen';
@@ -312,9 +316,16 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     otHelper.sendSignal('muteAll', { status: status, onlyChangeSwitch: onlyChangeSwitch });
   }
 
+  function sendSignalLock(status) {
+    otHelper.sendSignal('roomLocked', { status });
+  }
+
   var viewEventHandlers = {
     endCall: function () {
       otHelper.disconnect();
+      var url = window.location.origin.concat('/thanks');
+      window.location.href = url;
+      
     },
     startArchiving: function (evt) {
       sendArchivingOperation((evt.detail && evt.detail.operation) || 'startComposite');
@@ -438,7 +449,11 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       }
     },
     addToCall: function () {
-      showAddToCallModal();
+      if (isMobile() && navigator.share) {
+        showMobileShareUrl();
+      } else {
+        showAddToCallModal();
+      }
     },
     togglePublisherAudio: function (evt) {
       var newStatus = evt.detail.hasAudio;
@@ -451,6 +466,17 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       if (!otHelper.isPublisherReady || otHelper.publisherHas('video') !== newStatus) {
         otHelper.togglePublisherVideo(newStatus);
       }
+    },
+    setRoomLockState: function (evt) {
+      var state = evt.detail;
+      var data = {
+        userName,
+        token,
+        state,
+        roomURI
+      };
+
+      Request.sendLockingOperation(data).then(() => sendSignalLock(state));
     }
   };
 
@@ -570,33 +596,45 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
 
         subOptions.subscribeToVideo = !enterWithVideoDisabled;
 
+        /* Use ResizeSensor instead of mutationObserver
         // We want to observe the container where the actual suscriber will live
         var subsContainer = LayoutManager.getItemById(streamId);
         subsContainer && _mutationObserver &&
           _mutationObserver.observe(subsContainer, { attributes: true });
+        */
+
         subscriberStreams[streamId].subscriberPromise =
           otHelper.subscribe(evt.stream, subsDOMElem, subOptions, {}, enableAnnotations)
-          .then(function (subscriber) {
-            if (streamVideoType === 'screen') {
-              enableAnnotations && Utils.sendEvent('roomController:annotationStarted');
-              var subContainer = subscriber.element.parentElement;
-              Utils.sendEvent('layoutView:itemSelected', {
-                item: subContainer
-              });
-              return subscriber;
-            }
+            .then(function (subscriber) {
+              if (streamVideoType === 'screen') {
+                enableAnnotations && Utils.sendEvent('roomController:annotationStarted');
+                var subContainer = subscriber.element.parentElement;
+                Utils.sendEvent('layoutView:itemSelected', {
+                  item: subContainer
+                });
+                return subscriber;
+              }
 
-            Object.keys(_subscriberHandlers).forEach(function (name) {
-              subscriber.on(name, _subscriberHandlers[name]);
+              Object.keys(_subscriberHandlers).forEach(function (name) {
+                subscriber.on(name, _subscriberHandlers[name]);
+              });
+              if (enterWithVideoDisabled) {
+                pushSubscriberButton(streamId, 'video', true);
+              }
+
+              new ResizeSensor(subsDOMElem, function () { // eslint-disable-line no-new
+                var subsDimension = {
+                  width: subsDOMElem.clientWidth,
+                  height: subsDOMElem.clientHeight
+                };
+                otHelper.setPreferredResolution(subscriber, null, subsDimension, null, null);
+              });
+
+              sendVideoEvent(evt.stream);
+              return subscriber;
+            }, function (error) {
+              debug.error('Error susbscribing new participant. ' + error.message);
             });
-            if (enterWithVideoDisabled) {
-              pushSubscriberButton(streamId, 'video', true);
-            }
-            sendVideoEvent(evt.stream);
-            return subscriber;
-          }, function (error) {
-            debug.error('Error susbscribing new participant. ' + error.message);
-          });
       });
     },
     streamDestroyed: function (evt) {
@@ -641,6 +679,10 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       // Dispatched when an archive recording of the session stops
       Utils.sendEvent('archiving', { status: 'stopped' });
     },
+    'signal:roomLocked': function (evt) {
+      var roomState = JSON.parse(evt.data).status;
+      Utils.sendEvent('roomController:roomLocked', roomState); 
+    },
     'signal:muteAll': function (evt) {
       var statusData = JSON.parse(evt.data);
       var muteAllSwitch = statusData.status;
@@ -672,6 +714,33 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     }
   };
 
+  function showMobileShareUrl() {
+    navigator.share({
+      title: 'Invite Participant',
+      url: location.href
+    })
+      .then(function () { console.log('Successful share'); })
+      .catch(function (error) { console.log('Error sharing', error); });
+  }
+
+  function addClipBoardFeature(selector) {
+    const inviteLinkBtn = document.getElementById('copyInviteLinkBtn');
+    const inputElem = document.getElementById('current-url');
+    if (inputElem && inputElem.textContent) {
+      navigator.clipboard.writeText(inputElem.textContent.trim())
+        .then(() => {
+          if (inviteLinkBtn.innerText !== 'Copied!') {
+            const originalText = inviteLinkBtn.innerText;
+            inviteLinkBtn.innerText = 'Copied!';
+            setTimeout(() => {
+              Modal.hide(selector);
+              inviteLinkBtn.innerText = originalText;
+            }, 2000)
+          }
+        });
+    }
+  }
+
   function showAddToCallModal() {
     var selector = '.add-to-call-modal';
     return Modal.show(selector).then(function () {
@@ -680,14 +749,16 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
         enterButton && enterButton.addEventListener('click', function onClicked(event) {
           event.preventDefault();
           enterButton.removeEventListener('click', onClicked);
-          return Modal.hide(selector)
-            .then(function () {
-              resolve(document.querySelector(selector + ' input').value.trim());
-            });
-        });
+          if (enterButton.id = "copyInviteLinkBtn") {
+            addClipBoardFeature(selector);
+          } else {
+            Modal.hide(selector);
+          }
+          resolve();
       });
     });
-  }
+  });
+}
 
   function getRoomParams() {
     if (!exports.RoomController) {
@@ -711,7 +782,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
 
     // Recover user identifier
     var params = Utils.parseSearch(document.location.search);
-    var usrId = params.getFirstValue('userName');
+    var usrId = window.userName || params.getFirstValue('userName');
     resolutionAlgorithm = params.getFirstValue('resolutionAlgorithm');
     debugPreferredResolution = params.getFirstValue('debugPreferredResolution');
     enableHangoutScroll = params.getFirstValue('enableHangoutScroll') !== undefined;
@@ -720,7 +791,6 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     .then(function (info) {
       info.roomURI = roomURI;
       RoomView.showRoom();
-      RoomView.roomName = roomName;
       RoomView.roomURI = roomURI;
       publisherOptions.publishAudio = info.publisherOptions.publishAudio;
       publisherOptions.publishVideo = info.publisherOptions.publishVideo;
@@ -770,12 +840,21 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     '/js/screenShareController.js',
     '/js/feedbackController.js',
     '/js/googleAuth.js',
-    '/js/phoneNumberController.js'
+    '/js/phoneNumberController.js',
+    '/js/vendor/ResizeSensor.js'
   ];
 
   var init = function () {
     LazyLoader.load(modules)
     .then(function () {
+      Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
+      Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
+      Utils.addEventsHandlers('precallView:', {
+        submit: function () {
+          // Jeff to do: The room logic should go here, not in PrecallController.
+        }
+      });
+
       return PrecallController.init();
     })
     .then(function () {
@@ -801,7 +880,6 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
           };
 
         loadAnnotations = LazyLoader.load([
-          aParams.jqueryUrl + '/3.3.1/jquery.min.js',
           'https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js',
           '/js/vendor/opentok-annotation.js'
         ]);
@@ -809,8 +887,6 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       return loadAnnotations.then(function () { return aParams; });
     })
   .then(function (aParams) {
-    Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
-    Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
     RoomView.init(enableHangoutScroll, enableArchiveManager, enableSip);
     // Init this controller before connect to the session
     // to start receiving signals about archives updates
@@ -818,6 +894,8 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
 
     roomURI = aParams.roomURI;
     userName = aParams.username ? aParams.username.substring(0, 1000) : '';
+    userName = Utils.htmlEscape(userName.substring(0, 25));
+    token = aParams.token;
 
     var sessionInfo = {
       apiKey: aParams.apiKey,
@@ -826,6 +904,21 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     };
 
     var connect = otHelper.connect.bind(otHelper, sessionInfo);
+    
+    var waitForConnectionCount = function() {
+      return new Promise(function (resolve) {
+        if (!maxUsersPerRoom) {
+          return resolve();
+        }
+        return setTimeout(function () {
+          if (numUsrsInRoom > maxUsersPerRoom) {
+            Utils.sendEvent('roomController:meetingFullError');
+            return;
+          }
+          resolve();
+        }, 500);
+      });
+    }
 
     RoomView.participantsNumber = 0;
 
@@ -844,6 +937,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
         .init(userName, _allHandlers)
         .then(connect)
         .then(LayoutMenuController.init)
+        .then(waitForConnectionCount)
         .then(function () {
           var publisherElement = RoomView.createStreamView('publisher', {
             name: userName,
@@ -880,13 +974,13 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
         .then(function () {
           ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
           FeedbackController.init(otHelper, aParams.reportIssueLevel);
-          PhoneNumberController.init(aParams.jqueryUrl);
+          PhoneNumberController.init();
           Utils.sendEvent('roomController:controllersReady');
         })
         .catch(function (error) {
           debug.error('Error Connecting to room. ' + error.message);
         });
-  });
+    });
   };
 
   var RoomController = {

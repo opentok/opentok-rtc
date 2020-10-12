@@ -11,7 +11,7 @@ LayoutViewport, ItemsHandler */
   var items = {};
 
   var layouts;
-
+  var lcache = window.localStorage;
   var HANGOUT_BY_DEFAULT = 'hangout_vertical';
 
   function isOnGoing(layout) {
@@ -21,6 +21,7 @@ LayoutViewport, ItemsHandler */
   var handlers = {
     layout: function (evt) {
       userLayout = evt.detail.type;
+      lcache.setItem('opentokrtc-layout', userLayout);
       rearrange();
     },
     itemSelected: function (evt) {
@@ -34,6 +35,33 @@ LayoutViewport, ItemsHandler */
       rearrange();
     }
   };
+
+  function getDeviceLayout(isScreen = false) {
+    if (window.matchMedia('screen and (min-device-width : 320px) and (max-device-width : 1024px) and (orientation : landscape)').matches) {
+      return isScreen ? 'hangout_vertical' : 'f2f_vertical';
+    } else if (window.matchMedia('screen and (max-width: 480px) and (orientation : portrait)').matches) {
+      return isScreen ? 'hangout_horizontal' : 'f2f_horizontal';
+    }
+    var userSelectedLayout = null;
+    if (userLayout !== lcache.getItem('opentokrtc-default')) {
+      // not mobile
+      userSelectedLayout = lcache.getItem('opentokrtc-default');
+    }
+    return isScreen ? HANGOUT_BY_DEFAULT : userSelectedLayout;
+  }
+
+  function getLayoutByScreenCount(layout, isScreenShared) {
+    if (isScreenShared) {
+      return layout;
+    }
+    return (getTotal() <= 2) ? layout : 'grid';
+  }
+
+  function layoutModifier() {
+    var isScreenShared = lcache.getItem('opentokrtc-screenshare') != null;
+    userLayout = getLayoutByScreenCount(getDeviceLayout(isScreenShared), isScreenShared);
+    rearrange();
+  }
 
   function init(selector, enableHangoutScroll) {
     layouts = {
@@ -50,6 +78,13 @@ LayoutViewport, ItemsHandler */
     Utils.addEventsHandlers('layoutMenuView:', handlers, global);
     Utils.addEventsHandlers('layoutView:', handlers, global);
     Utils.addEventsHandlers('hangout:', handlers, global);
+    lcache.setItem('opentokrtc-default', userLayout);
+    var smartphonePortrait = window.matchMedia('screen and (max-width: 480px) and (orientation : portrait)');
+    if (smartphonePortrait.matches) {
+      layoutModifier(smartphonePortrait);
+    }
+    smartphonePortrait.addListener(layoutModifier);
+
     return enableHangoutScroll ? LazyLoader.load([
       '/js/layoutViewport.js', '/css/hangoutScroll.css'
     ]).then(function () {
@@ -68,7 +103,8 @@ LayoutViewport, ItemsHandler */
     var item = LayoutView.append(id, options);
     items[id] = item;
     if (isHangoutRequired(item)) {
-      userLayout = HANGOUT_BY_DEFAULT;
+      userLayout = getDeviceLayout(true);
+      lcache.setItem('opentokrtc-screenshare', id);
       rearrange(item);
     } else {
       rearrange();
@@ -85,12 +121,16 @@ LayoutViewport, ItemsHandler */
       return;
     }
 
+    if (id === lcache.getItem('opentokrtc-screenshare')) {
+      lcache.removeItem('opentokrtc-screenshare');
+    }
+
     LayoutView.remove(item);
     delete items[id];
     Utils.sendEvent('layoutManager:itemDeleted', {
       item: item
     });
-    rearrange();
+    layoutModifier();
   }
 
   function removeAll() {

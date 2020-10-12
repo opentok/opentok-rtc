@@ -18,6 +18,48 @@ var configLoader = require('./configLoader');
 var FirebaseArchives = require('./firebaseArchives');
 var GoogleAuth = require('./googleAuthStrategies');
 var testHealth = require('./testHealth');
+var Haikunator = require('haikunator');
+var _ = require('lodash');
+var qs = require('qs');
+var accepts = require('accepts');
+var geoip = require('geoip-lite');
+
+function htmlEscape(str) {
+  return String(str)
+    .replace(/&/g, '')
+    .replace(/"/g, '')
+    .replace(/'/g, '')
+    .replace(/</g, '')
+    .replace(/>/g, '')
+    .replace(/\(/g, '')
+    .replace(/\)/g, '')
+    .replace(/'/g, '')
+    .replace(/\\/g, '')
+    .replace(/;/g, '');
+};
+
+function getUserLanguage(acceptedLanguages) {
+  let language = '';
+
+  if (acceptedLanguages && acceptedLanguages[0]) {
+    language = acceptedLanguages[0];
+
+    if (language.indexOf('-') !== -1) {
+      language = language.split('-')[0];
+    } else if (language.indexOf('_') !== -1) {
+      language = language.split('_')[0];
+    }
+  }
+
+  return language;
+}
+
+function getUserCountry(req) {
+  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  const geo = geoip.lookup(ip) || {};
+
+  return _.get(geo, 'country', '').toLowerCase();
+}
 
 var securityHeaders = helmet({
   referrerPolicy: { policy: 'no-referrer-when-downgrade' },
@@ -52,6 +94,8 @@ function ServerMethods(aLogLevel, aModules) {
     env.REDIS_URL || env.REDISTOGO_URL || '';
   var serverPersistence =
     new ServerPersistence([], connectionString, aLogLevel, aModules);
+
+  const haikunator = new Haikunator();
 
   const redisRoomPrefix = C.REDIS_ROOM_PREFIX;
   const redisPhonePrefix = C.REDIS_PHONE_PREFIX;
@@ -149,16 +193,28 @@ function ServerMethods(aLogLevel, aModules) {
 
       var isWebRTCVersion = config.get(C.DEFAULT_INDEX_PAGE) === 'opentokrtc';
       var showTos = config.get(C.SHOW_TOS);
+      var meetingsRatePerMinute = config.get(C.MEETINGS_RATE_PER_MINUTE);
+      var minMeetingNameLength = config.get(C.MIN_MEETING_NAME_LENGTH);
+      var publisherResolution = config.get(C.PUBLISHER_RESOLUTION);
+      var supportIE = config.get(C.SUPPORT_IE);
 
       var firebaseConfigured =
               config.get(C.FIREBASE_DATA_URL) && config.get(C.FIREBASE_AUTH_SECRET);
 
       var enableArchiving = config.get(C.ENABLE_ARCHIVING, config);
       var enableArchiveManager = enableArchiving && config.get(C.ENABLE_ARCHIVE_MANAGER);
+      var enableMuteAll = config.get(C.ENABLE_MUTE_ALL);
+      var enableStopReceivingVideo = config.get(C.ENABLE_STOP_RECEIVING_VIDEO);
+      var maxUsersPerRoom = config.get(C.MAX_USERS_PER_ROOM);
       var enableScreensharing = config.get(C.ENABLE_SCREENSHARING);
+      var enablePrecallTest = config.get(C.ENABLE_PRECALL_TEST);
       var enableAnnotations = enableScreensharing && config.get(C.ENABLE_ANNOTATIONS);
+      var enableRoomLocking = config.get(C.ENABLE_ROOM_LOCKING);
       var feedbackUrl = config.get(C.FEEDBACK_URL);
       var reportIssueLevel = config.get(C.REPORT_ISSUE_LEVEL);
+      var hotjarId = config.get(C.HOTJAR_ID);
+      var hotjarVersion = config.get(C.HOTJAR_VERSION);
+      var enableFeedback = config.get(C.ENABLE_FEEDBACK);
 
       if (!firebaseConfigured && enableArchiveManager) {
         logger.error('Firebase not configured. Please provide firebase credentials or disable archive_manager');
@@ -176,6 +232,12 @@ function ServerMethods(aLogLevel, aModules) {
                                     config.get(C.FIREBASE_AUTH_SECRET),
                                     config.get(C.EMPTY_ROOM_LIFETIME), aLogLevel);
       _shutdownOldInstance(oldFirebaseArchivesPromise, firebaseArchivesPromise);
+
+      // Adobe tracking
+      var adobeTrackingUrl = config.get(C.ADOBE_TRACKING_URL);
+      var ATPrimaryCategory = config.get(C.ADOBE_TRACKING_PRIMARY_CATEGORY);
+      var ATSiteIdentifier = config.get(C.ADOBE_TRACKING_SITE_IDENTIFIER);
+      var ATFunctionDept = config.get(C.ADOBE_TRACKING_FUNCTION_DEPT);
 
       return firebaseArchivesPromise
               .then(firebaseArchives => ({
@@ -199,9 +261,16 @@ function ServerMethods(aLogLevel, aModules) {
                 isWebRTCVersion,
                 enableArchiving,
                 enableArchiveManager,
+                enableMuteAll,
+                enableStopReceivingVideo,
                 enableScreensharing,
                 enableAnnotations,
+                enablePrecallTest,
+                enableRoomLocking,
                 feedbackUrl,
+                hotjarId,
+                hotjarVersion,
+                enableFeedback,
                 enableSip,
                 opentokJsUrl,
                 showTos,
@@ -209,11 +278,20 @@ function ServerMethods(aLogLevel, aModules) {
                 sipUsername,
                 sipPassword,
                 sipRequireGoogleAuth,
+                supportIE,
+                meetingsRatePerMinute,
+                publisherResolution,
                 googleId,
                 googleHostedDomain,
                 reportIssueLevel,
                 useGoogleFonts,
                 jqueryUrl,
+                minMeetingNameLength,
+                maxUsersPerRoom,
+                adobeTrackingUrl,
+                ATPrimaryCategory,
+                ATSiteIdentifier,
+                ATFunctionDept,
                 mediaMode,
               }));
     });
@@ -255,7 +333,29 @@ function ServerMethods(aLogLevel, aModules) {
       aNext();
     }
   }
-
+  function getMeetingCompletion(aReq, aRes) {
+    var language = getUserLanguage(accepts(aReq).languages());
+    var country = getUserCountry(aReq);
+    logger.log('getMeetingCompletion ' + aReq.path);
+    aRes.render('endMeeting.ejs', {
+      hotjarId: aReq.tbConfig.hotjarId,
+      hotjarVersion: aReq.tbConfig.hotjarVersion,
+      enableFeedback: aReq.tbConfig.enableFeedback,
+      adobeTrackingUrl: aReq.tbConfig.adobeTrackingUrl,
+      ATPrimaryCategory: aReq.tbConfig.ATPrimaryCategory,
+      ATSiteIdentifier: aReq.tbConfig.ATSiteIdentifier,
+      ATFunctionDept: aReq.tbConfig.ATFunctionDept,
+      userLanguage: language,
+      userCountry: country,
+    }, (err, html) => {
+      if (err) {
+        logger.error('getMeetingCompletion. error: ', err);
+        aRes.status(500).send(new ErrorInfo(500, 'Invalid Template'));
+      } else {
+        aRes.send(html);
+      }
+    });
+  }
   function getRoomArchive(aReq, aRes) {
     logger.log('getRoomArchive ' + aReq.path, 'roomName: ' + aReq.params.roomName);
     var tbConfig = aReq.tbConfig;
@@ -322,12 +422,33 @@ function ServerMethods(aLogLevel, aModules) {
   }
 
   // Returns the personalized root page
-  function getRoot(aReq, aRes) {
+  async function getRoot(aReq, aRes) {
+    var meetingAllowed = await isMeetingAllowed(aReq);
+    var language = getUserLanguage(accepts(aReq).languages());
+    var country = getUserCountry(aReq);
+
     aRes
       .render('index.ejs', {
+        roomName: `${haikunator.haikunate({ tokenLength: 0 })}-${haikunator.haikunate()}`,
         isWebRTCVersion: aReq.tbConfig.isWebRTCVersion,
+        minMeetingNameLength: aReq.tbConfig.minMeetingNameLength,
+        publisherResolution: aReq.tbConfig.publisherResolution,
         showTos: aReq.tbConfig.showTos,
+        showUnavailable: !meetingAllowed,
         useGoogleFonts: aReq.tbConfig.useGoogleFonts,
+        supportIE: aReq.tbConfig.supportIE,
+        adobeTrackingUrl: aReq.tbConfig.adobeTrackingUrl,
+        ATPrimaryCategory: aReq.tbConfig.ATPrimaryCategory,
+        ATSiteIdentifier: aReq.tbConfig.ATSiteIdentifier,
+        ATFunctionDept: aReq.tbConfig.ATFunctionDept,
+        userLanguage: language,
+        userCountry: country,
+        hotjarId: aReq.tbConfig.hotjarId,
+        hotjarVersion: aReq.tbConfig.hotjarVersion,
+        enableFeedback: aReq.tbConfig.enableFeedback,
+        opentokJsUrl: aReq.tbConfig.opentokJsUrl,
+        enablePrecallTest: aReq.tbConfig.enablePrecallTest,
+        enterButtonLabel: 'Start Meeting',
       }, (err, html) => {
         if (err) {
           logger.error('getRoot. error: ', err);
@@ -342,12 +463,11 @@ function ServerMethods(aLogLevel, aModules) {
     return roomBlackList.includes(name.trim().toLowerCase());
   }
 
-  // Return the personalized HTML for a room.
-  function getRoom(aReq, aRes) {
+  // Finish the call to getRoom and postRoom
+  async function finshGetPostRoom(aReq, aRes, routedFromStartMeeting) {
+    var meetingAllowed = await isMeetingAllowed(aReq);
     var query = aReq.query;
-    logger.log('getRoom serving ' + aReq.path, 'roomName:', aReq.params.roomName,
-               'userName:', query && query.userName,
-               'template:', query && query.template);
+
     if (isInBlacklist(aReq.params.roomName)) {
       logger.log('getRoom. error:', `Blacklist found '${aReq.params.roomName}'`);
       return aRes.status(404).send(null);
@@ -355,7 +475,9 @@ function ServerMethods(aLogLevel, aModules) {
     var tbConfig = aReq.tbConfig;
     var template = query && tbConfig.templatingSecret &&
       (tbConfig.templatingSecret === query.template_auth) && query.template;
-    var userName = query && query.userName;
+    var userName = (aReq.body && aReq.body.userName) || (query && query.userName) || '';
+    var language = getUserLanguage(accepts(aReq).languages());
+    var country = getUserCountry(aReq);
 
     // Create a session ID and token for the network test
     tbConfig.precallOtInstance.createSession({ mediaMode: 'routed' }, (error, testSession) => {
@@ -366,19 +488,24 @@ function ServerMethods(aLogLevel, aModules) {
       aRes
         .render((template || tbConfig.defaultTemplate) + '.ejs',
         {
-          userName: userName || C.DEFAULT_USER_NAME,
-          roomName: aReq.params.roomName,
+          userName: htmlEscape(userName || C.DEFAULT_USER_NAME),
+          roomName: htmlEscape(aReq.params.roomName),
           chromeExtensionId: tbConfig.chromeExtId,
           iosAppId: tbConfig.iosAppId,
                  // iosUrlPrefix should have something like:
                  // https://opentokdemo.tokbox.com/room/
                  // or whatever other thing that should be before the roomName
-          iosURL: tbConfig.iosUrlPrefix + aReq.params.roomName + '?userName=' +
+          iosURL: tbConfig.iosUrlPrefix + htmlEscape(aReq.params.roomName) + '?userName=' +
                          (userName || C.DEFAULT_USER_NAME),
           enableArchiving: tbConfig.enableArchiving,
           enableArchiveManager: tbConfig.enableArchiveManager,
+          enableMuteAll: tbConfig.enableMuteAll,
+          enableStopReceivingVideo: tbConfig.enableStopReceivingVideo,
+          maxUsersPerRoom: tbConfig.maxUsersPerRoom,
           enableScreensharing: tbConfig.enableScreensharing,
           enableAnnotation: tbConfig.enableAnnotations,
+          enablePrecallTest: tbConfig.enablePrecallTest,
+          enableRoomLocking: tbConfig.enableRoomLocking,
           feedbackUrl: tbConfig.feedbackUrl,
           precallSessionId: testSession.sessionId,
           apiKey: tbConfig.apiKey,
@@ -388,9 +515,25 @@ function ServerMethods(aLogLevel, aModules) {
           }),
           hasSip: tbConfig.enableSip,
           showTos: tbConfig.showTos,
+          showUnavailable: !meetingAllowed,
+          publisherResolution: tbConfig.publisherResolution,
           opentokJsUrl: tbConfig.opentokJsUrl,
           authDomain: tbConfig.googleHostedDomain,
           useGoogleFonts: tbConfig.useGoogleFonts,
+          supportIE: tbConfig.supportIE,
+          jqueryUrl: tbConfig.jqueryUrl,
+          adobeTrackingUrl: aReq.tbConfig.adobeTrackingUrl,
+          ATPrimaryCategory: aReq.tbConfig.ATPrimaryCategory,
+          ATSiteIdentifier: aReq.tbConfig.ATSiteIdentifier,
+          ATFunctionDept: aReq.tbConfig.ATFunctionDept,
+          userLanguage: language,
+          userCountry: country,
+          hotjarId: tbConfig.hotjarId,
+          hotjarVersion: tbConfig.hotjarVersion,
+          enableFeedback: tbConfig.enableFeedback,
+          enterButtonLabel: 'Join Meeting',
+          routedFromStartMeeting: Boolean(routedFromStartMeeting),
+          userName,
         }, (err, html) => {
           if (err) {
             logger.log('getRoom. error:', err);
@@ -400,6 +543,24 @@ function ServerMethods(aLogLevel, aModules) {
           }
         });
     });
+  }
+
+  // Finish the call to getRoom and postRoom
+  function getRoom(aReq, aRes, routedFromStartMeeting) {
+    var query = aReq.query;
+
+    logger.log('getRoom serving ' + aReq.path, 'roomName:', aReq.params.roomName,
+               'userName:', query && query.userName,
+               'template:', query && query.template);
+
+    finshGetPostRoom(aReq, aRes, false);
+  };
+  
+  // Return the personalized HTML for a room when directed from the root.
+  function postRoom(aReq, aRes) {
+    logger.log('postRoom serving ' + aReq.path, 'roomName:', aReq.params.roomName,
+      'body:', aReq.body);
+    finshGetPostRoom(aReq, aRes, true);
   }
 
   // Given a sessionInfo (which might be empty or non usable) returns a promise than will fullfill
@@ -421,12 +582,22 @@ function ServerMethods(aLogLevel, aModules) {
         if (aArchiveAlways) {
           sessionOptions.archiveMode = 'always';
         }
+
+        getAppUsage().then((usage) => {
+          if (usage.lastUpdate + 60000 < Date.now()) {
+            setAppUsage(Date.now(), 1);
+          } else {
+            setAppUsage(usage.lastUpdate, ++usage.meetings);
+          }
+        });
+
         this
           .createSession(sessionOptions, (error, session) => {
             resolve({
               sessionId: session.sessionId,
               lastUsage: Date.now(),
               inProgressArchiveId: undefined,
+              isLocked: false
             });
           });
       } else {
@@ -435,9 +606,79 @@ function ServerMethods(aLogLevel, aModules) {
           sessionId: aSessionInfo.sessionId,
           lastUsage: Date.now(),
           inProgressArchiveId: aSessionInfo.inProgressArchiveId,
+          isLocked: aSessionInfo.isLocked
         });
       }
     });
+  }
+  
+  function getAppUsage() {
+    return new Promise((resolve) => {
+      const initial = { lastUpdate: Date.now(), meetings: 0 };
+      serverPersistence
+        .getKey('APP_USAGE_').then((usage) => {
+          if (!usage) return resolve(initial);
+          else return resolve(JSON.parse(usage));
+        }).catch((e) => {
+          return resolve(initial);
+        });
+    });
+  }
+
+  async function isMeetingAllowed(aReq) {
+    return new Promise((resolve) => {
+      if (aReq.tbConfig.meetingsRatePerMinute === 0) 
+        return resolve(false);
+      else if (aReq.tbConfig.meetingsRatePerMinute < 0)
+        return resolve(true);
+      getAppUsage().then((usage) => {
+        return resolve(usage.lastUpdate + 60000 < Date.now() || usage.meetings < aReq.tbConfig.meetingsRatePerMinute);
+      });
+    });
+  }
+
+  function setAppUsage(date, meetings) {
+    serverPersistence
+      .setKey('APP_USAGE_', JSON.stringify({lastUpdate: date, meetings}));
+  }
+
+  function getRoomRawInfo(aReq, aRes) {
+    var roomName = aReq.params.roomName.toLowerCase();
+    serverPersistence
+      .getKey(redisRoomPrefix + roomName).then((room) => {
+        if (!room) return aRes.status(404).send(null);
+        aRes.send(JSON.parse(room));
+      });
+  }
+
+  function decodeOtToken(token) { 
+    var parsed = {};
+    var encoded = token.substring(4);   // remove 'T1=='
+    var decoded = new Buffer(encoded, "base64").toString("ascii");
+    var tokenParts = decoded.split(':');
+    tokenParts.forEach(function(part) {
+      _.merge(parsed, qs.parse(part));
+    });
+    return parsed;
+  }
+
+  function lockRoom(aReq, aRes) {
+    var roomName = aReq.params.roomName.toLowerCase();
+    serverPersistence
+      .getKey(redisRoomPrefix + roomName).then((room) => {
+        if (!room) return aRes.status(404).send(null);
+
+        var decToken = decodeOtToken(aReq.body.token);
+        room = JSON.parse(room);
+
+        if (decToken.expire_time * 1000 < Date.now() || decToken.session_id !== room.sessionId)
+          return aRes.status(403).send(new Error('Unauthorized'));
+        
+        room.isLocked = aReq.body.state === 'locked';
+        serverPersistence
+          .setKey(redisRoomPrefix + roomName, room);
+        aRes.send(room);
+      });
   }
 
   // Get the information needed to connect to a session
@@ -504,7 +745,6 @@ function ServerMethods(aLogLevel, aModules) {
           googleId: tbConfig.googleId,
           googleHostedDomain: tbConfig.googleHostedDomain,
           reportIssueLevel: tbConfig.reportIssueLevel,
-          jqueryUrl: tbConfig.jqueryUrl,
         };
         answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId;
         aRes.send(answer);
@@ -672,6 +912,9 @@ function ServerMethods(aLogLevel, aModules) {
         aRes.render('archivePreview.ejs', {
           archiveName: aArchive.name,
           archiveURL: aArchive.url,
+          hotjarId: aReq.tbConfig.hotjarId,
+          hotjarVersion: aReq.tbConfig.hotjarVersion,
+          enableFeedback: aReq.tbConfig.enableFeedback,
         });
       }).catch((e) => {
         logger.error('getArchive error:', e);
@@ -852,6 +1095,17 @@ function ServerMethods(aLogLevel, aModules) {
     aRes.send({});
   }
 
+  function setSecurityHeaders(aReq, aRes, aNext) {
+    aRes.set('X-XSS-Protection', '1; mode=block');
+    aRes.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+    aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    aRes.set('Pragma', 'no-cache');
+    aRes.set('Expires', 0);
+    aRes.set('X-Content-Type-Options', 'nosniff');
+
+    aNext();
+  }
+
   return {
     logger,
     configReady,
@@ -859,8 +1113,10 @@ function ServerMethods(aLogLevel, aModules) {
     iframingOptions,
     featureEnabled,
     loadConfig,
+    lockRoom,
     getRoot,
     getRoom,
+    postRoom,
     getRoomInfo,
     postRoomArchive,
     postUpdateArchiveInfo,
@@ -870,8 +1126,11 @@ function ServerMethods(aLogLevel, aModules) {
     postRoomDial,
     postHangUp,
     getHealth,
+    getRoomRawInfo,
     saveConnectionFirebase,
     deleteConnectionFirebase,
+    setSecurityHeaders,
+    getMeetingCompletion,
   };
 }
 
