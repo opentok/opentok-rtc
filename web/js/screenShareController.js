@@ -49,12 +49,12 @@
         });
         _hasPendingOperation = true;
         otHelper.shareScreen(desktopElement, screenPublisherOptions, streamHandlers,
-                             enableAnnotations)
+          enableAnnotations)
           .then(() => {
             _isSharing = true;
             _hasPendingOperation = false;
             Utils.sendEvent('screenShareController:changeScreenShareStatus',
-                            { isSharing: _isSharing });
+              { isSharing: _isSharing });
             enableAnnotations && Utils.sendEvent('screenShareController:annotationStarted');
           })
           .catch(error => {
@@ -63,7 +63,7 @@
               RoomView.deleteStreamView('desktop');
             } else {
               Utils.sendEvent('screenShareController:shareScreenError',
-                              { code: error.code, message: error.message });
+                { code: error.code, message: error.message });
             }
           });
       }
@@ -91,7 +91,7 @@
       enableAnnotations = aEnableAnnotations;
       otHelper = aOTHelper;
       debug = new Utils.MultiLevelLogger('screenShareController.js',
-                                         Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
+        Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
 
       Utils.addEventsHandlers('roomView:', roomViewEvents, globals);
       Utils.addEventsHandlers('screenShareView:', screenShareViewEvents, globals);
