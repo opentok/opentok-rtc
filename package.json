@@ -4,8 +4,8 @@
   "description": "OpenTokRTC sample application to show off the OpenTok API and platform capabilities ",
   "main": "server.js",
   "engines": {
-    "node": "8.0.x",
-    "npm": "2.14.x"
+    "node": "11.15.x",
+    "npm": "6.7.x"
   },
   "scripts": {
     "start": "node server.js",
@@ -61,6 +61,10 @@
     "yamljs": "^0.2.10"
   },
   "devDependencies": {
+    "@wdio/firefox-profile-service": "^6.6.0",
+    "@wdio/mocha-framework": "^6.6.3",
+    "@wdio/sauce-service": "^6.6.3",
+    "@wdio/selenium-standalone-service": "^6.6.5",
     "chai": "^3.3.0",
     "chai-as-promised": "^5.2.0",
     "concurrently": "^3.4.0",
@@ -83,10 +87,6 @@
     "mockfirebase": "^0.12.0",
     "sinon": "^1.17.0",
     "supertest": "^3.4.2",
-    "wdio": "^3.0.3",
-    "wdio-firefox-profile-service": "^0.1.0",
-    "wdio-mocha-framework": "^0.5.11",
-    "wdio-sauce-service": "^0.4.0",
-    "wdio-selenium-standalone-service": "0.0.9"
+    "wdio": "^3.0.3"
   }
 }
