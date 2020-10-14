@@ -1,17 +1,15 @@
 /* global LandingView, PrecallController, PrecallView, OTHelper */
 
-!(function (global) {
-  'use strict';
-
-  var addEventHandlers = function () {
-    Utils.addEventsHandlers('precallView:', { submit: function () {
-      var form = document.querySelector('.main form');
-      form.action = '/room/' + window.roomName;
+!(global => {
+  const addEventHandlers = () => {
+    Utils.addEventsHandlers('precallView:', { submit() {
+      const form = document.querySelector('.main form');
+      form.action = `/room/${window.roomName}`;
       form.submit();
     } });
   };
 
-  var init = function () {
+  const init = () => {
     LazyLoader.dependencyLoad([
       '/js/components/htmlElems.js',
       '/js/vendor/ejs_production.js',
@@ -20,18 +18,18 @@
       '/js/precallView.js',
       '/js/precallController.js',
       '/js/helpers/OTHelper.js'
-    ]).then(function () {
+    ]).then(() => {
       return LandingView.init();
-    }).then(function () {
+    }).then(() => {
       return PrecallView.init();
-    }).then(function () {
-      var otHelper = new OTHelper({});
+    }).then(() => {
+      const otHelper = new OTHelper({});
       PrecallController.showCallSettingsPrompt('', '', otHelper);
       addEventHandlers();
     });
   };
 
   global.LandingController = {
-    init: init
+    init
   };
-}(this));
+})(this);
