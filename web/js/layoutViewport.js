@@ -1,37 +1,35 @@
-!(function (exports) {
-  'use strict';
-
-  var container,
-    itemSelector,
-    scrollTimer,
-    delay = 100;
+!(exports => {
+  let container;
+  let itemSelector;
+  let scrollTimer;
+  const delay = 100;
 
   function visitItems() {
-    var items = container.querySelectorAll(itemSelector);
-    var total = items.length;
+    const items = container.querySelectorAll(itemSelector);
+    const total = items.length;
 
     if (total === 0) {
       return;
     }
 
-    var viewTop = container.scrollTop;
-    var containerHeight = container.offsetHeight;
+    const viewTop = container.scrollTop;
+    const containerHeight = container.offsetHeight;
 
-    var viewLeft = container.scrollLeft;
-    var containerWidth = container.offsetWidth;
+    const viewLeft = container.scrollLeft;
+    const containerWidth = container.offsetWidth;
 
-    for (var i = 0; i < total; i++) {
-      var item = items[i];
+    for (let i = 0; i < total; i++) {
+      const item = items[i];
       if (item) {
-        var visibility = 'hidden';
+        let visibility = 'hidden';
 
         if (item.classList.contains('on-stage')) {
           visibility = 'visible';
         } else {
-          var itemHeight = item.offsetHeight;
-          var itemWidth = item.offsetWidth;
-          var itemOffsetTop = item.offsetTop;
-          var itemOffsetLeft = item.offsetLeft;
+          const itemHeight = item.offsetHeight;
+          const itemWidth = item.offsetWidth;
+          const itemOffsetTop = item.offsetTop;
+          const itemOffsetLeft = item.offsetLeft;
           if (((itemOffsetTop >= viewTop &&
                itemOffsetTop <= viewTop + containerHeight) ||
               (itemOffsetTop + itemHeight >= viewTop &&
@@ -58,7 +56,7 @@
     scrollTimer = exports.setTimeout(visitItems, delay);
   }
 
-  var handlers = {
+  const handlers = {
     itemAdded: onVisitItems,
     itemDeleted: onVisitItems,
     resize: onVisitItems,
@@ -75,6 +73,6 @@
   }
 
   exports.LayoutViewport = {
-    init: init
+    init
   };
-}(this));
+})(this);
