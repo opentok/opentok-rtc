@@ -3,7 +3,7 @@
   margin-top: 100px;
   right: 0;
   bottom: 0;
-  background-color: #e7e7e7;
+  background-color: @lightGrey3;
   z-index: 1000;
   font-size: 0;
 
@@ -34,8 +34,8 @@
       width: 100%;
       font-size: 16px;
       text-align: left;
-      background-color: #3f4f57;
-      color: #728a95;
+      background-color: @Cement;
+      color: @lightCement;
       position: relative;
       display: flex;
       flex-direction: row;
@@ -86,7 +86,7 @@
 
       li.event {
         align-self: center;
-        color: #a7a0a0;
+        color: @NobelGrey2;
 
         p {
           background: none;
@@ -98,7 +98,7 @@
         align-self: flex-end;
 
         & > p {
-          border-right: 2px solid #871FFF;
+          border-right: 2px solid @purple;
           text-align: right;
           margin-left: 40px;
           margin-right: 0;
@@ -115,7 +115,7 @@
           background-color: transparent;
           padding: 10px 30px 10px 20px;
           border: 0;
-          color: #3f4f57;
+          color: @Cement;
           width: fit-content;
 
           .time, .sender {
@@ -123,13 +123,13 @@
           }
 
           .sender {
-            color: #282828;
+            color: @nero2;
             padding-left: 10px;
           }
 
           & > p {
-            color: #151515;
-            background-color: #ffffff;
+            color: @nero;
+            background-color: @solidWhite;
             font-size: 16px;
             word-break: break-word;
             margin-right: 40px;
@@ -156,16 +156,16 @@
             padding: 12px 15px;
 
             &:link {
-              color: #1a99c3;
+              color: @PelorousBlue1;
             }
 
             &:hover,
             &:active {
-              color: #0d4c62;
+              color: @AstronautBlue;
             }
 
             &:visited {
-              color: #76c2db;
+              color: @SprayBlue;
             }
           }
 
@@ -193,7 +193,7 @@
       overflow: hidden;
       height: 115px;
       font-size: 12px;
-      background-color: #fafafa;
+      background-color: @snowWhite1;
       text-align: center;
 
       .btn {
@@ -203,11 +203,11 @@
         height: 60px;
         width: 60px;
         border-radius: 50%;
-        background-color: #871FFF;
+        background-color: @purple;
         background-size: 28px 28px;
         line-height: 25px;
         margin: 0;
-        box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
+        box-shadow: 0px 2px 4px 0px @blackAlpha50;
       }
 
       textarea {
@@ -224,14 +224,14 @@
       }
 
       textarea::placeholder {
-        color: #b8b6b6;
+        color: @PinkGrey;
       }
     }
   }
 
   .dialog-chat:invalid {
     .btn {
-      background-color: #c6c5c5;
+      background-color: @Silver5;
       pointer-events: none;
     }
   }
