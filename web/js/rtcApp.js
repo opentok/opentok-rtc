@@ -73,10 +73,10 @@ this.addEventListener('load', function startApp() {
     });
   }
 
-// Allow only https on production
+  // Allow only https on production
   if (
-    document.location.protocol === 'http:' && 
-    (document.location.hostname.includes('.tokbox.com') || 
+    document.location.protocol === 'http:' &&
+    (document.location.hostname.includes('.tokbox.com') ||
     document.location.hostname.includes('.vonage.com'))
   ) {
     document.location.href = document.location.href.replace(new RegExp('^http:'), 'https:');

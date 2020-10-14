@@ -38,7 +38,7 @@
     errorMessage = document.querySelector('.error-room');
     resetForm();
     const storedUsername = window.localStorage.getItem('username');
-    if (storedUsername) {
+    if (storedUsername && user) {
       user.value = storedUsername;
       userLabelElem.classList.add('visited');
     }

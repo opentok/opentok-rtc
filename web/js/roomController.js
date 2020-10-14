@@ -578,7 +578,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
 
         subscriberStreams[streamId] = {
           stream,
-          buttons: new SubscriberButtons(streamVideoType, stream.phoneNumber)
+          buttons: SubscriberButtons(streamVideoType, stream.phoneNumber)
         };
 
         const subOptions = subscriberOptions[streamVideoType];
