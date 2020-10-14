@@ -63,12 +63,10 @@
  *
  */
 
-!(function (exports) {
-  'use strict';
+!(exports => {
+  let _hasStatus;
 
-  var _hasStatus;
-
-  var debug =
+  const debug =
     new Utils.MultiLevelLogger('chatController.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
 
   // Contains an object foreach action.
@@ -83,22 +81,22 @@
   //                    We don't allow to change the event's name originating inside the chat module
   //                    whether it'll be listened for in other module's component
   //                    (e.g. chatView:outgoingMessage)
-  var eventsIn;
+  let eventsIn;
 
-  var _historyChat;
+  let _historyChat;
 
-  var CONN_TEXT = 'has joined the call';
-  var DISCONN_TEXT = 'has left the call';
-  var STATUS_KEY = 'chat';
+  const CONN_TEXT = 'has joined the call';
+  const DISCONN_TEXT = 'has left the call';
+  const STATUS_KEY = 'chat';
 
   function loadHistoryChat() {
     if (!_hasStatus) {
       return;
     }
-    var data = RoomStatus.get(STATUS_KEY);
+    const data = RoomStatus.get(STATUS_KEY);
     if (data) {
       _historyChat = data;
-      for (var i = 0, l = _historyChat.length; i < l; i++) {
+      for (let i = 0, l = _historyChat.length; i < l; i++) {
         Utils.sendEvent('chatController:incomingMessage', { data: _historyChat[i] });
       }
     } else {
@@ -107,9 +105,9 @@
     }
   }
 
-  var otHelper;
+  let otHelper;
 
-  var _chatHandlers = {
+  const _chatHandlers = {
     'signal:chat': function (evt) {
       // A signal of the specified type was received from the session. The
       // SignalEvent class defines this event object. It includes the following
@@ -118,17 +116,17 @@
       // from — (Connection) The Connection corresponding to the client that
       //        sent with the signal.
       // type — (String) The type assigned to the signal (if there is one).
-      var data = JSON.parse(evt.data);
+      const data = JSON.parse(evt.data);
       data.senderId = evt.from.connectionId;
       _historyChat.push(data);
-      Utils.sendEvent('chatController:incomingMessage', { data: data });
+      Utils.sendEvent('chatController:incomingMessage', { data });
     },
-    connectionCreated: function (evt) {
+    connectionCreated(evt) {
       // Dispatched when an new client (including your own) has connected to the
       // session, and for every client in the session when you first connect
       // Session object also dispatches a sessionConnected evt when your local
       // client connects
-      var newUsrName = JSON.parse(evt.connection.data).userName;
+      const newUsrName = JSON.parse(evt.connection.data).userName;
       if (!this.isMyself(evt.connection)) {
         Utils.sendEvent('chatController:presenceEvent', {
           userName: newUsrName,
@@ -138,7 +136,7 @@
         otHelper = this;
       }
     },
-    connectionDestroyed: function (evt) {
+    connectionDestroyed(evt) {
       Utils.sendEvent('chatController:presenceEvent', {
         userName: JSON.parse(evt.connection.data).userName,
         text: DISCONN_TEXT
@@ -146,22 +144,22 @@
     }
   };
 
- /**
-  * Send the event received as a message
-  */
+  /**
+   * Send the event received as a message
+   */
   function sendMsg(evt) {
-    var data = evt.detail;
+    const data = evt.detail;
     return otHelper.sendSignal('chat', data)
-      .then(function () {
+      .then(() => {
         Utils.sendEvent('chatController:messageDelivered');
-      }).catch(function (error) {
+      }).catch(error => {
         debug.error('Error sending [', data.text.value, '] to the group. ', error.message);
       });
   }
 
- /**
-  * It receives an array of objects or an object with the handlers to be set on OT.session
-  */
+  /**
+   * It receives an array of objects or an object with the handlers to be set on OT.session
+   */
   function addOTHandlers(aAllHandlers) {
     if (!Array.isArray(aAllHandlers)) {
       aAllHandlers = [aAllHandlers];
@@ -175,8 +173,8 @@
    * with the new name for the event and it exists here change its name
    */
   function addEventsHandlers(aEvents) {
-    Array.isArray(aEvents) && aEvents.forEach(function (aEvt) {
-      var event = eventsIn[aEvt.type];
+    Array.isArray(aEvents) && aEvents.forEach(aEvt => {
+      const event = eventsIn[aEvt.type];
       event && event.couldBeChanged && (event.name = aEvt.name);
     });
     Utils.addHandlers(eventsIn);
@@ -185,7 +183,7 @@
   function init(aUsrId, aGlobalHandlers, listenedEvts) {
     return LazyLoader.dependencyLoad([
       '/js/chatView.js'
-    ]).then(function () {
+    ]).then(() => {
       eventsIn = {
         updatedRemotely: {
           name: 'roomStatus:updatedRemotely',
@@ -200,7 +198,7 @@
       _historyChat = [];
       _hasStatus = (exports.RoomStatus !== undefined);
       return ChatView.init(aUsrId, listenedEvts)
-        .then(function () {
+        .then(() => {
           _hasStatus && RoomStatus.set(STATUS_KEY, _historyChat);
           addEventsHandlers(listenedEvts);
           return addOTHandlers(aGlobalHandlers);
@@ -209,6 +207,6 @@
   }
 
   exports.ChatController = {
-    init: init
+    init
   };
-}(this));
+})(this);
