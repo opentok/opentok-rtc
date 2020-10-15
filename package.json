@@ -55,6 +55,7 @@
     "grunt-karma": "^4.0.0",
     "grunt-mocha-test": "^0.13.3",
     "grunt-terser": "^1.0.0",
+    "grunt-critical": "^2.0.0",
     "haikunator": "^2.1.2",
     "helmet": "^4.1.1",
     "http2": "^3.3.7",

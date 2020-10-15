@@ -8,6 +8,7 @@ module.exports = function (grunt) {
     'grunt-contrib-less',
     'grunt-terser',
     'grunt-contrib-concat',
+    'grunt-critical',
     'grunt-contrib-watch',
     'grunt-mocha-test', // Server side test runner
     'grunt-bower-task',
@@ -159,7 +160,20 @@ module.exports = function (grunt) {
         }
       }
     },
-
+      critical: {
+          test: {
+              options: {
+                  base: './',
+                  css: ['web/css/landing.opentok.css'],
+                    target: {
+                      uncritical: 'web/css/landing-uncritical.opentok.css',
+                    },
+                      minify: true
+              },
+              src: 'views/index.ejs',
+              dest: 'web/css/landing-critical.opentok.css'
+          }
+      },
     autoprefixer: {
       options: {
         browsers: ['last 5 versions']
@@ -208,6 +222,7 @@ module.exports = function (grunt) {
     'less',
     'autoprefixer',
     'terser:prod_build'
+    'critical',
   ]);
 
   grunt.registerTask('clientDev', 'Watch for changes on less files', [
