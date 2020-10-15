@@ -1,23 +1,21 @@
-!function(global) {
-  'use strict';
-
-  var otPromise = Promise.resolve();
-  var annotation;
+!(global => {
+  let otPromise = Promise.resolve();
+  let annotation;
 
   otPromise = LazyLoader.load([opentokJsUrl]);
 
-  var MSG_MULTIPART = 'signal';
-  var SIZE_MAX = 7800;
+  const MSG_MULTIPART = 'signal';
+  const SIZE_MAX = 7800;
 
-  var HEAD_SIZE =
+  const HEAD_SIZE =
         JSON.stringify({ _head: { id: 99, seq: 99, tot: 99}, data: "" }).length;
-  var USER_DATA_SIZE = SIZE_MAX - HEAD_SIZE;
-  var logger =
+  const USER_DATA_SIZE = SIZE_MAX - HEAD_SIZE;
+  const logger =
         new Utils.MultiLevelLogger('OTHelper.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
 
-  var requestedResolutions = {};
-  var otLoaded = otPromise.then(function() {
-    var hasRequirements = OT.checkSystemRequirements();
+  const requestedResolutions = {};
+  const otLoaded = otPromise.then(() => {
+    const hasRequirements = OT.checkSystemRequirements();
     if (!hasRequirements) {
       OT.upgradeSystemRequirements();
       throw new Error('Unsupported browser, probably needs upgrade');
@@ -27,7 +25,7 @@
 
   // Done intentionally (to use string codes for our error codes)
   // so as to not overwrite existing OT library codes
-  var PUB_SCREEN_ERROR_CODES = {
+  const PUB_SCREEN_ERROR_CODES = {
     accessDenied: 1500,
     extNotInstalled: 'OT0001',
     extNotRegistered: 'OT0002',
@@ -36,8 +34,8 @@
   };
 
   function getScreenShareCapability() {
-    return new Promise(function(resolve, reject) {
-      OT.checkScreenSharingCapability(function(response) {
+    return new Promise((resolve, reject) => {
+      OT.checkScreenSharingCapability(response => {
         if (!response.supported) {
           reject({
             code: PUB_SCREEN_ERROR_CODES.notSupport,
@@ -62,15 +60,15 @@
   }
 
   function registerScreenShareExtension(aParams, version) {
-    Object.keys(aParams).forEach(function(aKey) {
+    Object.keys(aParams).forEach(aKey => {
       OT.registerScreenSharingExtension(aKey, aParams[aKey], version || 2);
     });
   }
 
-  var sendSignal = (function() {
-    var messageOrder = 0;
+  const sendSignal = (() => {
+    let messageOrder = 0;
     function composeSegment(aMsgId, aSegmentOrder, aTotalSegments, aUsrMsg) {
-      var obj = {
+      const obj = {
         type: aUsrMsg.type,
         data: JSON.stringify({
           _head: {
@@ -92,24 +90,24 @@
     //
     // Multipart message sending proccess. this is expected to be the actual session
     //
-    var sendSignal = function(aType, aMsgData, aTo) {
-      var session = this;
-      return new Promise(function(resolve, reject) {
-        var msg = {
+    const sendSignal = function(aType, aMsgData, aTo) {
+      const session = this;
+      return new Promise((resolve, reject) => {
+        const msg = {
           type: aType,
           data: aMsgData && JSON.stringify(aMsgData)
         };
-        var msgId = ++messageOrder;
-        var totalSegments = msg.data ? Math.ceil(msg.data.length / USER_DATA_SIZE) : 1;
-        var messagesSent = [];
-        for (var segmentOrder = 0; segmentOrder < totalSegments; segmentOrder++) {
-          var signalData = composeSegment(msgId, segmentOrder, totalSegments, msg);
+        const msgId = ++messageOrder;
+        const totalSegments = msg.data ? Math.ceil(msg.data.length / USER_DATA_SIZE) : 1;
+        const messagesSent = [];
+        for (let segmentOrder = 0; segmentOrder < totalSegments; segmentOrder++) {
+          const signalData = composeSegment(msgId, segmentOrder, totalSegments, msg);
           if (aTo) {
             signalData.to = aTo;
           }
           messagesSent[segmentOrder] =
-            new Promise(function(resolveMessage, rejectMessage) {
-              session.signal(signalData, function(error) {
+            new Promise((resolveMessage, rejectMessage) => {
+              session.signal(signalData, error => {
                 (error && (rejectMessage(error) || true)) || resolveMessage();
               });
             });
@@ -120,16 +118,16 @@
     return sendSignal;
   })();
 
-  var receiveMultipartMsg = (function() {
-    var _msgPieces = {};
+  const receiveMultipartMsg = (() => {
+    const _msgPieces = {};
 
     //
     // Multipart message reception proccess
     //
     function parseMultiPartMsg(aEvt) {
-      var dataParsed;
+      let dataParsed;
       dataParsed = JSON.parse(aEvt.data);
-      var fromConnectionId = aEvt.from !== null ? aEvt.from.connectionId : 'server';
+      const fromConnectionId = aEvt.from !== null ? aEvt.from.connectionId : 'server';
       return {
         connectionId: fromConnectionId,
         head: dataParsed._head,
@@ -137,18 +135,18 @@
       };
     }
 
-    var receiveMultipartMsg = function(aFcClients, aEvt) {
-      var parsedMsg = parseMultiPartMsg(aEvt);
+    const receiveMultipartMsg = (aFcClients, aEvt) => {
+      const parsedMsg = parseMultiPartMsg(aEvt);
 
-      var connection = _msgPieces[parsedMsg.connectionId];
-      var newPromise = null;
+      let connection = _msgPieces[parsedMsg.connectionId];
+      let newPromise = null;
       // First msg from a client
       if (!connection) {
         connection = {};
         _msgPieces[parsedMsg.connectionId] = connection;
       }
 
-      var msg = connection[parsedMsg.head.id];
+      let msg = connection[parsedMsg.head.id];
 
       // First piece of a message
       if (!msg) {
@@ -158,10 +156,10 @@
           promiseSolver: null
         };
         // Get a new solver
-        newPromise = new Promise(function (resolve, reject) {
+        newPromise = new Promise((resolve, reject) => {
           msg.promiseSolver = resolve;
         });
-        aFcClients.forEach(function(aFc) {
+        aFcClients.forEach(aFc => {
           newPromise.then(aFc);
         });
         connection[parsedMsg.head.id] = msg;
@@ -194,15 +192,15 @@
   // the message is complete before to send it (launch client event)
   // aHandlers is an array of objects
   function _setHandlers(aBindTo, aReceiver, aHandlers) {
-    var _interceptedHandlers = {};
+    const _interceptedHandlers = {};
 
     // First add the handlers removing the ones we want to intercept...
-    for(var i = 0; i < aHandlers.length; i++) {
-      var _handlers = {};
+    for(let i = 0; i < aHandlers.length; i++) {
+      const _handlers = {};
       Object.
         keys(aHandlers[i]).
-        forEach(function(evtName) {
-          var handler = aHandlers[i][evtName];
+        forEach(evtName => {
+          const handler = aHandlers[i][evtName];
           if (evtName.startsWith(MSG_MULTIPART)) {
             _interceptedHandlers[evtName] = _interceptedHandlers[evtName] || [];
             _interceptedHandlers[evtName].push(handler.bind(aBindTo));
@@ -216,7 +214,7 @@
     // And then add the intercepted handlers
     Object.
       keys(_interceptedHandlers).
-      forEach(function(evtName) {
+      forEach(evtName => {
         _interceptedHandlers[evtName] =
           receiveMultipartMsg.bind(undefined, _interceptedHandlers[evtName]);
       });
@@ -225,9 +223,9 @@
 
   // aSessionInfo must have sessionId, apiKey, token
   function OTHelper() {
-    var _session;
-    var _publisher;
-    var _publisherInitialized = false;
+    let _session;
+    let _publisher;
+    let _publisherInitialized = false;
 
     function disconnect() {
       if (_session) {
@@ -242,15 +240,15 @@
     // aHandlers is either an object with the handlers for each event type
     // or an array of objects
     function connect(sessionInfo, aHandlers) {
-      var self = this;
-      var apiKey = sessionInfo.apiKey;
-      var sessionId = sessionInfo.sessionId;
-      var token = sessionInfo.token;
+      const self = this;
+      const apiKey = sessionInfo.apiKey;
+      const sessionId = sessionInfo.sessionId;
+      const token = sessionInfo.token;
       if (!Array.isArray(aHandlers)) {
         aHandlers = [aHandlers];
       }
-      return otLoaded.then(function() {
-        return new Promise(function(resolve, reject) {
+      return otLoaded.then(() => {
+        return new Promise((resolve, reject) => {
           if (!(apiKey && sessionId && token)) {
             return reject({
               message: 'Invalid parameters received. ' +
@@ -263,7 +261,7 @@
 
           aHandlers && _setHandlers(self, self.session, aHandlers);
 
-          return _session.connect(token, function(error) {
+          return _session.connect(token, error => {
             if (error) {
               reject(error);
             } else {
@@ -279,22 +277,22 @@
       _session.off(evtName);
     }
 
-    var _publishOptions;
+    let _publishOptions;
     // We will use this in case the first publish fails. On the error we will give the caller a
     // promise that will fulfill when/if the publish succeeds at some future time (because of a
     // retry).
-    var _solvePublisherPromise;
-    var _publisherPromise = new Promise(function(resolve, reject) {
+    let _solvePublisherPromise;
+    const _publisherPromise = new Promise((resolve, reject) => {
       _solvePublisherPromise = resolve;
     });
 
     function initPublisher(aDOMElement, aProperties, aHandlers) {
-      return new Promise(function(resolve, reject) {
-        otLoaded.then(function() {
+      return new Promise((resolve, reject) => {
+        otLoaded.then(() => {
           getFilteredSources({
             audioSource: aProperties.audioSource,
             videoSource: aProperties.videoSource
-          }).then(function(mediaSources) {
+          }).then(mediaSources => {
             Object.assign(aProperties, mediaSources);
             _publisher = OT.initPublisher(aDOMElement, aProperties);
             return resolve(_publisher);
@@ -305,13 +303,13 @@
     }
 
     function publish(aDOMElement, aProperties, aHandlers) {
-      var self = this;
+      const self = this;
       _publishOptions = null;
-      var propCopy = {};
-      Object.keys(aProperties).forEach(function(aKey) {
+      const propCopy = {};
+      Object.keys(aProperties).forEach(aKey => {
         propCopy[aKey] = aProperties[aKey];
       });
-      return new Promise(function(resolve, reject) {
+      return new Promise((resolve, reject) => {
         function processError(error) {
           _publishOptions = {
             elem: aDOMElement,
@@ -319,23 +317,23 @@
             handlers: aHandlers
           };
           _publisher = null;
-          reject({ error: error, publisherPromise: _publisherPromise });
+          reject({ error, publisherPromise: _publisherPromise });
         }
 
-        _publisher = OT.initPublisher(aDOMElement, aProperties, function(error) {
+        _publisher = OT.initPublisher(aDOMElement, aProperties, error => {
           if (error) {
             processError({
               name: error.name,
-              message: 'Error initializing publisher. ' + error.message
+              message: `Error initializing publisher. ${error.message}`
             });
            return;
           }
-          _session.publish(_publisher, function(error) {
+          _session.publish(_publisher, error => {
             if (error) {
               processError(error);
             } else {
               _publisherInitialized = true;
-              Object.keys(aHandlers).forEach(function(name) {
+              Object.keys(aHandlers).forEach(name => {
                 _publisher.on(name, aHandlers[name].bind(self));
               });
 
@@ -348,10 +346,10 @@
     }
 
     function subscribeTo(aStream, name, value) {
-      var arrSubscribers = _session.getSubscribersForStream(aStream);
+      const arrSubscribers = _session.getSubscribersForStream(aStream);
       // TODO Currently we expect only one element in arrSubscriber
-      Array.isArray(arrSubscribers) && arrSubscribers.forEach(function(subscriber) {
-        subscriber['subscribeTo' + name](value);
+      Array.isArray(arrSubscribers) && arrSubscribers.forEach(subscriber => {
+        subscriber[`subscribeTo${name}`](value);
       });
     }
 
@@ -366,8 +364,8 @@
     }
 
     function togglePublisherProperty(aProperty, aValue) {
-      publisherReady().then(function(aPublisher) {
-        aPublisher['publish' + aProperty](aValue);
+      publisherReady().then(aPublisher => {
+        aPublisher[`publish${aProperty}`](aValue);
       });
     }
 
@@ -395,16 +393,16 @@
       _publisher.setAudioSource(deviceId)
     }
 
-    var _screenShare;
+    let _screenShare;
 
     const FAKE_OTK_ANALYTICS = global.OTKAnalytics ||
-      function() { return {
-          addSessionInfo: function() {},
-          logEvent: function(a,b) {
+      (() => { return {
+          addSessionInfo() {},
+          logEvent(a, b) {
             console.log(a,b);
           }
           };
-      };
+      });
 
     // TO-DO: Make this configurable
     const IMAGE_ASSETS = '/images/annotations/';
@@ -412,7 +410,7 @@
 
     function getAnnotation(aDomElement, aOptions) {
       aOptions = aOptions || {};
-      var options = {
+      const options = {
         session: aOptions.session || _session,
         watchForResize: aOptions.watchForResize || window,
         canvasContainer: aDomElement,
@@ -441,7 +439,7 @@
 
     // aElement can be a publisher, a subscriber or a AnnotationPack
     function endAnnotation(aElement) {
-      var annPack =  aElement && aElement._ANNOTATION_PACK || aElement;
+      const annPack =  aElement && aElement._ANNOTATION_PACK || aElement;
       annPack && annPack.end && annPack.end();
       Utils.removeEventHandlers('roomView:', {
         screenChange: resizeAnnotationCanvas
@@ -453,8 +451,8 @@
       if (!aAccPack) {
         return;
       }
-      var container = document.getElementById(aPubSub.id);
-      var canvasOptions = {
+      const container = document.getElementById(aPubSub.id);
+      const canvasOptions = {
         absoluteParent: aParentElement
       };
       aAccPack.linkCanvas(aPubSub, container, canvasOptions);
@@ -462,19 +460,19 @@
     }
 
     function getDevices(kind = 'all') {
-      return new Promise(function(resolve, reject) {
-        OT.getDevices(function (error, devices) {
+      return new Promise((resolve, reject) => {
+        OT.getDevices((error, devices) => {
           if (error) return reject(error);
-          devices = devices.filter(function (device) { return device.kind === kind || kind === 'all' });
+          devices = devices.filter(device => { return device.kind === kind || kind === 'all' });
           return resolve(devices);
         });
       });  
     }
 
     function getVideoDeviceNotInUse(selectedDeviceId) {
-      return new Promise(function(resolve, reject) {
-        getDevices('videoInput').then(function(videoDevices) {
-          var matchingDevice = videoDevices.find(function(device) {
+      return new Promise((resolve, reject) => {
+        getDevices('videoInput').then(videoDevices => {
+          const matchingDevice = videoDevices.find(device => {
             return device.deviceId !== selectedDeviceId;
           });
 
@@ -485,48 +483,48 @@
 
     function getFallbackMediaDeviceId(devices, kind) {
       kind = kind.replace('Source', 'Input');
-      var matchingDevice = devices.find(function(device) {
+      const matchingDevice = devices.find(device => {
         return device.kind === kind;
       });  
       return matchingDevice ? matchingDevice.deviceId : null;
     }
 
     function getFilteredSources(mediaDeviceIds) {
-      return new Promise(function(resolve, reject) {
-        getDevices().then(function (devices) {          
-          for (var source in mediaDeviceIds) {
-            var matchingDevice = devices.find(function(device) {
+      return new Promise((resolve, reject) => {
+        getDevices().then(devices => {          
+          for (const source in mediaDeviceIds) {
+            const matchingDevice = devices.find(device => {
               return device.deviceId === mediaDeviceIds[source];
             });
 
             if (!matchingDevice) mediaDeviceIds[source] = getFallbackMediaDeviceId(devices, source);
           }
           return resolve(mediaDeviceIds);
-      }).catch(function(e) {
+      }).catch(e => {
         return reject(e);
       });
-    })
+    });
    }  
 
     function subscribe(aStream, aTargetElement, aProperties, aHandlers, aEnableAnnotation) {
-      var self = this;
-      return new Promise(function(resolve, reject) {
-        var subscriber =
-          _session.subscribe(aStream, aTargetElement, aProperties, function(error) {
+      const self = this;
+      return new Promise((resolve, reject) => {
+        const subscriber =
+          _session.subscribe(aStream, aTargetElement, aProperties, error => {
             error ? reject(error) : resolve(subscriber);
           });
-      }).then(function(subscriber) {
-        Object.keys(aHandlers).forEach(function(name) {
+      }).then(subscriber => {
+        Object.keys(aHandlers).forEach(name => {
           subscriber.on(name, aHandlers[name].bind(self));
         });
-        subscriber.on('destroyed', function(evt) {
+        subscriber.on('destroyed', evt => {
           subscriber.off();
           endAnnotation(subscriber);
         });
-        var subsAnnotation =
+        const subsAnnotation =
           (aEnableAnnotation && aStream.videoType === 'screen' && getAnnotation(aTargetElement)) ||
           null;
-        return startAnnotation(subsAnnotation).then(function() {
+        return startAnnotation(subsAnnotation).then(() => {
           setupAnnotation(subsAnnotation, subscriber,
                           document.querySelector('.opentok-stream-container'));
           return subscriber;
@@ -542,23 +540,23 @@
     }
 
     function shareScreen(aDOMElement, aProperties, aHandlers, aEnableAnnotation) {
-      var self = this;
-      var screenShareCapability = getScreenShareCapability();
+      const self = this;
+      const screenShareCapability = getScreenShareCapability();
       if (!Array.isArray(aHandlers)) {
         aHandlers = [aHandlers];
       }
 
-      return screenShareCapability.then(function() {
-        return new Promise(function(resolve, reject) {
-          var annotationAccPack = aEnableAnnotation && getAnnotation(aDOMElement);
+      return screenShareCapability.then(() => {
+        return new Promise((resolve, reject) => {
+          const annotationAccPack = aEnableAnnotation && getAnnotation(aDOMElement);
           startAnnotation(annotationAccPack).
-            then(function() {
-              _screenShare = OT.initPublisher(aDOMElement, aProperties, function(error) {
+            then(() => {
+              _screenShare = OT.initPublisher(aDOMElement, aProperties, error => {
                 if (error) {
                   endAnnotation(annotationAccPack);
                   reject(error);
                 } else {
-                  _session.publish(_screenShare, function(error) {
+                  _session.publish(_screenShare, error => {
                     if (error) {
                       endAnnotation(annotationAccPack);
                       reject({
@@ -580,15 +578,15 @@
 
     function setPreferredResolution(aSubscriber, aTotalDimension, aSubsDimension,
                                     aSubsNumber, aAlgorithm) {
-      var PrefResolutionAlgProv = global.PreferredResolutionAlgorithmProvider;
+      const PrefResolutionAlgProv = global.PreferredResolutionAlgorithmProvider;
       if (!PrefResolutionAlgProv) {
         return;
       }
-      var algInfo = PrefResolutionAlgProv.getAlg(aAlgorithm);
-      var chosenAlgorithm = algInfo.chosenAlgorithm;
-      var algorithm = algInfo.algorithm;
-      var streamDimension = aSubscriber.stream.videoDimensions;
-      var newDimension =
+      const algInfo = PrefResolutionAlgProv.getAlg(aAlgorithm);
+      const chosenAlgorithm = algInfo.chosenAlgorithm;
+      const algorithm = algInfo.algorithm;
+      const streamDimension = aSubscriber.stream.videoDimensions;
+      const newDimension =
         algorithm(streamDimension, aTotalDimension, aSubsDimension, aSubsNumber);
 
       if (!requestedResolutions[aSubscriber.id]) {
@@ -596,7 +594,7 @@
         requestedResolutions[aSubscriber.id] = aSubscriber.stream.videoDimensions;
       }
 
-      var existingResolution = requestedResolutions[aSubscriber.id];
+      const existingResolution = requestedResolutions[aSubscriber.id];
       if (newDimension.width === existingResolution.width && newDimension.height === existingResolution.height ) {
         return; // No need to request a new resolution
       }
@@ -612,42 +610,42 @@
       get session() {
         return _session;
       },
-      connect: connect,
-      getDevices: getDevices,
-      getVideoDeviceNotInUse: getVideoDeviceNotInUse,
-      initPublisher: initPublisher,
-      off: off,
-      otLoaded: otLoaded,
-      publish: publish,
-      toggleSubscribersAudio: toggleSubscribersAudio,
-      toggleSubscribersVideo: toggleSubscribersVideo,
-      togglePublisherAudio: togglePublisherAudio,
-      togglePublisherVideo: togglePublisherVideo,
-      toggleFacingMode: toggleFacingMode,
-      setAudioSource: setAudioSource,
-      shareScreen: shareScreen,
-      subscribe: subscribe,
-      stopShareScreen: stopShareScreen,
+      connect,
+      getDevices,
+      getVideoDeviceNotInUse,
+      initPublisher,
+      off,
+      otLoaded,
+      publish,
+      toggleSubscribersAudio,
+      toggleSubscribersVideo,
+      togglePublisherAudio,
+      togglePublisherVideo,
+      toggleFacingMode,
+      setAudioSource,
+      shareScreen,
+      subscribe,
+      stopShareScreen,
       get isPublisherReady() {
         return _publisherInitialized;
       },
-      disconnect: disconnect,
-      removeListener: removeListener,
-      publisherHas: function(aType) {
-        return _publisher.stream['has' + (aType.toLowerCase() === 'audio' && 'Audio' || 'Video')];
+      disconnect,
+      removeListener,
+      publisherHas(aType) {
+        return _publisher.stream[`has${aType.toLowerCase() === 'audio' && 'Audio' || 'Video'}`];
       },
       get publisherId() {
         return (_publisherInitialized && _publisher && _publisher.stream && _publisher.stream.id) ||
           null;
       },
-      isMyself: function(connection) {
+      isMyself(connection) {
         return _session &&
           _session.connection.connectionId === connection.connectionId;
       },
       get screenShare() {
         return _screenShare;
       },
-      getImg: function(stream) {
+      getImg(stream) {
         if (!stream) {
           return null;
         }
@@ -656,18 +654,18 @@
           return stream.getImgData();
         }
 
-        var subscribers = _session.getSubscribersForStream(stream);
+        const subscribers = _session.getSubscribersForStream(stream);
         return subscribers.length ? subscribers[0].getImgData() : null;
       },
-      showAnnotationToolbar: function(aShow) {
-        var container = document.getElementById('annotationToolbarContainer');
+      showAnnotationToolbar(aShow) {
+        const container = document.getElementById('annotationToolbarContainer');
         if (!container) {
           return;
         }
         (aShow && (container.classList.remove('ots-hidden') || true)) ||
           container.classList.add('ots-hidden');
       },
-      setPreferredResolution: setPreferredResolution
+      setPreferredResolution
     };
   }
 
@@ -675,6 +673,5 @@
   OTHelper.screenShareErrorCodes = PUB_SCREEN_ERROR_CODES;
 
   global.OTHelper = OTHelper;
-
-}(this);
+})(this);
     

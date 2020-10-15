@@ -1,36 +1,46 @@
 /* global Grid, Float, F2FHorizontal, F2FVertical, HangoutHorizontal, HangoutVertical, LayoutView,
 LayoutViewport, ItemsHandler */
 
-!(function (global) {
-  'use strict';
+!(global => {
+  let userLayout = null;
+  let currentLayout = null;
+  let container = null;
 
-  var userLayout = null;
-  var currentLayout = null;
-  var container = null;
+  const items = {};
 
-  var items = {};
+  let layouts;
+  const lcache = window.localStorage;
+  const HANGOUT_BY_DEFAULT = 'hangout_vertical';
 
-  var layouts;
-  var lcache = window.localStorage;
-  var HANGOUT_BY_DEFAULT = 'hangout_vertical';
+  const F2F_LAYOUTS = {
+    float: true,
+    f2f_horizontal: true,
+    f2f_vertical: true
+  };
+
+  const GRP_LAYOUTS = {
+    grid: true,
+    hangout_horizontal: true,
+    hangout_vertical: true
+  };
 
   function isOnGoing(layout) {
     return Object.getPrototypeOf(currentLayout) === layout.prototype;
   }
 
-  var handlers = {
-    layout: function (evt) {
+  const handlers = {
+    layout(evt) {
       userLayout = evt.detail.type;
       lcache.setItem('opentokrtc-layout', userLayout);
       rearrange();
     },
-    itemSelected: function (evt) {
+    itemSelected(evt) {
       if (isGroup() && isOnGoing(Grid)) {
         userLayout = HANGOUT_BY_DEFAULT;
         rearrange(evt.detail.item);
       }
     },
-    emptyStage: function () {
+    emptyStage() {
       userLayout = 'grid';
       rearrange();
     }
@@ -42,7 +52,7 @@ LayoutViewport, ItemsHandler */
     } else if (window.matchMedia('screen and (max-width: 480px) and (orientation : portrait)').matches) {
       return isScreen ? 'hangout_horizontal' : 'f2f_horizontal';
     }
-    var userSelectedLayout = null;
+    let userSelectedLayout = null;
     if (userLayout !== lcache.getItem('opentokrtc-default')) {
       // not mobile
       userSelectedLayout = lcache.getItem('opentokrtc-default');
@@ -58,7 +68,7 @@ LayoutViewport, ItemsHandler */
   }
 
   function layoutModifier() {
-    var isScreenShared = lcache.getItem('opentokrtc-screenshare') != null;
+    const isScreenShared = lcache.getItem('opentokrtc-screenshare') != null;
     userLayout = getLayoutByScreenCount(getDeviceLayout(isScreenShared), isScreenShared);
     rearrange();
   }
@@ -79,7 +89,7 @@ LayoutViewport, ItemsHandler */
     Utils.addEventsHandlers('layoutView:', handlers, global);
     Utils.addEventsHandlers('hangout:', handlers, global);
     lcache.setItem('opentokrtc-default', userLayout);
-    var smartphonePortrait = window.matchMedia('screen and (max-width: 480px) and (orientation : portrait)');
+    const smartphonePortrait = window.matchMedia('screen and (max-width: 480px) and (orientation : portrait)');
     if (smartphonePortrait.matches) {
       layoutModifier(smartphonePortrait);
     }
@@ -87,7 +97,7 @@ LayoutViewport, ItemsHandler */
 
     return enableHangoutScroll ? LazyLoader.load([
       '/js/layoutViewport.js', '/css/hangoutScroll.css'
-    ]).then(function () {
+    ]).then(() => {
       LayoutViewport.init(container.querySelector('.tc-list ul'), '.stream');
     }) : Promise.resolve();
   }
@@ -100,7 +110,7 @@ LayoutViewport, ItemsHandler */
   }
 
   function append(id, options) {
-    var item = LayoutView.append(id, options);
+    const item = LayoutView.append(id, options);
     items[id] = item;
     if (isHangoutRequired(item)) {
       userLayout = getDeviceLayout(true);
@@ -110,13 +120,13 @@ LayoutViewport, ItemsHandler */
       rearrange();
     }
     Utils.sendEvent('layoutManager:itemAdded', {
-      item: item
+      item
     });
     return item.querySelector('.opentok-stream-container');
   }
 
   function remove(id) {
-    var item = items[id];
+    const item = items[id];
     if (!item) {
       return;
     }
@@ -128,7 +138,7 @@ LayoutViewport, ItemsHandler */
     LayoutView.remove(item);
     delete items[id];
     Utils.sendEvent('layoutManager:itemDeleted', {
-      item: item
+      item
     });
     layoutModifier();
   }
@@ -146,7 +156,7 @@ LayoutViewport, ItemsHandler */
   }
 
   function calculateCandidateLayout() {
-    var candidateLayout = null;
+    let candidateLayout = null;
 
     if (getTotal() > 2) {
       candidateLayout = GRP_LAYOUTS[userLayout] ? layouts[userLayout] : Grid;
@@ -157,17 +167,6 @@ LayoutViewport, ItemsHandler */
     return candidateLayout;
   }
 
-  var F2F_LAYOUTS = {
-    float: true,
-    f2f_horizontal: true,
-    f2f_vertical: true
-  };
-
-  var GRP_LAYOUTS = {
-    grid: true,
-    hangout_horizontal: true,
-    hangout_vertical: true
-  };
 
   function isGroup() {
     return getTotal() > 2;
@@ -180,7 +179,7 @@ LayoutViewport, ItemsHandler */
   }
 
   function rearrange(item) {
-    var CandidateLayout = calculateCandidateLayout();
+    const CandidateLayout = calculateCandidateLayout();
 
     if (!currentLayout || !isOnGoing(CandidateLayout)) {
       currentLayout && currentLayout.destroy();
@@ -193,10 +192,10 @@ LayoutViewport, ItemsHandler */
   }
 
   global.LayoutManager = {
-    init: init,
-    append: append,
-    remove: remove,
-    removeAll: removeAll,
-    getItemById: getItemById
+    init,
+    append,
+    remove,
+    removeAll,
+    getItemById
   };
-}(this));
+})(this);
