@@ -36,7 +36,7 @@
       name: _logEventData.name
     };
 
-    _otkanalytics = new _OTKAnalytics(otkanalyticsData);
+    _otkanalytics =  _OTKAnalytics(otkanalyticsData);
 
     var sessionInfo = {
       sessionId: _session.id,
@@ -2073,7 +2073,7 @@
       name: _logEventData.name
     };
 
-    _otkanalytics = new OTKAnalytics(otkanalyticsData);
+    _otkanalytics = OTKAnalytics(otkanalyticsData);
 
     var sessionInfo = {
       sessionId: _session.id,

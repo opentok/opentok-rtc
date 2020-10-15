@@ -3,24 +3,24 @@
 // Usage:
 // node server -h
 
-var SwaggerBP = require('swagger-boilerplate');
-var Utils = SwaggerBP.Utils;
-var Logger = Utils.MultiLevelLogger;
-var logger = new Logger('HTTP Server App');
+const SwaggerBP = require('swagger-boilerplate');
+const Utils = SwaggerBP.Utils;
+const Logger = Utils.MultiLevelLogger;
+const logger = new Logger('HTTP Server App');
 
-var Server = require('swagger-boilerplate').Server;
+const Server = require('swagger-boilerplate').Server;
 
-var server =
+const server =
  new Server({
-   apiFile: './api.yml',
-   modulePath: __dirname + '/server/',
-   appName: 'OpenTokRTC Main',
-   staticOptions: {
-     dotfiles: 'ignore',
-     extensions: ['jpg'],
-     index: false,
-     redirect: false,
-   }
- });
+    apiFile: './api.yml',
+    modulePath: `${__dirname}/server/`,
+    appName: 'OpenTokRTC Main',
+    staticOptions: {
+      dotfiles: 'ignore',
+      extensions: ['jpg'],
+      index: false,
+      redirect: false
+    }
+  });
 
 server.start();

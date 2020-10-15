@@ -1,12 +1,10 @@
-!(function (exports) {
-  'use strict';
-
-  var cronographElement;
-  var counter = 0;
-  var counterTimer = null;
+!(exports => {
+  let cronographElement;
+  let counter = 0;
+  let counterTimer = null;
 
   function beautify(value) {
-    return (value < 10) ? ('0' + value) : value;
+    return (value < 10) ? (`0${value}`) : value;
   }
 
   function reset(text) {
@@ -16,21 +14,21 @@
 
   function paint(text) {
     if (!text) {
-      var minutes = Math.floor(counter / 60);
-      var seconds = Math.floor(counter % 60);
-      text = beautify(minutes) + ':' + beautify(seconds);
+      const minutes = Math.floor(counter / 60);
+      const seconds = Math.floor(counter % 60);
+      text = `${beautify(minutes)}:${beautify(seconds)}`;
     }
 
     cronographElement.textContent = text;
   }
 
-  var Cronograph = {
+  const Cronograph = {
     /**
      * It initializes the cronograph.
      *
      * {initialText} Optional text which will be displayed before starting.
      */
-    init: function (initialText) {
+    init(initialText) {
       cronographElement = document.querySelector('.duration');
       reset(initialText);
       return this;
@@ -42,26 +40,26 @@
      * {from} This param sets the seconds from where the cronograph will start
      *        counting.
      */
-    start: function (from) {
+    start(from) {
       if (counterTimer !== null) {
         return this;
       }
       counter = Math.max(from || 0, 0);
-      counterTimer = setInterval(function () {
+      counterTimer = setInterval(() => {
         ++counter;
         paint();
       }, 1000);
       return this;
     },
 
-    stop: function () {
+    stop() {
       exports.clearInterval(counterTimer);
       counterTimer = null;
       return this;
     },
 
-    reset: reset
+    reset
   };
 
   exports.Cronograph = Cronograph;
-}(this));
+})(this);

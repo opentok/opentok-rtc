@@ -1,11 +1,9 @@
-!(function (global) {
-  'use strict';
-
-  var Handler = function (container, items) {
+!(global => {
+  const Handler = function (container, items) {
     ['click', 'dblclick'].forEach(function (name) {
       container.addEventListener(name, this);
     }, this);
-    var events = ['roomController:video', 'roomController:audio', 'roomController:videoDisabled',
+    const events = ['roomController:video', 'roomController:audio', 'roomController:videoDisabled',
       'roomController:videoEnabled', 'roomController:disconnected',
       'roomController:connected'];
     events.forEach(function (name) {
@@ -14,15 +12,15 @@
     this.items = items;
   };
 
-  var setVideoDisabled = function (item, disabled) {
+  const setVideoDisabled = (item, disabled) => {
     item && item.data('videoDisabled', disabled);
   };
 
   Handler.prototype = {
-    handleEvent: function (evt) {
+    handleEvent(evt) {
       switch (evt.type) {
-        case 'click':
-          var elemClicked = evt.target;
+        case 'click': {
+          const elemClicked = evt.target;
           if (!(HTMLElems.isAction(elemClicked))) {
             return;
           }
@@ -32,21 +30,21 @@
             streamType: elemClicked.data('streamType')
           });
           break;
-
+        }
         case 'roomController:video':
-        case 'roomController:audio':
-          var detail = evt.detail;
-          var item = this.items[detail.id];
+        case 'roomController:audio': {
+          const detail = evt.detail;
+          let item = this.items[detail.id];
 
           if (!item) {
             return;
           }
 
-          var action = evt.type.replace('roomController:', '');
-          HTMLElems.setEnabled(item.querySelector('.' + action + '-action'), detail.enabled);
+          const action = evt.type.replace('roomController:', '');
+          HTMLElems.setEnabled(item.querySelector(`.${action}-action`), detail.enabled);
           action === 'video' && setVideoDisabled(item, !detail.enabled);
           break;
-
+        }
         case 'roomController:videoDisabled':
         case 'roomController:videoEnabled':
           setVideoDisabled(this.items[evt.detail.id], evt.type === 'roomController:videoDisabled');
@@ -58,8 +56,8 @@
           item && item.data('disconnected', evt.type === 'roomController:disconnected');
           break;
 
-        case 'dblclick':
-          var target = evt.target;
+        case 'dblclick': {
+          const target = evt.target;
 
           if (target.classList.contains('dblclick_area')) {
             Utils.sendEvent('layoutView:itemSelected', {
@@ -67,6 +65,7 @@
             });
           }
           break;
+        }
       }
     }
   };
@@ -75,6 +74,6 @@
   }
 
   global.ItemsHandler = {
-    init: init
+    init
   };
-}(this));
+})(this);
