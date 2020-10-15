@@ -95,10 +95,6 @@
     };
 
     this.startNetworkTest = callback => {
-      // You cannot use the network test in IE. IE cannot subscribe to its own stream.
-      if (Utils.isIE() || !enablePrecallTest) {
-        return;
-      }
       publisher.publishVideo(true);
       const callbacks = {
         onInitPublisher: function onInitPublisher(error) {

@@ -13,7 +13,6 @@ LayoutBase.prototype = {
         style[feature] = features[feature];
       });
     }, this);
-    this.flush();
     Utils.sendEvent('hangout:rearranged');
     return this;
   },
@@ -24,10 +23,6 @@ LayoutBase.prototype = {
 
   get total() {
     return Object.keys(this.items).length;
-  },
-
-  flush() {
-    HTMLElems.flush(this.container);
   },
 
   destroy() {
