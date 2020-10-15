@@ -63,6 +63,8 @@
  *
  */
 
+ import ChatView from './ChatView';
+
 !(exports => {
   let _hasStatus;
 
@@ -197,7 +199,7 @@
       };
       _historyChat = [];
       _hasStatus = (exports.RoomStatus !== undefined);
-      return ChatView.init(aUsrId, listenedEvts)
+      return new ChatView(aUsrId, listenedEvts)
         .then(() => {
           _hasStatus && RoomStatus.set(STATUS_KEY, _historyChat);
           addEventsHandlers(listenedEvts);

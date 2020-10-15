@@ -7,6 +7,7 @@
   },
   "parserOptions": {
     "ecmaVersion": 8,
+    "sourceType": "module",
     "ecmaFeatures": {
       "experimentalObjectRestSpread": true
     }
@@ -17,7 +18,8 @@
     "no-labels": 0,
     "padded-blocks": 0,
     "no-unused-expressions": [2, { "allowShortCircuit": true, "allowTernary": true }],
-    "no-multiple-empty-lines": [1, {"max": 2, "maxBOF": 0}]
+    "no-multiple-empty-lines": [1, {"max": 2, "maxBOF": 0}],
+    "func-style": 0
   },
   "globals": {
     "Promise": true,

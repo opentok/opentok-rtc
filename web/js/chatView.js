@@ -1,34 +1,37 @@
 /* global Chat, TextProcessor, otHelper */
+"use strict";
+export class ChatView {
 
-!(exports => {
-  let usrId;
+  constructor(aUsrId, configuredEvts) {
+     this.chatParticipants = [];
+     this._visibilityChanging = Promise.resolve();
+     this.eventHandlers = {}
+    return LazyLoader.dependencyLoad([
+      '/js/helpers/textProcessor.js',
+      '/js/components/chat.js'
+    ]).then(() => {
+      initHTMLElements();
+      this.usrId = aUsrId;
+      Chat.init();
+      addEventsHandlers(configuredEvts);
+    });
+  }
 
-  let closeChatBtn;
-  let headerChat;
-  let sendMsgBtn;
-  let chatMsgInput;
-  let chatContainer;
-  let chatContent;
-  let chatForm;
-  const chatParticipants = [];
+   isMobile() { return typeof window.orientation !== 'undefined'; }
 
-  let _visibilityChanging = Promise.resolve();
-
-  function isMobile() { return typeof window.orientation !== 'undefined'; }
-
-  function isVisible() {
-    return _visibilityChanging.then(() => {
+   isVisible() {
+    return this._visibilityChanging.then(() => {
       return Chat.visible;
     });
   }
 
-  function setVisibility(isVisible) {
+   setVisibility(isVisible) {
     if (isVisible) {
       addHandlers();
       return Chat.show().then(() => {
         Utils.sendEvent('chatView:shown');
         scrollTo();
-        chatMsgInput.focus();
+        this.chatMsgInput.focus();
       });
     }
     removeHandlers();
@@ -37,10 +40,9 @@
     });
   }
 
-  let eventHandlers;
 
-  function addEventsHandlers(configuredEvts) {
-    eventHandlers = {
+   addEventsHandlers(configuredEvts) {
+    this.eventHandlers = {
       incomingMessage: {
         name: 'chatController:incomingMessage',
         handler(evt) {
@@ -62,53 +64,53 @@
       messageDelivered: {
         name: 'chatController:messageDelivered',
         handler() {
-          chatMsgInput.value = '';
+          this.chatMsgInput.value = '';
         }
       },
       chatVisibility: {
         name: 'roomView:chatVisibility',
         handler(evt) {
-          _visibilityChanging = setVisibility(evt.detail);
+          this._visibilityChanging = setVisibility(evt.detail);
         },
         couldBeChanged: true
       }
     };
     Array.isArray(configuredEvts) && configuredEvts.forEach(aEvt => {
-      const event = eventHandlers[aEvt.type];
+      const event = this.eventHandlers[aEvt.type];
       event && event.couldBeChanged && (event.name = aEvt.name);
     });
-    Utils.addHandlers(eventHandlers);
+    Utils.addHandlers(this.eventHandlers);
   }
 
-  function initHTMLElements() {
+   initHTMLElements() {
     const chatWndElem = document.getElementById('chat');
-    headerChat = chatWndElem.querySelector('header');
-    closeChatBtn = chatWndElem.querySelector('#closeChat');
-    sendMsgBtn = chatWndElem.querySelector('#sendTxt');
-    chatMsgInput = chatWndElem.querySelector('#msgText');
-    chatContainer = chatWndElem.querySelector('#chatMsgs');
-    chatContent = chatContainer.querySelector('ul');
-    chatForm = chatWndElem.querySelector('#chatForm');
+    this.headerChat = chatWndElem.querySelector('header');
+    this.closeChatBtn = chatWndElem.querySelector('#closeChat');
+    this.sendMsgBtn = chatWndElem.querySelector('#sendTxt');
+    this.chatMsgInput = chatWndElem.querySelector('#msgText');
+    this.chatContainer = chatWndElem.querySelector('#chatMsgs');
+    this.chatContent = this.chatContainer.querySelector('ul');
+    this.chatForm = chatWndElem.querySelector('#chatForm');
   }
 
-  const onSendClicked = evt => {
+   onSendClicked (evt) {
     evt.preventDefault();
-    if (!chatMsgInput.value.trim().length) {
+    if (!this.chatMsgInput.value.trim().length) {
       return;
     }
     if (isMobile()) {
       document.activeElement.blur(); // Hide the virtual keyboard.
     } else {
-      chatMsgInput.focus();
+      this.chatMsgInput.focus();
     }
     Utils.sendEvent('chatView:outgoingMessage', {
-      sender: usrId,
+      sender: this.usrId,
       time: Utils.getCurrentTime(),
-      text: chatMsgInput.value.trim()
+      text: this.chatMsgInput.value.trim()
     });
   };
 
-  const onKeyPress = ((myfield, evt) => {
+   onKeyPress = ((myfield, evt) => {
     let keycode;
     if (window.vent) {
       keycode = window.event.keyCode;
@@ -125,24 +127,24 @@
       return false;
     }
     return true;
-  }).bind(undefined, chatMsgInput);
+  }).bind(undefined, this.chatMsgInput);
 
-  const onSubmit = evt => {
+   onSubmit = evt => {
     evt.preventDefault();
     return false;
   };
 
-  const onClose = evt => {
+   onClose = evt => {
     evt.preventDefault();
     evt.stopImmediatePropagation();
-    _visibilityChanging = setVisibility(false);
+    this._visibilityChanging = setVisibility(false);
   };
 
-  const onToggle = () => {
+   onToggle = () => {
     Chat.isCollapsed() ? Chat.expand() : Chat.collapse();
   };
 
-  const onDrop = evt => {
+   onDrop = evt => {
     evt.preventDefault();
     evt.stopPropagation();
     return false;
@@ -150,26 +152,26 @@
 
   // The ChatController should have the handlers and call the view for
   // doing visual work
-  function addHandlers() {
-    chatForm.addEventListener('keypress', onKeyPress);
-    chatForm.addEventListener('submit', onSubmit);
-    chatForm.addEventListener('drop', onDrop);
-    closeChatBtn.addEventListener('click', onClose);
-    headerChat.addEventListener('click', onToggle);
-    sendMsgBtn.addEventListener('click', onSendClicked);
+   addHandlers() {
+    this.chatForm.addEventListener('keypress', onKeyPress);
+    this.chatForm.addEventListener('submit', onSubmit);
+    this.chatForm.addEventListener('drop', onDrop);
+    this.closeChatBtn.addEventListener('click', onClose);
+    this.eaderChat.addEventListener('click', onToggle);
+    this.sendMsgBtn.addEventListener('click', onSendClicked);
   }
 
-  function removeHandlers() {
-    chatForm.removeEventListener('keypress', onKeyPress);
-    closeChatBtn.removeEventListener('click', onClose);
-    headerChat.removeEventListener('click', onToggle);
-    sendMsgBtn.removeEventListener('click', onSendClicked);
-    chatForm.removeEventListener('drop', onDrop);
+   removeHandlers() {
+    this.chatForm.removeEventListener('keypress', onKeyPress);
+    this.closeChatBtn.removeEventListener('click', onClose);
+    this.headerChat.removeEventListener('click', onToggle);
+    this.sendMsgBtn.removeEventListener('click', onSendClicked);
+    this.chatForm.removeEventListener('drop', onDrop);
   }
 
-  function insertChatEvent(data) {
+   insertChatEvent(data) {
     const time = (data.time || Utils.getCurrentTime()).toLowerCase();
-    const item = HTMLElems.createElementAt(chatContent, 'li');
+    const item = HTMLElems.createElementAt(this.chatContent, 'li');
     item.classList.add('event');
     const name = data.sender || data.userName;
     const text = `${time} - ${name} ${data.text}`;
@@ -177,7 +179,7 @@
     scrollTo();
   }
 
-  function insertText(elemRoot, text) {
+   insertText(elemRoot, text) {
     const txtElems = TextProcessor.parse(text);
     const targetElem = HTMLElems.createElementAt(elemRoot, 'p');
     txtElems.forEach(node => {
@@ -192,15 +194,15 @@
     });
   }
 
-  function insertChatLine(data) {
-    const item = HTMLElems.createElementAt(chatContent, 'li');
+   insertChatLine(data) {
+    const item = HTMLElems.createElementAt(this.chatContent, 'li');
     const info = HTMLElems.createElementAt(item, 'p');
     if (otHelper.isMyself({ connectionId: data.senderId })) {
       item.classList.add('yourself');
     } else {
-      let chatIndex = chatParticipants.indexOf(data.senderId);
+      let chatIndex = this.chatParticipants.indexOf(data.senderId);
       if (chatIndex === -1) {
-        chatIndex = chatParticipants.push(data.senderId) - 1;
+        chatIndex = this.chatParticipants.push(data.senderId) - 1;
       }
       // We only have 10 colors so just get last digit.
       const participantNumber = chatIndex.toString().slice(-1);
@@ -217,25 +219,7 @@
     scrollTo();
   }
 
-  function scrollTo() {
-    chatContainer.scrollTop = chatContainer.scrollHeight;
+   scrollTo() {
+    this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
   }
-
-  function init(aUsrId, configuredEvts) {
-    return LazyLoader.dependencyLoad([
-      '/js/helpers/textProcessor.js',
-      '/js/components/chat.js'
-    ]).then(() => {
-      initHTMLElements();
-      usrId = aUsrId;
-      Chat.init();
-      addEventsHandlers(configuredEvts);
-    });
-  }
-
-  const ChatView = {
-    init
-  };
-
-  exports.ChatView = ChatView;
-})(this);
+}
