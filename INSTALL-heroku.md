@@ -23,7 +23,7 @@ You have to set the following environment variables on your Heroku instance:
 - `TB_API_KEY`: Your OpenTok API key.
 - `TB_API_SECRET`: Your OpenTok API secret.
 
-The following environment are optional and required only if you enable Archive Manager.
+The following environment variables are optional and required only if you enable Archive Manager.
 
 - `FB_DATA_URL`: (Optional) A Firebase database URL to store the archive list for each room.
 - `FB_AUTH_SECRET`: (Optional) The authentication secret for the previous URL.
