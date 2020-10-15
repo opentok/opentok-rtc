@@ -65,11 +65,39 @@
 
  import ChatView from './ChatView';
 
-!(exports => {
-  let _hasStatus;
+ export class ChatController {
 
-  const debug =
+  constructor(aUsrId, aGlobalHandlers, listenedEvts) {
+    this.debug =
     new Utils.MultiLevelLogger('chatController.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
+    this.eventsIn = {};
+    this.CONN_TEXT = 'has joined the call';
+    this.DISCONN_TEXT = 'has left the call';
+    this.STATUS_KEY = 'chat';
+    return LazyLoader.dependencyLoad([
+      '/js/chatView.js'
+    ]).then(() => {
+      this.eventsIn = {
+        updatedRemotely: {
+          name: 'roomStatus:updatedRemotely',
+          handler: loadHistoryChat,
+          couldBeChanged: true
+        },
+        outgoingMessage: {
+          name: 'chatView:outgoingMessage',
+          handler: sendMsg
+        }
+      };
+      this._historyChat = [];
+      this._hasStatus = (exports.RoomStatus !== undefined);
+      return new ChatView(aUsrId, listenedEvts)
+        .then(() => {
+          this._hasStatus && RoomStatus.set(STATUS_KEY, this._historyChat);
+          addEventsHandlers(listenedEvts);
+          return addOTHandlers(aGlobalHandlers);
+        });
+    });
+  }
 
   // Contains an object foreach action.
   // This enables to configure the name of the received event.
@@ -83,27 +111,22 @@
   //                    We don't allow to change the event's name originating inside the chat module
   //                    whether it'll be listened for in other module's component
   //                    (e.g. chatView:outgoingMessage)
-  let eventsIn;
 
-  let _historyChat;
 
-  const CONN_TEXT = 'has joined the call';
-  const DISCONN_TEXT = 'has left the call';
-  const STATUS_KEY = 'chat';
 
-  function loadHistoryChat() {
-    if (!_hasStatus) {
+   loadHistoryChat() {
+    if (!this._hasStatus) {
       return;
     }
     const data = RoomStatus.get(STATUS_KEY);
     if (data) {
-      _historyChat = data;
-      for (let i = 0, l = _historyChat.length; i < l; i++) {
-        Utils.sendEvent('chatController:incomingMessage', { data: _historyChat[i] });
+      this._historyChat = data;
+      for (let i = 0, l = this._historyChat.length; i < l; i++) {
+        Utils.sendEvent('chatController:incomingMessage', { data:this. _historyChat[i] });
       }
     } else {
-      _historyChat = [];
-      RoomStatus.set(STATUS_KEY, _historyChat);
+      this._historyChat = [];
+      RoomStatus.set(STATUS_KEY, this._historyChat);
     }
   }
 
@@ -120,7 +143,7 @@
       // type — (String) The type assigned to the signal (if there is one).
       const data = JSON.parse(evt.data);
       data.senderId = evt.from.connectionId;
-      _historyChat.push(data);
+      this._historyChat.push(data);
       Utils.sendEvent('chatController:incomingMessage', { data });
     },
     connectionCreated(evt) {
@@ -149,7 +172,7 @@
   /**
    * Send the event received as a message
    */
-  function sendMsg(evt) {
+   sendMsg(evt) {
     const data = evt.detail;
     return otHelper.sendSignal('chat', data)
       .then(() => {
@@ -162,7 +185,7 @@
   /**
    * It receives an array of objects or an object with the handlers to be set on OT.session
    */
-  function addOTHandlers(aAllHandlers) {
+   addOTHandlers(aAllHandlers) {
     if (!Array.isArray(aAllHandlers)) {
       aAllHandlers = [aAllHandlers];
     }
@@ -174,41 +197,11 @@
    * Set the listener for the application custom events. If receives an array
    * with the new name for the event and it exists here change its name
    */
-  function addEventsHandlers(aEvents) {
+   addEventsHandlers(aEvents) {
     Array.isArray(aEvents) && aEvents.forEach(aEvt => {
-      const event = eventsIn[aEvt.type];
+      const event = this.eventsIn[aEvt.type];
       event && event.couldBeChanged && (event.name = aEvt.name);
     });
-    Utils.addHandlers(eventsIn);
+    Utils.addHandlers(this.eventsIn);
   }
-
-  function init(aUsrId, aGlobalHandlers, listenedEvts) {
-    return LazyLoader.dependencyLoad([
-      '/js/chatView.js'
-    ]).then(() => {
-      eventsIn = {
-        updatedRemotely: {
-          name: 'roomStatus:updatedRemotely',
-          handler: loadHistoryChat,
-          couldBeChanged: true
-        },
-        outgoingMessage: {
-          name: 'chatView:outgoingMessage',
-          handler: sendMsg
-        }
-      };
-      _historyChat = [];
-      _hasStatus = (exports.RoomStatus !== undefined);
-      return new ChatView(aUsrId, listenedEvts)
-        .then(() => {
-          _hasStatus && RoomStatus.set(STATUS_KEY, _historyChat);
-          addEventsHandlers(listenedEvts);
-          return addOTHandlers(aGlobalHandlers);
-        });
-    });
-  }
-
-  exports.ChatController = {
-    init
-  };
-})(this);
+}
