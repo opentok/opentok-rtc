@@ -54,7 +54,7 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
       ping: () => {},
       subscribeArchiveUpdates: () => Promise.resolve(),
       saveConnection: () => Promise.resolve(),
-      deleteConnection: () => Promise.resolve(),
+      deleteConnection: () => Promise.resolve()
     });
   }
 
@@ -87,7 +87,7 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
           uid: aUsername + Math.random(),
           sessionId: aSessionId,
           role: 'user',
-          name: aUsername,
+          name: aUsername
         });
       },
       updateArchive(aSessionId, aArchive) {
@@ -127,14 +127,14 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
       saveConnection(connection, sessionId) {
         return new Promise((resolve) => {
           fbRootRef.child(sessionId + '/connections/' + connection).set(connection)
-          .then(resolve);
+            .then(resolve);
         });
       },
       deleteConnection(connection, sessionId) {
         return new Promise((resolve) => {
           fbRootRef.child(sessionId + '/connections/' + connection).remove(resolve);
         });
-      },
+      }
     };
   }
 
@@ -162,7 +162,7 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
         !hasNewChildren(aConnectionSnapshot)) {
       // Nobody connected... start the destruction timer!
       logger.log('_checkConnectionsNumber: setting the cleanup timer for: ', sessionId, 'to',
-                 aCleanupTime, 'ms');
+        aCleanupTime, 'ms');
       _timers[sessionId] = _timers[sessionId] ||
         setTimeout(() => {
           logger.log('_checkConnectionsNumber: cleaning up: ', sessionId);
@@ -192,9 +192,9 @@ function FirebaseArchives(aRootURL, aSecret, aCleanupTime, aLogLevel) {
     logger.log('(Re)issuing admin token and (re)authenticating session.');
     var serverToken = fbTokenGenerator
       .createToken({ uid: 'SERVER', role: 'server', name: 'OpenTok RTC Server' },
-                  { admin: true });
+        { admin: true });
     return fbRootRef
-        .authWithCustomToken_P(serverToken);
+      .authWithCustomToken_P(serverToken);
   };
 
   // Refresh the authentication every 23 hours (tokens expire by default at 24 hours)
@@ -215,6 +215,6 @@ Object.defineProperty(FirebaseArchives, 'Firebase', {
   },
   get() {
     return Firebase;
-  },
+  }
 });
 module.exports = FirebaseArchives;

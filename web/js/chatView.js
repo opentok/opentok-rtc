@@ -1,25 +1,23 @@
 /* global Chat, TextProcessor, otHelper */
 
-!(function (exports) {
-  'use strict';
+!(exports => {
+  let usrId;
 
-  var usrId;
+  let closeChatBtn;
+  let headerChat;
+  let sendMsgBtn;
+  let chatMsgInput;
+  let chatContainer;
+  let chatContent;
+  let chatForm;
+  const chatParticipants = [];
 
-  var closeChatBtn;
-  var headerChat;
-  var sendMsgBtn;
-  var chatMsgInput;
-  var chatContainer;
-  var chatContent;
-  var chatForm;
-  var chatParticipants = [];
-
-  var _visibilityChanging = Promise.resolve();
+  let _visibilityChanging = Promise.resolve();
 
   function isMobile() { return typeof window.orientation !== 'undefined'; }
 
   function isVisible() {
-    return _visibilityChanging.then(function () {
+    return _visibilityChanging.then(() => {
       return Chat.visible;
     });
   }
@@ -27,63 +25,63 @@
   function setVisibility(isVisible) {
     if (isVisible) {
       addHandlers();
-      return Chat.show().then(function () {
+      return Chat.show().then(() => {
         Utils.sendEvent('chatView:shown');
         scrollTo();
         chatMsgInput.focus();
       });
     }
     removeHandlers();
-    return Chat.hide().then(function () {
+    return Chat.hide().then(() => {
       Utils.sendEvent('chatView:hidden');
     });
   }
 
-  var eventHandlers;
+  let eventHandlers;
 
   function addEventsHandlers(configuredEvts) {
     eventHandlers = {
       incomingMessage: {
         name: 'chatController:incomingMessage',
-        handler: function (evt) {
-          var data = evt.detail.data;
+        handler(evt) {
+          const data = evt.detail.data;
           insertChatLine(data);
-          isVisible().then(function (visible) {
+          isVisible().then(visible => {
             if (!visible) {
-              Utils.sendEvent('chatView:unreadMessage', { data: data });
+              Utils.sendEvent('chatView:unreadMessage', { data });
             }
           });
         }
       },
       presenceEvent: {
         name: 'chatController:presenceEvent',
-        handler: function (evt) {
+        handler(evt) {
           insertChatEvent(evt.detail);
         }
       },
       messageDelivered: {
         name: 'chatController:messageDelivered',
-        handler: function () {
+        handler() {
           chatMsgInput.value = '';
         }
       },
       chatVisibility: {
         name: 'roomView:chatVisibility',
-        handler: function (evt) {
+        handler(evt) {
           _visibilityChanging = setVisibility(evt.detail);
         },
         couldBeChanged: true
       }
     };
-    Array.isArray(configuredEvts) && configuredEvts.forEach(function (aEvt) {
-      var event = eventHandlers[aEvt.type];
+    Array.isArray(configuredEvts) && configuredEvts.forEach(aEvt => {
+      const event = eventHandlers[aEvt.type];
       event && event.couldBeChanged && (event.name = aEvt.name);
     });
     Utils.addHandlers(eventHandlers);
   }
 
   function initHTMLElements() {
-    var chatWndElem = document.getElementById('chat');
+    const chatWndElem = document.getElementById('chat');
     headerChat = chatWndElem.querySelector('header');
     closeChatBtn = chatWndElem.querySelector('#closeChat');
     sendMsgBtn = chatWndElem.querySelector('#sendTxt');
@@ -93,7 +91,7 @@
     chatForm = chatWndElem.querySelector('#chatForm');
   }
 
-  var onSendClicked = function (evt) {
+  const onSendClicked = evt => {
     evt.preventDefault();
     if (!chatMsgInput.value.trim().length) {
       return;
@@ -110,8 +108,8 @@
     });
   };
 
-  var onKeyPress = function (myfield, evt) {
-    var keycode;
+  const onKeyPress = ((myfield, evt) => {
+    let keycode;
     if (window.vent) {
       keycode = window.event.keyCode;
     } else if (evt) {
@@ -127,24 +125,24 @@
       return false;
     }
     return true;
-  }.bind(undefined, chatMsgInput);
+  }).bind(undefined, chatMsgInput);
 
-  var onSubmit = function (evt) {
+  const onSubmit = evt => {
     evt.preventDefault();
     return false;
   };
 
-  var onClose = function (evt) {
+  const onClose = evt => {
     evt.preventDefault();
     evt.stopImmediatePropagation();
     _visibilityChanging = setVisibility(false);
   };
 
-  var onToggle = function () {
+  const onToggle = () => {
     Chat.isCollapsed() ? Chat.expand() : Chat.collapse();
   };
 
-  var onDrop = function (evt) {
+  const onDrop = evt => {
     evt.preventDefault();
     evt.stopPropagation();
     return false;
@@ -170,19 +168,19 @@
   }
 
   function insertChatEvent(data) {
-    var time = (data.time || Utils.getCurrentTime()).toLowerCase();
-    var item = HTMLElems.createElementAt(chatContent, 'li');
+    const time = (data.time || Utils.getCurrentTime()).toLowerCase();
+    const item = HTMLElems.createElementAt(chatContent, 'li');
     item.classList.add('event');
-    var name = data.sender || data.userName;
-    var text = time + ' - ' + name + ' ' + data.text;
+    const name = data.sender || data.userName;
+    const text = `${time} - ${name} ${data.text}`;
     insertText(item, text);
     scrollTo();
   }
 
   function insertText(elemRoot, text) {
-    var txtElems = TextProcessor.parse(text);
-    var targetElem = HTMLElems.createElementAt(elemRoot, 'p');
-    txtElems.forEach(function (node) {
+    const txtElems = TextProcessor.parse(text);
+    const targetElem = HTMLElems.createElementAt(elemRoot, 'p');
+    txtElems.forEach(node => {
       switch (node.type) {
         case TextProcessor.TYPE.URL:
           HTMLElems.createElementAt(targetElem, 'a',
@@ -195,24 +193,24 @@
   }
 
   function insertChatLine(data) {
-    var item = HTMLElems.createElementAt(chatContent, 'li');
-    var info = HTMLElems.createElementAt(item, 'p');
+    const item = HTMLElems.createElementAt(chatContent, 'li');
+    const info = HTMLElems.createElementAt(item, 'p');
     if (otHelper.isMyself({ connectionId: data.senderId })) {
       item.classList.add('yourself');
     } else {
-      var chatIndex = chatParticipants.indexOf(data.senderId);
+      let chatIndex = chatParticipants.indexOf(data.senderId);
       if (chatIndex === -1) {
         chatIndex = chatParticipants.push(data.senderId) - 1;
       }
       // We only have 10 colors so just get last digit.
-      var participantNumber = chatIndex.toString().slice(-1);
+      const participantNumber = chatIndex.toString().slice(-1);
       info.data('participant-number', participantNumber);
     }
 
-    var time = data.time.toLowerCase();
+    const time = data.time.toLowerCase();
     HTMLElems.createElementAt(info, 'span', null, time).classList.add('time');
     HTMLElems.createElementAt(info, 'span', null, data.sender || data.userName)
-              .classList.add('sender');
+      .classList.add('sender');
 
     insertText(info, data.text);
 
@@ -227,7 +225,7 @@
     return LazyLoader.dependencyLoad([
       '/js/helpers/textProcessor.js',
       '/js/components/chat.js'
-    ]).then(function () {
+    ]).then(() => {
       initHTMLElements();
       usrId = aUsrId;
       Chat.init();
@@ -235,9 +233,9 @@
     });
   }
 
-  var ChatView = {
-    init: init
+  const ChatView = {
+    init
   };
 
   exports.ChatView = ChatView;
-}(this));
+})(this);

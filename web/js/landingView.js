@@ -1,9 +1,7 @@
-/* global EJSTemplate, Modal, showTos, showUnavailable, roomName, minMeetingNameLength, Utils */
+/* global EJSTemplate, Modal, showTos, showUnavailable, minMeetingNameLength, Utils */
 
-!(function (global) {
-  'use strict';
-
-  var room,
+!(global => {
+  let room,
     user,
     enterButton,
     form,
@@ -11,27 +9,27 @@
     userLabelElem,
     errorMessage;
 
-  var loadTosTemplate = function () {
-    return new Promise(function (resolve) {
-      var tosTemplate = new EJSTemplate({ url: '/templates/tos.ejs' });
-      tosTemplate.render().then(function (aHTML) {
+  const loadTosTemplate = () => {
+    return new Promise(resolve => {
+      const tosTemplate = new EJSTemplate({ url: '/templates/tos.ejs' });
+      tosTemplate.render().then(aHTML => {
         document.body.insertAdjacentHTML('afterbegin', aHTML);
         resolve();
       });
     });
   };
 
-  var loadUnavailableTemplate = function () {
-    return new Promise(function (resolve) {
-      var tosTemplate = new EJSTemplate({ url: '/templates/unavailable.ejs' });
-      tosTemplate.render().then(function (aHTML) {
+  const loadUnavailableTemplate = () => {
+    return new Promise(resolve => {
+      const tosTemplate = new EJSTemplate({ url: '/templates/unavailable.ejs' });
+      tosTemplate.render().then(aHTML => {
         document.body.insertAdjacentHTML('afterbegin', aHTML);
         resolve();
       });
     });
   };
 
-  var performInit = function () {
+  const performInit = () => {
     enterButton = document.getElementById('enter');
     user = document.getElementById('user');
     form = document.querySelector('form');
@@ -39,8 +37,8 @@
     userLabelElem = document.getElementById('user-label');
     errorMessage = document.querySelector('.error-room');
     resetForm();
-    var storedUsername = window.localStorage.getItem('username');
-    if (storedUsername) {
+    const storedUsername = window.localStorage.getItem('username');
+    if (storedUsername && user) {
       user.value = storedUsername;
       userLabelElem.classList.add('visited');
     }
@@ -49,7 +47,7 @@
     }
   };
 
-  var init = function () {
+  const init = () => {
     if (showUnavailable) {
       loadUnavailableTemplate().then(performInit);
     } else if (showTos) {
@@ -59,13 +57,13 @@
     }
   };
 
-  var isValid = function () {
-    var formValid = true;
+  const isValid = () => {
+    let formValid = true;
 
     if (room.value.length < minMeetingNameLength) {
-      var messageText = (room.value.length === 0) ?
+      const messageText = (room.value.length === 0) ?
         'Please enter a meeting name' :
-        'The meeting name must be at least ' + minMeetingNameLength + ' characters';
+        `The meeting name must be at least ${minMeetingNameLength} characters`;
       errorMessage.querySelector('span').innerHTML = messageText;
       errorMessage.classList.add('show');
       formValid = false;
@@ -74,9 +72,9 @@
     return formValid;
   };
 
-  var resetForm = function () {
-    var fields = document.querySelectorAll('form input');
-    Array.prototype.map.call(fields, function (field) {
+  var resetForm = () => {
+    const fields = document.querySelectorAll('form input');
+    Array.prototype.map.call(fields, field => {
       field.value = '';
       field.checked = false;
       if (user) {
@@ -88,7 +86,7 @@
     });
   };
 
-  var onKeyup = function () {
+  var onKeyup = () => {
     userLabelElem.classList.add('visited');
     user.removeEventListener('keyup', onFocus);
   };
@@ -109,18 +107,18 @@
     }
   };
 
-  var showUnavailableMessage = function () {
-    var selector = '.tc-modal.unavailable';
+  const showUnavailableMessage = () => {
+    const selector = '.tc-modal.unavailable';
     return Modal.show(selector);
   };
 
-  var showContract = function () {
-    var selector = '.tc-modal.contract';
-    var acceptElement = document.querySelector(selector + ' .accept');
+  const showContract = () => {
+    const selector = '.tc-modal.contract';
+    const acceptElement = document.querySelector(`${selector} .accept`);
 
     return Modal.show(selector)
-      .then(function () {
-        return new Promise(function (resolve) {
+      .then(() => {
+        return new Promise(resolve => {
           acceptElement.addEventListener('click', function onClicked(evt) {
             acceptElement.removeEventListener('click', onClicked);
             resolve(true);
@@ -129,7 +127,7 @@
           });
 
           Utils.addEventsHandlers('modal:', {
-            close: function () {
+            close() {
               resolve();
             }
           });
@@ -137,26 +135,26 @@
       });
   };
 
-  var navigateToRoom = function () {
-    var url = window.location.origin
+  const navigateToRoom = () => {
+    let url = window.location.origin
       .concat('/room/', encodeURIComponent(Utils.htmlEscape(room.value)));
-    var userName = encodeURIComponent(Utils.htmlEscape(user.value.trim()));
+    const userName = encodeURIComponent(Utils.htmlEscape(user.value.trim()));
     if (userName) {
       url = url.concat('?userName=', userName);
     }
     window.location.href = url;
   };
 
-  var triggerEnterClick = function(event) {
-    var code = event.keyCode || event.which;
+  const triggerEnterClick = event => {
+    const code = event.keyCode || event.which;
 
     if (code === 13) {
       event.preventDefault();
       enterButton.click();
     }
-  }
+  };
 
-  var addHandlers = function () {
+  const addHandlers = () => {
     enterButton.addEventListener('click', function onEnterClicked(event) {
       event.preventDefault();
       event.stopImmediatePropagation();
@@ -174,7 +172,7 @@
       if (showUnavailable) {
         showUnavailableMessage();
       } else if (showTos) {
-        showContract().then(function (accepted) {
+        showContract().then(accepted => {
           if (accepted) {
             sessionStorage.setItem('tosAccepted', true);
             navigateToRoom();
@@ -191,12 +189,12 @@
       errorMessage.classList.remove('show');
     });
 
-    room.addEventListener("keydown", triggerEnterClick, false);
+    room.addEventListener('keydown', triggerEnterClick, false);
 
-    user.addEventListener("keydown", triggerEnterClick, false);
+    user.addEventListener('keydown', triggerEnterClick, false);
   };
 
   global.LandingView = {
-    init: init
+    init
   };
-}(this));
+})(this);

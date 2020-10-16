@@ -27,19 +27,19 @@ class EnabledGoogleAuthStrategy {
   verifyIdToken(token) {
     return new Promise((resolve, reject) => {
       this.verifyIdTokenPromise(token, this.googleId)
-      .then((login) => {
-        const payload = login.getPayload();
-        if (this.hostedDomain && (this.hostedDomain !== payload.hd)) {
-          reject(new Error('Authentication Domain Does Not Match'));
-        }
-        resolve();
-      })
-      .catch(err => reject(err));
+        .then((login) => {
+          const payload = login.getPayload();
+          if (this.hostedDomain && (this.hostedDomain !== payload.hd)) {
+            reject(new Error('Authentication Domain Does Not Match'));
+          }
+          resolve();
+        })
+        .catch(err => reject(err));
     });
   }
 }
 
 module.exports = {
   DisabledGoogleAuthStategy,
-  EnabledGoogleAuthStrategy,
+  EnabledGoogleAuthStrategy
 };
