@@ -51,3 +51,4 @@ config/
 
 # test error images
 errorShots
+!/web/js/min/
