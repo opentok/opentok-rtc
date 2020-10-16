@@ -5,7 +5,6 @@ module.exports = function (grunt) {
     'grunt-autoprefixer',
     'grunt-contrib-clean',
     'grunt-contrib-less',
-    'grunt-gulp',
     'grunt-terser',
     'grunt-contrib-watch',
     'grunt-mocha-test', // Server side test runner
