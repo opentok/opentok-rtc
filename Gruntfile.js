@@ -20,10 +20,10 @@ module.exports = function (grunt) {
 
   grunt.initConfig({
     terser: {
-     options: {
-     compress: true,
-     safari10: true
-     },
+      options: {
+        compress: true,
+        safari10: true
+      },
       main: {
         files: {
           './web/js/min/chatView.min.js': ['./web/js/chatView.js'],
