@@ -1,17 +1,15 @@
-!(function (exports) {
-  'use strict';
+!(exports => {
+  const isTouch = 'ontouchstart' in exports;
+  const touchstart = isTouch ? 'touchstart' : 'mousedown';
+  const touchmove = isTouch ? 'touchmove' : 'mousemove';
+  const touchend = isTouch ? 'touchend' : 'mouseup';
 
-  var isTouch = 'ontouchstart' in exports;
-  var touchstart = isTouch ? 'touchstart' : 'mousedown';
-  var touchmove = isTouch ? 'touchmove' : 'mousemove';
-  var touchend = isTouch ? 'touchend' : 'mouseup';
-
-  var getTouch = (function getTouchWrapper() {
-    return isTouch ? function (e) { return e.touches[0]; } :
-                     function (e) { return e; };
+  const getTouch = (function getTouchWrapper() {
+    return isTouch ? e => { return e.touches[0]; } :
+      e => { return e; };
   }());
 
-  var DragDetector = function (element) {
+  const DragDetector = function (element) {
     this.element = element;
     this.timer = null;
     element.addEventListener(touchstart, this);
@@ -21,27 +19,27 @@
   DragDetector.CLICK_THRESHOLD = 10;
 
   DragDetector.prototype = {
-    attachHandlers: function () {
+    attachHandlers() {
       [touchmove, touchend, 'contextmenu'].forEach(function (eventName) {
         this.element.addEventListener(eventName, this);
       }, this);
     },
 
-    removeHandlers: function () {
+    removeHandlers() {
       [touchmove, touchend, 'contextmenu'].forEach(function (eventName) {
         this.element.removeEventListener(eventName, this);
       }, this);
     },
 
-    startTimer: function () {
+    startTimer() {
       this.attachHandlers();
       this.clearTimer();
-      this.timer = setTimeout(function () {
+      this.timer = setTimeout(() => {
         this.sendEvent();
-      }.bind(this), DragDetector.DRAG_TIMEOUT);
+      }, DragDetector.DRAG_TIMEOUT);
     },
 
-    clearTimer: function () {
+    clearTimer() {
       if (this.timer !== null) {
         clearTimeout(this.timer);
         this.removeHandlers();
@@ -49,7 +47,7 @@
       }
     },
 
-    sendEvent: function () {
+    sendEvent() {
       Utils.sendEvent('DragDetector:dragstart', {
         pageX: this.startX,
         pageY: this.startY
@@ -57,7 +55,7 @@
       this.clearTimer();
     },
 
-    handleEvent: function (evt) {
+    handleEvent(evt) {
       switch (evt.type) {
         case touchstart:
           var touch = getTouch(evt);
@@ -84,7 +82,7 @@
       }
     },
 
-    destroy: function () {
+    destroy() {
       this.clearTimer();
       this.element.removeEventListener(touchstart, this);
       this.element = null;
@@ -93,7 +91,7 @@
     }
   };
 
-  var DraggableElement = function (element) {
+  const DraggableElement = function (element) {
     this.element = element;
     this.elementStyle = element.style;
 
@@ -106,52 +104,54 @@
   };
 
   DraggableElement.prototype = {
-    attachHandlers: function () {
+    attachHandlers() {
       [touchmove, touchend].forEach(function (eventName) {
         exports.addEventListener(eventName, this);
       }, this);
     },
 
-    removeHandlers: function () {
+    removeHandlers() {
       [touchmove, touchend].forEach(function (eventName) {
         exports.removeEventListener(eventName, this);
       }, this);
     },
 
-    handleEvent: function (evt) {
+    handleEvent(evt) {
       switch (evt.type) {
-        case 'DragDetector:dragstart':
+        case 'DragDetector:dragstart': {
           this.startX = evt.detail.pageX - this.translatedX;
           this.startY = evt.detail.pageY - this.translatedY;
           this.attachHandlers();
           this.element.classList.add('dragging');
-
           break;
-
-        case touchmove:
-          var touch = getTouch(evt);
+        }
+        case touchmove: {
+          const touch = getTouch(evt);
           this.translatedX = touch.pageX - this.startX;
           this.element.data('translatedX', this.translatedX);
           this.translatedY = touch.pageY - this.startY;
           this.element.data('translatedY', this.translatedY);
           this.translate();
-
           break;
-
+        }
         case touchend:
+        {
           this.removeHandlers();
           this.element.classList.remove('dragging');
-
           break;
+        }
+        default: {
+          console.warn('draggable: Unknown Event recieved');
+        }
       }
     },
 
-    translate: function () {
+    translate() {
       Utils.setTransform(this.elementStyle,
-                         'translate('.concat(this.translatedX, 'px,', this.translatedY, 'px)'));
+        'translate('.concat(this.translatedX, 'px,', this.translatedY, 'px)'));
     },
 
-    destroy: function () {
+    destroy() {
       this.element.removeEventListener('DragDetector:dragstart', this);
       this.detector.destroy();
       Utils.setTransform(this.elementStyle, '');
@@ -162,15 +162,15 @@
     }
   };
 
-  var elements = {};
+  const elements = {};
 
-  var Draggable = {
-    on: function (element) {
+  const Draggable = {
+    on(element) {
       element && !elements[element] && (elements[element] = new DraggableElement(element));
     },
 
-    off: function (element) {
-      var draggableElement = elements[element];
+    off(element) {
+      const draggableElement = elements[element];
       if (draggableElement) {
         draggableElement.destroy();
         elements[element] = null;
@@ -183,4 +183,4 @@
   };
 
   exports.Draggable = Draggable;
-}(this));
+})(this);

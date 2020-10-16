@@ -1,11 +1,9 @@
 /* global RTCApp */
 
-!(function (exports) {
-  'use strict';
+!(exports => {
+  let debug;
 
-  var debug;
-
-  var _views = {
+  const _views = {
     '/room/': {
       mainView: 'RoomController',
       dependencies: [
@@ -21,14 +19,14 @@
   };
 
   function getView() {
-    var pathViews = Object.keys(_views);
-    var numViews = pathViews.length;
-    var path = exports.document.location.pathname;
-    for (var i = 0; i < numViews; i++) {
+    const pathViews = Object.keys(_views);
+    const numViews = pathViews.length;
+    const path = exports.document.location.pathname;
+    for (let i = 0; i < numViews; i++) {
       if (path.startsWith(pathViews[i]) &&
         _views[pathViews[i]]
           .dependencies
-          .every(function (dependency) {
+          .every(dependency => {
             return !!exports[dependency];
           })) {
         return exports[_views[pathViews[i]].mainView];
@@ -39,18 +37,18 @@
 
   function init() {
     debug = new Utils.MultiLevelLogger('rtcApp.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
-    var view = getView();
+    const view = getView();
     if (view) {
       view.init();
     } else {
-      debug.error('Couldn\'t find a view for ' + exports.document.location.pathname);
+      debug.error(`Couldn't find a view for ${exports.document.location.pathname}`);
     }
   }
 
   exports.RTCApp = {
-    init: init
+    init
   };
-}(this));
+})(this);
 
 
 this.addEventListener('load', function startApp() {
@@ -70,15 +68,15 @@ this.addEventListener('load', function startApp() {
       '/js/helpers/requests.js',
       '/js/roomController.js',
       '/js/landingController.js'
-    ]).then(function () {
+    ]).then(() => {
       RTCApp.init();
     });
   }
 
-// Allow only https on production
+  // Allow only https on production
   if (
-    document.location.protocol === 'http:' && 
-    (document.location.hostname.includes('.tokbox.com') || 
+    document.location.protocol === 'http:' &&
+    (document.location.hostname.includes('.tokbox.com') ||
     document.location.hostname.includes('.vonage.com'))
   ) {
     document.location.href = document.location.href.replace(new RegExp('^http:'), 'https:');

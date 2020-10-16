@@ -1,15 +1,10 @@
-﻿// this background script is used to invoke desktopCapture API
+// this background script is used to invoke desktopCapture API
 // to capture screen-MediaStream.
 
 var session = ['screen', 'window'];
 
+// eslint-disable-next-line no-undef
 chrome.runtime.onConnect.addListener(function (port) {
-
-  port.onMessage.addListener(function(message) {
-    if(message && message.method == 'getSourceId') {
-      getSourceID(message.payload.requestId);
-    }
-  });
 
   function getSourceID(requestId) {
     // as related in https://code.google.com/p/chromium/issues/detail?id=413602
@@ -21,17 +16,24 @@ chrome.runtime.onConnect.addListener(function (port) {
     // requires Chrome 40+
     var tab = port.sender.tab;
     tab.url = port.sender.url;
-    chrome.desktopCapture.chooseDesktopMedia(session, tab, function(sourceId) {
+    // eslint-disable-next-line no-undef
+    chrome.desktopCapture.chooseDesktopMedia(session, tab, function (sourceId) {
       console.log('sourceId', sourceId);
       // "sourceId" will be empty if permission is denied
-      if(!sourceId || !sourceId.length) {
-        return port.postMessage({ method: 'permissionDenied', payload: { requestId: requestId }});
+      if (!sourceId || !sourceId.length) {
+        return port.postMessage({ method: 'permissionDenied', payload: { requestId: requestId } });
       }
       // "ok" button is clicked; share "sourceId" with the
       // content-script which will forward it to the webpage
       return port.postMessage({ method: 'sourceId',
-                                payload: { requestId: requestId, sourceId: sourceId } });
+        payload: { requestId: requestId, sourceId: sourceId } });
     });
   }
+
+  port.onMessage.addListener(function (message) {
+    if (message && message.method === 'getSourceId') {
+      getSourceID(message.payload.requestId);
+    }
+  });
 
 });

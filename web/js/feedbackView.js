@@ -1,16 +1,9 @@
 /* global Modal */
 
-!(function (global) {
-  'use strict';
+!(global => {
+  let showFeedback, sendButton, audioScoreSelect, videoScoreSelect, otherInfo, reportIssueScore;
 
-  var showFeedback,
-    sendButton,
-    audioScoreSelect,
-    videoScoreSelect,
-    otherInfo,
-    reportIssueScore;
-
-  var feedbackReportSelector = '.feedback-report';
+  const feedbackReportSelector = '.feedback-report';
 
   function showForm() {
     resetForm();
@@ -21,7 +14,7 @@
     return Modal.hide(feedbackReportSelector);
   }
 
-  var init = function (aReportIssueLevel) {
+  const init = aReportIssueLevel => {
     reportIssueScore = aReportIssueLevel;
     showFeedback = document.querySelector('#showFeedback');
     sendButton = document.querySelector('.feedback-report .send-feedback');
@@ -31,18 +24,18 @@
     addHandlers();
   };
 
-  var resetForm = function () {
+  var resetForm = () => {
     otherInfo.value = '';
   };
 
-  var addHandlers = function () {
-    sendButton.addEventListener('click', function (event) {
+  var addHandlers = () => {
+    sendButton.addEventListener('click', event => {
       event.preventDefault();
-      var audioScore = audioScoreSelect.options[audioScoreSelect.selectedIndex].value;
-      var videoScore = videoScoreSelect.options[videoScoreSelect.selectedIndex].value;
+      const audioScore = audioScoreSelect.options[audioScoreSelect.selectedIndex].value;
+      const videoScore = videoScoreSelect.options[videoScoreSelect.selectedIndex].value;
       Utils.sendEvent('feedbackView:sendFeedback', {
-        audioScore: audioScore,
-        videoScore: videoScore,
+        audioScore,
+        videoScore,
         description: otherInfo.value
       });
 
@@ -60,6 +53,6 @@
   };
 
   global.FeedbackView = {
-    init: init
+    init
   };
-}(this));
+})(this);
