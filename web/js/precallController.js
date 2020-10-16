@@ -232,7 +232,7 @@
       LazyLoader.dependencyLoad([
         '/js/helpers/ejsTemplate.js',
         '/js/vendor/ejs_production.js',
-        '/js/precallView.js'
+        '/js/min/precallView.min.js'
       ]).then(() => {
         Utils.addEventsHandlers('', eventHandlers);
         return PrecallView.init();

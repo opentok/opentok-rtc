@@ -182,7 +182,7 @@
 
   function init(aUsrId, aGlobalHandlers, listenedEvts) {
     return LazyLoader.dependencyLoad([
-      '/js/chatView.js'
+      '/js/min/chatView.min.js'
     ]).then(() => {
       eventsIn = {
         updatedRemotely: {

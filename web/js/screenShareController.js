@@ -86,7 +86,7 @@
 
   function init(aUserName, aChromeExtId, aOTHelper, aEnableAnnotations) {
     return LazyLoader.dependencyLoad([
-      '/js/screenShareView.js'
+      '/js/min/screenShareView.min.js'
     ]).then(() => {
       enableAnnotations = aEnableAnnotations;
       otHelper = aOTHelper;

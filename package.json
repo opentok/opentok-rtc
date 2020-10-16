@@ -74,6 +74,7 @@
     "eslint-plugin-react": "^7.0.1",
     "firefox-profile": "^1.0.3",
     "geckodriver": "^1.19.1",
+    "grunt-terser": "^1.0.0",
     "istanbul": "^0.4.5",
     "karma": "^1.7.1",
     "karma-chrome-launcher": "^0.2.3",
@@ -89,6 +90,7 @@
     "wdio-firefox-profile-service": "^0.1.0",
     "wdio-mocha-framework": "^0.5.11",
     "wdio-sauce-service": "^0.4.0",
-    "wdio-selenium-standalone-service": "0.0.9"
+    "wdio-selenium-standalone-service": "0.0.9",
+    "workbox-build": "^5.1.4"
   }
 }

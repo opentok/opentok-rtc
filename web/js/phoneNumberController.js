@@ -2,7 +2,7 @@
 !(global => {
   const init = () => {
     return LazyLoader.load(
-      '/js/phoneNumberView.js'
+      '/js/min/phoneNumberView.min.js'
     ).then(() => {
       PhoneNumberView.init();
     });

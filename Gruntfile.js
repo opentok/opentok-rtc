@@ -1,11 +1,12 @@
 'use strict';
-
 module.exports = function (grunt) {
   // To-Do check what we need and add/remove as needed...
   [
     'grunt-autoprefixer',
     'grunt-contrib-clean',
     'grunt-contrib-less',
+    'grunt-gulp',
+    'grunt-terser',
     'grunt-contrib-watch',
     'grunt-mocha-test', // Server side test runner
     'grunt-bower-task',
@@ -19,6 +20,30 @@ module.exports = function (grunt) {
   var TEST_BASE_DIR = 'test/';
 
   grunt.initConfig({
+    terser: {
+     options: {
+     compress: true,
+     safari10: true
+     },
+      main: {
+        files: {
+          './web/js/min/chatView.min.js': ['./web/js/chatView.js'],
+          './web/js/min/chatController.min.js': ['./web/js/chatController.js'],
+          './web/js/min/feedbackView.min.js': ['./web/js/feedbackView.js'],
+          './web/js/min/feedbackController.min.js': ['./web/js/feedbackController.js'],
+          './web/js/min/precallView.min.js': ['./web/js/precallView.js'],
+          './web/js/min/precallController.min.js': ['./web/js/precallController.js'],
+          './web/js/min/phoneNumberView.min.js': ['./web/js/phoneNumberView.js'],
+          './web/js/min/phoneNumberController.min.js': ['./web/js/phoneNumberController.js'],
+          './web/js/min/recordingsView.min.js': ['./web/js/recordingsView.js'],
+          './web/js/min/recordingsController.min.js': ['./web/js/recordingsController.js'],
+          './web/js/min/screenShareView.min.js': ['./web/js/screenShareView.js'],
+          './web/js/min/screenShareController.min.js': ['./web/js/screenShareController.js'],
+          './web/js/min/roomController.min.js': ['./web/js/roomController.js']
+
+        }
+      }
+    },
     mochaTest: {
       unit: {
         options: {
@@ -146,7 +171,8 @@ module.exports = function (grunt) {
 
   grunt.registerTask('clientBuild', 'Build css files', [
     'less',
-    'autoprefixer'
+    'autoprefixer',
+    'terser'
   ]);
 
   grunt.registerTask('clientDev', 'Watch for changes on less files', [

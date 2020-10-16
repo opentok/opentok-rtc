@@ -41,7 +41,7 @@
 
   const init = (aOTHelper, aReportIssueLevel) => {
     return LazyLoader.load([
-      '/js/feedbackView.js'
+      '/js/min/feedbackView.min.js'
     ]).then(() => {
       otHelper = aOTHelper;
       Utils.addEventsHandlers('feedbackView:', eventHandlers, global);
