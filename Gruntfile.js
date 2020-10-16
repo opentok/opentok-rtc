@@ -22,7 +22,9 @@ module.exports = function (grunt) {
     terser: {
       options: {
         compress: true,
-        safari10: true
+        safari10: true,
+        ecma: 2016,
+        sourceMap: true
       },
       main: {
         files: {
