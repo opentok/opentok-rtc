@@ -160,20 +160,20 @@ module.exports = function (grunt) {
         }
       }
     },
-      critical: {
-          test: {
-              options: {
-                  base: './',
-                  css: ['web/css/landing.opentok.css'],
-                    target: {
-                      uncritical: 'web/css/landing-uncritical.opentok.css',
-                    },
-                      minify: true
-              },
-              src: 'views/index.ejs',
-              dest: 'web/css/landing-critical.opentok.css'
-          }
-      },
+    critical: {
+      test: {
+        options: {
+          base: './',
+          css: ['web/css/landing.opentok.css'],
+          target: {
+            uncritical: 'web/css/landing-uncritical.opentok.css',
+          },
+          minify: true
+        },
+        src: 'views/index.ejs',
+        dest: 'web/css/landing-critical.opentok.css'
+      }
+    },
     autoprefixer: {
       options: {
         browsers: ['last 5 versions']
