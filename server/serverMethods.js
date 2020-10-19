@@ -82,11 +82,6 @@ function ServerMethods(aLogLevel, aModules) {
 
   var roomBlackList;
 
-  if (aModules.Firebase) {
-    FirebaseArchives.Firebase = aModules.Firebase;
-  }
-
-
   var logger = new Logger('ServerMethods', aLogLevel);
   var ServerPersistence = SwaggerBP.ServerPersistence;
   var connectionString =
@@ -669,8 +664,6 @@ function ServerMethods(aLogLevel, aModules) {
   //   apiKey: string
   //   token: string
   //   username: string
-  //   firebaseURL: string
-  //   firebaseToken: string
   //   chromeExtId: string value || 'undefined'
   // }
   var _numAnonymousUsers = 1;

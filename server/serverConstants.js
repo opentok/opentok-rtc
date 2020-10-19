@@ -35,10 +35,6 @@ E.OPENTOK_PRECALL_API_SECRET = { envVar: 'TB_PRECALL_API_SECRET', jsonPath: 'pre
 
 E.OPENTOK_JS_URL = { envVar: 'TB_JS_URL', jsonPath: 'OpenTok.jsUrl', required: false, defaultValue: 'https://static.opentok.com/v2/js/opentok.min.js' };
 
-E.FIREBASE_DATA_URL = { envVar: 'FB_DATA_URL', jsonPath: 'Firebase.dataUrl' };
-
-E.FIREBASE_AUTH_SECRET = { envVar: 'FB_AUTH_SECRET', jsonPath: 'Firebase.authSecret' };
-
 // Sessions should not live forever. So we'll store the last time a session was used and if when
 // we fetch it from Redis we determine it's older than this max age (in days). This is the key
 // where that value (in days) should be stored. By default, sessions live two days.

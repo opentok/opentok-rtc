@@ -18,11 +18,8 @@ describe('OpenTokRTC server', () => {
     MockOpentok = require('../mocks/mock_opentok.js');
     process.env.TEMPLATING_SECRET = '123456';
 
-    // Note that we're not actually testing anything that uses Firebase here. They'll
-    // have their own unit tests. We're only avoiding using it at all.
     var mocks = {
       Opentok: MockOpentok,
-      Firebase: require('../mocks/mock_firebase'),
     };
 
     // Note that this actually executes on the level where the Grunt file is

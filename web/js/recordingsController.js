@@ -1,4 +1,4 @@
-/* global Modal, FirebaseModel, RecordingsView */
+/* global Modal, ArchivesEventsListener, RecordingsView */
 
 !(function (exports) {
   'use strict';
