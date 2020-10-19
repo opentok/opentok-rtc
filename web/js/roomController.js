@@ -955,10 +955,6 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
               publisherOptions.publishAudio = false;
             }
             publisherOptions.name = userName;
-            // Remember previous device selection in IE:
-            if (Utils.isIE()) {
-              publisherOptions.usePreviousDeviceSelection = true;
-            }
             return otHelper.publish(publisherElement, publisherOptions, {}).then(() => {
               setPublisherReady();
               RoomView.showPublisherButtons(publisherOptions);

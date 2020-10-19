@@ -196,7 +196,6 @@ function ServerMethods(aLogLevel, aModules) {
       var meetingsRatePerMinute = config.get(C.MEETINGS_RATE_PER_MINUTE);
       var minMeetingNameLength = config.get(C.MIN_MEETING_NAME_LENGTH);
       var publisherResolution = config.get(C.PUBLISHER_RESOLUTION);
-      var supportIE = config.get(C.SUPPORT_IE);
 
       var firebaseConfigured =
               config.get(C.FIREBASE_DATA_URL) && config.get(C.FIREBASE_AUTH_SECRET);
@@ -278,7 +277,6 @@ function ServerMethods(aLogLevel, aModules) {
           sipUsername,
           sipPassword,
           sipRequireGoogleAuth,
-          supportIE,
           meetingsRatePerMinute,
           publisherResolution,
           googleId,
@@ -439,7 +437,6 @@ function ServerMethods(aLogLevel, aModules) {
         showTos: aReq.tbConfig.showTos,
         showUnavailable: !meetingAllowed,
         useGoogleFonts: aReq.tbConfig.useGoogleFonts,
-        supportIE: aReq.tbConfig.supportIE,
         adobeTrackingUrl: aReq.tbConfig.adobeTrackingUrl,
         ATPrimaryCategory: aReq.tbConfig.ATPrimaryCategory,
         ATSiteIdentifier: aReq.tbConfig.ATSiteIdentifier,
@@ -524,7 +521,6 @@ function ServerMethods(aLogLevel, aModules) {
             opentokJsUrl: tbConfig.opentokJsUrl,
             authDomain: tbConfig.googleHostedDomain,
             useGoogleFonts: tbConfig.useGoogleFonts,
-            supportIE: tbConfig.supportIE,
             jqueryUrl: tbConfig.jqueryUrl,
             adobeTrackingUrl: aReq.tbConfig.adobeTrackingUrl,
             ATPrimaryCategory: aReq.tbConfig.ATPrimaryCategory,

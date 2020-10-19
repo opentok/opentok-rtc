@@ -170,11 +170,6 @@
     return label.join('');
   }
 
-  function isIE() {
-    const userAgent = 'userAgent' in navigator && (navigator.userAgent.toLowerCase() || '');
-    return /msie/.test(userAgent) || userAgent.indexOf('trident/') !== -1;
-  }
-
   function isSafariMac() {
     const checkObject = p => { return p.toString() === '[object SafariRemoteNotification]'; };
     return /constructor/i.test(window.HTMLElement) ||
@@ -234,7 +229,6 @@
     },
     setDisabled,
     getLabelText,
-    isIE,
     htmlEscape
   };
 

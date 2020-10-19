@@ -117,24 +117,6 @@
     });
   }
 
-  const flush = (function flush() {
-    if (Utils.isIE()) {
-      // While many attributes, when changed, cause a reflow this doesn't appear to be the case with
-      // data-* attributes in Internet Explorer. Changing these will not immediately result in the
-      // element being redrawn - we have to trigger out reflow manually.
-      return elements => {
-        elements = Array.isArray(elements) ? elements : [elements];
-        elements.forEach(element => {
-          element = typeof element === 'string' ? document.querySelector(element) : element;
-          element && element.classList.toggle('flush-this-element-please');
-        });
-      };
-    }
-    return () => {
-
-    };
-  }());
-
   exports.HTMLElems = {
     addText,
     replaceText,
@@ -145,7 +127,6 @@
     },
     setEnabled,
     getAncestorByTagName,
-    addHandlerArchive,
-    flush
+    addHandlerArchive
   };
 })(this);

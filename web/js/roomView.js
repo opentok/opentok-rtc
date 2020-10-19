@@ -121,7 +121,6 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
       messageButtonElem.classList.remove('activated');
     }
     Utils.sendEvent('roomView:chatVisibility', visible);
-    HTMLElems.flush('#toggleChat');
   }
 
   const chatViews = {
@@ -144,7 +143,6 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
       document.body.data('chatStatus', 'hidden');
       messageButtonElem.classList.remove('activated');
       setUnreadMessages(0);
-      HTMLElems.flush('#toggleChat');
     }
   };
 
@@ -672,7 +670,6 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
       }
 
       document.body.data('archiveStatus', e.detail.status);
-      HTMLElems.flush(['#toggleArchiving', '[data-stream-type=publisher] [data-icon="record"]']);
     });
 
     Utils.addEventsHandlers('screenShareController:', screenShareCtrEvents, exports);
@@ -685,7 +682,6 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
   function toggleScreenSharing(evt) {
     const isSharing = evt.detail.isSharing;
     document.body.data('desktopStatus', isSharing ? 'sharing' : 'notSharing');
-    HTMLElems.flush('#toggleSharing');
   }
 
   const getURLtoShare = () => {

@@ -74,7 +74,7 @@
       function loadModalText() {
         PrecallView.setFocus(username);
 
-        if (Utils.isIE() || Utils.isSafariIOS()) {
+        if (Utils.isSafariIOS()) {
           if (window.enablePrecallTest) PrecallView.hideConnectivityTest();
         }
 
@@ -94,9 +94,7 @@
         function hidePrecall() {
           PrecallView.hide();
           publisher && publisher.destroy();
-          if (!Utils.isIE()) {
-            otNetworkTest && otNetworkTest.stopTest();
-          }
+          otNetworkTest && otNetworkTest.stopTest();
           const username = document.querySelector(`${selector} input`).value.trim();
           window.localStorage.setItem('username', username);
           publisherOptions.name = username;
@@ -177,10 +175,10 @@
                     // eslint-disable-next-line max-len
                     PrecallView.populateAudioDevicesDropdown(audioDevs, publisherOptions.audioSource);
                   });
-                  // You cannot use the network test in IE or Safari because you cannot use two
+                  // You cannot use the network test in Safari because you cannot use two
                   // eslint-disable-next-line max-len
                   // publishers (the preview publisher and the network test publisher) simultaneously.
-                  if (!Utils.isIE() && !Utils.isSafariIOS() && window.enablePrecallTest) {
+                  if (!Utils.isSafariIOS() && window.enablePrecallTest) {
                     PrecallView.startPrecallTestMeter();
                     otNetworkTest = new OTNetworkTest(previewOptions);
                     otNetworkTest.startNetworkTest((error, result) => {
