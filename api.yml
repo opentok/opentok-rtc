@@ -257,7 +257,7 @@ paths:
         - 'application/json,'
       description: >-
         Starts or stops an archiving operation. Returns the information about
-        the new recording, and inserts that information on the firebase record
+        the new recording, and inserts that information on the redis record
         associated to the room. Once a recording is in process, succesives call
         with operation=start are ignored and the existing record of the current
         archive is returned.
@@ -465,10 +465,6 @@ definitions:
         type: string
       username:
         type: string
-      firebaseURL:
-        type: string
-      firebaseToken:
-        type: string
       isLocked:
         type: boolean
   ArchiveInfo:
@@ -560,8 +556,6 @@ definitions:
       gitHash:
         type: string
       opentok:
-        type: boolean
-      firebase:
         type: boolean
       googleAuth:
         type: boolean
