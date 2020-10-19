@@ -9,10 +9,10 @@
     var dependenciesLoaded;
     if (enableArchiveManager) {
       dependenciesLoaded = LazyLoader.dependencyLoad([
-        '/js/models/firebase.js',
+        '/js/models/archivesEventsListener.js',
         '/js/recordingsView.js'
       ]).then(function () {
-        return FirebaseModel
+        return ArchivesEventsListener
                   .init();
       });
     } else {

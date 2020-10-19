@@ -13,17 +13,13 @@ const redis = new Redis(env.REDIS_URL || env.REDISTOGO_URL || ''); // uses defau
 
  */
 
-class FirebaseArchives {
+class ArchiveLocalStorage {
   constructor(otInstance, roomNameKey) {
     this.otInstance = otInstance;
     this.roomNameKey = roomNameKey;
   }
 
-  fbArchivesCallback(sessionId, archives) {
-    console.log("SENDING SIGNEAL");
-    console.log(sessionId);
-    console.log(archives);
-
+  sendBroadcastSignal(sessionId, archives) {
     this.otInstance.signal(
       sessionId,
       null,
@@ -59,7 +55,7 @@ class FirebaseArchives {
 
         redis.set(this.roomNameKey, JSON.stringify(sessionInfo)).then((listo) => {
           //if (enableArchiveManager) {
-          this.fbArchivesCallback(sessionInfo.sessionId, sessionInfo.archives);
+          this.sendBroadcastSignal(sessionInfo.sessionId, sessionInfo.archives);
         });
       });
     });        
@@ -72,7 +68,7 @@ class FirebaseArchives {
         delete sessionInfo.archives[aArchiveId];
         redis.set(this.roomNameKey, sessionInfo).then((listo) => {
           // if (enableArchiveManager) {
-          this.fbArchivesCallback(sessionInfo.aSessionId, sessionInfo.archives);
+          this.sendBroadcastSignal(sessionInfo.aSessionId, sessionInfo.archives);
         });
       });
     });
@@ -80,4 +76,4 @@ class FirebaseArchives {
 
 }
   
-module.exports = FirebaseArchives;
+module.exports = ArchiveLocalStorage;

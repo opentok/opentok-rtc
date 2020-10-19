@@ -15,7 +15,7 @@ var SwaggerBP = require('swagger-boilerplate');
 var helmet = require('helmet');
 var C = require('./serverConstants');
 var configLoader = require('./configLoader');
-var FirebaseArchives = require('./firebaseArchives');
+var ArchiveLocalStorage = require('./archiveLocalStorage');
 var GoogleAuth = require('./googleAuthStrategies');
 var testHealth = require('./testHealth');
 var Haikunator = require('haikunator');
@@ -845,12 +845,12 @@ function ServerMethods(aLogLevel, aModules) {
                                    tbConfig.archivePollingTOMultiplier)) ||
             Promise.resolve(aArchive);
 
-          const fbArchives = new FirebaseArchives(otInstance, redisRoomPrefix + roomName);
+          const archiveStorage = new ArchiveLocalStorage(otInstance, redisRoomPrefix + roomName);
           readyToUpdateExternalDb
             .then((aUpdatedArchive) => {
               aUpdatedArchive.localDownloadURL = '/archive/' + aArchive.id;
               operation !== 'stop' && (aUpdatedArchive.recordingUser = userName);
-              fbArchives.updateArchive(aUpdatedArchive);
+              archiveStorage.updateArchive(aUpdatedArchive);
             });
 
           logger.log('postRoomArchive => Returning archive info: ', aArchive.id);

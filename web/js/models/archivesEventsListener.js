@@ -1,5 +1,3 @@
-/* globals Firebase */
-
 !(function (exports) {
   'use strict';
 
@@ -64,7 +62,7 @@
     return false;
   }
 
-  var FirebaseModel = {
+  var ArchivesEventsListener = {
     addEventListener: addEventListener,
     removeEventListener: removeEventListener,
     init: init,
@@ -73,5 +71,5 @@
     }
   };
 
-  exports.FirebaseModel = FirebaseModel;
+  exports.ArchivesEventsListener = ArchivesEventsListener;
 }(this));
