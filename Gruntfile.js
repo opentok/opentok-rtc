@@ -1,4 +1,5 @@
 'use strict';
+
 module.exports = function (grunt) {
   // To-Do check what we need and add/remove as needed...
   [
@@ -6,6 +7,7 @@ module.exports = function (grunt) {
     'grunt-contrib-clean',
     'grunt-contrib-less',
     'grunt-terser',
+    'grunt-contrib-concat',
     'grunt-contrib-watch',
     'grunt-mocha-test', // Server side test runner
     'grunt-bower-task',
@@ -20,29 +22,34 @@ module.exports = function (grunt) {
 
   grunt.initConfig({
     terser: {
+      pages: {
+        options: {
+          compress: true,
+          safari10: true,
+          ecma: 2016,
+          sourceMap: {
+            includeSources: true,
+            url: true
+          }
+        },
+        files: [
+          {
+            expand: true,
+            src: '*.js',
+            dest: './web/js/min',
+            cwd: './web/js',
+            ext: '.min.js'
+          }
+        ]
+      }
+    },
+    concat: {
       options: {
-        compress: true,
-        safari10: true,
-        ecma: 2016,
-        sourceMap: true
+        footer: '//# sourceMappingURL= <%= filename %>'
       },
-      main: {
-        files: {
-          './web/js/min/chatView.min.js': ['./web/js/chatView.js'],
-          './web/js/min/chatController.min.js': ['./web/js/chatController.js'],
-          './web/js/min/feedbackView.min.js': ['./web/js/feedbackView.js'],
-          './web/js/min/feedbackController.min.js': ['./web/js/feedbackController.js'],
-          './web/js/min/precallView.min.js': ['./web/js/precallView.js'],
-          './web/js/min/precallController.min.js': ['./web/js/precallController.js'],
-          './web/js/min/phoneNumberView.min.js': ['./web/js/phoneNumberView.js'],
-          './web/js/min/phoneNumberController.min.js': ['./web/js/phoneNumberController.js'],
-          './web/js/min/recordingsView.min.js': ['./web/js/recordingsView.js'],
-          './web/js/min/recordingsController.min.js': ['./web/js/recordingsController.js'],
-          './web/js/min/screenShareView.min.js': ['./web/js/screenShareView.js'],
-          './web/js/min/screenShareController.min.js': ['./web/js/screenShareController.js'],
-          './web/js/min/roomController.min.js': ['./web/js/roomController.js']
-
-        }
+      dist: {
+        src: ['./web/js/min/*.js'],
+        dest: './web/js/min/'
       }
     },
     mochaTest: {
@@ -173,7 +180,8 @@ module.exports = function (grunt) {
   grunt.registerTask('clientBuild', 'Build css files', [
     'less',
     'autoprefixer',
-    'terser'
+    'terser',
+    'concat'
   ]);
 
   grunt.registerTask('clientDev', 'Watch for changes on less files', [
