@@ -76,6 +76,10 @@
       // client connects
       evt.connection.data && proccessNewConnection(evt);
     },
+    sessionConnected: function (evt) {
+      _myCreationTime = evt.target.connection.creationTime;
+      otHelper = this;
+    },
     connectionDestroyed: function (evt) {
       // If connection destroyed belongs to someone older than me,
       // subtract one from connected early than me
