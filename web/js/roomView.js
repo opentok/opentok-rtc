@@ -443,7 +443,7 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
   function onStopArchiving() {
     getCronograph().then(cronograph => {
       stopArchivingElem.style.display = 'none';
-      startArchivingElem.style.display = 'inline-block';
+      startArchivingElem.style.display = 'inline-flex';
       manageRecordingsElem.classList.remove('recording');
       cronograph.stop();
     });

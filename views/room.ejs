@@ -148,15 +148,21 @@
         <% } %>
         <%   if(enableArchiving) { %>
         <div id="toggleArchiving" disabled>
-          <a id="startArchiving" class="btn btn-purple btn-padding">Record</a>
-          <a id="stopArchiving" class="btn btn-purple btn-padding duration">Stop Recording</a>
+          <a id="startArchiving" class="banner-dynamic-btn">
+            <i data-icon="start_archive"></i>
+            <span>Record</span>
+          </a>
+          <a id="stopArchiving" class="banner-dynamic-btn duration">
+            <i data-icon="stop_archive"></i>
+            <span>Stop Recording</span>
+          </a>
         </div>
         <%      if(enableArchiveManager) { %>
         <div id="manageRecordings">
           <a id="viewRecordings"  class="btn btn-purple btn-padding"><span id="recordings">0</span></a>
         </div>
         <% } } %>
-        <a class="invite-btn" id="addToCall">
+        <a class="banner-dynamic-btn" id="addToCall">
           <i data-icon="add"></i>
           <span>Invite</span>
         </a>

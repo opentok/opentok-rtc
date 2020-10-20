@@ -148,7 +148,7 @@ body {
       }
     }
   }
-  .invite-btn {
+  .banner-dynamic-btn {
     background: @purple;
     border-radius: 5px;
     border: none;
@@ -269,9 +269,7 @@ body {
 
     a {
       height: 40px;
-      width: 85px;
       margin-right: 34px;
-      padding-right: 60px;
       line-height: 40px;
       font-size: 12px;
       border-radius: 6px;
@@ -280,13 +278,20 @@ body {
     }
   }
   #toggleArchiving a {
-    padding: 0 37.5px;
+
     @media @smartphonesPortrait {
+      padding: 0px 0px;
       top: -20px;
       right: 8px;
-      width: 116px;
       margin: 0;
       padding: 0;
+    }
+
+    @media @smartphonesLandscape {
+      padding: 0px 0px;
+      top: -20px;
+      right: 8px;
+      margin-right: 10px;
     }
   }
   .manage-recordings {
