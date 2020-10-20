@@ -28,8 +28,7 @@ module.exports = function (grunt) {
           safari10: true,
           ecma: 2016,
           sourceMap: {
-            includeSources: true,
-            url: true
+            includeSources: true
           }
         },
         files: [
@@ -44,12 +43,27 @@ module.exports = function (grunt) {
       }
     },
     concat: {
-      options: {
-        footer: '//# sourceMappingURL= <%= filename %>'
-      },
       dist: {
-        src: ['./web/js/min/*.js'],
-        dest: './web/js/min/'
+        options: {
+          process: function (src, filepath) {
+            return src + '\n //# sourceMappingURL= ' + filepath.substring(filepath.lastIndexOf('/') + 1) + '.map';
+          }
+        },
+        files: {
+          './web/js/min/chatView.min.js': ['./web/js/min/chatView.min.js'],
+          './web/js/min/chatController.min.js': ['./web/js/min/chatController.min.js'],
+          './web/js/min/feedbackView.min.js': ['./web/js/min/feedbackView.min.js'],
+          './web/js/min/feedbackController.min.js': ['./web/js/min/feedbackController.min.js'],
+          './web/js/min/precallView.min.js': ['./web/js/min/precallView.min.js'],
+          './web/js/min/precallController.min.js': ['./web/js/min/precallController.min.js'],
+          './web/js/min/phoneNumberView.min.js': ['./web/js/min/phoneNumberView.min.js'],
+          './web/js/min/phoneNumberController.min.js': ['./web/js/min/phoneNumberController.min.js'],
+          './web/js/min/recordingsView.min.js': ['./web/js/min/recordingsView.min.js'],
+          './web/js/min/recordingsController.min.js': ['./web/js/min/recordingsController.min.js'],
+          './web/js/min/screenShareView.min.js': ['./web/js/min/screenShareView.min.js'],
+          './web/js/min/screenShareController.min.js': ['./web/js/min/screenShareController.min.js'],
+          './web/js/min/roomController.min.js': ['./web/js/min/roomController.min.js']
+        }
       }
     },
     mochaTest: {
