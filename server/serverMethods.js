@@ -831,19 +831,19 @@ function ServerMethods(aLogLevel, aModules) {
           // archive information will not be updated yet. We can wait to be notified (by a callback)
           // or poll for the information. Since polling is less efficient, we do so only when
           // required by the configuration.
-          var readyToUpdateExternalDb =
+          var readyToUpdateDb =
             (operation === 'stop' && tbConfig.archivePollingTO &&
              _launchArchivePolling(otInstance, aArchive.id,
                                    tbConfig.archivePollingTO,
                                    tbConfig.archivePollingTOMultiplier)) ||
             Promise.resolve(aArchive);
 
-          const archiveStorage = new ArchiveLocalStorage(otInstance, redisRoomPrefix + roomName);
-          readyToUpdateExternalDb
+          const roomArchiveStorage = new ArchiveLocalStorage(otInstance, redisRoomPrefix + roomName);
+          readyToUpdateDb
             .then((aUpdatedArchive) => {
               aUpdatedArchive.localDownloadURL = '/archive/' + aArchive.id;
               operation !== 'stop' && (aUpdatedArchive.recordingUser = userName);
-              archiveStorage.updateArchive(aUpdatedArchive);
+              roomArchiveStorage.updateArchive(aUpdatedArchive);
             });
 
           logger.log('postRoomArchive => Returning archive info: ', aArchive.id);
@@ -889,6 +889,12 @@ function ServerMethods(aLogLevel, aModules) {
       });
   }
 
+  function getRoomNameFromHeaders(headers) {
+    const referer = headers.referer;
+    var lastIndex = referer.lastIndexOf('/');
+    return referer.substr(lastIndex + 1, referer.length).split('?')[0];
+  }
+
   function deleteArchive(aReq, aRes) {
     var archiveId = aReq.params.archiveId;
     logger.log('deleteArchive:', archiveId);
@@ -896,6 +902,9 @@ function ServerMethods(aLogLevel, aModules) {
     var otInstance = tbConfig.otInstance;
     var sessionId;
     var type;
+    const roomName = getRoomNameFromHeaders(aReq.headers);
+    const roomArchiveStorage = new ArchiveLocalStorage(otInstance, redisRoomPrefix + roomName);
+
     otInstance
       .getArchive_P(archiveId) // This is only needed so we can get the sesionId
       .then((aArchive) => {
@@ -904,7 +913,7 @@ function ServerMethods(aLogLevel, aModules) {
         return archiveId;
       })
       .then(otInstance.deleteArchive_P)
-      .then(() => tbConfig.fbArchives.removeArchive(sessionId, archiveId))
+      .then(() => roomArchiveStorage.removeArchive(archiveId))
       .then(() => aRes.send({ id: archiveId, type }))
       .catch((e) => {
         logger.error('deleteArchive error:', e);

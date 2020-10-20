@@ -53,7 +53,7 @@ class ArchiveLocalStorage {
         if (!sessionInfo.archives) sessionInfo.archives = {};
         sessionInfo.archives[aArchive.id] = aArchive;
 
-        redis.set(this.roomNameKey, JSON.stringify(sessionInfo)).then((listo) => {
+        redis.set(this.roomNameKey, JSON.stringify(sessionInfo)).then((ready) => {
           //if (enableArchiveManager) {
           this.sendBroadcastSignal(sessionInfo.sessionId, sessionInfo.archives);
         });
@@ -66,9 +66,9 @@ class ArchiveLocalStorage {
       redis.get(this.roomNameKey).then((sessionInfo) => {
         sessionInfo = JSON.parse(sessionInfo);
         delete sessionInfo.archives[aArchiveId];
-        redis.set(this.roomNameKey, sessionInfo).then((listo) => {
+        redis.set(this.roomNameKey, JSON.stringify(sessionInfo)).then((ready) => {
           // if (enableArchiveManager) {
-          this.sendBroadcastSignal(sessionInfo.aSessionId, sessionInfo.archives);
+          this.sendBroadcastSignal(sessionInfo.sessionId, sessionInfo.archives);
         });
       });
     });
