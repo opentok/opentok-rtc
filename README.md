@@ -19,7 +19,6 @@ This repository contains a Node.js server and a web client application.
 - [Running](#running)
 - [Configuration options](#configuration-options)
   - [OpenTok configuration](#opentok-configuration)
-  - [Firebase configuration](#firebase-configuration)
   - [Screen sharing](#screen-sharing)
   - [Phone dial-out](#phone-dial-out)
   - [Google Authentication for Phone dial-out](#google-authentication-for-phone-dial-out)
@@ -46,7 +45,6 @@ You will need these dependencies installed on your machine:
 You will also need these API subscriptions:
 
 - [OpenTok](https://tokbox.com): An OpenTok API key and secret. You can obtain these by signing up with [Opentok/Vonage](https://tokbox.com/account/user/signup).
-- [Firebase](https://firebase.google.com) (Optional): A Firebase app and secret. Firebase is used for storing archive data of video conferences. You will need this only if you want to enable Archive Management (In-app playback and download of recordings) of conference rooms.
 
 ### Setting up
 
@@ -68,23 +66,6 @@ Edit `config/config.json` and replace `<key>` and `<secret>` with your OpenTok A
     "OpenTok": {
         "apiKey": "<key>"
         "apiSecret": "<secret>"
-    }
-}
-```
-
-If you want to use archive management, set up Firebase configuration. To do these, edit the configuration sections for `"Firebase"` and `"Archiving"`. Replace `<firebase_url>` with a Firebase database URL and `<firebase_secret>` with a corresponding database secret. Also mark `Archiving` and `archivingManager` as enabled. For more information on how to obtain Firebase credentials, see [Firebase configuration](#firebase-configuration) section below:
-
-```js
-{
-    "Firebase": {
-        "dataUrl": "<firebase_url>",
-        "authSecret": "<firebase_secret>"
-    },
-    "Archiving": {
-        "enabled": true,
-        "archiveManager": {
-            "enabled": true
-        }
     }
 }
 ```
@@ -163,55 +144,6 @@ JSON example:
 }
 ```
 
-### Firebase configuration
-
-This application needs you to specify a Firebase database URL and a database secret. Here is how you can obtain both.
-
-Go to [Firebase console](https://console.firebase.google.com/), create a new project or choose an existing project. Once there, follow these steps:
-
-- **Firebase database URL:** Click on `Database` link on the left. Copy the URL you see under the `Data` tab. The URL is in the format `https://xxxx.firebaseio.com/` where `xxxx` is the unique ID of your Firebase project.
-
-  **Note**: For the security rule mentioned in the [Firebase security measure](#firebase-security-measure) section to work, you will need to set the Firebase database URL in this application configuration as `https://xxxx.firebaseio.com/sessions`.
-
-- **Firebase database secret:** Click on the `Settings` (cog) icon and go to `Project Settings` > `Service Accounts` > `Database Secrets`. Click on the `Show` button for the secret and copy it.
-
-Then set the following values in `config/config.json`, replacing `<firebase_url>` with the Firebase database URL and `<firebase_secret>` with the Firebase database secret:
-
-```json
-"Firebase": {
-    "dataUrl": "<firebase_url>",
-    "authSecret": "<firebase_secret>"
-}
-```
-
-You can also set the values using these environment variables:
-
-- `FB_DATA_URL`: Firebase database URL.
-- `FB_AUTH_SECRET`: Firebase database secret.
-
-#### Firebase security measure
-
-If you want to ensure that the archive list is kept secure (as in only the actual people using a room can see it, and nobody can see the list of archives of other rooms) then you will need to configure additional security parameters to your Firebase application. To do this, log in to Firebase console, go to your project, then in `Database` > `Rules` set these rules and hit `Publish`:
-
-```js
-{
-    "rules": {
-        ".read": "auth != null && auth.role == 'server'",
-        ".write": "auth != null && auth.role == 'server'",
-        "$sessionId": {
-            ".read": "auth != null && (auth.role == 'server' || auth.sessionId == $sessionId)",
-            ".write": "auth != null && auth.role == 'server'",
-            "archives": {},
-            "connections": {
-                ".read": "auth != null && auth.role == 'server'",
-                ".write": "auth != null && (auth.role == 'server' || auth.sessionId == $sessionId)",
-                "$connectionId": {}
-            }
-        }
-    }
-}
-```
-
 ### Phone dial-out
 
 The app can dial out and add a phone-based end user to the OpenTok session, using the OpenTok
@@ -284,7 +216,7 @@ Web client allows to be configured in some of its features. You can enable or di
 
 ##### Archive Manager
 
-- `ENABLE_ARCHIVE_MANAGER`: (Optional, default value: false) Enable Archive Manager. Only meaningful if `archiving` is not disabled (Manage Recordings, requires firebase to be configured)
+- `ENABLE_ARCHIVE_MANAGER`: (Optional, default value: false) Enable Archive Manager. Only meaningful if `archiving` is not disabled
 - `EMPTY_ROOM_LIFETIME`: (Optional, default value 3): Maximum time, in minutes, an empty room
 
 ```json
@@ -498,7 +430,6 @@ endpoint sends a response with the HTTP status code set to 200 and the JSON like
   "version": "4.1.1",
   "gitHash": "312903cd043d5267bc11639718c47a9b313c1663",
   "opentok": true,
-  "firebase": true,
   "googleAuth": true,
   "status": "pass"
 }
@@ -515,9 +446,6 @@ The JSON includes the following properties:
 - `opentok` -- Whether the OpenTok API check passed. The app uses the OpenTok Node.js SDK,
   which connects to the OpenTok API server to create OpenTok sessions.
 
-- `firebase` -- Whether the Firebase check passed. The app uses Firebase to store
-  embed data.
-
 - `googleAuth` -- Whether the Google Authentication check passed. This check is only run if the app
   uses Google Authentication for making outbound SIP calls. (See [Google Authentication for
   Phone dial-out](#google-authentication-for-phone-dial-out).)
@@ -532,15 +460,14 @@ the HTTP status code set 400 and JSON like the following:
   "name": "opentok-rtc",
   "version": "4.1.1",
   "git_hash": "312903cd043d5267bc11639718c47a9b313c1663",
-  "opentok": true,
-  "firebase": false,
-  "error": "10-second Firebase timeout reached.",
+  "opentok": false,
+  "error": "OpenTok API server timeout exceeded.",
   "status": "fail"
 }
 ```
 
 Note that upon failure, the `status` property is set to `"fail"` and the `error` property
-is set to an error message. Also, the property for the failing test, such as `firebase`,
+is set to an error message. Also, the property for the failing test, such as `opentok`,
 will be set to `false`. If a test fails, the health check will not run subsequent tests.
 
 ## Development and Contributing
