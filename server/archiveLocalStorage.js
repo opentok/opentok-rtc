@@ -7,10 +7,6 @@ var env = process.env;
 const Redis = require("ioredis");
 const redis = new Redis(env.REDIS_URL || env.REDISTOGO_URL || ''); // uses defaults unless given configuration object
 var logger = new Logger('ArchiveLocalStorage', 'debug');
- /*
-// Time is in minutes but we need it in ms.
-  aCleanupTime = aCleanupTime * 60 * 1000;
- */
 
 class ArchiveLocalStorage {
   constructor(otInstance, roomNameKey) {
