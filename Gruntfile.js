@@ -40,7 +40,24 @@ module.exports = function (grunt) {
             ext: '.min.js'
           }
         ]
+      },
+      prod_build: {
+        options: {
+          compress: true,
+          safari10: true,
+          ecma: 2016
+        },
+        files: [
+          {
+            expand: true,
+            src: '*.js',
+            dest: './web/js/min',
+            cwd: './web/js',
+            ext: '.min.js'
+          }
+        ]
       }
+
     },
     concat: {
       dist: {
@@ -196,6 +213,12 @@ module.exports = function (grunt) {
     'autoprefixer',
     'terser',
     'concat'
+  ]);
+
+  grunt.registerTask('clientBuild-Prod', 'Build css files', [
+    'less',
+    'autoprefixer',
+    'terser:prod_build'
   ]);
 
   grunt.registerTask('clientDev', 'Watch for changes on less files', [
