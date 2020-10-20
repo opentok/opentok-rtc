@@ -15,7 +15,8 @@
     "regression-test": "wdio wdio.conf.js",
     "lint": "./node_modules/.bin/eslint .",
     "lint-auto-fix": "./node_modules/.bin/eslint . --fix",
-    "clientBuild": "grunt clientBuild"
+    "clientBuild": "grunt clientBuild",
+
   },
   "repository": {
     "type": "git",
