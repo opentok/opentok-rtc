@@ -66,7 +66,7 @@ this.addEventListener('load', function startApp() {
       '/js/libs/browser_utils.js',
       '/shared/js/utils.js',
       '/js/helpers/requests.js',
-      '/js/roomController.js',
+      '/js/min/roomController.min.js',
       '/js/landingController.js'
     ]).then(() => {
       RTCApp.init();

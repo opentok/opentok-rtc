@@ -15,8 +15,8 @@
       '/js/vendor/ejs_production.js',
       '/js/helpers/ejsTemplate.js',
       '/js/landingView.js',
-      '/js/precallView.js',
-      '/js/precallController.js',
+      '/js/min/precallView.min.js',
+      '/js/min/precallController.min.js',
       '/js/helpers/OTHelper.js'
     ]).then(() => {
       return LandingView.init();

@@ -8,7 +8,7 @@
     if (enableArchiveManager) {
       dependenciesLoaded = LazyLoader.dependencyLoad([
         '/js/models/firebase.js',
-        '/js/recordingsView.js'
+        '/js/min/recordingsView.min.js'
       ]).then(() => {
         return FirebaseModel
           .init();

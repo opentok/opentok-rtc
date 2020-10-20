@@ -6,6 +6,8 @@ module.exports = function (grunt) {
     'grunt-autoprefixer',
     'grunt-contrib-clean',
     'grunt-contrib-less',
+    'grunt-terser',
+    'grunt-contrib-concat',
     'grunt-contrib-watch',
     'grunt-mocha-test', // Server side test runner
     'grunt-bower-task',
@@ -19,6 +21,68 @@ module.exports = function (grunt) {
   var TEST_BASE_DIR = 'test/';
 
   grunt.initConfig({
+    terser: {
+      pages: {
+        options: {
+          compress: true,
+          safari10: true,
+          ecma: 2016,
+          sourceMap: {
+            includeSources: true
+          }
+        },
+        files: [
+          {
+            expand: true,
+            src: '*.js',
+            dest: './web/js/min',
+            cwd: './web/js',
+            ext: '.min.js'
+          }
+        ]
+      },
+      prod_build: {
+        options: {
+          compress: true,
+          safari10: true,
+          ecma: 2016
+        },
+        files: [
+          {
+            expand: true,
+            src: '*.js',
+            dest: './web/js/min',
+            cwd: './web/js',
+            ext: '.min.js'
+          }
+        ]
+      }
+
+    },
+    concat: {
+      dist: {
+        options: {
+          process: function (src, filepath) {
+            return src + '\n //# sourceMappingURL= ' + filepath.substring(filepath.lastIndexOf('/') + 1) + '.map';
+          }
+        },
+        files: {
+          './web/js/min/chatView.min.js': ['./web/js/min/chatView.min.js'],
+          './web/js/min/chatController.min.js': ['./web/js/min/chatController.min.js'],
+          './web/js/min/feedbackView.min.js': ['./web/js/min/feedbackView.min.js'],
+          './web/js/min/feedbackController.min.js': ['./web/js/min/feedbackController.min.js'],
+          './web/js/min/precallView.min.js': ['./web/js/min/precallView.min.js'],
+          './web/js/min/precallController.min.js': ['./web/js/min/precallController.min.js'],
+          './web/js/min/phoneNumberView.min.js': ['./web/js/min/phoneNumberView.min.js'],
+          './web/js/min/phoneNumberController.min.js': ['./web/js/min/phoneNumberController.min.js'],
+          './web/js/min/recordingsView.min.js': ['./web/js/min/recordingsView.min.js'],
+          './web/js/min/recordingsController.min.js': ['./web/js/min/recordingsController.min.js'],
+          './web/js/min/screenShareView.min.js': ['./web/js/min/screenShareView.min.js'],
+          './web/js/min/screenShareController.min.js': ['./web/js/min/screenShareController.min.js'],
+          './web/js/min/roomController.min.js': ['./web/js/min/roomController.min.js']
+        }
+      }
+    },
     mochaTest: {
       unit: {
         options: {
@@ -145,7 +209,15 @@ module.exports = function (grunt) {
 
   grunt.registerTask('clientBuild', 'Build css files', [
     'less',
-    'autoprefixer'
+    'autoprefixer',
+    'terser',
+    'concat'
+  ]);
+
+  grunt.registerTask('clientBuild-Prod', 'Build css files', [
+    'less',
+    'autoprefixer',
+    'terser:prod_build'
   ]);
 
   grunt.registerTask('clientDev', 'Watch for changes on less files', [

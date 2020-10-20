@@ -831,14 +831,14 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     '/js/layoutManager.js',
     '/js/roomView.js',
     '/js/roomStatus.js',
-    '/js/chatController.js',
-    '/js/recordingsController.js',
-    '/js/precallController.js',
+    '/js/min/chatController.min.js',
+    '/js/min/recordingsController.min.js',
+    '/js/min/precallController.min.js',
     '/js/layoutMenuController.js',
-    '/js/screenShareController.js',
-    '/js/feedbackController.js',
+    '/js/min/screenShareController.min.js',
+    '/js/min/feedbackController.min.js',
     '/js/googleAuth.js',
-    '/js/phoneNumberController.js',
+    '/js/min/phoneNumberController.min.js',
     '/js/vendor/ResizeSensor.js'
   ];
 
