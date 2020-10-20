@@ -66,6 +66,9 @@
     addEventListener: addEventListener,
     removeEventListener: removeEventListener,
     init: init,
+    set archives(existingArchives) {
+      archives = existingArchives;
+    },
     get archives() {
       return archives;
     }

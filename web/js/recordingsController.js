@@ -5,7 +5,7 @@
 
   var model = null;
 
-  function init(enableArchiveManager) {
+  function init(enableArchiveManager, existingArchives) {
     var dependenciesLoaded;
     if (enableArchiveManager) {
       dependenciesLoaded = LazyLoader.dependencyLoad([
@@ -21,6 +21,7 @@
 
     return dependenciesLoaded.then(function (aModel) {
       model = aModel;
+      model.archives = existingArchives;
       Utils.sendEvent('recordings-model-ready', null, exports);
       addListeners();
       aModel && RecordingsView.init(model);

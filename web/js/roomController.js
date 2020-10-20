@@ -888,7 +888,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     RoomView.init(enableHangoutScroll, enableArchiveManager, enableSip);
     // Init this controller before connect to the session
     // to start receiving signals about archives updates
-    RecordingsController.init(enableArchiveManager);
+    RecordingsController.init(enableArchiveManager, aParams.archives);
 
     roomURI = aParams.roomURI;
     userName = aParams.username ? aParams.username.substring(0, 1000) : '';
