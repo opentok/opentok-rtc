@@ -100,7 +100,7 @@
       evt.preventDefault();
     if (emojiPicker.style.display == "none") {
         emojiPicker.style.display = "block";
-        emojiPicker.style.bottom =  "111px";
+        emojiPicker.style.bottom =  "81px";
     } else {
         emojiPicker.style.display = "none";
     }
@@ -120,6 +120,7 @@
       time: Utils.getCurrentTime(),
       text: chatMsgInput.value.trim()
     });
+    emojiPicker.style.display = "none";
   };
 
   const onKeyPress = ((myfield, evt) => {
