@@ -835,7 +835,7 @@ function ServerMethods(aLogLevel, aModules) {
                                    tbConfig.archivePollingTOMultiplier)) ||
             Promise.resolve(aArchive);
 
-          const roomArchiveStorage = new ArchiveLocalStorage(otInstance, redisRoomPrefix + roomName);
+          const roomArchiveStorage = new ArchiveLocalStorage(otInstance, redisRoomPrefix + roomName, aArchive.sessionId, aLogLevel);
           readyToUpdateDb
             .then((aUpdatedArchive) => {
               aUpdatedArchive.localDownloadURL = '/archive/' + aArchive.id;
@@ -900,13 +900,14 @@ function ServerMethods(aLogLevel, aModules) {
     var sessionId;
     var type;
     const roomName = getRoomNameFromHeaders(aReq.headers);
-    const roomArchiveStorage = new ArchiveLocalStorage(otInstance, redisRoomPrefix + roomName);
+    let roomArchiveStorage;
 
     otInstance
       .getArchive_P(archiveId) // This is only needed so we can get the sesionId
       .then((aArchive) => {
         sessionId = aArchive.sessionId;
         type = aArchive.outputMode;
+        roomArchiveStorage = new ArchiveLocalStorage(otInstance, redisRoomPrefix + roomName, sessionId, aLogLevel);
         return archiveId;
       })
       .then(otInstance.deleteArchive_P)

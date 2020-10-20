@@ -1,22 +1,23 @@
 'use strict';
 
+var env = process.env;
 var SwaggerBP = require('swagger-boilerplate');
 var Utils = SwaggerBP.Utils;
 var Logger = Utils.MultiLevelLogger;
-var env = process.env;
 const Redis = require("ioredis");
 const redis = new Redis(env.REDIS_URL || env.REDISTOGO_URL || ''); // uses defaults unless given configuration object
-var logger = new Logger('ArchiveLocalStorage', 'debug');
 
 class ArchiveLocalStorage {
-  constructor(otInstance, roomNameKey) {
+  constructor(otInstance, roomNameKey, sessionId, aLogLevel) {
     this.otInstance = otInstance;
     this.roomNameKey = roomNameKey;
+    this.sessionId = sessionId;
+    this.logger = new Logger('ArchiveLocalStorage', aLogLevel);
   }
 
-  sendBroadcastSignal(sessionId, archives) {
+  sendBroadcastSignal(archives) {
     this.otInstance.signal(
-      sessionId,
+      this.sessionId,
       null,
       {
         type: 'archives',
@@ -31,7 +32,7 @@ class ArchiveLocalStorage {
       },
       (error) => {
         if (error) {
-          return logger.log('Get archives error:', error);
+          return this.logger.log('Get archives error:', error);
         }
         return false;
       });
@@ -46,7 +47,7 @@ class ArchiveLocalStorage {
         sessionInfo.archives[aArchive.id] = aArchive;
 
         redis.set(this.roomNameKey, JSON.stringify(sessionInfo)).then((ready) => {
-          this.sendBroadcastSignal(sessionInfo.sessionId, sessionInfo.archives);
+          this.sendBroadcastSignal(sessionInfo.archives);
         });
       });
     });        
@@ -58,7 +59,7 @@ class ArchiveLocalStorage {
         sessionInfo = JSON.parse(sessionInfo);
         delete sessionInfo.archives[aArchiveId];
         redis.set(this.roomNameKey, JSON.stringify(sessionInfo)).then((ready) => {
-          this.sendBroadcastSignal(sessionInfo.sessionId, sessionInfo.archives);
+          this.sendBroadcastSignal(sessionInfo.archives);
         });
       });
     });
