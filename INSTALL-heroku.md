@@ -58,7 +58,6 @@ Additionally you can also modify all the other configuration options described i
 - `tb_archive_polling_initial_timeout` => ARCHIVE_TIMEOUT
 - `tb_archive_polling_multiplier` => TIMEOUT_MULTIPLIER
 - `tb_max_session_age` => TB_MAX_SESSION_AGE
-- `tb_max_history_lifetime` => EMPTY_ROOM_LIFETIME
 - `allow_iframing` => ALLOW_IFRAMING
 - `valid_refrers` => VALID_REFERERS
 - `chrome_extension_id` => CHROME_EXTENSION_ID

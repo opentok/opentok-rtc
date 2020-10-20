@@ -230,7 +230,6 @@ Web client allows to be configured in some of its features. You can enable or di
 ##### Archive Manager
 
 - `ENABLE_ARCHIVE_MANAGER`: (Optional, default value: false) Enable Archive Manager. Only meaningful if `archiving` is not disabled
-- `EMPTY_ROOM_LIFETIME`: (Optional, default value 3): Maximum time, in minutes, an empty room
 
 ```json
 "Archiving": {
@@ -239,8 +238,7 @@ Web client allows to be configured in some of its features. You can enable or di
     "pollingInitialTimeout": 5000,
     "pollingTimeoutMultiplier": 1.5,
     "archiveManager": {
-        "enabled": false,
-        "emptyRoomMaxLifetime": 3
+        "enabled": false
     }
 },
 ```

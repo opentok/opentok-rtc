@@ -60,9 +60,6 @@ E.ENABLE_STOP_RECEIVING_VIDEO = { envVar: 'ENABLE_STOP_RECEIVING_VIDEO', jsonPat
 
 E.MAX_USERS_PER_ROOM = { envVar: 'MAX_USERS_PER_ROOM', jsonPath: 'maxUsersPerRoom', defaultValue: 0, parser: parseInt };
 
-// Maximum time an empty room will keep it's history alive, in minutes.
-E.EMPTY_ROOM_LIFETIME = { envVar: 'EMPTY_ROOM_LIFETIME', jsonPath: 'Archiving.archiveManager.emptyRoomMaxLifetime', defaultValue: 3 };
-
 E.FEEDBACK_URL = { envVar: 'FEEDBACK_URL', jsonPath: 'Feedback.url', defaultValue: '' };
 
 E.REPORT_ISSUE_LEVEL = { envVar: 'REPORT_ISSUE_LEVEL', jsonPath: 'Feedback.reportIssueLevel', defaultValue: 3 };
