@@ -10,6 +10,8 @@
   let chatContainer;
   let chatContent;
   let chatForm;
+  let emojiPicker;
+  let toggleEmojiBtn;
   const chatParticipants = [];
 
   let _visibilityChanging = Promise.resolve();
@@ -89,8 +91,20 @@
     chatContainer = chatWndElem.querySelector('#chatMsgs');
     chatContent = chatContainer.querySelector('ul');
     chatForm = chatWndElem.querySelector('#chatForm');
+    emojiPicker = document.querySelector('emoji-picker');
+    toggleEmojiBtn = chatWndElem.querySelector('#addEmoji');
   }
 
+  const onEmojiClicked = event => chatMsgInput.value += (" "+(event.detail.unicode)+" ")
+  const toggleEmojiView = evt => {
+      evt.preventDefault();
+    if (emojiPicker.style.display == "none") {
+        emojiPicker.style.display = "block";
+        emojiPicker.style.bottom: 111px;
+    } else {
+        emojiPicker.style.display = "none";
+    }
+  }
   const onSendClicked = evt => {
     evt.preventDefault();
     if (!chatMsgInput.value.trim().length) {
@@ -157,6 +171,9 @@
     closeChatBtn.addEventListener('click', onClose);
     headerChat.addEventListener('click', onToggle);
     sendMsgBtn.addEventListener('click', onSendClicked);
+    emojiPicker.addEventListener('emoji-click', onEmojiClicked);
+    toggleEmojiBtn.addEventListener('click', toggleEmojiView);
+
   }
 
   function removeHandlers() {
@@ -165,6 +182,8 @@
     headerChat.removeEventListener('click', onToggle);
     sendMsgBtn.removeEventListener('click', onSendClicked);
     chatForm.removeEventListener('drop', onDrop);
+    emojiPicker.removeEventListener('emoji-click', onEmojiClicked);
+    toggleEmojiBtn.removeEventListener('click', toggleEmojiView);
   }
 
   function insertChatEvent(data) {
