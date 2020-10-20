@@ -92,7 +92,6 @@
     "wdio-firefox-profile-service": "^0.1.0",
     "wdio-mocha-framework": "^0.5.11",
     "wdio-sauce-service": "^0.4.0",
-    "wdio-selenium-standalone-service": "0.0.9",
-    "workbox-build": "^5.1.4"
+    "wdio-selenium-standalone-service": "0.0.9"
   }
 }
