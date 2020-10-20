@@ -100,7 +100,7 @@
       evt.preventDefault();
     if (emojiPicker.style.display == "none") {
         emojiPicker.style.display = "block";
-        emojiPicker.style.bottom: 111px;
+        emojiPicker.style.bottom =  "111px";
     } else {
         emojiPicker.style.display = "none";
     }
