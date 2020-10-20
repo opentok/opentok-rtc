@@ -577,12 +577,8 @@ function ServerMethods(aLogLevel, aModules) {
           });
       } else {
         // We only need to update the last usage data...
-        resolve({
-          sessionId: aSessionInfo.sessionId,
-          lastUsage: Date.now(),
-          inProgressArchiveId: aSessionInfo.inProgressArchiveId,
-          isLocked: aSessionInfo.isLocked
-        });
+        aSessionInfo.lastUsage = Date.now();
+        resolve(aSessionInfo);
       }
     });
   }

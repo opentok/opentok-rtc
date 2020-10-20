@@ -1,16 +1,15 @@
 'use strict';
 
 var SwaggerBP = require('swagger-boilerplate');
+var Utils = SwaggerBP.Utils;
+var Logger = Utils.MultiLevelLogger;
 var env = process.env;
 const Redis = require("ioredis");
 const redis = new Redis(env.REDIS_URL || env.REDISTOGO_URL || ''); // uses defaults unless given configuration object
+var logger = new Logger('ArchiveLocalStorage', 'debug');
  /*
 // Time is in minutes but we need it in ms.
   aCleanupTime = aCleanupTime * 60 * 1000;
-
-  var Utils = SwaggerBP.Utils;
-  var Logger = Utils.MultiLevelLogger;
-
  */
 
 class ArchiveLocalStorage {
@@ -36,16 +35,13 @@ class ArchiveLocalStorage {
       },
       (error) => {
         if (error) {
-          console.error(error);
-          //return logger.log('Get archives error:', error);
+          return logger.log('Get archives error:', error);
         }
         return false;
       });
   };
 
   updateArchive(aArchive) {
-    // We will do this in the background... it shouldn't be needed to stop answering till this
-    // is done.
     return new Promise((resolve) => {
       redis.get(this.roomNameKey).then((sessionInfo) => {
         sessionInfo = JSON.parse(sessionInfo);
@@ -54,7 +50,6 @@ class ArchiveLocalStorage {
         sessionInfo.archives[aArchive.id] = aArchive;
 
         redis.set(this.roomNameKey, JSON.stringify(sessionInfo)).then((ready) => {
-          //if (enableArchiveManager) {
           this.sendBroadcastSignal(sessionInfo.sessionId, sessionInfo.archives);
         });
       });
@@ -67,7 +62,6 @@ class ArchiveLocalStorage {
         sessionInfo = JSON.parse(sessionInfo);
         delete sessionInfo.archives[aArchiveId];
         redis.set(this.roomNameKey, JSON.stringify(sessionInfo)).then((ready) => {
-          // if (enableArchiveManager) {
           this.sendBroadcastSignal(sessionInfo.sessionId, sessionInfo.archives);
         });
       });
