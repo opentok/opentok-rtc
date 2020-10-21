@@ -14,9 +14,11 @@
     <link rel="icon" href="/favicon.png">
 
     <link rel="stylesheet prefetch" href="/css/room.opentok.css">
-    <script type=module>
-      import 'https://unpkg.com/emoji-picker-element'
-    </script>
+    <% if (enableEmoji) { %>
+        <script type=module>
+          import 'https://unpkg.com/emoji-picker-element'
+        </script>
+    <% } %>
     <script type="application/javascript">
     if (!document.referrer)
     {
@@ -242,12 +244,16 @@
           <ul>
           </ul>
         </div>
-        <emoji-picker class="light"></emoji-picker>
         <footer>
           <textarea id="msgText" placeholder="Type your message..." required></textarea>
           <button id="sendTxt" type="submit" alt="Send Message" data-icon="send" class="btn btn-purple btn-padding btn-padding-small"></button>
-          <button id="addEmoji" alt="Add Emoji"  data-icon="emoji" class="btn1"></button>
+          <% if (enableEmoji) { %>
+            <button id="addEmoji" alt="Add Emoji"  data-icon="emoji" class="btn1"></button>
+          <% } %>
         </footer>
+        <% if (enableEmoji) { %>
+        <emoji-picker class="light"></emoji-picker>
+        <% } %>
       </form>
     </section>
 

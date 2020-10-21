@@ -100,7 +100,7 @@
       evt.preventDefault();
     if (emojiPicker.style.display == "none") {
         emojiPicker.style.display = "block";
-        emojiPicker.style.bottom =  "81px";
+
     } else {
         emojiPicker.style.display = "none";
     }
@@ -120,7 +120,10 @@
       time: Utils.getCurrentTime(),
       text: chatMsgInput.value.trim()
     });
-    emojiPicker.style.display = "none";
+    if (emojiPicker) {
+        emojiPicker.style.display = "none";
+    }
+
   };
 
   const onKeyPress = ((myfield, evt) => {
@@ -172,8 +175,11 @@
     closeChatBtn.addEventListener('click', onClose);
     headerChat.addEventListener('click', onToggle);
     sendMsgBtn.addEventListener('click', onSendClicked);
-    emojiPicker.addEventListener('emoji-click', onEmojiClicked);
-    toggleEmojiBtn.addEventListener('click', toggleEmojiView);
+    if (emojiPicker) {
+        emojiPicker.addEventListener('emoji-click', onEmojiClicked);
+        toggleEmojiBtn.addEventListener('click', toggleEmojiView);
+    }
+
 
   }
 
@@ -183,8 +189,11 @@
     headerChat.removeEventListener('click', onToggle);
     sendMsgBtn.removeEventListener('click', onSendClicked);
     chatForm.removeEventListener('drop', onDrop);
-    emojiPicker.removeEventListener('emoji-click', onEmojiClicked);
-    toggleEmojiBtn.removeEventListener('click', toggleEmojiView);
+    if (emojiPicker) {
+        emojiPicker.removeEventListener('emoji-click', onEmojiClicked);
+        toggleEmojiBtn.removeEventListener('click', toggleEmojiView);
+    }
+
   }
 
   function insertChatEvent(data) {
