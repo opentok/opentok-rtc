@@ -403,6 +403,8 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
         cronograph.start(duration);
         startArchivingElem.style.display = 'none';
         stopArchivingElem.style.display = 'block';
+        stopArchivingElem.style.flex = 'auto';
+        stopArchivingElem.style.flexDirection = 'row';
         manageRecordingsElem.classList.add('recording');
       };
 

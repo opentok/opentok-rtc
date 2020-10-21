@@ -153,7 +153,7 @@ body {
     border-radius: 5px;
     border: none;
     margin-right: 20px;
-    width: 140px;
+    width: 100px;
     height: 40px;
     display: flex;
     justify-content: center;
@@ -163,9 +163,8 @@ body {
     font-size: 16px;
     cursor: pointer;
     @media @smartphonesPortrait {
-      display: none;
+      width: 50px;
     }
-
     i {
       margin-right: 10px;
       @media @smartphonesPortrait {
@@ -280,11 +279,10 @@ body {
   #toggleArchiving a {
 
     @media @smartphonesPortrait {
-      padding: 0px 0px;
       top: -20px;
       right: 8px;
-      margin: 0;
-      padding: 0;
+      margin: 20px 0 0 0;
+      padding-left: 5px;
     }
 
     @media @smartphonesLandscape {
@@ -324,6 +322,7 @@ body {
   #stopArchiving {
     display: none;
     background-color: @mandiRed;
+    padding-left: 15px;
     &:hover,
     &:focus,
     &:active {
@@ -1346,4 +1345,22 @@ body[data-annotation-visible="true"] {
       }
     }
   }
+}
+
+.invite-btn {
+  @media @smartphonesPortrait {
+    display: none!important;
+  }
+}
+
+.duration {
+      @media @smartphonesPortrait {
+        display: inline-flex!important;
+        font-size: 9px;
+      }
+
+      @media @smartphonesLandscape{
+        display: inline-flex!important;
+        font-size: 9px;
+      }
 }
