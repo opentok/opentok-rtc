@@ -95,16 +95,16 @@
     toggleEmojiBtn = chatWndElem.querySelector('#addEmoji');
   }
 
-  const onEmojiClicked = event => chatMsgInput.value += (" "+(event.detail.unicode)+" ")
+  const onEmojiClicked = event => chatMsgInput.value += (' ' + (event.detail.unicode) + ' ');
   const toggleEmojiView = evt => {
-      evt.preventDefault();
-    if (emojiPicker.style.display == "none") {
-        emojiPicker.style.display = "block";
+    evt.preventDefault();
+    if (emojiPicker.style.display === 'none') {
+      emojiPicker.style.display = 'block';
 
     } else {
-        emojiPicker.style.display = "none";
+      emojiPicker.style.display = 'none';
     }
-  }
+  };
   const onSendClicked = evt => {
     evt.preventDefault();
     if (!chatMsgInput.value.trim().length) {
@@ -121,7 +121,7 @@
       text: chatMsgInput.value.trim()
     });
     if (emojiPicker) {
-        emojiPicker.style.display = "none";
+      emojiPicker.style.display = 'none';
     }
 
   };
@@ -176,8 +176,8 @@
     headerChat.addEventListener('click', onToggle);
     sendMsgBtn.addEventListener('click', onSendClicked);
     if (emojiPicker) {
-        emojiPicker.addEventListener('emoji-click', onEmojiClicked);
-        toggleEmojiBtn.addEventListener('click', toggleEmojiView);
+      emojiPicker.addEventListener('emoji-click', onEmojiClicked);
+      toggleEmojiBtn.addEventListener('click', toggleEmojiView);
     }
 
 
@@ -190,8 +190,8 @@
     sendMsgBtn.removeEventListener('click', onSendClicked);
     chatForm.removeEventListener('drop', onDrop);
     if (emojiPicker) {
-        emojiPicker.removeEventListener('emoji-click', onEmojiClicked);
-        toggleEmojiBtn.removeEventListener('click', toggleEmojiView);
+      emojiPicker.removeEventListener('emoji-click', onEmojiClicked);
+      toggleEmojiBtn.removeEventListener('click', toggleEmojiView);
     }
 
   }
