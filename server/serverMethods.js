@@ -252,7 +252,6 @@ function ServerMethods(aLogLevel, aModules) {
         sipUsername,
         sipPassword,
         sipRequireGoogleAuth,
-        supportIE,
         meetingsRatePerMinute,
         publisherResolution,
         googleId,

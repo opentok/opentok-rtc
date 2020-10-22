@@ -1,9 +1,6 @@
 /* global RoomView, Cronograph, ArchivesEventsListener, RecordingsController, Modal,
 BubbleFactory, LayoutManager, $, maxUsersPerRoom */
 
-!(function (exports) {
-  'use strict';
-
 !(exports => {
   // HTML elements for the view
   let dock;

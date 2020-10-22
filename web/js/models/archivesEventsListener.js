@@ -1,5 +1,5 @@
 !(exports => {
-  const archives = null;
+  let archives = null;
   const listeners = {};
 
   const archiveHandler = {
