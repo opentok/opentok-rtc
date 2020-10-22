@@ -194,6 +194,7 @@ function ServerMethods(aLogLevel, aModules) {
       var enableArchiving = config.get(C.ENABLE_ARCHIVING, config);
       var enableArchiveManager = enableArchiving && config.get(C.ENABLE_ARCHIVE_MANAGER);
       var enableMuteAll = config.get(C.ENABLE_MUTE_ALL);
+      var enableEmoji = config.get(C.ENABLE_EMOJI);
       var enableStopReceivingVideo = config.get(C.ENABLE_STOP_RECEIVING_VIDEO);
       var maxUsersPerRoom = config.get(C.MAX_USERS_PER_ROOM);
       var enableScreensharing = config.get(C.ENABLE_SCREENSHARING);
@@ -266,6 +267,7 @@ function ServerMethods(aLogLevel, aModules) {
         ATSiteIdentifier,
         ATFunctionDept,
         mediaMode,
+        enableEmoji
       };
     });
   }
@@ -476,6 +478,7 @@ function ServerMethods(aLogLevel, aModules) {
             enableArchiving: tbConfig.enableArchiving,
             enableArchiveManager: tbConfig.enableArchiveManager,
             enableMuteAll: tbConfig.enableMuteAll,
+            enableEmoji: tbConfig.enableEmoji,
             enableStopReceivingVideo: tbConfig.enableStopReceivingVideo,
             maxUsersPerRoom: tbConfig.maxUsersPerRoom,
             enableScreensharing: tbConfig.enableScreensharing,

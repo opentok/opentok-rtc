@@ -14,6 +14,11 @@
     <link rel="icon" href="/favicon.png">
 
     <link rel="stylesheet prefetch" href="/css/room.opentok.css">
+    <% if (enableEmoji) { %>
+        <script type=module>
+          import 'https://unpkg.com/emoji-picker-element'
+        </script>
+    <% } %>
     <script type="application/javascript">
     if (!document.referrer)
     {
@@ -228,11 +233,12 @@
     <section id="chat">
       <form class="dialog-chat" id="chatForm">
         <header>
+
           <div class="chat-title">
-            <i data-icon="message_blue"></i>
+            <i data-icon="message_silver"></i>
             <span>Messaging</span>
           </div>
-          <i id="closeChat" data-icon="close_blue"></i>
+          <i id="closeChat" data-icon="close_silver"></i>
         </header>
         <div id="chatMsgs" class="tc-list">
           <ul>
@@ -240,8 +246,14 @@
         </div>
         <footer>
           <textarea id="msgText" placeholder="Type your message..." required></textarea>
-          <button id="sendTxt" type="submit" data-icon="send" class="btn btn-purple btn-padding btn-padding-small"></button>
+          <button id="sendTxt" type="submit" alt="Send Message" data-icon="send" class="btn btn-purple btn-padding btn-padding-small"></button>
+          <% if (enableEmoji) { %>
+            <button id="addEmoji" alt="Add Emoji"  data-icon="emoji" class="btn1"></button>
+          <% } %>
         </footer>
+        <% if (enableEmoji) { %>
+        <emoji-picker class="light"></emoji-picker>
+        <% } %>
       </form>
     </section>
 
