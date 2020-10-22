@@ -51,3 +51,8 @@ config/
 
 # test error images
 errorShots
+
+# minified files
+/web/js/min/
+*.min.js
+*.js.map

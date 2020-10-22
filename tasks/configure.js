@@ -1,12 +1,12 @@
 'use strict';
 
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
-  grunt.registerTask('preBowerInstall', function() {
+  grunt.registerTask('preBowerInstall', function () {
     grunt.file.setBase('test');
   });
 
-  grunt.registerTask('postBowerInstall', function() {
+  grunt.registerTask('postBowerInstall', function () {
     grunt.file.setBase('..');
   });
 

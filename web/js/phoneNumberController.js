@@ -1,14 +1,14 @@
 /* global PhoneNumberView */
-!(function (global) {
-  var init = function () {
+!(global => {
+  const init = () => {
     return LazyLoader.load(
-      '/js/phoneNumberView.js'
-    ).then(function () {
+      '/js/min/phoneNumberView.min.js'
+    ).then(() => {
       PhoneNumberView.init();
     });
   };
 
   global.PhoneNumberController = {
-    init: init
+    init
   };
-}(this));
+})(this);

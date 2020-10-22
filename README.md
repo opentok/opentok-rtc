@@ -380,12 +380,6 @@ See the [Phone dial-out](#phone-dial-out) section.
 
 * `MEDIA_MODE` (Optional, default value: 'routed'): Whether the OpenTok sessions should be `relayed` or `routed`.
 
-* `SUPPORT_IE` (Optional, default value: true): Whether the app support Internet Explorer.
- If you set this to `false`, the app will not load scripts that add polyfills for IE.
- Note that OpenTok.js 2.17 removes support for IE, and you should set this to `false`.
- (When OpenTok.js 2.16 is no longer supported, we will remove this config settings
- and remove these polyfill scripts.)
-
 * `ENABLE_MUTE_ALL` (Optional, default value: true): Whether to show the Mute All
  control in the top menu of the room. (You can set this in the config file
  using the `enableMuteAll` setting.)

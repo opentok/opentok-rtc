@@ -11,7 +11,7 @@ const TIMEOUT = 20000; // 20-second timeout for each async test
 module.exports = (config, googleAuth) => new Promise((resolve, reject) => {
   const healthObj = {
     name: pkg.name,
-    version: pkg.version,
+    version: pkg.version
   };
 
   const gitHash = () => new Promise((resolve) => {
@@ -58,15 +58,15 @@ module.exports = (config, googleAuth) => new Promise((resolve, reject) => {
   });
 
   gitHash()
-  .then(testOpenTok)
-  .then(testGoogleAuth)
-  .then(() => {
-    healthObj.status = 'pass';
-    resolve(healthObj);
-  })
-  .catch((error) => {
-    healthObj.status = 'fail';
-    healthObj.error = error.message;
-    reject(healthObj);
-  });
+    .then(testOpenTok)
+    .then(testGoogleAuth)
+    .then(() => {
+      healthObj.status = 'pass';
+      resolve(healthObj);
+    })
+    .catch((error) => {
+      healthObj.status = 'fail';
+      healthObj.error = error.message;
+      reject(healthObj);
+    });
 });

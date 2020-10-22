@@ -132,8 +132,6 @@ E.BLACKLIST = { envVar: 'BLACKLIST', jsonPath: 'blacklist', defaultValue: '' };
 
 E.MEDIA_MODE = { envVar: 'MEDIA_MODE', jsonPath: 'mediaMode', defaultValue: 'routed' };
 
-E.SUPPORT_IE = { envVar: 'SUPPORT_IE', jsonPath: 'supportIE', defaultValue: true, parser: parseBool };
-
 E.ADOBE_TRACKING_URL = { envVar: 'ADOBE_TRACKING_URL', jsonPath: 'adobeTracking.url', defaultValue: '' };
 
 E.ADOBE_TRACKING_PRIMARY_CATEGORY = { envVar: 'ADOBE_TRACKING_PRIMARY_CATEGORY', jsonPath: 'adobeTracking.primaryCategory', defaultValue: '' };
