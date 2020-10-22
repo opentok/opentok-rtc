@@ -12,9 +12,9 @@ describe('Home', function () {
 
   it('creates room', () => {
     page.open();
-    page.room.setValue(room);
     page.name.setValue(user);
     page.goToRoom();
+    page.acceptTerms();
   }, 1);
 
 });

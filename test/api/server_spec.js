@@ -55,7 +55,7 @@ describe('OpenTokRTC server', () => {
   // Note that everything needed to test this is actually in api.json, but it's not
   // really worth it at this point to try to do this generic. So for now we'll just do
   // it manually.
-  function checkForAttributes(aAttributes, aRes) {
+   const checkForAttributes = (aAttributes, aRes) =>  {
     var aObject = aRes.body;
     for (var i = 0, l = aAttributes.length; i < l; i++) {
       if (!aObject[aAttributes[i]]) {
