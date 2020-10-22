@@ -48,12 +48,14 @@ describe('OpenTokRTC server', () => {
     });
   });
 
+  after(() => {
+    MockOpentok.restoreInstances();
+  });
 
   // Note that everything needed to test this is actually in api.json, but it's not
   // really worth it at this point to try to do this generic. So for now we'll just do
   // it manually.
   function checkForAttributes(aAttributes, aRes) {
-    console.log('checking attrib');
     var aObject = aRes.body;
     for (var i = 0, l = aAttributes.length; i < l; i++) {
       if (!aObject[aAttributes[i]]) {
@@ -127,13 +129,6 @@ describe('OpenTokRTC server', () => {
       .expect(200, done);
   });
 
-  it('GET /room/:roomName?template=room', (done) => {
-    request(app)
-      .get('/room/roomName?template=room')
-      .set('Accept', 'text/html')
-      .expect('X-XSS-Protection', '1; mode=block')
-      .expect(200, done);
-  });
 
   it('GET /room/:roomName?template=unknownTemplate without auth, return default', (done) => {
     request(app)
@@ -217,7 +212,6 @@ describe('OpenTokRTC server', () => {
       .get('/server/health')
       .expect(400)
       .then((response) => {
-        console.log(response.body);
         expect(response.body.name).to.equal('opentok-rtc');
         expect(response.body.version).to.be.a.string;
         expect(response.body.gitHash).to.be.a.string;
