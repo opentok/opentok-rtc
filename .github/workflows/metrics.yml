@@ -14,4 +14,3 @@ jobs:
         project_id: ${{ secrets.project_id }}
         private_key: ${{ secrets.private_key }}
         client_email: ${{ secrets.client_email }}
-        firebaseDbUrl: ${{ secrets.firebaseDbUrl }}

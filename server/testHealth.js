@@ -35,21 +35,6 @@ module.exports = (config, googleAuth) => new Promise((resolve, reject) => {
     });
   });
 
-  const testFirebase = () => new Promise((resolve, reject) => {
-    setTimeout(() => {
-      reject(new Error('Firebase connectivity timeout exceeded.'));
-    }, TIMEOUT);
-    config.fbArchives.ping()
-      .then(() => {
-        healthObj.firebase = true;
-        resolve();
-      })
-      .catch((error) => {
-        healthObj.firebase = false;
-        reject(error);
-      });
-  });
-
   const testGoogleAuth = () => new Promise((resolve, reject) => {
     setTimeout(() => {
       reject(new Error('Google Authentication timeout exceeded.'));
@@ -74,7 +59,6 @@ module.exports = (config, googleAuth) => new Promise((resolve, reject) => {
 
   gitHash()
     .then(testOpenTok)
-    .then(testFirebase)
     .then(testGoogleAuth)
     .then(() => {
       healthObj.status = 'pass';
