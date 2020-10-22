@@ -89,10 +89,7 @@
       cancelPendingSend(evt.connection.connectionId);
     },
     sessionDisconnected() {
-      Request.deleteConnection(_myCreationTime, otHelper.session.id)
-        .then(() => {
-          window.location = '/';
-        });
+      window.location = '/';
     }
   };
 

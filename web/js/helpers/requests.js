@@ -111,9 +111,7 @@
     dialOut,
     hangUp,
     deleteArchive,
-    sendXHR,
-    saveConnection,
-    deleteConnection
+    sendXHR
   };
 
   exports.Request = Request;
