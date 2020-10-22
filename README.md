@@ -432,8 +432,7 @@ See the [Phone dial-out](#phone-dial-out) section.
 
 * `USE_GOOGLE_FONTS` (Optional, default value: true): Whether the client app will load
    the Open Sans font (the main font used in the user interface) from the Google font library
-   (fonts.googleapis.com) or not. *Note:* This version of the app uses Spezia, not Open Sans,
-   and it is not available from the Google font library. This setting is ignored.
+   (fonts.googleapis.com) or not.
 
 * `MEDIA_MODE` (Optional, default value: 'routed'): Whether the OpenTok sessions should be `relayed` or `routed`.
 
