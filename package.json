@@ -32,6 +32,7 @@
     "cors": "^2.7.1",
     "daemon": "^1.1.0",
     "ejs": "^2.5.5",
+    "emoji-picker-element": "^1.2.1",
     "express": "^4.0.0",
     "firebase": "^2.3.1",
     "firebase-token-generator": "^2.0.0",

@@ -60,6 +60,8 @@ E.ENABLE_ARCHIVE_MANAGER = { envVar: 'ENABLE_ARCHIVE_MANAGER', jsonPath: 'Archiv
 
 E.ENABLE_MUTE_ALL = { envVar: 'ENABLE_MUTE_ALL', jsonPath: 'enableMuteAll', defaultValue: true, parser: parseBool };
 
+E.ENABLE_EMOJI = { envVar: 'ENABLE_EMOJI', jsonPath: 'enableEmoji', defaultValue: false, parser: parseBool  };
+
 E.ENABLE_STOP_RECEIVING_VIDEO = { envVar: 'ENABLE_STOP_RECEIVING_VIDEO', jsonPath: 'enableStopReceivingVideo', defaultValue: true, parser: parseBool };
 
 E.MAX_USERS_PER_ROOM = { envVar: 'MAX_USERS_PER_ROOM', jsonPath: 'maxUsersPerRoom', defaultValue: 0, parser: parseInt };
