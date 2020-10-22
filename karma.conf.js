@@ -18,7 +18,6 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'test/lib/**/*.js',
-      {pattern: 'test/mocks/mock_firebase.js', include: true},
       {pattern: 'test/mocks/mock_othelper.js', include: true},
       {pattern: 'test/mocks/mock_roomStatus.js', include: true},
       {pattern: 'test/mocks/mock_chat.js', include: true},

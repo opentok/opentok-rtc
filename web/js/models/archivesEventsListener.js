@@ -1,7 +1,5 @@
-//  globals Firebase
-
 !(exports => {
-  const archives = null;
+  let archives = null;
   const listeners = {};
 
   const archiveHandler = {
@@ -62,14 +60,17 @@
     return false;
   }
 
-  const FirebaseModel = {
-    addEventListener,
-    removeEventListener,
-    init,
+  const ArchivesEventsListener = {
+    addEventListener: addEventListener,
+    removeEventListener: removeEventListener,
+    init: init,
+    set archives(existingArchives) {
+      archives = existingArchives;
+    },
     get archives() {
       return archives;
     }
   };
 
-  exports.FirebaseModel = FirebaseModel;
+  exports.ArchivesEventsListener = ArchivesEventsListener;
 })(this);

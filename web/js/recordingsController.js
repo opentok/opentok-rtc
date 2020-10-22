@@ -1,16 +1,16 @@
-/* global Modal, FirebaseModel, RecordingsView */
+/* global Modal, ArchivesEventsListener, RecordingsView */
 
 !(exports => {
   let model = null;
 
-  function init(enableArchiveManager) {
+  function init(enableArchiveManager, existingArchives) {
     let dependenciesLoaded;
     if (enableArchiveManager) {
       dependenciesLoaded = LazyLoader.dependencyLoad([
-        '/js/models/firebase.js',
+        '/js/models/archivesEventsListener.js',
         '/js/min/recordingsView.min.js'
       ]).then(() => {
-        return FirebaseModel
+        return ArchivesEventsListener
           .init();
       });
     } else {
@@ -19,6 +19,7 @@
 
     return dependenciesLoaded.then(aModel => {
       model = aModel;
+      model.archives = existingArchives;
       Utils.sendEvent('recordings-model-ready', null, exports);
       addListeners();
       aModel && RecordingsView.init(model);

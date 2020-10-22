@@ -77,7 +77,6 @@
     sessionConnected(evt) {
       _myCreationTime = evt.target.connection.creationTime;
       otHelper = this;
-      Request.saveConnection(_myCreationTime, otHelper.session.id);
     },
     connectionDestroyed(evt) {
       // If connection destroyed belongs to someone older than me,
@@ -90,10 +89,7 @@
       cancelPendingSend(evt.connection.connectionId);
     },
     sessionDisconnected() {
-      Request.deleteConnection(_myCreationTime, otHelper.session.id)
-        .then(() => {
-          window.location = '/';
-        });
+      window.location = '/';
     }
   };
 

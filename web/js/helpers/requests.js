@@ -103,20 +103,6 @@
     return sendXHR('DELETE', `${server}/archive/${id}`);
   }
 
-  function saveConnection(connection, sessionId) {
-    return sendXHR('POST', `${server}/saveConnection/`, JSON.stringify({
-      connection,
-      sessionId
-    }), 'application/json');
-  }
-
-  function deleteConnection(connection, sessionId) {
-    return sendXHR('POST', `${server}/deleteConnection/`, JSON.stringify({
-      connection,
-      sessionId
-    }), 'application/json');
-  }
-
   const Request = {
     getRoomInfo,
     getRoomRawInfo,
@@ -125,9 +111,7 @@
     dialOut,
     hangUp,
     deleteArchive,
-    sendXHR,
-    saveConnection,
-    deleteConnection
+    sendXHR
   };
 
   exports.Request = Request;
