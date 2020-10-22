@@ -15,7 +15,7 @@ var SwaggerBP = require('swagger-boilerplate');
 var helmet = require('helmet');
 var C = require('./serverConstants');
 var configLoader = require('./configLoader');
-var FirebaseArchives = require('./firebaseArchives');
+var ArchiveLocalStorage = require('./archiveLocalStorage');
 var GoogleAuth = require('./googleAuthStrategies');
 var testHealth = require('./testHealth');
 var Haikunator = require('haikunator');
@@ -81,11 +81,6 @@ function ServerMethods(aLogLevel, aModules) {
   var Opentok = aModules.Opentok || require('opentok'); // eslint-disable-line global-require
 
   var roomBlackList;
-
-  if (aModules.Firebase) {
-    FirebaseArchives.Firebase = aModules.Firebase;
-  }
-
 
   var logger = new Logger('ServerMethods', aLogLevel);
   var ServerPersistence = SwaggerBP.ServerPersistence;
@@ -196,13 +191,10 @@ function ServerMethods(aLogLevel, aModules) {
       var meetingsRatePerMinute = config.get(C.MEETINGS_RATE_PER_MINUTE);
       var minMeetingNameLength = config.get(C.MIN_MEETING_NAME_LENGTH);
       var publisherResolution = config.get(C.PUBLISHER_RESOLUTION);
-
-      var firebaseConfigured =
-              config.get(C.FIREBASE_DATA_URL) && config.get(C.FIREBASE_AUTH_SECRET);
-
       var enableArchiving = config.get(C.ENABLE_ARCHIVING, config);
       var enableArchiveManager = enableArchiving && config.get(C.ENABLE_ARCHIVE_MANAGER);
       var enableMuteAll = config.get(C.ENABLE_MUTE_ALL);
+      var enableEmoji = config.get(C.ENABLE_EMOJI);
       var enableStopReceivingVideo = config.get(C.ENABLE_STOP_RECEIVING_VIDEO);
       var maxUsersPerRoom = config.get(C.MAX_USERS_PER_ROOM);
       var enableScreensharing = config.get(C.ENABLE_SCREENSHARING);
@@ -215,22 +207,8 @@ function ServerMethods(aLogLevel, aModules) {
       var hotjarVersion = config.get(C.HOTJAR_VERSION);
       var enableFeedback = config.get(C.ENABLE_FEEDBACK);
 
-      if (!firebaseConfigured && enableArchiveManager) {
-        logger.error('Firebase not configured. Please provide firebase credentials or disable archive_manager');
-      }
-
       roomBlackList = config.get(C.BLACKLIST) ?
         config.get(C.BLACKLIST).split(',').map(word => word.trim().toLowerCase()) : [];
-
-      // For this object we need to know if/when we're reconnecting so we can shutdown the
-      // old instance.
-      var oldFirebaseArchivesPromise = Utils.CachifiedObject.getCached(FirebaseArchives);
-
-      var firebaseArchivesPromise =
-              Utils.CachifiedObject(FirebaseArchives, config.get(C.FIREBASE_DATA_URL),
-                config.get(C.FIREBASE_AUTH_SECRET),
-                config.get(C.EMPTY_ROOM_LIFETIME), aLogLevel);
-      _shutdownOldInstance(oldFirebaseArchivesPromise, firebaseArchivesPromise);
 
       // Adobe tracking
       var adobeTrackingUrl = config.get(C.ADOBE_TRACKING_URL);
@@ -238,60 +216,59 @@ function ServerMethods(aLogLevel, aModules) {
       var ATSiteIdentifier = config.get(C.ADOBE_TRACKING_SITE_IDENTIFIER);
       var ATFunctionDept = config.get(C.ADOBE_TRACKING_FUNCTION_DEPT);
 
-      return firebaseArchivesPromise
-        .then(firebaseArchives => ({
-          otInstance,
-          precallOtInstance,
-          apiKey,
-          apiSecret,
-          precallApiKey,
-          precallApiSecret,
-          archivePollingTO,
-          archivePollingTOMultiplier,
-          maxSessionAgeMs,
-          fbArchives: firebaseArchives,
-          allowIframing,
-          chromeExtId,
-          defaultTemplate,
-          templatingSecret,
-          archiveAlways,
-          iosAppId,
-          iosUrlPrefix,
-          isWebRTCVersion,
-          enableArchiving,
-          enableArchiveManager,
-          enableMuteAll,
-          enableStopReceivingVideo,
-          enableScreensharing,
-          enableAnnotations,
-          enablePrecallTest,
-          enableRoomLocking,
-          feedbackUrl,
-          hotjarId,
-          hotjarVersion,
-          enableFeedback,
-          enableSip,
-          opentokJsUrl,
-          showTos,
-          sipUri,
-          sipUsername,
-          sipPassword,
-          sipRequireGoogleAuth,
-          meetingsRatePerMinute,
-          publisherResolution,
-          googleId,
-          googleHostedDomain,
-          reportIssueLevel,
-          useGoogleFonts,
-          jqueryUrl,
-          minMeetingNameLength,
-          maxUsersPerRoom,
-          adobeTrackingUrl,
-          ATPrimaryCategory,
-          ATSiteIdentifier,
-          ATFunctionDept,
-          mediaMode
-        }));
+      return {
+        otInstance,
+        precallOtInstance,
+        apiKey,
+        apiSecret,
+        precallApiKey,
+        precallApiSecret,
+        archivePollingTO,
+        archivePollingTOMultiplier,
+        maxSessionAgeMs,
+        allowIframing,
+        chromeExtId,
+        defaultTemplate,
+        templatingSecret,
+        archiveAlways,
+        iosAppId,
+        iosUrlPrefix,
+        isWebRTCVersion,
+        enableArchiving,
+        enableArchiveManager,
+        enableMuteAll,
+        enableStopReceivingVideo,
+        enableScreensharing,
+        enableAnnotations,
+        enablePrecallTest,
+        enableRoomLocking,
+        feedbackUrl,
+        hotjarId,
+        hotjarVersion,
+        enableFeedback,
+        enableSip,
+        opentokJsUrl,
+        showTos,
+        sipUri,
+        sipUsername,
+        sipPassword,
+        sipRequireGoogleAuth,
+        meetingsRatePerMinute,
+        publisherResolution,
+        googleId,
+        googleHostedDomain,
+        reportIssueLevel,
+        useGoogleFonts,
+        jqueryUrl,
+        minMeetingNameLength,
+        maxUsersPerRoom,
+        adobeTrackingUrl,
+        ATPrimaryCategory,
+        ATSiteIdentifier,
+        ATFunctionDept,
+        mediaMode,
+        enableEmoji
+      };
     });
   }
 
@@ -501,6 +478,7 @@ function ServerMethods(aLogLevel, aModules) {
             enableArchiving: tbConfig.enableArchiving,
             enableArchiveManager: tbConfig.enableArchiveManager,
             enableMuteAll: tbConfig.enableMuteAll,
+            enableEmoji: tbConfig.enableEmoji,
             enableStopReceivingVideo: tbConfig.enableStopReceivingVideo,
             maxUsersPerRoom: tbConfig.maxUsersPerRoom,
             enableScreensharing: tbConfig.enableScreensharing,
@@ -604,12 +582,8 @@ function ServerMethods(aLogLevel, aModules) {
           });
       } else {
         // We only need to update the last usage data...
-        resolve({
-          sessionId: aSessionInfo.sessionId,
-          lastUsage: Date.now(),
-          inProgressArchiveId: aSessionInfo.inProgressArchiveId,
-          isLocked: aSessionInfo.isLocked
-        });
+        aSessionInfo.lastUsage = Date.now();
+        resolve(aSessionInfo);
       }
     });
   }
@@ -692,8 +666,6 @@ function ServerMethods(aLogLevel, aModules) {
   //   apiKey: string
   //   token: string
   //   username: string
-  //   firebaseURL: string
-  //   firebaseToken: string
   //   chromeExtId: string value || 'undefined'
   // }
   var _numAnonymousUsers = 1;
@@ -724,10 +696,6 @@ function ServerMethods(aLogLevel, aModules) {
         serverPersistence.setKeyEx(Math.round(tbConfig.maxSessionAgeMs / 1000),
           redisRoomPrefix + roomName, JSON.stringify(usableSessionInfo));
 
-        // We have to create an authentication token for the new user...
-        var fbUserToken =
-          enableArchiveManager && fbArchives.createUserToken(usableSessionInfo.sessionId, userName);
-
         // and finally, answer...
         var answer = {
           apiKey: tbConfig.apiKey,
@@ -737,9 +705,6 @@ function ServerMethods(aLogLevel, aModules) {
               data: JSON.stringify({ userName })
             }),
           username: userName,
-          firebaseURL:
-            (enableArchiveManager && fbArchives.baseURL + '/' + usableSessionInfo.sessionId) || '',
-          firebaseToken: fbUserToken || '',
           chromeExtId: tbConfig.chromeExtId,
           enableArchiveManager: tbConfig.enableArchiveManager,
           enableAnnotation: tbConfig.enableAnnotations,
@@ -748,7 +713,8 @@ function ServerMethods(aLogLevel, aModules) {
           requireGoogleAuth: tbConfig.sipRequireGoogleAuth,
           googleId: tbConfig.googleId,
           googleHostedDomain: tbConfig.googleHostedDomain,
-          reportIssueLevel: tbConfig.reportIssueLevel
+          reportIssueLevel: tbConfig.reportIssueLevel,
+          archives: usableSessionInfo.archives,
         };
         answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId;
         aRes.send(answer);
@@ -870,18 +836,19 @@ function ServerMethods(aLogLevel, aModules) {
           // archive information will not be updated yet. We can wait to be notified (by a callback)
           // or poll for the information. Since polling is less efficient, we do so only when
           // required by the configuration.
-          var readyToUpdateExternalDb =
+          var readyToUpdateDb =
             (operation === 'stop' && tbConfig.archivePollingTO &&
              _launchArchivePolling(otInstance, aArchive.id,
                tbConfig.archivePollingTO,
                tbConfig.archivePollingTOMultiplier)) ||
             Promise.resolve(aArchive);
 
-          readyToUpdateExternalDb
+          const roomArchiveStorage = new ArchiveLocalStorage(otInstance, redisRoomPrefix + roomName, aArchive.sessionId, aLogLevel);
+          readyToUpdateDb
             .then((aUpdatedArchive) => {
               aUpdatedArchive.localDownloadURL = '/archive/' + aArchive.id;
               operation !== 'stop' && (aUpdatedArchive.recordingUser = userName);
-              tbConfig.fbArchives.updateArchive(sessionInfo.sessionId, aUpdatedArchive);
+              roomArchiveStorage.updateArchive(aUpdatedArchive);
             });
 
           logger.log('postRoomArchive => Returning archive info: ', aArchive.id);
@@ -927,6 +894,12 @@ function ServerMethods(aLogLevel, aModules) {
       });
   }
 
+  function getRoomNameFromHeaders(headers) {
+    const referer = headers.referer;
+    var lastIndex = referer.lastIndexOf('/');
+    return referer.substr(lastIndex + 1, referer.length).split('?')[0];
+  }
+
   function deleteArchive(aReq, aRes) {
     var archiveId = aReq.params.archiveId;
     logger.log('deleteArchive:', archiveId);
@@ -934,15 +907,19 @@ function ServerMethods(aLogLevel, aModules) {
     var otInstance = tbConfig.otInstance;
     var sessionId;
     var type;
+    const roomName = getRoomNameFromHeaders(aReq.headers);
+    let roomArchiveStorage;
+
     otInstance
       .getArchive_P(archiveId) // This is only needed so we can get the sesionId
       .then((aArchive) => {
         sessionId = aArchive.sessionId;
         type = aArchive.outputMode;
+        roomArchiveStorage = new ArchiveLocalStorage(otInstance, redisRoomPrefix + roomName, sessionId, aLogLevel);
         return archiveId;
       })
       .then(otInstance.deleteArchive_P)
-      .then(() => tbConfig.fbArchives.removeArchive(sessionId, archiveId))
+      .then(() => roomArchiveStorage.removeArchive(archiveId))
       .then(() => aRes.send({ id: archiveId, type }))
       .catch((e) => {
         logger.error('deleteArchive error:', e);
@@ -1045,61 +1022,6 @@ function ServerMethods(aLogLevel, aModules) {
       });
   }
 
-  function saveConnectionFirebase(aReq, aRes) {
-    var body = aReq.body;
-    var connection = body.connection;
-    var sessionId = body.sessionId;
-    var tbConfig = aReq.tbConfig;
-    var fbArchives = tbConfig.fbArchives;
-    var enableArchiveManager = tbConfig.enableArchiveManager;
-
-    fbArchives.saveConnection(connection, sessionId)
-      .then(() => {
-        if (enableArchiveManager) {
-          var fbArchivesCallback = function (archivesSnapshot) {
-            var archives = archivesSnapshot.val() || {};
-
-            tbConfig.otInstance.signal(
-              sessionId,
-              null,
-              {
-                type: 'archives',
-                data: JSON.stringify({
-                  _head: {
-                    id: 1,
-                    seq: 1,
-                    tot: 1
-                  },
-                  data: archives
-                })
-              },
-              (error) => {
-                if (error) {
-                  return logger.log('Get archives error:', error);
-                }
-                return false;
-              });
-          };
-
-          fbArchives.subscribeArchiveUpdates(sessionId, fbArchivesCallback);
-        }
-      });
-
-    aRes.send({});
-  }
-
-  function deleteConnectionFirebase(aReq, aRes) {
-    var body = aReq.body;
-    var connection = body.connection;
-    var sessionId = body.sessionId;
-    var tbConfig = aReq.tbConfig;
-    var fbArchives = tbConfig.fbArchives;
-
-    fbArchives.deleteConnection(connection, sessionId);
-
-    aRes.send({});
-  }
-
   function setSecurityHeaders(aReq, aRes, aNext) {
     aRes.set('X-XSS-Protection', '1; mode=block');
     aRes.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
@@ -1132,8 +1054,6 @@ function ServerMethods(aLogLevel, aModules) {
     postHangUp,
     getHealth,
     getRoomRawInfo,
-    saveConnectionFirebase,
-    deleteConnectionFirebase,
     setSecurityHeaders,
     getMeetingCompletion
   };

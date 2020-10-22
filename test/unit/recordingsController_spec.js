@@ -31,11 +31,6 @@ describe('RecordingsController', () => {
               action: 'delete',
             });
           });
-          this.stub(FirebaseModel, 'init', (valA) => {
-            expect(valA).to.be.equal('valueA');
-            var model = {};
-            return Promise.resolve(model);
-          });
           var enableArchiveManager = true;
           RecordingsController.init(enableArchiveManager);
         }));

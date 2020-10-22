@@ -803,9 +803,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
       .getRoomInfo(aRoomParams)
       .then(aRoomInfo => {
         if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId &&
-              aRoomInfo.apiKey && aRoomInfo.username) ||
-              (aRoomInfo.enableArchiveManager &&
-              (!aRoomInfo.firebaseToken || !aRoomInfo.firebaseURL))) {
+              aRoomInfo.apiKey && aRoomInfo.username)) {
           debug.error('Error getRoomParams [', aRoomInfo,
             '] without correct response');
           throw new Error('Error getting room parameters');
@@ -888,7 +886,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
         RoomView.init(enableHangoutScroll, enableArchiveManager, enableSip);
         // Init this controller before connect to the session
         // to start receiving signals about archives updates
-        RecordingsController.init(enableArchiveManager);
+        RecordingsController.init(enableArchiveManager, aParams.archives);
 
         roomURI = aParams.roomURI;
         userName = aParams.username ? aParams.username.substring(0, 1000) : '';
