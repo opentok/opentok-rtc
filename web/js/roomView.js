@@ -1,4 +1,4 @@
-/* global RoomView, Cronograph, FirebaseModel, RecordingsController, Modal,
+/* global RoomView, Cronograph, ArchivesEventsListener, RecordingsController, Modal,
 BubbleFactory, LayoutManager, $, maxUsersPerRoom */
 
 !(exports => {
@@ -412,15 +412,15 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
       }
 
       const onModel = () => { // eslint-disable-line consistent-return
-        const archives = FirebaseModel.archives;
-        const archiveId = data.id;
+        var archives = ArchivesEventsListener.archives;
+        var archiveId = data.id;
 
         if (archives) {
           return start(archives[archiveId]);
         }
 
-        FirebaseModel.addEventListener('value', function onValue(archives) {
-          FirebaseModel.removeEventListener('value', onValue);
+        ArchivesEventsListener.addEventListener('value', function onValue(archives) {
+          ArchivesEventsListener.removeEventListener('value', onValue);
           start(archives[archiveId]);
         });
       };

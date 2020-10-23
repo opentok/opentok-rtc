@@ -44,15 +44,12 @@ If you want to install OpenTokRTC on your own server, read on. If you want to de
 
 You will need to install these dependencies on your machine:
 
-- [Node.js v8](https://nodejs.org): This version of OpenTokRTC is tested with Node.js v8.
+- [NodeJS v12](https://nodejs.org): This version of OpenTokRTC is tested with NodeJS v12 LTS.
 - [Redis](https://redis.io): A `redis` server running on `localhost`.
 - [Grunt](http://gruntjs.com): Used for bundling assets and running tests. You can install the Grunt CLI globally by running:<br/>   `# npm i -g grunt-cli`.
 
-You will also need these API subscriptions:
-
-- [OpenTok](https://tokbox.com): An OpenTok API key and secret. You can obtain these by signing up with
-  [OpenTok/Vonage Video API](https://tokbox.com/account/user/signup).
-- [Firebase](https://firebase.google.com) (Optional): A Firebase app and secret. Firebase is used for storing archive data of video conferences. You will need this only if you want to enable Archive Management (In-app playback and download of recordings) of conference rooms.
+You will also need these an OpenTok API key and secret. You can obtain these by signing up with
+[OpenTok/Vonage Video API](https://tokbox.com/account/user/signup).
 
 ### Installing dependencies
 
@@ -368,10 +365,6 @@ or set environment variables:
   The end user can click an archive to view the recording. This setting is only meaningful
   if `Archiving.enabled` / `ENABLE_ARCHIVING` is set to `true`. The default value is `false`.
 
-* `Archiving.archivingManager.emptyRoomMaxLifetime` (config.json) / `EMPTY_ROOM_LIFETIME`
-  (environment variable) -- The time, in minutes, an empty room will store its archive history
-  after the last participant leaves a room, in minutes. The default value is 3.
-
 
 **Config.json example:**
 
@@ -385,7 +378,6 @@ or set environment variables:
         "pollingTimeoutMultiplier": 1,
         "archiveManager": {
             "enabled": true,
-            "emptyRoomMaxLifetime": 10
         }
     }
 }

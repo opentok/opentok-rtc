@@ -92,18 +92,8 @@ module.exports = function (grunt) {
           clearRequireCache: true
         },
         src: [
-          'test/server/**/*_spec.js',
-          '!test/server/firebaseArchives_spec.js'
+          'test/server/**/*_spec.js'
         ]
-      },
-      archives: {
-        options: {
-          reporter: 'spec',
-          captureFile: 'resultsUnit.txt',
-          quiet: false,
-          clearRequireCache: true
-        },
-        src: ['test/server/firebaseArchives_spec.js']
       },
       rest: {
         options: {

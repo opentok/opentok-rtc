@@ -35,10 +35,6 @@ E.OPENTOK_PRECALL_API_SECRET = { envVar: 'TB_PRECALL_API_SECRET', jsonPath: 'pre
 
 E.OPENTOK_JS_URL = { envVar: 'TB_JS_URL', jsonPath: 'OpenTok.jsUrl', required: false, defaultValue: 'https://static.opentok.com/v2/js/opentok.min.js' };
 
-E.FIREBASE_DATA_URL = { envVar: 'FB_DATA_URL', jsonPath: 'Firebase.dataUrl' };
-
-E.FIREBASE_AUTH_SECRET = { envVar: 'FB_AUTH_SECRET', jsonPath: 'Firebase.authSecret' };
-
 // Sessions should not live forever. So we'll store the last time a session was used and if when
 // we fetch it from Redis we determine it's older than this max age (in days). This is the key
 // where that value (in days) should be stored. By default, sessions live two days.
@@ -60,12 +56,11 @@ E.ENABLE_ARCHIVE_MANAGER = { envVar: 'ENABLE_ARCHIVE_MANAGER', jsonPath: 'Archiv
 
 E.ENABLE_MUTE_ALL = { envVar: 'ENABLE_MUTE_ALL', jsonPath: 'enableMuteAll', defaultValue: true, parser: parseBool };
 
+E.ENABLE_EMOJI = { envVar: 'ENABLE_EMOJI', jsonPath: 'enableEmoji', defaultValue: false, parser: parseBool  };
+
 E.ENABLE_STOP_RECEIVING_VIDEO = { envVar: 'ENABLE_STOP_RECEIVING_VIDEO', jsonPath: 'enableStopReceivingVideo', defaultValue: true, parser: parseBool };
 
 E.MAX_USERS_PER_ROOM = { envVar: 'MAX_USERS_PER_ROOM', jsonPath: 'maxUsersPerRoom', defaultValue: 0, parser: parseInt };
-
-// Maximum time an empty room will keep its history alive, in minutes.
-E.EMPTY_ROOM_LIFETIME = { envVar: 'EMPTY_ROOM_LIFETIME', jsonPath: 'Archiving.archiveManager.emptyRoomMaxLifetime', defaultValue: 3 };
 
 E.FEEDBACK_URL = { envVar: 'FEEDBACK_URL', jsonPath: 'Feedback.url', defaultValue: '' };
 

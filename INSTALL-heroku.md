@@ -23,11 +23,6 @@ You have to set the following environment variables on your Heroku instance:
 - `TB_API_KEY`: Your OpenTok API key.
 - `TB_API_SECRET`: Your OpenTok API secret.
 
-The following environment are optional and required only if you enable Archive Manager.
-
-- `FB_DATA_URL`: (Optional) A Firebase database URL to store the archive list for each room.
-- `FB_AUTH_SECRET`: (Optional) The authentication secret for the previous URL.
-
 ## Manual Installation using Heroku CLI
 
 You will need to install Heroku CLI tool. For information on downloading and using the heroku CLI, see their official documentation: https://devcenter.heroku.com/articles/heroku-cli.
@@ -42,12 +37,6 @@ Now you will have to set the following environment variables on your heroku inst
 
 ```sh
 $ heroku config:set TB_API_KEY=<key> TB_API_SECRET=<secret>
-```
-
-If you want to use Archive Management (In app playback and download of recordings), set up Firebase configuration. Replace `<appurl>` with your Firebase application URL and `<appsecret>` with the secret for that Firebase app in this command:
-
-```sh
-$ heroku config:set FB_DATA_URL=<appurl> FB_AUTH_SECRET=<appsecret> ENABLE_ARCHIVE_MANAGER=true
 ```
 
 You will need to choose a redis addon. These two are currently supported,
@@ -69,7 +58,6 @@ Additionally you can also modify all the other configuration options described i
 - `tb_archive_polling_initial_timeout` => ARCHIVE_TIMEOUT
 - `tb_archive_polling_multiplier` => TIMEOUT_MULTIPLIER
 - `tb_max_session_age` => TB_MAX_SESSION_AGE
-- `tb_max_history_lifetime` => EMPTY_ROOM_LIFETIME
 - `allow_iframing` => ALLOW_IFRAMING
 - `valid_refrers` => VALID_REFERERS
 - `chrome_extension_id` => CHROME_EXTENSION_ID
