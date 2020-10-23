@@ -38,31 +38,21 @@ class ArchiveLocalStorage {
       });
   };
 
-  updateArchive(aArchive) {
-    return new Promise((resolve) => {
-      redis.get(this.roomNameKey).then((sessionInfo) => {
-        sessionInfo = JSON.parse(sessionInfo);
-
-        if (!sessionInfo.archives) sessionInfo.archives = {};
-        sessionInfo.archives[aArchive.id] = aArchive;
-
-        redis.set(this.roomNameKey, JSON.stringify(sessionInfo)).then((ready) => {
-          this.sendBroadcastSignal(sessionInfo.archives);
-        });
-      });
-    });        
+  async updateArchive(aArchive) {
+    const stringSessionInfo = await redis.get(this.roomNameKey);
+    const sessionInfo = JSON.parse(stringSessionInfo);
+    if (!sessionInfo.archives) sessionInfo.archives = {};
+    sessionInfo.archives[aArchive.id] = aArchive;
+    await redis.set(this.roomNameKey, JSON.stringify(sessionInfo));
+    this.sendBroadcastSignal(sessionInfo.archives);  
   }
 
-  removeArchive(aArchiveId) {
-    return new Promise((resolve) => {
-      redis.get(this.roomNameKey).then((sessionInfo) => {
-        sessionInfo = JSON.parse(sessionInfo);
-        delete sessionInfo.archives[aArchiveId];
-        redis.set(this.roomNameKey, JSON.stringify(sessionInfo)).then((ready) => {
-          this.sendBroadcastSignal(sessionInfo.archives);
-        });
-      });
-    });
+  async removeArchive(aArchiveId) {
+    const stringSessionInfo = await redis.get(this.roomNameKey);
+    const sessionInfo = JSON.parse(stringSessionInfo);
+    delete sessionInfo.archives[aArchiveId];
+    await redis.set(this.roomNameKey, JSON.stringify(sessionInfo));
+    this.sendBroadcastSignal(sessionInfo.archives);  
   }
 
 }
