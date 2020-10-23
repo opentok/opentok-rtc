@@ -113,6 +113,21 @@ paths:
           description: The HTML for the room
           schema:
             $ref: '#/definitions/RoomHTML'
+  /updateArchiveInfo:
+    post:
+      summary: Callback for the OpenTok Archive API.
+      x-implemented-in: postUpdateArchiveInfo
+      description: Gets the updated information for a recording archive.
+      parameters:
+        - name: otArchiveInfo
+          in: body
+          schema:
+            $ref: '#/definitions/OTArchiveInfo'
+      tags:
+        - Archives
+      responses:
+        '200':
+          description: OK
   '/room/{roomName}/state':
     post:
       summary: Sets room state to locked or unlocked
