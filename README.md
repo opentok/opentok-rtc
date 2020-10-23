@@ -363,7 +363,12 @@ or set environment variables:
   (environment variable) -- Whether the UI will include a list of archive recordings for the session.
   The end user can click an archive to view the recording. This setting is only meaningful
   if `Archiving.enabled` / `ENABLE_ARCHIVING` is set to `true`. The default value is `false`.
-
+  
+  *Note:* The OpenTokRTC app retrieves the archive recordings from the OpenTok cloud storage. However,
+  you may choose to have archives uploaded to an Amazon S3 bucket or an Azure container. If you do, you
+  will need to modify the OpenTokRTC code to obtain archive recordings from the chosen storage location.
+  For more information, see [Archive storage](https://tokbox.com/developer/guides/archiving/#storage)
+  in the OpenTok developer guides.
 
 **Config.json example:**
 
