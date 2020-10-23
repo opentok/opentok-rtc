@@ -40,6 +40,11 @@ class Page {
     this.wait('[data-wd=username]')
     return browser.$('[data-wd=username]');
   }
+
+  get audioSwitch() {
+  return $('#initialVideoSwitch');
+  }
+
   goToRoom() {
     this.clickWhenExist('[data-wd=enterbutton]');
   }
