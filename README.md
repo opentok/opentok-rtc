@@ -106,9 +106,8 @@ your OpenTok API key and the corresponding API secret:
 }
 ```
 
-You can also copy the existing `config/example.json` to `config/config.json` file.
-It contains settings for other options, which are described in the
-[Configuration options](#configuration-options) section below.
+The [config/example.json](config/example.json) file includes settings for other options,
+which are described in the [Configuration options](#configuration-options) section below.
 
 #### Setting environment variables
 
@@ -174,7 +173,7 @@ For detailed information on available options, run `$ node server -h`.
 You can enable and configure UI settings and other options using a config JSON file
 or by setting environment variables.
 
-Environment variable settings overwrite any JSON value read.
+Environment variable settings overwrite any value set with the config JSON file.
 
 The default config JSON file location is config/config.json. This path can be
 overwritten by setting the `DEFAULT_JSON_CONFIG_PATH` environment variable.
@@ -403,6 +402,7 @@ or set environment variables:
   (environment variable) -- The Chrome add-on extension ID for screen sharing.
   Note: an extension is no longer required for screen sharing in Chrome 72+ and Opera 59+.
   The browser prompts the end user for access to the screen as it would for access to the camera.
+  Use a screen-sharing extension only if you need to support older versions of Chrome and Opera.
   The default value is `null`.
 
 * `Screensharing.annotations` (config.json) / `ENABLE_ANNOTATIONS` (environment variable) -- Whether
@@ -456,7 +456,7 @@ and configure this, edit options in the config/config.json file or set environme
 {
     "Feedback": {
         "url": "https://my-app.com/feedback-endpoint/",
-        "reportIssueLevel": 0
+        "reportIssueLevel": 3
     }
 }
 ```
@@ -465,7 +465,7 @@ and configure this, edit options in the config/config.json file or set environme
 
 ```sh
 export FEEDBACK_URL="https://my-app.com/feedback-endpoint/";
-export REPORT_ISSUE_LEVEL=0;
+export REPORT_ISSUE_LEVEL=3;
 ```
 
 Instead of posting feedback to an endpoint on your HTTP server, you can use
@@ -478,18 +478,23 @@ in the config/config.json file or set environment variables:
 * `Feedback.hotjarVersion` (config.json) / `HOTJAR_VERSION`: (Optional, default value: null) Version of
   the Tracking Code using with hjsv.
 
-* `Feedback.enableFeedback` (config.json) / `ENABLE_FEEDBACK`: (Optional, default value: false) Enables the feedback form.
+* `Feedback.enableFeedback` (config.json) / `ENABLE_FEEDBACK` (environment variable) -- Set this
+  to `true` when using Hotjar for feedback.
+
+* `Feedback.reportIssueLevel` (config.json) / `REPORT_ISSUE_LEVEL` (environment variable) -- This setting
+  is ignored when using Hotjar for feedback.
+
+* `Feedback.url` (config.json) / `FEEDBACK_URL` (environment variable) -- This setting
+  is ignored when using Hotjar for feedback.
 
 **Config.json example:**
 
  ```json
 {
       "Feedback": {
-          "url": "",
-          "reportIssueLevel": 0,
           "hotjarId": "your-hotjar-id",
           "hotjarVersion": "your-hotjar-version",
-          "enableFeedback": false,
+          "enableFeedback": true,
       }
 }
 ```
@@ -497,11 +502,9 @@ in the config/config.json file or set environment variables:
 **Environment variable example:**
 
 ```sh
-export FEEDBACK_URL="";
-export REPORT_ISSUE_LEVEL=0;
 export HOTJAR_ID=your-hotjar-id;
 export HOTJAR_VERSION=your-hotjar-version;
-export ENABLE_FEEDBACK=false;
+export ENABLE_FEEDBACK=true;
 ```
 
 ### Pre-call test
