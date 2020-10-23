@@ -638,7 +638,7 @@ function ServerMethods(aLogLevel, aModules) {
 
   async function lockRoom(aReq, aRes) {
     var roomName = aReq.params.roomName.toLowerCase();
-    const room = await serverPersistence.getKey(redisRoomPrefix + roomName);
+    let room = await serverPersistence.getKey(redisRoomPrefix + roomName);
     if (!room) return aRes.status(404).send(null);
 
     var decToken = decodeOtToken(aReq.body.token);
