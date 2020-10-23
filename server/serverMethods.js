@@ -380,26 +380,7 @@ function ServerMethods(aLogLevel, aModules) {
       });
   }
 
-  // Update archive callback. TO-DO: Is there any way of restricting calls to this?
-  function postUpdateArchiveInfo(aReq, aRes) {
-    var archive = aReq.body;
-    var tbConfig = aReq.tbConfig;
-    var fbArchives = tbConfig.fbArchives;
-    if (!archive.sessionId || !archive.id) {
-      logger.log('postUpdateArchiveInfo: Got an invalid call! Ignoring.', archive);
-    } else if (archive.status === 'available' || archive.status === 'updated') {
-      logger.log('postUpdateArchiveInfo: Updating information for archive:', archive.id);
-      fbArchives.updateArchive(archive.sessionId, archive);
-    } else {
-      logger.log('postUpdateArchiveInfo: Ignoring updated status for', archive.id, ':',
-        archive.status);
-    }
-    aRes.send({});
-  }
-
   // Returns the personalized root page
-
-
   async function getRoot(aReq, aRes) {
     var meetingAllowed = await isMeetingAllowed(aReq);
     var language = getUserLanguage(accepts(aReq).languages());
@@ -672,7 +653,6 @@ function ServerMethods(aLogLevel, aModules) {
   // eslint-disable-next-line consistent-return
   function getRoomInfo(aReq, aRes) {
     var tbConfig = aReq.tbConfig;
-    var fbArchives = tbConfig.fbArchives;
     var roomName = aReq.params.roomName.toLowerCase();
     var userName =
       (aReq.query && aReq.query.userName) || C.DEFAULT_USER_NAME + _numAnonymousUsers++;
