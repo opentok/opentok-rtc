@@ -36,20 +36,6 @@ describe('OpenTokRTC server', () => {
          });
     loadYAML('./api.yml').then((apiSpec) => {
 
-    var SwaggerServer = require('swagger-boilerplate').Server;
-
-//    var swaggerServer =
-//     new SwaggerServer({
-//       apiDef: apiSpec,
-//       modulePath: __dirname + '/../../server/',
-//       appName: 'Opentok rtc ',
-//       staticPath: '../../web',
-//       serverPort: 8124,
-//       allowedCorsOrigins: 'http://sample.com,https://example.com']
-//     });
-//
-//    swaggerServer.start();
-
       app = (require('swagger-boilerplate').App)({
         modulePath: __dirname + '/../../server/', // eslint-disable-line no-path-concat
         staticPath: '../../web',
