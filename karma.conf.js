@@ -60,8 +60,10 @@ module.exports = function(config) {
       'test/unit/chatController_spec.js':['browserify'],
       'test/unit/chatView_spec.js':['browserify'],
       'test/unit/cronograph_spec.js':['browserify'],
-      'test/unit/draggable_spec.js':['browserify']
-      
+      'test/unit/draggable_spec.js':['browserify'],
+      'test/unit/feedbackController_spec.js':['browserify'],
+      'test/unit/feedbackView_spec':['browserify']
+
     },
 
 

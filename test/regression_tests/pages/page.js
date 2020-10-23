@@ -16,13 +16,13 @@ class Page {
     browser.submitForm(form);
   }
   wait(elem, timeout = this.defaultTimeout) {
-    browser.waitForVisible(elem, timeout);
+    browser.$(elem).waitForDisplayed({ timeout: timeout });
   }
-  waitForHidden(elem) {
-    browser.waitForVisible(elem, 20000, true); // third param makes it wait for NOT visible
+  waitForHidden(elem, timeout = this.defaultTimeout) {
+    browser.$(elem).waitForDisplayed({ timeout: 3000, reverse: true}); // third param makes it wait for NOT visible
   }
   click(elem) {
-    browser.click(elem);
+      browser.$(elem).click();
   }
   clickNonVisible(selector) {
     browser.execute(function (sel) {
@@ -30,16 +30,15 @@ class Page {
     }, selector);
   }
   clickWhenExist(selector) {
-    browser.waitForExist(selector, 30000);
-    browser.waitForVisible(selector, 10000);
-    browser.click(selector);
+    this.wait(selector, 30000);
+    browser.$(selector).click();
   }
   getBrowserName() {
     return browser.desiredCapabilities.browserName;
   }
   get name() {
     this.wait('[data-wd=username]')
-    return browser.element('[data-wd=username]');
+    return browser.$('[data-wd=username]');
   }
   goToRoom() {
     this.clickWhenExist('[data-wd=enterbutton]');
