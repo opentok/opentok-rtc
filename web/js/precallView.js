@@ -46,7 +46,7 @@
       userNameInputElement.removeEventListener('keypress', keypressHandler);
     });
 
-    document.querySelector('.user-name-modal').addEventListener('click', () => {
+    document.querySelector('.user-name-input-container').addEventListener('click', () => {
       userNameInputElement.focus();
     });
 
