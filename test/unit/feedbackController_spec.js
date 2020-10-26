@@ -29,7 +29,7 @@ describe('FeedbackController', () => {
         logEvent() {},
       },
     };
-    sinon.stub(LazyLoader, 'load', resources => Promise.resolve());
+    sinon.stub(LazyLoader, 'load').callsFake(  resources => Promise.resolve());
   });
 
   after(() => {

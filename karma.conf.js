@@ -62,7 +62,11 @@ module.exports = function(config) {
       'test/unit/cronograph_spec.js':['browserify'],
       'test/unit/draggable_spec.js':['browserify'],
       'test/unit/feedbackController_spec.js':['browserify'],
-      'test/unit/feedbackView_spec':['browserify']
+      'test/unit/feedbackView_spec.js':['browserify'],
+      'test/unit/itemsHandler_spec.js':['browserify'],
+      'test/unit/layoutMenuView_spec.js':['browserify'],
+      'test/unit/layouts_spec.js':['browserify'],
+      'test/unit/precallController_spec.js':['browserify']
 
     },
 

@@ -24,8 +24,8 @@ describe('ChatController', () => {
 
   before(() => {
     window.LazyLoader = window.LazyLoader || { dependencyLoad() {} };
-    sinon.stub(LazyLoader, 'dependencyLoad', resources => Promise.resolve());
-    sinon.stub(ChatView, 'init', () => Promise.resolve());
+    sinon.stub(LazyLoader, 'dependencyLoad').callsFake(  resources => Promise.resolve());
+    sinon.stub(ChatView, 'init').callsFake(  () => Promise.resolve());
     window.MockRoomStatus._install();
     window.MockOTHelper._install();
   });
@@ -232,7 +232,7 @@ describe('ChatController', () => {
     });
 
     it('should load chat history', sinon.test(function (done) {
-      this.stub(RoomStatus, 'get', key => sharedHistory);
+      this.stub(RoomStatus, 'get').callsFake(  key => sharedHistory);
 
       var handlers = [];
 
@@ -254,7 +254,7 @@ describe('ChatController', () => {
 
   describe('#outgoingMessage event', () => {
     it('should send the message using an OT signal', sinon.test(function (done) {
-      this.stub(OTHelper, 'sendSignal', evt => Promise.resolve());
+      this.stub(OTHelper, 'sendSignal').callsFake(  evt => Promise.resolve());
 
       var handlers = [];
       var resolver;

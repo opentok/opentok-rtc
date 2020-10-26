@@ -56,7 +56,7 @@ describe('ChatView', () => {
 
   before(() => {
     window.LazyLoader = window.LazyLoader || { dependencyLoad() {} };
-    sinon.stub(LazyLoader, 'dependencyLoad', resources => Promise.resolve());
+    sinon.stub(LazyLoader, 'dependencyLoad').callsFake(  resources => Promise.resolve());
     window.MockOTHelper._install();
     window.MockChat._install();
     window.document.body.innerHTML = window.__html__['test/unit/chatView_spec.html'];
