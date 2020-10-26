@@ -1,8 +1,8 @@
 // Karma configuration
 // Generated on Tue Sep 29 2015 19:25:55 GMT+0200 (CEST)
 
-module.exports = function(config) {
-    configuration = {
+module.exports = function (config) {
+  configuration = {
 
     plugins: ['karma-mocha', 'karma-chai', 'karma-sinon', 'karma-browserify', 'karma-coverage', 'karma-html2js-preprocessor', 'karma-chrome-launcher', 'karma-firefox-launcher'],
 
@@ -17,10 +17,9 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'test/lib/**/*.js',
-      {pattern: 'test/mocks/mock_othelper.js', include: true},
-      {pattern: 'test/mocks/mock_roomStatus.js', include: true},
-      {pattern: 'test/mocks/mock_chat.js', include: true},
+      { pattern: 'test/mocks/mock_othelper.js', include: true },
+      { pattern: 'test/mocks/mock_roomStatus.js', include: true },
+      { pattern: 'test/mocks/mock_chat.js', include: true },
       'web/js/vendor/**/*.js',
       'web/js/libs/**/*.js',
       'node_modules/swagger-boilerplate/lib/shared/**/*.js',
@@ -56,17 +55,17 @@ module.exports = function(config) {
     preprocessors: {
       '**/*.html': ['html2js'],
       'web/**/*.js': ['coverage'],
-      'test/unit/browserUtils_spec.js':['browserify'],
-      'test/unit/chatController_spec.js':['browserify'],
-      'test/unit/chatView_spec.js':['browserify'],
-      'test/unit/cronograph_spec.js':['browserify'],
-      'test/unit/draggable_spec.js':['browserify'],
-      'test/unit/feedbackController_spec.js':['browserify'],
-      'test/unit/feedbackView_spec.js':['browserify'],
-      'test/unit/itemsHandler_spec.js':['browserify'],
-      'test/unit/layoutMenuView_spec.js':['browserify'],
-      'test/unit/layouts_spec.js':['browserify'],
-      'test/unit/precallController_spec.js':['browserify']
+      'test/unit/browserUtils_spec.js': ['browserify'],
+      'test/unit/chatController_spec.js': ['browserify'],
+      'test/unit/chatView_spec.js': ['browserify'],
+      'test/unit/cronograph_spec.js': ['browserify'],
+      'test/unit/draggable_spec.js': ['browserify'],
+      'test/unit/feedbackController_spec.js': ['browserify'],
+      'test/unit/feedbackView_spec.js': ['browserify'],
+      'test/unit/itemsHandler_spec.js': ['browserify'],
+      'test/unit/layoutMenuView_spec.js': ['browserify'],
+      'test/unit/layouts_spec.js': ['browserify'],
+      'test/unit/precallController_spec.js': ['browserify']
 
     },
 
@@ -107,8 +106,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-//    browsers: ['Firefox', 'Chrome'],
-    browsers: ['Chrome'],
+    browsers: ['Firefox', 'Chrome'],
 
     customLaunchers: {
       Chrome_travis_ci: {
@@ -123,9 +121,9 @@ module.exports = function(config) {
   };
 
   if (process.env.TRAVIS) {
-       configuration.browsers = ['Firefox', 'Chrome_travis_ci'];
-   }
+    configuration.browsers = ['Firefox', 'Chrome_travis_ci'];
+  }
 
   config.set(configuration);
 
-}
+};
