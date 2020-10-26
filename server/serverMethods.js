@@ -667,7 +667,6 @@ function ServerMethods(aLogLevel, aModules) {
   // eslint-disable-next-line consistent-return
   function getRoomInfo(aReq, aRes) {
     var tbConfig = aReq.tbConfig;
-    var fbArchives = tbConfig.fbArchives;
     var roomName = aReq.params.roomName.toLowerCase();
     var userName =
       (aReq.query && aReq.query.userName) || C.DEFAULT_USER_NAME + _numAnonymousUsers++;
@@ -987,7 +986,7 @@ function ServerMethods(aLogLevel, aModules) {
     var googleIdToken = body.googleIdToken;
     var tbConfig = aReq.tbConfig;
     const dialedNumberInfo = await serverPersistence.getKey(redisPhonePrefix + phoneNumber, true);
-
+     
     if (!dialedNumberInfo || dialedNumberInfo.googleIdToken !== googleIdToken) {
       return aRes.status(400).send(new ErrorInfo(400, 'Unknown phone number.'));
     }
@@ -995,7 +994,7 @@ function ServerMethods(aLogLevel, aModules) {
       dialedNumberInfo.connectionId).then(() => {
       serverPersistence.delKey(redisPhonePrefix + phoneNumber);
       return aRes.send({});
-    });
+    });    
   }
 
   function loadConfig() {
