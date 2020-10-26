@@ -4,7 +4,9 @@
   const addEventHandlers = () => {
     Utils.addEventsHandlers('precallView:', { submit() {
       const form = document.querySelector('.main form');
-      form.action = `/room/${window.roomName}`;
+      const roomNameTextInput = (document.getElementById('room-name-input') || {}).value;
+      const roomName = roomNameTextInput || window.roomName;
+      form.action = `/room/${roomName}`;
       form.submit();
     } });
   };
