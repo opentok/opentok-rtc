@@ -15,7 +15,7 @@ OpenTokRTC uses the LESS CSS pre-processor for its CSS. Values for theme colors 
 Once you have edited this file, you will need to build new UI assets. Run:
 
 ```
-$ grunt clientBuild
+$ npm run clientBuild
 ```
 
 ## Adding static assets
