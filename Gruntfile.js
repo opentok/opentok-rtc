@@ -166,7 +166,7 @@ module.exports = function (grunt) {
           base: './',
           css: ['web/css/landing.opentok.css'],
           target: {
-            uncritical: 'web/css/landing-uncritical.opentok.css',
+            uncritical: 'web/css/landing-uncritical.opentok.css'
           },
           minify: true
         },
@@ -221,8 +221,8 @@ module.exports = function (grunt) {
   grunt.registerTask('clientBuild-Prod', 'Build css files', [
     'less',
     'autoprefixer',
-    'terser:prod_build'
-    'critical',
+    'terser:prod_build',
+    'critical'
   ]);
 
   grunt.registerTask('clientDev', 'Watch for changes on less files', [
