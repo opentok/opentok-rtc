@@ -72,7 +72,7 @@
       }
 
       function loadModalText() {
-        PrecallView.setFocus(username);
+        window.allowCustomRoomName ? PrecallView.setFocus('room') : PrecallView.setFocus('user');
 
         if (Utils.isSafariIOS()) {
           if (window.enablePrecallTest) PrecallView.hideConnectivityTest();
@@ -146,7 +146,8 @@
         function submitForm() {
 
           if (window.allowCustomRoomName && !document.getElementById('room-name-input').value) {
-            const errorMsg = document.querySelector('.error-room.error-text')
+            const errorMsg = document.querySelector('.error-room.error-text');
+            const roomNameInput = document.querySelector('.room-name-input-container label').innerHTML = '';
             errorMsg.classList.add('show');
             return;
           }
