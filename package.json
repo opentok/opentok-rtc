@@ -14,8 +14,12 @@
     "test": "grunt test",
     "regression-test": "wdio wdio.conf.js",
     "lint": "./node_modules/.bin/eslint .",
+<<<<<<< HEAD
     "lint-auto-fix": "./node_modules/.bin/eslint . --fix",
     "clientBuild": "grunt clientBuild"
+=======
+    "lint-auto-fix": "./node_modules/.bin/eslint . --fix"
+>>>>>>> clean up package json
   },
   "repository": {
     "type": "git",
@@ -56,7 +60,6 @@
     "grunt-karma": "^4.0.0",
     "grunt-mocha-test": "^0.13.3",
     "grunt-terser": "^1.0.0",
-    "grunt-critical": "^2.0.0",
     "haikunator": "^2.1.2",
     "helmet": "^4.1.1",
     "http2": "^3.3.7",
