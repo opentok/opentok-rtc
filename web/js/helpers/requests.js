@@ -13,7 +13,6 @@
       if (aDataType) {
         // Note that this requires
         xhr.setRequestHeader('Content-Type', aDataType);
-        aData;
       }
 
       xhr.onload = aEvt => {
