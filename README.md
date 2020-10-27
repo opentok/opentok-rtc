@@ -40,7 +40,6 @@ You will need these dependencies installed on your machine:
 
 - [NodeJS v12](https://nodejs.org): This version of OpenTokRTC is tested with NodeJS v12 LTS.
 - [Redis](https://redis.io): A `redis` server running on `localhost`.
-- [Grunt](http://gruntjs.com): Used for bundling assets and running tests. You can install the Grunt CLI globally by running:<br/>   `# npm i -g grunt-cli`.
 
 You will also need these API subscriptions:
 
@@ -420,7 +419,7 @@ UI assets are compiled as part of the build process when installing application 
 
 ```
 $ bower install
-$ grunt clientBuild
+$ npm run clientBuild
 ```
 
 We recommend that you run the application as a non-root user. However, if you are running the application as the `root` user, you will additionally need to tell `bower` to allow root user to install dependencies, else bower will refuse to work:
