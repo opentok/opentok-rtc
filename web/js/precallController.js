@@ -144,6 +144,13 @@
         }
 
         function submitForm() {
+
+          if (window.allowCustomRoomName && !document.getElementById('room-name-input').value) {
+            const errorMsg = document.querySelector('.error-room.error-text')
+            errorMsg.classList.add('show');
+            return;
+          }
+
           if (window.location.href.indexOf('room') > -1) {
             // Jeff to do: This code should move to RoomController and be event-driven
             submitRoomForm();

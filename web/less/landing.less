@@ -239,7 +239,7 @@ a {
       display: block;
       font-size: 14px;
       color: @flamingoRed;
-      opacity: 0;
+      z-index: -9999;
 
       @media @smartphonesPortrait {
         font-size: 12px;
@@ -277,12 +277,8 @@ a {
       }
     }
 
-    &.error {
-      .show,
-      .error-title {
-        transition: opacity @transitionTime;
-        opacity: 1;
-      }
+    .show {
+      z-index: 9999;
     }
 
     .btn {

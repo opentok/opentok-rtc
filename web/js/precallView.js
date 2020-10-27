@@ -50,6 +50,15 @@
       userNameInputElement.focus();
     });
 
+    if (window.allowCustomRoomName) {
+      const roomNameInputElement = document.getElementById('room-name-input');
+      document.querySelector('.room-name-input-container').addEventListener('click', () => {
+        const errorMsg = document.querySelector('.error-room.error-text');
+        errorMsg.classList.remove('show');
+        roomNameInputElement.focus();
+      });
+    }
+
     const publishSettings = document.querySelector('.publish-settings');
 
     publishSettings.addEventListener('click', e => {
