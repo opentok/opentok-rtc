@@ -242,13 +242,15 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
   };
 
   function setAudioSwitchRemotely(isMuted) {
-    setSwitchStatus(isMuted, false, audioSwitch, 'roomView:muteAllSwitch');
     isMuted ?
       setPublisherAudioSwitchStatus('muted') :
       setPublisherAudioSwitchStatus('activated');
   }
 
   function showConfirmChangeMicStatus(isMuted) {
+    if (isMuted) {
+        setPublisherAudioSwitchStatus('muted');
+      }
     return Modal.showConfirm(isMuted ? MODAL_TXTS.muteRemotely : MODAL_TXTS.unmutedRemotely);
   }
 
@@ -582,6 +584,14 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
     switchCam.addEventListener('click', () => {
       Utils.sendEvent('roomView:toggleFacingMode');
     });
+
+    const muteAllparticipants = document.getElementById('muteAllContainer');
+    if (muteAllparticipants) {
+      muteAllparticipants.addEventListener('click', () => {
+        Utils.sendEvent('roomView:muteAllSwitch', { status: true });
+        setPublisherAudioSwitchStatus('muted');
+      });
+    }
 
     const menu = document.getElementById('top-banner');
 
