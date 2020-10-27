@@ -50,7 +50,7 @@
       userNameInputElement.focus();
     });
 
-    if (window.allowCustomRoomName) {
+    if (!window.autoGenerateRoomName) {
       const roomNameInputElement = document.getElementById('room-name-input');
       
       roomNameInputElement.addEventListener('keypress', function keypressHandler() {

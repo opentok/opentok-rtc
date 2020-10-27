@@ -24,7 +24,7 @@
   <form method="post">
     <div id="video-preview">
     </div>
-    <% if (allowCustomRoomName) { %>
+    <% if (!autoGenerateRoomName) { %>
     <div id="enter-room-name-prompt">
       <div class="room-name-input-container">
         <input id="room-name-input" class="block username" name="roomName" autocomplete="off" maxlength="46" value="<%=roomName%>">

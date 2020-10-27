@@ -206,7 +206,7 @@ function ServerMethods(aLogLevel, aModules) {
       var hotjarId = config.get(C.HOTJAR_ID);
       var hotjarVersion = config.get(C.HOTJAR_VERSION);
       var enableFeedback = config.get(C.ENABLE_FEEDBACK);
-      var allowCustomRoomName = config.get(C.ALLOW_CUSTOM_ROOM_NAME);
+      var autoGenerateRoomName = config.get(C.AUTO_GENERATE_ROOM_NAME);
 
       roomBlackList = config.get(C.BLACKLIST) ?
         config.get(C.BLACKLIST).split(',').map(word => word.trim().toLowerCase()) : [];
@@ -269,7 +269,7 @@ function ServerMethods(aLogLevel, aModules) {
         ATFunctionDept,
         mediaMode,
         enableEmoji,
-        allowCustomRoomName
+        autoGenerateRoomName
       };
     });
   }
@@ -406,7 +406,7 @@ function ServerMethods(aLogLevel, aModules) {
     var country = getUserCountry(aReq);
     var roomName = '';
     
-    if (!aReq.tbConfig.allowCustomRoomName)
+    if (aReq.tbConfig.autoGenerateRoomName)
       roomName = `${haikunator.haikunate({ tokenLength: 0 })}-${haikunator.haikunate()}`;
     
     aRes
@@ -429,7 +429,7 @@ function ServerMethods(aLogLevel, aModules) {
         enableFeedback: aReq.tbConfig.enableFeedback,
         opentokJsUrl: aReq.tbConfig.opentokJsUrl,
         enablePrecallTest: aReq.tbConfig.enablePrecallTest,
-        allowCustomRoomName: aReq.tbConfig.allowCustomRoomName,
+        autoGenerateRoomName: aReq.tbConfig.autoGenerateRoomName,
         enterButtonLabel: 'Start Meeting'
       }, (err, html) => {
         if (err) {
@@ -471,7 +471,7 @@ function ServerMethods(aLogLevel, aModules) {
       aRes
         .render((template || tbConfig.defaultTemplate) + '.ejs',
           {
-            allowCustomRoomName: tbConfig.allowCustomRoomName,
+            autoGenerateRoomName: tbConfig.autoGenerateRoomName,
             userName: htmlEscape(userName || C.DEFAULT_USER_NAME),
             roomName: htmlEscape(aReq.params.roomName),
             chromeExtensionId: tbConfig.chromeExtId,
@@ -704,7 +704,7 @@ function ServerMethods(aLogLevel, aModules) {
               data: JSON.stringify({ userName })
             }),
           username: userName,
-          allowCustomRoomName: tbConfig.allowCustomRoomName,
+          autoGenerateRoomName: tbConfig.autoGenerateRoomName,
           chromeExtId: tbConfig.chromeExtId,
           enableArchiveManager: tbConfig.enableArchiveManager,
           enableAnnotation: tbConfig.enableAnnotations,
