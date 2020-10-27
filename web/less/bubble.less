@@ -16,10 +16,10 @@
     position:relative;
     border: 1px solid @bubbleBorderColor;
     background-color: @bubbleBackgroundColor;
-    box-shadow: -2px 3px 4px 0 rgba(0, 0, 0, 0.5);
+    box-shadow: -2px 3px 4px 0 @blackAlpha50;
     border-radius: 10px;
 
-    color: #9b9c9b;
+    color: @mediumGrey1;
     font-size: 12px;
 
     max-width: 265px;
@@ -57,7 +57,7 @@
     top: 42.5px;
     border-top: 9px solid transparent;
     border-bottom: 9px solid transparent;
-    border-right: 9px solid #fff;
+    border-right: 9px solid @solidWhite;
   }
   .bubble-content.top-arrow:after {
     right: 26px;
@@ -78,7 +78,7 @@
 
 [for="addToCall"] {
   .check-mark {
-    color: #1a99ce;
+    color: @pacificBlue1;
     opacity: 0;
   }
 
@@ -91,7 +91,7 @@
     margin: 16px 0;
     width: 90%;
     outline: none;
-    color: #9b9b93;
+    color: @starDustGrey;
   }
 }
 
@@ -110,7 +110,7 @@
 
   .title {
     font-size: 20px;
-    color: #4f4f4f;
+    color: @darkCement;
   }
 
   .subtitle {
@@ -119,7 +119,7 @@
 
   p {
     font-size: 16px;
-    color: #5b5b5b;
+    color: @darkCement;
   }
   
   a {
@@ -173,7 +173,7 @@
 
     li[data-status="available"] a,
     li[data-status="stopped"] a {
-      color: #1a99ce;
+      color: @pacificBlue1;
       pointer-events: all;
     }
 
@@ -293,7 +293,7 @@
   #layout-manager {
     text-align: center;
     span {
-      background-color: #fff;
+      background-color: @solidWhite;
       position: relative;
       top: 8px;
       padding: 10px;
@@ -328,24 +328,24 @@
     }
 
     li:nth-child(1) {
-      border-right: 1px solid #9b9c9b;
+      border-right: 1px solid @mediumGrey1;
     }
 
     li:nth-child(3) {
-      border-right: 1px solid #9b9c9b;
+      border-right: 1px solid @mediumGrey1;
     }
 
     li:nth-child(5) { 
-      border-right: 1px solid #9b9c9b;
+      border-right: 1px solid @mediumGrey1;
     }
 
     li:nth-child(1), li:nth-child(2) {
-      border-top: 1px solid #9b9c9b;
-      border-bottom: 1px solid #9b9c9b;
+      border-top: 1px solid @mediumGrey1;
+      border-bottom: 1px solid @mediumGrey1;
     }
 
     li:nth-child(3), li:nth-child(4) {
-      border-bottom: 1px solid #9b9c9b;
+      border-bottom: 1px solid @mediumGrey1;
     }
 
   }

@@ -22,7 +22,7 @@ body {
   width: 100%;
   height: 100%;
   overflow-x: hidden;
-  color: #fff;
+  color: @solidWhite;
   overflow-y: hidden;
   background-color: @mainBackgroundColor;
 }
@@ -42,8 +42,8 @@ body {
   display: none;
   height: 98px;
   width: 100%;
-  background: #131415;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+  background: @darkBlue;
+  box-shadow: 0px 2px 4px @blackAlpha50;
   position: absolute;
   display: flex;
   top: 0;
@@ -71,7 +71,7 @@ body {
     min-width: 269px;
     height: 100%;
     text-align: center;
-    border-right: 1px solid #455b66;
+    border-right: 1px solid @sanJuanShade;
     @media @smartphonesPortrait {
       width: 52px;
       min-width: 52px;
@@ -99,7 +99,7 @@ body {
       font-size: 13px;
       font-weight: 600;
       letter-spacing: 1.1px;
-      color: #7a8b93;
+      color: @regentGrey;
       min-width: 200px;
       @media @smartphonesPortrait {
         min-width: unset;
@@ -139,7 +139,7 @@ body {
           text-overflow: ellipsis;
           overflow: hidden;
           white-space: nowrap;
-          color: #ffffff;
+          color: @solidWhite;
           margin: 0;
           @media @smartphonesPortrait {
             height: 22px;
@@ -149,7 +149,7 @@ body {
     }
   }
   .invite-btn {
-    background: #871fff;
+    background: @purple;
     border-radius: 5px;
     border: none;
     margin-right: 20px;
@@ -217,7 +217,7 @@ body {
       vertical-align: top;
       line-height: 24px;
       font-size: 12px;
-      color: #c0c0c0;
+      color: @silver;
     }
     @media @smartphonesPortrait {
       display: none;
@@ -229,11 +229,11 @@ body {
   }
   #options-container {
     &:hover {
-      background-color: #303234;
+      background-color: @codGrey;
     }
     width: 114px;
     height: 98px;
-    border-left: 1px solid #455b66;
+    border-left: 1px solid @sanJuanShade;
     text-align: center;
     display: flex;
     right: 0;
@@ -317,18 +317,18 @@ body {
   }
   #stopArchiving {
     display: none;
-    background-color: #e75758;
+    background-color: @mandiRed;
     &:hover,
     &:focus,
     &:active {
-      background-color: #cb4348;
+      background-color: @mandiRedDark;
     }
   }
   #manageRecordings.recording {
     transition: none;
     a {
-      border-left: 2px solid #f28284;
-      background-color: #cc4446;
+      border-left: 2px solid @pomegranate;
+      background-color: @pomegranateDark;
     }
   }
 }
@@ -360,7 +360,7 @@ body {
 #room-unlocked-alert {
   color: white;
   border-radius: 100px;
-  background-color: #131415;
+  background-color: @darkBlue;
   opacity: 0.7;
   font-size: 16px;
   span {
@@ -394,7 +394,7 @@ body {
       font-size: 14px;
       line-height: 21px;
       text-decoration-line: underline;
-      color: #871fff;
+      color: @purple;
       margin-bottom: 25px;
     }
     .btn {
@@ -424,7 +424,7 @@ body {
 
     #dialOutForm:invalid {
       .btn {
-        background-color: #c6c6c6;
+        background-color: @silver6;
         pointer-events: none;
       }
     }
@@ -445,13 +445,13 @@ body {
 
       input {
         border: none;
-        border-bottom: 1px solid #24aadb;
+        border-bottom: 1px solid @summerSky1;
         padding-left: 90px !important;
         padding-right: 6px !important;
       }
 
       input:invalid {
-        border-bottom: 1px solid #ccd2d7;
+        border-bottom: 1px solid @mediumGrey;
       }
 
       input:focus {
@@ -460,12 +460,12 @@ body {
     }
 
     input.phoneNumber::placeholder {
-      color: #b6bfc8;
+      color: @spindleGrey;
     }
     .itnl-tel-input {
       input.phoneNumber {
         border: none;
-        border-bottom: 1px solid #ccd2d7;
+        border-bottom: 1px solid @mediumGrey;
       }
     }
   }
@@ -542,7 +542,7 @@ body {
     font-size: 11px;
     font-weight: 600;
     text-align: center;
-    color: #c0c0c0;
+    color: @silver;
     button {
       background-image: url("/images/icons/inactive-circle.svg");
       width: 54.2px;
@@ -558,7 +558,7 @@ body {
     }
     button.activated {
       background-image: none;
-      border: 2px solid #871fff;
+      border: 2px solid @purple;
       border-radius: 50%;
     }
     button#endCall {
@@ -625,7 +625,7 @@ body {
   }
   #screen-share {
     background-image: none;
-    border: 2px solid #871fff;
+    border: 2px solid @purple;
     border-radius: 50%;
   }
 }
@@ -743,7 +743,7 @@ body {
   #video-preview {
     width: 360px;
     height: 212px;
-    background-color: #222;
+    background-color: @nero1;
     border-radius: 5px;
     .OT_publisher .OT_widget-container {
       border-radius: 5px;
@@ -785,7 +785,7 @@ body {
       display: flex;
       label {
         font-size: 12px;
-        color: #8e99a5;
+        color: @baliHaiGrey;
       }
     }
   }
@@ -810,7 +810,7 @@ body {
       margin-right: 24px;
       object-fit: contain;
       border-radius: 4px;
-      border: 1px #979797 solid;
+      border: 1px @nobelGrey solid;
     }
     div {
       display: flex;
@@ -820,7 +820,7 @@ body {
   #enter-name-prompt {
     margin-top: 10px;
     padding: 0;
-    border-bottom: #788492 1px solid;
+    border-bottom: @lightSlateGrey 1px solid;
     .justify-content(space-between);
     @media @smartphonesPortrait {
       margin: 10px 0 0 0;
@@ -851,7 +851,7 @@ body {
     label {
       top: 0;
       position: absolute;
-      color: #9b9da3;
+      color: @manateeSilver;
       font-size: 16px;
       transition: all 0.5s;
       @media @smartphonesPortrait {
@@ -861,7 +861,7 @@ body {
     label.visited {
       top: -12px;
       font-size: 12px;
-      color: #909298;
+      color: @manateeSilver1
     }
   }
   #audio-meter-container {
@@ -869,18 +869,18 @@ body {
   }
   #audio-meter,
   #precall-test-meter {
-    background-color: #505050;
+    background-color: @heavyGrey;
     height: 5px;
     width: 89px;
   }
   #audio-meter-level {
-    background-color: #ffffff;
+    background-color: @solidWhite;
     height: 100%;
   }
 
   #audio-settings,
   #pre-call-test {
-    border-top: #434d5a 1px solid;
+    border-top: @rhinoBlue 1px solid;
     padding-top: 17px;
     clear: both;
   }
@@ -897,7 +897,7 @@ body {
       position: absolute;
       right: 10px;
       label {
-        color: #c6c6c6;
+        color: @silver6;
         font-size: 10px;
         line-height: 26px;
         text-align: right;
@@ -935,7 +935,7 @@ body {
   }
 
   #precall-test-meter-level {
-    background-color: #ffffff;
+    background-color: @solidWhite;
     height: 100%;
     width: 0;
     background-image: -webkit-linear-gradient(
@@ -1020,13 +1020,13 @@ body {
     margin-top: 14px;
     margin-bottom: 40px;
     font-size: 14px;
-    color: #ffffff;
+    color: @solidWhite;
     @media @smartphonesPortrait {
       font-size: 13px;
     }
 
     a {
-      color: #ffffff;
+      color: @solidWhite;
       text-decoration: none;
     }
 
@@ -1040,13 +1040,13 @@ body {
   }
   .about-link {
     font-size: 14px;
-    color: #ffffff;
+    color: @solidWhite;
     @media @smartphonesPortrait {
       font-size: 12px;
       margin-bottom: 4px;
     }
     a {
-      color: #ffffff;
+      color: @solidWhite;
       text-decoration: none;
     }
   }
@@ -1060,8 +1060,8 @@ body {
   height: 420.4px;
   background-color: white;
   border-radius: 10px;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
-  color: #494747;
+  box-shadow: 0 2px 4px 0 @blackAlpha50;
+  color: @charcoal1;
   font-size: 14px;
   padding: 35px;
   left: calc(~"50% - 152px");
@@ -1086,18 +1086,18 @@ body {
     font-size: 16px;
   }
   #pre-call-heading.precall-tick {
-    color: #3fbe36;
+    color: @limeGreen;
   }
   #pre-call-heading.precall-warning {
-    color: #e67232;
+    color: @goldEmber;
   }
   #pre-call-heading.precall-error {
-    color: #e44c4e;
+    color: @trafficRed;
   }
   #pre-call-description {
-    color: #414141;
+    color: @charcoal;
     padding-bottom: 21px;
-    border-bottom: #d7d7d7 solid 1px;
+    border-bottom: @lightGrey1 solid 1px;
   }
   .media-heading {
     font-size: 10px;
@@ -1109,7 +1109,7 @@ body {
     margin: 0;
     font-weight: 600;
     letter-spacing: -0.6px;
-    color: #494747;
+    color: @charcoal1;
   }
   .precall-media-results {
     width: 50%;
@@ -1126,7 +1126,7 @@ body {
   }
   .bitrate {
     font-size: 10px;
-    color: #9b9b9b;
+    color: @nobelGrey1;
   }
   #precall-resolution,
   #precall-audio-packet-loss {
@@ -1147,7 +1147,7 @@ body {
     font-weight: 600;
     font-size: 16px;
     cursor: pointer;
-    background-color: #f9f9f9;
+    background-color: @snowWhite;
     box-shadow: inset 0 2px 2px 0 rgba(0, 0, 0, 0.2);
     border-radius: 0 0 10px 10px;
   }
@@ -1182,12 +1182,12 @@ body {
       margin-top: 49px;
       display: flex;
       justify-content: center;
-      border-bottom: 1px solid #e8e8e8;
+      border-bottom: 1px solid @lightGrey2;
 
       .title {
         margin-bottom: 10px;
         font-size: 18px;
-        color: #404040;
+        color: @lightGrey;
         font-weight: @boldFontWeight;
       }
     }
@@ -1196,13 +1196,13 @@ body {
   section {
     font-family: @baseFontFamily;
     font-size: 16px;
-    color: #22282d;
+    color: @blueCharcoal;
     text-align: center;
     display: block;
     height: 55px;
 
     .call-quality-feedback {
-      border-bottom: 1px solid #e8e8e8;
+      border-bottom: 1px solid @lightGrey2;
       height: 240px;
     }
 
@@ -1221,11 +1221,11 @@ body {
       width: 436px;
       border: none;
       outline: none;
-      border-bottom: 1px solid #ccd2d7;
+      border-bottom: 1px solid @mediumGrey;
     }
 
     .other-info::placeholder {
-      color: #a1a8b1;
+      color: @mischkaGrey;
       text-align: center;
     }
   }
@@ -1238,7 +1238,7 @@ body {
       text-align-last: center;
       font-size: 14px;
       margin: 7.5px 0 12px 0;
-      border: 1px solid #cfcfcf;
+      border: 1px solid @VeryLightGrey;
     }
   }
 
@@ -1250,11 +1250,11 @@ body {
   }
 
   .btn-blue {
-    background-color: #319cca;
+    background-color: @pelorousBlue;
   }
 
   .btn-purple {
-    background-color: #871fff;
+    background-color: @purple;
   }
 }
 
@@ -1264,7 +1264,7 @@ footer.main {
   right: 60px;
   z-index: 1001;
   width: 300px;
-  color: #9b9c9b;
+  color: @mediumGrey1;
   font-size: 8px;
   line-height: 19px;
   height: 19px;
@@ -1272,13 +1272,13 @@ footer.main {
 }
 
 #enter.btn {
-  color: #fff;
+  color: @solidWhite;
   line-height: 18px;
   overflow: hidden;
   width: 100%;
-  background-color: #871fff;
+  background-color: @purple;
   &.accept {
-    background-color: #131415;
+    background-color: @darkBlue;
   }
 }
 
@@ -1308,7 +1308,7 @@ body[data-annotation-visible="true"] {
   top: 0;
   bottom: 0;
   right: 0;
-  background-color: rgba(255, 255, 255, 0.6);
+  background-color: @whiteAlpha60;
 }
 
 .main {
