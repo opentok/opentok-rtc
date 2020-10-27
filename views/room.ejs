@@ -31,7 +31,11 @@
     }
     </script>
 
-    <link href="/css/fonts.css" rel="stylesheet">
+    <% if (useGoogleFonts) { %>
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <% } else { %>
+        <link href="/css/fonts.css" rel="stylesheet">
+    <% } %>
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/<%=chromeExtensionId%>">
     <link rel="stylesheet" rel="preload" href="https://assets.tokbox.com/solutions/css/style.css">
     <link rel="stylesheet" rel="prefetch" href="/css/annotation.opentok.css">

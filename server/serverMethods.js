@@ -321,7 +321,8 @@ function ServerMethods(aLogLevel, aModules) {
       ATSiteIdentifier: aReq.tbConfig.ATSiteIdentifier,
       ATFunctionDept: aReq.tbConfig.ATFunctionDept,
       userLanguage: language,
-      userCountry: country
+      userCountry: country,
+      useGoogleFonts: aReq.tbConfig.useGoogleFonts,
     }, (err, html) => {
       if (err) {
         logger.error('getMeetingCompletion. error: ', err);
@@ -879,7 +880,8 @@ function ServerMethods(aLogLevel, aModules) {
           archiveURL: aArchive.url,
           hotjarId: aReq.tbConfig.hotjarId,
           hotjarVersion: aReq.tbConfig.hotjarVersion,
-          enableFeedback: aReq.tbConfig.enableFeedback
+          enableFeedback: aReq.tbConfig.enableFeedback,
+          useGoogleFonts: aReq.tbConfig.useGoogleFonts
         });
       }).catch((e) => {
         logger.error('getArchive error:', e);
