@@ -618,14 +618,11 @@ function ServerMethods(aLogLevel, aModules) {
       .setKey('APP_USAGE_', JSON.stringify({ lastUpdate: date, meetings }));
   }
 
-  function getRoomRawInfo(aReq, aRes) {
-    var roomName = aReq.params.roomName.toLowerCase();
-    serverPersistence
-      // eslint-disable-next-line consistent-return
-      .getKey(redisRoomPrefix + roomName).then((room) => {
-        if (!room) return aRes.status(404).send(null);
-        aRes.send(JSON.parse(room));
-      });
+  async function getRoomRawInfo(aReq, aRes) {
+    const roomName = aReq.params.roomName.toLowerCase();
+    const room = await serverPersistence.getKey(redisRoomPrefix + roomName);
+    if (!room) return aRes.status(404).send(null);
+    aRes.send(JSON.parse(room));
   }
 
   function decodeOtToken(token) {
@@ -639,23 +636,20 @@ function ServerMethods(aLogLevel, aModules) {
     return parsed;
   }
 
-  function lockRoom(aReq, aRes) {
+  async function lockRoom(aReq, aRes) {
     var roomName = aReq.params.roomName.toLowerCase();
+    let room = await serverPersistence.getKey(redisRoomPrefix + roomName);
+    if (!room) return aRes.status(404).send(null);
+
+    var decToken = decodeOtToken(aReq.body.token);
+    room = JSON.parse(room);
+
+    if (decToken.expire_time * 1000 < Date.now() || decToken.session_id !== room.sessionId) { return aRes.status(403).send(new Error('Unauthorized')); }
+
+    room.isLocked = aReq.body.state === 'locked';
     serverPersistence
-      // eslint-disable-next-line consistent-return
-      .getKey(redisRoomPrefix + roomName).then((room) => {
-        if (!room) return aRes.status(404).send(null);
-
-        var decToken = decodeOtToken(aReq.body.token);
-        room = JSON.parse(room);
-
-        if (decToken.expire_time * 1000 < Date.now() || decToken.session_id !== room.sessionId) { return aRes.status(403).send(new Error('Unauthorized')); }
-
-        room.isLocked = aReq.body.state === 'locked';
-        serverPersistence
-          .setKey(redisRoomPrefix + roomName, room);
-        aRes.send(room);
-      });
+      .setKey(redisRoomPrefix + roomName, room);
+    aRes.send(room);
   }
 
   // Get the information needed to connect to a session
@@ -672,7 +666,6 @@ function ServerMethods(aLogLevel, aModules) {
   // eslint-disable-next-line consistent-return
   function getRoomInfo(aReq, aRes) {
     var tbConfig = aReq.tbConfig;
-    var fbArchives = tbConfig.fbArchives;
     var roomName = aReq.params.roomName.toLowerCase();
     var userName =
       (aReq.query && aReq.query.userName) || C.DEFAULT_USER_NAME + _numAnonymousUsers++;
@@ -986,24 +979,22 @@ function ServerMethods(aLogLevel, aModules) {
   }
   // /hang-up
   // A web client that initiated a SIP call is requesting that we hang up
-  function postHangUp(aReq, aRes) {
+  async function postHangUp(aReq, aRes) {
     var body = aReq.body;
     var phoneNumber = body.phoneNumber;
     var googleIdToken = body.googleIdToken;
     var tbConfig = aReq.tbConfig;
-    serverPersistence.getKey(redisPhonePrefix + phoneNumber, true)
-      .then((dialedNumberInfo) => {
-        if (!dialedNumberInfo || dialedNumberInfo.googleIdToken !== googleIdToken) {
-          return aRes.status(400).send(new ErrorInfo(400, 'Unknown phone number.'));
-        }
-        return tbConfig.otInstance.forceDisconnect_P(dialedNumberInfo.sessionId,
-          dialedNumberInfo.connectionId).then(() => {
-          serverPersistence.delKey(redisPhonePrefix + phoneNumber);
-          return aRes.send({});
-        });
-      });
+    const dialedNumberInfo = await serverPersistence.getKey(redisPhonePrefix + phoneNumber, true);
+     
+    if (!dialedNumberInfo || dialedNumberInfo.googleIdToken !== googleIdToken) {
+      return aRes.status(400).send(new ErrorInfo(400, 'Unknown phone number.'));
+    }
+    return tbConfig.otInstance.forceDisconnect_P(dialedNumberInfo.sessionId,
+      dialedNumberInfo.connectionId).then(() => {
+      serverPersistence.delKey(redisPhonePrefix + phoneNumber);
+      return aRes.send({});
+    });    
   }
-
 
   function loadConfig() {
     tbConfigPromise = _initialTBConfig();
