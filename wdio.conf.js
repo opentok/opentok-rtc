@@ -168,12 +168,10 @@ if (process.env.SAUCE_USERNAME) {
 } else {
   config.services.push('selenium-standalone');
   config.capabilities.push({
-    browserName: 'chrome',
-    browserVersion: '86.0'
+    browserName: 'chrome'
   });
   config.capabilities.push({
-    browserName: 'firefox',
-    browserVersion: '81.0.1'
+    browserName: 'firefox'
   });
 }
 
