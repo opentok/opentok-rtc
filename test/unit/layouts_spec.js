@@ -1,5 +1,5 @@
-var assert = chai.assert;
-var expect = chai.expect;
+var { assert } = chai;
+var { expect } = chai;
 var should = chai.should();
 
 describe('Layouts', () => {
@@ -20,7 +20,7 @@ describe('Layouts', () => {
   }
 
   var checkSizes = function (width, height) {
-    var features = instance.features;
+    var { features } = instance;
     expect(features.width).to.equal(width + '%');
     expect(features.height).to.equal(height + '%');
   };
@@ -29,7 +29,7 @@ describe('Layouts', () => {
     var items = getItems(2);
     instance = new clazz(getContainer(), items);
     instance.rearrange();
-    var features = instance.features;
+    var { features } = instance;
     Object.keys(items).forEach((id) => {
       var item = items[id];
       expect(features.width).to.equal(item.style.width.replace(',', '.'));
@@ -102,7 +102,7 @@ describe('Layouts', () => {
 
   describe('Float', () => {
     var checkSizes = function (width, height) {
-      var features = instance.features;
+      var { features } = instance;
       expect(features.width).to.equal('100%');
       expect(features.height).to.equal('100%');
     };
@@ -127,12 +127,12 @@ describe('Layouts', () => {
         var publisher = document.createElement('myPublisher');
 
         stubDraggable(this, () => (
-           Promise.resolve({
-             on(element) {
-               expect(element).to.equal(publisher);
-               done();
-             }
-           })
+          Promise.resolve({
+            on(element) {
+              expect(element).to.equal(publisher);
+              done();
+            }
+          })
         ));
 
         instance = new Float(container, {
@@ -163,13 +163,13 @@ describe('Layouts', () => {
       it('should disable drag feature for the publisher', sinon.test(function (done) {
         var publisher = document.createElement('div');
         stubDraggable(this, () => (
-            Promise.resolve({
-              on() {},
-              off(element) {
-                expect(element).to.equal(publisher);
-                done();
-              }
-            })
+          Promise.resolve({
+            on() {},
+            off(element) {
+              expect(element).to.equal(publisher);
+              done();
+            }
+          })
         ));
 
         instance = new Float(getContainer(), {
@@ -333,7 +333,7 @@ describe('Layouts', () => {
       describe('#features', () => {
         it('should fit items to container width divided by total minus one on stage', () => {
           instance = new HangoutHorizontal(getContainer(), items, items['7y4813y4134123']);
-          var features = instance.features;
+          var { features } = instance;
           var value = 100 / instance.totalOnStrip;
           expect(features.width).to.equal(value + '%');
           expect(features.height).to.equal('100%');
@@ -358,10 +358,10 @@ describe('Layouts', () => {
       });
 
       describe('#features', () => {
-        it('should fit items to container height divided by total minus one on stage ' +
-           'and the shared screen', () => {
+        it('should fit items to container height divided by total minus one on stage '
+           + 'and the shared screen', () => {
           instance = new HangoutVertical(getContainer(), items, items['7y4813y4134123']);
-          var features = instance.features;
+          var { features } = instance;
           expect(features.width).to.equal('100%');
           var value = 100 / instance.totalOnStrip;
           expect(features.height).to.equal(value + '%');

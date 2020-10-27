@@ -66,8 +66,7 @@
 !(exports => {
   let _hasStatus;
 
-  const debug =
-    new Utils.MultiLevelLogger('chatController.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
+  const debug = new Utils.MultiLevelLogger('chatController.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
 
   // Contains an object foreach action.
   // This enables to configure the name of the received event.

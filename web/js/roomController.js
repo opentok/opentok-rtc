@@ -4,8 +4,7 @@ RecordingsController, ScreenShareController, FeedbackController,
 PhoneNumberController, ResizeSensor, maxUsersPerRoom */
 
 !(exports => {
-  const debug =
-    new Utils.MultiLevelLogger('roomController.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
+  const debug = new Utils.MultiLevelLogger('roomController.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
 
   let otHelper;
   let numUsrsInRoom = 0;
@@ -159,13 +158,12 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
   // work all that well either.
   const processMutation = aMutation => {
     const elem = aMutation.target;
-    if ((aMutation.attributeName !== 'style' && aMutation.attributeName !== 'class') ||
-        elem.data('streamType') !== 'camera') {
+    if ((aMutation.attributeName !== 'style' && aMutation.attributeName !== 'class')
+        || elem.data('streamType') !== 'camera') {
       return;
     }
     const streamId = elem.data('id');
-    const subscriberPromise =
-      subscriberStreams[streamId] && subscriberStreams[streamId].subscriberPromise;
+    const subscriberPromise = subscriberStreams[streamId] && subscriberStreams[streamId].subscriberPromise;
 
     subscriberPromise.then(subscriber => {
       if (debugPreferredResolution) {
@@ -181,8 +179,8 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
               const sub = window.subscriber[aSub];
               const stream = sub && sub.stream;
               const vd = stream && stream.videoDimensions;
-              const streamPref = (stream && stream.getPreferredResolution()) ||
-                                 { width: 'NA', height: 'NA' };
+              const streamPref = (stream && stream.getPreferredResolution())
+                                 || { width: 'NA', height: 'NA' };
               stream && console.log( // eslint-disable-line no-console
                 'StreamId:', aSub, 'Real:', sub.videoWidth(), 'x', sub.videoHeight(),
                 'Stream.getPreferredResolution:', streamPref.width, 'x', streamPref.height,
@@ -206,8 +204,8 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
         resolutionAlgorithm);
     });
   };
-  const _mutationObserver = exports.MutationObserver &&
-    new exports.MutationObserver(aMutations => {
+  const _mutationObserver = exports.MutationObserver
+    && new exports.MutationObserver(aMutations => {
       aMutations.forEach(processMutation);
     });
 
@@ -292,8 +290,8 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     _disabledAllVideos = status;
 
     Object.keys(subscriberStreams).forEach(aStreamId => {
-      if (subscriberStreams[aStreamId] &&
-          subscriberStreams[aStreamId].stream.videoType === 'camera') {
+      if (subscriberStreams[aStreamId]
+          && subscriberStreams[aStreamId].stream.videoType === 'camera') {
         pushSubscriberButton(aStreamId, name, status);
       }
     });
@@ -601,38 +599,37 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
           _mutationObserver.observe(subsContainer, { attributes: true });
         */
 
-        subscriberStreams[streamId].subscriberPromise =
-          otHelper.subscribe(evt.stream, subsDOMElem, subOptions, {}, enableAnnotations)
-            .then(subscriber => {
-              if (streamVideoType === 'screen') {
-                enableAnnotations && Utils.sendEvent('roomController:annotationStarted');
-                const subContainer = subscriber.element.parentElement;
-                Utils.sendEvent('layoutView:itemSelected', {
-                  item: subContainer
-                });
-                return subscriber;
-              }
-
-              Object.keys(_subscriberHandlers).forEach(name => {
-                subscriber.on(name, _subscriberHandlers[name]);
+        subscriberStreams[streamId].subscriberPromise = otHelper.subscribe(evt.stream, subsDOMElem, subOptions, {}, enableAnnotations)
+          .then(subscriber => {
+            if (streamVideoType === 'screen') {
+              enableAnnotations && Utils.sendEvent('roomController:annotationStarted');
+              const subContainer = subscriber.element.parentElement;
+              Utils.sendEvent('layoutView:itemSelected', {
+                item: subContainer
               });
-              if (enterWithVideoDisabled) {
-                pushSubscriberButton(streamId, 'video', true);
-              }
-
-              new ResizeSensor(subsDOMElem, () => { // eslint-disable-line no-new
-                const subsDimension = {
-                  width: subsDOMElem.clientWidth,
-                  height: subsDOMElem.clientHeight
-                };
-                otHelper.setPreferredResolution(subscriber, null, subsDimension, null, null);
-              });
-
-              sendVideoEvent(evt.stream);
               return subscriber;
-            }, error => {
-              debug.error(`Error susbscribing new participant. ${error.message}`);
+            }
+
+            Object.keys(_subscriberHandlers).forEach(name => {
+              subscriber.on(name, _subscriberHandlers[name]);
             });
+            if (enterWithVideoDisabled) {
+              pushSubscriberButton(streamId, 'video', true);
+            }
+
+            new ResizeSensor(subsDOMElem, () => { // eslint-disable-line no-new
+              const subsDimension = {
+                width: subsDOMElem.clientWidth,
+                height: subsDOMElem.clientHeight
+              };
+              otHelper.setPreferredResolution(subscriber, null, subsDimension, null, null);
+            });
+
+            sendVideoEvent(evt.stream);
+            return subscriber;
+          }, error => {
+            debug.error(`Error susbscribing new participant. ${error.message}`);
+          });
       });
     },
     streamDestroyed(evt) {
@@ -802,8 +799,8 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     return Request
       .getRoomInfo(aRoomParams)
       .then(aRoomInfo => {
-        if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId &&
-              aRoomInfo.apiKey && aRoomInfo.username)) {
+        if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId
+              && aRoomInfo.apiKey && aRoomInfo.username)) {
           debug.error('Error getRoomParams [', aRoomInfo,
             '] without correct response');
           throw new Error('Error getting room parameters');
@@ -865,8 +862,8 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
       .then(aParams => {
         let loadAnnotations = Promise.resolve();
         if (enableAnnotations) {
-          exports.OTKAnalytics = exports.OTKAnalytics ||
-          (() => {
+          exports.OTKAnalytics = exports.OTKAnalytics
+          || (() => {
             return {
               addSessionInfo() {},
               logEvent(a, b) {

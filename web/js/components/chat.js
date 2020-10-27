@@ -1,11 +1,11 @@
 /* global Chat */
 
 !(global => {
-  const transEndEventName =
-    ('WebkitTransition' in document.documentElement.style) ?
-     'webkitTransitionEnd' : 'transitionend';
+  const transEndEventName = ('WebkitTransition' in document.documentElement.style)
+    ? 'webkitTransitionEnd' : 'transitionend';
 
-  let container = null, chatShown = null, chatHidden = null;
+  let container = null; let chatShown = null; let
+    chatHidden = null;
 
   function init() {
     container = document.querySelector('#chat');

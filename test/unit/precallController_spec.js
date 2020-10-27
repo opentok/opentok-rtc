@@ -1,16 +1,18 @@
-var assert = chai.assert;
-var expect = chai.expect;
+var { assert } = chai;
+var { expect } = chai;
 var should = chai.should();
 
 describe('PrecallController', () => {
   before(() => {
     window.document.body.innerHTML = window.__html__['test/unit/precallView_spec.html'];
-    window.LazyLoader = window.LazyLoader || { dependencyLoad() {
-      return new Promise((resolve) => {
-        resolve();
-      });
-    } };
-    sinon.stub(LazyLoader, 'dependencyLoad', resources => Promise.resolve());
+    window.LazyLoader = window.LazyLoader || {
+      dependencyLoad() {
+        return new Promise((resolve) => {
+          resolve();
+        });
+      }
+    };
+    sinon.stub(LazyLoader, 'dependencyLoad', (resources) => Promise.resolve());
     sinon.stub(ChatView, 'init', () => Promise.resolve());
     sinon.stub(Modal, 'show', (selector, fcCb) => new Promise((resolve) => {
       var modal = document.querySelector(selector);

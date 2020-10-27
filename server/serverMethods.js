@@ -84,11 +84,9 @@ function ServerMethods(aLogLevel, aModules) {
 
   var logger = new Logger('ServerMethods', aLogLevel);
   var ServerPersistence = SwaggerBP.ServerPersistence;
-  var connectionString =
-    (aModules && aModules.params && aModules.params.persistenceConfig) ||
-    env.REDIS_URL || env.REDISTOGO_URL || '';
-  var serverPersistence =
-    new ServerPersistence([], connectionString, aLogLevel, aModules);
+  var connectionString = (aModules && aModules.params && aModules.params.persistenceConfig)
+    || env.REDIS_URL || env.REDISTOGO_URL || '';
+  var serverPersistence = new ServerPersistence([], connectionString, aLogLevel, aModules);
 
   const haikunator = new Haikunator();
 
@@ -129,8 +127,8 @@ function ServerMethods(aLogLevel, aModules) {
   }
 
   function _shutdownOldInstance(aOldPromise, aNewPromise) {
-    aOldPromise && (aNewPromise !== aOldPromise) &&
-      aOldPromise.then(aObject => aObject.shutdown());
+    aOldPromise && (aNewPromise !== aOldPromise)
+      && aOldPromise.then(aObject => aObject.shutdown());
   }
 
 
@@ -149,8 +147,7 @@ function ServerMethods(aLogLevel, aModules) {
       var jqueryUrl = config.get(C.JQUERY_URL);
       logger.log('apiSecret', apiSecret);
       var archivePollingTO = config.get(C.ARCHIVE_POLLING_INITIAL_TIMEOUT);
-      var archivePollingTOMultiplier =
-                config.get(C.ARCHIVE_POLLING_TIMEOUT_MULTIPLIER);
+      var archivePollingTOMultiplier = config.get(C.ARCHIVE_POLLING_TIMEOUT_MULTIPLIER);
       var otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret);
       var precallOtInstance = Utils.CachifiedObject(Opentok, precallApiKey, precallApiSecret);
 
@@ -207,8 +204,8 @@ function ServerMethods(aLogLevel, aModules) {
       var hotjarVersion = config.get(C.HOTJAR_VERSION);
       var enableFeedback = config.get(C.ENABLE_FEEDBACK);
 
-      roomBlackList = config.get(C.BLACKLIST) ?
-        config.get(C.BLACKLIST).split(',').map(word => word.trim().toLowerCase()) : [];
+      roomBlackList = config.get(C.BLACKLIST)
+        ? config.get(C.BLACKLIST).split(',').map(word => word.trim().toLowerCase()) : [];
 
       // Adobe tracking
       var adobeTrackingUrl = config.get(C.ADOBE_TRACKING_URL);
@@ -352,10 +349,9 @@ function ServerMethods(aLogLevel, aModules) {
         var sessionId = usableSessionInfo.sessionId;
         tbConfig.otInstance.listArchives_P({ offset: 0, count: 1000 })
           .then((aArchives) => {
-            var archive = aArchives.reduce((aLastArch, aCurrArch) =>
-              aCurrArch.sessionId === sessionId &&
-              aCurrArch.createdAt > aLastArch.createdAt &&
-              (aCurrArch || aLastArch), { createdAt: 0 });
+            var archive = aArchives.reduce((aLastArch, aCurrArch) => aCurrArch.sessionId === sessionId
+              && aCurrArch.createdAt > aLastArch.createdAt
+              && (aCurrArch || aLastArch), { createdAt: 0 });
 
             if (!archive.sessionId || !archive.url) {
               aRes.status(404).send(new ErrorInfo(404, 'Unknown archive'));
@@ -451,8 +447,8 @@ function ServerMethods(aLogLevel, aModules) {
       return aRes.status(404).send(null);
     }
     var tbConfig = aReq.tbConfig;
-    var template = query && tbConfig.templatingSecret &&
-      (tbConfig.templatingSecret === query.template_auth) && query.template;
+    var template = query && tbConfig.templatingSecret
+      && (tbConfig.templatingSecret === query.template_auth) && query.template;
     var userName = (aReq.body && aReq.body.userName) || (query && query.userName) || '';
     var language = getUserLanguage(accepts(aReq).languages());
     var country = getUserCountry(aReq);
@@ -473,8 +469,8 @@ function ServerMethods(aLogLevel, aModules) {
             // iosUrlPrefix should have something like:
             // https://opentokdemo.tokbox.com/room/
             // or whatever other thing that should be before the roomName
-            iosURL: tbConfig.iosUrlPrefix + htmlEscape(aReq.params.roomName) + '?userName=' +
-                         (userName || C.DEFAULT_USER_NAME),
+            iosURL: tbConfig.iosUrlPrefix + htmlEscape(aReq.params.roomName) + '?userName='
+                         + (userName || C.DEFAULT_USER_NAME),
             enableArchiving: tbConfig.enableArchiving,
             enableArchiveManager: tbConfig.enableArchiveManager,
             enableMuteAll: tbConfig.enableMuteAll,
@@ -605,7 +601,7 @@ function ServerMethods(aLogLevel, aModules) {
     // eslint-disable-next-line consistent-return
     return new Promise((resolve) => {
       // eslint-disable-next-line max-len
-      if (aReq.tbConfig.meetingsRatePerMinute === 0) { return resolve(false); } else if (aReq.tbConfig.meetingsRatePerMinute < 0) { return resolve(true); }
+      if (aReq.tbConfig.meetingsRatePerMinute === 0) { return resolve(false); } if (aReq.tbConfig.meetingsRatePerMinute < 0) { return resolve(true); }
       getAppUsage().then((usage) => {
         // eslint-disable-next-line max-len
         return resolve(usage.lastUpdate + 60000 < Date.now() || usage.meetings < aReq.tbConfig.meetingsRatePerMinute);
@@ -667,8 +663,7 @@ function ServerMethods(aLogLevel, aModules) {
   function getRoomInfo(aReq, aRes) {
     var tbConfig = aReq.tbConfig;
     var roomName = aReq.params.roomName.toLowerCase();
-    var userName =
-      (aReq.query && aReq.query.userName) || C.DEFAULT_USER_NAME + _numAnonymousUsers++;
+    var userName = (aReq.query && aReq.query.userName) || C.DEFAULT_USER_NAME + _numAnonymousUsers++;
     logger.log('getRoomInfo serving ' + aReq.path, 'roomName: ', roomName, 'userName: ', userName);
     var enableArchiveManager = tbConfig.enableArchiveManager;
 
@@ -707,7 +702,7 @@ function ServerMethods(aLogLevel, aModules) {
           googleId: tbConfig.googleId,
           googleHostedDomain: tbConfig.googleHostedDomain,
           reportIssueLevel: tbConfig.reportIssueLevel,
-          archives: usableSessionInfo.archives,
+          archives: usableSessionInfo.archives
         };
         answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId;
         aRes.send(answer);
@@ -751,7 +746,7 @@ function ServerMethods(aLogLevel, aModules) {
           aSessionInfo.inProgressArchiveId = undefined;
           return aSessionInfo;
         });
-    } else if (aOperation.startsWith('stop') && !aSessionInfo.inProgressArchiveId) {
+    } if (aOperation.startsWith('stop') && !aSessionInfo.inProgressArchiveId) {
       return aTbConfig.otInstance.listArchives_P({ offset: 0, count: 100 })
         .then(aArch => aArch.filter(aArchive => aArchive.sessionId === aSessionInfo.sessionId))
         .then((aArchives) => {
@@ -811,8 +806,7 @@ function ServerMethods(aLogLevel, aModules) {
           case 'startComposite':
             logger.log('Binding archiveOp to startArchive with sessionId:', sessionInfo.sessionId);
             archiveOptions.resolution = '1280x720';
-            archiveOp =
-              otInstance.startArchive_P.bind(otInstance, sessionInfo.sessionId, archiveOptions);
+            archiveOp = otInstance.startArchive_P.bind(otInstance, sessionInfo.sessionId, archiveOptions);
             break;
           case 'stop':
             archiveOp = otInstance.stopArchive_P.bind(otInstance, sessionInfo.inProgressArchiveId);
@@ -829,12 +823,11 @@ function ServerMethods(aLogLevel, aModules) {
           // archive information will not be updated yet. We can wait to be notified (by a callback)
           // or poll for the information. Since polling is less efficient, we do so only when
           // required by the configuration.
-          var readyToUpdateDb =
-            (operation === 'stop' && tbConfig.archivePollingTO &&
-             _launchArchivePolling(otInstance, aArchive.id,
+          var readyToUpdateDb = (operation === 'stop' && tbConfig.archivePollingTO
+             && _launchArchivePolling(otInstance, aArchive.id,
                tbConfig.archivePollingTO,
-               tbConfig.archivePollingTOMultiplier)) ||
-            Promise.resolve(aArchive);
+               tbConfig.archivePollingTOMultiplier))
+            || Promise.resolve(aArchive);
 
           const roomArchiveStorage = new ArchiveLocalStorage(otInstance, redisRoomPrefix + roomName, aArchive.sessionId, aLogLevel);
           readyToUpdateDb
@@ -940,38 +933,37 @@ function ServerMethods(aLogLevel, aModules) {
       logger.log('postRoomDial => missing body parameter: ', aReq.body);
       return aRes.status(400).send(new ErrorInfo(400, 'Missing required parameter'));
     }
-    return googleAuth.verifyIdToken(googleIdToken).then(() =>
-      serverPersistence
-        .getKey(redisRoomPrefix + roomName, true)
-        .then((sessionInfo) => {
-          const sessionId = sessionInfo.sessionId;
-          const token = tbConfig.otInstance.generateToken(sessionId, {
-            role: 'publisher',
-            data: '{"sip":true, "role":"client", "name":"' + phoneNumber + '"}'
+    return googleAuth.verifyIdToken(googleIdToken).then(() => serverPersistence
+      .getKey(redisRoomPrefix + roomName, true)
+      .then((sessionInfo) => {
+        const sessionId = sessionInfo.sessionId;
+        const token = tbConfig.otInstance.generateToken(sessionId, {
+          role: 'publisher',
+          data: '{"sip":true, "role":"client", "name":"' + phoneNumber + '"}'
+        });
+        sipUri = `sip:+${phoneNumber}@sip.nexmo.com;transport=tls`;
+        var options = {
+          auth: {
+            username: tbConfig.sipUsername,
+            password: tbConfig.sipPassword
+          },
+          secure: false
+        };
+        tbConfig.otInstance.dial_P(sessionId, token, sipUri, options)
+          .then((sipCallData) => {
+            var dialedNumberInfo = {};
+            dialedNumberInfo.sessionId = sipCallData.sessionId;
+            dialedNumberInfo.connectionId = sipCallData.connectionId;
+            dialedNumberInfo.googleIdToken = googleIdToken;
+            serverPersistence.setKey(redisPhonePrefix + phoneNumber,
+              JSON.stringify(dialedNumberInfo));
+            return aRes.send(sipCallData);
+          })
+          .catch((error) => {
+            logger.log('postRoomDial error', error);
+            return aRes.status(400).send(new ErrorInfo(400, 'An error ocurred while forwarding SIP Call'));
           });
-          sipUri = `sip:+${phoneNumber}@sip.nexmo.com;transport=tls`;
-          var options = {
-            auth: {
-              username: tbConfig.sipUsername,
-              password: tbConfig.sipPassword
-            },
-            secure: false
-          };
-          tbConfig.otInstance.dial_P(sessionId, token, sipUri, options)
-            .then((sipCallData) => {
-              var dialedNumberInfo = {};
-              dialedNumberInfo.sessionId = sipCallData.sessionId;
-              dialedNumberInfo.connectionId = sipCallData.connectionId;
-              dialedNumberInfo.googleIdToken = googleIdToken;
-              serverPersistence.setKey(redisPhonePrefix + phoneNumber,
-                JSON.stringify(dialedNumberInfo));
-              return aRes.send(sipCallData);
-            })
-            .catch((error) => {
-              logger.log('postRoomDial error', error);
-              return aRes.status(400).send(new ErrorInfo(400, 'An error ocurred while forwarding SIP Call'));
-            });
-        }))
+      }))
       .catch((err) => {
         logger.log('postRoomDial => authentication error: ', err);
         return aRes.status(401).send(new ErrorInfo(401, 'Authentication Error'));
@@ -985,7 +977,7 @@ function ServerMethods(aLogLevel, aModules) {
     var googleIdToken = body.googleIdToken;
     var tbConfig = aReq.tbConfig;
     const dialedNumberInfo = await serverPersistence.getKey(redisPhonePrefix + phoneNumber, true);
-     
+
     if (!dialedNumberInfo || dialedNumberInfo.googleIdToken !== googleIdToken) {
       return aRes.status(400).send(new ErrorInfo(400, 'Unknown phone number.'));
     }
@@ -993,7 +985,7 @@ function ServerMethods(aLogLevel, aModules) {
       dialedNumberInfo.connectionId).then(() => {
       serverPersistence.delKey(redisPhonePrefix + phoneNumber);
       return aRes.send({});
-    });    
+    });
   }
 
   function loadConfig() {

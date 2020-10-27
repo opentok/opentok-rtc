@@ -1,7 +1,6 @@
 !(global => {
-  const transEndEventName =
-    ('WebkitTransition' in document.documentElement.style) ?
-      'webkitTransitionEnd' : 'transitionend';
+  const transEndEventName = ('WebkitTransition' in document.documentElement.style)
+    ? 'webkitTransitionEnd' : 'transitionend';
 
   const closeHandlers = {};
   let keyPressHandler;

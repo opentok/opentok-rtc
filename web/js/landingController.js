@@ -2,11 +2,13 @@
 
 !(global => {
   const addEventHandlers = () => {
-    Utils.addEventsHandlers('precallView:', { submit() {
-      const form = document.querySelector('.main form');
-      form.action = `/room/${window.roomName}`;
-      form.submit();
-    } });
+    Utils.addEventsHandlers('precallView:', {
+      submit() {
+        const form = document.querySelector('.main form');
+        form.action = `/room/${window.roomName}`;
+        form.submit();
+      }
+    });
   };
 
   const init = () => {

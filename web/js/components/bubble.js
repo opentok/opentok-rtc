@@ -33,9 +33,8 @@
  */
 
 !(global => {
-  const transEndEventName =
-    ('WebkitTransition' in document.documentElement.style) ?
-      'webkitTransitionEnd' : 'transitionend';
+  const transEndEventName = ('WebkitTransition' in document.documentElement.style)
+    ? 'webkitTransitionEnd' : 'transitionend';
 
   const HORIZONTAL_OFFSET = 10;
   const VERTICAL_OFFSET = 4;
@@ -86,23 +85,22 @@
     show() {
       const bubble = this;
 
-      this.bubbleShown =
-        this.bubbleShown || new Promise(resolve => {
-          const container = bubble.container;
+      this.bubbleShown = this.bubbleShown || new Promise(resolve => {
+        const container = bubble.container;
 
-          container.removeEventListener(transEndEventName, bubble._onHidden);
-          container.addEventListener(transEndEventName, bubble._onShown);
-          container.addEventListener(transEndEventName, function onEnd() {
-            container.removeEventListener(transEndEventName, onEnd);
-            resolve();
-          });
-
-          bubble._takePlace();
-          bubble._visible = true;
-          setTimeout(() => {
-            container.classList.add('show');
-          }, 50); // Give the chance to paint the UI element before fading in
+        container.removeEventListener(transEndEventName, bubble._onHidden);
+        container.addEventListener(transEndEventName, bubble._onShown);
+        container.addEventListener(transEndEventName, function onEnd() {
+          container.removeEventListener(transEndEventName, onEnd);
+          resolve();
         });
+
+        bubble._takePlace();
+        bubble._visible = true;
+        setTimeout(() => {
+          container.classList.add('show');
+        }, 50); // Give the chance to paint the UI element before fading in
+      });
 
       return this.bubbleShown;
     },
@@ -110,22 +108,21 @@
     hide() {
       const bubble = this;
 
-      this.bubbleHidden =
-        this.bubbleHidden || new Promise(resolve => {
-          const container = bubble.container;
+      this.bubbleHidden = this.bubbleHidden || new Promise(resolve => {
+        const container = bubble.container;
 
-          container.removeEventListener(transEndEventName, bubble._onShown);
-          container.addEventListener(transEndEventName, bubble._onHidden);
-          container.addEventListener(transEndEventName, function onEnd() {
-            container.removeEventListener(transEndEventName, onEnd);
-            bubble.bubbleShown = bubble.bubbleHidden = null;
-            resolve();
-          });
-
-          setTimeout(() => {
-            container.classList.remove('show');
-          }, 50); // Give the chance to paint the UI element before fading out
+        container.removeEventListener(transEndEventName, bubble._onShown);
+        container.addEventListener(transEndEventName, bubble._onHidden);
+        container.addEventListener(transEndEventName, function onEnd() {
+          container.removeEventListener(transEndEventName, onEnd);
+          bubble.bubbleShown = bubble.bubbleHidden = null;
+          resolve();
         });
+
+        setTimeout(() => {
+          container.classList.remove('show');
+        }, 50); // Give the chance to paint the UI element before fading out
+      });
 
       return this.bubbleHidden;
     },

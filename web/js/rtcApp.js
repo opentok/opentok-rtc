@@ -23,8 +23,8 @@
     const numViews = pathViews.length;
     const path = exports.document.location.pathname;
     for (let i = 0; i < numViews; i++) {
-      if (path.startsWith(pathViews[i]) &&
-        _views[pathViews[i]]
+      if (path.startsWith(pathViews[i])
+        && _views[pathViews[i]]
           .dependencies
           .every(dependency => {
             return !!exports[dependency];
@@ -75,9 +75,9 @@ this.addEventListener('load', function startApp() {
 
   // Allow only https on production
   if (
-    document.location.protocol === 'http:' &&
-    (document.location.hostname.includes('.tokbox.com') ||
-    document.location.hostname.includes('.vonage.com'))
+    document.location.protocol === 'http:'
+    && (document.location.hostname.includes('.tokbox.com')
+    || document.location.hostname.includes('.vonage.com'))
   ) {
     document.location.href = document.location.href.replace(new RegExp('^http:'), 'https:');
   }

@@ -48,9 +48,8 @@
 
       send(newUsrConnection);
 
-      const intervalResendStatus =
-        window.setInterval(send.bind(undefined, newUsrConnection),
-          TIME_RESEND_STATUS);
+      const intervalResendStatus = window.setInterval(send.bind(undefined, newUsrConnection),
+        TIME_RESEND_STATUS);
       _connectedAfterMe[connectionId] = intervalResendStatus;
     }
   }

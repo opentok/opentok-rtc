@@ -41,8 +41,8 @@ module.exports = (config, googleAuth) => new Promise((resolve, reject) => {
     }, TIMEOUT);
     if (config.sipRequireGoogleAuth) {
       googleAuth.verifyIdToken(INVALID_GOOGLE_TOKEN).catch((error) => {
-        if (error.message === 'Authentication Domain Does Not Match' ||
-          (error.message.indexOf('Token used too late') > -1)) {
+        if (error.message === 'Authentication Domain Does Not Match'
+          || (error.message.indexOf('Token used too late') > -1)) {
           // Good -- we expect an error using the invalid token.
           healthObj.googleAuth = true;
           resolve();

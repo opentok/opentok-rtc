@@ -1,4 +1,4 @@
-var expect = chai.expect;
+var { expect } = chai;
 
 describe('ScreenShareController', () => {
   var chromeExtId = 'querty';
@@ -17,7 +17,7 @@ describe('ScreenShareController', () => {
   before(() => {
     window.LazyLoader = window.LazyLoader || { dependencyLoad() {} };
 
-    sinon.stub(LazyLoader, 'dependencyLoad', resources => Promise.resolve());
+    sinon.stub(LazyLoader, 'dependencyLoad', (resources) => Promise.resolve());
 
     window.MockOTHelper._install();
 
@@ -53,106 +53,106 @@ describe('ScreenShareController', () => {
   });
 
   it('should start sharing the screen when roomView:shareScreen is received and shared works',
-     sinon.test(function (done) {
-       var event = new CustomEvent('roomView:shareScreen');
-       otHelper.isGoingToWork = true;
-       this.spy(otHelper, 'shareScreen');
+    sinon.test(function (done) {
+      var event = new CustomEvent('roomView:shareScreen');
+      otHelper.isGoingToWork = true;
+      this.spy(otHelper, 'shareScreen');
 
-       this.stub(RoomView, 'createStreamView', (id, options) => document.createElement('div'));
+      this.stub(RoomView, 'createStreamView', (id, options) => document.createElement('div'));
 
-       window.addEventListener('screenShareController:changeScreenShareStatus',
-                            function handlerTest(evt) {
-                              window.removeEventListener('screenShareController:changeScreenShareStatus', handlerTest);
-                              expect(evt.detail.isSharing).to.be.true;
-                              expect(otHelper.shareScreen.calledOnce).to.be.true;
-                              done();
-                            });
+      window.addEventListener('screenShareController:changeScreenShareStatus',
+        function handlerTest(evt) {
+          window.removeEventListener('screenShareController:changeScreenShareStatus', handlerTest);
+          expect(evt.detail.isSharing).to.be.true;
+          expect(otHelper.shareScreen.calledOnce).to.be.true;
+          done();
+        });
 
-       ScreenShareController.init('usr', chromeExtId, otHelper).then(() => {
-         window.dispatchEvent(event);
-       });
-     }));
+      ScreenShareController.init('usr', chromeExtId, otHelper).then(() => {
+        window.dispatchEvent(event);
+      });
+    }));
 
   it('should stop sharing the screen when the second roomView:shareScreen is received',
-     sinon.test(function () {
-       var event = new CustomEvent('roomView:shareScreen');
-       otHelper.isGoingToWork = true;
-       this.spy(otHelper, 'stopShareScreen');
+    sinon.test(function () {
+      var event = new CustomEvent('roomView:shareScreen');
+      otHelper.isGoingToWork = true;
+      this.spy(otHelper, 'stopShareScreen');
 
-       window.dispatchEvent(event);
+      window.dispatchEvent(event);
 
-       expect(otHelper.stopShareScreen.calledOnce).to.be.true;
-     }));
+      expect(otHelper.stopShareScreen.calledOnce).to.be.true;
+    }));
 
-  it('should respond correctly when roomView:shareScreen is received and sharing does not work' +
-     ' because an error different that user denied permission', sinon.test(function (done) {
-       var event = new CustomEvent('roomView:shareScreen');
-       otHelper.isGoingToWork = false;
-       otHelper.error.code = otHelper.screenShareErrorCodes.notSupported;
+  it('should respond correctly when roomView:shareScreen is received and sharing does not work'
+     + ' because an error different that user denied permission', sinon.test(function (done) {
+    var event = new CustomEvent('roomView:shareScreen');
+    otHelper.isGoingToWork = false;
+    otHelper.error.code = otHelper.screenShareErrorCodes.notSupported;
 
-       this.spy(otHelper, 'shareScreen');
+    this.spy(otHelper, 'shareScreen');
 
-       this.stub(RoomView, 'createStreamView', (id, options) => document.createElement('div'));
+    this.stub(RoomView, 'createStreamView', (id, options) => document.createElement('div'));
 
-       window.addEventListener('screenShareController:shareScreenError', function handlerTest(evt) {
-         window.removeEventListener('screenShareController:shareScreenError', handlerTest);
-         expect(evt.detail).to.be.deep.equal(otHelper.error);
-         expect(otHelper.shareScreen.calledOnce).to.be.true;
-         done();
-       });
+    window.addEventListener('screenShareController:shareScreenError', function handlerTest(evt) {
+      window.removeEventListener('screenShareController:shareScreenError', handlerTest);
+      expect(evt.detail).to.be.deep.equal(otHelper.error);
+      expect(otHelper.shareScreen.calledOnce).to.be.true;
+      done();
+    });
 
-       ScreenShareController.init('usr', chromeExtId, otHelper).then(() => {
-         window.dispatchEvent(event);
-       });
-     }));
+    ScreenShareController.init('usr', chromeExtId, otHelper).then(() => {
+      window.dispatchEvent(event);
+    });
+  }));
 
-  it('should respond correctly when roomView:shareScreen is received and sharing does not work' +
-     ' because the user denied the permission', sinon.test(function (done) {
-       var event = new CustomEvent('roomView:shareScreen');
-       otHelper.isGoingToWork = false;
-       otHelper.error.code = otHelper.screenShareErrorCodes.accessDenied;
-       this.spy(otHelper, 'shareScreen');
+  it('should respond correctly when roomView:shareScreen is received and sharing does not work'
+     + ' because the user denied the permission', sinon.test(function (done) {
+    var event = new CustomEvent('roomView:shareScreen');
+    otHelper.isGoingToWork = false;
+    otHelper.error.code = otHelper.screenShareErrorCodes.accessDenied;
+    this.spy(otHelper, 'shareScreen');
 
-       this.stub(RoomView, 'createStreamView', (id, options) => document.createElement('div'));
+    this.stub(RoomView, 'createStreamView', (id, options) => document.createElement('div'));
 
-       this.stub(RoomView, 'deleteStreamView', (id, options) => {
-         expect(otHelper.shareScreen.calledOnce).to.be.true;
-         done();
-       });
+    this.stub(RoomView, 'deleteStreamView', (id, options) => {
+      expect(otHelper.shareScreen.calledOnce).to.be.true;
+      done();
+    });
 
-       ScreenShareController.init('usr', chromeExtId, otHelper).then(() => {
-         window.dispatchEvent(event);
-       });
-     }));
+    ScreenShareController.init('usr', chromeExtId, otHelper).then(() => {
+      window.dispatchEvent(event);
+    });
+  }));
 
-  it('should respond correctly to screenShareView:installExtension when ' +
-     'installation works', (done) => {
+  it('should respond correctly to screenShareView:installExtension when '
+     + 'installation works', (done) => {
     var event = new CustomEvent('screenShareView:installExtension');
     window.addEventListener('screenShareController:extInstallationResult',
-                             function handlerTest(evt) {
-                               window.removeEventListener('screenShareController:extInstallationResult', handlerTest);
-                               expect(evt.detail.error).to.be.false;
-                               done();
-                             });
+      function handlerTest(evt) {
+        window.removeEventListener('screenShareController:extInstallationResult', handlerTest);
+        expect(evt.detail.error).to.be.false;
+        done();
+      });
 
     ScreenShareController.init('usr', chromeExtId, otHelper).then(() => {
       window.dispatchEvent(event);
     });
   });
 
-  it('should respond correctly to screenShareView:installExtension when ' +
-     'installation does not work', (done) => {
+  it('should respond correctly to screenShareView:installExtension when '
+     + 'installation does not work', (done) => {
     var event = new CustomEvent('screenShareView:installExtension');
     var realWindowOpen = window.open;
     window.open = () => null;
 
     window.addEventListener('screenShareController:extInstallationResult',
-                            function handlerTest(evt) {
-                              window.removeEventListener('screenShareController:extInstallationResult', handlerTest);
-                              expect(evt.detail.error).to.be.true;
-                              done();
-                              window.open = realWindowOpen;
-                            });
+      function handlerTest(evt) {
+        window.removeEventListener('screenShareController:extInstallationResult', handlerTest);
+        expect(evt.detail.error).to.be.true;
+        done();
+        window.open = realWindowOpen;
+      });
 
     ScreenShareController.init('usr', chromeExtId, otHelper).then(() => {
       window.dispatchEvent(event);

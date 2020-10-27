@@ -1,5 +1,5 @@
-var assert = chai.assert;
-var expect = chai.expect;
+var { assert } = chai;
+var { expect } = chai;
 var should = chai.should();
 
 describe('LayoutMenuView', () => {
@@ -47,7 +47,7 @@ describe('LayoutMenuView', () => {
       }));
 
       Array.prototype.map.call(document.querySelectorAll('ul a'), (elem) => {
-        var layoutType = elem.dataset.layoutType;
+        var { layoutType } = elem.dataset;
         var isAvailable = !!layouts[layoutType];
         expect(elem.disabled).to.be.equal(!isAvailable);
       });

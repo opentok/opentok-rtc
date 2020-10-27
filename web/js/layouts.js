@@ -336,8 +336,8 @@ Hangout.prototype.removeItemFromStage = function (item) {
   if (item) {
     this.removeStageId(item);
     item.classList.remove('on-stage');
-    Hangout.getItemType(item) === 'screen' &&
-      Utils.sendEvent('hangout:screenOnStage', { status: 'off' });
+    Hangout.getItemType(item) === 'screen'
+      && Utils.sendEvent('hangout:screenOnStage', { status: 'off' });
   }
   return this;
 };

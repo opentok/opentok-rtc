@@ -1,7 +1,8 @@
 /* global Modal */
 
 !(global => {
-  let showFeedback, sendButton, audioScoreSelect, videoScoreSelect, otherInfo, reportIssueScore;
+  let showFeedback; let sendButton; let audioScoreSelect; let videoScoreSelect; let otherInfo; let
+    reportIssueScore;
 
   const feedbackReportSelector = '.feedback-report';
 

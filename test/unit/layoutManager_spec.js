@@ -1,5 +1,5 @@
-var assert = chai.assert;
-var expect = chai.expect;
+var { assert } = chai;
+var { expect } = chai;
 var should = chai.should();
 
 describe('LayoutManager', () => {
@@ -81,8 +81,8 @@ describe('LayoutManager', () => {
   });
 
   describe('#remove', () => {
-    it('should set the grid layout with three remaining streams after leaving of ' +
-       'sharing the screen', () => {
+    it('should set the grid layout with three remaining streams after leaving of '
+       + 'sharing the screen', () => {
       LayoutManager.remove('desktop');
       checkLayout('grid');
     });

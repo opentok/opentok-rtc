@@ -10,17 +10,16 @@ const logger = new Logger('HTTP Server App');
 
 const Server = require('swagger-boilerplate').Server;
 
-const server =
- new Server({
-    apiFile: './api.yml',
-    modulePath: `${__dirname}/server/`,
-    appName: 'OpenTokRTC Main',
-    staticOptions: {
-      dotfiles: 'ignore',
-      extensions: ['jpg'],
-      index: false,
-      redirect: false
-    }
-  });
+const server = new Server({
+  apiFile: './api.yml',
+  modulePath: `${__dirname}/server/`,
+  appName: 'OpenTokRTC Main',
+  staticOptions: {
+    dotfiles: 'ignore',
+    extensions: ['jpg'],
+    index: false,
+    redirect: false
+  }
+});
 
 server.start();

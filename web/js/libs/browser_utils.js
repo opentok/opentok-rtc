@@ -79,8 +79,7 @@
         getFirstValue(aParam) {
           return Array.isArray(this.params[aParam]) ? this.params[aParam][0] : this.params[aParam];
         }
-      }
-      );
+      });
   };
 
   // Aux function to generate a search str from an object with
@@ -106,8 +105,8 @@
 
   const setDisabled = (element, disabled) => {
     element.disabled = disabled;
-    disabled ? element.setAttribute('disabled', 'disabled') :
-      element.removeAttribute('disabled');
+    disabled ? element.setAttribute('disabled', 'disabled')
+      : element.removeAttribute('disabled');
   };
 
   const formatter = new Intl.DateTimeFormat('en-US', {
@@ -172,8 +171,8 @@
 
   function isSafariMac() {
     const checkObject = p => { return p.toString() === '[object SafariRemoteNotification]'; };
-    return /constructor/i.test(window.HTMLElement) ||
-        checkObject(!window.safari || safari.pushNotification);
+    return /constructor/i.test(window.HTMLElement)
+        || checkObject(!window.safari || safari.pushNotification);
   }
 
   function isSafariIOS() {

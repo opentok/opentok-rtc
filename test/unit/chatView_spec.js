@@ -1,4 +1,4 @@
-var expect = chai.expect;
+var { expect } = chai;
 
 describe('ChatView', () => {
   var container = null;
@@ -56,7 +56,7 @@ describe('ChatView', () => {
 
   before(() => {
     window.LazyLoader = window.LazyLoader || { dependencyLoad() {} };
-    sinon.stub(LazyLoader, 'dependencyLoad', resources => Promise.resolve());
+    sinon.stub(LazyLoader, 'dependencyLoad', (resources) => Promise.resolve());
     window.MockOTHelper._install();
     window.MockChat._install();
     window.document.body.innerHTML = window.__html__['test/unit/chatView_spec.html'];
@@ -80,8 +80,7 @@ describe('ChatView', () => {
         expect(Chat.init.calledOnce).to.be.true;
         var spyArg = Utils.addHandlers.getCall(0).args[0];
         expect(Object.keys(spyArg).length).to.be.equal(Object.keys(handlerShouldHave).length);
-        expect(Object.keys(spyArg).every(action =>
-          spyArg[action].name === handlerShouldHave[action].name)).to.be.true;
+        expect(Object.keys(spyArg).every((action) => spyArg[action].name === handlerShouldHave[action].name)).to.be.true;
         done();
       });
     }
@@ -91,53 +90,53 @@ describe('ChatView', () => {
       expect(ChatView.init).to.be.a('function');
     });
 
-    it('should set the chat\'s room name and init the Chat object when called without configured ' +
-       'handlers', sinon.test(function (done) {
-         var handlersShouldHave = {
-           incomingMessage: {
-             name: 'chatController:incomingMessage',
-           },
-           presenceEvent: {
-             name: 'chatController:presenceEvent',
-           },
-           messageDelivered: {
-             name: 'chatController:messageDelivered',
-           },
-           chatVisibility: {
-             name: 'roomView:chatVisibility',
-             couldBeChanged: true,
-           },
-         };
-         verifyInit(this, done, handlersShouldHave);
-       }));
+    it('should set the chat\'s room name and init the Chat object when called without configured '
+       + 'handlers', sinon.test(function (done) {
+      var handlersShouldHave = {
+        incomingMessage: {
+          name: 'chatController:incomingMessage',
+        },
+        presenceEvent: {
+          name: 'chatController:presenceEvent',
+        },
+        messageDelivered: {
+          name: 'chatController:messageDelivered',
+        },
+        chatVisibility: {
+          name: 'roomView:chatVisibility',
+          couldBeChanged: true,
+        },
+      };
+      verifyInit(this, done, handlersShouldHave);
+    }));
 
-    it('should set the chat\'s room name and init the Chat object when called with configured ' +
-       'handlers', sinon.test(function (done) {
-         var handlersShouldHave = {
-           incomingMessage: {
-             name: 'chatController:incomingMessage',
-           },
-           presenceEvent: {
-             name: 'chatController:presenceEvent',
-           },
-           messageDelivered: {
-             name: 'chatController:messageDelivered',
-           },
-           chatVisibility: {
-             name: 'changedRoomView:changedChatVisibility',
-             couldBeChanged: true,
-           },
-         };
-         var configuredHandlers = [
-           {
-             type: 'updatedRemotely',
-             name: 'changedRoomStatus:changedUpdatedRemotely',
-           }, {
-             type: 'chatVisibility',
-             name: 'changedRoomView:changedChatVisibility',
-           }];
-         verifyInit(this, done, handlersShouldHave, configuredHandlers);
-       }));
+    it('should set the chat\'s room name and init the Chat object when called with configured '
+       + 'handlers', sinon.test(function (done) {
+      var handlersShouldHave = {
+        incomingMessage: {
+          name: 'chatController:incomingMessage',
+        },
+        presenceEvent: {
+          name: 'chatController:presenceEvent',
+        },
+        messageDelivered: {
+          name: 'chatController:messageDelivered',
+        },
+        chatVisibility: {
+          name: 'changedRoomView:changedChatVisibility',
+          couldBeChanged: true,
+        },
+      };
+      var configuredHandlers = [
+        {
+          type: 'updatedRemotely',
+          name: 'changedRoomStatus:changedUpdatedRemotely',
+        }, {
+          type: 'chatVisibility',
+          name: 'changedRoomView:changedChatVisibility',
+        }];
+      verifyInit(this, done, handlersShouldHave, configuredHandlers);
+    }));
   });
 
   describe('#incomingMessage event', () => {
@@ -198,34 +197,34 @@ describe('ChatView', () => {
     });
 
     it('should add a new text line correctly when chat is visible and sender is yourself',
-       sinon.test(function () {
-         var chatContent = getChatContainer().querySelector('ul');
-         var lengthBefore = chatContent.children.length;
+      sinon.test(function () {
+        var chatContent = getChatContainer().querySelector('ul');
+        var lengthBefore = chatContent.children.length;
 
-         Chat._isVisible = true;
-         this.spy(window, 'dispatchEvent');
-         data.senderId = 'myConnectionId';
-         window.dispatchEvent(new CustomEvent('chatController:incomingMessage',
-                                           { detail: { data } }));
+        Chat._isVisible = true;
+        this.spy(window, 'dispatchEvent');
+        data.senderId = 'myConnectionId';
+        window.dispatchEvent(new CustomEvent('chatController:incomingMessage',
+          { detail: { data } }));
 
-         testVisualElems(chatContent, lengthBefore, true);
-         expect(window.dispatchEvent.calledOnce).to.be.true;
-       }));
+        testVisualElems(chatContent, lengthBefore, true);
+        expect(window.dispatchEvent.calledOnce).to.be.true;
+      }));
 
     it('should add a new text line correctly when chat is visible and sender is other',
-       sinon.test(function () {
-         var chatContent = getChatContainer().querySelector('ul');
-         var lengthBefore = chatContent.children.length;
-         data.senderId = 'other';
+      sinon.test(function () {
+        var chatContent = getChatContainer().querySelector('ul');
+        var lengthBefore = chatContent.children.length;
+        data.senderId = 'other';
 
-         Chat._isVisible = true;
-         this.spy(window, 'dispatchEvent');
-         window.dispatchEvent(new CustomEvent('chatController:incomingMessage',
-                                           { detail: { data } }));
+        Chat._isVisible = true;
+        this.spy(window, 'dispatchEvent');
+        window.dispatchEvent(new CustomEvent('chatController:incomingMessage',
+          { detail: { data } }));
 
-         testVisualElems(chatContent, lengthBefore, false);
-         expect(window.dispatchEvent.calledOnce).to.be.true;
-       }));
+        testVisualElems(chatContent, lengthBefore, false);
+        expect(window.dispatchEvent.calledOnce).to.be.true;
+      }));
 
     it('should add a new text line correctly when chat is hidden', sinon.test((done) => {
       var chatContent = getChatContainer().querySelector('ul');
@@ -240,7 +239,7 @@ describe('ChatView', () => {
 
       Chat._isVisible = false;
       window.dispatchEvent(new CustomEvent('chatController:incomingMessage',
-                                           { detail: { data } }));
+        { detail: { data } }));
     }));
   });
 
@@ -304,43 +303,43 @@ describe('ChatView', () => {
       chatForm = getContainer().querySelector('#chatForm');
     });
 
-    it('should send the text content when chat is visible, textArea has content and ' +
-       'return key is pressed', sinon.test((done) => {
-         var textArea = getChatTextArea();
-         textArea.value = 'It has text';
+    it('should send the text content when chat is visible, textArea has content and '
+       + 'return key is pressed', sinon.test((done) => {
+      var textArea = getChatTextArea();
+      textArea.value = 'It has text';
 
-         window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: true }));
+      window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: true }));
 
-         window.addEventListener('chatView:outgoingMessage', function handlerTest(evt) {
-           window.removeEventListener('chatView:outgoingMessage', handlerTest);
-           expect(evt.detail.sender).to.be.equal('myself');
-           expect(evt.detail.text).to.be.equal(textArea.value);
-           done();
-         });
-         dispatchKeyEvent('\r');
-       }));
+      window.addEventListener('chatView:outgoingMessage', function handlerTest(evt) {
+        window.removeEventListener('chatView:outgoingMessage', handlerTest);
+        expect(evt.detail.sender).to.be.equal('myself');
+        expect(evt.detail.text).to.be.equal(textArea.value);
+        done();
+      });
+      dispatchKeyEvent('\r');
+    }));
 
-    it('should not do anything when chat is visible, textArea is empty and ' +
-       'return key is pressed', sinon.test(function () {
-         window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: true }));
-         var textArea = getChatTextArea();
-         textArea.value = '';
+    it('should not do anything when chat is visible, textArea is empty and '
+       + 'return key is pressed', sinon.test(function () {
+      window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: true }));
+      var textArea = getChatTextArea();
+      textArea.value = '';
 
-         this.spy(window, 'dispatchEvent');
-         dispatchKeyEvent('\r');
-         expect(window.dispatchEvent.called).to.be.false;
-       }));
+      this.spy(window, 'dispatchEvent');
+      dispatchKeyEvent('\r');
+      expect(window.dispatchEvent.called).to.be.false;
+    }));
 
     it('should not do anything when chat is visible and key pressed is not return key',
-        sinon.test(function () {
-          window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: true }));
-          var textArea = getChatTextArea();
-          textArea.value = 'It has text';
+      sinon.test(function () {
+        window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: true }));
+        var textArea = getChatTextArea();
+        textArea.value = 'It has text';
 
-          this.spy(window, 'dispatchEvent');
-          dispatchKeyEvent('a');
-          expect(window.dispatchEvent.called).to.be.false;
-        }));
+        this.spy(window, 'dispatchEvent');
+        dispatchKeyEvent('a');
+        expect(window.dispatchEvent.called).to.be.false;
+      }));
 
     it('should not do anything when chat is hidden', sinon.test(function () {
       window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: false }));
@@ -458,34 +457,34 @@ describe('ChatView', () => {
     });
 
     it('should send chatView:outgoingMessage when the chat is visible and textArea has content',
-       sinon.test((done) => {
-         window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: true }));
+      sinon.test((done) => {
+        window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: true }));
 
-         var textArea = getChatTextArea();
-         textArea.value = 'It has text';
+        var textArea = getChatTextArea();
+        textArea.value = 'It has text';
 
-         window.addEventListener('chatView:outgoingMessage', function handlerTest(evt) {
-           window.removeEventListener('chatView:outgoingMessage', handlerTest);
-           expect(evt.detail.sender).to.be.equal('myself');
-           expect(evt.detail.text).to.be.equal(textArea.value);
-           done();
-         });
+        window.addEventListener('chatView:outgoingMessage', function handlerTest(evt) {
+          window.removeEventListener('chatView:outgoingMessage', handlerTest);
+          expect(evt.detail.sender).to.be.equal('myself');
+          expect(evt.detail.text).to.be.equal(textArea.value);
+          done();
+        });
 
-         sendMsgBtn.dispatchEvent(getMouseClickEvt());
-       }));
+        sendMsgBtn.dispatchEvent(getMouseClickEvt());
+      }));
 
     it('should not do anything when the chat is visible and textArea is empty',
-       sinon.test(function () {
-         window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: true }));
+      sinon.test(function () {
+        window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: true }));
 
-         var textArea = getChatTextArea();
-         textArea.value = '';
+        var textArea = getChatTextArea();
+        textArea.value = '';
 
-         this.spy(window, 'dispatchEvent');
+        this.spy(window, 'dispatchEvent');
 
-         sendMsgBtn.dispatchEvent(getMouseClickEvt());
-         expect(window.dispatchEvent.called).to.be.false;
-       }));
+        sendMsgBtn.dispatchEvent(getMouseClickEvt());
+        expect(window.dispatchEvent.called).to.be.false;
+      }));
 
     it('should not do anything when the chat is hidden', sinon.test(function () {
       window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: false }));

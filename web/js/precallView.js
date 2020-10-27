@@ -143,8 +143,8 @@
   };
 
   const setFocus = username => {
-    const focusElement = username ? document.getElementById('enter') :
-      document.getElementById('user-name-input');
+    const focusElement = username ? document.getElementById('enter')
+      : document.getElementById('user-name-input');
     focusElement && focusElement.focus();
   };
 
@@ -259,13 +259,11 @@
     document.getElementById('connectivity-cancel').style.display = 'none';
 
     document.getElementById('pre-call-test-results').style.display = 'block';
-    document.getElementById('audio-bitrate').innerText =
-      Math.round(results.audio.bitsPerSecond / 1000);
+    document.getElementById('audio-bitrate').innerText = Math.round(results.audio.bitsPerSecond / 1000);
     if (results.video) {
-      document.getElementById('video-bitrate').innerText =
-        Math.round(results.video.bitsPerSecond / 1000);
-      packetLossStr = isNaN(results.video.packetLossRatio) ? '' :
-        `${Math.round(100 * results.video.packetLossRatio)}% packet loss`;
+      document.getElementById('video-bitrate').innerText = Math.round(results.video.bitsPerSecond / 1000);
+      packetLossStr = isNaN(results.video.packetLossRatio) ? ''
+        : `${Math.round(100 * results.video.packetLossRatio)}% packet loss`;
       document.getElementById('precall-video-packet-loss').innerText = packetLossStr;
     } else {
       document.getElementById('video-bitrate').innerText = 0;
@@ -286,8 +284,8 @@
     }
     document.getElementById('pre-call-description').innerText = results.text;
     document.getElementById('precall-icon').setAttribute('data-icon', results.classification);
-    packetLossStr = isNaN(results.audio.packetLossRatio) ? '' :
-      `${Math.round(100 * results.audio.packetLossRatio)}% packet loss`;
+    packetLossStr = isNaN(results.audio.packetLossRatio) ? ''
+      : `${Math.round(100 * results.audio.packetLossRatio)}% packet loss`;
     document.getElementById('precall-audio-packet-loss').innerText = packetLossStr;
   };
 

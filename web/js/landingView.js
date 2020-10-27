@@ -1,13 +1,13 @@
 /* global EJSTemplate, Modal, showTos, showUnavailable, minMeetingNameLength, Utils */
 
 !(global => {
-  let room,
-    user,
-    enterButton,
-    form,
-    roomLabelElem,
-    userLabelElem,
-    errorMessage;
+  let room;
+  let user;
+  let enterButton;
+  let form;
+  let roomLabelElem;
+  let userLabelElem;
+  let errorMessage;
 
   const loadTosTemplate = () => {
     return new Promise(resolve => {
@@ -61,9 +61,9 @@
     let formValid = true;
 
     if (room.value.length < minMeetingNameLength) {
-      const messageText = (room.value.length === 0) ?
-        'Please enter a meeting name' :
-        `The meeting name must be at least ${minMeetingNameLength} characters`;
+      const messageText = (room.value.length === 0)
+        ? 'Please enter a meeting name'
+        : `The meeting name must be at least ${minMeetingNameLength} characters`;
       errorMessage.querySelector('span').innerHTML = messageText;
       errorMessage.classList.add('show');
       formValid = false;

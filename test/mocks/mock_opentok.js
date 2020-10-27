@@ -33,8 +33,7 @@ function Opentok(aApiKey, aApiSecret) {
   // We must mock/stub some of the Opentok methods before the app is created
   // because they might be renamed/rebinded...
   sinon.stub(opentok, 'startArchive', (aSessionId, aArchiveOptions, aCallback) => {
-    setTimeout(() =>
-    aCallback(null, new FakeArchive(aSessionId, aArchiveOptions, 'started')));
+    setTimeout(() => aCallback(null, new FakeArchive(aSessionId, aArchiveOptions, 'started')));
   });
 
   sinon.stub(opentok, 'stopArchive', (aArchiveId, aCallback) => {
@@ -51,7 +50,7 @@ function Opentok(aApiKey, aApiSecret) {
   });
 
   sinon.stub(opentok, 'listArchives', (aOptions, aCallback) => {
-    var list = Object.keys(_archives).map(key => _archives[key]);
+    var list = Object.keys(_archives).map((key) => _archives[key]);
     setTimeout(aCallback.bind(undefined, undefined, list));
   });
 
@@ -62,7 +61,7 @@ function Opentok(aApiKey, aApiSecret) {
     setTimeout(aCallback.bind(undefined, undefined, sessionInfo));
   });
 
-  sinon.stub(opentok, 'generateToken', aOptions => 'tokentoken');
+  sinon.stub(opentok, 'generateToken', (aOptions) => 'tokentoken');
 
   opentok._sinonRestore = function () {
     ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'generateToken', 'createSession'].forEach((method) => {

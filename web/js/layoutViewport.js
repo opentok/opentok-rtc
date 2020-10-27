@@ -30,15 +30,15 @@
           const itemWidth = item.offsetWidth;
           const itemOffsetTop = item.offsetTop;
           const itemOffsetLeft = item.offsetLeft;
-          if (((itemOffsetTop >= viewTop &&
-               itemOffsetTop <= viewTop + containerHeight) ||
-              (itemOffsetTop + itemHeight >= viewTop &&
-               itemOffsetTop + itemHeight <= viewTop + containerHeight)) &&
+          if (((itemOffsetTop >= viewTop
+               && itemOffsetTop <= viewTop + containerHeight)
+              || (itemOffsetTop + itemHeight >= viewTop
+               && itemOffsetTop + itemHeight <= viewTop + containerHeight))
 
-              ((itemOffsetLeft >= viewLeft &&
-               itemOffsetLeft <= viewLeft + containerWidth) ||
-              (itemOffsetLeft + itemWidth >= viewLeft &&
-               itemOffsetLeft + itemWidth <= viewLeft + containerWidth))) {
+              && ((itemOffsetLeft >= viewLeft
+               && itemOffsetLeft <= viewLeft + containerWidth)
+              || (itemOffsetLeft + itemWidth >= viewLeft
+               && itemOffsetLeft + itemWidth <= viewLeft + containerWidth))) {
             visibility = 'visible';
           }
         }

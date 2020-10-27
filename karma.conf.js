@@ -1,8 +1,8 @@
 // Karma configuration
 // Generated on Tue Sep 29 2015 19:25:55 GMT+0200 (CEST)
 
-module.exports = function(config) {
-    configuration = {
+module.exports = function (config) {
+  configuration = {
 
     plugins: ['karma-mocha', 'karma-coverage', 'karma-html2js-preprocessor', 'karma-chrome-launcher', 'karma-firefox-launcher'],
 
@@ -18,9 +18,9 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'test/lib/**/*.js',
-      {pattern: 'test/mocks/mock_othelper.js', include: true},
-      {pattern: 'test/mocks/mock_roomStatus.js', include: true},
-      {pattern: 'test/mocks/mock_chat.js', include: true},
+      { pattern: 'test/mocks/mock_othelper.js', include: true },
+      { pattern: 'test/mocks/mock_roomStatus.js', include: true },
+      { pattern: 'test/mocks/mock_chat.js', include: true },
       'web/js/vendor/**/*.js',
       'web/js/libs/**/*.js',
       'node_modules/swagger-boilerplate/lib/shared/**/*.js',
@@ -109,9 +109,9 @@ module.exports = function(config) {
   };
 
   if (process.env.TRAVIS) {
-       configuration.browsers = ['Firefox', 'Chrome_travis_ci'];
-   }
+    configuration.browsers = ['Firefox', 'Chrome_travis_ci'];
+  }
 
   config.set(configuration);
 
-}
+};

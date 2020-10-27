@@ -49,7 +49,7 @@ LayoutViewport, ItemsHandler */
   function getDeviceLayout(isScreen = false) {
     if (window.matchMedia('screen and (min-device-width : 320px) and (max-device-width : 1024px) and (orientation : landscape)').matches) {
       return isScreen ? 'hangout_vertical' : 'f2f_vertical';
-    } else if (window.matchMedia('screen and (max-width: 480px) and (orientation : portrait)').matches) {
+    } if (window.matchMedia('screen and (max-width: 480px) and (orientation : portrait)').matches) {
       return isScreen ? 'hangout_horizontal' : 'f2f_horizontal';
     }
     let userSelectedLayout = null;
@@ -105,8 +105,8 @@ LayoutViewport, ItemsHandler */
   function isHangoutRequired(item) {
     // New screen shared and 3 or more items implies going to hangout if this isn't our current
     // layout running
-    return Utils.isScreen(item) && isGroup() &&
-           !(isOnGoing(HangoutHorizontal) || isOnGoing(HangoutVertical));
+    return Utils.isScreen(item) && isGroup()
+           && !(isOnGoing(HangoutHorizontal) || isOnGoing(HangoutVertical));
   }
 
   function append(id, options) {

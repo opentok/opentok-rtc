@@ -35,32 +35,32 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
   const MODAL_TXTS = {
     mute: {
       head: 'Mute all participants, including yourself',
-      detail: 'Everyone will be notified and can click their <i data-icon="no_mic"></i> button' +
-              ' to unmute themselves.',
+      detail: 'Everyone will be notified and can click their <i data-icon="no_mic"></i> button'
+              + ' to unmute themselves.',
       button: 'Mute all participants'
     },
     muteRemotely: {
       head: 'All participants microphones are being disabled in the call',
-      detail: 'If you want to keep talking, ' +
-              'you must manually enable your own microphone.',
+      detail: 'If you want to keep talking, '
+              + 'you must manually enable your own microphone.',
       button: 'I understand'
     },
     unmutedRemotely: {
       head: 'Your microphone is now enabled in the call',
-      detail: 'If you want to remain muted, ' +
-              'you must manually disable your own microphone.',
+      detail: 'If you want to remain muted, '
+              + 'you must manually disable your own microphone.',
       button: 'I understand'
     },
     join: {
       head: 'All participants are muted',
-      detail: 'You can unmute everyone by toggling the Mute all participants option. Or you can ' +
-              'unmute just yourself by clicking the microphone icon in the bottom menu.',
+      detail: 'You can unmute everyone by toggling the Mute all participants option. Or you can '
+              + 'unmute just yourself by clicking the microphone icon in the bottom menu.',
       button: 'I understand'
     },
     lock: {
       head: 'Do you want to lock the meeting?',
-      detail: 'When a meeting room is locked, no one else will be allowed to join the meeting. ' +
-              'Current participants who leave the meeting will not be allowed back in.',
+      detail: 'When a meeting room is locked, no one else will be allowed to join the meeting. '
+              + 'Current participants who leave the meeting will not be allowed back in.',
       button: 'Lock Meeting'
     },
     endCall: {
@@ -76,14 +76,14 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
     },
     sessionDisconnected: {
       head: 'Session disconected',
-      detail: 'The connection to the OpenTok platform has been lost. Check your network ' +
-              'connectivity and press Reload to connect again.',
+      detail: 'The connection to the OpenTok platform has been lost. Check your network '
+              + 'connectivity and press Reload to connect again.',
       button: 'Reload'
     },
     chromePublisherError: {
       head: 'Internal Chrome Error',
-      detail: 'Failed to acquire microphone. This is a known Chrome bug. Please completely quit ' +
-              'and restart your browser.',
+      detail: 'Failed to acquire microphone. This is a known Chrome bug. Please completely quit '
+              + 'and restart your browser.',
       button: 'Reload'
     },
     meetingFullError: {
@@ -153,8 +153,8 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
         dock.data('previouslyCollapsed', dock.classList.contains('collapsed'));
         dock.classList.add('collapsed');
       } else if (dock.data('previouslyCollapsed') !== null) {
-        dock.data('previouslyCollapsed') === 'true' ? dock.classList.add('collapsed') :
-          dock.classList.remove('collapsed');
+        dock.data('previouslyCollapsed') === 'true' ? dock.classList.add('collapsed')
+          : dock.classList.remove('collapsed');
         dock.data('previouslyCollapsed', null);
       }
     },
@@ -243,9 +243,9 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
 
   function setAudioSwitchRemotely(isMuted) {
     setSwitchStatus(isMuted, false, audioSwitch, 'roomView:muteAllSwitch');
-    isMuted ?
-      setPublisherAudioSwitchStatus('muted') :
-      setPublisherAudioSwitchStatus('activated');
+    isMuted
+      ? setPublisherAudioSwitchStatus('muted')
+      : setPublisherAudioSwitchStatus('activated');
   }
 
   function showConfirmChangeMicStatus(isMuted) {
@@ -499,8 +499,8 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
           break;
         }
         case 'annotate': {
-          document.body.data('annotationVisible') === 'true' ?
-            document.body.data('annotationVisible', 'false') : document.body.data('annotationVisible', 'true');
+          document.body.data('annotationVisible') === 'true'
+            ? document.body.data('annotationVisible', 'false') : document.body.data('annotationVisible', 'true');
           Utils.sendEvent('roomView:screenChange');
           break;
         }

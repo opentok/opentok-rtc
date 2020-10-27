@@ -5,8 +5,8 @@
   const touchend = isTouch ? 'touchend' : 'mouseup';
 
   const getTouch = (function getTouchWrapper() {
-    return isTouch ? e => { return e.touches[0]; } :
-      e => { return e; };
+    return isTouch ? e => { return e.touches[0]; }
+      : e => { return e; };
   }());
 
   const DragDetector = function (element) {
@@ -67,8 +67,8 @@
 
         case touchmove:
           var touch = getTouch(evt); // eslint-disable-line no-redeclare
-          if (Math.abs(touch.pageX - this.startX) > DragDetector.CLICK_THRESHOLD ||
-              Math.abs(touch.pageY - this.startY) > DragDetector.CLICK_THRESHOLD) {
+          if (Math.abs(touch.pageX - this.startX) > DragDetector.CLICK_THRESHOLD
+              || Math.abs(touch.pageY - this.startY) > DragDetector.CLICK_THRESHOLD) {
             this.sendEvent();
           }
 

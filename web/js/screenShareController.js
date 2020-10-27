@@ -98,8 +98,8 @@
       _isSharing = false;
       screenPublisherOptions.name = (aUserName || DEFAULT_NAME) + NAME_SUFFIX;
       _chromeExtId = aChromeExtId;
-      aChromeExtId && aChromeExtId !== 'undefined' &&
-        OTHelper.registerScreenShareExtension({ chrome: aChromeExtId }, 1);
+      aChromeExtId && aChromeExtId !== 'undefined'
+        && OTHelper.registerScreenShareExtension({ chrome: aChromeExtId }, 1);
       ScreenShareView.init(aUserName);
     });
   }

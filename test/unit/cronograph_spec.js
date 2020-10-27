@@ -1,5 +1,5 @@
-var assert = chai.assert;
-var expect = chai.expect;
+var { assert } = chai;
+var { expect } = chai;
 var should = chai.should();
 
 describe('Cronograph', () => {
@@ -46,8 +46,8 @@ describe('Cronograph', () => {
       var seconds = 2 * 60 * 60; // Simulating 2 hours of meeting
       for (var i = 1; i < seconds; i++) {
         clock.tick(1000);
-        checkCounterUI(beautify(Math.floor(i / 60)) + ':' +
-                       beautify(Math.floor(i % 60)));
+        checkCounterUI(beautify(Math.floor(i / 60)) + ':'
+                       + beautify(Math.floor(i % 60)));
       }
 
       clock.restore();

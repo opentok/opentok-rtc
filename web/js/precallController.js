@@ -113,13 +113,13 @@
                 .getRoomRawInfo(roomName).then((room) => {
                   if (window.routedFromStartMeeting) {
                     return resolve();
-                  } else if (showUnavailable && !room) {
+                  } if (showUnavailable && !room) {
                     return reject(new Error('New rooms not allowed'));
-                  } else if (room && !room.isLocked) {
+                  } if (room && !room.isLocked) {
                     return resolve();
-                  } else if (!showUnavailable && !room) {
+                  } if (!showUnavailable && !room) {
                     return resolve();
-                  } else if (room && room.isLocked) {
+                  } if (room && room.isLocked) {
                     return reject(new Error('Room locked'));
                   }
                   // default
