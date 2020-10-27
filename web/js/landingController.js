@@ -1,13 +1,13 @@
 /* global LandingView, PrecallController, PrecallView, OTHelper */
 
-!(global => {
+!((global) => {
   const addEventHandlers = () => {
     Utils.addEventsHandlers('precallView:', {
       submit() {
         const form = document.querySelector('.main form');
         form.action = `/room/${window.roomName}`;
         form.submit();
-      }
+      },
     });
   };
 
@@ -19,12 +19,8 @@
       '/js/landingView.js',
       '/js/min/precallView.min.js',
       '/js/min/precallController.min.js',
-      '/js/helpers/OTHelper.js'
-    ]).then(() => {
-      return LandingView.init();
-    }).then(() => {
-      return PrecallView.init();
-    }).then(() => {
+      '/js/helpers/OTHelper.js',
+    ]).then(() => LandingView.init()).then(() => PrecallView.init()).then(() => {
       const otHelper = new OTHelper({});
       PrecallController.showCallSettingsPrompt('', '', otHelper);
       addEventHandlers();
@@ -32,6 +28,6 @@
   };
 
   global.LandingController = {
-    init
+    init,
   };
 })(this);

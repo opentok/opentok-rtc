@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 /* global Modal, OTNetworkTest, PrecallView, showTos, showUnavailable */
 
-!(exports => {
+!((exports) => {
   const endPrecall = () => {
     Utils.sendEvent('PrecallController:endPrecall');
   };
@@ -15,7 +15,7 @@
     width: '100%',
     height: '100%',
     insertMode: 'append',
-    showControls: false
+    showControls: false,
   };
 
   const storedAudioDeviceId = window.localStorage.getItem('audioDeviceId');
@@ -28,8 +28,8 @@
 
     const videoPreviewEventHandlers = {
       toggleFacingMode() {
-        otHelper.toggleFacingMode().then(dev => {
-          const deviceId = dev.deviceId;
+        otHelper.toggleFacingMode().then((dev) => {
+          const { deviceId } = dev;
           publisherOptions.videoSource = deviceId;
           window.localStorage.setItem('videoDeviceId', deviceId);
         });
@@ -59,15 +59,15 @@
       cancelTest() {
         PrecallView.hideConnectivityTest();
         otNetworkTest.stopTest();
-      }
+      },
     };
 
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       if (window.routedFromStartMeeting) {
         publisherOptions.name = window.userName || document.querySelector(`${selector} input`).value.trim();
         return resolve({
           username: window.userName || document.querySelector(`${selector} input`).value.trim(),
-          publisherOptions
+          publisherOptions,
         });
       }
 
@@ -79,14 +79,14 @@
         }
 
         document.querySelector('.user-name-modal #enter').disabled = false;
-        document.querySelector('.user-name-modal').addEventListener('keypress', event => {
+        document.querySelector('.user-name-modal').addEventListener('keypress', (event) => {
           if (event.which === 13) {
             event.preventDefault();
             submitForm();
           }
         });
 
-        document.querySelector('.user-name-modal').addEventListener('submit', event => {
+        document.querySelector('.user-name-modal').addEventListener('submit', (event) => {
           event.preventDefault();
           submitForm();
         });
@@ -101,7 +101,7 @@
           setTimeout(() => {
             resolve({
               username,
-              publisherOptions
+              publisherOptions,
             });
           }, 1);
         }
@@ -157,21 +157,21 @@
         }
 
         otHelper.initPublisher('video-preview', publisherOptions)
-          .then(pub => {
+          .then((pub) => {
             publisher = pub;
 
             otHelper.getVideoDeviceNotInUse(publisherOptions.videoSource)
-              .then(videoSourceId => {
+              .then((videoSourceId) => {
                 previewOptions = {
                   apiKey: window.precallApiKey,
                   resolution: '640x480',
                   sessionId: window.precallSessionId,
                   token: window.precallToken,
-                  videoSource: videoSourceId
+                  videoSource: videoSourceId,
                 };
 
                 publisher.on('accessAllowed', () => {
-                  otHelper.getDevices('audioInput').then(audioDevs => {
+                  otHelper.getDevices('audioInput').then((audioDevs) => {
                     // eslint-disable-next-line max-len
                     PrecallView.populateAudioDevicesDropdown(audioDevs, publisherOptions.audioSource);
                   });
@@ -193,7 +193,7 @@
               });
             Utils.addEventsHandlers('roomView:', videoPreviewEventHandlers, exports);
             let movingAvg = null;
-            publisher.on('audioLevelUpdated', event => {
+            publisher.on('audioLevelUpdated', (event) => {
               if (movingAvg === null || movingAvg <= event.audioLevel) {
                 movingAvg = event.audioLevel;
               } else {
@@ -222,26 +222,24 @@
   }
 
   const eventHandlers = {
-    'roomView:endprecall': endPrecall
+    'roomView:endprecall': endPrecall,
   };
 
-  const init = () => {
-    return new Promise(resolve => {
-      LazyLoader.dependencyLoad([
-        '/js/helpers/ejsTemplate.js',
-        '/js/vendor/ejs_production.js',
-        '/js/min/precallView.min.js'
-      ]).then(() => {
-        Utils.addEventsHandlers('', eventHandlers);
-        return PrecallView.init();
-      }).then(() => {
-        resolve();
-      });
+  const init = () => new Promise((resolve) => {
+    LazyLoader.dependencyLoad([
+      '/js/helpers/ejsTemplate.js',
+      '/js/vendor/ejs_production.js',
+      '/js/min/precallView.min.js',
+    ]).then(() => {
+      Utils.addEventsHandlers('', eventHandlers);
+      return PrecallView.init();
+    }).then(() => {
+      resolve();
     });
-  };
+  });
 
   exports.PrecallController = {
     init,
-    showCallSettingsPrompt
+    showCallSettingsPrompt,
   };
 })(this);

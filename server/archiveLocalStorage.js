@@ -1,10 +1,12 @@
 'use strict';
 
-var env = process.env;
+var { env } = process;
 var SwaggerBP = require('swagger-boilerplate');
-var Utils = SwaggerBP.Utils;
+
+var { Utils } = SwaggerBP;
 var Logger = Utils.MultiLevelLogger;
 const Redis = require('ioredis');
+
 const redis = new Redis(env.REDIS_URL || env.REDISTOGO_URL || ''); // uses defaults unless given configuration object
 
 class ArchiveLocalStorage {

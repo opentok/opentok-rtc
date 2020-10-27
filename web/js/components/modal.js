@@ -1,4 +1,4 @@
-!(global => {
+!((global) => {
   const transEndEventName = ('WebkitTransition' in document.documentElement.style)
     ? 'webkitTransitionEnd' : 'transitionend';
 
@@ -20,10 +20,10 @@
     };
     closeHandlers[selector] = {
       target: closeElement,
-      handler
+      handler,
     };
 
-    keyPressHandler = event => {
+    keyPressHandler = (event) => {
       const keyCode = event.which || event.keyCode;
       if (keyCode === 27) { // escape key maps to keycode `27`
         handler();
@@ -47,25 +47,23 @@
     if (!_modalShown || allowMultiple) {
       screenFree = Promise.resolve();
     } else {
-      screenFree = new Promise(resolve => {
+      screenFree = new Promise((resolve) => {
         _queuedModals.push(resolve);
       });
     }
 
-    return screenFree.then(() => {
-      return new Promise(resolve => {
-        _modalShown = true;
-        preShowCb && preShowCb();
-        const modal = document.querySelector(selector);
-        modal.addEventListener(transEndEventName, function onTransitionend() {
-          modal.removeEventListener(transEndEventName, onTransitionend);
-          addCloseHandler(selector);
-          resolve();
-        });
-        modal.classList.add('visible');
-        modal.classList.add('show');
+    return screenFree.then(() => new Promise((resolve) => {
+      _modalShown = true;
+      preShowCb && preShowCb();
+      const modal = document.querySelector(selector);
+      modal.addEventListener(transEndEventName, function onTransitionend() {
+        modal.removeEventListener(transEndEventName, onTransitionend);
+        addCloseHandler(selector);
+        resolve();
       });
-    });
+      modal.classList.add('visible');
+      modal.classList.add('show');
+    }));
   }
 
   function flashMessage(selector) {
@@ -76,7 +74,7 @@
   }
 
   function hide(selector) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const modal = document.querySelector(selector);
 
       modal.addEventListener(transEndEventName, function onTransitionend() {
@@ -118,31 +116,29 @@
     }
 
     return show(selector, loadModalText, allowMultiple)
-      .then(() => {
-        return new Promise(resolve => {
-          ui.addEventListener('click', function onClicked(evt) {
-            const classList = evt.target.classList;
-            const hasAccepted = classList.contains('accept');
-            const altHasAccepted = classList.contains('alt-accept');
-            if (evt.target.id !== 'switchAlerts' && !hasAccepted && !altHasAccepted && !classList.contains('close')) {
-              return;
-            }
-            evt.stopImmediatePropagation();
-            evt.preventDefault();
-            ui.removeEventListener('click', onClicked);
-            hide(selector).then(() => {
-              if (altHasAccepted) return resolve({ altHasAccepted });
-              return resolve(hasAccepted);
-            });
+      .then(() => new Promise((resolve) => {
+        ui.addEventListener('click', function onClicked(evt) {
+          const { classList } = evt.target;
+          const hasAccepted = classList.contains('accept');
+          const altHasAccepted = classList.contains('alt-accept');
+          if (evt.target.id !== 'switchAlerts' && !hasAccepted && !altHasAccepted && !classList.contains('close')) {
+            return;
+          }
+          evt.stopImmediatePropagation();
+          evt.preventDefault();
+          ui.removeEventListener('click', onClicked);
+          hide(selector).then(() => {
+            if (altHasAccepted) return resolve({ altHasAccepted });
+            return resolve(hasAccepted);
           });
         });
-      });
+      }));
   }
 
   global.Modal = {
     flashMessage,
     show,
     hide,
-    showConfirm
+    showConfirm,
   };
 })(this);

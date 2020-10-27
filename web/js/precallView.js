@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 /* globals EJSTemplate, Modal, setTimeout, showTos, showUnavailable, enablePrecallTest, enterButtonLabel */
-!(exports => {
+!((exports) => {
   const _precallTemplateSrc = '/templates/precall.ejs';
   let _precallTemplate;
   const _tosTemplateSrc = '/templates/tos.ejs';
@@ -16,7 +16,7 @@
     if (window.enablePrecallTest) {
       const preCallTestResults = document.getElementById('pre-call-test-results');
 
-      preCallTestResults.addEventListener('click', e => {
+      preCallTestResults.addEventListener('click', (e) => {
         const elem = e.target;
         switch (elem.id) {
           case 'precall-close':
@@ -31,7 +31,7 @@
       });
 
       const connectivityCancelElement = document.getElementById('connectivity-cancel');
-      connectivityCancelElement.addEventListener('click', event => {
+      connectivityCancelElement.addEventListener('click', (event) => {
         event.preventDefault();
         Utils.sendEvent('roomView:cancelTest');
         connectivityCancelElement.style.display = 'none';
@@ -52,7 +52,7 @@
 
     const publishSettings = document.querySelector('.publish-settings');
 
-    publishSettings.addEventListener('click', e => {
+    publishSettings.addEventListener('click', (e) => {
       const initialVideoSwitch = document.querySelector('#initialVideoSwitch');
       const initialAudioSwitch = document.querySelector('#initialAudioSwitch');
 
@@ -78,8 +78,8 @@
           Modal.showConfirm({
             head: 'Set mic input',
             detail: 'Please identify the audio source in the following list:',
-            button: 'Set'
-          }, true).then(start => {
+            button: 'Set',
+          }, true).then((start) => {
             if (start) {
               Utils.sendEvent('roomView:setAudioSource', select.value);
             }
@@ -105,7 +105,6 @@
         }
       }
     });
-
   };
 
   function render(resolve) {
@@ -114,8 +113,8 @@
     if (showTos) {
       templatePromises.push(_tosTemplate.render());
     }
-    Promise.all(templatePromises).then(htmlStrings => {
-      htmlStrings.forEach(aHTML => {
+    Promise.all(templatePromises).then((htmlStrings) => {
+      htmlStrings.forEach((aHTML) => {
         document.body.insertAdjacentHTML('afterbegin', aHTML);
       });
 
@@ -139,10 +138,10 @@
     },
     'PrecallController:audioOnly': function () {
       setSwitchStatus(false, 'Video', 'roomView:initialVideoSwitch');
-    }
+    },
   };
 
-  const setFocus = username => {
+  const setFocus = (username) => {
     const focusElement = username ? document.getElementById('enter')
       : document.getElementById('user-name-input');
     focusElement && focusElement.focus();
@@ -155,7 +154,7 @@
 
   const populateAudioDevicesDropdown = (audioDevices, selectedDevId) => {
     const select = document.getElementById('select-devices');
-    audioDevices.forEach(device => {
+    audioDevices.forEach((device) => {
       const option = document.createElement('option');
       option.text = device.label;
       option.value = device.deviceId;
@@ -166,23 +165,21 @@
 
   let alreadyInitialized = false;
 
-  const init = () => {
-    return new Promise(resolve => {
-      if (alreadyInitialized) {
-        return resolve();
-      }
+  const init = () => new Promise((resolve) => {
+    if (alreadyInitialized) {
+      return resolve();
+    }
 
-      Utils.addEventsHandlers('', eventHandlers);
-      _precallTemplate = new EJSTemplate({ url: _precallTemplateSrc });
-      if (showTos) {
-        _tosTemplate = new EJSTemplate({ url: _tosTemplateSrc });
-      }
-      _unavailableTemplate = new EJSTemplate({ url: _unavailableTemplateSrc });
-      _lockedTemplate = new EJSTemplate({ url: _lockedTemplateSrc });
-      alreadyInitialized = true;
-      return render(resolve);
-    });
-  };
+    Utils.addEventsHandlers('', eventHandlers);
+    _precallTemplate = new EJSTemplate({ url: _precallTemplateSrc });
+    if (showTos) {
+      _tosTemplate = new EJSTemplate({ url: _tosTemplateSrc });
+    }
+    _unavailableTemplate = new EJSTemplate({ url: _unavailableTemplateSrc });
+    _lockedTemplate = new EJSTemplate({ url: _lockedTemplateSrc });
+    alreadyInitialized = true;
+    return render(resolve);
+  });
 
   const showModal = () => {
     Utils.removeEventHandlers('modal:', { close: showModal });
@@ -203,19 +200,17 @@
     const selector = '.tc-modal.contract';
     const acceptElement = document.querySelector(`${selector} .accept`);
     return Modal.show(selector, null, true)
-      .then(() => {
-        return new Promise(resolve => {
-          acceptElement.addEventListener('click', function onClicked(evt) {
-            acceptElement.removeEventListener('click', onClicked);
-            evt.preventDefault();
-            sessionStorage.setItem('tosAccepted', true);
-            Modal.hide(selector);
-            resolve();
-          });
-
-          Utils.addEventsHandlers('modal:', { close: showModal });
+      .then(() => new Promise((resolve) => {
+        acceptElement.addEventListener('click', function onClicked(evt) {
+          acceptElement.removeEventListener('click', onClicked);
+          evt.preventDefault();
+          sessionStorage.setItem('tosAccepted', true);
+          Modal.hide(selector);
+          resolve();
         });
-      });
+
+        Utils.addEventsHandlers('modal:', { close: showModal });
+      }));
   };
 
   const hide = () => {
@@ -223,7 +218,7 @@
     Utils.removeEventHandlers('modal:', { close: showModal });
   };
 
-  const setVolumeMeterLevel = level => {
+  const setVolumeMeterLevel = (level) => {
     document.getElementById('audio-meter-level').style.width = `${level * 89}px`;
   };
 
@@ -244,12 +239,12 @@
     }, 100);
   };
 
-  var setTestMeterLevel = value => {
+  var setTestMeterLevel = (value) => {
     const width = value * document.getElementById('precall-test-meter').offsetWidth;
     document.getElementById('precall-test-meter-level').style.width = `${width}px`;
   };
 
-  const displayNetworkTestResults = results => {
+  const displayNetworkTestResults = (results) => {
     let packetLossStr;
 
     clearInterval(testMeterInterval);
@@ -322,6 +317,6 @@
     showLockedMessage,
     startPrecallTestMeter,
     displayNetworkTestResults,
-    hideConnectivityTest
+    hideConnectivityTest,
   };
 })(this);

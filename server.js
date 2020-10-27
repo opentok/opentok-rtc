@@ -4,11 +4,12 @@
 // node server -h
 
 const SwaggerBP = require('swagger-boilerplate');
-const Utils = SwaggerBP.Utils;
+
+const { Utils } = SwaggerBP;
 const Logger = Utils.MultiLevelLogger;
 const logger = new Logger('HTTP Server App');
 
-const Server = require('swagger-boilerplate').Server;
+const { Server } = require('swagger-boilerplate');
 
 const server = new Server({
   apiFile: './api.yml',
@@ -18,8 +19,8 @@ const server = new Server({
     dotfiles: 'ignore',
     extensions: ['jpg'],
     index: false,
-    redirect: false
-  }
+    redirect: false,
+  },
 });
 
 server.start();

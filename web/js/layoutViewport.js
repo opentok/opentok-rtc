@@ -1,4 +1,4 @@
-!(exports => {
+!((exports) => {
   let container;
   let itemSelector;
   let scrollTimer;
@@ -45,7 +45,7 @@
 
         Utils.sendEvent('roomView:streamVisibilityChange', {
           id: item.data('id'),
-          value: visibility
+          value: visibility,
         });
       }
     }
@@ -61,7 +61,7 @@
     itemDeleted: onVisitItems,
     resize: onVisitItems,
     layoutChanged: onVisitItems,
-    scroll: onVisitItems
+    scroll: onVisitItems,
   };
 
   function init(pContainer, pItemSelector) {
@@ -73,6 +73,6 @@
   }
 
   exports.LayoutViewport = {
-    init
+    init,
   };
 })(this);

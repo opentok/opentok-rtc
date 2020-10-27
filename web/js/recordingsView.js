@@ -1,6 +1,6 @@
 /* global RoomView */
 
-!(exports => {
+!((exports) => {
   const LIST_SELECTOR = '.videos.tc-list ul';
 
   const VIDEO_EXTENSION = 'mp4';
@@ -30,7 +30,7 @@
     let total = 0;
     Object.keys(archives)
       .sort(sortingDescending)
-      .forEach(archiveId => {
+      .forEach((archiveId) => {
         const archive = archives[archiveId];
         ++total;
         const url = archive.localDownloadURL;
@@ -40,20 +40,20 @@
 
         HTMLElems.createElementAt(item, 'a', {
           target: '_blank',
-          href: `${url}?generatePreview`
+          href: `${url}?generatePreview`,
         }, Utils.getLabelText(archive)).classList.add('file');
 
         HTMLElems.createElementAt(item, 'i', {
           'data-id': archive.id,
           'data-icon': 'delete',
           'data-action': 'delete',
-          'data-username': archive.recordingUser
+          'data-username': archive.recordingUser,
         });
 
         HTMLElems.createElementAt(item, 'a', {
           'data-icon': 'download',
           href: url,
-          download: `${archive.name}.${VIDEO_EXTENSION}`
+          download: `${archive.name}.${VIDEO_EXTENSION}`,
         }).classList.add('download');
       });
 
@@ -64,7 +64,7 @@
     HTMLElems.addHandlerArchive(LIST_SELECTOR);
   };
 
-  const init = model => {
+  const init = (model) => {
     document.body.data('downloadAvailable', Utils.isChrome());
     model.addEventListener('value', render);
     render(model.archives);
@@ -72,6 +72,6 @@
   };
 
   exports.RecordingsView = {
-    init
+    init,
   };
 })(this);

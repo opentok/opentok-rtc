@@ -6,10 +6,10 @@ const LayoutBase = function (container, items, type) {
 
 LayoutBase.prototype = {
   rearrange() {
-    const features = this.features;
+    const { features } = this;
     Object.keys(this.items).forEach(function (id) {
-      const style = this.items[id].style;
-      Object.keys(features).forEach(feature => {
+      const { style } = this.items[id];
+      Object.keys(features).forEach((feature) => {
         style[feature] = features[feature];
       });
     }, this);
@@ -27,7 +27,7 @@ LayoutBase.prototype = {
 
   destroy() {
     this.container = null;
-  }
+  },
 };
 
 const Grid = function (container, items) {
@@ -38,15 +38,15 @@ Grid.prototype = Object.create(LayoutBase.prototype, {
   features: {
     configurable: false,
     get() {
-      const total = this.total;
+      const { total } = this;
       const columns = Math.ceil(Math.sqrt(total));
 
       return {
         width: `${100 / columns}%`,
-        height: `${100 / Math.ceil(total / columns)}%`
+        height: `${100 / Math.ceil(total / columns)}%`,
       };
-    }
-  }
+    },
+  },
 });
 
 Grid.prototype.constructor = Grid;
@@ -62,17 +62,17 @@ Float.prototype = Object.create(LayoutBase.prototype, {
     get() {
       return {
         width: '100%',
-        height: '100%'
+        height: '100%',
       };
-    }
+    },
   },
 
   publisher: {
     configurable: false,
     get() {
       return this.items.publisher;
-    }
-  }
+    },
+  },
 });
 
 Float.prototype.constructor = Float;
@@ -83,7 +83,7 @@ Float.prototype.addDraggableFeature = function () {
   }
 
   this.addedDraggableFeature = true;
-  Utils.getDraggable().then(draggable => {
+  Utils.getDraggable().then((draggable) => {
     draggable.on(this.publisher);
   });
 };
@@ -110,10 +110,10 @@ F2FHorizontal.prototype = Object.create(LayoutBase.prototype, {
     get() {
       return {
         width: '100%',
-        height: `${100 / this.total}%`
+        height: `${100 / this.total}%`,
       };
-    }
-  }
+    },
+  },
 });
 
 F2FHorizontal.prototype.constructor = F2FHorizontal;
@@ -128,10 +128,10 @@ F2FVertical.prototype = Object.create(LayoutBase.prototype, {
     get() {
       return {
         width: `${100 / this.total}%`,
-        height: '100%'
+        height: '100%',
       };
-    }
-  }
+    },
+  },
 });
 
 F2FVertical.prototype.constructor = F2FVertical;
@@ -158,16 +158,14 @@ const Hangout = function (container, items, item, type) {
  *
  * @param type - camera or screen
  */
-Hangout.getAttributeName = type => {
-  return `onStage${type.charAt(0).toUpperCase()}${type.slice(1)}`;
-};
+Hangout.getAttributeName = (type) => `onStage${type.charAt(0).toUpperCase()}${type.slice(1)}`;
 
 /*
  * It returns the type of item which is used to index internally
  *
  * @param item - item object
  */
-Hangout.getItemType = item => {
+Hangout.getItemType = (item) => {
   let type = null;
 
   switch (item.data('streamType')) {
@@ -188,19 +186,15 @@ Hangout.getItemType = item => {
  *
  * @param item - item object
  */
-Hangout.getItemId = item => {
-  return item.data('id');
-};
+Hangout.getItemId = (item) => item.data('id');
 
 /*
  * It returns an array of objects for each event with type and attribute name
  */
-Hangout.stageTypeDescriptors = ['camera', 'screen'].map(aType => {
-  return {
-    type: aType,
-    attrName: Hangout.getAttributeName(aType)
-  };
-});
+Hangout.stageTypeDescriptors = ['camera', 'screen'].map((aType) => ({
+  type: aType,
+  attrName: Hangout.getAttributeName(aType),
+}));
 
 Hangout.prototype = Object.create(LayoutBase.prototype, {
   stageIds: {
@@ -231,7 +225,7 @@ Hangout.prototype = Object.create(LayoutBase.prototype, {
           this.container.data(descriptor.attrName, null);
         }
       }, this);
-    }
+    },
   },
   totalOnStage: {
     configurable: false,
@@ -240,7 +234,7 @@ Hangout.prototype = Object.create(LayoutBase.prototype, {
      */
     get() {
       return Object.keys(this.stageIds).length;
-    }
+    },
   },
   totalOnStrip: {
     configurable: false,
@@ -249,20 +243,20 @@ Hangout.prototype = Object.create(LayoutBase.prototype, {
      */
     get() {
       return this.total - this.totalOnStage;
-    }
-  }
+    },
+  },
 });
 
 Hangout.prototype.constructor = Hangout;
 
 Hangout.prototype.handlers = {
   'layoutView:itemSelected': function (evt) {
-    const item = evt.detail.item;
+    const { item } = evt.detail;
     if (this.isOnStage(item)) {
       // Selected item is already on stage so it should be expanded to cover all. That means that
       // the other item on stage should go to the strip leaving the stage
       this.removeCurrentItemFromStage(
-        Hangout.getItemType(item) === 'camera' ? 'screen' : 'camera'
+        Hangout.getItemType(item) === 'camera' ? 'screen' : 'camera',
       );
     } else {
       this.putItemOnStage(item);
@@ -270,19 +264,19 @@ Hangout.prototype.handlers = {
     this.updateTotalOnStage();
   },
   'layoutManager:itemDeleted': function (evt) {
-    const item = evt.detail.item;
+    const { item } = evt.detail;
     if (this.isOnStage(item)) {
       this.removeItemFromStage(item).updateTotalOnStage();
       !this.totalOnStage && Utils.sendEvent('hangout:emptyStage');
     }
   },
   'layoutManager:itemAdded': function (evt) {
-    const item = evt.detail.item;
+    const { item } = evt.detail;
     // New screen shared goes to stage if there is not another screen shared there
     if (Hangout.getItemType(item) === 'screen' && !this.stageIds.screen) {
       this.putItemOnStage(item).updateTotalOnStage();
     }
-  }
+  },
 };
 
 Hangout.prototype.handleEvent = function (evt) {
@@ -312,9 +306,7 @@ Hangout.prototype.putItemOnStage = function (item) {
  * It returns a random item (publisher stream is not included)
  */
 Hangout.prototype.getRandomItem = function () {
-  return this.items[Object.keys(this.items).find(id => {
-    return id !== 'publisher';
-  })];
+  return this.items[Object.keys(this.items).find((id) => id !== 'publisher')];
 };
 
 /*
@@ -347,9 +339,7 @@ Hangout.prototype.removeItemFromStage = function (item) {
  *
  * @param item - item object
  */
-Hangout.prototype.isOnStage = item => {
-  return item.classList.contains('on-stage');
-};
+Hangout.prototype.isOnStage = (item) => item.classList.contains('on-stage');
 
 /*
  * This method checks the latest status of the stage in order to be synchronized with current
@@ -359,13 +349,13 @@ Hangout.prototype.isOnStage = item => {
  */
 Hangout.prototype.sanitize = function (reset) {
   const sanitizedStageIds = {};
-  Array.prototype.forEach.call(this.container.querySelectorAll('.on-stage'), elem => {
+  Array.prototype.forEach.call(this.container.querySelectorAll('.on-stage'), (elem) => {
     elem.classList.remove('on-stage');
   });
 
   if (!reset) {
     // Checking items previously on stage if they still exist
-    const stageIds = this.stageIds;
+    const { stageIds } = this;
     Object.keys(stageIds).forEach(function (type) {
       const id = stageIds[type];
       const item = this.items[id];
@@ -429,10 +419,10 @@ HangoutHorizontal.prototype = Object.create(Hangout.prototype, {
     get() {
       return {
         width: `${100 / this.totalOnStrip}%`,
-        height: '100%'
+        height: '100%',
       };
-    }
-  }
+    },
+  },
 });
 
 HangoutHorizontal.prototype.constructor = HangoutHorizontal;
@@ -447,10 +437,10 @@ HangoutVertical.prototype = Object.create(Hangout.prototype, {
     get() {
       return {
         width: '100%',
-        height: `${100 / this.totalOnStrip}%`
+        height: `${100 / this.totalOnStrip}%`,
       };
-    }
-  }
+    },
+  },
 });
 
 HangoutVertical.prototype.constructor = HangoutVertical;

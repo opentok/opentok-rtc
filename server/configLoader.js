@@ -1,12 +1,12 @@
 'use strict';
 
 var _ = require('lodash');
-var Utils = require('swagger-boilerplate').Utils;
+var { Utils } = require('swagger-boilerplate');
 
 var readFile = Utils.promisify(require('fs').readFile);
 const defaultJsonConfigPath = require('./serverConstants').DEFAULT_JSON_CONFIG_PATH;
 
-var env = process.env;
+var { env } = process;
 var exports = module.exports = {};
 
 class Config {
@@ -43,5 +43,5 @@ exports.readConfigJson = () => {
     } catch (e) {
       (e.code === 'MODULE_NOT_FOUND' && (resolve('{}') || true)) || reject(e);
     }
-  }).then(data => new Config(JSON.parse(data)));
+  }).then((data) => new Config(JSON.parse(data)));
 };

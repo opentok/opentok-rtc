@@ -1,6 +1,6 @@
 /* global EJSTemplate, Modal, showTos, showUnavailable, minMeetingNameLength, Utils */
 
-!(global => {
+!((global) => {
   let room;
   let user;
   let enterButton;
@@ -9,25 +9,21 @@
   let userLabelElem;
   let errorMessage;
 
-  const loadTosTemplate = () => {
-    return new Promise(resolve => {
-      const tosTemplate = new EJSTemplate({ url: '/templates/tos.ejs' });
-      tosTemplate.render().then(aHTML => {
-        document.body.insertAdjacentHTML('afterbegin', aHTML);
-        resolve();
-      });
+  const loadTosTemplate = () => new Promise((resolve) => {
+    const tosTemplate = new EJSTemplate({ url: '/templates/tos.ejs' });
+    tosTemplate.render().then((aHTML) => {
+      document.body.insertAdjacentHTML('afterbegin', aHTML);
+      resolve();
     });
-  };
+  });
 
-  const loadUnavailableTemplate = () => {
-    return new Promise(resolve => {
-      const tosTemplate = new EJSTemplate({ url: '/templates/unavailable.ejs' });
-      tosTemplate.render().then(aHTML => {
-        document.body.insertAdjacentHTML('afterbegin', aHTML);
-        resolve();
-      });
+  const loadUnavailableTemplate = () => new Promise((resolve) => {
+    const tosTemplate = new EJSTemplate({ url: '/templates/unavailable.ejs' });
+    tosTemplate.render().then((aHTML) => {
+      document.body.insertAdjacentHTML('afterbegin', aHTML);
+      resolve();
     });
-  };
+  });
 
   const performInit = () => {
     enterButton = document.getElementById('enter');
@@ -74,7 +70,7 @@
 
   var resetForm = () => {
     const fields = document.querySelectorAll('form input');
-    Array.prototype.map.call(fields, field => {
+    Array.prototype.map.call(fields, (field) => {
       field.value = '';
       field.checked = false;
       if (user) {
@@ -117,22 +113,20 @@
     const acceptElement = document.querySelector(`${selector} .accept`);
 
     return Modal.show(selector)
-      .then(() => {
-        return new Promise(resolve => {
-          acceptElement.addEventListener('click', function onClicked(evt) {
-            acceptElement.removeEventListener('click', onClicked);
-            resolve(true);
-            evt.preventDefault();
-            Modal.hide(selector);
-          });
-
-          Utils.addEventsHandlers('modal:', {
-            close() {
-              resolve();
-            }
-          });
+      .then(() => new Promise((resolve) => {
+        acceptElement.addEventListener('click', function onClicked(evt) {
+          acceptElement.removeEventListener('click', onClicked);
+          resolve(true);
+          evt.preventDefault();
+          Modal.hide(selector);
         });
-      });
+
+        Utils.addEventsHandlers('modal:', {
+          close() {
+            resolve();
+          },
+        });
+      }));
   };
 
   const navigateToRoom = () => {
@@ -145,7 +139,7 @@
     window.location.href = url;
   };
 
-  const triggerEnterClick = event => {
+  const triggerEnterClick = (event) => {
     const code = event.keyCode || event.which;
 
     if (code === 13) {
@@ -172,7 +166,7 @@
       if (showUnavailable) {
         showUnavailableMessage();
       } else if (showTos) {
-        showContract().then(accepted => {
+        showContract().then((accepted) => {
           if (accepted) {
             sessionStorage.setItem('tosAccepted', true);
             navigateToRoom();
@@ -185,7 +179,7 @@
       }
     });
 
-    room.addEventListener('keypress', function onKeypress() {
+    room.addEventListener('keypress', () => {
       errorMessage.classList.remove('show');
     });
 
@@ -195,6 +189,6 @@
   };
 
   global.LandingView = {
-    init
+    init,
   };
 })(this);

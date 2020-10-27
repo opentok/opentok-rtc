@@ -32,7 +32,7 @@
  *
  */
 
-!(global => {
+!((global) => {
   const transEndEventName = ('WebkitTransition' in document.documentElement.style)
     ? 'webkitTransitionEnd' : 'transitionend';
 
@@ -44,11 +44,11 @@
   /*
    * Closes all bubbles clicking outside them
    */
-  const onBodyClicked = evt => {
+  const onBodyClicked = (evt) => {
     document.body.removeEventListener('click', onBodyClicked);
-    Object.keys(bubbles).forEach(id => {
+    Object.keys(bubbles).forEach((id) => {
       const bubble = bubbles[id];
-      let target = evt.target;
+      let { target } = evt;
       if (bubble.associatedWith !== target) {
         // pointer-events is not working on IE so we can receive as target a child of
         // "change layout" item in main menu
@@ -76,7 +76,7 @@
     this._onHidden = this._onHidden.bind(this);
 
     // Bubbles consumes 'click' events in order not to be closed automatically
-    this.container.addEventListener('click', e => {
+    this.container.addEventListener('click', (e) => {
       e.stopImmediatePropagation();
     });
   };
@@ -85,8 +85,8 @@
     show() {
       const bubble = this;
 
-      this.bubbleShown = this.bubbleShown || new Promise(resolve => {
-        const container = bubble.container;
+      this.bubbleShown = this.bubbleShown || new Promise((resolve) => {
+        const { container } = bubble;
 
         container.removeEventListener(transEndEventName, bubble._onHidden);
         container.addEventListener(transEndEventName, bubble._onShown);
@@ -108,8 +108,8 @@
     hide() {
       const bubble = this;
 
-      this.bubbleHidden = this.bubbleHidden || new Promise(resolve => {
-        const container = bubble.container;
+      this.bubbleHidden = this.bubbleHidden || new Promise((resolve) => {
+        const { container } = bubble;
 
         container.removeEventListener(transEndEventName, bubble._onShown);
         container.addEventListener(transEndEventName, bubble._onHidden);
@@ -142,13 +142,13 @@
     },
 
     set _visible(value) {
-      const classList = this.container.classList;
+      const { classList } = this.container;
       value ? classList.add('visible') : classList.remove('visible');
     },
 
     _takePlace() {
       const rectObject = this.associatedWith.getBoundingClientRect();
-      const container = this.container;
+      const { container } = this;
       if (this.topArrow) {
         container.style.right = `${window.innerWidth - rectObject.right + 25}px`;
         container.style.top = `${rectObject.bottom + VERTICAL_OFFSET}px`;
@@ -156,7 +156,7 @@
         container.style.left = `${rectObject.right + HORIZONTAL_OFFSET}px`;
         container.style.top = `${rectObject.top - rectObject.height}px`;
       }
-    }
+    },
   };
 
   global.BubbleFactory = {
@@ -173,6 +173,6 @@
       }
 
       return instance;
-    }
+    },
   };
 })(this);

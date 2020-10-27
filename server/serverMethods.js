@@ -13,16 +13,16 @@
 
 var SwaggerBP = require('swagger-boilerplate');
 var helmet = require('helmet');
-var C = require('./serverConstants');
-var configLoader = require('./configLoader');
-var ArchiveLocalStorage = require('./archiveLocalStorage');
-var GoogleAuth = require('./googleAuthStrategies');
-var testHealth = require('./testHealth');
 var Haikunator = require('haikunator');
 var _ = require('lodash');
 var qs = require('qs');
 var accepts = require('accepts');
 var geoip = require('geoip-lite');
+var C = require('./serverConstants');
+var configLoader = require('./configLoader');
+var ArchiveLocalStorage = require('./archiveLocalStorage');
+var GoogleAuth = require('./googleAuthStrategies');
+var testHealth = require('./testHealth');
 
 function htmlEscape(str) {
   return String(str)
@@ -70,20 +70,20 @@ var securityHeaders = helmet({
 function ServerMethods(aLogLevel, aModules) {
   aModules = aModules || {};
 
-  var ErrorInfo = SwaggerBP.ErrorInfo;
+  var { ErrorInfo } = SwaggerBP;
 
-  var env = process.env;
-  var Utils = SwaggerBP.Utils;
+  var { env } = process;
+  var { Utils } = SwaggerBP;
 
   var Logger = Utils.MultiLevelLogger;
-  var promisify = Utils.promisify;
+  var { promisify } = Utils;
 
   var Opentok = aModules.Opentok || require('opentok'); // eslint-disable-line global-require
 
   var roomBlackList;
 
   var logger = new Logger('ServerMethods', aLogLevel);
-  var ServerPersistence = SwaggerBP.ServerPersistence;
+  var { ServerPersistence } = SwaggerBP;
   var connectionString = (aModules && aModules.params && aModules.params.persistenceConfig)
     || env.REDIS_URL || env.REDISTOGO_URL || '';
   var serverPersistence = new ServerPersistence([], connectionString, aLogLevel, aModules);
@@ -128,7 +128,7 @@ function ServerMethods(aLogLevel, aModules) {
 
   function _shutdownOldInstance(aOldPromise, aNewPromise) {
     aOldPromise && (aNewPromise !== aOldPromise)
-      && aOldPromise.then(aObject => aObject.shutdown());
+      && aOldPromise.then((aObject) => aObject.shutdown());
   }
 
 
@@ -177,7 +177,7 @@ function ServerMethods(aLogLevel, aModules) {
       // methods of the API.
       ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'deleteArchive', 'dial',
         'forceDisconnect']
-        .forEach(method => otInstance[method + '_P'] = promisify(otInstance[method])); // eslint-disable-line no-return-assign
+        .forEach((method) => otInstance[method + '_P'] = promisify(otInstance[method])); // eslint-disable-line no-return-assign
 
       var maxSessionAge = config.get(C.OPENTOK_MAX_SESSION_AGE);
       var maxSessionAgeMs = maxSessionAge * 24 * 60 * 60 * 1000;
@@ -205,7 +205,7 @@ function ServerMethods(aLogLevel, aModules) {
       var enableFeedback = config.get(C.ENABLE_FEEDBACK);
 
       roomBlackList = config.get(C.BLACKLIST)
-        ? config.get(C.BLACKLIST).split(',').map(word => word.trim().toLowerCase()) : [];
+        ? config.get(C.BLACKLIST).split(',').map((word) => word.trim().toLowerCase()) : [];
 
       // Adobe tracking
       var adobeTrackingUrl = config.get(C.ADOBE_TRACKING_URL);
@@ -292,13 +292,13 @@ function ServerMethods(aLogLevel, aModules) {
   }
 
   function featureEnabled(aReq, aRes, aNext) {
-    var disabledFeatures = aReq.tbConfig.disabledFeatures;
+    var { disabledFeatures } = aReq.tbConfig;
     if (!disabledFeatures) {
       aNext();
       return;
     }
-    var path = aReq.path;
-    if (disabledFeatures.filter(feature => path.search('\\/' + feature + '(\\/|$)') !== -1).length > 0) {
+    var { path } = aReq;
+    if (disabledFeatures.filter((feature) => path.search('\\/' + feature + '(\\/|$)') !== -1).length > 0) {
       logger.log('featureEnabled: Refusing to serve disabled feature: ' + path);
       aRes.status(400).send(new ErrorInfo(400, 'Unauthorized access'));
     } else {
@@ -331,7 +331,7 @@ function ServerMethods(aLogLevel, aModules) {
   // eslint-disable-next-line consistent-return
   function getRoomArchive(aReq, aRes) {
     logger.log('getRoomArchive ' + aReq.path, 'roomName: ' + aReq.params.roomName);
-    var tbConfig = aReq.tbConfig;
+    var { tbConfig } = aReq;
     var roomName = aReq.params.roomName.toLowerCase();
     if (isInBlacklist(roomName)) {
       logger.log('getRoom. error:', `Blacklist found '${roomName}'`);
@@ -346,7 +346,7 @@ function ServerMethods(aLogLevel, aModules) {
       .then((usableSessionInfo) => {
         serverPersistence.setKeyEx(Math.round(tbConfig.maxSessionAgeMs / 1000),
           redisRoomPrefix + roomName, JSON.stringify(usableSessionInfo));
-        var sessionId = usableSessionInfo.sessionId;
+        var { sessionId } = usableSessionInfo;
         tbConfig.otInstance.listArchives_P({ offset: 0, count: 1000 })
           .then((aArchives) => {
             var archive = aArchives.reduce((aLastArch, aCurrArch) => aCurrArch.sessionId === sessionId
@@ -379,8 +379,8 @@ function ServerMethods(aLogLevel, aModules) {
   // Update archive callback. TO-DO: Is there any way of restricting calls to this?
   function postUpdateArchiveInfo(aReq, aRes) {
     var archive = aReq.body;
-    var tbConfig = aReq.tbConfig;
-    var fbArchives = tbConfig.fbArchives;
+    var { tbConfig } = aReq;
+    var { fbArchives } = tbConfig;
     if (!archive.sessionId || !archive.id) {
       logger.log('postUpdateArchiveInfo: Got an invalid call! Ignoring.', archive);
     } else if (archive.status === 'available' || archive.status === 'updated') {
@@ -440,13 +440,13 @@ function ServerMethods(aLogLevel, aModules) {
   // eslint-disable-next-line consistent-return
   async function finshGetPostRoom(aReq, aRes, routedFromStartMeeting) {
     var meetingAllowed = await isMeetingAllowed(aReq);
-    var query = aReq.query;
+    var { query } = aReq;
 
     if (isInBlacklist(aReq.params.roomName)) {
       logger.log('getRoom. error:', `Blacklist found '${aReq.params.roomName}'`);
       return aRes.status(404).send(null);
     }
-    var tbConfig = aReq.tbConfig;
+    var { tbConfig } = aReq;
     var template = query && tbConfig.templatingSecret
       && (tbConfig.templatingSecret === query.template_auth) && query.template;
     var userName = (aReq.body && aReq.body.userName) || (query && query.userName) || '';
@@ -523,7 +523,7 @@ function ServerMethods(aLogLevel, aModules) {
   // Finish the call to getRoom and postRoom
   // eslint-disable-next-line no-unused-vars
   function getRoom(aReq, aRes, routedFromStartMeeting) {
-    var query = aReq.query;
+    var { query } = aReq;
 
     logger.log('getRoom serving ' + aReq.path, 'roomName:', aReq.params.roomName,
       'userName:', query && query.userName,
@@ -591,9 +591,7 @@ function ServerMethods(aLogLevel, aModules) {
         .getKey('APP_USAGE_').then((usage) => {
           if (!usage) return resolve(initial);
           return resolve(JSON.parse(usage));
-        }).catch(() => {
-          return resolve(initial);
-        });
+        }).catch(() => resolve(initial));
     });
   }
 
@@ -602,10 +600,9 @@ function ServerMethods(aLogLevel, aModules) {
     return new Promise((resolve) => {
       // eslint-disable-next-line max-len
       if (aReq.tbConfig.meetingsRatePerMinute === 0) { return resolve(false); } if (aReq.tbConfig.meetingsRatePerMinute < 0) { return resolve(true); }
-      getAppUsage().then((usage) => {
+      getAppUsage().then((usage) =>
         // eslint-disable-next-line max-len
-        return resolve(usage.lastUpdate + 60000 < Date.now() || usage.meetings < aReq.tbConfig.meetingsRatePerMinute);
-      });
+        resolve(usage.lastUpdate + 60000 < Date.now() || usage.meetings < aReq.tbConfig.meetingsRatePerMinute));
     });
   }
 
@@ -626,7 +623,7 @@ function ServerMethods(aLogLevel, aModules) {
     var encoded = token.substring(4); // remove 'T1=='
     var decoded = new Buffer(encoded, 'base64').toString('ascii');
     var tokenParts = decoded.split(':');
-    tokenParts.forEach(function (part) {
+    tokenParts.forEach((part) => {
       _.merge(parsed, qs.parse(part));
     });
     return parsed;
@@ -661,11 +658,11 @@ function ServerMethods(aLogLevel, aModules) {
   var _numAnonymousUsers = 1;
   // eslint-disable-next-line consistent-return
   function getRoomInfo(aReq, aRes) {
-    var tbConfig = aReq.tbConfig;
+    var { tbConfig } = aReq;
     var roomName = aReq.params.roomName.toLowerCase();
     var userName = (aReq.query && aReq.query.userName) || C.DEFAULT_USER_NAME + _numAnonymousUsers++;
     logger.log('getRoomInfo serving ' + aReq.path, 'roomName: ', roomName, 'userName: ', userName);
-    var enableArchiveManager = tbConfig.enableArchiveManager;
+    var { enableArchiveManager } = tbConfig;
 
     if (isInBlacklist(roomName)) {
       logger.log('getRoomInfo. error:', `Blacklist found '${roomName}'`);
@@ -748,7 +745,7 @@ function ServerMethods(aLogLevel, aModules) {
         });
     } if (aOperation.startsWith('stop') && !aSessionInfo.inProgressArchiveId) {
       return aTbConfig.otInstance.listArchives_P({ offset: 0, count: 100 })
-        .then(aArch => aArch.filter(aArchive => aArchive.sessionId === aSessionInfo.sessionId))
+        .then((aArch) => aArch.filter((aArchive) => aArchive.sessionId === aSessionInfo.sessionId))
         .then((aArchives) => {
           var recordingInProgress = aArchives[0] && aArchives[0].status === 'started';
           if (recordingInProgress) {
@@ -767,17 +764,17 @@ function ServerMethods(aLogLevel, aModules) {
   // Returns ArchiveInfo:
   // { archiveId: string, archiveType: string }
   function postRoomArchive(aReq, aRes) {
-    var tbConfig = aReq.tbConfig;
-    var body = aReq.body;
+    var { tbConfig } = aReq;
+    var { body } = aReq;
     if (!body || !body.userName || !body.operation) {
       logger.log('postRoomArchive => missing body parameter: ', aReq.body);
       aRes.status(400).send(new ErrorInfo(100, 'Missing required parameter'));
       return;
     }
     var roomName = aReq.params.roomName.toLowerCase();
-    var userName = body.userName;
-    var operation = body.operation;
-    var otInstance = tbConfig.otInstance;
+    var { userName } = body;
+    var { operation } = body;
+    var { otInstance } = tbConfig;
 
     if (isInBlacklist(roomName)) {
       logger.log('postRoomArchive error:', `Blacklist found '${roomName}'`);
@@ -851,7 +848,7 @@ function ServerMethods(aLogLevel, aModules) {
   }
 
   function getArchive(aReq, aRes) {
-    var archiveId = aReq.params.archiveId;
+    var { archiveId } = aReq.params;
     var generatePreview = (aReq.query && aReq.query.generatePreview !== undefined);
     logger.log('getAchive:', archiveId, generatePreview);
 
@@ -881,16 +878,16 @@ function ServerMethods(aLogLevel, aModules) {
   }
 
   function getRoomNameFromHeaders(headers) {
-    const referer = headers.referer;
+    const { referer } = headers;
     var lastIndex = referer.lastIndexOf('/');
     return referer.substr(lastIndex + 1, referer.length).split('?')[0];
   }
 
   function deleteArchive(aReq, aRes) {
-    var archiveId = aReq.params.archiveId;
+    var { archiveId } = aReq.params;
     logger.log('deleteArchive:', archiveId);
-    var tbConfig = aReq.tbConfig;
-    var otInstance = tbConfig.otInstance;
+    var { tbConfig } = aReq;
+    var { otInstance } = tbConfig;
     var sessionId;
     var type;
     const roomName = getRoomNameFromHeaders(aReq.headers);
@@ -917,11 +914,11 @@ function ServerMethods(aLogLevel, aModules) {
   // Returns DialInfo:
   // { number: string, status: string }
   function postRoomDial(aReq, aRes) {
-    var tbConfig = aReq.tbConfig;
+    var { tbConfig } = aReq;
     var roomName = aReq.params.roomName.toLowerCase();
-    var body = aReq.body;
-    var phoneNumber = body.phoneNumber;
-    var googleIdToken = body.googleIdToken;
+    var { body } = aReq;
+    var { phoneNumber } = body;
+    var { googleIdToken } = body;
     if (isInBlacklist(roomName)) {
       logger.log('postRoomDial. error:', `Blacklist found '${roomName}'`);
       return aRes.status(404).send(null);
@@ -936,7 +933,7 @@ function ServerMethods(aLogLevel, aModules) {
     return googleAuth.verifyIdToken(googleIdToken).then(() => serverPersistence
       .getKey(redisRoomPrefix + roomName, true)
       .then((sessionInfo) => {
-        const sessionId = sessionInfo.sessionId;
+        const { sessionId } = sessionInfo;
         const token = tbConfig.otInstance.generateToken(sessionId, {
           role: 'publisher',
           data: '{"sip":true, "role":"client", "name":"' + phoneNumber + '"}'
@@ -972,10 +969,10 @@ function ServerMethods(aLogLevel, aModules) {
   // /hang-up
   // A web client that initiated a SIP call is requesting that we hang up
   async function postHangUp(aReq, aRes) {
-    var body = aReq.body;
-    var phoneNumber = body.phoneNumber;
-    var googleIdToken = body.googleIdToken;
-    var tbConfig = aReq.tbConfig;
+    var { body } = aReq;
+    var { phoneNumber } = body;
+    var { googleIdToken } = body;
+    var { tbConfig } = aReq;
     const dialedNumberInfo = await serverPersistence.getKey(redisPhonePrefix + phoneNumber, true);
 
     if (!dialedNumberInfo || dialedNumberInfo.googleIdToken !== googleIdToken) {

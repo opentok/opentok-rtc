@@ -1,24 +1,24 @@
 /* global BubbleFactory */
 
-!(exports => {
+!((exports) => {
   let menu = null;
   let items = null;
 
   const addHandlers = () => {
-    menu.addEventListener('click', evt => {
+    menu.addEventListener('click', (evt) => {
       const type = evt.target.data('layoutType');
       if (type) {
         BubbleFactory.get('chooseLayout').toggle();
         Utils.sendEvent('layoutMenuView:layout', {
-          type
+          type,
         });
       }
     });
 
-    window.addEventListener('layoutManager:availableLayouts', evt => {
+    window.addEventListener('layoutManager:availableLayouts', (evt) => {
       const availableLayouts = evt.detail.layouts;
 
-      Array.prototype.map.call(items, elem => {
+      Array.prototype.map.call(items, (elem) => {
         const layoutType = elem.data('layoutType');
         const isAvailable = !!availableLayouts[layoutType];
         elem.disabled = !isAvailable;
@@ -34,6 +34,6 @@
   };
 
   exports.LayoutMenuView = {
-    init
+    init,
   };
 })(this);
