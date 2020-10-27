@@ -373,10 +373,6 @@ See the [Phone dial-out](#phone-dial-out) section.
 * `JQUERY_URL` (Optional, default value: 'https://ajax.googleapis.com/ajax/libs/jquery/'):
   Route of the CDN that will be used to load JQuery scripts.
 
-* `USE_GOOGLE_FONTS` (Optional, default value: true): Whether the client app will load
-   the Open Sans font (the main font used in the user interface) from the Google font library
-   (fonts.googleapis.com) or not.
-
 * `MEDIA_MODE` (Optional, default value: 'routed'): Whether the OpenTok sessions should be `relayed` or `routed`.
 
 * `ENABLE_MUTE_ALL` (Optional, default value: true): Whether to show the Mute All
