@@ -2,6 +2,12 @@
 
 You can customize UI colors and logos of OpenTokRTC. Follow this guide to know where to edit them.
 
+## Configuration options
+
+Many of the UI options are enabled and configurable using the config.json file or environment
+variables. For details, see the [Configuration options](README.md#configuration-options)
+section in the main README file.
+
 ## Changing theme colors
 
 OpenTokRTC uses the LESS CSS pre-processor for its CSS. Values for theme colors are in the file [`web/less/variables.less`](web/less/variables.less). Edit this values in this file to suit your needs.
