@@ -61,6 +61,7 @@
       document.querySelector('.room-name-input-container').addEventListener('click', () => {
         const errorMsg = document.querySelector('.error-room.error-text');
         errorMsg.classList.remove('show');
+        document.querySelector('.room-name-input-container label').style.display = 'block';
         roomNameInputElement.focus();
       });
     }

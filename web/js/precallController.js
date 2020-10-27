@@ -147,7 +147,7 @@
 
           if (window.allowCustomRoomName && !document.getElementById('room-name-input').value) {
             const errorMsg = document.querySelector('.error-room.error-text');
-            const roomNameInput = document.querySelector('.room-name-input-container label').innerHTML = '';
+            const roomNameInput = document.querySelector('.room-name-input-container label').style.display = 'none';
             errorMsg.classList.add('show');
             return;
           }
