@@ -25,11 +25,11 @@
     addHandlers();
   };
 
-  var resetForm = () => {
+  const resetForm = () => {
     otherInfo.value = '';
   };
 
-  var addHandlers = () => {
+  const addHandlers = () => {
     sendButton.addEventListener('click', (event) => {
       event.preventDefault();
       const audioScore = audioScoreSelect.options[audioScoreSelect.selectedIndex].value;
