@@ -1,4 +1,4 @@
-/* global window, safari, LazyLoader, Draggable */
+/* global safari, LazyLoader, Draggable */
 !((exports) => {
   const getCurrentTime = () => new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
