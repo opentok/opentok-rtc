@@ -217,7 +217,7 @@
         const userNameInputElement = document.getElementById('user-name-input');
         const storedUsername = window.localStorage.getItem('username');
         if (username) {
-          document.getElementById('enter-name-prompt').style.display = 'none';
+          document.getElementById('settings-prompt').style.display = 'none';
           userNameInputElement.value = username;
           userNameInputElement.setAttribute('readonly', true);
         } else if (storedUsername) {
