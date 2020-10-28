@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-/* globals EJSTemplate, Modal, setTimeout, showTos, showUnavailable, enablePrecallTest, enterButtonLabel */
+/* globals EJSTemplate, Modal, showTos, showUnavailable, enablePrecallTest, enterButtonLabel */
 !((exports) => {
   const _precallTemplateSrc = '/templates/precall.ejs';
   let _precallTemplate;
@@ -27,6 +27,8 @@
             document.getElementById('connectivity-cancel').style.display = 'inline-block';
             Utils.sendEvent('roomView:retest');
             break;
+          default:
+            throw new Error(`Unknown element ${elem.id}`);
         }
       });
 
@@ -103,6 +105,9 @@
           }
           break;
         }
+        default: {
+          throw new Error(`Unknown element ${elem.id}`);
+        }
       }
     });
   };
@@ -147,7 +152,7 @@
     focusElement && focusElement.focus();
   };
 
-  var hideConnectivityTest = () => {
+  const hideConnectivityTest = () => {
     document.getElementById('pre-call-test').style.display = 'none';
     document.getElementById('precall-test-meter').style.display = 'none';
   };
@@ -239,7 +244,7 @@
     }, 100);
   };
 
-  var setTestMeterLevel = (value) => {
+  const setTestMeterLevel = (value) => {
     const width = value * document.getElementById('precall-test-meter').offsetWidth;
     document.getElementById('precall-test-meter-level').style.width = `${width}px`;
   };
@@ -276,6 +281,8 @@
       case 'precall-error':
         precallHeadingElement.innerText = 'Poor Connectivity';
         break;
+      default:
+        throw new Error(`Unknown classification ${results.classification}`);
     }
     document.getElementById('pre-call-description').innerText = results.text;
     document.getElementById('precall-icon').setAttribute('data-icon', results.classification);
