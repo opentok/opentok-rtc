@@ -65,6 +65,8 @@
     return new Promise(resolve => {
       if (window.routedFromStartMeeting) {
         publisherOptions.name = window.userName || document.querySelector(`${selector} input`).value.trim();
+        publisherOptions.publishVideo = window.publishVideo;
+        publisherOptions.publishAudio = window.publishAudio;
         return resolve({
           username: window.userName || document.querySelector(`${selector} input`).value.trim(),
           publisherOptions
@@ -214,7 +216,7 @@
           userNameInputElement.setAttribute('readonly', true);
         } else if (storedUsername) {
           userNameInputElement.value = storedUsername;
-          document.querySelector('#enter-name-prompt label').classList.add('visited');
+          document.querySelector('.user-name-input-container').classList.add('visited');
         }
       }
       otHelper.otLoaded.then(loadModalText);

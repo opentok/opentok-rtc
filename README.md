@@ -596,9 +596,7 @@ To configure this, edit options in the config/config.json file or set environmen
 
 * `useGoogleFonts` (config.json) / `USE_GOOGLE_FONTS` (environment variable) -- Whether the client app will load
    the Open Sans font (the main font used in the user interface) from the Google font library
-   (fonts.googleapis.com) or not. *Note:* This version of the app uses Spezia, not Open Sans,
-   and it is not available from the Google font library. This setting is ignored.
-   The default value is `true`.
+   (fonts.googleapis.com) or not. The default value is `true`.
 
 * `jqueryUrl` (config.json) / `JQUERY_URL` (environment variable) --
   Route of the CDN that will be used to load JQuery scripts. The default value is
