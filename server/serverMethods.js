@@ -456,6 +456,8 @@ function ServerMethods(aLogLevel, aModules) {
     var template = query && tbConfig.templatingSecret &&
       (tbConfig.templatingSecret === query.template_auth) && query.template;
     var userName = (aReq.body && aReq.body.userName) || (query && query.userName) || '';
+    var publishVideo = aReq.body && aReq.body.publishVideo ? JSON.parse(aReq.body.publishVideo) : true;
+    var publishAudio = aReq.body && aReq.body.publishAudio ? JSON.parse(aReq.body.publishAudio) : true;
     var language = getUserLanguage(accepts(aReq).languages());
     var country = getUserCountry(aReq);
 
@@ -470,6 +472,8 @@ function ServerMethods(aLogLevel, aModules) {
           {
             userName: htmlEscape(userName || C.DEFAULT_USER_NAME),
             roomName: htmlEscape(aReq.params.roomName),
+            publishVideo,
+            publishAudio,
             chromeExtensionId: tbConfig.chromeExtId,
             iosAppId: tbConfig.iosAppId,
             // iosUrlPrefix should have something like:
