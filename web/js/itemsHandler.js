@@ -52,7 +52,7 @@
 
         case 'roomController:connected':
         case 'roomController:disconnected':
-          var item = this.items[evt.detail.id]; // eslint-disable-line no-redeclare
+          const item = this.items[evt.detail.id]; // eslint-disable-line no-case-declarations
           item && item.data('disconnected', evt.type === 'roomController:disconnected');
           break;
 
@@ -65,6 +65,9 @@
             });
           }
           break;
+        }
+        default: {
+          throw new Error(`Unknown event type ${evt.type}`);
         }
       }
     },
