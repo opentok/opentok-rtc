@@ -115,7 +115,8 @@
         container.addEventListener(transEndEventName, bubble._onHidden);
         container.addEventListener(transEndEventName, function onEnd() {
           container.removeEventListener(transEndEventName, onEnd);
-          bubble.bubbleShown = bubble.bubbleHidden = null;
+          bubble.bubbleShown = null;
+          bubble.bubbleHidden = null;
           resolve();
         });
 
@@ -169,7 +170,8 @@
       let instance = bubbles[id];
 
       if (!instance) {
-        instance = bubbles[id] = new Bubble(id);
+        instance = new Bubble(id);
+        bubbles[id] = new Bubble(id);
       }
 
       return instance;
