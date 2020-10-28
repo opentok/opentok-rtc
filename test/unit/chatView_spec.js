@@ -80,7 +80,8 @@ describe('ChatView', () => {
         expect(Chat.init.calledOnce).to.be.true;
         var spyArg = Utils.addHandlers.getCall(0).args[0];
         expect(Object.keys(spyArg).length).to.be.equal(Object.keys(handlerShouldHave).length);
-        expect(Object.keys(spyArg).every((action) => spyArg[action].name === handlerShouldHave[action].name)).to.be.true;
+        expect(Object.keys(spyArg)
+          .every((action) => spyArg[action].name === handlerShouldHave[action].name)).to.be.true;
         done();
       });
     }
