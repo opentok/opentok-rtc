@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot for resolutionAlgorithms component 1`] = `
+Object {
+  "PreferredResolutionAlgorithmProvider": Object {
+    "algorithmNames": Array [
+      "percentOfAvailable",
+      "percentOfStream",
+      "biasedPercent",
+      "fitToSubscriberDimensions",
+    ],
+    "defaultAlgorithmName": "fitToSubscriberDimensions",
+    "getAlg": [Function],
+  },
+}
+`;

@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot for browser Utils 1`] = `
+Object {
+  "Utils": Object {
+    "addEventsHandlers": [Function],
+    "addHandlers": [Function],
+    "decodeStr": [Function],
+    "draggableUI": 0,
+    "generateSearchStr": [Function],
+    "getCurrentTime": [Function],
+    "getDraggable": [Function],
+    "getLabelText": [Function],
+    "htmlEscape": [Function],
+    "inspectObject": [Function],
+    "isChrome": [Function],
+    "isSafariIOS": [Function],
+    "isSafariMac": [Function],
+    "isScreen": [Function],
+    "parseSearch": [Function],
+    "removeEventHandlers": [Function],
+    "sendEvent": [Function],
+    "setDisabled": [Function],
+    "setTransform": [Function],
+  },
+}
+`;

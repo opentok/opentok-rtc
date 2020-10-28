@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot for textProcessor component 1`] = `
+Object {
+  "TextProcessor": Object {
+    "TYPE": Object {
+      "TXT": "txt",
+      "URL": "url",
+    },
+    "parse": [Function],
+  },
+}
+`;
