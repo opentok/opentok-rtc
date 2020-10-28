@@ -20,5 +20,8 @@ module.exports = {
     'no-use-before-define': 0,
     'max-classes-per-file': 0,
     'no-plusplus': 0,
+    'func-names': 0,
+    'no-console': 0,
+    'no-restricted-globals': 0,
   },
 };
