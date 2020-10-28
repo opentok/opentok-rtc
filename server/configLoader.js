@@ -5,8 +5,6 @@ const readFile = Utils.promisify(require('fs').readFile);
 const defaultJsonConfigPath = require('./serverConstants').DEFAULT_JSON_CONFIG_PATH;
 
 const { env } = process;
-const exports = {};
-module.exports = {};
 
 class Config {
   constructor(aConfigJson) {
