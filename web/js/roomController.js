@@ -1,4 +1,4 @@
-/* global Utils, Request, RoomStatus, RoomView, LayoutManager, LazyLoader, Modal,
+/* global Utils, RoomStatus, RoomView, LazyLoader, Modal,
 ChatController, GoogleAuth, LayoutMenuController, OTHelper, PrecallController,
 RecordingsController, ScreenShareController, FeedbackController,
 PhoneNumberController, ResizeSensor, maxUsersPerRoom */
@@ -28,8 +28,6 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
 
   let { userName } = window;
   let roomURI = null;
-  let resolutionAlgorithm = null;
-  let debugPreferredResolution = null;
   let token = null;
 
   const publisherOptions = {
@@ -149,65 +147,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
   };
 
   let subscriberStreams = { };
-  var dialedNumberTokens = {};
-
-  // We want to use media priorization on the subscriber streams. We're going to restrict the
-  // maximum width and height to the one that's actually displayed. To do that, we're going to
-  // observe changes on the elements that hold the subscribers.
-  // Note that mutationObserver only works on IE11+, but that the previous alternative doesn't
-  // work all that well either.
-  const processMutation = (aMutation) => {
-    const elem = aMutation.target;
-    if ((aMutation.attributeName !== 'style' && aMutation.attributeName !== 'class')
-        || elem.data('streamType') !== 'camera') {
-      return;
-    }
-    const streamId = elem.data('id');
-    const subscriberPromise = subscriberStreams[streamId] && subscriberStreams[streamId].subscriberPromise;
-
-    subscriberPromise.then((subscriber) => {
-      if (debugPreferredResolution) {
-        // If the user requested debugging this, we're going to export all the information through
-        // window so he can examine the values.
-        window.subscriberElem = window.subscriberElem || {};
-        window.subscriberElem[streamId] = elem;
-        window.subscriber = window.subscriber || {};
-        window.subscriber[streamId] = subscriber;
-        window.dumpResolutionInfo = window.dumpResolutionInfo || (() => {
-          Object.keys(window.subscriber)
-            .forEach((aSub) => {
-              const sub = window.subscriber[aSub];
-              const stream = sub && sub.stream;
-              const vd = stream && stream.videoDimensions;
-              const streamPref = (stream && stream.getPreferredResolution())
-                                 || { width: 'NA', height: 'NA' };
-              stream && console.log( // eslint-disable-line no-console
-                'StreamId:', aSub, 'Real:', sub.videoWidth(), 'x', sub.videoHeight(),
-                'Stream.getPreferredResolution:', streamPref.width, 'x', streamPref.height,
-                'Stream.VDimension:', vd.width, 'x', vd.height,
-              );
-            });
-        });
-      }
-
-      const parent = elem.parentNode;
-
-      const parentDimension = {
-        width: parent.clientWidth,
-        height: parent.clientHeight,
-      };
-      const subsDimension = {
-        width: elem.clientWidth,
-        height: elem.clientHeight,
-      };
-      otHelper.setPreferredResolution(subscriber, parentDimension, subsDimension, numUsrsInRoom - 1,
-        resolutionAlgorithm);
-    });
-  };
-  const _mutationObserver = exports.MutationObserver
-    && new exports.MutationObserver((aMutations) => {
-      aMutations.forEach(processMutation);
-    });
+  const dialedNumberTokens = { };
 
   const sendVideoEvent = (stream) => {
     if (!stream) {
@@ -297,7 +237,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     });
   };
 
-  var pushSubscriberButton = (streamId, name, status) => {
+  const pushSubscriberButton = (streamId, name, status) => {
     viewEventHandlers.buttonClick({
       detail: {
         streamId,
@@ -316,7 +256,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     otHelper.sendSignal('roomLocked', { status });
   }
 
-  var viewEventHandlers = {
+  const viewEventHandlers = {
     endCall() {
       otHelper.disconnect();
       const url = window.location.origin.concat('/thanks');
@@ -475,7 +415,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     },
   };
 
-  var setAudioStatus = (switchStatus) => {
+  const setAudioStatus = (switchStatus) => {
     otHelper.isPublisherReady && viewEventHandlers.buttonClick({
       detail: {
         streamId: 'publisher',
@@ -486,7 +426,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     });
   };
 
-  var sendStatus = (evt, control, enabled) => {
+  const sendStatus = (evt, control, enabled) => {
     let stream = evt.stream || evt.target.stream;
     if (!stream) {
       return;
@@ -591,44 +531,38 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
 
         subOptions.subscribeToVideo = !enterWithVideoDisabled;
 
-        /* Use ResizeSensor instead of mutationObserver
-        // We want to observe the container where the actual suscriber will live
-        var subsContainer = LayoutManager.getItemById(streamId);
-        subsContainer && _mutationObserver &&
-          _mutationObserver.observe(subsContainer, { attributes: true });
-        */
-
-        subscriberStreams[streamId].subscriberPromise = otHelper.subscribe(evt.stream, subsDOMElem, subOptions, {}, enableAnnotations)
-          .then((subscriber) => {
-            if (streamVideoType === 'screen') {
-              enableAnnotations && Utils.sendEvent('roomController:annotationStarted');
-              const subContainer = subscriber.element.parentElement;
-              Utils.sendEvent('layoutView:itemSelected', {
-                item: subContainer,
-              });
-              return subscriber;
-            }
-
-            Object.keys(_subscriberHandlers).forEach((name) => {
-              subscriber.on(name, _subscriberHandlers[name]);
+        subscriberStreams[streamId].subscriberPromise = otHelper.subscribe(
+          evt.stream, subsDOMElem, subOptions, {}, enableAnnotations,
+        ).then((subscriber) => {
+          if (streamVideoType === 'screen') {
+            enableAnnotations && Utils.sendEvent('roomController:annotationStarted');
+            const subContainer = subscriber.element.parentElement;
+            Utils.sendEvent('layoutView:itemSelected', {
+              item: subContainer,
             });
-            if (enterWithVideoDisabled) {
-              pushSubscriberButton(streamId, 'video', true);
-            }
-
-            new ResizeSensor(subsDOMElem, () => { // eslint-disable-line no-new
-              const subsDimension = {
-                width: subsDOMElem.clientWidth,
-                height: subsDOMElem.clientHeight,
-              };
-              otHelper.setPreferredResolution(subscriber, null, subsDimension, null, null);
-            });
-
-            sendVideoEvent(evt.stream);
             return subscriber;
-          }, (error) => {
-            debug.error(`Error susbscribing new participant. ${error.message}`);
+          }
+
+          Object.keys(_subscriberHandlers).forEach((name) => {
+            subscriber.on(name, _subscriberHandlers[name]);
           });
+          if (enterWithVideoDisabled) {
+            pushSubscriberButton(streamId, 'video', true);
+          }
+
+          new ResizeSensor(subsDOMElem, () => { // eslint-disable-line no-new
+            const subsDimension = {
+              width: subsDOMElem.clientWidth,
+              height: subsDOMElem.clientHeight,
+            };
+            otHelper.setPreferredResolution(subscriber, null, subsDimension, null, null);
+          });
+
+          sendVideoEvent(evt.stream);
+          return subscriber;
+        }, (error) => {
+          debug.error(`Error susbscribing new participant. ${error.message}`);
+        });
       });
     },
     streamDestroyed(evt) {
@@ -775,8 +709,6 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     // Recover user identifier
     const params = Utils.parseSearch(document.location.search);
     const usrId = window.userName || params.getFirstValue('userName');
-    resolutionAlgorithm = params.getFirstValue('resolutionAlgorithm');
-    debugPreferredResolution = params.getFirstValue('debugPreferredResolution');
     enableHangoutScroll = params.getFirstValue('enableHangoutScroll') !== undefined;
 
     return PrecallController.showCallSettingsPrompt(roomName, usrId, otHelper)
@@ -820,7 +752,6 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     '/js/itemsHandler.js',
     '/js/layoutView.js',
     '/js/layouts.js',
-    '/js/layoutManager.js',
     '/js/roomView.js',
     '/js/roomStatus.js',
     '/js/min/chatController.min.js',
