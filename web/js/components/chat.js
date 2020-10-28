@@ -57,7 +57,8 @@
       container.addEventListener(transEndEventName, function onEnd() {
         container.removeEventListener(transEndEventName, onEnd);
         setVisible(false);
-        chatShown = chatHidden = null;
+        chatShown = null;
+        chatHidden = null;
         Utils.sendEvent('chat:hidden');
         resolve();
       });
