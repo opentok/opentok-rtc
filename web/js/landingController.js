@@ -3,21 +3,20 @@
 !(global => {
   const addEventHandlers = () => {
     Utils.addEventsHandlers('precallView:', { submit() {
-
-      const addFormElem = (form, prop, value) => {
+      const createInput = (prop, value) => {
         const input = document.createElement('input');
         input.setAttribute('name', prop);
         input.setAttribute('value', value);
         input.setAttribute('type', 'hidden');
-        form.appendChild(input);
+        return input;
       }
 
       const form = document.querySelector('.main form');
       form.action = `/room/${window.roomName}`;
-      const boundAddElem = addFormElem.bind(form);
-
-      addFormElem(form, 'publishVideo', document.querySelector(`.user-name-modal #initialVideoSwitch label`).textContent === 'On');
-      addFormElem(form, 'publishAudio', document.querySelector(`.user-name-modal #initialAudioSwitch label`).textContent === 'On')
+      const publishVideo = document.querySelector(`.user-name-modal #initialVideoSwitch label`).textContent === 'On';
+      const publishAudio = document.querySelector(`.user-name-modal #initialAudioSwitch label`).textContent === 'On';
+      form.appendChild(createInput('publishVideo', publishVideo));
+      form.appendChild(createInput('publishAudio', publishAudio));
       form.submit();
     } });
   };
