@@ -15,9 +15,6 @@ module.exports = function (grunt) {
 
   grunt.loadTasks('tasks');
 
-  // To create HTML test files from a template. To-Do: Dunno if this is even needed or not
-  const TEST_BASE_DIR = 'test/';
-
   grunt.initConfig({
     terser: {
       pages: {

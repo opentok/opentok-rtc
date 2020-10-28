@@ -1,10 +1,8 @@
-'use strict';
+const { env } = process;
+const SwaggerBP = require('swagger-boilerplate');
 
-var { env } = process;
-var SwaggerBP = require('swagger-boilerplate');
-
-var { Utils } = SwaggerBP;
-var Logger = Utils.MultiLevelLogger;
+const { Utils } = SwaggerBP;
+const Logger = Utils.MultiLevelLogger;
 const Redis = require('ioredis');
 
 const redis = new Redis(env.REDIS_URL || env.REDISTOGO_URL || ''); // uses defaults unless given configuration object
@@ -27,17 +25,17 @@ class ArchiveLocalStorage {
           _head: {
             id: 1,
             seq: 1,
-            tot: 1
+            tot: 1,
           },
-          data: archives
-        })
+          data: archives,
+        }),
       },
       (error) => {
         if (error) {
           return this.logger.log('Get archives error:', error);
         }
         return false;
-      }
+      },
     );
   }
 
@@ -57,7 +55,6 @@ class ArchiveLocalStorage {
     await redis.set(this.roomNameKey, JSON.stringify(sessionInfo));
     this.sendBroadcastSignal(sessionInfo.archives);
   }
-
 }
 
 module.exports = ArchiveLocalStorage;

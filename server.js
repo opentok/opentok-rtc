@@ -2,13 +2,6 @@
 // defined on the api.yaml swagger 2.0 file
 // Usage:
 // node server -h
-
-const SwaggerBP = require('swagger-boilerplate');
-
-const { Utils } = SwaggerBP;
-const Logger = Utils.MultiLevelLogger;
-const logger = new Logger('HTTP Server App');
-
 const { Server } = require('swagger-boilerplate');
 
 const server = new Server({

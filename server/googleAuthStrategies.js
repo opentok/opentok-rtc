@@ -1,5 +1,3 @@
-'use strict';
-
 const { OAuth2Client } = require('google-auth-library');
 const { Utils } = require('swagger-boilerplate');
 
@@ -40,5 +38,5 @@ class EnabledGoogleAuthStrategy {
 
 module.exports = {
   DisabledGoogleAuthStategy,
-  EnabledGoogleAuthStrategy
+  EnabledGoogleAuthStrategy,
 };
