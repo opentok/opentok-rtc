@@ -17,11 +17,11 @@ describe('ScreenShareController', () => {
   before(() => {
     window.LazyLoader = window.LazyLoader || { dependencyLoad() {} };
 
-    sinon.stub(LazyLoader, 'dependencyLoad', resources => Promise.resolve());
+    sinon.stub(LazyLoader, 'dependencyLoad').callsFake(  resources => Promise.resolve());
 
     window.MockOTHelper._install();
 
-    sinon.stub(ScreenShareView, 'init', () => {});
+    sinon.stub(ScreenShareView).callsFake( 'init', () => {});
 
     realChrome = window.chrome || null;
     window.chrome = mockChrome;

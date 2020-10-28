@@ -1,10 +1,10 @@
 // Karma configuration
 // Generated on Tue Sep 29 2015 19:25:55 GMT+0200 (CEST)
 
-module.exports = function(config) {
-    configuration = {
+module.exports = function (config) {
+  configuration = {
 
-    plugins: ['karma-mocha', 'karma-coverage', 'karma-html2js-preprocessor', 'karma-chrome-launcher', 'karma-firefox-launcher'],
+    plugins: ['karma-mocha', 'karma-chai', 'karma-sinon', 'karma-browserify', 'karma-coverage', 'karma-html2js-preprocessor', 'karma-chrome-launcher', 'karma-firefox-launcher'],
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
@@ -12,15 +12,14 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['mocha'],
+    frameworks: ['mocha', 'sinon', 'chai', 'browserify'],
 
 
     // list of files / patterns to load in the browser
     files: [
-      'test/lib/**/*.js',
-      {pattern: 'test/mocks/mock_othelper.js', include: true},
-      {pattern: 'test/mocks/mock_roomStatus.js', include: true},
-      {pattern: 'test/mocks/mock_chat.js', include: true},
+      { pattern: 'test/mocks/mock_othelper.js', include: true },
+      { pattern: 'test/mocks/mock_roomStatus.js', include: true },
+      { pattern: 'test/mocks/mock_chat.js', include: true },
       'web/js/vendor/**/*.js',
       'web/js/libs/**/*.js',
       'node_modules/swagger-boilerplate/lib/shared/**/*.js',
@@ -41,6 +40,7 @@ module.exports = function(config) {
 
     // list of files to exclude
     exclude: [
+      'web/js/min/*.min.js',
       '**/html_helper.js',
       'web/bower_components/**/*.js',
       'web/js/vendor/lazy_loader.js',
@@ -54,7 +54,19 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       '**/*.html': ['html2js'],
-      'web/**/*.js': ['coverage']
+      'web/**/*.js': ['coverage'],
+      'test/unit/browserUtils_spec.js': ['browserify'],
+      'test/unit/chatController_spec.js': ['browserify'],
+      'test/unit/chatView_spec.js': ['browserify'],
+      'test/unit/cronograph_spec.js': ['browserify'],
+      'test/unit/draggable_spec.js': ['browserify'],
+      'test/unit/feedbackController_spec.js': ['browserify'],
+      'test/unit/feedbackView_spec.js': ['browserify'],
+      'test/unit/itemsHandler_spec.js': ['browserify'],
+      'test/unit/layoutMenuView_spec.js': ['browserify'],
+      'test/unit/layouts_spec.js': ['browserify'],
+      'test/unit/precallController_spec.js': ['browserify']
+
     },
 
 
@@ -109,9 +121,9 @@ module.exports = function(config) {
   };
 
   if (process.env.TRAVIS) {
-       configuration.browsers = ['Firefox', 'Chrome_travis_ci'];
-   }
+    configuration.browsers = ['Firefox', 'Chrome_travis_ci'];
+  }
 
   config.set(configuration);
 
-}
+};

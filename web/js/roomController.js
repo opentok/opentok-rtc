@@ -38,7 +38,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     width: '100%',
     height: '100%',
     showControls: true,
-    resolution: publisherResolution,
+    resolution: window.publisherResolution,
     style: {
       audioLevelDisplayMode: 'auto',
       buttonDisplayMode: 'off',
