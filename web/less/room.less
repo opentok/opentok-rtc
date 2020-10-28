@@ -148,12 +148,12 @@ body {
       }
     }
   }
-  .invite-btn {
+  .banner-dynamic-btn {
     background: @purple;
     border-radius: 5px;
     border: none;
     margin-right: 20px;
-    width: 140px;
+    width: 100px;
     height: 40px;
     display: flex;
     justify-content: center;
@@ -163,9 +163,8 @@ body {
     font-size: 16px;
     cursor: pointer;
     @media @smartphonesPortrait {
-      display: none;
+      width: 50px;
     }
-
     i {
       margin-right: 10px;
       @media @smartphonesPortrait {
@@ -264,14 +263,12 @@ body {
 
     @media @smartphonesPortrait {
       top: -20px;
-      right: 8px;
+      right: 25px;
     }
 
     a {
       height: 40px;
-      width: 85px;
       margin-right: 34px;
-      padding-right: 60px;
       line-height: 40px;
       font-size: 12px;
       border-radius: 6px;
@@ -280,22 +277,28 @@ body {
     }
   }
   #toggleArchiving a {
-    padding: 0 37.5px;
+
     @media @smartphonesPortrait {
       top: -20px;
+      right: 31px;
+      margin: 20px 0 0 0;
+      padding-left: 5px;
+    }
+
+    @media @smartphonesLandscape {
+      padding: 0px 0px;
+      top: -20px;
       right: 8px;
-      width: 116px;
-      margin: 0;
-      padding: 0;
+      margin-right: 10px;
     }
   }
   .manage-recordings {
     #startArchiving,
     #stopArchiving {
-      padding: 0 57.5px 0 17.5px;
+      padding: 0 39.5px 0 5.5px;
       @media @smartphonesPortrait {
-        padding: 0 20px 0 0;
-        width: 100px;
+        padding: 0 5px 0 6px;
+        width: 20px;
         right: -8px;
       }
     }
@@ -303,6 +306,11 @@ body {
   #manageRecordings {
     display: none;
     @media @smartphonesPortrait {
+      display: none;
+      right: -26px;
+      top: 0px;
+    }
+    @media @smartphonesLandscape {
       right: -26px;
     }
     a {
@@ -313,11 +321,15 @@ body {
       width: 34px;
       padding: 0;
       border-radius: 0 6px 6px 0;
+      @media @smartphonesPortrait {
+         width: 18px;
+      }
     }
   }
   #stopArchiving {
     display: none;
     background-color: @mandiRed;
+    padding-left: 15px;
     &:hover,
     &:focus,
     &:active {
@@ -1348,3 +1360,22 @@ emoji-picker {
     position: relative;
     bottom: 345px;
 }
+
+.invite-btn {
+  @media @smartphonesPortrait {
+    display: none!important;
+  }
+}
+
+.duration {
+  @media @smartphonesPortrait {
+    display: inline-flex!important;
+    font-size: 9px;
+  }
+
+  @media @smartphonesLandscape{
+    display: inline-flex!important;
+    font-size: 10px;
+  }
+}
+

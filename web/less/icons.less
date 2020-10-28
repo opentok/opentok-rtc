@@ -232,6 +232,7 @@
 [data-icon="emoji"] {
   background-image: url("/images/icons/emoji.png");
 }
+
 /* Archives */
 
 .bubble [data-icon] {
@@ -255,6 +256,10 @@
 [data-icon="delete"]:hover,
 [data-icon="delete"]:after {
   background-image: url("/images/icons/delete_hover.svg");
+}
+
+[data-icon="download"] {
+  background-image: url("/images/icons/download.svg");
 }
 
 /* Actions */
@@ -386,6 +391,28 @@
   }
 }
 
+[data-icon="start_archive"] {
+    background-image: url("/images/icons/Vlt-icon-rec-full.svg");
+    width: 22.49px;
+    height: 22.49px;
+    vertical-align: middle;
+      @media @smartphonesPortrait {
+        width: 18px;
+        height: 18px;
+      }
+}
+
+[data-icon="stop_archive"] {
+    background-image: url("/images/icons/Vlt-icon-stop-full.svg");
+    width: 22.49px;
+    height: 22.49px;
+    vertical-align: middle;
+      @media @smartphonesPortrait {
+        width: 18px;
+        height: 18px;
+      }
+}
+
 [data-icon="annotate"] {
   background-image: url("/images/icons/annotate.svg");
   width: 24px;
@@ -462,13 +489,29 @@
   background-image: url("/images/icons/end_hover.svg");
 }
 
-#videoSwitch,
-#audioSwitch {
-  [data-icon="videoSwitch"],
-  [data-icon="audioSwitch"] {
+#videoSwitch {
+  [data-icon="videoSwitch"] {
     background-image: url("/images/icons/switch_off_blue.svg");
     width: 51px;
     height: 30.4px;
+    vertical-align: text-bottom;
+  }
+}
+
+#audioSwitch {
+  [data-icon="audioSwitch"] {
+    background-image: url("/images/icons/mute-all-users.svg");
+    width: 51px;
+    height: 30.4px;
+    vertical-align: text-bottom;
+  }
+}
+
+#muteAllIconButton {
+  [data-icon="muteAllButton"] {
+    background-image: url("/images/icons/mute-all-users.svg");
+    width: 35px;
+    height: 25px;
     vertical-align: text-bottom;
   }
 }
