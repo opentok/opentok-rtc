@@ -3,6 +3,13 @@
 !((exports) => {
   let model = null;
 
+  const addListeners = () => {
+    exports.addEventListener('archive', (evt) => {
+      const handler = handlers[evt.detail.action];
+      handler && handler(evt.detail);
+    });
+  };
+
   function init(enableArchiveManager, existingArchives) {
     let dependenciesLoaded;
     if (enableArchiveManager) {
@@ -59,13 +66,6 @@
         });
       }));
     },
-  };
-
-  var addListeners = () => {
-    exports.addEventListener('archive', (evt) => {
-      const handler = handlers[evt.detail.action];
-      handler && handler(evt.detail);
-    });
   };
 
   exports.RecordingsController = {
