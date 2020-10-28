@@ -146,14 +146,6 @@
           </a>
         </div>
         <% } %>
-        <% if (enableMuteAll) { %>
-        <div class="audioSwitch" disabled>
-          <a id="audioSwitch">
-            <span>Mute all participants</span>
-            <i data-icon="audioSwitch"></i>
-          </a>
-        </div>
-        <% } %>
         <%   if(enableArchiving) { %>
         <div id="toggleArchiving" disabled>
           <a id="startArchiving" class="btn btn-purple btn-padding">Record</a>
@@ -324,6 +316,14 @@
               <span>Switch Camera</span>
             </div>
           </div>
+        <% if (enableMuteAll) { %>
+          <div class="source-pick-container">
+            <div id="muteAllContainer" class="sourcePick icon-with-text">
+              <a id="muteAllIconButton"><i data-icon="muteAllButton"></i></a>
+              <span>Mute all participants</span>
+            </div>
+          </div>
+        <% } %>
         </div>
         <div id="layout-manager">
           <span id="layout-title">Layout Manager</span>

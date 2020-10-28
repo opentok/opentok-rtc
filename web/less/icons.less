@@ -231,6 +231,7 @@
 [data-icon="emoji"] {
   background-image: url("/images/icons/emoji.png");
 }
+
 /* Archives */
 
 .bubble [data-icon] {
@@ -461,13 +462,29 @@
   background-image: url("/images/icons/end_hover.svg");
 }
 
-#videoSwitch,
-#audioSwitch {
-  [data-icon="videoSwitch"],
-  [data-icon="audioSwitch"] {
+#videoSwitch {
+  [data-icon="videoSwitch"] {
     background-image: url("/images/icons/switch_off_blue.svg");
     width: 51px;
     height: 30.4px;
+    vertical-align: text-bottom;
+  }
+}
+
+#audioSwitch {
+  [data-icon="audioSwitch"] {
+    background-image: url("/images/icons/mute-all-users.svg");
+    width: 51px;
+    height: 30.4px;
+    vertical-align: text-bottom;
+  }
+}
+
+#muteAllIconButton {
+  [data-icon="muteAllButton"] {
+    background-image: url("/images/icons/mute-all-users.svg");
+    width: 35px;
+    height: 25px;
     vertical-align: text-bottom;
   }
 }

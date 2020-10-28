@@ -699,12 +699,9 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
 
       if (!otHelper.isMyself(evt.from)) {
         _sharedStatus.roomMuted = muteAllSwitch;
-        if (muteAllSwitch) {
-          setAudioStatus(muteAllSwitch);
-          Utils.sendEvent('roomController:roomMuted', { isJoining: false });
-        } else {
-          RoomView.showConfirmChangeMicStatus(muteAllSwitch).then(setNewAudioStatus);
-        }
+         setAudioStatus(muteAllSwitch);
+         Utils.sendEvent('roomController:roomMuted', { isJoining: false });
+         RoomView.showConfirmChangeMicStatus(muteAllSwitch).then(setNewAudioStatus);
       }
     },
     'signal:archives': function (evt) {
