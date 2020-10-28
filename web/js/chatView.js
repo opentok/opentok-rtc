@@ -93,7 +93,10 @@
     toggleEmojiBtn = chatWndElem.querySelector('#addEmoji');
   }
 
-  const onEmojiClicked = (event) => chatMsgInput.value += (` ${event.detail.unicode} `);
+  const onEmojiClicked = (event) => {
+    chatMsgInput.value += (` ${event.detail.unicode} `);
+  };
+
   const toggleEmojiView = (evt) => {
     evt.preventDefault();
     if (emojiPicker.style.display === 'none') {
