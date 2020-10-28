@@ -5,6 +5,9 @@ class Page {
 
   constructor() {
     this.title = '';
+    this.defaultTimeout = 30 * 1000; // 30 seconds
+    this.externalServiceTimeout = 2 * 60 * 1000; // 2 min
+    this.defaultPauseTime = 5 * 1000; // 5 seconds
   }
   open() {
     browser.url('/');
@@ -12,11 +15,14 @@ class Page {
   submit(form) {
     browser.submitForm(form);
   }
-  wait(elem) {
-    browser.waitForExist(elem);
+  wait(elem, timeout = this.defaultTimeout) {
+    browser.$(elem).waitForDisplayed({ timeout: timeout });
+  }
+  waitForHidden(elem, timeout = this.defaultTimeout) {
+    browser.$(elem).waitForDisplayed({ timeout: 3000, reverse: true}); // third param makes it wait for NOT visible
   }
   click(elem) {
-    browser.click(elem);
+      browser.$(elem).click();
   }
   clickNonVisible(selector) {
     browser.execute(function (sel) {
@@ -24,24 +30,32 @@ class Page {
     }, selector);
   }
   clickWhenExist(selector) {
-    browser.waitForExist(selector, 20000);
-    browser.click(selector);
+    this.wait(selector, 30000);
+    browser.$(selector).click();
   }
   getBrowserName() {
     return browser.desiredCapabilities.browserName;
   }
-  get room() {
-    if (browser.desiredCapabilities.browserName === 'firefox') {
-      browser.pause(100);
-    }
-    browser.waitForExist('[data-wd=roomname]');
-    return browser.element('[data-wd=roomname]');
-  }
   get name() {
-    return browser.element('[data-wd=username]');
+    this.wait('[data-wd=username]')
+    return browser.$('[data-wd=username]');
   }
+
+  get audioSwitch() {
+  return $('#initialVideoSwitch');
+  }
+
   goToRoom() {
-    this.clickWhenExist('#enter');
+    this.clickWhenExist('[data-wd=enterbutton]');
   }
+
+  pause(msec) {
+    browser.pause(msec);
+  }
+
+  acceptTerms(){
+    this.clickWhenExist('[data-wd=tos]');
+  }
+
 }
 module.exports = Page;

@@ -88,7 +88,7 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
     },
     meetingFullError: {
       head: 'Meeting Full',
-      detail: `This meeting has reached the full capacity of ${maxUsersPerRoom} participants. Try&nbsp;joining later.`,
+      detail: `This meeting has reached the full capacity of ${window.maxUsersPerRoom} participants. Try&nbsp;joining later.`,
       button: 'OK'
     }
   };
