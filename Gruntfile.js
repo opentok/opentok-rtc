@@ -212,8 +212,9 @@ module.exports = function (grunt) {
   grunt.registerTask('clientBuild', 'Build css files', [
     'less',
     'autoprefixer',
-    'terser',
-    'concat'
+    'terser:pages',
+    'concat',
+    'critical'
   ]);
 
   grunt.registerTask('clientBuild-Prod', 'Build css files', [
