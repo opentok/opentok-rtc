@@ -11,5 +11,14 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 12,
   },
-  rules: {}
+  rules: {
+    'no-param-reassign': 0,
+    'no-undef': 0,
+    'no-unused-expressions': 0,
+    'no-underscore-dangle': 0,
+    'no-shadow': 0,
+    'no-use-before-define': 0,
+    'max-classes-per-file': 0,
+    'no-plusplus': 0,
+  },
 };
