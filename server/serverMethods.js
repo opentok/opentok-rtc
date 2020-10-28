@@ -419,6 +419,7 @@ function ServerMethods(aLogLevel, aModules) {
         ATPrimaryCategory: aReq.tbConfig.ATPrimaryCategory,
         ATSiteIdentifier: aReq.tbConfig.ATSiteIdentifier,
         ATFunctionDept: aReq.tbConfig.ATFunctionDept,
+        maxUsersPerRoom: aReq.tbConfig.maxUsersPerRoom,
         userLanguage: language,
         userCountry: country,
         hotjarId: aReq.tbConfig.hotjarId,

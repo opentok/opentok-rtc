@@ -19,7 +19,7 @@ describe('ScreenShareView', () => {
       resolveShow = resolve;
     });
 
-    sinon.stub(Modal, 'show', (selector, fcCb) => {
+    sinon.stub(Modal, 'show').callsFake(  (selector, fcCb) => {
       fcCb && fcCb();
       resolveShow();
       return showDone;
@@ -43,7 +43,7 @@ describe('ScreenShareView', () => {
 
   before(() => {
     window.LazyLoader = window.LazyLoader || { dependencyLoad() {} };
-    sinon.stub(LazyLoader, 'dependencyLoad', resources => Promise.resolve());
+    sinon.stub(LazyLoader, 'dependencyLoad').callsFake(  resources => Promise.resolve());
     window.MockOTHelper._install();
   });
 

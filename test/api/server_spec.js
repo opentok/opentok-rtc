@@ -35,6 +35,7 @@ describe('OpenTokRTC server', () => {
            }
          });
     loadYAML('./api.yml').then((apiSpec) => {
+
       app = (require('swagger-boilerplate').App)({
         modulePath: __dirname + '/../../server/', // eslint-disable-line no-path-concat
         staticPath: '../../web',
@@ -126,13 +127,6 @@ describe('OpenTokRTC server', () => {
       .expect(200, done);
   });
 
-  it('GET /room/:roomName?template=room', (done) => {
-    request(app)
-      .get('/room/roomName?template=room')
-      .set('Accept', 'text/html')
-      .expect('X-XSS-Protection', '1; mode=block')
-      .expect(200, done);
-  });
 
   it('GET /room/:roomName?template=unknownTemplate without auth, return default', (done) => {
     request(app)
@@ -145,20 +139,20 @@ describe('OpenTokRTC server', () => {
   it('GET /room/:roomName?template=unknownTemplate&template_auth=1234 invalid auth',
     (done) => {
       request(app)
-      .get('/room/roomName?template=unknownTemplate&template_auth=1234')
-      .set('Accept', 'text/html')
-      .expect('Content-Type', new RegExp('text/html'))
-      .expect(200, done);
+        .get('/room/roomName?template=unknownTemplate&template_auth=1234')
+        .set('Accept', 'text/html')
+        .expect('Content-Type', new RegExp('text/html'))
+        .expect(200, done);
     });
 
   it('GET /room/:roomName?template=unknownTemplate&template_auth=123456 valid auth',
     (done) => {
       request(app)
-      .get('/room/roomName?template=unknownTemplate&template_auth=123456')
-      .set('Accept', 'application/json')
-      .expect('Content-Type', new RegExp('application/json'))
-      .expect(checkForAttributes.bind(undefined, ReturnError))
-      .expect(400, done);
+        .get('/room/roomName?template=unknownTemplate&template_auth=123456')
+        .set('Accept', 'application/json')
+        .expect('Content-Type', new RegExp('application/json'))
+        .expect(checkForAttributes.bind(undefined, ReturnError))
+        .expect(400, done);
     });
 
   it('POST /room/:roomName/archive should allow composite archiving', (done) => {
@@ -213,16 +207,15 @@ describe('OpenTokRTC server', () => {
 
   it('GET /server/health should return 400 and expected values', (done) => {
     request(app)
-    .get('/server/health')
-    .expect(400)
-    .then((response) => {
-      console.log(response.body);
-      expect(response.body.name).to.equal('opentok-rtc');
-      expect(response.body.version).to.be.a.string;
-      expect(response.body.gitHash).to.be.a.string;
-      expect(response.body.status).to.equal('fail');
-      done();
-    });
+      .get('/server/health')
+      .expect(400)
+      .then((response) => {
+        expect(response.body.name).to.equal('opentok-rtc');
+        expect(response.body.version).to.be.a.string;
+        expect(response.body.gitHash).to.be.a.string;
+        expect(response.body.status).to.equal('fail');
+        done();
+      });
   });
   it('GET /thanks should return post meeting screen', (done) => {
     request(app)
