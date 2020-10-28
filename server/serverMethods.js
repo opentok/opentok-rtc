@@ -406,8 +406,9 @@ function ServerMethods(aLogLevel, aModules) {
     var country = getUserCountry(aReq);
     var roomName = '';
     
-    if (aReq.tbConfig.autoGenerateRoomName)
+    if (aReq.tbConfig.autoGenerateRoomName) {
       roomName = `${haikunator.haikunate({ tokenLength: 0 })}-${haikunator.haikunate()}`;
+    }
     
     aRes
       .render('index.ejs', {
