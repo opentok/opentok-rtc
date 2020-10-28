@@ -3,6 +3,7 @@
   const touchstart = isTouch ? 'touchstart' : 'mousedown';
   const touchmove = isTouch ? 'touchmove' : 'mousemove';
   const touchend = isTouch ? 'touchend' : 'mouseup';
+  let touch;
 
   const getTouch = (function getTouchWrapper() {
     return isTouch ? (e) => e.touches[0]
@@ -58,7 +59,7 @@
     handleEvent(evt) {
       switch (evt.type) {
         case touchstart:
-          var touch = getTouch(evt);
+          touch = getTouch(evt);
           this.startX = touch.pageX;
           this.startY = touch.pageY;
           this.startTimer();
@@ -66,7 +67,7 @@
           break;
 
         case touchmove:
-          var touch = getTouch(evt); // eslint-disable-line no-redeclare
+          touch = getTouch(evt); // eslint-disable-line no-redeclare
           if (Math.abs(touch.pageX - this.startX) > DragDetector.CLICK_THRESHOLD
               || Math.abs(touch.pageY - this.startY) > DragDetector.CLICK_THRESHOLD) {
             this.sendEvent();
@@ -77,8 +78,9 @@
         case touchend:
         case 'contextmenu':
           this.clearTimer();
-
           break;
+        default:
+          throw new Error(`Unknown event ${evt.type}`);
       }
     },
 
