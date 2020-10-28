@@ -23,5 +23,7 @@ module.exports = {
     'func-names': 0,
     'no-console': 0,
     'no-restricted-globals': 0,
+    'prefer-rest-params': 0,
+    'consistent-return': 0,
   },
 };
