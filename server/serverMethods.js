@@ -42,12 +42,12 @@ function getUserLanguage(acceptedLanguages) {
   let language = '';
 
   if (acceptedLanguages && acceptedLanguages[0]) {
-    language = acceptedLanguages[0];
+    [language] = acceptedLanguages;
 
     if (language.indexOf('-') !== -1) {
-      language = language.split('-')[0];
+      [language] = language.split('-');
     } else if (language.indexOf('_') !== -1) {
-      language = language.split('_')[0];
+      [language] = language.split('_');
     }
   }
 
@@ -125,12 +125,6 @@ function ServerMethods(aLogLevel, aModules) {
       setTimeout(pollArchive, timeout);
     });
   }
-
-  function _shutdownOldInstance(aOldPromise, aNewPromise) {
-    aOldPromise && (aNewPromise !== aOldPromise)
-      && aOldPromise.then((aObject) => aObject.shutdown());
-  }
-
 
   function _initialTBConfig() {
     return configLoader.readConfigJson().then((config) => {
@@ -349,7 +343,8 @@ function ServerMethods(aLogLevel, aModules) {
         var { sessionId } = usableSessionInfo;
         tbConfig.otInstance.listArchives_P({ offset: 0, count: 1000 })
           .then((aArchives) => {
-            var archive = aArchives.reduce((aLastArch, aCurrArch) => aCurrArch.sessionId === sessionId
+            var archive = aArchives
+              .reduce((aLastArch, aCurrArch) => aCurrArch.sessionId === sessionId
               && aCurrArch.createdAt > aLastArch.createdAt
               && (aCurrArch || aLastArch), { createdAt: 0 });
 
@@ -600,9 +595,10 @@ function ServerMethods(aLogLevel, aModules) {
     return new Promise((resolve) => {
       // eslint-disable-next-line max-len
       if (aReq.tbConfig.meetingsRatePerMinute === 0) { return resolve(false); } if (aReq.tbConfig.meetingsRatePerMinute < 0) { return resolve(true); }
-      getAppUsage().then((usage) =>
-        // eslint-disable-next-line max-len
-        resolve(usage.lastUpdate + 60000 < Date.now() || usage.meetings < aReq.tbConfig.meetingsRatePerMinute));
+      getAppUsage().then((usage) => resolve(
+        usage.lastUpdate + 60000 < Date.now()
+        || usage.meetings < aReq.tbConfig.meetingsRatePerMinute
+      ));
     });
   }
 
@@ -615,13 +611,14 @@ function ServerMethods(aLogLevel, aModules) {
     const roomName = aReq.params.roomName.toLowerCase();
     const room = await serverPersistence.getKey(redisRoomPrefix + roomName);
     if (!room) return aRes.status(404).send(null);
-    aRes.send(JSON.parse(room));
+    return aRes.send(JSON.parse(room));
   }
 
   function decodeOtToken(token) {
     var parsed = {};
     var encoded = token.substring(4); // remove 'T1=='
-    var decoded = new Buffer(encoded, 'base64').toString('ascii');
+    var buffer = Buffer.from(encoded, 'base64');
+    var decoded = buffer.toString('ascii');
     var tokenParts = decoded.split(':');
     tokenParts.forEach((part) => {
       _.merge(parsed, qs.parse(part));
@@ -637,12 +634,14 @@ function ServerMethods(aLogLevel, aModules) {
     var decToken = decodeOtToken(aReq.body.token);
     room = JSON.parse(room);
 
-    if (decToken.expire_time * 1000 < Date.now() || decToken.session_id !== room.sessionId) { return aRes.status(403).send(new Error('Unauthorized')); }
+    if (decToken.expire_time * 1000 < Date.now() || decToken.session_id !== room.sessionId) {
+      return aRes.status(403).send(new Error('Unauthorized'));
+    }
 
     room.isLocked = aReq.body.state === 'locked';
     serverPersistence
       .setKey(redisRoomPrefix + roomName, room);
-    aRes.send(room);
+    return aRes.send(room);
   }
 
   // Get the information needed to connect to a session
@@ -660,9 +659,9 @@ function ServerMethods(aLogLevel, aModules) {
   function getRoomInfo(aReq, aRes) {
     var { tbConfig } = aReq;
     var roomName = aReq.params.roomName.toLowerCase();
-    var userName = (aReq.query && aReq.query.userName) || C.DEFAULT_USER_NAME + _numAnonymousUsers++;
+    var userName = (aReq.query && aReq.query.userName)
+      || C.DEFAULT_USER_NAME + _numAnonymousUsers++;
     logger.log('getRoomInfo serving ' + aReq.path, 'roomName: ', roomName, 'userName: ', userName);
-    var { enableArchiveManager } = tbConfig;
 
     if (isInBlacklist(roomName)) {
       logger.log('getRoomInfo. error:', `Blacklist found '${roomName}'`);
@@ -803,7 +802,8 @@ function ServerMethods(aLogLevel, aModules) {
           case 'startComposite':
             logger.log('Binding archiveOp to startArchive with sessionId:', sessionInfo.sessionId);
             archiveOptions.resolution = '1280x720';
-            archiveOp = otInstance.startArchive_P.bind(otInstance, sessionInfo.sessionId, archiveOptions);
+            archiveOp = otInstance.startArchive_P
+              .bind(otInstance, sessionInfo.sessionId, archiveOptions);
             break;
           case 'stop':
             archiveOp = otInstance.stopArchive_P.bind(otInstance, sessionInfo.inProgressArchiveId);
@@ -826,7 +826,10 @@ function ServerMethods(aLogLevel, aModules) {
                tbConfig.archivePollingTOMultiplier))
             || Promise.resolve(aArchive);
 
-          const roomArchiveStorage = new ArchiveLocalStorage(otInstance, redisRoomPrefix + roomName, aArchive.sessionId, aLogLevel);
+          const roomArchiveStorage = new ArchiveLocalStorage(
+            otInstance, redisRoomPrefix + roomName, aArchive.sessionId, aLogLevel
+          );
+
           readyToUpdateDb
             .then((aUpdatedArchive) => {
               aUpdatedArchive.localDownloadURL = '/archive/' + aArchive.id;
@@ -898,7 +901,9 @@ function ServerMethods(aLogLevel, aModules) {
       .then((aArchive) => {
         sessionId = aArchive.sessionId;
         type = aArchive.outputMode;
-        roomArchiveStorage = new ArchiveLocalStorage(otInstance, redisRoomPrefix + roomName, sessionId, aLogLevel);
+        roomArchiveStorage = new ArchiveLocalStorage(
+          otInstance, redisRoomPrefix + roomName, sessionId, aLogLevel
+        );
         return archiveId;
       })
       .then(otInstance.deleteArchive_P)
