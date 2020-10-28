@@ -804,6 +804,8 @@ function ServerMethods(aLogLevel, aModules) {
           case 'stop':
             archiveOp = otInstance.stopArchive_P.bind(otInstance, sessionInfo.inProgressArchiveId);
             break;
+          default:
+            throw new Error(`Unknown operation ${operation}`);
         }
         logger.log('postRoomArchive: Invoking archiveOp. SessionInfo', sessionInfo);
         return archiveOp().then((aArchive) => {
