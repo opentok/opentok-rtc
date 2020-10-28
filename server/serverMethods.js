@@ -406,36 +406,44 @@ function ServerMethods(aLogLevel, aModules) {
     var language = getUserLanguage(accepts(aReq).languages());
     var country = getUserCountry(aReq);
 
-    aRes
-      .render('index.ejs', {
-        roomName: `${haikunator.haikunate({ tokenLength: 0 })}-${haikunator.haikunate()}`,
-        isWebRTCVersion: aReq.tbConfig.isWebRTCVersion,
-        minMeetingNameLength: aReq.tbConfig.minMeetingNameLength,
-        publisherResolution: aReq.tbConfig.publisherResolution,
-        showTos: aReq.tbConfig.showTos,
-        showUnavailable: !meetingAllowed,
-        useGoogleFonts: aReq.tbConfig.useGoogleFonts,
-        adobeTrackingUrl: aReq.tbConfig.adobeTrackingUrl,
-        ATPrimaryCategory: aReq.tbConfig.ATPrimaryCategory,
-        ATSiteIdentifier: aReq.tbConfig.ATSiteIdentifier,
-        ATFunctionDept: aReq.tbConfig.ATFunctionDept,
-        maxUsersPerRoom: aReq.tbConfig.maxUsersPerRoom,
-        userLanguage: language,
-        userCountry: country,
-        hotjarId: aReq.tbConfig.hotjarId,
-        hotjarVersion: aReq.tbConfig.hotjarVersion,
-        enableFeedback: aReq.tbConfig.enableFeedback,
-        opentokJsUrl: aReq.tbConfig.opentokJsUrl,
-        enablePrecallTest: aReq.tbConfig.enablePrecallTest,
-        enterButtonLabel: 'Start Meeting'
-      }, (err, html) => {
-        if (err) {
-          logger.error('getRoot. error: ', err);
-          aRes.status(500).send(new ErrorInfo(500, 'Invalid Template'));
-        } else {
-          aRes.send(html);
-        }
-      });
+    // Create a session ID and token for the network test
+    aReq.tbConfig.precallOtInstance.createSession({ mediaMode: 'routed' }, (error, testSession) => {
+      aRes
+        .render('index.ejs', {
+          roomName: `${haikunator.haikunate({ tokenLength: 0 })}-${haikunator.haikunate()}`,
+          isWebRTCVersion: aReq.tbConfig.isWebRTCVersion,
+          minMeetingNameLength: aReq.tbConfig.minMeetingNameLength,
+          publisherResolution: aReq.tbConfig.publisherResolution,
+          precallSessionId: testSession.sessionId,
+          precallApiKey: aReq.tbConfig.precallApiKey,
+          precallToken: aReq.tbConfig.precallOtInstance.generateToken(testSession.sessionId, {
+            role: 'publisher'
+          }),
+          showTos: aReq.tbConfig.showTos,
+          showUnavailable: !meetingAllowed,
+          useGoogleFonts: aReq.tbConfig.useGoogleFonts,
+          adobeTrackingUrl: aReq.tbConfig.adobeTrackingUrl,
+          ATPrimaryCategory: aReq.tbConfig.ATPrimaryCategory,
+          ATSiteIdentifier: aReq.tbConfig.ATSiteIdentifier,
+          ATFunctionDept: aReq.tbConfig.ATFunctionDept,
+          maxUsersPerRoom: aReq.tbConfig.maxUsersPerRoom,
+          userLanguage: language,
+          userCountry: country,
+          hotjarId: aReq.tbConfig.hotjarId,
+          hotjarVersion: aReq.tbConfig.hotjarVersion,
+          enableFeedback: aReq.tbConfig.enableFeedback,
+          opentokJsUrl: aReq.tbConfig.opentokJsUrl,
+          enablePrecallTest: aReq.tbConfig.enablePrecallTest,
+          enterButtonLabel: 'Start Meeting'
+        }, (err, html) => {
+          if (err) {
+            logger.error('getRoot. error: ', err);
+            aRes.status(500).send(new ErrorInfo(500, 'Invalid Template'));
+          } else {
+            aRes.send(html);
+          }
+        });
+    });
   }
 
   function isInBlacklist(name) {

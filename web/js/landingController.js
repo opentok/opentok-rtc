@@ -33,7 +33,8 @@
     ]).then(() => {
       return LandingView.init();
     }).then(() => {
-      return PrecallView.init();
+      PrecallView.init();
+      return PrecallController.init();
     }).then(() => {
       const otHelper = new OTHelper({});
       PrecallController.showCallSettingsPrompt('', '', otHelper);

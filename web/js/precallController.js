@@ -232,7 +232,8 @@
       LazyLoader.dependencyLoad([
         '/js/helpers/ejsTemplate.js',
         '/js/vendor/ejs_production.js',
-        '/js/min/precallView.min.js'
+        '/js/min/precallView.min.js',
+        '/js/helpers/opentok-network-test.js'
       ]).then(() => {
         Utils.addEventsHandlers('', eventHandlers);
         return PrecallView.init();
