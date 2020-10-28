@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot for htmlElems component 1`] = `
+Object {
+  "HTMLElems": Object {
+    "addHandlerArchive": [Function],
+    "addText": [Function],
+    "createElement": [Function],
+    "createElementAt": [Function],
+    "getAncestorByTagName": [Function],
+    "isAction": [Function],
+    "replaceText": [Function],
+    "setEnabled": [Function],
+  },
+}
+`;
