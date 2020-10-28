@@ -65,8 +65,8 @@
     return new Promise(resolve => {
       if (window.routedFromStartMeeting) {
         publisherOptions.name = window.userName || document.querySelector(`${selector} input`).value.trim();
-        publisherOptions.publishAudio = document.querySelector(`${selector} #initialVideoSwitch label`).textContent === 'on';
-        publisherOptions.publishVideo = document.querySelector(`${selector} #initialAudioSwitch label`).textContent === 'on';
+        publisherOptions.publishVideo = window.publishVideo;
+        publisherOptions.publishAudio = window.publishAudio;
         return resolve({
           username: window.userName || document.querySelector(`${selector} input`).value.trim(),
           publisherOptions

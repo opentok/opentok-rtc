@@ -3,8 +3,21 @@
 !(global => {
   const addEventHandlers = () => {
     Utils.addEventsHandlers('precallView:', { submit() {
+
+      const addFormElem = (form, prop, value) => {
+        const input = document.createElement('input');
+        input.setAttribute('name', prop);
+        input.setAttribute('value', value);
+        input.setAttribute('type', 'hidden');
+        form.appendChild(input);
+      }
+
       const form = document.querySelector('.main form');
       form.action = `/room/${window.roomName}`;
+      const boundAddElem = addFormElem.bind(form);
+
+      addFormElem(form, 'publishVideo', document.querySelector(`.user-name-modal #initialVideoSwitch label`).textContent === 'On');
+      addFormElem(form, 'publishAudio', document.querySelector(`.user-name-modal #initialAudioSwitch label`).textContent === 'On')
       form.submit();
     } });
   };
