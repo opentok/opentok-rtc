@@ -46,9 +46,25 @@
       userNameInputElement.removeEventListener('keypress', keypressHandler);
     });
 
-    document.querySelector('.user-name-modal').addEventListener('click', () => {
+    document.querySelector('.user-name-input-container').addEventListener('click', () => {
       userNameInputElement.focus();
     });
+
+    if (!window.autoGenerateRoomName) {
+      const roomNameInputElement = document.getElementById('room-name-input');
+      
+      roomNameInputElement.addEventListener('keypress', function keypressHandler() {
+        document.querySelector('.room-name-input-container').classList.add('visited');
+        roomNameInputElement.removeEventListener('keypress', keypressHandler);
+      });
+
+      document.querySelector('.room-name-input-container').addEventListener('click', () => {
+        const errorMsg = document.querySelector('.error-room.error-text');
+        errorMsg.classList.remove('show');
+        document.querySelector('.room-name-input-container label').style.display = 'block';
+        roomNameInputElement.focus();
+      });
+    }
 
     const publishSettings = document.querySelector('.publish-settings');
 
@@ -142,9 +158,8 @@
     }
   };
 
-  const setFocus = username => {
-    const focusElement = username ? document.getElementById('enter') :
-      document.getElementById('user-name-input');
+  const setFocus = elem => {
+    const focusElement = document.getElementById(`${elem}-name-input`);
     focusElement && focusElement.focus();
   };
 

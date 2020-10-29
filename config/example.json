@@ -44,6 +44,7 @@
   "enableStopReceivingVideo": true,
   "maxUsersPerRoom": 0,
   "enableRoomLocking": true,
+  "autoGenerateRoomName": true,
   "adobeTracking": {
     "url": "",
     "primaryCategory": "",

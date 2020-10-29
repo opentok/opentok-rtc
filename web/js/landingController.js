@@ -12,7 +12,9 @@
       }
 
       const form = document.querySelector('.main form');
-      form.action = `/room/${window.roomName}`;
+      const roomNameTextInput = (document.getElementById('room-name-input') || {}).value;
+      const roomName = roomNameTextInput || window.roomName;
+      form.action = `/room/${roomName}`;
       const publishVideo = document.querySelector(`.user-name-modal #initialVideoSwitch label`).textContent === 'On';
       const publishAudio = document.querySelector(`.user-name-modal #initialAudioSwitch label`).textContent === 'On';
       form.appendChild(createInput('publishVideo', publishVideo));
