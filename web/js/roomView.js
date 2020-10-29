@@ -1,5 +1,5 @@
 /* global RoomView, Cronograph, ArchivesEventsListener, RecordingsController, Modal,
-BubbleFactory, LayoutManager, $, maxUsersPerRoom */
+BubbleFactory, LayoutManager */
 
 !((exports) => {
   // HTML elements for the view
@@ -535,6 +535,9 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
           }
           break;
         }
+        default: {
+          throw new Error(`Unknown element ${elem.id}`);
+        }
       }
     });
 
@@ -647,6 +650,9 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
             setSwitchStatus(false, true, audioSwitch, 'roomView:muteAllSwitch');
             togglePublisherAudioElem.classList.add('activated');
           }
+          break;
+        default:
+          throw new Error(`Unknown element ${elem.id}`);
       }
     });
 
@@ -678,6 +684,8 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
         case 'stopped':
           onStopArchiving();
           break;
+        default:
+          throw new Error(`Unknown status ${detail.status}`);
       }
 
       document.body.data('archiveStatus', e.detail.status);

@@ -60,7 +60,8 @@ describe('ChatController', () => {
           var spyArg = Utils.addHandlers.getCall(0).args[0];
           expect(Object.keys(spyArg).length).to.be
             .equal(Object.keys(handlerShouldHave).length);
-          expect(Object.keys(spyArg).every((action) => spyArg[action].name === handlerShouldHave[action].name)).to.be.true;
+          expect(Object.keys(spyArg)
+            .every((action) => spyArg[action].name === handlerShouldHave[action].name)).to.be.true;
           expect(RoomStatus.set.calledWith(STATUS_KEY, [])).to.be.true;
           done();
         });

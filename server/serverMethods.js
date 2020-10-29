@@ -40,12 +40,12 @@ function getUserLanguage(acceptedLanguages) {
   let language = '';
 
   if (acceptedLanguages && acceptedLanguages[0]) {
-    language = acceptedLanguages[0];
+    [language] = acceptedLanguages;
 
     if (language.indexOf('-') !== -1) {
-      language = language.split('-')[0];
+      [language] = language.split('-');
     } else if (language.indexOf('_') !== -1) {
-      language = language.split('_')[0];
+      [language] = language.split('_');
     }
   }
 
@@ -122,11 +122,6 @@ function ServerMethods(aLogLevel, aModules) {
       logger.log('Poll [', aArchiveId, ']: Setting first try for', timeout);
       setTimeout(pollArchive, timeout);
     });
-  }
-
-  function _shutdownOldInstance(aOldPromise, aNewPromise) {
-    aOldPromise && (aNewPromise !== aOldPromise)
-      && aOldPromise.then((aObject) => aObject.shutdown());
   }
 
   function _initialTBConfig() {
@@ -348,7 +343,8 @@ function ServerMethods(aLogLevel, aModules) {
         const { sessionId } = usableSessionInfo;
         tbConfig.otInstance.listArchives_P({ offset: 0, count: 1000 })
           .then((aArchives) => {
-            const archive = aArchives.reduce((aLastArch, aCurrArch) => aCurrArch.sessionId === sessionId
+            const archive = aArchives
+              .reduce((aLastArch, aCurrArch) => aCurrArch.sessionId === sessionId
               && aCurrArch.createdAt > aLastArch.createdAt
               && (aCurrArch || aLastArch), { createdAt: 0 });
 
@@ -454,8 +450,10 @@ function ServerMethods(aLogLevel, aModules) {
     const template = query && tbConfig.templatingSecret
       && (tbConfig.templatingSecret === query.template_auth) && query.template;
     const userName = (aReq.body && aReq.body.userName) || (query && query.userName) || '';
-    const publishVideo = aReq.body && aReq.body.publishVideo ? JSON.parse(aReq.body.publishVideo) : true;
-    const publishAudio = aReq.body && aReq.body.publishAudio ? JSON.parse(aReq.body.publishAudio) : true;
+    const publishVideo = aReq.body && aReq.body.publishVideo
+      ? JSON.parse(aReq.body.publishVideo) : true;
+    const publishAudio = aReq.body && aReq.body.publishAudio
+      ? JSON.parse(aReq.body.publishAudio) : true;
     const language = getUserLanguage(accepts(aReq).languages());
     const country = getUserCountry(aReq);
 
@@ -609,9 +607,10 @@ function ServerMethods(aLogLevel, aModules) {
     return new Promise((resolve) => {
       // eslint-disable-next-line max-len
       if (aReq.tbConfig.meetingsRatePerMinute === 0) { return resolve(false); } if (aReq.tbConfig.meetingsRatePerMinute < 0) { return resolve(true); }
-      getAppUsage().then((usage) =>
-        // eslint-disable-next-line max-len
-        resolve(usage.lastUpdate + 60000 < Date.now() || usage.meetings < aReq.tbConfig.meetingsRatePerMinute));
+      getAppUsage().then((usage) => resolve(
+        usage.lastUpdate + 60000 < Date.now()
+          || usage.meetings < aReq.tbConfig.meetingsRatePerMinute,
+      ));
     });
   }
 
@@ -630,7 +629,8 @@ function ServerMethods(aLogLevel, aModules) {
   function decodeOtToken(token) {
     const parsed = {};
     const encoded = token.substring(4); // remove 'T1=='
-    const decoded = new Buffer(encoded, 'base64').toString('ascii');
+    const buffer = Buffer.from(encoded, 'base64');
+    const decoded = buffer.toString('ascii');
     const tokenParts = decoded.split(':');
     tokenParts.forEach((part) => {
       _.merge(parsed, qs.parse(part));
@@ -669,9 +669,9 @@ function ServerMethods(aLogLevel, aModules) {
   function getRoomInfo(aReq, aRes) {
     const { tbConfig } = aReq;
     const roomName = aReq.params.roomName.toLowerCase();
-    const userName = (aReq.query && aReq.query.userName) || C.DEFAULT_USER_NAME + _numAnonymousUsers++;
+    const userName = (aReq.query && aReq.query.userName)
+      || C.DEFAULT_USER_NAME + _numAnonymousUsers++;
     logger.log(`getRoomInfo serving ${aReq.path}`, 'roomName: ', roomName, 'userName: ', userName);
-    const { enableArchiveManager } = tbConfig;
 
     if (isInBlacklist(roomName)) {
       logger.log('getRoomInfo. error:', `Blacklist found '${roomName}'`);
@@ -813,11 +813,15 @@ function ServerMethods(aLogLevel, aModules) {
           case 'startComposite':
             logger.log('Binding archiveOp to startArchive with sessionId:', sessionInfo.sessionId);
             archiveOptions.resolution = '1280x720';
-            archiveOp = otInstance.startArchive_P.bind(otInstance, sessionInfo.sessionId, archiveOptions);
+            archiveOp = otInstance.startArchive_P.bind(
+              otInstance, sessionInfo.sessionId, archiveOptions,
+            );
             break;
           case 'stop':
             archiveOp = otInstance.stopArchive_P.bind(otInstance, sessionInfo.inProgressArchiveId);
             break;
+          default:
+            throw new Error(`Unknown operation ${operation}`);
         }
         logger.log('postRoomArchive: Invoking archiveOp. SessionInfo', sessionInfo);
         return archiveOp().then((aArchive) => {
@@ -836,7 +840,9 @@ function ServerMethods(aLogLevel, aModules) {
                tbConfig.archivePollingTOMultiplier))
             || Promise.resolve(aArchive);
 
-          const roomArchiveStorage = new ArchiveLocalStorage(otInstance, redisRoomPrefix + roomName, aArchive.sessionId, aLogLevel);
+          const roomArchiveStorage = new ArchiveLocalStorage(
+            otInstance, redisRoomPrefix + roomName, aArchive.sessionId, aLogLevel,
+          );
           readyToUpdateDb
             .then((aUpdatedArchive) => {
               aUpdatedArchive.localDownloadURL = `/archive/${aArchive.id}`;
@@ -909,7 +915,9 @@ function ServerMethods(aLogLevel, aModules) {
       .then((aArchive) => {
         sessionId = aArchive.sessionId;
         type = aArchive.outputMode;
-        roomArchiveStorage = new ArchiveLocalStorage(otInstance, redisRoomPrefix + roomName, sessionId, aLogLevel);
+        roomArchiveStorage = new ArchiveLocalStorage(
+          otInstance, redisRoomPrefix + roomName, sessionId, aLogLevel,
+        );
         return archiveId;
       })
       .then(otInstance.deleteArchive_P)
