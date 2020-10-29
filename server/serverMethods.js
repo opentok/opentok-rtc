@@ -497,7 +497,9 @@ function ServerMethods(aLogLevel, aModules) {
             hotjarId: tbConfig.hotjarId,
             hotjarVersion: tbConfig.hotjarVersion,
             enableFeedback: tbConfig.enableFeedback,
-            enterButtonLabel: 'Join Meeting'
+            enterButtonLabel: 'Join Meeting',
+            // eslint-disable-next-line no-dupe-keys
+            userName
           }, (err, html) => {
             if (err) {
               logger.log('getRoom. error:', err);
