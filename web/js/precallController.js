@@ -63,16 +63,6 @@
     };
 
     return new Promise(resolve => {
-      if (window.routedFromStartMeeting) {
-        publisherOptions.name = window.userName || document.querySelector(`${selector} input`).value.trim();
-        publisherOptions.publishVideo = window.publishVideo;
-        publisherOptions.publishAudio = window.publishAudio;
-        return resolve({
-          username: window.userName || document.querySelector(`${selector} input`).value.trim(),
-          publisherOptions
-        });
-      }
-
       function loadModalText() {
         window.autoGenerateRoomName ? PrecallView.setFocus('user') : PrecallView.setFocus('room');
 
@@ -108,14 +98,12 @@
           }, 1);
         }
 
-        function submitRoomForm() {
+        function submitRoomForm(roomName) {
           function isAllowedToJoin() {
             return new Promise((resolve, reject) => {
               Request
                 .getRoomRawInfo(roomName).then((room) => {
-                  if (window.routedFromStartMeeting) {
-                    return resolve();
-                  } else if (showUnavailable && !room) {
+                  if (showUnavailable && !room) {
                     return reject(new Error('New rooms not allowed'));
                   } else if (room && !room.isLocked) {
                     return resolve();
@@ -154,15 +142,19 @@
             return;
           }
 
-          if (window.location.href.indexOf('room') > -1) {
-            // Jeff to do: This code should move to RoomController and be event-driven
-            submitRoomForm();
-          } else if (showTos) {
+          const roomNameTextInput = (document.getElementById('room-name-input') || {}).value;
+          if (roomNameTextInput) {
+            window.history.pushState('', '', `/room/${roomNameTextInput}`);
+          }
+
+          const roomName = window.roomName || roomNameTextInput;
+
+          if (showTos) {
             PrecallView.showContract().then(() => {
-              Utils.sendEvent('precallView:submit');
+              submitRoomForm(roomName);
             });
           } else {
-            Utils.sendEvent('precallView:submit');
+            submitRoomForm(roomName);
           }
         }
 

@@ -409,39 +409,11 @@ function ServerMethods(aLogLevel, aModules) {
     
     if (aReq.tbConfig.autoGenerateRoomName) {
       roomName = `${haikunator.haikunate({ tokenLength: 0 })}-${haikunator.haikunate()}`;
+      return aRes.redirect(`/room/${roomName}`);
+    } else {
+      finshGetPostRoom(aReq, aRes);
     }
-    
-    aRes
-      .render('index.ejs', {
-        roomName,
-        isWebRTCVersion: aReq.tbConfig.isWebRTCVersion,
-        minMeetingNameLength: aReq.tbConfig.minMeetingNameLength,
-        publisherResolution: aReq.tbConfig.publisherResolution,
-        showTos: aReq.tbConfig.showTos,
-        showUnavailable: !meetingAllowed,
-        useGoogleFonts: aReq.tbConfig.useGoogleFonts,
-        adobeTrackingUrl: aReq.tbConfig.adobeTrackingUrl,
-        ATPrimaryCategory: aReq.tbConfig.ATPrimaryCategory,
-        ATSiteIdentifier: aReq.tbConfig.ATSiteIdentifier,
-        ATFunctionDept: aReq.tbConfig.ATFunctionDept,
-        maxUsersPerRoom: aReq.tbConfig.maxUsersPerRoom,
-        userLanguage: language,
-        userCountry: country,
-        hotjarId: aReq.tbConfig.hotjarId,
-        hotjarVersion: aReq.tbConfig.hotjarVersion,
-        enableFeedback: aReq.tbConfig.enableFeedback,
-        opentokJsUrl: aReq.tbConfig.opentokJsUrl,
-        enablePrecallTest: aReq.tbConfig.enablePrecallTest,
-        autoGenerateRoomName: aReq.tbConfig.autoGenerateRoomName,
-        enterButtonLabel: 'Start Meeting'
-      }, (err, html) => {
-        if (err) {
-          logger.error('getRoot. error: ', err);
-          aRes.status(500).send(new ErrorInfo(500, 'Invalid Template'));
-        } else {
-          aRes.send(html);
-        }
-      });
+   
   }
 
   function isInBlacklist(name) {
@@ -450,11 +422,11 @@ function ServerMethods(aLogLevel, aModules) {
 
   // Finish the call to getRoom and postRoom
   // eslint-disable-next-line consistent-return
-  async function finshGetPostRoom(aReq, aRes, routedFromStartMeeting) {
+  async function finshGetPostRoom(aReq, aRes) {
     var meetingAllowed = await isMeetingAllowed(aReq);
     var query = aReq.query;
 
-    if (isInBlacklist(aReq.params.roomName)) {
+    if (aReq.params.roomName && isInBlacklist(aReq.params.roomName)) {
       logger.log('getRoom. error:', `Blacklist found '${aReq.params.roomName}'`);
       return aRes.status(404).send(null);
     }
@@ -473,12 +445,15 @@ function ServerMethods(aLogLevel, aModules) {
       aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
       aRes.set('Pragma', 'no-cache');
       aRes.set('Expires', 0);
+
+      console.log("RENDERING THIS TEMPLATE");
+      console.log((template || tbConfig.defaultTemplate));
       aRes
         .render((template || tbConfig.defaultTemplate) + '.ejs',
           {
             autoGenerateRoomName: tbConfig.autoGenerateRoomName,
             userName: htmlEscape(userName || C.DEFAULT_USER_NAME),
-            roomName: htmlEscape(aReq.params.roomName),
+            roomName: htmlEscape(aReq.params.roomName || ''),
             publishVideo,
             publishAudio,
             chromeExtensionId: tbConfig.chromeExtId,
@@ -522,10 +497,7 @@ function ServerMethods(aLogLevel, aModules) {
             hotjarId: tbConfig.hotjarId,
             hotjarVersion: tbConfig.hotjarVersion,
             enableFeedback: tbConfig.enableFeedback,
-            enterButtonLabel: 'Join Meeting',
-            routedFromStartMeeting: Boolean(routedFromStartMeeting),
-            // eslint-disable-next-line no-dupe-keys
-            userName
+            enterButtonLabel: 'Join Meeting'
           }, (err, html) => {
             if (err) {
               logger.log('getRoom. error:', err);
@@ -539,14 +511,14 @@ function ServerMethods(aLogLevel, aModules) {
 
   // Finish the call to getRoom and postRoom
   // eslint-disable-next-line no-unused-vars
-  function getRoom(aReq, aRes, routedFromStartMeeting) {
+  function getRoom(aReq, aRes) {
     var query = aReq.query;
 
     logger.log('getRoom serving ' + aReq.path, 'roomName:', aReq.params.roomName,
       'userName:', query && query.userName,
       'template:', query && query.template);
 
-    finshGetPostRoom(aReq, aRes, false);
+    finshGetPostRoom(aReq, aRes);
   }
 
   // Return the personalized HTML for a room when directed from the root.
