@@ -1,5 +1,8 @@
-var { assert } = chai;
-var { expect } = chai;
+var sinonTest = require('sinon-test');
+var test = sinonTest(sinon);
+sinon.test = test;
+var assert = chai.assert;
+var expect = chai.expect;
 var should = chai.should();
 
 describe('Utils', () => {
@@ -116,12 +119,10 @@ describe('Utils', () => {
         output: '?key=value&key2&key3=value3',
       },
       {
-        input: {
-          key: 'value',
+        input: { key: 'value',
           key2: undefined,
           key3: ['value3', 'value4', 'value5'],
-          key4: undefined
-        },
+          key4: undefined },
         output: '?key=value&key2&key3=value3&key3=value4&key3=value5&key4',
       },
     ];
@@ -248,8 +249,8 @@ describe('Utils', () => {
     ];
 
     useCases.forEach((useCase) => {
-      it('should generate as params' + JSON.stringify(useCase.output) + ' for '
-         + useCase.input, () => {
+      it('should generate as params' + JSON.stringify(useCase.output) + ' for ' +
+         useCase.input, () => {
         var result = Utils.parseSearch(useCase.input);
         expect(result.params).to.be.deep.equal(useCase.output);
         results.push(result);
@@ -265,8 +266,8 @@ describe('Utils', () => {
       }));
 
       results.forEach((result, index) => {
-        it('should return ' + useCases[index].getFirst.output + ' when called with '
-           + useCases[index].getFirst.input + 'on the use case #' + index, () => {
+        it('should return ' + useCases[index].getFirst.output + ' when called with ' +
+           useCases[index].getFirst.input + 'on the use case #' + index, () => {
           var useCase = useCases[index].getFirst;
           expect(result.getFirstValue(useCase.input)).to.be.equal(useCase.output);
         });

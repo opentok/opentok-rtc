@@ -1,5 +1,9 @@
-var { assert } = chai;
-var { expect } = chai;
+var sinonTest = require('sinon-test');
+var test = sinonTest(sinon);
+sinon.test = test;
+
+var assert = chai.assert;
+var expect = chai.expect;
 var should = chai.should();
 
 describe('FeedbackView', () => {

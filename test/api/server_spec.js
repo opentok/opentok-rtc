@@ -1,7 +1,7 @@
 var chai = require('chai');
 var request = require('supertest');
 
-var { expect } = chai;
+var expect = chai.expect;
 
 const TEST_LOG_LEVEL = 0;
 
@@ -26,14 +26,16 @@ describe('OpenTokRTC server', () => {
     // So that's what '.' is. OTOH, the requires are relative to *this* file.
     // Yep, I don't like that either. Nope, I can't do anything about that.
     var YAML = require('yamljs');
-    var loadYAML = (apiFile) => new Promise((resolve, reject) => {
-      try {
-        YAML.load(apiFile, resolve);
-      } catch (e) {
-        reject(e);
-      }
-    });
+    var loadYAML =
+         apiFile => new Promise((resolve, reject) => {
+           try {
+             YAML.load(apiFile, resolve);
+           } catch (e) {
+             reject(e);
+           }
+         });
     loadYAML('./api.yml').then((apiSpec) => {
+
       app = (require('swagger-boilerplate').App)({
         modulePath: __dirname + '/../../server/', // eslint-disable-line no-path-concat
         staticPath: '../../web',
@@ -55,8 +57,8 @@ describe('OpenTokRTC server', () => {
     var aObject = aRes.body;
     for (var i = 0, l = aAttributes.length; i < l; i++) {
       if (!aObject[aAttributes[i]]) {
-        throw new Error('Missing required attribute: ' + aAttributes[i]
-                        + ' in ' + JSON.stringify(aObject));
+        throw new Error('Missing required attribute: ' + aAttributes[i] +
+                        ' in ' + JSON.stringify(aObject));
       }
     }
     return undefined;
@@ -125,13 +127,6 @@ describe('OpenTokRTC server', () => {
       .expect(200, done);
   });
 
-  it('GET /room/:roomName?template=room', (done) => {
-    request(app)
-      .get('/room/roomName?template=room')
-      .set('Accept', 'text/html')
-      .expect('X-XSS-Protection', '1; mode=block')
-      .expect(200, done);
-  });
 
   it('GET /room/:roomName?template=unknownTemplate without auth, return default', (done) => {
     request(app)
@@ -215,7 +210,6 @@ describe('OpenTokRTC server', () => {
       .get('/server/health')
       .expect(400)
       .then((response) => {
-        console.log(response.body);
         expect(response.body.name).to.equal('opentok-rtc');
         expect(response.body.version).to.be.a.string;
         expect(response.body.gitHash).to.be.a.string;

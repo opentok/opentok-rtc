@@ -31,7 +31,13 @@
     }
     </script>
 
-    <link href="/css/fonts.css" rel="stylesheet">
+    <% if (useGoogleFonts) { %>
+        <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <% } else { %>
+        <link rel="preload" href="/fonts/open-sans-v15-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+        <link href="/css/fonts.css" rel="stylesheet">
+    <% } %>
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/<%=chromeExtensionId%>">
     <link rel="stylesheet" rel="preload" href="https://assets.tokbox.com/solutions/css/style.css">
     <link rel="stylesheet" rel="prefetch" href="/css/annotation.opentok.css">
@@ -61,11 +67,15 @@
       window.maxUsersPerRoom = <%=maxUsersPerRoom%>;
       window.routedFromStartMeeting = <%=routedFromStartMeeting%>;
       window.userName = "<%=userName%>";
-      var isMobile = function() { return typeof window.orientation !== 'undefined'; }
+      window.roomName = "<%=roomName%>";
+      window.autoGenerateRoomName = <%=autoGenerateRoomName%>;
+      window.publishAudio = <%=publishAudio%>;
+      window.publishVideo = <%=publishVideo%>;
+      var isMobile = function() { return window.matchMedia("only screen and (max-width: 480px)").matches; }
 
       var mobileSettings = function() {
 
-        var ids = ['toggleSharing', 'manageRecordings', 'videoSwitch',
+        var ids = ['toggleSharing', 'videoSwitch',
           'audioSwitch', 'showFeedback', 'screenShareErrors'];
 
         ids.forEach(function(id) {
@@ -138,25 +148,23 @@
           </a>
         </div>
         <% } %>
-        <% if (enableMuteAll) { %>
-        <div class="audioSwitch" disabled>
-          <a id="audioSwitch">
-            <span>Mute all participants</span>
-            <i data-icon="audioSwitch"></i>
-          </a>
-        </div>
-        <% } %>
         <%   if(enableArchiving) { %>
         <div id="toggleArchiving" disabled>
-          <a id="startArchiving" class="btn btn-purple btn-padding">Record</a>
-          <a id="stopArchiving" class="btn btn-purple btn-padding duration">Stop Recording</a>
+          <a id="startArchiving" class="banner-dynamic-btn">
+            <i data-icon="start_archive"></i>
+            <span>Record</span>
+          </a>
+          <a id="stopArchiving" class="banner-dynamic-btn">
+            <i data-icon="stop_archive"></i>
+            <span class="duration">Stop Recording</span>
+          </a>
         </div>
         <%      if(enableArchiveManager) { %>
         <div id="manageRecordings">
           <a id="viewRecordings"  class="btn btn-purple btn-padding"><span id="recordings">0</span></a>
         </div>
         <% } } %>
-        <a class="invite-btn" id="addToCall">
+        <a class="banner-dynamic-btn invite-btn" id="addToCall">
           <i data-icon="add"></i>
           <span>Invite</span>
         </a>
@@ -316,6 +324,14 @@
               <span>Switch Camera</span>
             </div>
           </div>
+        <% if (enableMuteAll) { %>
+          <div class="source-pick-container">
+            <div id="muteAllContainer" class="sourcePick icon-with-text">
+              <a id="muteAllIconButton"><i data-icon="muteAllButton"></i></a>
+              <span>Mute all participants</span>
+            </div>
+          </div>
+        <% } %>
         </div>
         <div id="layout-manager">
           <span id="layout-title">Layout Manager</span>

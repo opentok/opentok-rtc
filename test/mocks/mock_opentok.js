@@ -32,11 +32,12 @@ function Opentok(aApiKey, aApiSecret) {
 
   // We must mock/stub some of the Opentok methods before the app is created
   // because they might be renamed/rebinded...
-  sinon.stub(opentok, 'startArchive', (aSessionId, aArchiveOptions, aCallback) => {
-    setTimeout(() => aCallback(null, new FakeArchive(aSessionId, aArchiveOptions, 'started')));
+  sinon.stub(opentok, 'startArchive').callsFake( (aSessionId, aArchiveOptions, aCallback) => {
+    setTimeout(() =>
+    aCallback(null, new FakeArchive(aSessionId, aArchiveOptions, 'started')));
   });
 
-  sinon.stub(opentok, 'stopArchive', (aArchiveId, aCallback) => {
+  sinon.stub(opentok, 'stopArchive').callsFake( (aArchiveId, aCallback) => {
     setTimeout(() => {
       if (_archives[aArchiveId]) {
         _archives[aArchiveId].status = 'stopped';
@@ -45,23 +46,23 @@ function Opentok(aApiKey, aApiSecret) {
     });
   });
 
-  sinon.stub(opentok, 'getArchive', (aArchiveId, aCallback) => {
+  sinon.stub(opentok, 'getArchive').callsFake( (aArchiveId, aCallback) => {
     setTimeout(aCallback.bind(undefined, !_archives[aArchiveId], _archives[aArchiveId]));
   });
 
-  sinon.stub(opentok, 'listArchives', (aOptions, aCallback) => {
-    var list = Object.keys(_archives).map((key) => _archives[key]);
+  sinon.stub(opentok, 'listArchives').callsFake( (aOptions, aCallback) => {
+    var list = Object.keys(_archives).map(key => _archives[key]);
     setTimeout(aCallback.bind(undefined, undefined, list));
   });
 
-  sinon.stub(opentok, 'createSession', (aOptions, aCallback) => {
+  sinon.stub(opentok, 'createSession').callsFake( (aOptions, aCallback) => {
     var sessionInfo = {
       sessionId: '1' + Math.random(),
     };
     setTimeout(aCallback.bind(undefined, undefined, sessionInfo));
   });
 
-  sinon.stub(opentok, 'generateToken', (aOptions) => 'tokentoken');
+  sinon.stub(opentok, 'generateToken').callsFake(  aOptions => 'tokentoken');
 
   opentok._sinonRestore = function () {
     ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'generateToken', 'createSession'].forEach((method) => {

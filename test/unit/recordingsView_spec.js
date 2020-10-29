@@ -123,7 +123,7 @@ describe('RecordingsView', () => {
       model._fire(archives);
       var { id } = archives.one;
 
-      this.stub(window, 'dispatchEvent', (event) => {
+      this.stub(window, 'dispatchEvent').callsFake( (event) => {
         expect(event.type).to.equal('archive');
         expect(event.detail.id).to.equal(id);
         expect(event.detail.action).to.equal('delete');

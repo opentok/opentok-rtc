@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-unused-vars
-/* globals EJSTemplate, Modal, showTos, showUnavailable, enablePrecallTest, enterButtonLabel */
-!((exports) => {
+/* globals EJSTemplate, Modal, setTimeout, showTos, showUnavailable, enablePrecallTest, enterButtonLabel */
+!(exports => {
   const _precallTemplateSrc = '/templates/precall.ejs';
   let _precallTemplate;
   const _tosTemplateSrc = '/templates/tos.ejs';
@@ -16,7 +16,7 @@
     if (window.enablePrecallTest) {
       const preCallTestResults = document.getElementById('pre-call-test-results');
 
-      preCallTestResults.addEventListener('click', (e) => {
+      preCallTestResults.addEventListener('click', e => {
         const elem = e.target;
         switch (elem.id) {
           case 'precall-close':
@@ -27,13 +27,11 @@
             document.getElementById('connectivity-cancel').style.display = 'inline-block';
             Utils.sendEvent('roomView:retest');
             break;
-          default:
-            throw new Error(`Unknown element ${elem.id}`);
         }
       });
 
       const connectivityCancelElement = document.getElementById('connectivity-cancel');
-      connectivityCancelElement.addEventListener('click', (event) => {
+      connectivityCancelElement.addEventListener('click', event => {
         event.preventDefault();
         Utils.sendEvent('roomView:cancelTest');
         connectivityCancelElement.style.display = 'none';
@@ -48,13 +46,29 @@
       userNameInputElement.removeEventListener('keypress', keypressHandler);
     });
 
-    document.querySelector('.user-name-modal').addEventListener('click', () => {
+    document.querySelector('.user-name-input-container').addEventListener('click', () => {
       userNameInputElement.focus();
     });
 
+    if (!window.autoGenerateRoomName) {
+      const roomNameInputElement = document.getElementById('room-name-input');
+      
+      roomNameInputElement.addEventListener('keypress', function keypressHandler() {
+        document.querySelector('.room-name-input-container').classList.add('visited');
+        roomNameInputElement.removeEventListener('keypress', keypressHandler);
+      });
+
+      document.querySelector('.room-name-input-container').addEventListener('click', () => {
+        const errorMsg = document.querySelector('.error-room.error-text');
+        errorMsg.classList.remove('show');
+        document.querySelector('.room-name-input-container label').style.display = 'block';
+        roomNameInputElement.focus();
+      });
+    }
+
     const publishSettings = document.querySelector('.publish-settings');
 
-    publishSettings.addEventListener('click', (e) => {
+    publishSettings.addEventListener('click', e => {
       const initialVideoSwitch = document.querySelector('#initialVideoSwitch');
       const initialAudioSwitch = document.querySelector('#initialAudioSwitch');
 
@@ -80,8 +94,8 @@
           Modal.showConfirm({
             head: 'Set mic input',
             detail: 'Please identify the audio source in the following list:',
-            button: 'Set',
-          }, true).then((start) => {
+            button: 'Set'
+          }, true).then(start => {
             if (start) {
               Utils.sendEvent('roomView:setAudioSource', select.value);
             }
@@ -105,11 +119,9 @@
           }
           break;
         }
-        default: {
-          throw new Error(`Unknown element ${elem.id}`);
-        }
       }
     });
+
   };
 
   function render(resolve) {
@@ -118,8 +130,8 @@
     if (showTos) {
       templatePromises.push(_tosTemplate.render());
     }
-    Promise.all(templatePromises).then((htmlStrings) => {
-      htmlStrings.forEach((aHTML) => {
+    Promise.all(templatePromises).then(htmlStrings => {
+      htmlStrings.forEach(aHTML => {
         document.body.insertAdjacentHTML('afterbegin', aHTML);
       });
 
@@ -143,23 +155,22 @@
     },
     'PrecallController:audioOnly': function () {
       setSwitchStatus(false, 'Video', 'roomView:initialVideoSwitch');
-    },
+    }
   };
 
-  const setFocus = (username) => {
-    const focusElement = username ? document.getElementById('enter')
-      : document.getElementById('user-name-input');
+  const setFocus = elem => {
+    const focusElement = document.getElementById(`${elem}-name-input`);
     focusElement && focusElement.focus();
   };
 
-  const hideConnectivityTest = () => {
+  var hideConnectivityTest = () => {
     document.getElementById('pre-call-test').style.display = 'none';
     document.getElementById('precall-test-meter').style.display = 'none';
   };
 
   const populateAudioDevicesDropdown = (audioDevices, selectedDevId) => {
     const select = document.getElementById('select-devices');
-    audioDevices.forEach((device) => {
+    audioDevices.forEach(device => {
       const option = document.createElement('option');
       option.text = device.label;
       option.value = device.deviceId;
@@ -170,21 +181,23 @@
 
   let alreadyInitialized = false;
 
-  const init = () => new Promise((resolve) => {
-    if (alreadyInitialized) {
-      return resolve();
-    }
+  const init = () => {
+    return new Promise(resolve => {
+      if (alreadyInitialized) {
+        return resolve();
+      }
 
-    Utils.addEventsHandlers('', eventHandlers);
-    _precallTemplate = new EJSTemplate({ url: _precallTemplateSrc });
-    if (showTos) {
-      _tosTemplate = new EJSTemplate({ url: _tosTemplateSrc });
-    }
-    _unavailableTemplate = new EJSTemplate({ url: _unavailableTemplateSrc });
-    _lockedTemplate = new EJSTemplate({ url: _lockedTemplateSrc });
-    alreadyInitialized = true;
-    return render(resolve);
-  });
+      Utils.addEventsHandlers('', eventHandlers);
+      _precallTemplate = new EJSTemplate({ url: _precallTemplateSrc });
+      if (showTos) {
+        _tosTemplate = new EJSTemplate({ url: _tosTemplateSrc });
+      }
+      _unavailableTemplate = new EJSTemplate({ url: _unavailableTemplateSrc });
+      _lockedTemplate = new EJSTemplate({ url: _lockedTemplateSrc });
+      alreadyInitialized = true;
+      return render(resolve);
+    });
+  };
 
   const showModal = () => {
     Utils.removeEventHandlers('modal:', { close: showModal });
@@ -205,17 +218,19 @@
     const selector = '.tc-modal.contract';
     const acceptElement = document.querySelector(`${selector} .accept`);
     return Modal.show(selector, null, true)
-      .then(() => new Promise((resolve) => {
-        acceptElement.addEventListener('click', function onClicked(evt) {
-          acceptElement.removeEventListener('click', onClicked);
-          evt.preventDefault();
-          sessionStorage.setItem('tosAccepted', true);
-          Modal.hide(selector);
-          resolve();
-        });
+      .then(() => {
+        return new Promise(resolve => {
+          acceptElement.addEventListener('click', function onClicked(evt) {
+            acceptElement.removeEventListener('click', onClicked);
+            evt.preventDefault();
+            sessionStorage.setItem('tosAccepted', true);
+            Modal.hide(selector);
+            resolve();
+          });
 
-        Utils.addEventsHandlers('modal:', { close: showModal });
-      }));
+          Utils.addEventsHandlers('modal:', { close: showModal });
+        });
+      });
   };
 
   const hide = () => {
@@ -223,7 +238,7 @@
     Utils.removeEventHandlers('modal:', { close: showModal });
   };
 
-  const setVolumeMeterLevel = (level) => {
+  const setVolumeMeterLevel = level => {
     document.getElementById('audio-meter-level').style.width = `${level * 89}px`;
   };
 
@@ -244,12 +259,12 @@
     }, 100);
   };
 
-  const setTestMeterLevel = (value) => {
+  var setTestMeterLevel = value => {
     const width = value * document.getElementById('precall-test-meter').offsetWidth;
     document.getElementById('precall-test-meter-level').style.width = `${width}px`;
   };
 
-  const displayNetworkTestResults = (results) => {
+  const displayNetworkTestResults = results => {
     let packetLossStr;
 
     clearInterval(testMeterInterval);
@@ -259,11 +274,13 @@
     document.getElementById('connectivity-cancel').style.display = 'none';
 
     document.getElementById('pre-call-test-results').style.display = 'block';
-    document.getElementById('audio-bitrate').innerText = Math.round(results.audio.bitsPerSecond / 1000);
+    document.getElementById('audio-bitrate').innerText =
+      Math.round(results.audio.bitsPerSecond / 1000);
     if (results.video) {
-      document.getElementById('video-bitrate').innerText = Math.round(results.video.bitsPerSecond / 1000);
-      packetLossStr = isNaN(results.video.packetLossRatio) ? ''
-        : `${Math.round(100 * results.video.packetLossRatio)}% packet loss`;
+      document.getElementById('video-bitrate').innerText =
+        Math.round(results.video.bitsPerSecond / 1000);
+      packetLossStr = isNaN(results.video.packetLossRatio) ? '' :
+        `${Math.round(100 * results.video.packetLossRatio)}% packet loss`;
       document.getElementById('precall-video-packet-loss').innerText = packetLossStr;
     } else {
       document.getElementById('video-bitrate').innerText = 0;
@@ -281,13 +298,11 @@
       case 'precall-error':
         precallHeadingElement.innerText = 'Poor Connectivity';
         break;
-      default:
-        throw new Error(`Unknown classification ${results.classification}`);
     }
     document.getElementById('pre-call-description').innerText = results.text;
     document.getElementById('precall-icon').setAttribute('data-icon', results.classification);
-    packetLossStr = isNaN(results.audio.packetLossRatio) ? ''
-      : `${Math.round(100 * results.audio.packetLossRatio)}% packet loss`;
+    packetLossStr = isNaN(results.audio.packetLossRatio) ? '' :
+      `${Math.round(100 * results.audio.packetLossRatio)}% packet loss`;
     document.getElementById('precall-audio-packet-loss').innerText = packetLossStr;
   };
 
@@ -324,6 +339,6 @@
     showLockedMessage,
     startPrecallTestMeter,
     displayNetworkTestResults,
-    hideConnectivityTest,
+    hideConnectivityTest
   };
 })(this);

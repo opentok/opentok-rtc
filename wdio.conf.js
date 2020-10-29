@@ -1,4 +1,3 @@
-
 const DEBUG = process.env.DEBUG;
 
 const config = {
@@ -9,7 +8,7 @@ const config = {
   name: 'OT Demo Regression Tests',
 
   // sets the global timeout for all waitFor commands
-  waitforTimeout: !DEBUG ? 60 * 1000 : Infinity,
+  waitforTimeout: !DEBUG ? 5 * 60 * 1000 : Infinity,
 
   specs: [
     'test/regression_tests/specs/*.js'
@@ -51,7 +50,7 @@ const config = {
   sync: true,
   //
   // Level of logging verbosity: silent | verbose | command | data | result | error
-  logLevel: 'verbose',
+  logLevel: 'error',
   //
   // Enables colors for log output.
   coloredLogs: true,
@@ -66,10 +65,10 @@ const config = {
   //
   // Default timeout in milliseconds for request
   // if Selenium Grid doesn't send response
-  connectionRetryTimeout: 20000,
+  connectionRetryTimeout: 5 * 60 * 1000,
   //
   // Default request retries count
-  connectionRetryCount: 3,
+  connectionRetryCount: 1,
   //
   // Initialize the browser instance with a WebdriverIO plugin. The object should have the
   // plugin name as key and the desired plugin options as properties. Make sure you have
@@ -94,25 +93,25 @@ const config = {
   // your test setup with almost no effort. Unlike plugins, they don't add new
   // commands. Instead, they hook themselves up into the test process.
   services: [
-    'selenium-standalone',
     'firefox-profile'
   ],
-  seleniumArgs: {
-    drivers: {
-      chrome: {
-        version: '2.46',
-        baseURL: 'https://chromedriver.storage.googleapis.com'
-      }
-    }
-  },
-  seleniumInstallArgs: {
-    drivers: {
-      chrome: {
-        version: '2.46',
-        baseURL: 'https://chromedriver.storage.googleapis.com'
-      }
-    }
-  },
+  reporters: ['dot', 'spec'],
+  //  seleniumArgs: {
+  //    drivers: {
+  //      chrome: {
+  //        version: '2.46',
+  //        baseURL: 'https://chromedriver.storage.googleapis.com'
+  //      }
+  //    }
+  //  },
+  //  seleniumInstallArgs: {
+  //    drivers: {
+  //      chrome: {
+  //        version: '2.46',
+  //        baseURL: 'https://chromedriver.storage.googleapis.com'
+  //      }
+  //    }
+  //  },
   //
   // Framework you want to run your specs with.
   // The following are supported: Mocha, Jasmine, and Cucumber
@@ -130,8 +129,16 @@ const config = {
   // Options to be passed to Mocha.
   // See the full list at http://mochajs.org/
   mochaOpts: {
-    timeout: !DEBUG ? 2 * 60 * 1000 : Infinity,
+    timeout: !DEBUG ? 5 * 60 * 1000 : Infinity,
     ui: 'bdd'
+  },
+  onPrepare: function () {
+    // eslint-disable-next-line
+        console.log('let\'s go')
+  },
+  onComplete: function () {
+    // eslint-disable-next-line
+        console.log('that\'s it')
   }
 };
 
@@ -144,7 +151,7 @@ if (process.env.SAUCE_USERNAME) {
   };
   config.capabilities.push({
     browserName: 'chrome',
-    platform: 'macOS 10.12',
+    platform: 'macOS 10.14',
     version: 'latest',
     screenResolution: '1376x1032',
     username: process.env.SAUCE_USERNAME,
@@ -159,15 +166,12 @@ if (process.env.SAUCE_USERNAME) {
     accessKey: process.env.SAUCE_ACCESS_KEY
   });
 } else {
+  config.services.push('selenium-standalone');
   config.capabilities.push({
-    browserName: 'chrome',
-    version: 'latest',
-    screenResolution: '1280x1024'
+    browserName: 'chrome'
   });
   config.capabilities.push({
-    browserName: 'firefox',
-    version: 'latest',
-    screenResolution: '1280x1024'
+    browserName: 'firefox'
   });
 }
 

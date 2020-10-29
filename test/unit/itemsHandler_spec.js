@@ -1,5 +1,8 @@
-var { assert } = chai;
-var { expect } = chai;
+var sinonTest = require('sinon-test');
+var test = sinonTest(sinon);
+sinon.test = test;
+var assert = chai.assert;
+var expect = chai.expect;
 var should = chai.should();
 
 describe('ItemsHandler', () => {
@@ -33,7 +36,7 @@ describe('ItemsHandler', () => {
   function clickButton(ctx, selector, id, type, cb) {
     var control = getContainer().querySelector(selector);
 
-    ctx.stub(window, 'CustomEvent', (name, data) => {
+    ctx.stub(window, 'CustomEvent').callsFake( (name, data) => {
       expect(name).to.equal('roomView:buttonClick');
       expect(data.detail.streamId).to.equal(id);
       expect(data.detail.name).to.equal(type);
@@ -87,7 +90,7 @@ describe('ItemsHandler', () => {
 
   describe('#event handlers: dblclick', () => {
     it('should send the correct event when user clicks twice', sinon.test(function (done) {
-      this.stub(window, 'CustomEvent', (name, data) => {
+      this.stub(window, 'CustomEvent').callsFake( (name, data) => {
         expect(name).to.equal('layoutView:itemSelected');
         expect(data.detail.item).to.equal(getContainer().querySelector('#subscriber'));
         done();

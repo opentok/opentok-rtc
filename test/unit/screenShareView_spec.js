@@ -1,4 +1,4 @@
-var { expect } = chai;
+var expect = chai.expect;
 
 describe('ScreenShareView', () => {
   var shareErrors;
@@ -19,7 +19,7 @@ describe('ScreenShareView', () => {
       resolveShow = resolve;
     });
 
-    sinon.stub(Modal, 'show', (selector, fcCb) => {
+    sinon.stub(Modal, 'show').callsFake(  (selector, fcCb) => {
       fcCb && fcCb();
       resolveShow();
       return showDone;
@@ -43,7 +43,7 @@ describe('ScreenShareView', () => {
 
   before(() => {
     window.LazyLoader = window.LazyLoader || { dependencyLoad() {} };
-    sinon.stub(LazyLoader, 'dependencyLoad', (resources) => Promise.resolve());
+    sinon.stub(LazyLoader, 'dependencyLoad').callsFake(  resources => Promise.resolve());
     window.MockOTHelper._install();
   });
 
@@ -92,16 +92,16 @@ describe('ScreenShareView', () => {
   });
 
   it('should show a message when has error and is not userDenied or extensionNotInstalled',
-    (done) => {
-      var err = {
-        code: 'AAAA',
-        message: 'whatEver Error',
-      };
+     (done) => {
+       var err = {
+         code: 'AAAA',
+         message: 'whatEver Error',
+       };
 
-      var event = new CustomEvent('screenShareController:shareScreenError', { detail: err });
+       var event = new CustomEvent('screenShareController:shareScreenError', { detail: err });
 
-      testMsgError(event, err.message, 'error-sharing', done);
-    });
+       testMsgError(event, err.message, 'error-sharing', done);
+     });
 
   it('should show install message when error is extNotInstalled', (done) => {
     var err = {
