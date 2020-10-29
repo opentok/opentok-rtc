@@ -50,9 +50,9 @@ You will also need these API subscriptions:
 
 ### Setting up
 
-Once all the dependencies are in place, you will need to set some configuration options and install the applications dependencies.
+Once all the dependencies are in place, you will need to set some configuration options and install the application dependencies.
 
-First, change directory to where you have downloaded OpenTokRTC. Then create create the file `config.json` in the `config` folder. You can copy `config/example.json` to `config/config.json`
+First, change directory to where you have downloaded OpenTokRTC. Then create the file `config.json` in the `config` folder. You can copy `config/example.json` to `config/config.json`
 
 ```sh
 $ cd <path-to-opentok-rtc>
@@ -127,13 +127,13 @@ To start the server with HTTPS enabled, pass `-S` flag to launch a secure server
 $ node server -S -C sampleCerts
 ```
 
-The server expects SSL certificate file to be named `serverCert.pem` and SSL private key file to be named `serverKey.pem`. There is a pre-generated, self-signed SSL certificate pair in the `./sampleCerts` directory.
+The server expects the SSL certificate file to be named `serverCert.pem` and the SSL private key file to be named `serverKey.pem`. There is a pre-generated, self-signed SSL certificate pair in the `./sampleCerts` directory.
 
 For detailed information on available options, run `$ node server -h`.
 
 ## Configuration options
 
-Configuration can be done using the config JSON file, or environment variables which overwrite any JSON value read. The default JSON file is `config/config.json`. This path can be overwritten using the Environment Variable `DEFAULT_JSON_CONFIG_PATH`.
+Configuration can be done using the config JSON file, or environment variables that overwrite any JSON value read. The default JSON file is `config/config.json`. This path can be overwritten using the Environment Variable `DEFAULT_JSON_CONFIG_PATH`.
 These are the detailed configuration options:
 
 ### OpenTok configuration
@@ -148,7 +148,7 @@ Environment Variable Names and Description:
 - `TB_MAX_SESSION_AGE` (Optional, default value 2): Sessions should not live forever. So we'll store
   the last time a session was used and if when we fetch it from Redis we determine it's older than
   this max age (in days). This is the key where that value (in days) should be stored.
-  By default, sessions live two days.
+  By default, sessions live for two days.
 
 JSON example:
 
@@ -266,7 +266,7 @@ For example, the new lines in the config.json file should look like this:
   }
 ```
 
-You can also add these as `GOOGLE_CLIENT_ID` and `GOOGLE_HOSTED_DOMAIN` environment variables instead of config.json setings.
+You can also add these as `GOOGLE_CLIENT_ID` and `GOOGLE_HOSTED_DOMAIN` environment variables instead of config.json settings.
 
 ### Web client configuration
 
@@ -375,12 +375,12 @@ For information on how to customize OpenTokRTC's UI, see [CUSTOMIZING-UI.md](CUS
 Ensure Redis server is running on localhost (run `redis-server` in the command line)
 and restart OpenTokRTC.
 
-**OpenTokRTC does not work on when served over HTTP.**
+**OpenTokRTC does not work when served over HTTP.**
 
 Browser security policies require HTTPS for WebRTC video communications. You will need to set up
 the app to be served over HTTPS. You can set up a
 [secure reverse-proxy](https://www.nginx.com/resources/admin-guide/nginx-https-upstreams/)
-to your OpenTokRTC port using nginx. For details, read
+to your OpenTokRTC port using Nginx. For details, read
 [this post](https://tokbox.com/blog/the-impact-of-googles-new-chrome-security-policy-on-webrtc/).
 
 **UI looks broken**
@@ -392,7 +392,7 @@ $ bower install
 $ grunt clientBuild
 ```
 
-We recommend that you run the application as a non-root user. However, if you are running the application as the `root` user, you will additionally need to tell `bower` to allow root user to install dependencies, else bower will refuse to work:
+We recommend that you run the application as a non-root user. However, if you are running the application as the `root` user, you will additionally need to tell `bower` to allow the root user to install dependencies, else bower will refuse to work:
 
 ```
 $ bower install --allow-root
@@ -462,7 +462,7 @@ Interested in contributing? We :heart: pull requests! See the
 
 ## Getting Help
 
-We love to hear from you so if you have questions, comments or find a bug in the project, let us know! You can either:
+We love to hear from you so if you have questions, comments, or find a bug in the project, let us know! You can either:
 
 - Open an issue on this repository
 - See <https://support.tokbox.com/> for support options
