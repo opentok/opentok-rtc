@@ -97,12 +97,9 @@
           PrecallView.hide();
           publisher && publisher.destroy();
           otNetworkTest && otNetworkTest.stopTest();
-          const username = document.querySelector(`${selector} input`).value.trim();
-          window.localStorage.setItem('username', username);
-          publisherOptions.name = username;
           setTimeout(() => {
             resolve({
-              username,
+              username: publisherOptions.name,
               publisherOptions
             });
           }, 1);
@@ -153,6 +150,10 @@
             errorMsg.classList.add('show');
             return;
           }
+
+          const username = document.querySelector(`${selector} input`).value.trim();
+          publisherOptions.name = username;
+          window.localStorage.setItem('username', username);
 
           if (window.location.href.indexOf('room') > -1) {
             // Jeff to do: This code should move to RoomController and be event-driven
