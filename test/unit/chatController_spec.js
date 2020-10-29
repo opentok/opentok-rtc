@@ -1,7 +1,8 @@
 var sinonTest = require('sinon-test');
+
 var test = sinonTest(sinon);
 sinon.test = test;
-var expect = chai.expect;
+var { expect } = chai;
 
 describe('ChatController', () => {
   var expectedHandlers = ['signal:chat', 'connectionCreated', 'connectionDestroyed'];
@@ -24,8 +25,8 @@ describe('ChatController', () => {
 
   before(() => {
     window.LazyLoader = window.LazyLoader || { dependencyLoad() {} };
-    sinon.stub(LazyLoader, 'dependencyLoad').callsFake(  resources => Promise.resolve());
-    sinon.stub(ChatView, 'init').callsFake(  () => Promise.resolve());
+    sinon.stub(LazyLoader, 'dependencyLoad').callsFake((resources) => Promise.resolve());
+    sinon.stub(ChatView, 'init').callsFake(() => Promise.resolve());
     window.MockRoomStatus._install();
     window.MockOTHelper._install();
   });
@@ -59,58 +60,56 @@ describe('ChatController', () => {
           var spyArg = Utils.addHandlers.getCall(0).args[0];
           expect(Object.keys(spyArg).length).to.be
             .equal(Object.keys(handlerShouldHave).length);
-          expect(Object.keys(spyArg).every(action =>
-            spyArg[action].name === handlerShouldHave[action].name)).to.be.true;
+          expect(Object.keys(spyArg).every((action) => spyArg[action].name === handlerShouldHave[action].name)).to.be.true;
           expect(RoomStatus.set.calledWith(STATUS_KEY, [])).to.be.true;
           done();
         });
     }
 
-    it('should initialize properly the object and return the handlers set when called without ' +
-       'handlers', sinon.test(function (done) {
-         var expectedHandlers = {
-           updatedRemotely: {
-             name: 'roomStatus:updatedRemotely',
-             couldBeChanged: true,
-           },
-           outgoingMessage: {
-             name: 'chatView:outgoingMessage',
-           },
-         };
+    it('should initialize properly the object and return the handlers set when called without '
+       + 'handlers', sinon.test(function (done) {
+      var expectedHandlers = {
+        updatedRemotely: {
+          name: 'roomStatus:updatedRemotely',
+          couldBeChanged: true,
+        },
+        outgoingMessage: {
+          name: 'chatView:outgoingMessage',
+        },
+      };
 
-         this.stub(RoomStatus, 'set');
-         this.stub(Utils, 'addHandlers');
+      this.stub(RoomStatus, 'set');
+      this.stub(Utils, 'addHandlers');
 
-         verifyInit(done, expectedHandlers);
-       }));
+      verifyInit(done, expectedHandlers);
+    }));
 
+    it('should initialize properly the object and return the handlers set when called with '
+       + 'handlers', sinon.test(function (done) {
+      var expectedHandlers = {
+        updatedRemotely: {
+          name: 'changedRoomStatus:changedUpdatedRemotely',
+          couldBeChanged: true,
+        },
+        outgoingMessage: {
+          name: 'chatView:outgoingMessage',
+        },
+      };
 
-    it('should initialize properly the object and return the handlers set when called with ' +
-       'handlers', sinon.test(function (done) {
-         var expectedHandlers = {
-           updatedRemotely: {
-             name: 'changedRoomStatus:changedUpdatedRemotely',
-             couldBeChanged: true,
-           },
-           outgoingMessage: {
-             name: 'chatView:outgoingMessage',
-           },
-         };
+      var handlersName = [
+        {
+          type: 'updatedRemotely',
+          name: 'changedRoomStatus:changedUpdatedRemotely',
+        }, {
+          type: 'chatVisibility',
+          name: 'roomView:chatVisibility',
+        }];
 
-         var handlersName = [
-           {
-             type: 'updatedRemotely',
-             name: 'changedRoomStatus:changedUpdatedRemotely',
-           }, {
-             type: 'chatVisibility',
-             name: 'roomView:chatVisibility',
-           }];
+      this.stub(RoomStatus, 'set');
+      this.stub(Utils, 'addHandlers');
 
-         this.stub(RoomStatus, 'set');
-         this.stub(Utils, 'addHandlers');
-
-         verifyInit(done, expectedHandlers, handlersName);
-       }));
+      verifyInit(done, expectedHandlers, handlersName);
+    }));
   });
 
   describe('#handlers OT', () => {
@@ -151,36 +150,36 @@ describe('ChatController', () => {
       });
 
       it('should insert new user connected event when a different user connects',
-         sinon.test((done) => {
-           var connData = {
-             userName: 'otherUser',
-             text: 'has joined the call',
-           };
+        sinon.test((done) => {
+          var connData = {
+            userName: 'otherUser',
+            text: 'has joined the call',
+          };
 
-           OTHelper._myConnId = 'myConnId';
+          OTHelper._myConnId = 'myConnId';
 
-           window.addEventListener('chatController:presenceEvent', function handlerTest(evt) {
-             window.removeEventListener('chatController:presenceEvent', handlerTest);
-             expect(evt.detail).to.be.deep.equal(connData);
-             done();
-           });
+          window.addEventListener('chatController:presenceEvent', function handlerTest(evt) {
+            window.removeEventListener('chatController:presenceEvent', handlerTest);
+            expect(evt.detail).to.be.deep.equal(connData);
+            done();
+          });
 
-           chatHndls.connectionCreated(getSignalEvent(connData.userName, 'otherConnId'));
-         }));
+          chatHndls.connectionCreated(getSignalEvent(connData.userName, 'otherConnId'));
+        }));
 
       it('should not do anything when I receive a connect event for myself',
-         sinon.test(function () {
-           var connData = {
-             userName: 'mySelf',
-             text: 'has joined the call',
-           };
+        sinon.test(function () {
+          var connData = {
+            userName: 'mySelf',
+            text: 'has joined the call',
+          };
 
-           OTHelper._myConnId = 'myConnId';
+          OTHelper._myConnId = 'myConnId';
 
-           this.spy(window, 'dispatchEvent');
-           chatHndls.connectionCreated(getSignalEvent(connData.userName, OTHelper._myConnId));
-           expect(window.dispatchEvent.called).to.be.false;
-         }));
+          this.spy(window, 'dispatchEvent');
+          chatHndls.connectionCreated(getSignalEvent(connData.userName, OTHelper._myConnId));
+          expect(window.dispatchEvent.called).to.be.false;
+        }));
     });
 
     describe('#connectionDestroyed', () => {
@@ -232,12 +231,12 @@ describe('ChatController', () => {
     });
 
     it('should load chat history', sinon.test(function (done) {
-      this.stub(RoomStatus, 'get').callsFake(  key => sharedHistory);
+      this.stub(RoomStatus, 'get').callsFake((key) => sharedHistory);
 
       var handlers = [];
 
       loadHistoryTest = function (evt) {
-        var data = evt.detail.data;
+        var { data } = evt.detail;
         expect(data).to.be.deep.equal(sharedHistory[eventCount++]);
         if (eventCount === sharedHistory.length) {
           done();
@@ -254,7 +253,7 @@ describe('ChatController', () => {
 
   describe('#outgoingMessage event', () => {
     it('should send the message using an OT signal', sinon.test(function (done) {
-      this.stub(OTHelper, 'sendSignal').callsFake(  evt => Promise.resolve());
+      this.stub(OTHelper, 'sendSignal').callsFake((evt) => Promise.resolve());
 
       var handlers = [];
       var resolver;

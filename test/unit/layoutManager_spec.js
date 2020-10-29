@@ -24,10 +24,10 @@ describe('LayoutManager', () => {
       return li;
     }
     sinon.stub(LayoutView, 'init');
-    sinon.stub(LayoutView, 'append').callsFake(  (id) => { return id === 'desktop' ? desktop : getLayoutElement(); }); // eslint-disable-line arrow-body-style
+    sinon.stub(LayoutView, 'append').callsFake((id) => { return id === 'desktop' ? desktop : getLayoutElement(); }); // eslint-disable-line arrow-body-style
     sinon.stub(LayoutView, 'remove');
     sinon.stub(ItemsHandler, 'init');
-    sinon.stub(LazyLoader, 'dependencyLoad').callsFake(  () => Promise.resolve());
+    sinon.stub(LazyLoader, 'dependencyLoad').callsFake(() => Promise.resolve());
   });
 
   it('should exist', () => {

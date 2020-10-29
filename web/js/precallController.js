@@ -146,7 +146,6 @@
         }
 
         function submitForm() {
-
           if (!window.autoGenerateRoomName && !document.getElementById('room-name-input').value) {
             const errorMsg = document.querySelector('.error-room.error-text');
             document.querySelector('.room-name-input-container label').style.display = 'none';
