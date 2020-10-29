@@ -144,14 +144,16 @@
 
         function submitForm() {
 
-          if (!window.autoGenerateRoomName && !document.getElementById('room-name-input').value) {
-            const errorMsg = document.querySelector('.error-room.error-text');
-            document.querySelector('.room-name-input-container label').style.display = 'none';
-            errorMsg.classList.add('show');
-            return;
+          if (!window.autoGenerateRoomName &&
+            document.getElementById('room-name-input') &&
+            !document.getElementById('room-name-input').value) {
+              const errorMsg = document.querySelector('.error-room.error-text');
+              document.querySelector('.room-name-input-container label').style.display = 'none';
+              errorMsg.classList.add('show');
+              return;
           }
 
-          const username = document.querySelector(`${selector} input`).value.trim();
+          const username = document.getElementById('user-name-input').value.trim();
           publisherOptions.name = username;
           window.localStorage.setItem('username', username);
 
