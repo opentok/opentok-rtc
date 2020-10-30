@@ -11,9 +11,9 @@
       ]
     },
     '/': {
-      mainView: 'LandingController',
+      mainView: 'RoomController',
       dependencies: [
-        'LandingController'
+        'RoomController'
       ]
     }
   };

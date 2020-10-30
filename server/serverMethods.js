@@ -401,19 +401,13 @@ function ServerMethods(aLogLevel, aModules) {
   }
 
   // Returns the personalized root page
-  async function getRoot(aReq, aRes) {
-    var meetingAllowed = await isMeetingAllowed(aReq);
-    var language = getUserLanguage(accepts(aReq).languages());
-    var country = getUserCountry(aReq);
-    var roomName = '';
-    
+  async function getRoot(aReq, aRes) { 
     if (aReq.tbConfig.autoGenerateRoomName) {
-      roomName = `${haikunator.haikunate({ tokenLength: 0 })}-${haikunator.haikunate()}`;
+      const roomName = `${haikunator.haikunate({ tokenLength: 0 })}-${haikunator.haikunate()}`;
       return aRes.redirect(`/room/${roomName}`);
     } else {
-      finshGetPostRoom(aReq, aRes);
-    }
-   
+      getRoom(aReq, aRes);
+    } 
   }
 
   function isInBlacklist(name) {
@@ -422,7 +416,7 @@ function ServerMethods(aLogLevel, aModules) {
 
   // Finish the call to getRoom and postRoom
   // eslint-disable-next-line consistent-return
-  async function finshGetPostRoom(aReq, aRes) {
+  async function getRoom(aReq, aRes) {
     var meetingAllowed = await isMeetingAllowed(aReq);
     var query = aReq.query;
 
@@ -509,25 +503,6 @@ function ServerMethods(aLogLevel, aModules) {
             }
           });
     });
-  }
-
-  // Finish the call to getRoom and postRoom
-  // eslint-disable-next-line no-unused-vars
-  function getRoom(aReq, aRes) {
-    var query = aReq.query;
-
-    logger.log('getRoom serving ' + aReq.path, 'roomName:', aReq.params.roomName,
-      'userName:', query && query.userName,
-      'template:', query && query.template);
-
-    finshGetPostRoom(aReq, aRes);
-  }
-
-  // Return the personalized HTML for a room when directed from the root.
-  function postRoom(aReq, aRes) {
-    logger.log('postRoom serving ' + aReq.path, 'roomName:', aReq.params.roomName,
-      'body:', aReq.body);
-    finshGetPostRoom(aReq, aRes, true);
   }
 
   // Given a sessionInfo (which might be empty or non usable) returns a promise than will fullfill
@@ -1023,7 +998,6 @@ function ServerMethods(aLogLevel, aModules) {
     lockRoom,
     getRoot,
     getRoom,
-    postRoom,
     getRoomInfo,
     postRoomArchive,
     postUpdateArchiveInfo,

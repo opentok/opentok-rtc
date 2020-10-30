@@ -83,15 +83,16 @@
           submitForm();
         });
 
-        function hidePrecall() {
+        function hidePrecall(roomName) {
           PrecallView.hide();
           publisher && publisher.destroy();
           otNetworkTest && otNetworkTest.stopTest();
-          const username = document.querySelector(`${selector} input`).value.trim();
+          const username = document.getElementById('user-name-input').value.trim();
           window.localStorage.setItem('username', username);
           publisherOptions.name = username;
           setTimeout(() => {
             resolve({
+              roomURI: roomName
               username,
               publisherOptions
             });
@@ -99,7 +100,7 @@
         }
 
         function submitRoomForm(roomName) {
-          function isAllowedToJoin() {
+          function isAllowedToJoin(roomName) {
             return new Promise((resolve, reject) => {
               Request
                 .getRoomRawInfo(roomName).then((room) => {
@@ -118,11 +119,11 @@
             });
           }
 
-          isAllowedToJoin().then(() => {
+          isAllowedToJoin(roomName).then(() => {
             if (showTos) {
-              PrecallView.showContract().then(hidePrecall);
+              PrecallView.showContract().then(hidePrecall(roomName));
             } else {
-              hidePrecall();
+              hidePrecall(roomName);
             }
           }).catch((e) => {
             if (e.message === 'Room locked') {
