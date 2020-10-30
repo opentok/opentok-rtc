@@ -45,6 +45,12 @@
   "maxUsersPerRoom": 0,
   "enableRoomLocking": true,
   "autoGenerateRoomName": true,
+  "appName": "",
+  "introText": "",
+  "helpLinkText1": "",
+  "helpLinkUrl1": "",
+  "helpLinkText2": "",
+  "helpLinkUrl2": "",
   "adobeTracking": {
     "url": "",
     "primaryCategory": "",

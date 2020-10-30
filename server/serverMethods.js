@@ -207,6 +207,12 @@ function ServerMethods(aLogLevel, aModules) {
       var hotjarVersion = config.get(C.HOTJAR_VERSION);
       var enableFeedback = config.get(C.ENABLE_FEEDBACK);
       var autoGenerateRoomName = config.get(C.AUTO_GENERATE_ROOM_NAME);
+      var introText = config.get(C.INTRO_TEXT);
+      var appName = config.get(C.APP_NAME);
+      var helpLinkText1 = config.get(C.HELP_LINK_TEXT_1);
+      var helpLinkUrl1 = config.get(C.HELP_LINK_URL_1);
+      var helpLinkText2 = config.get(C.HELP_LINK_TEXT_2);
+      var helpLinkUrl2 = config.get(C.HELP_LINK_URL_2);
 
       roomBlackList = config.get(C.BLACKLIST) ?
         config.get(C.BLACKLIST).split(',').map(word => word.trim().toLowerCase()) : [];
@@ -269,7 +275,13 @@ function ServerMethods(aLogLevel, aModules) {
         ATFunctionDept,
         mediaMode,
         enableEmoji,
-        autoGenerateRoomName
+        autoGenerateRoomName,
+        introText,
+        appName,
+        helpLinkText1,
+        helpLinkUrl1,
+        helpLinkText2,
+        helpLinkUrl2
       };
     });
   }
@@ -325,6 +337,7 @@ function ServerMethods(aLogLevel, aModules) {
       userLanguage: language,
       userCountry: country,
       useGoogleFonts: aReq.tbConfig.useGoogleFonts,
+      appName: aReq.tbConfig.appName,
     }, (err, html) => {
       if (err) {
         logger.error('getMeetingCompletion. error: ', err);
@@ -442,7 +455,13 @@ function ServerMethods(aLogLevel, aModules) {
           enableFeedback: aReq.tbConfig.enableFeedback,
           opentokJsUrl: aReq.tbConfig.opentokJsUrl,
           enablePrecallTest: aReq.tbConfig.enablePrecallTest,
-          enterButtonLabel: 'Start Meeting'
+          enterButtonLabel: 'Start Meeting',
+          introText: aReq.tbConfig.introText,
+          appName: aReq.tbConfig.appName,
+          helpLinkText1: aReq.tbConfig.helpLinkText1,
+          helpLinkUrl1: aReq.tbConfig.helpLinkUrl1,
+          helpLinkText2: aReq.tbConfig.helpLinkText2,
+          helpLinkUrl2: aReq.tbConfig.helpLinkUrl2
         }, (err, html) => {
           if (err) {
             logger.error('getRoot. error: ', err);
@@ -534,6 +553,12 @@ function ServerMethods(aLogLevel, aModules) {
             enableFeedback: tbConfig.enableFeedback,
             enterButtonLabel: 'Join Meeting',
             routedFromStartMeeting: Boolean(routedFromStartMeeting),
+            introText: tbConfig.introText,
+            appName: tbConfig.appName,
+            helpLinkText1: tbConfig.helpLinkText1,
+            helpLinkUrl1: tbConfig.helpLinkUrl1,
+            helpLinkText2: tbConfig.helpLinkText2,
+            helpLinkUrl2: tbConfig.helpLinkUrl2,
             // eslint-disable-next-line no-dupe-keys
             userName
           }, (err, html) => {

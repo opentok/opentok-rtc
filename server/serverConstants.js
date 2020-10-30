@@ -135,6 +135,18 @@ E.BLACKLIST = { envVar: 'BLACKLIST', jsonPath: 'blacklist', defaultValue: '' };
 
 E.MEDIA_MODE = { envVar: 'MEDIA_MODE', jsonPath: 'mediaMode', defaultValue: 'routed' };
 
+E.INTRO_TEXT = { envVar: 'INTRO_TEXT', jsonPath: 'introText', defaultValue: 'Welcome to Video Conferencing.' };
+
+E.APP_NAME = { envVar: 'APP_NAME', jsonPath: 'appName', defaultValue: 'Vonage Video Conferencing' };
+
+E.HELP_LINK_TEXT_1 = { envVar: 'HELP_LINK_TEXT_1', jsonPath: 'helpLinkText1', defaultValue: '' };
+
+E.HELP_LINK_URL_1 = { envVar: 'HELP_LINK_URL_1', jsonPath: 'helpLinkUrl1', defaultValue: '' };
+
+E.HELP_LINK_TEXT_2 = { envVar: 'HELP_LINK_TEXT_2', jsonPath: 'helpLinkText2', defaultValue: '' };
+
+E.HELP_LINK_URL_2 = { envVar: 'HELP_LINK_URL_2', jsonPath: 'helpLinkUrl2', defaultValue: '' };
+
 E.ADOBE_TRACKING_URL = { envVar: 'ADOBE_TRACKING_URL', jsonPath: 'adobeTracking.url', defaultValue: '' };
 
 E.ADOBE_TRACKING_PRIMARY_CATEGORY = { envVar: 'ADOBE_TRACKING_PRIMARY_CATEGORY', jsonPath: 'adobeTracking.primaryCategory', defaultValue: '' };
