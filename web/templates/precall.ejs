@@ -16,31 +16,30 @@
     <footer>
       <a href="https://www.vonage.com/solutions/" target="_blank" rel="noopener">Solutions for when the unexpected happens</a>
     </footer>
+</div>
+<div id="righthand-container" class="user-name-modal">
+  <div class="landing-more-info">
+    Need help? <a href="Vonage-Free-Conferencing-help.pdf" target="_blank">Read our FAQs</a>
   </div>
-  <div id="righthand-container" class="user-name-modal">
-    <div class="landing-more-info">
-      Need help? <a href="Vonage-Free-Conferencing-help.pdf" target="_blank">Read our FAQs</a>
+  <form method="post">
+    <div id="video-preview">
     </div>
-    <form method="post">
-      <div id="video-preview">
+    <div id="settings-prompt">
+      <% if (!autoGenerateRoomName && !roomName) { %>
+      <div id="enter-room-name-prompt">
+        <div class="room-name-input-container">
+          <input id="room-name-input" class="block username" name="roomName" autocomplete="off" maxlength="46" value="<%=roomName%>">
+          <label>Room Name</label>
+          <p class="error-room error-text">
+            <i data-icon="warning"></i>
+            Please enter a meeting name.
+          </p>
+        </div>
       </div>
-      <div id="settings-prompt">
-        <% if (!autoGenerateRoomName && !roomName) { %>
-        <div id="enter-room-name-prompt">
-          <div class="room-name-input-container">
-            <input id="room-name-input" class="block username" name="roomName" autocomplete="off" maxlength="46" value="<%=roomName%>">
-            <label>Room Name</label>
-            <p class="error-room error-text">
-              <i data-icon="warning"></i>
-              Please enter a meeting name.
-            </p>
-          </div>
-        </div>
-        <% } %>
-        <div class="user-name-input-container">
-          <input id="user-name-input" class="block username" name="userName" autocomplete="off" data-wd="username" maxlength="46">
-          <label>Your name (optional)</label>
-        </div>
+      <% } %>
+      <div class="user-name-input-container">
+        <input id="user-name-input" class="block username" name="userName" autocomplete="off" data-wd="username" maxlength="46">
+        <label>Your name (optional)</label>
       </div>
       <div class="publish-settings">
         <div id="video-settings">
@@ -101,47 +100,49 @@
           <span><%=enterButtonLabel%></span>
         </button>
       </div>
-    </form>
-    <% if (enablePrecallTest) { %>
-    <div id="pre-call-test-results">
-      <i data-icon="close-box" id="precall-close"></i>
-      <i data-icon="precall-tick" id="precall-icon"></i>
-      <p id="pre-call-heading">Precall Test Results</p>
-      <p id="pre-call-description">
-        You can expect a great experience on your video call!
-      </p>
-      <div id="results">
-        <div id="precall-video-results" class="precall-media-results">
-          <p class="media-heading">
-            VIDEO QUALITY
-          </p>
-          <p class="bitrate">
-            <span id="video-bitrate"></span> Kbps
-          </p>
-          <p id="precall-resolution">
-          </p>
-          <p id="precall-framerate">
-          </p>
-          <p id="precall-video-packet-loss">
-          </p>
-        </div>
-        <div id="precall-audio-results" class="precall-media-results">
-          <p class="media-heading">
-            AUDIO QUALITY
-          </p>
-          <p class="bitrate">
-            <span id="audio-bitrate">40</span> Kbps
-          </p>
-          <p id="precall-audio-packet-loss">
-            0% packet loss
-          </p>
-        </div>
+    </div>
+    
+  </form>
+  <% if (enablePrecallTest) { %>
+  <div id="pre-call-test-results">
+    <i data-icon="close-box" id="precall-close"></i>
+    <i data-icon="precall-tick" id="precall-icon"></i>
+    <p id="pre-call-heading">Precall Test Results</p>
+    <p id="pre-call-description">
+      You can expect a great experience on your video call!
+    </p>
+    <div id="results">
+      <div id="precall-video-results" class="precall-media-results">
+        <p class="media-heading">
+          VIDEO QUALITY
+        </p>
+        <p class="bitrate">
+          <span id="video-bitrate"></span> Kbps
+        </p>
+        <p id="precall-resolution">
+        </p>
+        <p id="precall-framerate">
+        </p>
+        <p id="precall-video-packet-loss">
+        </p>
       </div>
-      <div id="retest">
-        <i data-icon="precall-retest" id="precall-retest"></i>
-        Re-test
+      <div id="precall-audio-results" class="precall-media-results">
+        <p class="media-heading">
+          AUDIO QUALITY
+        </p>
+        <p class="bitrate">
+          <span id="audio-bitrate">40</span> Kbps
+        </p>
+        <p id="precall-audio-packet-loss">
+          0% packet loss
+        </p>
       </div>
     </div>
-    <% } %>
+    <div id="retest">
+      <i data-icon="precall-retest" id="precall-retest"></i>
+      Re-test
+    </div>
   </div>
+  <% } %>
+</div>
 </div>
