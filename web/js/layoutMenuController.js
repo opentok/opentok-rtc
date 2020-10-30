@@ -1,15 +1,11 @@
 /* global LayoutMenuView */
 
-!(global => {
-  const init = () => {
-    return LazyLoader.dependencyLoad([
-      '/js/layoutMenuView.js'
-    ]).then(() => {
-      return LayoutMenuView.init();
-    });
-  };
+!((global) => {
+  const init = () => LazyLoader.dependencyLoad([
+    '/js/layoutMenuView.js',
+  ]).then(() => LayoutMenuView.init());
 
   global.LayoutMenuController = {
-    init
+    init,
   };
 })(this);

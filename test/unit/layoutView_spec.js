@@ -1,5 +1,5 @@
-var assert = chai.assert;
-var expect = chai.expect;
+var { assert } = chai;
+var { expect } = chai;
 var should = chai.should();
 
 describe('LayoutView', () => {
@@ -46,7 +46,7 @@ describe('LayoutView', () => {
   describe('#append', () => {
     it('should add items', () => {
       var list = getContainer().querySelector('ul');
-      var length = list.children.length;
+      var { length } = list.children;
 
       var id = Math.random() + '';
 
@@ -88,7 +88,7 @@ describe('LayoutView', () => {
   describe('#remove', () => {
     it('should delete items', () => {
       var list = getContainer().querySelector('ul');
-      var length = list.children.length;
+      var { length } = list.children;
       var item = LayoutView.append(Math.random() + '', options);
       expect(list.children.length).to.be.equal(length + 1);
       LayoutView.remove(item);

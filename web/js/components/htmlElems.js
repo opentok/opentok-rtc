@@ -1,4 +1,4 @@
-!(exports => {
+!((exports) => {
   Element.prototype.data = function (name, value) {
     if (!name) {
       return null;
@@ -75,7 +75,7 @@
   }
 
   function setEnabled(element, enabled) {
-    const classList = element.classList;
+    const { classList } = element;
     enabled ? classList.add('enabled') : classList.remove('enabled');
   }
 
@@ -96,7 +96,7 @@
   function addHandlerArchive(selector) {
     const list = document.querySelector(selector);
 
-    list.addEventListener('click', evt => {
+    list.addEventListener('click', (evt) => {
       if (evt.type === 'click') {
         const elemClicked = evt.target;
         if (!(HTMLElems.isAction(elemClicked))) {
@@ -111,7 +111,7 @@
           },
           get status() {
             return elemClicked.parentNode.data('status');
-          }
+          },
         });
       }
     });
@@ -127,6 +127,6 @@
     },
     setEnabled,
     getAncestorByTagName,
-    addHandlerArchive
+    addHandlerArchive,
   };
 })(this);

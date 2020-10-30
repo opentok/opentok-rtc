@@ -1,6 +1,6 @@
 /* global Chat, TextProcessor, otHelper */
 
-!(exports => {
+!((exports) => {
   let usrId;
 
   let closeChatBtn;
@@ -19,9 +19,7 @@
   function isMobile() { return typeof window.orientation !== 'undefined'; }
 
   function isVisible() {
-    return _visibilityChanging.then(() => {
-      return Chat.visible;
-    });
+    return _visibilityChanging.then(() => Chat.visible);
   }
 
   function setVisibility(isVisible) {
@@ -46,36 +44,36 @@
       incomingMessage: {
         name: 'chatController:incomingMessage',
         handler(evt) {
-          const data = evt.detail.data;
+          const { data } = evt.detail;
           insertChatLine(data);
-          isVisible().then(visible => {
+          isVisible().then((visible) => {
             if (!visible) {
               Utils.sendEvent('chatView:unreadMessage', { data });
             }
           });
-        }
+        },
       },
       presenceEvent: {
         name: 'chatController:presenceEvent',
         handler(evt) {
           insertChatEvent(evt.detail);
-        }
+        },
       },
       messageDelivered: {
         name: 'chatController:messageDelivered',
         handler() {
           chatMsgInput.value = '';
-        }
+        },
       },
       chatVisibility: {
         name: 'roomView:chatVisibility',
         handler(evt) {
           _visibilityChanging = setVisibility(evt.detail);
         },
-        couldBeChanged: true
-      }
+        couldBeChanged: true,
+      },
     };
-    Array.isArray(configuredEvts) && configuredEvts.forEach(aEvt => {
+    Array.isArray(configuredEvts) && configuredEvts.forEach((aEvt) => {
       const event = eventHandlers[aEvt.type];
       event && event.couldBeChanged && (event.name = aEvt.name);
     });
@@ -95,17 +93,19 @@
     toggleEmojiBtn = chatWndElem.querySelector('#addEmoji');
   }
 
-  const onEmojiClicked = event => chatMsgInput.value += (' ' + (event.detail.unicode) + ' ');
-  const toggleEmojiView = evt => {
+  const onEmojiClicked = (event) => {
+    chatMsgInput.value += (` ${event.detail.unicode} `);
+  };
+
+  const toggleEmojiView = (evt) => {
     evt.preventDefault();
     if (emojiPicker.style.display === 'none') {
       emojiPicker.style.display = 'block';
-
     } else {
       emojiPicker.style.display = 'none';
     }
   };
-  const onSendClicked = evt => {
+  const onSendClicked = (evt) => {
     evt.preventDefault();
     if (!chatMsgInput.value.trim().length) {
       return;
@@ -118,12 +118,11 @@
     Utils.sendEvent('chatView:outgoingMessage', {
       sender: usrId,
       time: Utils.getCurrentTime(),
-      text: chatMsgInput.value.trim()
+      text: chatMsgInput.value.trim(),
     });
     if (emojiPicker) {
       emojiPicker.style.display = 'none';
     }
-
   };
 
   const onKeyPress = ((myfield, evt) => {
@@ -145,12 +144,12 @@
     return true;
   }).bind(undefined, chatMsgInput);
 
-  const onSubmit = evt => {
+  const onSubmit = (evt) => {
     evt.preventDefault();
     return false;
   };
 
-  const onClose = evt => {
+  const onClose = (evt) => {
     evt.preventDefault();
     evt.stopImmediatePropagation();
     _visibilityChanging = setVisibility(false);
@@ -160,7 +159,7 @@
     Chat.isCollapsed() ? Chat.expand() : Chat.collapse();
   };
 
-  const onDrop = evt => {
+  const onDrop = (evt) => {
     evt.preventDefault();
     evt.stopPropagation();
     return false;
@@ -179,8 +178,6 @@
       emojiPicker.addEventListener('emoji-click', onEmojiClicked);
       toggleEmojiBtn.addEventListener('click', toggleEmojiView);
     }
-
-
   }
 
   function removeHandlers() {
@@ -193,7 +190,6 @@
       emojiPicker.removeEventListener('emoji-click', onEmojiClicked);
       toggleEmojiBtn.removeEventListener('click', toggleEmojiView);
     }
-
   }
 
   function insertChatEvent(data) {
@@ -209,7 +205,7 @@
   function insertText(elemRoot, text) {
     const txtElems = TextProcessor.parse(text);
     const targetElem = HTMLElems.createElementAt(elemRoot, 'p');
-    txtElems.forEach(node => {
+    txtElems.forEach((node) => {
       switch (node.type) {
         case TextProcessor.TYPE.URL:
           HTMLElems.createElementAt(targetElem, 'a',
@@ -253,7 +249,7 @@
   function init(aUsrId, configuredEvts) {
     return LazyLoader.dependencyLoad([
       '/js/helpers/textProcessor.js',
-      '/js/components/chat.js'
+      '/js/components/chat.js',
     ]).then(() => {
       initHTMLElements();
       usrId = aUsrId;
@@ -263,7 +259,7 @@
   }
 
   const ChatView = {
-    init
+    init,
   };
 
   exports.ChatView = ChatView;

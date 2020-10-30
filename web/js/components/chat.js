@@ -1,16 +1,16 @@
 /* global Chat */
 
-!(global => {
-  const transEndEventName =
-    ('WebkitTransition' in document.documentElement.style) ?
-     'webkitTransitionEnd' : 'transitionend';
+!((global) => {
+  const transEndEventName = ('WebkitTransition' in document.documentElement.style)
+    ? 'webkitTransitionEnd' : 'transitionend';
 
-  let container = null, chatShown = null, chatHidden = null;
+  let container = null; let chatShown = null; let
+    chatHidden = null;
 
   function init() {
     container = document.querySelector('#chat');
     // Chat consumes 'click' events in order not to be closed automatically
-    container.addEventListener('click', e => {
+    container.addEventListener('click', (e) => {
       e.stopImmediatePropagation();
     });
   }
@@ -33,7 +33,7 @@
   }
 
   function show() {
-    chatShown = chatShown || new Promise(resolve => {
+    chatShown = chatShown || new Promise((resolve) => {
       container.addEventListener(transEndEventName, function onEnd() {
         container.removeEventListener(transEndEventName, onEnd);
         resolve();
@@ -53,11 +53,12 @@
       return Promise.resolve();
     }
 
-    chatHidden = chatHidden || new Promise(resolve => {
+    chatHidden = chatHidden || new Promise((resolve) => {
       container.addEventListener(transEndEventName, function onEnd() {
         container.removeEventListener(transEndEventName, onEnd);
         setVisible(false);
-        chatShown = chatHidden = null;
+        chatShown = null;
+        chatHidden = null;
         Utils.sendEvent('chat:hidden');
         resolve();
       });
@@ -78,6 +79,6 @@
     isCollapsed,
     get visible() {
       return container && container.classList.contains('visible');
-    }
+    },
   };
 })(this);
