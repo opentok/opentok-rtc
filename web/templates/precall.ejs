@@ -25,7 +25,7 @@
       <div id="video-preview">
       </div>
       <div id="settings-prompt">
-        <% if (!autoGenerateRoomName) { %>
+        <% if (!autoGenerateRoomName && !roomName) { %>
         <div id="enter-room-name-prompt">
           <div class="room-name-input-container">
             <input id="room-name-input" class="block username" name="roomName" autocomplete="off" maxlength="46" value="<%=roomName%>">
