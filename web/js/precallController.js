@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 /* global Modal, OTNetworkTest, PrecallView, showTos, showUnavailable */
 
-!((exports) => {
+!(exports => {
   const endPrecall = () => {
     Utils.sendEvent('PrecallController:endPrecall');
   };
@@ -15,7 +15,7 @@
     width: '100%',
     height: '100%',
     insertMode: 'append',
-    showControls: false,
+    showControls: false
   };
 
   const storedAudioDeviceId = window.localStorage.getItem('audioDeviceId');
@@ -28,8 +28,8 @@
 
     const videoPreviewEventHandlers = {
       toggleFacingMode() {
-        otHelper.toggleFacingMode().then((dev) => {
-          const { deviceId } = dev;
+        otHelper.toggleFacingMode().then(dev => {
+          const deviceId = dev.deviceId;
           publisherOptions.videoSource = deviceId;
           window.localStorage.setItem('videoDeviceId', deviceId);
         });
@@ -59,17 +59,17 @@
       cancelTest() {
         PrecallView.hideConnectivityTest();
         otNetworkTest.stopTest();
-      },
+      }
     };
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       if (window.routedFromStartMeeting) {
         publisherOptions.name = window.userName || document.querySelector(`${selector} input`).value.trim();
         publisherOptions.publishVideo = window.publishVideo;
         publisherOptions.publishAudio = window.publishAudio;
         return resolve({
           username: window.userName || document.querySelector(`${selector} input`).value.trim(),
-          publisherOptions,
+          publisherOptions
         });
       }
 
@@ -81,14 +81,14 @@
         }
 
         document.querySelector('.user-name-modal #enter').disabled = false;
-        document.querySelector('.user-name-modal').addEventListener('keypress', (event) => {
+        document.querySelector('.user-name-modal').addEventListener('keypress', event => {
           if (event.which === 13) {
             event.preventDefault();
             submitForm();
           }
         });
 
-        document.querySelector('.user-name-modal').addEventListener('submit', (event) => {
+        document.querySelector('.user-name-modal').addEventListener('submit', event => {
           event.preventDefault();
           submitForm();
         });
@@ -97,13 +97,10 @@
           PrecallView.hide();
           publisher && publisher.destroy();
           otNetworkTest && otNetworkTest.stopTest();
-          const username = document.querySelector(`${selector} input`).value.trim();
-          window.localStorage.setItem('username', username);
-          publisherOptions.name = username;
           setTimeout(() => {
             resolve({
-              username,
-              publisherOptions,
+              username: publisherOptions.name,
+              publisherOptions
             });
           }, 1);
         }
@@ -115,13 +112,13 @@
                 .getRoomRawInfo(roomName).then((room) => {
                   if (window.routedFromStartMeeting) {
                     return resolve();
-                  } if (showUnavailable && !room) {
+                  } else if (showUnavailable && !room) {
                     return reject(new Error('New rooms not allowed'));
-                  } if (room && !room.isLocked) {
+                  } else if (room && !room.isLocked) {
                     return resolve();
-                  } if (!showUnavailable && !room) {
+                  } else if (!showUnavailable && !room) {
                     return resolve();
-                  } if (room && room.isLocked) {
+                  } else if (room && room.isLocked) {
                     return reject(new Error('Room locked'));
                   }
                   // default
@@ -146,12 +143,19 @@
         }
 
         function submitForm() {
-          if (!window.autoGenerateRoomName && !document.getElementById('room-name-input').value) {
-            const errorMsg = document.querySelector('.error-room.error-text');
-            document.querySelector('.room-name-input-container label').style.display = 'none';
-            errorMsg.classList.add('show');
-            return;
+
+          if (!window.autoGenerateRoomName &&
+            document.getElementById('room-name-input') &&
+            !document.getElementById('room-name-input').value) {
+              const errorMsg = document.querySelector('.error-room.error-text');
+              document.querySelector('.room-name-input-container label').style.display = 'none';
+              errorMsg.classList.add('show');
+              return;
           }
+
+          const username = document.getElementById('user-name-input').value.trim();
+          publisherOptions.name = username;
+          window.localStorage.setItem('username', username);
 
           if (window.location.href.indexOf('room') > -1) {
             // Jeff to do: This code should move to RoomController and be event-driven
@@ -166,21 +170,21 @@
         }
 
         otHelper.initPublisher('video-preview', publisherOptions)
-          .then((pub) => {
+          .then(pub => {
             publisher = pub;
 
             otHelper.getVideoDeviceNotInUse(publisherOptions.videoSource)
-              .then((videoSourceId) => {
+              .then(videoSourceId => {
                 previewOptions = {
                   apiKey: window.precallApiKey,
                   resolution: '640x480',
                   sessionId: window.precallSessionId,
                   token: window.precallToken,
-                  videoSource: videoSourceId,
+                  videoSource: videoSourceId
                 };
 
                 publisher.on('accessAllowed', () => {
-                  otHelper.getDevices('audioInput').then((audioDevs) => {
+                  otHelper.getDevices('audioInput').then(audioDevs => {
                     // eslint-disable-next-line max-len
                     PrecallView.populateAudioDevicesDropdown(audioDevs, publisherOptions.audioSource);
                   });
@@ -202,7 +206,7 @@
               });
             Utils.addEventsHandlers('roomView:', videoPreviewEventHandlers, exports);
             let movingAvg = null;
-            publisher.on('audioLevelUpdated', (event) => {
+            publisher.on('audioLevelUpdated', event => {
               if (movingAvg === null || movingAvg <= event.audioLevel) {
                 movingAvg = event.audioLevel;
               } else {
@@ -231,24 +235,26 @@
   }
 
   const eventHandlers = {
-    'roomView:endprecall': endPrecall,
+    'roomView:endprecall': endPrecall
   };
 
-  const init = () => new Promise((resolve) => {
-    LazyLoader.dependencyLoad([
-      '/js/helpers/ejsTemplate.js',
-      '/js/vendor/ejs_production.js',
-      '/js/min/precallView.min.js',
-    ]).then(() => {
-      Utils.addEventsHandlers('', eventHandlers);
-      return PrecallView.init();
-    }).then(() => {
-      resolve();
+  const init = () => {
+    return new Promise(resolve => {
+      LazyLoader.dependencyLoad([
+        '/js/helpers/ejsTemplate.js',
+        '/js/vendor/ejs_production.js',
+        '/js/min/precallView.min.js'
+      ]).then(() => {
+        Utils.addEventsHandlers('', eventHandlers);
+        return PrecallView.init();
+      }).then(() => {
+        resolve();
+      });
     });
-  });
+  };
 
   exports.PrecallController = {
     init,
-    showCallSettingsPrompt,
+    showCallSettingsPrompt
   };
 })(this);

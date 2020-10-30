@@ -52,7 +52,7 @@
       userNameInputElement.focus();
     });
 
-    if (!window.autoGenerateRoomName) {
+    if (!window.autoGenerateRoomName && !window.roomName) {
       const roomNameInputElement = document.getElementById('room-name-input');
 
       roomNameInputElement.addEventListener('keypress', function keypressHandler() {
