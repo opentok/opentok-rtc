@@ -67,7 +67,7 @@
           break;
         }
         default: {
-          throw new Error(`Unknown event type ${evt.type}`);
+          // No-op on default;
         }
       }
     },

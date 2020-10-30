@@ -80,7 +80,7 @@
           this.clearTimer();
           break;
         default:
-          throw new Error(`Unknown event ${evt.type}`);
+          // No-op on default;
       }
     },
 

@@ -536,7 +536,7 @@ BubbleFactory, LayoutManager */
           break;
         }
         default: {
-          throw new Error(`Unknown element ${elem.id}`);
+          // No-op on default;
         }
       }
     });
@@ -652,7 +652,7 @@ BubbleFactory, LayoutManager */
           }
           break;
         default:
-          throw new Error(`Unknown element ${elem.id}`);
+          // No-op on default;
       }
     });
 
@@ -685,7 +685,7 @@ BubbleFactory, LayoutManager */
           onStopArchiving();
           break;
         default:
-          throw new Error(`Unknown status ${detail.status}`);
+          // No-op on default;
       }
 
       document.body.data('archiveStatus', e.detail.status);

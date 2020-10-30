@@ -28,7 +28,7 @@
             Utils.sendEvent('roomView:retest');
             break;
           default:
-            throw new Error(`Unknown element ${elem.id}`);
+            // No-op on default;
         }
       });
 
@@ -122,7 +122,7 @@
           break;
         }
         default: {
-          throw new Error(`Unknown element ${elem.id}`);
+          // No-op on default;
         }
       }
     });
@@ -297,7 +297,7 @@
         precallHeadingElement.innerText = 'Poor Connectivity';
         break;
       default:
-        throw new Error(`Unknown classification ${results.classification}`);
+        // No-op on default;
     }
     document.getElementById('pre-call-description').innerText = results.text;
     document.getElementById('precall-icon').setAttribute('data-icon', results.classification);
