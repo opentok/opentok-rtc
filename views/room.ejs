@@ -70,7 +70,7 @@
       window.autoGenerateRoomName = <%=autoGenerateRoomName%>;
       window.publishAudio = <%=publishAudio%>;
       window.publishVideo = <%=publishVideo%>;
-      var isMobile = function() { return typeof window.orientation !== 'undefined'; }
+      var isMobile = function() { return window.matchMedia("only screen and (max-width: 480px)").matches; }
 
       var mobileSettings = function() {
 

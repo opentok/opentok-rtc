@@ -93,7 +93,7 @@
           setTimeout(() => {
             resolve({
               roomURI: roomName,
-              username,
+              username: publisherOptions.name,
               publisherOptions
             });
           }, 1);
@@ -136,11 +136,13 @@
 
         function submitForm() {
 
-          if (!window.autoGenerateRoomName && !document.getElementById('room-name-input').value) {
-            const errorMsg = document.querySelector('.error-room.error-text');
-            document.querySelector('.room-name-input-container label').style.display = 'none';
-            errorMsg.classList.add('show');
-            return;
+          if (!window.autoGenerateRoomName &&
+            document.getElementById('room-name-input') &&
+            !document.getElementById('room-name-input').value) {
+              const errorMsg = document.querySelector('.error-room.error-text');
+              document.querySelector('.room-name-input-container label').style.display = 'none';
+              errorMsg.classList.add('show');
+              return;
           }
 
           const roomNameTextInput = (document.getElementById('room-name-input') || {}).value;
@@ -149,6 +151,10 @@
           }
 
           const roomName = window.roomName || roomNameTextInput;
+
+          const username = document.getElementById('user-name-input').value.trim();
+          publisherOptions.name = username;
+          window.localStorage.setItem('username', username);
 
           if (showTos) {
             PrecallView.showContract().then(() => {
@@ -233,7 +239,8 @@
       LazyLoader.dependencyLoad([
         '/js/helpers/ejsTemplate.js',
         '/js/vendor/ejs_production.js',
-        '/js/min/precallView.min.js'
+        '/js/min/precallView.min.js',
+        '/js/helpers/opentok-network-test.js'
       ]).then(() => {
         Utils.addEventsHandlers('', eventHandlers);
         return PrecallView.init();

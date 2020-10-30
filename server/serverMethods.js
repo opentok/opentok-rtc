@@ -400,7 +400,6 @@ function ServerMethods(aLogLevel, aModules) {
     aRes.send({});
   }
 
-  // Returns the personalized root page
   async function getRoot(aReq, aRes) { 
     if (aReq.tbConfig.autoGenerateRoomName) {
       const roomName = `${haikunator.haikunate({ tokenLength: 0 })}-${haikunator.haikunate()}`;

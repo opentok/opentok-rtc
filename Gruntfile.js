@@ -8,6 +8,7 @@ module.exports = function (grunt) {
     'grunt-contrib-less',
     'grunt-terser',
     'grunt-contrib-concat',
+    'grunt-critical',
     'grunt-contrib-watch',
     'grunt-mocha-test', // Server side test runner
     'grunt-bower-task',
@@ -153,13 +154,24 @@ module.exports = function (grunt) {
           'web/css/room.opentok.css': 'web/less/room.less',
           'web/css/endMeeting.opentok.css': 'web/less/endMeeting.less',
           'web/css/annotation.opentok.css': 'web/less/annotation.less',
-          'web/css/hangoutScroll.css': 'web/less/hangoutScroll.less',
-          'web/css/completeMeeting.opentok.css':
-            'web/less/completeMeeting.less'
+          'web/css/hangoutScroll.css': 'web/less/hangoutScroll.less'
         }
       }
     },
-
+    critical: {
+      test: {
+        options: {
+          base: './',
+          css: ['web/css/landing.opentok.css'],
+          target: {
+            uncritical: 'web/css/landing-uncritical.opentok.css'
+          },
+          minify: true
+        },
+        src: 'views/index.ejs',
+        dest: 'web/css/landing-critical.opentok.css'
+      }
+    },
     autoprefixer: {
       options: {
         browsers: ['last 5 versions']
@@ -200,14 +212,16 @@ module.exports = function (grunt) {
   grunt.registerTask('clientBuild', 'Build css files', [
     'less',
     'autoprefixer',
-    'terser',
-    'concat'
+    'terser:pages',
+    'concat',
+    'critical'
   ]);
 
   grunt.registerTask('clientBuild-Prod', 'Build css files', [
     'less',
     'autoprefixer',
-    'terser:prod_build'
+    'terser:prod_build',
+    'critical'
   ]);
 
   grunt.registerTask('clientDev', 'Watch for changes on less files', [
