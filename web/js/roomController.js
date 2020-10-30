@@ -745,7 +745,6 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
   const modules = [
     '/js/components/htmlElems.js',
     '/js/helpers/resolutionAlgorithms.js',
-    '/js/helpers/opentok-network-test.js',
     '/js/itemsHandler.js',
     '/js/layoutView.js',
     '/js/layouts.js',
