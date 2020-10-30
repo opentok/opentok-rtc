@@ -1,6 +1,6 @@
 /* global RoomView, OTHelper, ScreenShareView */
 
-!(globals => {
+!((globals) => {
   let debug;
   let _chromeExtId;
   let _isSharing;
@@ -17,10 +17,10 @@
     name: 'screen',
     showControls: false,
     style: {
-      nameDisplayMode: 'off'
+      nameDisplayMode: 'off',
     },
     publishAudio: false,
-    videoSource: 'screen'
+    videoSource: 'screen',
   };
 
   const streamHandlers = {
@@ -28,7 +28,7 @@
       _isSharing = false;
       Utils.sendEvent('screenShareController:destroyed');
       enableAnnotations && Utils.sendEvent('screenShareController:annotationEnded');
-    }
+    },
   };
 
   const roomViewEvents = {
@@ -45,7 +45,7 @@
         const desktopElement = RoomView.createStreamView('desktop', {
           name: screenPublisherOptions.name,
           type: 'desktop',
-          controlElems: {}
+          controlElems: {},
         });
         _hasPendingOperation = true;
         otHelper.shareScreen(desktopElement, screenPublisherOptions, streamHandlers,
@@ -57,7 +57,7 @@
               { isSharing: _isSharing });
             enableAnnotations && Utils.sendEvent('screenShareController:annotationStarted');
           })
-          .catch(error => {
+          .catch((error) => {
             _hasPendingOperation = false;
             if (error.code === OTHelper.screenShareErrorCodes.accessDenied) {
               RoomView.deleteStreamView('desktop');
@@ -67,7 +67,7 @@
             }
           });
       }
-    }
+    },
   };
 
   const screenShareViewEvents = {
@@ -76,17 +76,17 @@
       const error = !newTab || typeof newTab !== 'object';
       Utils.sendEvent('screenShareController:extInstallationResult', {
         error,
-        message: error ? 'It seems you have a Pop-Up blocker enabled. Please disabled it and try again.' : null
+        message: error ? 'It seems you have a Pop-Up blocker enabled. Please disabled it and try again.' : null,
       });
       if (error) {
         debug.error('Error opening Chrome Webstore');
       }
-    }
+    },
   };
 
   function init(aUserName, aChromeExtId, aOTHelper, aEnableAnnotations) {
     return LazyLoader.dependencyLoad([
-      '/js/min/screenShareView.min.js'
+      '/js/min/screenShareView.min.js',
     ]).then(() => {
       enableAnnotations = aEnableAnnotations;
       otHelper = aOTHelper;
@@ -98,8 +98,8 @@
       _isSharing = false;
       screenPublisherOptions.name = (aUserName || DEFAULT_NAME) + NAME_SUFFIX;
       _chromeExtId = aChromeExtId;
-      aChromeExtId && aChromeExtId !== 'undefined' &&
-        OTHelper.registerScreenShareExtension({ chrome: aChromeExtId }, 1);
+      aChromeExtId && aChromeExtId !== 'undefined'
+        && OTHelper.registerScreenShareExtension({ chrome: aChromeExtId }, 1);
       ScreenShareView.init(aUserName);
     });
   }
@@ -108,7 +108,7 @@
     init,
     get chromeExtId() {
       return _chromeExtId;
-    }
+    },
   };
 
   globals.ScreenShareController = ScreenShareController;

@@ -1,9 +1,9 @@
-var assert = chai.assert;
-var expect = chai.expect;
+var { assert } = chai;
+var { expect } = chai;
 var should = chai.should();
 
 describe('Request', () => {
-  var setRequestHeader = sinon.FakeXMLHttpRequest.prototype.setRequestHeader;
+  var { setRequestHeader } = sinon.FakeXMLHttpRequest.prototype;
 
   before(() => {
     // overrideMimeType does not exist in FakeXMLHttpRequest
@@ -54,8 +54,8 @@ describe('Request', () => {
 
       var req = this.requests[0];
       expect(req.url).to.contains(data.roomName);
-      expect(req.requestBody).to.equal('roomName=' + data.roomName +
-                                       '&userName=' + data.userName);
+      expect(req.requestBody).to.equal('roomName=' + data.roomName
+                                       + '&userName=' + data.userName);
       req.respond(200, { 'Content-Type': 'text/json' }, JSON.stringify(response));
     });
 

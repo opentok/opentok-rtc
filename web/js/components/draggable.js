@@ -1,12 +1,13 @@
-!(exports => {
+!((exports) => {
   const isTouch = 'ontouchstart' in exports;
   const touchstart = isTouch ? 'touchstart' : 'mousedown';
   const touchmove = isTouch ? 'touchmove' : 'mousemove';
   const touchend = isTouch ? 'touchend' : 'mouseup';
+  let touch;
 
   const getTouch = (function getTouchWrapper() {
-    return isTouch ? e => { return e.touches[0]; } :
-      e => { return e; };
+    return isTouch ? (e) => e.touches[0]
+      : (e) => e;
   }());
 
   const DragDetector = function (element) {
@@ -50,7 +51,7 @@
     sendEvent() {
       Utils.sendEvent('DragDetector:dragstart', {
         pageX: this.startX,
-        pageY: this.startY
+        pageY: this.startY,
       }, this.element);
       this.clearTimer();
     },
@@ -58,7 +59,7 @@
     handleEvent(evt) {
       switch (evt.type) {
         case touchstart:
-          var touch = getTouch(evt);
+          touch = getTouch(evt);
           this.startX = touch.pageX;
           this.startY = touch.pageY;
           this.startTimer();
@@ -66,9 +67,9 @@
           break;
 
         case touchmove:
-          var touch = getTouch(evt); // eslint-disable-line no-redeclare
-          if (Math.abs(touch.pageX - this.startX) > DragDetector.CLICK_THRESHOLD ||
-              Math.abs(touch.pageY - this.startY) > DragDetector.CLICK_THRESHOLD) {
+          touch = getTouch(evt); // eslint-disable-line no-redeclare
+          if (Math.abs(touch.pageX - this.startX) > DragDetector.CLICK_THRESHOLD
+              || Math.abs(touch.pageY - this.startY) > DragDetector.CLICK_THRESHOLD) {
             this.sendEvent();
           }
 
@@ -77,8 +78,9 @@
         case touchend:
         case 'contextmenu':
           this.clearTimer();
-
           break;
+        default:
+          // No-op on default;
       }
     },
 
@@ -88,7 +90,7 @@
       this.element = null;
       this.startX = null;
       this.startY = null;
-    }
+    },
   };
 
   const DraggableElement = function (element) {
@@ -159,7 +161,7 @@
       this.element.classList.remove('dragging');
       this.element = null;
       this.elementStyle = null;
-    }
+    },
   };
 
   const elements = {};
@@ -179,7 +181,7 @@
 
     DRAG_TIMEOUT: DragDetector.DRAG_TIMEOUT,
 
-    CLICK_THRESHOLD: DragDetector.CLICK_THRESHOLD
+    CLICK_THRESHOLD: DragDetector.CLICK_THRESHOLD,
   };
 
   exports.Draggable = Draggable;

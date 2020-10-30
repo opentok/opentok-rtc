@@ -1,4 +1,4 @@
-var expect = chai.expect;
+var { expect } = chai;
 
 describe('Chat', () => {
   function getContainer() {

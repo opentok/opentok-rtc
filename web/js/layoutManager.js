@@ -1,7 +1,7 @@
 /* global Grid, Float, F2FHorizontal, F2FVertical, HangoutHorizontal, HangoutVertical, LayoutView,
 LayoutViewport, ItemsHandler */
 
-!(global => {
+!((global) => {
   let userLayout = null;
   let currentLayout = null;
   let container = null;
@@ -15,13 +15,13 @@ LayoutViewport, ItemsHandler */
   const F2F_LAYOUTS = {
     float: true,
     f2f_horizontal: true,
-    f2f_vertical: true
+    f2f_vertical: true,
   };
 
   const GRP_LAYOUTS = {
     grid: true,
     hangout_horizontal: true,
-    hangout_vertical: true
+    hangout_vertical: true,
   };
 
   function isOnGoing(layout) {
@@ -43,13 +43,13 @@ LayoutViewport, ItemsHandler */
     emptyStage() {
       userLayout = 'grid';
       rearrange();
-    }
+    },
   };
 
   function getDeviceLayout(isScreen = false) {
     if (window.matchMedia('screen and (min-device-width : 320px) and (max-device-width : 1024px) and (orientation : landscape)').matches) {
       return isScreen ? 'hangout_vertical' : 'f2f_vertical';
-    } else if (window.matchMedia('screen and (max-width: 480px) and (orientation : portrait)').matches) {
+    } if (window.matchMedia('screen and (max-width: 480px) and (orientation : portrait)').matches) {
       return isScreen ? 'hangout_horizontal' : 'f2f_horizontal';
     }
     let userSelectedLayout = null;
@@ -80,7 +80,7 @@ LayoutViewport, ItemsHandler */
       f2f_horizontal: F2FHorizontal,
       f2f_vertical: F2FVertical,
       hangout_horizontal: HangoutHorizontal,
-      hangout_vertical: HangoutVertical
+      hangout_vertical: HangoutVertical,
     };
     container = document.querySelector(selector);
     LayoutView.init(container);
@@ -96,7 +96,7 @@ LayoutViewport, ItemsHandler */
     smartphonePortrait.addListener(layoutModifier);
 
     return enableHangoutScroll ? LazyLoader.load([
-      '/js/layoutViewport.js', '/css/hangoutScroll.css'
+      '/js/layoutViewport.js', '/css/hangoutScroll.css',
     ]).then(() => {
       LayoutViewport.init(container.querySelector('.tc-list ul'), '.stream');
     }) : Promise.resolve();
@@ -105,8 +105,8 @@ LayoutViewport, ItemsHandler */
   function isHangoutRequired(item) {
     // New screen shared and 3 or more items implies going to hangout if this isn't our current
     // layout running
-    return Utils.isScreen(item) && isGroup() &&
-           !(isOnGoing(HangoutHorizontal) || isOnGoing(HangoutVertical));
+    return Utils.isScreen(item) && isGroup()
+           && !(isOnGoing(HangoutHorizontal) || isOnGoing(HangoutVertical));
   }
 
   function append(id, options) {
@@ -120,7 +120,7 @@ LayoutViewport, ItemsHandler */
       rearrange();
     }
     Utils.sendEvent('layoutManager:itemAdded', {
-      item
+      item,
     });
     return item.querySelector('.opentok-stream-container');
   }
@@ -138,7 +138,7 @@ LayoutViewport, ItemsHandler */
     LayoutView.remove(item);
     delete items[id];
     Utils.sendEvent('layoutManager:itemDeleted', {
-      item
+      item,
     });
     layoutModifier();
   }
@@ -167,14 +167,13 @@ LayoutViewport, ItemsHandler */
     return candidateLayout;
   }
 
-
   function isGroup() {
     return getTotal() > 2;
   }
 
   function updateAvailableLayouts() {
     Utils.sendEvent('layoutManager:availableLayouts', {
-      layouts: isGroup() ? GRP_LAYOUTS : F2F_LAYOUTS
+      layouts: isGroup() ? GRP_LAYOUTS : F2F_LAYOUTS,
     });
   }
 
@@ -196,6 +195,6 @@ LayoutViewport, ItemsHandler */
     append,
     remove,
     removeAll,
-    getItemById
+    getItemById,
   };
 })(this);

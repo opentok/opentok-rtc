@@ -1,7 +1,8 @@
 /* global Modal */
 
-!(global => {
-  let showFeedback, sendButton, audioScoreSelect, videoScoreSelect, otherInfo, reportIssueScore;
+!((global) => {
+  let showFeedback; let sendButton; let audioScoreSelect; let videoScoreSelect; let otherInfo; let
+    reportIssueScore;
 
   const feedbackReportSelector = '.feedback-report';
 
@@ -14,7 +15,7 @@
     return Modal.hide(feedbackReportSelector);
   }
 
-  const init = aReportIssueLevel => {
+  const init = (aReportIssueLevel) => {
     reportIssueScore = aReportIssueLevel;
     showFeedback = document.querySelector('#showFeedback');
     sendButton = document.querySelector('.feedback-report .send-feedback');
@@ -24,19 +25,19 @@
     addHandlers();
   };
 
-  var resetForm = () => {
+  const resetForm = () => {
     otherInfo.value = '';
   };
 
-  var addHandlers = () => {
-    sendButton.addEventListener('click', event => {
+  const addHandlers = () => {
+    sendButton.addEventListener('click', (event) => {
       event.preventDefault();
       const audioScore = audioScoreSelect.options[audioScoreSelect.selectedIndex].value;
       const videoScore = videoScoreSelect.options[videoScoreSelect.selectedIndex].value;
       Utils.sendEvent('feedbackView:sendFeedback', {
         audioScore,
         videoScore,
-        description: otherInfo.value
+        description: otherInfo.value,
       });
 
       if (audioScore <= reportIssueScore || videoScore <= reportIssueScore) {
@@ -46,13 +47,13 @@
       hideForm();
     });
 
-    showFeedback && showFeedback.addEventListener('click', function onShowFeedbackClicked(event) {
+    showFeedback && showFeedback.addEventListener('click', (event) => {
       event.preventDefault();
       showForm();
     });
   };
 
   global.FeedbackView = {
-    init
+    init,
   };
 })(this);

@@ -1,4 +1,4 @@
-!(exports => {
+!((exports) => {
   let archives = null;
   const listeners = {};
 
@@ -6,15 +6,15 @@
     archiveUpdates(evt) {
       const handlers = listeners.value;
       const archiveValues = Promise.resolve(evt.detail || {});
-      handlers && handlers.forEach(aHandler => {
+      handlers && handlers.forEach((aHandler) => {
         archiveValues.then(aHandler.method.bind(aHandler.context));
       });
-    }
+    },
   };
 
   function init() {
     const self = this;
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       Utils.addEventsHandlers('roomController:', archiveHandler, exports);
       resolve(self);
     });
@@ -35,7 +35,7 @@
     if (hd) {
       listeners[type].push({
         method: hd,
-        context
+        context,
       });
     }
   }
@@ -61,15 +61,15 @@
   }
 
   const ArchivesEventsListener = {
-    addEventListener: addEventListener,
-    removeEventListener: removeEventListener,
-    init: init,
+    addEventListener,
+    removeEventListener,
+    init,
     set archives(existingArchives) {
       archives = existingArchives;
     },
     get archives() {
       return archives;
-    }
+    },
   };
 
   exports.ArchivesEventsListener = ArchivesEventsListener;
