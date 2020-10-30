@@ -440,8 +440,6 @@ function ServerMethods(aLogLevel, aModules) {
       aRes.set('Pragma', 'no-cache');
       aRes.set('Expires', 0);
 
-      console.log("RENDERING THIS TEMPLATE");
-      console.log((template || tbConfig.defaultTemplate));
       aRes
         .render((template || tbConfig.defaultTemplate) + '.ejs',
           {

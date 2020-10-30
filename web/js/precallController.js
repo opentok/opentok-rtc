@@ -92,7 +92,7 @@
           publisherOptions.name = username;
           setTimeout(() => {
             resolve({
-              roomURI: roomName
+              roomURI: roomName,
               username,
               publisherOptions
             });
