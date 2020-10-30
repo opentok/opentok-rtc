@@ -72,9 +72,7 @@ a {
       @media @smartphonesLandscape{
         min-width: 55vw;
         position: relative;
-        margin-left: -53vw;
-
-        top: 35px;
+        margin-left: 3vw;
       }
     }
 
@@ -135,6 +133,12 @@ a {
       background: @solidWhite;
     }
 
+    #enter-room-name-prompt {
+      height: 45px;
+      margin-bottom: 12px;
+    }
+
+    .room-name-input-container,
     .user-name-input-container {
       position: relative;
       @media @smartphonesLandscape{
@@ -171,6 +175,7 @@ a {
       text-shadow: black 1px 1px 12px;
     }
 
+    .room-name-input-container.visited,
     .user-name-input-container.visited {
       input {
         font-size: 14px;
@@ -240,7 +245,7 @@ a {
       display: block;
       font-size: 14px;
       color: @flamingoRed;
-      opacity: 0;
+      z-index: -9999;
 
       @media @smartphonesPortrait {
         font-size: 12px;
@@ -266,8 +271,7 @@ a {
       position: relative;
       font-size: 16px;
       width: 100%;
-      bottom: 98px;
-      border-bottom: solid 1px @flamingoRed;
+      bottom: 40px;
       line-height: 38px;
       @media @smartphonesPortrait {
         margin: 0 0 0 0;
@@ -278,12 +282,8 @@ a {
       }
     }
 
-    &.error {
-      .show,
-      .error-title {
-        transition: opacity @transitionTime;
-        opacity: 1;
-      }
+    .show {
+      z-index: 9999;
     }
 
     .btn {
@@ -342,6 +342,7 @@ a {
     }
     @media @smartphonesLandscape{
       text-align: center;
+      position:absolute;
     }
 
     a {

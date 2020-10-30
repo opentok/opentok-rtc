@@ -206,6 +206,7 @@ function ServerMethods(aLogLevel, aModules) {
       var hotjarId = config.get(C.HOTJAR_ID);
       var hotjarVersion = config.get(C.HOTJAR_VERSION);
       var enableFeedback = config.get(C.ENABLE_FEEDBACK);
+      var autoGenerateRoomName = config.get(C.AUTO_GENERATE_ROOM_NAME);
 
       roomBlackList = config.get(C.BLACKLIST) ?
         config.get(C.BLACKLIST).split(',').map(word => word.trim().toLowerCase()) : [];
@@ -267,7 +268,8 @@ function ServerMethods(aLogLevel, aModules) {
         ATSiteIdentifier,
         ATFunctionDept,
         mediaMode,
-        enableEmoji
+        enableEmoji,
+        autoGenerateRoomName
       };
     });
   }
@@ -399,18 +401,24 @@ function ServerMethods(aLogLevel, aModules) {
   }
 
   // Returns the personalized root page
-
-
   async function getRoot(aReq, aRes) {
     var meetingAllowed = await isMeetingAllowed(aReq);
     var language = getUserLanguage(accepts(aReq).languages());
     var country = getUserCountry(aReq);
 
+    var roomName = '';
+
+    if (aReq.tbConfig.autoGenerateRoomName) {
+      roomName = `${haikunator.haikunate({ tokenLength: 0 })}-${haikunator.haikunate()}`;
+    }
+
+
     // Create a session ID and token for the network test
     aReq.tbConfig.precallOtInstance.createSession({ mediaMode: 'routed' }, (error, testSession) => {
       aRes
         .render('index.ejs', {
-          roomName: `${haikunator.haikunate({ tokenLength: 0 })}-${haikunator.haikunate()}`,
+          roomName,
+          autoGenerateRoomName: aReq.tbConfig.autoGenerateRoomName,
           isWebRTCVersion: aReq.tbConfig.isWebRTCVersion,
           minMeetingNameLength: aReq.tbConfig.minMeetingNameLength,
           publisherResolution: aReq.tbConfig.publisherResolution,
@@ -478,6 +486,7 @@ function ServerMethods(aLogLevel, aModules) {
       aRes
         .render((template || tbConfig.defaultTemplate) + '.ejs',
           {
+            autoGenerateRoomName: tbConfig.autoGenerateRoomName,
             userName: htmlEscape(userName || C.DEFAULT_USER_NAME),
             roomName: htmlEscape(aReq.params.roomName),
             publishVideo,
@@ -712,6 +721,7 @@ function ServerMethods(aLogLevel, aModules) {
               data: JSON.stringify({ userName })
             }),
           username: userName,
+          autoGenerateRoomName: tbConfig.autoGenerateRoomName,
           chromeExtId: tbConfig.chromeExtId,
           enableArchiveManager: tbConfig.enableArchiveManager,
           enableAnnotation: tbConfig.enableAnnotations,

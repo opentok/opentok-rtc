@@ -74,7 +74,7 @@
       }
 
       function loadModalText() {
-        PrecallView.setFocus(username);
+        window.autoGenerateRoomName ? PrecallView.setFocus('user') : PrecallView.setFocus('room');
 
         if (Utils.isSafariIOS()) {
           if (window.enablePrecallTest) PrecallView.hideConnectivityTest();
@@ -146,6 +146,14 @@
         }
 
         function submitForm() {
+
+          if (!window.autoGenerateRoomName && !document.getElementById('room-name-input').value) {
+            const errorMsg = document.querySelector('.error-room.error-text');
+            document.querySelector('.room-name-input-container label').style.display = 'none';
+            errorMsg.classList.add('show');
+            return;
+          }
+
           if (window.location.href.indexOf('room') > -1) {
             // Jeff to do: This code should move to RoomController and be event-driven
             submitRoomForm();
@@ -211,7 +219,7 @@
         const userNameInputElement = document.getElementById('user-name-input');
         const storedUsername = window.localStorage.getItem('username');
         if (username) {
-          document.getElementById('enter-name-prompt').style.display = 'none';
+          document.getElementById('settings-prompt').style.display = 'none';
           userNameInputElement.value = username;
           userNameInputElement.setAttribute('readonly', true);
         } else if (storedUsername) {

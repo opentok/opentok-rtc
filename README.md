@@ -617,6 +617,8 @@ To configure this, edit options in the config/config.json file or set environmen
   to include the Lock Meeting command to users in the options menu. This command allows users
   to prevent new participants from joining a meeting. The default value is `true`.
 
+* `autoGenerateRoomName` (config.json) / `AUTO_GENERATE_ROOM_NAME` (environment variable) -- Whether or not to auto generate the room name on behalf of the user. If this setting is turned on, we will use haikunator to generate room names for new rooms. If turned off, users will be prompted to enter a room/meeting name when they visit the landing page and won't be allowed to move forward until they do so.
+
 ## Customizing the UI
 
 For information on how to customize the OpenTokRTC UI, see [CUSTOMIZING-UI.md](CUSTOMIZING-UI.md).
