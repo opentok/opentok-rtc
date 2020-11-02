@@ -51,27 +51,27 @@
               Utils.sendEvent('chatView:unreadMessage', { data });
             }
           });
-        },
+        }
       },
       presenceEvent: {
         name: 'chatController:presenceEvent',
         handler(evt) {
           insertChatEvent(evt.detail);
-        },
+        }
       },
       messageDelivered: {
         name: 'chatController:messageDelivered',
         handler() {
           chatMsgInput.value = '';
-        },
+        }
       },
       chatVisibility: {
         name: 'roomView:chatVisibility',
         handler(evt) {
           _visibilityChanging = setVisibility(evt.detail);
         },
-        couldBeChanged: true,
-      },
+        couldBeChanged: true
+      }
     };
     Array.isArray(configuredEvts) && configuredEvts.forEach((aEvt) => {
       const event = eventHandlers[aEvt.type];
@@ -118,7 +118,7 @@
     Utils.sendEvent('chatView:outgoingMessage', {
       sender: usrId,
       time: Utils.getCurrentTime(),
-      text: chatMsgInput.value.trim(),
+      text: chatMsgInput.value.trim()
     });
     if (emojiPicker) {
       emojiPicker.style.display = 'none';
@@ -249,7 +249,7 @@
   function init(aUsrId, configuredEvts) {
     return LazyLoader.dependencyLoad([
       '/js/helpers/textProcessor.js',
-      '/js/components/chat.js',
+      '/js/components/chat.js'
     ]).then(() => {
       initHTMLElements();
       usrId = aUsrId;
@@ -259,7 +259,7 @@
   }
 
   const ChatView = {
-    init,
+    init
   };
 
   exports.ChatView = ChatView;

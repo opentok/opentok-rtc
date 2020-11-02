@@ -40,20 +40,20 @@
 
         HTMLElems.createElementAt(item, 'a', {
           target: '_blank',
-          href: `${url}?generatePreview`,
+          href: `${url}?generatePreview`
         }, Utils.getLabelText(archive)).classList.add('file');
 
         HTMLElems.createElementAt(item, 'i', {
           'data-id': archive.id,
           'data-icon': 'delete',
           'data-action': 'delete',
-          'data-username': archive.recordingUser,
+          'data-username': archive.recordingUser
         });
 
         HTMLElems.createElementAt(item, 'a', {
           'data-icon': 'download',
           href: url,
-          download: `${archive.name}.${VIDEO_EXTENSION}`,
+          download: `${archive.name}.${VIDEO_EXTENSION}`
         }).classList.add('download');
       });
 
@@ -72,6 +72,6 @@
   };
 
   exports.RecordingsView = {
-    init,
+    init
   };
 })(this);

@@ -58,7 +58,7 @@
       return this;
     },
 
-    reset,
+    reset
   };
 
   exports.Cronograph = Cronograph;

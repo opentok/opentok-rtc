@@ -37,7 +37,7 @@
       Utils.sendEvent('feedbackView:sendFeedback', {
         audioScore,
         videoScore,
-        description: otherInfo.value,
+        description: otherInfo.value
       });
 
       if (audioScore <= reportIssueScore || videoScore <= reportIssueScore) {
@@ -54,6 +54,6 @@
   };
 
   global.FeedbackView = {
-    init,
+    init
   };
 })(this);

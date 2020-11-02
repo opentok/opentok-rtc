@@ -111,7 +111,7 @@
           },
           get status() {
             return elemClicked.parentNode.data('status');
-          },
+          }
         });
       }
     });
@@ -127,6 +127,6 @@
     },
     setEnabled,
     getAncestorByTagName,
-    addHandlerArchive,
+    addHandlerArchive
   };
 })(this);

@@ -16,7 +16,7 @@
         videoScore: report.videoScore,
         description: report.description,
         clientSystemTime: new Date().getTime(),
-        source: document.location.href,
+        source: document.location.href
       };
       const xhr = new XMLHttpRequest();
       const url = window.feedbackUrl;
@@ -29,18 +29,18 @@
         partnerId: otHelper.session.apiKey,
         sessionId: otHelper.session.id,
         connectionId: otHelper.session.connection.id,
-        publisherId: otHelper.publisherId,
+        publisherId: otHelper.publisherId
       };
       OT.reportIssue((error, reportId) => {
         if (!error) {
           loggedEvent.reportIssueId = reportId;
         }
       });
-    },
+    }
   };
 
   const init = (aOTHelper, aReportIssueLevel) => LazyLoader.load([
-    '/js/min/feedbackView.min.js',
+    '/js/min/feedbackView.min.js'
   ]).then(() => {
     otHelper = aOTHelper;
     Utils.addEventsHandlers('feedbackView:', eventHandlers, global);
@@ -48,6 +48,6 @@
   });
 
   global.FeedbackController = {
-    init,
+    init
   };
 })(this);

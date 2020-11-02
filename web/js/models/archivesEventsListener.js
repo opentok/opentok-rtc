@@ -9,7 +9,7 @@
       handlers && handlers.forEach((aHandler) => {
         archiveValues.then(aHandler.method.bind(aHandler.context));
       });
-    },
+    }
   };
 
   function init() {
@@ -35,7 +35,7 @@
     if (hd) {
       listeners[type].push({
         method: hd,
-        context,
+        context
       });
     }
   }
@@ -69,7 +69,7 @@
     },
     get archives() {
       return archives;
-    },
+    }
   };
 
   exports.ArchivesEventsListener = ArchivesEventsListener;

@@ -79,6 +79,6 @@
     isCollapsed,
     get visible() {
       return container && container.classList.contains('visible');
-    },
+    }
   };
 })(this);

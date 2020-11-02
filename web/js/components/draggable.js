@@ -51,7 +51,7 @@
     sendEvent() {
       Utils.sendEvent('DragDetector:dragstart', {
         pageX: this.startX,
-        pageY: this.startY,
+        pageY: this.startY
       }, this.element);
       this.clearTimer();
     },
@@ -90,7 +90,7 @@
       this.element = null;
       this.startX = null;
       this.startY = null;
-    },
+    }
   };
 
   const DraggableElement = function (element) {
@@ -161,7 +161,7 @@
       this.element.classList.remove('dragging');
       this.element = null;
       this.elementStyle = null;
-    },
+    }
   };
 
   const elements = {};
@@ -181,7 +181,7 @@
 
     DRAG_TIMEOUT: DragDetector.DRAG_TIMEOUT,
 
-    CLICK_THRESHOLD: DragDetector.CLICK_THRESHOLD,
+    CLICK_THRESHOLD: DragDetector.CLICK_THRESHOLD
   };
 
   exports.Draggable = Draggable;

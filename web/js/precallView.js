@@ -96,7 +96,7 @@
           Modal.showConfirm({
             head: 'Set mic input',
             detail: 'Please identify the audio source in the following list:',
-            button: 'Set',
+            button: 'Set'
           }, true).then((start) => {
             if (start) {
               Utils.sendEvent('roomView:setAudioSource', select.value);
@@ -155,7 +155,7 @@
     },
     'PrecallController:audioOnly': function () {
       setSwitchStatus(false, 'Video', 'roomView:initialVideoSwitch');
-    },
+    }
   };
 
   const setFocus = (elem) => {
@@ -335,6 +335,6 @@
     showLockedMessage,
     startPrecallTestMeter,
     displayNetworkTestResults,
-    hideConnectivityTest,
+    hideConnectivityTest
   };
 })(this);

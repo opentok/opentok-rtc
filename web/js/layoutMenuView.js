@@ -10,7 +10,7 @@
       if (type) {
         BubbleFactory.get('chooseLayout').toggle();
         Utils.sendEvent('layoutMenuView:layout', {
-          type,
+          type
         });
       }
     });
@@ -34,6 +34,6 @@
   };
 
   exports.LayoutMenuView = {
-    init,
+    init
   };
 })(this);

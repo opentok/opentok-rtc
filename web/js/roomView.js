@@ -37,66 +37,66 @@ BubbleFactory, LayoutManager */
       head: 'Mute all participants, including yourself',
       detail: 'Everyone will be notified and can click their <i data-icon="no_mic"></i> button'
               + ' to unmute themselves.',
-      button: 'Mute all participants',
+      button: 'Mute all participants'
     },
     muteRemotely: {
       head: 'All participants microphones are being disabled in the call',
       detail: 'If you want to keep talking, '
               + 'you must manually enable your own microphone.',
-      button: 'I understand',
+      button: 'I understand'
     },
     unmutedRemotely: {
       head: 'Your microphone is now enabled in the call',
       detail: 'If you want to remain muted, '
               + 'you must manually disable your own microphone.',
-      button: 'I understand',
+      button: 'I understand'
     },
     join: {
       head: 'All participants are muted',
       detail: 'You can unmute everyone by toggling the Mute all participants option. Or you can '
               + 'unmute just yourself by clicking the microphone icon in the bottom menu.',
-      button: 'I understand',
+      button: 'I understand'
     },
     lock: {
       head: 'Do you want to lock the meeting?',
       detail: 'When a meeting room is locked, no one else will be allowed to join the meeting. '
               + 'Current participants who leave the meeting will not be allowed back in.',
-      button: 'Lock Meeting',
+      button: 'Lock Meeting'
     },
     endCall: {
       head: 'Do you want to leave the meeting?',
       detail: 'The meeting will continue with the remaining participants.',
-      button: 'Leave meeting',
+      button: 'Leave meeting'
     },
     endLockedCall: {
       head: 'Do you want to unlock the meeting before leaving?',
       detail: 'The meeting will continue with the remaining participants. When a meeting room is locked, no one else will be allowed to join or re-join the meeting.',
       button: 'Unlock and Leave',
-      altButton: 'Leave Without Unlocking',
+      altButton: 'Leave Without Unlocking'
     },
     sessionDisconnected: {
       head: 'Session disconected',
       detail: 'The connection to the OpenTok platform has been lost. Check your network '
               + 'connectivity and press Reload to connect again.',
-      button: 'Reload',
+      button: 'Reload'
     },
     chromePublisherError: {
       head: 'Internal Chrome Error',
       detail: 'Failed to acquire microphone. This is a known Chrome bug. Please completely quit '
               + 'and restart your browser.',
-      button: 'Reload',
+      button: 'Reload'
     },
     meetingFullError: {
       head: 'Meeting Full',
       detail: `This meeting has reached the full capacity of ${window.maxUsersPerRoom} participants. Try&nbsp;joining later.`,
-      button: 'OK',
-    },
+      button: 'OK'
+    }
   };
 
   const NOT_SHARING = {
     detail: {
-      isSharing: false,
-    },
+      isSharing: false
+    }
   };
 
   function setUnreadMessages(count) {
@@ -135,7 +135,7 @@ BubbleFactory, LayoutManager */
     },
     shown() {
       Utils.sendEvent('roomView:screenChange');
-    },
+    }
   };
 
   const chatEvents = {
@@ -143,7 +143,7 @@ BubbleFactory, LayoutManager */
       document.body.data('chatStatus', 'hidden');
       messageButtonElem.classList.remove('activated');
       setUnreadMessages(0);
-    },
+    }
   };
 
   const hangoutEvents = {
@@ -160,7 +160,7 @@ BubbleFactory, LayoutManager */
     },
     rearranged() {
       Utils.sendEvent('roomView:screenChange');
-    },
+    }
   };
 
   const screenShareCtrEvents = {
@@ -172,7 +172,7 @@ BubbleFactory, LayoutManager */
     annotationEnded() {
       document.body.data('annotationVisible', 'false');
       Utils.setDisabled(annotateBtnElem, true);
-    },
+    }
   };
 
   const roomControllerEvents = {
@@ -238,7 +238,7 @@ BubbleFactory, LayoutManager */
       Modal.showConfirm(MODAL_TXTS.meetingFullError).then(() => {
         document.location.reload();
       });
-    },
+    }
   };
 
   function setAudioSwitchRemotely(isMuted) {
@@ -389,7 +389,7 @@ BubbleFactory, LayoutManager */
       return Promise.resolve(cronograph);
     }
     return LazyLoader.dependencyLoad([
-      '/js/components/cronograph.js',
+      '/js/components/cronograph.js'
     ]).then(() => {
       cronograph = Cronograph;
       return cronograph;
@@ -574,7 +574,7 @@ BubbleFactory, LayoutManager */
       Modal.showConfirm({
         head: 'Set mic input',
         detail: 'Please identify the audio source in the following list:',
-        button: 'Change',
+        button: 'Change'
       }).then((start) => {
         if (start) {
           Utils.sendEvent('roomView:setAudioSource', select.value);
@@ -669,7 +669,7 @@ BubbleFactory, LayoutManager */
         dialOut(evt) {
           const phonenumber = evt.detail;
           Utils.sendEvent('roomView:dialOut', phonenumber);
-        },
+        }
       });
     }
 
@@ -757,6 +757,6 @@ BubbleFactory, LayoutManager */
     createStreamView,
     deleteStreamView,
     setAudioSwitchRemotely,
-    showConfirmChangeMicStatus,
+    showConfirmChangeMicStatus
   };
 })(this);

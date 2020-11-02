@@ -25,5 +25,6 @@ module.exports = {
     'no-restricted-globals': 0,
     'prefer-rest-params': 0,
     'consistent-return': 0,
+    'comma-dangle': ['error', 'never'],
   },
 };

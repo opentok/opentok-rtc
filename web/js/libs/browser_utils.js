@@ -75,7 +75,7 @@
         params: {},
         getFirstValue(aParam) {
           return Array.isArray(this.params[aParam]) ? this.params[aParam][0] : this.params[aParam];
-        },
+        }
       });
   };
 
@@ -109,7 +109,7 @@
   const formatter = new Intl.DateTimeFormat('en-US', {
     hour: '2-digit',
     minute: '2-digit',
-    hour12: true,
+    hour12: true
   });
 
   function toPrettyDuration(duration) {
@@ -205,7 +205,7 @@
     },
     getDraggable() {
       return LazyLoader.dependencyLoad([
-        '/js/components/draggable.js',
+        '/js/components/draggable.js'
       ]).then(() => Draggable);
     },
     isScreen(item) {
@@ -223,7 +223,7 @@
     },
     setDisabled,
     getLabelText,
-    htmlEscape,
+    htmlEscape
   };
 
   // Just replacing global.utils might not be safe... let's just expand it...

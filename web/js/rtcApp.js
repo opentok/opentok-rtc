@@ -7,9 +7,9 @@
     '/': {
       mainView: 'RoomController',
       dependencies: [
-        'RoomController',
-      ],
-    },
+        'RoomController'
+      ]
+    }
   };
 
   function getView() {
@@ -38,7 +38,7 @@
   }
 
   exports.RTCApp = {
-    init,
+    init
   };
 })(this);
 
@@ -57,7 +57,7 @@ this.addEventListener('load', () => {
       '/js/libs/browser_utils.js',
       '/shared/js/utils.js',
       '/js/helpers/requests.js',
-      '/js/min/roomController.min.js',
+      '/js/min/roomController.min.js'
     ]).then(() => {
       RTCApp.init();
     });

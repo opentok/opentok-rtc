@@ -27,7 +27,7 @@ LayoutBase.prototype = {
 
   destroy() {
     this.container = null;
-  },
+  }
 };
 
 const Grid = function (container, items) {
@@ -43,10 +43,10 @@ Grid.prototype = Object.create(LayoutBase.prototype, {
 
       return {
         width: `${100 / columns}%`,
-        height: `${100 / Math.ceil(total / columns)}%`,
+        height: `${100 / Math.ceil(total / columns)}%`
       };
-    },
-  },
+    }
+  }
 });
 
 Grid.prototype.constructor = Grid;
@@ -62,17 +62,17 @@ Float.prototype = Object.create(LayoutBase.prototype, {
     get() {
       return {
         width: '100%',
-        height: '100%',
+        height: '100%'
       };
-    },
+    }
   },
 
   publisher: {
     configurable: false,
     get() {
       return this.items.publisher;
-    },
-  },
+    }
+  }
 });
 
 Float.prototype.constructor = Float;
@@ -110,10 +110,10 @@ F2FHorizontal.prototype = Object.create(LayoutBase.prototype, {
     get() {
       return {
         width: '100%',
-        height: `${100 / this.total}%`,
+        height: `${100 / this.total}%`
       };
-    },
-  },
+    }
+  }
 });
 
 F2FHorizontal.prototype.constructor = F2FHorizontal;
@@ -128,10 +128,10 @@ F2FVertical.prototype = Object.create(LayoutBase.prototype, {
     get() {
       return {
         width: `${100 / this.total}%`,
-        height: '100%',
+        height: '100%'
       };
-    },
-  },
+    }
+  }
 });
 
 F2FVertical.prototype.constructor = F2FVertical;
@@ -193,7 +193,7 @@ Hangout.getItemId = (item) => item.data('id');
  */
 Hangout.stageTypeDescriptors = ['camera', 'screen'].map((aType) => ({
   type: aType,
-  attrName: Hangout.getAttributeName(aType),
+  attrName: Hangout.getAttributeName(aType)
 }));
 
 Hangout.prototype = Object.create(LayoutBase.prototype, {
@@ -225,7 +225,7 @@ Hangout.prototype = Object.create(LayoutBase.prototype, {
           this.container.data(descriptor.attrName, null);
         }
       }, this);
-    },
+    }
   },
   totalOnStage: {
     configurable: false,
@@ -234,7 +234,7 @@ Hangout.prototype = Object.create(LayoutBase.prototype, {
      */
     get() {
       return Object.keys(this.stageIds).length;
-    },
+    }
   },
   totalOnStrip: {
     configurable: false,
@@ -243,8 +243,8 @@ Hangout.prototype = Object.create(LayoutBase.prototype, {
      */
     get() {
       return this.total - this.totalOnStage;
-    },
-  },
+    }
+  }
 });
 
 Hangout.prototype.constructor = Hangout;
@@ -256,7 +256,7 @@ Hangout.prototype.handlers = {
       // Selected item is already on stage so it should be expanded to cover all. That means that
       // the other item on stage should go to the strip leaving the stage
       this.removeCurrentItemFromStage(
-        Hangout.getItemType(item) === 'camera' ? 'screen' : 'camera',
+        Hangout.getItemType(item) === 'camera' ? 'screen' : 'camera'
       );
     } else {
       this.putItemOnStage(item);
@@ -276,7 +276,7 @@ Hangout.prototype.handlers = {
     if (Hangout.getItemType(item) === 'screen' && !this.stageIds.screen) {
       this.putItemOnStage(item).updateTotalOnStage();
     }
-  },
+  }
 };
 
 Hangout.prototype.handleEvent = function (evt) {
@@ -419,10 +419,10 @@ HangoutHorizontal.prototype = Object.create(Hangout.prototype, {
     get() {
       return {
         width: `${100 / this.totalOnStrip}%`,
-        height: '100%',
+        height: '100%'
       };
-    },
-  },
+    }
+  }
 });
 
 HangoutHorizontal.prototype.constructor = HangoutHorizontal;
@@ -437,10 +437,10 @@ HangoutVertical.prototype = Object.create(Hangout.prototype, {
     get() {
       return {
         width: '100%',
-        height: `${100 / this.totalOnStrip}%`,
+        height: `${100 / this.totalOnStrip}%`
       };
-    },
-  },
+    }
+  }
 });
 
 HangoutVertical.prototype.constructor = HangoutVertical;

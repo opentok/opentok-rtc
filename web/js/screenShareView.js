@@ -7,7 +7,7 @@
   const screenShareCtrlEvents = {
     shareScreenError: launchShareError,
     extInstallationResult,
-    destroyed: destroyView,
+    destroyed: destroyView
   };
 
   function destroyView() {
@@ -114,6 +114,6 @@
   }
 
   exports.ScreenShareView = {
-    init,
+    init
   };
 })(this);

@@ -157,7 +157,7 @@
         container.style.left = `${rectObject.right + HORIZONTAL_OFFSET}px`;
         container.style.top = `${rectObject.top - rectObject.height}px`;
       }
-    },
+    }
   };
 
   global.BubbleFactory = {
@@ -175,6 +175,6 @@
       }
 
       return instance;
-    },
+    }
   };
 })(this);

@@ -15,7 +15,7 @@
     width: '100%',
     height: '100%',
     insertMode: 'append',
-    showControls: false,
+    showControls: false
   };
 
   const storedAudioDeviceId = window.localStorage.getItem('audioDeviceId');
@@ -57,7 +57,7 @@
       cancelTest() {
         PrecallView.hideConnectivityTest();
         otNetworkTest.stopTest();
-      },
+      }
     };
 
     return new Promise((resolve) => {
@@ -92,7 +92,7 @@
             resolve({
               roomURI: roomName,
               username: publisherOptions.name,
-              publisherOptions,
+              publisherOptions
             });
           }, 1);
         }
@@ -173,7 +173,7 @@
                   resolution: '640x480',
                   sessionId: window.precallSessionId,
                   token: window.precallToken,
-                  videoSource: videoSourceId,
+                  videoSource: videoSourceId
                 };
 
                 publisher.on('accessAllowed', () => {
@@ -228,7 +228,7 @@
   }
 
   const eventHandlers = {
-    'roomView:endprecall': endPrecall,
+    'roomView:endprecall': endPrecall
   };
 
   const init = () => new Promise((resolve) => {
@@ -236,7 +236,7 @@
       '/js/helpers/ejsTemplate.js',
       '/js/vendor/ejs_production.js',
       '/js/min/precallView.min.js',
-      '/js/helpers/opentok-network-test.js',
+      '/js/helpers/opentok-network-test.js'
     ]).then(() => {
       Utils.addEventsHandlers('', eventHandlers);
       return PrecallView.init();
@@ -247,6 +247,6 @@
 
   exports.PrecallController = {
     init,
-    showCallSettingsPrompt,
+    showCallSettingsPrompt
   };
 })(this);

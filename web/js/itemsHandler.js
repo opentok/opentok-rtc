@@ -27,7 +27,7 @@
           Utils.sendEvent(elemClicked.data('eventName'), {
             streamId: elemClicked.data('streamId'),
             name: elemClicked.data('action'),
-            streamType: elemClicked.data('streamType'),
+            streamType: elemClicked.data('streamType')
           });
           break;
         }
@@ -61,7 +61,7 @@
 
           if (target.classList.contains('dblclick_area')) {
             Utils.sendEvent('layoutView:itemSelected', {
-              item: this.items[target.data('id')],
+              item: this.items[target.data('id')]
             });
           }
           break;
@@ -70,13 +70,13 @@
           // No-op on default;
         }
       }
-    },
+    }
   };
   function init(container, items) {
     return new Handler(container, items);
   }
 
   global.ItemsHandler = {
-    init,
+    init
   };
 })(this);

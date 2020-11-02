@@ -89,7 +89,7 @@
     },
     sessionDisconnected() {
       window.location = '/';
-    },
+    }
   };
 
   function addHandlers(aGlobalHandlers) {
@@ -115,6 +115,6 @@
     get(key) {
       return _entries[key];
     },
-    init,
+    init
   };
 })(this);

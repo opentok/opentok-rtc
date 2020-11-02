@@ -8,7 +8,7 @@
   };
 
   const eventHandlers = {
-    verifyDialOut: sendPhoneNumber,
+    verifyDialOut: sendPhoneNumber
   };
 
   const addHandlers = () => {
@@ -18,19 +18,19 @@
   const init = () => {
     LazyLoader.dependencyLoad([
       'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/js/intlTelInput.js',
-      'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/js/utils.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/js/utils.js'
     ]).then(() => {
       input = $('#dialOutNumber');
       input.intlTelInput({
         utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/js/utils.js',
         initialCountry: 'US',
-        separateDialCode: true,
+        separateDialCode: true
       });
     });
     addHandlers();
   };
 
   global.PhoneNumberView = {
-    init,
+    init
   };
 })(this);

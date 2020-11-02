@@ -20,7 +20,7 @@
     };
     closeHandlers[selector] = {
       target: closeElement,
-      handler,
+      handler
     };
 
     keyPressHandler = (event) => {
@@ -139,6 +139,6 @@
     flashMessage,
     show,
     hide,
-    showConfirm,
+    showConfirm
   };
 })(this);

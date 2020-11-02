@@ -129,7 +129,7 @@
       if (!this.isMyself(evt.connection)) {
         Utils.sendEvent('chatController:presenceEvent', {
           userName: newUsrName,
-          text: CONN_TEXT,
+          text: CONN_TEXT
         });
       } else {
         otHelper = this;
@@ -138,9 +138,9 @@
     connectionDestroyed(evt) {
       Utils.sendEvent('chatController:presenceEvent', {
         userName: JSON.parse(evt.connection.data).userName,
-        text: DISCONN_TEXT,
+        text: DISCONN_TEXT
       });
-    },
+    }
   };
 
   /**
@@ -181,18 +181,18 @@
 
   function init(aUsrId, aGlobalHandlers, listenedEvts) {
     return LazyLoader.dependencyLoad([
-      '/js/min/chatView.min.js',
+      '/js/min/chatView.min.js'
     ]).then(() => {
       eventsIn = {
         updatedRemotely: {
           name: 'roomStatus:updatedRemotely',
           handler: loadHistoryChat,
-          couldBeChanged: true,
+          couldBeChanged: true
         },
         outgoingMessage: {
           name: 'chatView:outgoingMessage',
-          handler: sendMsg,
-        },
+          handler: sendMsg
+        }
       };
       _historyChat = [];
       _hasStatus = (exports.RoomStatus !== undefined);
@@ -206,6 +206,6 @@
   }
 
   exports.ChatController = {
-    init,
+    init
   };
 })(this);

@@ -15,7 +15,7 @@
     if (enableArchiveManager) {
       dependenciesLoaded = LazyLoader.dependencyLoad([
         '/js/models/archivesEventsListener.js',
-        '/js/min/recordingsView.min.js',
+        '/js/min/recordingsView.min.js'
       ]).then(() => ArchivesEventsListener
         .init());
     } else {
@@ -65,13 +65,13 @@
           }
         });
       }));
-    },
+    }
   };
 
   exports.RecordingsController = {
     init,
     get model() {
       return model;
-    },
+    }
   };
 })(this);
