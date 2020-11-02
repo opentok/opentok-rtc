@@ -1,5 +1,4 @@
 const { OAuth2Client } = require('google-auth-library');
-const { Utils } = require('swagger-boilerplate');
 
 /* eslint-disable class-methods-use-this */
 class DisabledGoogleAuthStategy {
@@ -18,12 +17,14 @@ class EnabledGoogleAuthStrategy {
     this.googleId = googleId;
     this.hostedDomain = hostedDomain;
     this.client = new OAuth2Client(googleId, '', '');
-    this.verifyIdTokenPromise = Utils.promisify(this.client.verifyIdToken, 1, this.client);
   }
 
   verifyIdToken(token) {
     return new Promise((resolve, reject) => {
-      this.verifyIdTokenPromise(token, this.googleId)
+      this.client.verifyIdToken({
+        idToken: token,
+        audience: this.googleId,
+      })
         .then((login) => {
           const payload = login.getPayload();
           if (this.hostedDomain && (this.hostedDomain !== payload.hd)) {
