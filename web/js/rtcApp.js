@@ -15,7 +15,7 @@
       dependencies: [
         'RoomController',
       ],
-    }
+    },
   };
 
   function getView() {
