@@ -62,7 +62,7 @@ function getUserCountry(req) {
 const securityHeaders = helmet({
   referrerPolicy: { policy: 'no-referrer-when-downgrade' },
   contentSecurityPolicy: false,
-  frameGuard: false, // configured by tbConfig.allowIframing
+  frameGuard: false // configured by tbConfig.allowIframing
 });
 
 function ServerMethods(aLogLevel, aModules) {
@@ -270,7 +270,7 @@ function ServerMethods(aLogLevel, aModules) {
         helpLinkText1,
         helpLinkUrl1,
         helpLinkText2,
-        helpLinkUrl2,
+        helpLinkUrl2
       };
     });
   }
@@ -325,7 +325,7 @@ function ServerMethods(aLogLevel, aModules) {
       userLanguage: language,
       userCountry: country,
       useGoogleFonts: aReq.tbConfig.useGoogleFonts,
-      appName: aReq.tbConfig.appName,
+      appName: aReq.tbConfig.appName
     }, (err, html) => {
       if (err) {
         logger.error('getMeetingCompletion. error: ', err);
@@ -370,7 +370,7 @@ function ServerMethods(aLogLevel, aModules) {
 
               aRes.render('archivePreview.ejs', {
                 archiveName: archive.name,
-                archiveURL: archive.url,
+                archiveURL: archive.url
               });
             }
           })
@@ -471,7 +471,7 @@ function ServerMethods(aLogLevel, aModules) {
             apiKey: tbConfig.apiKey,
             precallApiKey: tbConfig.precallApiKey,
             precallToken: tbConfig.precallOtInstance.generateToken(testSession.sessionId, {
-              role: 'publisher',
+              role: 'publisher'
             }),
             hasSip: tbConfig.enableSip,
             showTos: tbConfig.showTos,
@@ -498,7 +498,7 @@ function ServerMethods(aLogLevel, aModules) {
             helpLinkText2: tbConfig.helpLinkText2,
             helpLinkUrl2: tbConfig.helpLinkUrl2,
             // eslint-disable-next-line no-dupe-keys
-            userName,
+            userName
           }, (err, html) => {
             if (err) {
               logger.log('getRoom. error:', err);
@@ -544,7 +544,7 @@ function ServerMethods(aLogLevel, aModules) {
               sessionId: session.sessionId,
               lastUsage: Date.now(),
               inProgressArchiveId: undefined,
-              isLocked: false,
+              isLocked: false
             });
           });
       } else {
@@ -658,7 +658,7 @@ function ServerMethods(aLogLevel, aModules) {
           token: tbConfig.otInstance
             .generateToken(usableSessionInfo.sessionId, {
               role: 'publisher',
-              data: JSON.stringify({ userName }),
+              data: JSON.stringify({ userName })
             }),
           username: userName,
           autoGenerateRoomName: tbConfig.autoGenerateRoomName,
@@ -671,7 +671,7 @@ function ServerMethods(aLogLevel, aModules) {
           googleId: tbConfig.googleId,
           googleHostedDomain: tbConfig.googleHostedDomain,
           reportIssueLevel: tbConfig.reportIssueLevel,
-          archives: usableSessionInfo.archives,
+          archives: usableSessionInfo.archives
         };
         answer[aReq.sessionIdField || 'sessionId'] = usableSessionInfo.sessionId;
         aRes.send(answer);
@@ -765,7 +765,7 @@ function ServerMethods(aLogLevel, aModules) {
       .then((sessionInfo) => {
         const now = new Date();
         const archiveOptions = {
-          name: `${userName} ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`,
+          name: `${userName} ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`
         };
         let archiveOp;
         switch (operation) {
@@ -803,7 +803,7 @@ function ServerMethods(aLogLevel, aModules) {
             || Promise.resolve(aArchive);
 
           const roomArchiveStorage = new ArchiveLocalStorage(
-            otInstance, redisRoomPrefix + roomName, aArchive.sessionId, aLogLevel,
+            otInstance, redisRoomPrefix + roomName, aArchive.sessionId, aLogLevel
           );
           readyToUpdateDb
             .then((aUpdatedArchive) => {
@@ -815,7 +815,7 @@ function ServerMethods(aLogLevel, aModules) {
           logger.log('postRoomArchive => Returning archive info: ', aArchive.id);
           aRes.send({
             archiveId: aArchive.id,
-            archiveType: aArchive.outputMode,
+            archiveType: aArchive.outputMode
           });
         });
       })
@@ -848,7 +848,7 @@ function ServerMethods(aLogLevel, aModules) {
           hotjarId: aReq.tbConfig.hotjarId,
           hotjarVersion: aReq.tbConfig.hotjarVersion,
           enableFeedback: aReq.tbConfig.enableFeedback,
-          useGoogleFonts: aReq.tbConfig.useGoogleFonts,
+          useGoogleFonts: aReq.tbConfig.useGoogleFonts
         });
       }).catch((e) => {
         logger.error('getArchive error:', e);
@@ -878,7 +878,7 @@ function ServerMethods(aLogLevel, aModules) {
         sessionId = aArchive.sessionId;
         type = aArchive.outputMode;
         roomArchiveStorage = new ArchiveLocalStorage(
-          otInstance, redisRoomPrefix + roomName, sessionId, aLogLevel,
+          otInstance, redisRoomPrefix + roomName, sessionId, aLogLevel
         );
         return archiveId;
       })
@@ -917,15 +917,15 @@ function ServerMethods(aLogLevel, aModules) {
         const { sessionId } = sessionInfo;
         const token = tbConfig.otInstance.generateToken(sessionId, {
           role: 'publisher',
-          data: `{"sip":true, "role":"client", "name":"${phoneNumber}"}`,
+          data: `{"sip":true, "role":"client", "name":"${phoneNumber}"}`
         });
         sipUri = `sip:+${phoneNumber}@sip.nexmo.com;transport=tls`;
         const options = {
           auth: {
             username: tbConfig.sipUsername,
-            password: tbConfig.sipPassword,
+            password: tbConfig.sipPassword
           },
-          secure: false,
+          secure: false
         };
         tbConfig.otInstance.dial_P(sessionId, token, sipUri, options)
           .then((sipCallData) => {
@@ -1015,7 +1015,7 @@ function ServerMethods(aLogLevel, aModules) {
     getHealth,
     getRoomRawInfo,
     setSecurityHeaders,
-    getMeetingCompletion,
+    getMeetingCompletion
   };
 }
 

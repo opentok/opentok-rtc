@@ -25,17 +25,17 @@ class ArchiveLocalStorage {
           _head: {
             id: 1,
             seq: 1,
-            tot: 1,
+            tot: 1
           },
-          data: archives,
-        }),
+          data: archives
+        })
       },
       (error) => {
         if (error) {
           return this.logger.log('Get archives error:', error);
         }
         return false;
-      },
+      }
     );
   }
 

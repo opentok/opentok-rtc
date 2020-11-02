@@ -30,7 +30,7 @@ module.exports = function (config) {
       'web/js/layouts.js',
       'web/**/*.js',
       'test/unit/**/*.html',
-      'test/unit/**/*.js',
+      'test/unit/**/*.js'
     ],
 
     // list of files to exclude
@@ -41,7 +41,7 @@ module.exports = function (config) {
       'web/js/vendor/lazy_loader.js',
       'web/js/helpers/OTHelper.js',
       'web/js/rtcApp.js',
-      'web/js/vendor/opentok-annotation.js',
+      'web/js/vendor/opentok-annotation.js'
     ],
 
     // preprocess matching files before serving them to the browser
@@ -59,7 +59,7 @@ module.exports = function (config) {
       'test/unit/itemsHandler_spec.js': ['browserify'],
       'test/unit/layoutMenuView_spec.js': ['browserify'],
       'test/unit/layouts_spec.js': ['browserify'],
-      'test/unit/precallController_spec.js': ['browserify'],
+      'test/unit/precallController_spec.js': ['browserify']
 
     },
 
@@ -85,13 +85,13 @@ module.exports = function (config) {
     coverageReporter: {
       dir: 'coverage',
       instrumenter: {
-        'web/**/*.js': ['istanbul'],
+        'web/**/*.js': ['istanbul']
       },
       reporters: [
         { type: 'html', subdir: 'report-html' },
         { type: 'lcov', subdir: 'report-lcov' },
-        { type: 'lcovonly', subdir: '.', file: 'report-lcovonly.txt' },
-      ],
+        { type: 'lcovonly', subdir: '.', file: 'report-lcovonly.txt' }
+      ]
     },
 
     // start these browsers
@@ -101,13 +101,13 @@ module.exports = function (config) {
     customLaunchers: {
       Chrome_travis_ci: {
         base: 'Chrome',
-        flags: ['--no-sandbox'],
-      },
+        flags: ['--no-sandbox']
+      }
     },
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: true,
+    singleRun: true
   };
 
   if (process.env.TRAVIS) {

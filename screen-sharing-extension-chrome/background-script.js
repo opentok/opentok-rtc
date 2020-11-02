@@ -26,7 +26,7 @@ chrome.runtime.onConnect.addListener((port) => {
       // content-script which will forward it to the webpage
       return port.postMessage({
         method: 'sourceId',
-        payload: { requestId, sourceId },
+        payload: { requestId, sourceId }
       });
     });
   }

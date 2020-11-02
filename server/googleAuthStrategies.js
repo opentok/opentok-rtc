@@ -38,5 +38,5 @@ class EnabledGoogleAuthStrategy {
 
 module.exports = {
   DisabledGoogleAuthStategy,
-  EnabledGoogleAuthStrategy,
+  EnabledGoogleAuthStrategy
 };

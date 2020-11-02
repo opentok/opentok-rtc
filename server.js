@@ -12,8 +12,8 @@ const server = new Server({
     dotfiles: 'ignore',
     extensions: ['jpg'],
     index: false,
-    redirect: false,
-  },
+    redirect: false
+  }
 });
 
 server.start();
