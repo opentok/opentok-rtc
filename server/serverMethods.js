@@ -401,13 +401,12 @@ function ServerMethods(aLogLevel, aModules) {
     aRes.send({});
   }
 
-  async function getRoot(aReq, aRes) { 
+  async function getRoot(aReq, aRes) {
     if (aReq.tbConfig.autoGenerateRoomName) {
       const roomName = `${haikunator.haikunate({ tokenLength: 0 })}-${haikunator.haikunate()}`;
       return aRes.redirect(`/room/${roomName}`);
-    } else {
-      getRoom(aReq, aRes);
-    } 
+    }
+    getRoom(aReq, aRes);
   }
 
   function isInBlacklist(name) {
@@ -417,8 +416,8 @@ function ServerMethods(aLogLevel, aModules) {
   // Finish the call to getRoom and postRoom
   // eslint-disable-next-line consistent-return
   async function getRoom(aReq, aRes) {
-    var meetingAllowed = await isMeetingAllowed(aReq);
-    var query = aReq.query;
+    const meetingAllowed = await isMeetingAllowed(aReq);
+    const { query } = aReq;
 
     if (aReq.params.roomName && isInBlacklist(aReq.params.roomName)) {
       logger.log('getRoom. error:', `Blacklist found '${aReq.params.roomName}'`);

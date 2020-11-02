@@ -24,8 +24,6 @@
   if (storedVideoDeviceId) publisherOptions.videoSource = storedVideoDeviceId;
 
   function showCallSettingsPrompt(roomName, username, otHelper) {
-    const selector = '.user-name-modal';
-
     const videoPreviewEventHandlers = {
       toggleFacingMode() {
         otHelper.toggleFacingMode().then((dev) => {
@@ -62,7 +60,7 @@
       },
     };
 
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       function loadModalText() {
         window.autoGenerateRoomName ? PrecallView.setFocus('user') : PrecallView.setFocus('room');
 

@@ -7,9 +7,9 @@
     '/': {
       mainView: 'RoomController',
       dependencies: [
-        'RoomController'
-      ]
-    }
+        'RoomController',
+      ],
+    },
   };
 
   function getView() {
