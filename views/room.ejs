@@ -9,6 +9,15 @@
     <title><%= appName %></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover'"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta
+      name="description"
+      content="Vonage offers flexible and scalable voice, messaging,
+      video and data capabilities across Unified Communications,
+      Contact Centers and Communications APIs.This is a Free Video conferencing web application.">
+
+    <link rel="stylesheet" href="css/landing-critical.opentok.css">
+    <link rel="preload" href="css/landing-uncritical.opentok.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="css/landing-uncritical.opentok.css"></noscript>
 
     <!--[if IE]><link rel="shortcut icon" href="/favicon.ico"><![endif]-->
     <link rel="icon" href="/favicon.png">
@@ -30,6 +39,11 @@
         head.appendChild(link);
     }
     </script>
+
+    <link rel="dns-prefetch" href="https://static.opentok.com">
+    <link rel="dns-prefetch" href="https://vars.hotjar.com">
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
+    <link rel="dns-prefetch" href="https://code.jquery.com">
 
     <% if (useGoogleFonts) { %>
         <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
