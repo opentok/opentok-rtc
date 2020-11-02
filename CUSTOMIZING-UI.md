@@ -38,5 +38,5 @@ These can be configured with these settings:
 
 ## Changing landing page HTML
 
-Edit the view file [`views/index.ejs`](views/index.ejs) and change the images and text in the `<body>` section. You can also change the text in the `<title>` tag.
+Edit the view file [`views/room.ejs`](views/room.ejs) and change the images and text in the `<body>` section. You can also change the text in the `<title>` tag.
 
