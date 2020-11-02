@@ -3,13 +3,13 @@ module.exports = {
     browser: true,
     commonjs: true,
     es2020: true,
-    node: true,
+    node: true
   },
   extends: [
-    'airbnb-base',
+    'airbnb-base'
   ],
   parserOptions: {
-    ecmaVersion: 12,
+    ecmaVersion: 12
   },
   rules: {
     'no-param-reassign': 0,
@@ -25,6 +25,6 @@ module.exports = {
     'no-restricted-globals': 0,
     'prefer-rest-params': 0,
     'consistent-return': 0,
-    'comma-dangle': ['error', 'never'],
-  },
+    'comma-dangle': ['error', 'never']
+  }
 };

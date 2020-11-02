@@ -11,7 +11,7 @@ module.exports = function (grunt) {
     'grunt-mocha-test', // Server side test runner
     'grunt-bower-task',
     'grunt-gitinfo',
-    'grunt-karma', // Client side test runner.
+    'grunt-karma' // Client side test runner.
   ].forEach(grunt.loadNpmTasks);
 
   grunt.loadTasks('tasks');
@@ -24,8 +24,8 @@ module.exports = function (grunt) {
           safari10: true,
           ecma: 2016,
           sourceMap: {
-            includeSources: true,
-          },
+            includeSources: true
+          }
         },
         files: [
           {
@@ -33,15 +33,15 @@ module.exports = function (grunt) {
             src: '*.js',
             dest: './web/js/min',
             cwd: './web/js',
-            ext: '.min.js',
-          },
-        ],
+            ext: '.min.js'
+          }
+        ]
       },
       prod_build: {
         options: {
           compress: true,
           safari10: true,
-          ecma: 2016,
+          ecma: 2016
         },
         files: [
           {
@@ -49,10 +49,10 @@ module.exports = function (grunt) {
             src: '*.js',
             dest: './web/js/min',
             cwd: './web/js',
-            ext: '.min.js',
-          },
-        ],
-      },
+            ext: '.min.js'
+          }
+        ]
+      }
 
     },
     concat: {
@@ -60,7 +60,7 @@ module.exports = function (grunt) {
         options: {
           process(src, filepath) {
             return `${src}\n //# sourceMappingURL= ${filepath.substring(filepath.lastIndexOf('/') + 1)}.map`;
-          },
+          }
         },
         files: {
           './web/js/min/chatView.min.js': ['./web/js/min/chatView.min.js'],
@@ -75,9 +75,9 @@ module.exports = function (grunt) {
           './web/js/min/recordingsController.min.js': ['./web/js/min/recordingsController.min.js'],
           './web/js/min/screenShareView.min.js': ['./web/js/min/screenShareView.min.js'],
           './web/js/min/screenShareController.min.js': ['./web/js/min/screenShareController.min.js'],
-          './web/js/min/roomController.min.js': ['./web/js/min/roomController.min.js'],
-        },
-      },
+          './web/js/min/roomController.min.js': ['./web/js/min/roomController.min.js']
+        }
+      }
     },
     mochaTest: {
       unit: {
@@ -85,21 +85,21 @@ module.exports = function (grunt) {
           reporter: 'spec',
           captureFile: 'resultsUnit.txt',
           quiet: false,
-          clearRequireCache: true,
+          clearRequireCache: true
         },
         src: [
-          'test/server/**/*_spec.js',
-        ],
+          'test/server/**/*_spec.js'
+        ]
       },
       rest: {
         options: {
           reporter: 'spec',
           captureFile: 'resultsRest.txt',
           quiet: false,
-          clearRequireCache: true,
+          clearRequireCache: true
         },
-        src: ['test/api/**/*_spec.js'],
-      },
+        src: ['test/api/**/*_spec.js']
+      }
     },
 
     bower: {
@@ -112,19 +112,19 @@ module.exports = function (grunt) {
           verbose: false,
           cleanTargetDir: false,
           cleanBowerDir: true,
-          bowerOptions: {},
-        },
-      },
+          bowerOptions: {}
+        }
+      }
     },
 
     karma: {
       options: {
-        configFile: 'karma.conf.js',
+        configFile: 'karma.conf.js'
       },
       integration: {
-        singleRun: true,
+        singleRun: true
       },
-      dev: {},
+      dev: {}
     },
 
     clean: {
@@ -133,8 +133,8 @@ module.exports = function (grunt) {
 
     gitinfo: {
       options: {
-        cwd: '.',
-      },
+        cwd: '.'
+      }
     },
 
     less: {
@@ -142,16 +142,16 @@ module.exports = function (grunt) {
         options: {
           compress: true,
           yuicompress: true,
-          optimization: 2,
+          optimization: 2
         },
         files: {
           'web/css/landing.opentok.css': 'web/less/landing.less',
           'web/css/room.opentok.css': 'web/less/room.less',
           'web/css/endMeeting.opentok.css': 'web/less/endMeeting.less',
           'web/css/annotation.opentok.css': 'web/less/annotation.less',
-          'web/css/hangoutScroll.css': 'web/less/hangoutScroll.less',
-        },
-      },
+          'web/css/hangoutScroll.css': 'web/less/hangoutScroll.less'
+        }
+      }
     },
     critical: {
       test: {
@@ -159,21 +159,21 @@ module.exports = function (grunt) {
           base: './',
           css: ['web/css/landing.opentok.css'],
           target: {
-            uncritical: 'web/css/landing-uncritical.opentok.css',
+            uncritical: 'web/css/landing-uncritical.opentok.css'
           },
-          minify: true,
+          minify: true
         },
         src: 'views/room.ejs',
-        dest: 'web/css/landing-critical.opentok.css',
-      },
+        dest: 'web/css/landing-critical.opentok.css'
+      }
     },
     autoprefixer: {
       options: {
-        browsers: ['last 5 versions'],
+        browsers: ['last 5 versions']
       },
       dist: {
-        src: 'web/css/*.css',
-      },
+        src: 'web/css/*.css'
+      }
     },
 
     watch: {
@@ -181,17 +181,17 @@ module.exports = function (grunt) {
         files: ['./web/**/*.less'],
         tasks: ['less', 'autoprefixer'],
         options: {
-          nospawn: false,
-        },
+          nospawn: false
+        }
       },
       server: {
         options: {
-          nospawn: false,
+          nospawn: false
         },
         files: ['./server.js', 'server/**/*.js', 'test/server/**/*.js'],
-        tasks: ['serverTest'],
-      },
-    },
+        tasks: ['serverTest']
+      }
+    }
   });
 
   // On watch events, if the changed file is a test file then configure mochaTest to only
@@ -209,41 +209,41 @@ module.exports = function (grunt) {
     'autoprefixer',
     'terser:pages',
     'concat',
-    'critical',
+    'critical'
   ]);
 
   grunt.registerTask('clientBuild-Prod', 'Build css files', [
     'less',
     'autoprefixer',
     'terser:prod_build',
-    'critical',
+    'critical'
   ]);
 
   grunt.registerTask('clientDev', 'Watch for changes on less files', [
     'clientBuild',
-    'watch',
+    'watch'
   ]);
 
   grunt.registerTask(
     'clientTest',
     'Launch client unit tests in shell with Karma + PhantomJS',
-    ['karma:dev'],
+    ['karma:dev']
   );
 
   grunt.registerTask('precommit', 'Run precommit tests', [
     'karma:integration',
     'mochaTest:unit',
-    'apiTest',
+    'apiTest'
   ]);
 
   grunt.registerTask('serverTest', 'Launch server unit tests', [
-    'mochaTest:unit',
+    'mochaTest:unit'
   ]);
 
   grunt.registerTask('apiTest', 'Launch server unit tests', ['mochaTest:rest']);
 
   grunt.registerTask('archivesTest', 'Launch server unit tests', [
-    'mochaTest:archives',
+    'mochaTest:archives'
   ]);
 
   grunt.registerTask('test', 'Launch server unit tests', () => {
@@ -257,7 +257,7 @@ module.exports = function (grunt) {
   grunt.registerTask('configTests', [
     'preBowerInstall',
     'bower:install',
-    'postBowerInstall',
+    'postBowerInstall'
   ]);
 
   grunt.registerTask('initialConfig', ['clientBuild', 'configTests']);
