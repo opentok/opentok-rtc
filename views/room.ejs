@@ -6,7 +6,7 @@
     <% if(iosAppId) { %>
       <meta name="apple-itunes-app" content="app-id=<%=iosAppId%>, app-argument=<%=iosURL%>">
     <% } %>
-    <title>Vonage Free Conferencing</title>
+    <title><%= appName %></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover'"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
 
@@ -70,6 +70,12 @@
       window.autoGenerateRoomName = <%=autoGenerateRoomName%>;
       window.publishAudio = <%=publishAudio%>;
       window.publishVideo = <%=publishVideo%>;
+      window.introText='<%=introText%>';
+      window.appName='<%=appName%>';
+      window.helpLinkText1='<%=helpLinkText1%>';
+      window.helpLinkUrl1='<%=helpLinkUrl1%>';
+      window.helpLinkText2='<%=helpLinkText2%>';
+      window.helpLinkUrl2='<%=helpLinkUrl2%>';
       var isMobile = function() { return window.matchMedia("only screen and (max-width: 480px)").matches; }
 
       var mobileSettings = function() {
@@ -131,7 +137,7 @@
         <div class="room-info">
           <div class="name-wrapper">
             <i id="room-locked-state" data-icon="closedLock" title="This room is locked. No additional participants may join the room."></i>
-            <p class="room-name">Vonage Video Conferencing</p>
+            <p class="room-name"><%= appName %></p>
           </div>
           <div class="participants-wrapper">
             <i data-icon="participants"></i><span id="participantsStr"></span>

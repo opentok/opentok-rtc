@@ -1,4 +1,4 @@
-!(global => {
+!((global) => {
   const Handler = function (container, items) {
     ['click', 'dblclick'].forEach(function (name) {
       container.addEventListener(name, this);
@@ -27,14 +27,14 @@
           Utils.sendEvent(elemClicked.data('eventName'), {
             streamId: elemClicked.data('streamId'),
             name: elemClicked.data('action'),
-            streamType: elemClicked.data('streamType')
+            streamType: elemClicked.data('streamType'),
           });
           break;
         }
         case 'roomController:video':
         case 'roomController:audio': {
-          const detail = evt.detail;
-          let item = this.items[detail.id];
+          const { detail } = evt;
+          const item = this.items[detail.id];
 
           if (!item) {
             return;
@@ -52,28 +52,31 @@
 
         case 'roomController:connected':
         case 'roomController:disconnected':
-          var item = this.items[evt.detail.id]; // eslint-disable-line no-redeclare
+          const item = this.items[evt.detail.id]; // eslint-disable-line no-case-declarations
           item && item.data('disconnected', evt.type === 'roomController:disconnected');
           break;
 
         case 'dblclick': {
-          const target = evt.target;
+          const { target } = evt;
 
           if (target.classList.contains('dblclick_area')) {
             Utils.sendEvent('layoutView:itemSelected', {
-              item: this.items[target.data('id')]
+              item: this.items[target.data('id')],
             });
           }
           break;
         }
+        default: {
+          // No-op on default;
+        }
       }
-    }
+    },
   };
   function init(container, items) {
     return new Handler(container, items);
   }
 
   global.ItemsHandler = {
-    init
+    init,
   };
 })(this);

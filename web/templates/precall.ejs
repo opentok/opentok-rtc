@@ -5,12 +5,16 @@
         <img src="/images/vonage-logo-no-text.svg" alt="Vonage logo">
       </a>
       <h2>
-        Vonage
-        <br>
-        Free Conferencing
+        <% if (appName === "Vonage Free Conferencing") { %>
+          Vonage
+          <br>
+          Free Conferencing
+        <% } else { %>
+          <%= appName %>
+        <% } %>
       </h2>
       <p>
-        Host free group video calls with friends, family, teammates&mdash;anyone!
+        <%=introText%>
       </p>
     </header>
     <footer>
@@ -19,7 +23,18 @@
 </div>
 <div id="righthand-container" class="user-name-modal">
   <div class="landing-more-info">
-    Need help? <a href="Vonage-Free-Conferencing-help.pdf" target="_blank">Read our FAQs</a>
+    <% if (helpLinkText1) { %>
+      Need help?
+        <% if (helpLinkText1 && helpLinkUrl1 ) { %>
+          <a href="<%= helpLinkUrl1 %>" target="_blank"><%= helpLinkText1 %></a>
+        <%
+           }
+           if (helpLinkText2 && helpLinkUrl2 ) {
+        %>
+          /
+          <a href="<%= helpLinkUrl2 %>" target="_blank"><%= helpLinkText2 %></a>
+        <% } %>
+    <% } %>
   </div>
   <form method="post">
     <div id="video-preview">

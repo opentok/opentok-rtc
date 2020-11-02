@@ -1,9 +1,10 @@
 var sinonTest = require('sinon-test');
+
 var test = sinonTest(sinon);
 sinon.test = test;
 
-var assert = chai.assert;
-var expect = chai.expect;
+var { assert } = chai;
+var { expect } = chai;
 var should = chai.should();
 
 describe('LayoutMenuView', () => {
@@ -30,9 +31,9 @@ describe('LayoutMenuView', () => {
     it('should set the correct layout when grid is selected', sinon.test(function (done) {
       var myLayoutGrid = {};
 
-      this.stub(BubbleFactory, 'get').callsFake( () => ({ toggle() {} }));
+      this.stub(BubbleFactory, 'get').callsFake(() => ({ toggle() {} }));
 
-      this.stub(window, 'CustomEvent').callsFake( (name, data) => {
+      this.stub(window, 'CustomEvent').callsFake((name, data) => {
         expect(name).to.be.equal('layoutMenuView:layout');
         expect(data.detail.type).to.be.equal('grid');
         done();
@@ -51,7 +52,7 @@ describe('LayoutMenuView', () => {
       }));
 
       Array.prototype.map.call(document.querySelectorAll('ul a'), (elem) => {
-        var layoutType = elem.dataset.layoutType;
+        var { layoutType } = elem.dataset;
         var isAvailable = !!layouts[layoutType];
         expect(elem.disabled).to.be.equal(!isAvailable);
       });

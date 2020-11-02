@@ -1,4 +1,4 @@
-!(exports => {
+!((exports) => {
   let cronographElement;
   let counter = 0;
   let counterTimer = null;
@@ -58,7 +58,7 @@
       return this;
     },
 
-    reset
+    reset,
   };
 
   exports.Cronograph = Cronograph;

@@ -1,12 +1,10 @@
-/* global window, safari, LazyLoader, Draggable */
-!(exports => {
-  const getCurrentTime = () => {
-    return new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-  };
+/* global safari, LazyLoader, Draggable */
+!((exports) => {
+  const getCurrentTime = () => new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
-  const inspectObject = obj => {
+  const inspectObject = (obj) => {
     let str = '';
-    Object.keys(obj).forEach(elto => {
+    Object.keys(obj).forEach((elto) => {
       str += `\n${elto}:${JSON.stringify(obj[elto])}`;
     });
     return str;
@@ -18,8 +16,8 @@
     (target || exports).dispatchEvent(newEvt);
   };
 
-  const addHandlers = events => {
-    Object.keys(events).forEach(evtName => {
+  const addHandlers = (events) => {
+    Object.keys(events).forEach((evtName) => {
       const event = events[evtName];
       (event.target || exports).addEventListener(event.name, event.handler);
     });
@@ -27,14 +25,14 @@
 
   const addEventsHandlers = (eventPreffixName, handlers, target) => {
     eventPreffixName = eventPreffixName || '';
-    Object.keys(handlers).forEach(eventName => {
+    Object.keys(handlers).forEach((eventName) => {
       (target || exports).addEventListener(eventPreffixName + eventName, handlers[eventName]);
     });
   };
 
   const removeEventHandlers = (eventPreffixName, handlers, target) => {
     eventPreffixName = eventPreffixName || '';
-    Object.keys(handlers).forEach(eventName => {
+    Object.keys(handlers).forEach((eventName) => {
       (target || exports).removeEventListener(eventPreffixName + eventName, handlers[eventName]);
     });
   };
@@ -44,7 +42,6 @@
     style.MozTransform = style.webkitTransform = style.msTransform = style.transform = transform;
     /* eslint-enable no-multi-assign */
   };
-
 
   // Adds newValue to currValue and returns the new value:
   //  - if currValue is undefined, returns newValue
@@ -65,10 +62,10 @@
   // parses a URL search string. It returns an object that has a key the parameter name(s)
   // and as values either the value if the value is unique or an array of values if it exists
   // more than once on the search
-  const parseSearch = aSearchStr => {
+  const parseSearch = (aSearchStr) => {
     aSearchStr = decodeStr(aSearchStr);
     return aSearchStr.slice(1).split('&')
-      .map(aParam => { return aParam.split(/=(.+)?/); })
+      .map((aParam) => aParam.split(/=(.+)?/))
       .reduce((aObject, aCurrentValue) => {
         const parName = aCurrentValue[0];
         aObject.params[parName] = _addValue(aObject.params[parName], aCurrentValue[1] || null);
@@ -78,9 +75,8 @@
         params: {},
         getFirstValue(aParam) {
           return Array.isArray(this.params[aParam]) ? this.params[aParam][0] : this.params[aParam];
-        }
-      }
-      );
+        },
+      });
   };
 
   // Aux function to generate a search str from an object with
@@ -106,14 +102,14 @@
 
   const setDisabled = (element, disabled) => {
     element.disabled = disabled;
-    disabled ? element.setAttribute('disabled', 'disabled') :
-      element.removeAttribute('disabled');
+    disabled ? element.setAttribute('disabled', 'disabled')
+      : element.removeAttribute('disabled');
   };
 
   const formatter = new Intl.DateTimeFormat('en-US', {
     hour: '2-digit',
     minute: '2-digit',
-    hour12: true
+    hour12: true,
   });
 
   function toPrettyDuration(duration) {
@@ -171,13 +167,13 @@
   }
 
   function isSafariMac() {
-    const checkObject = p => { return p.toString() === '[object SafariRemoteNotification]'; };
-    return /constructor/i.test(window.HTMLElement) ||
-        checkObject(!window.safari || safari.pushNotification);
+    const checkObject = (p) => p.toString() === '[object SafariRemoteNotification]';
+    return /constructor/i.test(window.HTMLElement)
+        || checkObject(!window.safari || safari.pushNotification);
   }
 
   function isSafariIOS() {
-    const userAgent = window.navigator.userAgent;
+    const { userAgent } = window.navigator;
     return userAgent.match(/iPad/i) || userAgent.match(/iPhone/i);
   }
 
@@ -209,10 +205,8 @@
     },
     getDraggable() {
       return LazyLoader.dependencyLoad([
-        '/js/components/draggable.js'
-      ]).then(() => {
-        return Draggable;
-      });
+        '/js/components/draggable.js',
+      ]).then(() => Draggable);
     },
     isScreen(item) {
       const type = item.data('streamType');
@@ -229,12 +223,12 @@
     },
     setDisabled,
     getLabelText,
-    htmlEscape
+    htmlEscape,
   };
 
   // Just replacing global.utils might not be safe... let's just expand it...
   exports.Utils = exports.Utils || {};
-  Object.keys(Utils).forEach(utilComponent => {
+  Object.keys(Utils).forEach((utilComponent) => {
     exports.Utils[utilComponent] = Utils[utilComponent];
   });
 })(this);

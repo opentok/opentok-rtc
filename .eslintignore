@@ -3,6 +3,7 @@
 /web/js/vendor/*
 /web/bower_components/*
 /web/js/helpers/*
+/web/js/min/*
 
 /test/lib/*
 /test/regression_tests/*

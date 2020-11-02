@@ -566,6 +566,27 @@ To configure this, edit options in the config/config.json file or set environmen
 
 ### Additional configuration options
 
+* `appName` (config.json) / `APP_NAME` (environment variable) -- The name of the application
+  displayed in the precall widget, in the top of the room page, and in the end (/thanks) page.
+  The default value is 'Vonage Video Conferencing'.
+
+* `introText` (config.json) / `INTRO_TEXT` (environment variable) -- The text displayed under
+  the application name in the precall widget. The default value is 'Welcome to Video Conferencing'
+
+* `helpLinkText1` (config.json) / `HELP_LINK_TEXT_1` (environment variable) -- The text
+  for the first help link displayed after "Need help?" at the top of the precall widget.
+  If you do not set this option, the "Need help" section is omitted.
+
+* `helpLinkUrl1` (config.json) / `HELP_LINK_URL_1` (environment variable) -- The URL for
+  the first help link the precall widget.
+
+* `helpLinkText2` (config.json) / `HELP_LINK_TEXT_2` (environment variable) -- The text
+  for the second help link displayed after "Need help?" at the top of the precall widget.
+  If you do not set this option, second help link is omitted.
+
+* `helpLinkUrl2` (config.json) / `HELP_LINK_URL_2` (environment variable) -- The URL for
+  the second help link the precall widget.
+
 * `showTos` (config.json) / `SHOW_TOS` (environment variable) -- Whether the app will display the terms of service
   dialog box and require the user to agree to the terms before joining a room. The default value is `false`.
 

@@ -1,6 +1,6 @@
 /* global RTCApp */
 
-!(exports => {
+!((exports) => {
   let debug;
 
   const _views = {
@@ -17,12 +17,10 @@
     const numViews = pathViews.length;
     const path = exports.document.location.pathname;
     for (let i = 0; i < numViews; i++) {
-      if (path.startsWith(pathViews[i]) &&
-        _views[pathViews[i]]
+      if (path.startsWith(pathViews[i])
+        && _views[pathViews[i]]
           .dependencies
-          .every(dependency => {
-            return !!exports[dependency];
-          })) {
+          .every((dependency) => !!exports[dependency])) {
         return exports[_views[pathViews[i]].mainView];
       }
     }
@@ -40,12 +38,11 @@
   }
 
   exports.RTCApp = {
-    init
+    init,
   };
 })(this);
 
-
-this.addEventListener('load', function startApp() {
+this.addEventListener('load', () => {
   // Note that since the server forbids loading the content on an iframe this should not execute.
   // But it doesn't hurt either
   if (window.top !== window.self && !window.iframing_allowed) {
@@ -68,9 +65,9 @@ this.addEventListener('load', function startApp() {
 
   // Allow only https on production
   if (
-    document.location.protocol === 'http:' &&
-    (document.location.hostname.includes('.tokbox.com') ||
-    document.location.hostname.includes('.vonage.com'))
+    document.location.protocol === 'http:'
+    && (document.location.hostname.includes('.tokbox.com')
+    || document.location.hostname.includes('.vonage.com'))
   ) {
     document.location.href = document.location.href.replace(new RegExp('^http:'), 'https:');
   }

@@ -1,12 +1,12 @@
 /* global gapi */
-!(exports => {
+!((exports) => {
   const init = (clientId, hostedDomain, callback) => {
     LazyLoader.dependencyLoad([
-      'https://apis.google.com/js/api.js'
+      'https://apis.google.com/js/api.js',
     ]).then(() => {
       gapi.load('auth2', () => {
         const options = {
-          client_id: clientId
+          client_id: clientId,
         };
         if (hostedDomain) {
           options.hosted_domain = hostedDomain;
@@ -16,8 +16,7 @@
     });
   };
 
-
   exports.GoogleAuth = {
-    init
+    init,
   };
 })(this);

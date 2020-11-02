@@ -1,13 +1,13 @@
 /* global RoomView, OTHelper, Modal */
 
-!(exports => {
+!((exports) => {
   let shareError;
   let _userName;
 
   const screenShareCtrlEvents = {
     shareScreenError: launchShareError,
     extInstallationResult,
-    destroyed: destroyView
+    destroyed: destroyView,
   };
 
   function destroyView() {
@@ -74,10 +74,10 @@
 
     btnReload.addEventListener('click', function btnConfirmReload() {
       btnReload.removeEventListener('click', btnConfirmReload);
-      const location = document.location;
-      let href = location.href;
+      const { location } = document;
+      let { href } = location;
       if (href.indexOf('?userName=') < 0) {
-        const params = Utils.parseSearch(document.location.search).params;
+        const { params } = Utils.parseSearch(document.location.search);
         params.userName = _userName;
         const search = Utils.generateSearchStr(params);
         href = `${location.protocol}//${location.hostname}:${location.port}${location.pathname}${search}`;
@@ -114,6 +114,6 @@
   }
 
   exports.ScreenShareView = {
-    init
+    init,
   };
 })(this);
