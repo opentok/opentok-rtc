@@ -163,7 +163,7 @@ module.exports = function (grunt) {
           },
           minify: true,
         },
-        src: 'views/index.ejs',
+        src: 'views/room.ejs',
         dest: 'web/css/landing-critical.opentok.css',
       },
     },

@@ -401,63 +401,12 @@ function ServerMethods(aLogLevel, aModules) {
     aRes.send({});
   }
 
-  // Returns the personalized root page
   async function getRoot(aReq, aRes) {
-    const meetingAllowed = await isMeetingAllowed(aReq);
-    const language = getUserLanguage(accepts(aReq).languages());
-    const country = getUserCountry(aReq);
-
-    let roomName = '';
-
     if (aReq.tbConfig.autoGenerateRoomName) {
-      roomName = `${haikunator.haikunate({ tokenLength: 0 })}-${haikunator.haikunate()}`;
+      const roomName = `${haikunator.haikunate({ tokenLength: 0 })}-${haikunator.haikunate()}`;
+      return aRes.redirect(`/room/${roomName}`);
     }
-
-    // Create a session ID and token for the network test
-    aReq.tbConfig.precallOtInstance.createSession({ mediaMode: 'routed' }, (error, testSession) => {
-      aRes
-        .render('index.ejs', {
-          roomName,
-          autoGenerateRoomName: aReq.tbConfig.autoGenerateRoomName,
-          isWebRTCVersion: aReq.tbConfig.isWebRTCVersion,
-          minMeetingNameLength: aReq.tbConfig.minMeetingNameLength,
-          publisherResolution: aReq.tbConfig.publisherResolution,
-          precallSessionId: testSession.sessionId,
-          precallApiKey: aReq.tbConfig.precallApiKey,
-          precallToken: aReq.tbConfig.precallOtInstance.generateToken(testSession.sessionId, {
-            role: 'publisher',
-          }),
-          showTos: aReq.tbConfig.showTos,
-          showUnavailable: !meetingAllowed,
-          useGoogleFonts: aReq.tbConfig.useGoogleFonts,
-          adobeTrackingUrl: aReq.tbConfig.adobeTrackingUrl,
-          ATPrimaryCategory: aReq.tbConfig.ATPrimaryCategory,
-          ATSiteIdentifier: aReq.tbConfig.ATSiteIdentifier,
-          ATFunctionDept: aReq.tbConfig.ATFunctionDept,
-          maxUsersPerRoom: aReq.tbConfig.maxUsersPerRoom,
-          userLanguage: language,
-          userCountry: country,
-          hotjarId: aReq.tbConfig.hotjarId,
-          hotjarVersion: aReq.tbConfig.hotjarVersion,
-          enableFeedback: aReq.tbConfig.enableFeedback,
-          opentokJsUrl: aReq.tbConfig.opentokJsUrl,
-          enablePrecallTest: aReq.tbConfig.enablePrecallTest,
-          enterButtonLabel: 'Start Meeting',
-          introText: aReq.tbConfig.introText,
-          appName: aReq.tbConfig.appName,
-          helpLinkText1: aReq.tbConfig.helpLinkText1,
-          helpLinkUrl1: aReq.tbConfig.helpLinkUrl1,
-          helpLinkText2: aReq.tbConfig.helpLinkText2,
-          helpLinkUrl2: aReq.tbConfig.helpLinkUrl2,
-        }, (err, html) => {
-          if (err) {
-            logger.error('getRoot. error: ', err);
-            aRes.status(500).send(new ErrorInfo(500, 'Invalid Template'));
-          } else {
-            aRes.send(html);
-          }
-        });
-    });
+    getRoom(aReq, aRes);
   }
 
   function isInBlacklist(name) {
@@ -466,11 +415,11 @@ function ServerMethods(aLogLevel, aModules) {
 
   // Finish the call to getRoom and postRoom
   // eslint-disable-next-line consistent-return
-  async function finshGetPostRoom(aReq, aRes, routedFromStartMeeting) {
+  async function getRoom(aReq, aRes) {
     const meetingAllowed = await isMeetingAllowed(aReq);
     const { query } = aReq;
 
-    if (isInBlacklist(aReq.params.roomName)) {
+    if (aReq.params.roomName && isInBlacklist(aReq.params.roomName)) {
       logger.log('getRoom. error:', `Blacklist found '${aReq.params.roomName}'`);
       return aRes.status(404).send(null);
     }
@@ -491,12 +440,13 @@ function ServerMethods(aLogLevel, aModules) {
       aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
       aRes.set('Pragma', 'no-cache');
       aRes.set('Expires', 0);
+
       aRes
         .render(`${template || tbConfig.defaultTemplate}.ejs`,
           {
             autoGenerateRoomName: tbConfig.autoGenerateRoomName,
             userName: htmlEscape(userName || C.DEFAULT_USER_NAME),
-            roomName: htmlEscape(aReq.params.roomName),
+            roomName: htmlEscape(aReq.params.roomName || ''),
             publishVideo,
             publishAudio,
             chromeExtensionId: tbConfig.chromeExtId,
@@ -541,7 +491,6 @@ function ServerMethods(aLogLevel, aModules) {
             hotjarVersion: tbConfig.hotjarVersion,
             enableFeedback: tbConfig.enableFeedback,
             enterButtonLabel: 'Join Meeting',
-            routedFromStartMeeting: Boolean(routedFromStartMeeting),
             introText: tbConfig.introText,
             appName: tbConfig.appName,
             helpLinkText1: tbConfig.helpLinkText1,
@@ -559,25 +508,6 @@ function ServerMethods(aLogLevel, aModules) {
             }
           });
     });
-  }
-
-  // Finish the call to getRoom and postRoom
-  // eslint-disable-next-line no-unused-vars
-  function getRoom(aReq, aRes, routedFromStartMeeting) {
-    const { query } = aReq;
-
-    logger.log(`getRoom serving ${aReq.path}`, 'roomName:', aReq.params.roomName,
-      'userName:', query && query.userName,
-      'template:', query && query.template);
-
-    finshGetPostRoom(aReq, aRes, false);
-  }
-
-  // Return the personalized HTML for a room when directed from the root.
-  function postRoom(aReq, aRes) {
-    logger.log(`postRoom serving ${aReq.path}`, 'roomName:', aReq.params.roomName,
-      'body:', aReq.body);
-    finshGetPostRoom(aReq, aRes, true);
   }
 
   // Given a sessionInfo (which might be empty or non usable) returns a promise than will fullfill
@@ -1074,7 +1004,6 @@ function ServerMethods(aLogLevel, aModules) {
     lockRoom,
     getRoot,
     getRoom,
-    postRoom,
     getRoomInfo,
     postRoomArchive,
     postUpdateArchiveInfo,

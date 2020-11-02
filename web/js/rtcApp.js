@@ -4,16 +4,10 @@
   let debug;
 
   const _views = {
-    '/room/': {
+    '/': {
       mainView: 'RoomController',
       dependencies: [
         'RoomController',
-      ],
-    },
-    '/': {
-      mainView: 'LandingController',
-      dependencies: [
-        'LandingController',
       ],
     },
   };
@@ -64,7 +58,6 @@ this.addEventListener('load', () => {
       '/shared/js/utils.js',
       '/js/helpers/requests.js',
       '/js/min/roomController.min.js',
-      '/js/landingController.js',
     ]).then(() => {
       RTCApp.init();
     });
