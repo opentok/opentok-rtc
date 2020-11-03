@@ -22,7 +22,7 @@ module.exports = function (grunt) {
         options: {
           compress: true,
           safari10: true,
-          ecma: 2016,
+          ecma: 2018,
           sourceMap: {
             includeSources: true,
           },
@@ -76,6 +76,7 @@ module.exports = function (grunt) {
           './web/js/min/screenShareView.min.js': ['./web/js/min/screenShareView.min.js'],
           './web/js/min/screenShareController.min.js': ['./web/js/min/screenShareController.min.js'],
           './web/js/min/roomController.min.js': ['./web/js/min/roomController.min.js'],
+          './web/js/min/layoutManager.min.js': ['./web/js/min/layoutManager.min.js'],
         },
       },
     },
@@ -159,12 +160,12 @@ module.exports = function (grunt) {
           base: './',
           css: ['web/css/landing.opentok.css'],
           target: {
-            uncritical: 'web/css/landing-uncritical.opentok.css',
+            uncritical: 'web/css/room-uncritical.opentok.css',
           },
           minify: true,
         },
-        src: 'views/index.ejs',
-        dest: 'web/css/landing-critical.opentok.css',
+        src: 'views/room.ejs',
+        dest: 'web/css/room-critical.opentok.css',
       },
     },
     autoprefixer: {
@@ -209,7 +210,6 @@ module.exports = function (grunt) {
     'autoprefixer',
     'terser:pages',
     'concat',
-    'critical',
   ]);
 
   grunt.registerTask('clientBuild-Prod', 'Build css files', [

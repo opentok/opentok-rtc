@@ -31,6 +31,8 @@ These can be configured with these settings:
 
 * `appName` (config.json) / `APP_NAME` (environment variable)
 * `introText` (config.json) / `INTRO_TEXT` (environment variable)
+* `introFooterLinkText` (config.json) / `INTRO_FOOTER_LINK_TEXT` (environment variable)
+* `introFooterLinkUrl` (config.json) / `INTRO_FOOTER_LINK_URL` (environment variable)
 * `helpLinkText1` (config.json) / `HELP_LINK_TEXT_1` (environment variable)
 * `helpLinkUrl1` (config.json) / `HELP_LINK_URL_1` (environment variable)
 * `helpLinkText2` (config.json) / `HELP_LINK_TEXT_2` (environment variable)
@@ -38,5 +40,5 @@ These can be configured with these settings:
 
 ## Changing landing page HTML
 
-Edit the view file [`views/index.ejs`](views/index.ejs) and change the images and text in the `<body>` section. You can also change the text in the `<title>` tag.
+Edit the view file [`views/room.ejs`](views/room.ejs) and change the images and text in the `<body>` section. You can also change the text in the `<title>` tag.
 

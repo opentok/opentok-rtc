@@ -17,9 +17,11 @@
         <%=introText%>
       </p>
     </header>
+    <% if (introFooterLinkText) { %>
     <footer>
-      <a href="https://www.vonage.com/solutions/" target="_blank" rel="noopener">Solutions for when the unexpected happens</a>
+      <a href="<%=introFooterLinkUrl%>" target="_blank" rel="noopener"><%=introFooterLinkText%></a>
     </footer>
+    <% } %>
 </div>
 <div id="righthand-container" class="user-name-modal">
   <div class="landing-more-info">

@@ -139,10 +139,6 @@
         document.body.insertAdjacentHTML('afterbegin', aHTML);
       });
 
-      if (window.routedFromStartMeeting) {
-        document.querySelector('.main').style.display = 'none';
-        resolve();
-      }
       addHandlers();
       if (window.enablePrecallTest) {
         document.getElementById('pre-call-test').style.display = 'flex';

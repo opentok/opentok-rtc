@@ -24,8 +24,6 @@
   if (storedVideoDeviceId) publisherOptions.videoSource = storedVideoDeviceId;
 
   function showCallSettingsPrompt(roomName, username, otHelper) {
-    const selector = '.user-name-modal';
-
     const videoPreviewEventHandlers = {
       toggleFacingMode() {
         otHelper.toggleFacingMode().then((dev) => {
@@ -63,16 +61,6 @@
     };
 
     return new Promise((resolve) => {
-      if (window.routedFromStartMeeting) {
-        publisherOptions.name = window.userName || document.querySelector(`${selector} input`).value.trim();
-        publisherOptions.publishVideo = window.publishVideo;
-        publisherOptions.publishAudio = window.publishAudio;
-        return resolve({
-          username: window.userName || document.querySelector(`${selector} input`).value.trim(),
-          publisherOptions,
-        });
-      }
-
       function loadModalText() {
         window.autoGenerateRoomName ? PrecallView.setFocus('user') : PrecallView.setFocus('room');
 
@@ -93,26 +81,28 @@
           submitForm();
         });
 
-        function hidePrecall() {
+        function hidePrecall(roomName) {
           PrecallView.hide();
           publisher && publisher.destroy();
           otNetworkTest && otNetworkTest.stopTest();
+          const username = document.getElementById('user-name-input').value.trim();
+          window.localStorage.setItem('username', username);
+          publisherOptions.name = username;
           setTimeout(() => {
             resolve({
+              roomURI: roomName,
               username: publisherOptions.name,
               publisherOptions,
             });
           }, 1);
         }
 
-        function submitRoomForm() {
-          function isAllowedToJoin() {
+        function submitRoomForm(roomName) {
+          function isAllowedToJoin(roomName) {
             return new Promise((resolve, reject) => {
               Request
                 .getRoomRawInfo(roomName).then((room) => {
-                  if (window.routedFromStartMeeting) {
-                    return resolve();
-                  } if (showUnavailable && !room) {
+                  if (showUnavailable && !room) {
                     return reject(new Error('New rooms not allowed'));
                   } if (room && !room.isLocked) {
                     return resolve();
@@ -127,11 +117,11 @@
             });
           }
 
-          isAllowedToJoin().then(() => {
+          isAllowedToJoin(roomName).then(() => {
             if (showTos) {
-              PrecallView.showContract().then(hidePrecall);
+              PrecallView.showContract().then(hidePrecall(roomName));
             } else {
-              hidePrecall();
+              hidePrecall(roomName);
             }
           }).catch((e) => {
             if (e.message === 'Room locked') {
@@ -152,19 +142,23 @@
             return;
           }
 
+          const roomNameTextInput = (document.getElementById('room-name-input') || {}).value;
+          if (roomNameTextInput) {
+            window.history.pushState('', '', `/room/${roomNameTextInput}`);
+          }
+
+          const roomName = window.roomName || roomNameTextInput;
+
           const username = document.getElementById('user-name-input').value.trim();
           publisherOptions.name = username;
           window.localStorage.setItem('username', username);
 
-          if (window.location.href.indexOf('room') > -1) {
-            // Jeff to do: This code should move to RoomController and be event-driven
-            submitRoomForm();
-          } else if (showTos) {
+          if (showTos) {
             PrecallView.showContract().then(() => {
-              Utils.sendEvent('precallView:submit');
+              submitRoomForm(roomName);
             });
           } else {
-            Utils.sendEvent('precallView:submit');
+            submitRoomForm(roomName);
           }
         }
 
