@@ -54,6 +54,13 @@
         <link rel="preload" href="/fonts/open-sans-v15-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
         <link href="/css/fonts.css" rel="stylesheet">
     <% } %>
+    
+    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/<%=chromeExtensionId%>">
+    <link rel="stylesheet" rel="preload" href="https://assets.tokbox.com/solutions/css/style.css">
+    <% if (enableAnnotation && enableScreensharing) { %>
+      <link rel="stylesheet" rel="prefetch" href="/css/annotation.opentok.css">
+    <% } %>
+    <link rel="stylesheet dns-prefetch" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/css/intlTelInput.css">
 
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/<%=chromeExtensionId%>">
     <link rel="stylesheet prefetch" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/css/intlTelInput.css">
@@ -81,6 +88,8 @@
       window.publishAudio = <%=publishAudio%>;
       window.publishVideo = <%=publishVideo%>;
       window.introText='<%=introText%>';
+      window.introFooterLinkText='<%=introFooterLinkText%>';
+      window.introFooterLinkUrl='<%=introFooterLinkUrl%>';
       window.appName='<%=appName%>';
       window.helpLinkText1='<%=helpLinkText1%>';
       window.helpLinkUrl1='<%=helpLinkUrl1%>';
