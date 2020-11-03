@@ -176,9 +176,13 @@ E.BLACKLIST = { envVar: 'BLACKLIST', jsonPath: 'blacklist', defaultValue: '' };
 
 E.MEDIA_MODE = { envVar: 'MEDIA_MODE', jsonPath: 'mediaMode', defaultValue: 'routed' };
 
+E.APP_NAME = { envVar: 'APP_NAME', jsonPath: 'appName', defaultValue: 'Vonage Video Conferencing' };
+
 E.INTRO_TEXT = { envVar: 'INTRO_TEXT', jsonPath: 'introText', defaultValue: 'Welcome to Video Conferencing.' };
 
-E.APP_NAME = { envVar: 'APP_NAME', jsonPath: 'appName', defaultValue: 'Vonage Video Conferencing' };
+E.INTRO_FOOTER_LINK_TEXT = { envVar: 'INTRO_FOOTER_LINK_TEXT', jsonPath: 'introFooterLinkText', defaultValue: '' };
+
+E.INTRO_FOOTER_LINK_URL = { envVar: 'INTRO_FOOTER_LINK_URL', jsonPath: 'introFooterLinkUrl', defaultValue: '' };
 
 E.HELP_LINK_TEXT_1 = { envVar: 'HELP_LINK_TEXT_1', jsonPath: 'helpLinkText1', defaultValue: '' };
 

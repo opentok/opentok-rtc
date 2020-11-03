@@ -47,6 +47,8 @@
   "autoGenerateRoomName": true,
   "appName": "Vonage Video Conferencing",
   "introText": "Welcome to Video Conferencing.",
+  "introFooterLinkText": "",
+  "introFooterLinkUrl": "",
   "helpLinkText1": "",
   "helpLinkUrl1": "",
   "helpLinkText2": "",

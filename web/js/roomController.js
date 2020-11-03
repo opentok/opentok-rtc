@@ -747,6 +747,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     '/js/itemsHandler.js',
     '/js/layoutView.js',
     '/js/layouts.js',
+    '/js/min/layoutManager.min.js',
     '/js/roomView.js',
     '/js/roomStatus.js',
     '/js/min/chatController.min.js',
