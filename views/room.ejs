@@ -15,43 +15,46 @@
       video and data capabilities across Unified Communications,
       Contact Centers and Communications APIs.This is a Free Video conferencing web application.">
 
-    <link rel="stylesheet" href="css/landing-critical.opentok.css">
-    <link rel="preload" href="css/landing-uncritical.opentok.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="css/landing-uncritical.opentok.css"></noscript>
-
     <!--[if IE]><link rel="shortcut icon" href="/favicon.ico"><![endif]-->
     <link rel="icon" href="/favicon.png">
 
-    <link rel="stylesheet prefetch" href="/css/room.opentok.css">
+    <link rel="stylesheet prefetch" href="/css/room-critical.opentok.css">
+
+    <link rel="preload" href="/css/room.opentok.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/css/room.opentok.css"></noscript>
+
+    <link rel="preload" href="https://assets.tokbox.com/solutions/css/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://assets.tokbox.com/solutions/css/style.css"></noscript>
+
+    <link rel="preload" href="/css/annotation.opentok.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/css/annotation.opentok.css"></noscript>
+
     <% if (enableEmoji) { %>
         <script type=module>
           import 'https://unpkg.com/emoji-picker-element'
         </script>
     <% } %>
-    <script type="application/javascript">
-    if (!document.referrer)
-    {
-        var head  = document.getElementsByTagName('head')[0];
-        var link  = document.createElement('link');
-        link.rel  = 'stylesheet';
-        link.type = 'text/css';
-        link.href = '/css/landing.opentok.css';
-        head.appendChild(link);
-    }
-    </script>
+
+    <link rel="preconnect" href="https://code.jquery.com" >
+    <link rel="preconnect" href="https://hlg.tokbox.com">
+    <link rel="preconnect" href="https://in.hotjar.com">
+    <link rel="preconnect" href="https://www.google-analytics.com">
+    <link rel="preconnect" href="https://assets.tokbox.com">
 
     <link rel="dns-prefetch" href="https://static.opentok.com">
     <link rel="dns-prefetch" href="https://vars.hotjar.com">
     <link rel="dns-prefetch" href="https://www.google-analytics.com">
     <link rel="dns-prefetch" href="https://code.jquery.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
 
     <% if (useGoogleFonts) { %>
         <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
     <% } else { %>
         <link rel="preload" href="/fonts/open-sans-v15-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
         <link href="/css/fonts.css" rel="stylesheet">
     <% } %>
+    
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/<%=chromeExtensionId%>">
     <link rel="stylesheet" rel="preload" href="https://assets.tokbox.com/solutions/css/style.css">
     <% if (enableAnnotation && enableScreensharing) { %>
@@ -59,10 +62,8 @@
     <% } %>
     <link rel="stylesheet dns-prefetch" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/css/intlTelInput.css">
 
-    <link rel="preconnect" href="https://code.jquery.com">
-    <link rel="preconnect" href="https://hlg.tokbox.com">
-    <link rel="preconnect" href="https://in.hotjar.com">
-    <link rel="preconnect" href="https://www.google-analytics.com">
+    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/<%=chromeExtensionId%>">
+    <link rel="stylesheet prefetch" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/css/intlTelInput.css">
 
     <% if (adobeTrackingUrl) { %>
     <script src="<%=adobeTrackingUrl%>" async></script>
@@ -120,11 +121,11 @@
     <script defer src="/js/components/modal.js"></script>
     <script defer src="/js/vendor/lazy_loader.js"></script>
     <script defer src="/js/rtcApp.js"></script>
-    <script src="<%= jqueryUrl %>/3.3.1/jquery.min.js"></script>
+    <script defer src="<%= jqueryUrl %>/3.3.1/jquery.min.js"></script>
 
     <!-- OneTrust Cookies Consent Notice start -->
-    <script src="https://cdn.cookielaw.org/consent/bede0017-0962-4a07-829e-a25b103d453c.js" type="text/javascript" charset="UTF-8"></script>
-    <script type="text/javascript">
+    <script defer src="https://cdn.cookielaw.org/consent/bede0017-0962-4a07-829e-a25b103d453c.js" type="text/javascript" charset="UTF-8"></script>
+    <script defer type="text/javascript">
     function OptanonWrapper() { }
     </script>
     <!-- OneTrust Cookies Consent Notice end -->
