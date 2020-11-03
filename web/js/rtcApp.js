@@ -10,6 +10,12 @@
         'RoomController',
       ],
     },
+    '/room/': {
+      mainView: 'RoomController',
+      dependencies: [
+        'RoomController',
+      ],
+    },
   };
 
   function getView() {
