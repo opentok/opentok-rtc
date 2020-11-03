@@ -669,15 +669,20 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
   function showAddToCallModal() {
     const selector = '.add-to-call-modal';
     return Modal.show(selector).then(() => new Promise((resolve) => {
-      const enterButton = document.querySelector(`${selector} button`);
-      enterButton && enterButton.addEventListener('click', function onClicked(event) {
+      const copyButton = document.getElementById('copyInviteLinkBtn');
+      const dialButton = document.getElementById('dialOutBtn');
+
+      copyButton && copyButton.addEventListener('click', function onClicked(event) {
         event.preventDefault();
-        enterButton.removeEventListener('click', onClicked);
-        if (enterButton.id === 'copyInviteLinkBtn') {
-          addClipBoardFeature(selector);
-        } else {
-          Modal.hide(selector);
-        }
+        copyButton.removeEventListener('click', onClicked);
+        addClipBoardFeature(selector);
+        resolve();
+      });
+
+      dialButton && dialButton.addEventListener('click', function onClicked(event) {
+        event.preventDefault();
+        dialButton.removeEventListener('click', onClicked);
+        Modal.hide(selector);
         resolve();
       });
     }));
