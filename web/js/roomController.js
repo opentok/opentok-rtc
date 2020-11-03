@@ -710,9 +710,8 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
 
     return PrecallController.showCallSettingsPrompt(roomName, usrId, otHelper)
       .then((info) => {
-        info.roomURI = roomURI;
         RoomView.showRoom();
-        RoomView.roomURI = roomURI;
+        RoomView.roomURI = info.roomURI;
         publisherOptions.publishAudio = info.publisherOptions.publishAudio;
         publisherOptions.publishVideo = info.publisherOptions.publishVideo;
         publisherOptions.audioSource = info.publisherOptions.audioSource;
