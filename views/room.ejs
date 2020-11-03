@@ -97,6 +97,27 @@
       window.helpLinkUrl2='<%=helpLinkUrl2%>';
       var isMobile = function() { return window.matchMedia("only screen and (max-width: 480px)").matches; }
 
+      var loadCss = function(href) {
+          var head  = document.getElementsByTagName('head')[0];
+          var link  = document.createElement('link');
+          link.rel  = 'stylesheet';
+          link.type = 'text/css';
+          link.href = href;
+          link.media = 'all';
+          head.appendChild(link);
+      }
+
+      // feature detection for preload
+      var supportsPreload = (function() {
+      try { return document.createElement("link").relList.supports('preload'); }
+       catch(e)
+       { return false; }}());
+      if (!supportsPreload) {
+           loadCss('/css/room.opentok.css');
+           loadCss('https://assets.tokbox.com/solutions/css/style.css');
+           loadCss('/css/annotation.opentok.css');
+      }
+
       var mobileSettings = function() {
 
         var ids = ['toggleSharing', 'videoSwitch',
