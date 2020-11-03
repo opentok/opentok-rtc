@@ -54,7 +54,9 @@
     <% } %>
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/<%=chromeExtensionId%>">
     <link rel="stylesheet" rel="preload" href="https://assets.tokbox.com/solutions/css/style.css">
-    <link rel="stylesheet" rel="prefetch" href="/css/annotation.opentok.css">
+    <% if (enableAnnotation && enableScreensharing) { %>
+      <link rel="stylesheet" rel="prefetch" href="/css/annotation.opentok.css">
+    <% } %>
     <link rel="stylesheet dns-prefetch" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/css/intlTelInput.css">
 
     <link rel="preconnect" href="https://code.jquery.com">
