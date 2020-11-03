@@ -197,6 +197,8 @@ function ServerMethods(aLogLevel, aModules) {
       const enableFeedback = config.get(C.ENABLE_FEEDBACK);
       const autoGenerateRoomName = config.get(C.AUTO_GENERATE_ROOM_NAME);
       const introText = config.get(C.INTRO_TEXT);
+      const introFooterLinkText = config.get(C.INTRO_FOOTER_LINK_TEXT);
+      const introFooterLinkUrl = config.get(C.INTRO_FOOTER_LINK_URL);
       const appName = config.get(C.APP_NAME);
       const helpLinkText1 = config.get(C.HELP_LINK_TEXT_1);
       const helpLinkUrl1 = config.get(C.HELP_LINK_URL_1);
@@ -266,6 +268,8 @@ function ServerMethods(aLogLevel, aModules) {
         enableEmoji,
         autoGenerateRoomName,
         introText,
+        introFooterLinkText,
+        introFooterLinkUrl,
         appName,
         helpLinkText1,
         helpLinkUrl1,
@@ -492,6 +496,8 @@ function ServerMethods(aLogLevel, aModules) {
             enableFeedback: tbConfig.enableFeedback,
             enterButtonLabel: 'Join Meeting',
             introText: tbConfig.introText,
+            introFooterLinkText: tbConfig.introFooterLinkText,
+            introFooterLinkUrl: tbConfig.introFooterLinkUrl,
             appName: tbConfig.appName,
             helpLinkText1: tbConfig.helpLinkText1,
             helpLinkUrl1: tbConfig.helpLinkUrl1,

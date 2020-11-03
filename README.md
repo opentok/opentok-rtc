@@ -571,7 +571,14 @@ To configure this, edit options in the config/config.json file or set environmen
   The default value is 'Vonage Video Conferencing'.
 
 * `introText` (config.json) / `INTRO_TEXT` (environment variable) -- The text displayed under
-  the application name in the precall widget. The default value is 'Welcome to Video Conferencing'
+  the application name in the precall widget. The default value is 'Welcome to Video Conferencing'.
+
+* `introFooterLinkText` (config.json) / `INTRO_FOOTER_LINK_TEXT` (environment variable) -- The text
+  for the optional link displayed under the intro text in the precall widget. If no value is
+  specified (or if it is set the an empty string), no link is displayed. The default value is ''.
+
+* `introFooterLinkUrl` (config.json) / `INTRO_FOOTER_LINK_URL` (environment variable) -- The URL
+  for the optional link displayed under the intro text in the precall widget. The default value is ''.
 
 * `helpLinkText1` (config.json) / `HELP_LINK_TEXT_1` (environment variable) -- The text
   for the first help link displayed after "Need help?" at the top of the precall widget.
