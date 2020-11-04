@@ -88,7 +88,7 @@
       cancelPendingSend(evt.connection.connectionId);
     },
     sessionDisconnected() {
-      window.location = '/';
+      window.location = '/thanks';
     },
   };
 
