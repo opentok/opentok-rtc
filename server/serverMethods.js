@@ -590,7 +590,7 @@ function ServerMethods(aLogLevel, aModules) {
   async function getRoomRawInfo(aReq, aRes) {
     const roomName = aReq.params.roomName.toLowerCase();
     const room = await serverPersistence.getKey(redisRoomPrefix + roomName);
-    if (!room) return aRes.status(404).send(null);
+    if (!room) return aRes.status(204).send();
     aRes.send(JSON.parse(room));
   }
 
