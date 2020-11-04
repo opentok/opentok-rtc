@@ -259,8 +259,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
   const viewEventHandlers = {
     endCall() {
       otHelper.disconnect();
-      const url = window.location.origin.concat('/thanks');
-      window.location.href = url;
+      window.location = '/thanks';
     },
     startArchiving(evt) {
       sendArchivingOperation((evt.detail && evt.detail.operation) || 'startComposite');
