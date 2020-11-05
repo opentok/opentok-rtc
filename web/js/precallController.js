@@ -118,7 +118,7 @@
           }
 
           isAllowedToJoin(roomName).then(() => {
-            if (showTos) {
+            if (showTos && !sessionStorage.tosAccepted) {
               PrecallView.showContract().then(hidePrecall(roomName));
             } else {
               hidePrecall(roomName);
@@ -153,7 +153,7 @@
           publisherOptions.name = username;
           window.localStorage.setItem('username', username);
 
-          if (showTos) {
+          if (showTos && !sessionStorage.tosAccepted) {
             PrecallView.showContract().then(() => {
               submitRoomForm(roomName);
             });
