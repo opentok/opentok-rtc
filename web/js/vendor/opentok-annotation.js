@@ -1587,7 +1587,7 @@
       if (_toolbar.parent) {
         var context = externalWindow ? externalWindow.document : document;
         panel = context.getElementById('OT_toolbar');
-        if (!context.getElementById('OT_toolbar')) {
+        if (!panel) {
           panel = context.createElement('div');
           panel.setAttribute('id', 'OT_toolbar');
           panel.setAttribute('class', 'OT_panel');
