@@ -1587,12 +1587,12 @@
       if (_toolbar.parent) {
         var context = externalWindow ? externalWindow.document : document;
         panel = context.getElementById('OT_toolbar');
-        if(!context.getElementById('OT_toolbar')){
-            panel = context.createElement('div');
-            panel.setAttribute('id', 'OT_toolbar');
-            panel.setAttribute('class', 'OT_panel');
-            panel.style.width = '100%';
-            panel.style.height = '100%';
+        if (!context.getElementById('OT_toolbar')) {
+          panel = context.createElement('div');
+          panel.setAttribute('id', 'OT_toolbar');
+          panel.setAttribute('class', 'OT_panel');
+          panel.style.width = '100%';
+          panel.style.height = '100%';
         }
         this.parent.appendChild(panel);
         this.parent.style.position = 'relative';
