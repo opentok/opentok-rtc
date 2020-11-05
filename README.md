@@ -87,6 +87,7 @@ There are two ways to set configuration options for the application:
 #### Using a config.json file
 
 First create create a `config.json` file in the `config` folder.
+You can copy the `config/example.json` file to `config/config.json`:
 
 ```sh
 $ cd <path-to-opentok-rtc>
@@ -161,8 +162,8 @@ To quickly start a secure server, run:
 $ node server -S -C sampleCerts
 ```
 
-The server expects SSL certificate file to be named `serverCert.pem` and
-an SSL private key file to be named `serverKey.pem`. There is a pre-generated,
+The server expects the SSL certificate file to be named `serverCert.pem` and
+the SSL private key file to be named `serverKey.pem`. There is a pre-generated,
 self-signed SSL certificate pair in the `./sampleCerts` directory.
 
 For detailed information on available options, run `$ node server -h`.
@@ -209,7 +210,7 @@ There are other OpenTok configuration settings (each of which are optional):
   how long room names are associated with OpenTok session IDs. The app stores the last time
   a session is used and if when we fetch it from Redis we determine it's older than
   this max age (in days). This is the key where that value (in days) should be stored.
-  By default, sessions live two days.
+  By default, sessions live for two days.
   
   The config.json setting is `OpenTok.maxSessionAge`. The environment variable name is `TB_MAX_SESSION_AGE`.
 
@@ -658,12 +659,12 @@ For information on how to customize the OpenTokRTC UI, see [CUSTOMIZING-UI.md](C
 Ensure Redis server is running on localhost (run `redis-server` in the command line)
 and restart OpenTokRTC.
 
-**OpenTokRTC does not work on when served over HTTP.**
+**OpenTokRTC does not work when served over HTTP.**
 
 Browser security policies require HTTPS for WebRTC video communications. You will need to set up
 the app to be served over HTTPS. You can set up a
 [secure reverse-proxy](https://www.nginx.com/resources/admin-guide/nginx-https-upstreams/)
-to your OpenTokRTC port using nginx. For details, read
+to your OpenTokRTC port using Nginx. For details, read
 [this post](https://tokbox.com/blog/the-impact-of-googles-new-chrome-security-policy-on-webrtc/).
 
 **UI looks broken**
@@ -675,7 +676,7 @@ $ bower install
 $ npm run clientBuild
 ```
 
-We recommend that you run the application as a non-root user. However, if you are running the application as the `root` user, you will additionally need to tell `bower` to allow root user to install dependencies, else bower will refuse to work:
+We recommend that you run the application as a non-root user. However, if you are running the application as the `root` user, you will additionally need to tell `bower` to allow the root user to install dependencies, else bower will refuse to work:
 
 ```
 $ bower install --allow-root
@@ -740,7 +741,7 @@ Interested in contributing? We :heart: pull requests! See the
 
 ## Getting Help
 
-We love to hear from you. If you have questions, comments or find a bug, let us know:
+We love to hear from you. If you have questions, comments, or find a bug, let us know:
 
 * Open an issue on this repository <https://github.com/opentok/opentok-rtc/issues>.
 
