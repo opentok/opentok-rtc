@@ -15,6 +15,7 @@
     let getStatsIntervalId;
     let testTimeoutId;
     let currentStats;
+    let testRunning;
 
     const testStreamingCapability = (subscriber, callback) => {
       performQualityTest({subscriber, timeout: TEST_TIMEOUT_MS}, (error, results) => {
@@ -95,6 +96,7 @@
     };
 
     this.startNetworkTest = callback => {
+      testRunning = true;
       publisher.publishVideo(true);
       const callbacks = {
         onInitPublisher: function onInitPublisher(error) {
@@ -124,13 +126,18 @@
         },
 
         cleanup() {
+          subscriber && session.unsubscribe(subscriber);
+          publisher && session.unpublish(publisher);
           session.disconnect();
         },
 
         onSubscribe: function onSubscribe(error, subscriber) {
-          if (error) {
-            console.error('Could not subscribe to video.', error);
+          if (!testRunning) {
             return;
+          }
+
+          if (error) {
+            return console.error('Could not subscribe to video.', error);
           }
 
           testStreamingCapability(subscriber, (error, result) => {
@@ -140,10 +147,13 @@
         },
 
         onConnect: function onConnect(error) {
+          if (!testRunning) {
+            return;
+          }
           if (error) {
             console.error('Could not connect to OpenTok.', error);
           }
-          session.publish(publisher, callbacks.onPublish);
+          return session.publish(publisher, callbacks.onPublish);
         }
       };
 
@@ -159,6 +169,9 @@
 
       callbacks.onInitPublisher();
 
+      if (!testRunning) {
+        return;
+      }
       // This publisher uses the default resolution (640x480 pixels) and frame rate (30fps).
       // For other resoultions you may need to adjust the bandwidth conditions in
       // testStreamingCapability().
@@ -167,18 +180,23 @@
       });
 
       session = OT.initSession(options.apiKey, options.sessionId);
-      session.connect(options.token, callbacks.onConnect);
+      return session.connect(options.token, callbacks.onConnect);
     };
     
     this.stopTest = () => {
+      if (!testRunning) {
+        return;
+      }
+      testRunning = false;
       bandwidthCalculator && bandwidthCalculator.stop();
       try {
         session.unpublish(publisher);
+        subscriber && session.unsubscribe(subscriber);
         session.disconnect();
       } catch(error) {
         // Probably not connected yet.
       }
-      publisher.destroy();
+      return publisher.destroy();
     }
 
     // Helpers
