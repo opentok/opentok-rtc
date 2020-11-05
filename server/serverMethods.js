@@ -175,7 +175,6 @@ function ServerMethods(aLogLevel, aModules) {
       const maxSessionAgeMs = maxSessionAge * 24 * 60 * 60 * 1000;
       const chromeExtId = config.get(C.CHROME_EXTENSION_ID);
 
-      const isWebRTCVersion = config.get(C.DEFAULT_INDEX_PAGE) === 'opentokrtc';
       const showTos = config.get(C.SHOW_TOS);
       const meetingsRatePerMinute = config.get(C.MEETINGS_RATE_PER_MINUTE);
       const minMeetingNameLength = config.get(C.MIN_MEETING_NAME_LENGTH);
@@ -231,7 +230,6 @@ function ServerMethods(aLogLevel, aModules) {
         archiveAlways,
         iosAppId,
         iosUrlPrefix,
-        isWebRTCVersion,
         enableArchiving,
         enableArchiveManager,
         enableMuteAll,
