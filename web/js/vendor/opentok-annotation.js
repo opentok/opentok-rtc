@@ -2125,8 +2125,8 @@
       '</div>'
     ].join('\n');
 
-    if (!$('#annotationToolbarContainer').length){
-        $('body').append(toolbar);
+    if (!$('#annotationToolbarContainer').length) {
+      $('body').append(toolbar);
     }
 
     _log(_logEventData.actionUseToolbar, _logEventData.variationSuccess);
