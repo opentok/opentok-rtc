@@ -15,7 +15,7 @@ module.exports = function () {
     };
 
     this.exec = function () {
-      return Promise.resolve(requestedKeys.map(key => [null, _internalState[key]]));
+      return Promise.resolve(requestedKeys.map((key) => [null, _internalState[key]]));
     };
   }
 

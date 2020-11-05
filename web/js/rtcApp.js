@@ -1,57 +1,4 @@
-/* global RTCApp */
-
-!(exports => {
-  let debug;
-
-  const _views = {
-    '/room/': {
-      mainView: 'RoomController',
-      dependencies: [
-        'RoomController'
-      ]
-    },
-    '/': {
-      mainView: 'LandingController',
-      dependencies: [
-        'LandingController'
-      ]
-    }
-  };
-
-  function getView() {
-    const pathViews = Object.keys(_views);
-    const numViews = pathViews.length;
-    const path = exports.document.location.pathname;
-    for (let i = 0; i < numViews; i++) {
-      if (path.startsWith(pathViews[i]) &&
-        _views[pathViews[i]]
-          .dependencies
-          .every(dependency => {
-            return !!exports[dependency];
-          })) {
-        return exports[_views[pathViews[i]].mainView];
-      }
-    }
-    return null;
-  }
-
-  function init() {
-    debug = new Utils.MultiLevelLogger('rtcApp.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
-    const view = getView();
-    if (view) {
-      view.init();
-    } else {
-      debug.error(`Couldn't find a view for ${exports.document.location.pathname}`);
-    }
-  }
-
-  exports.RTCApp = {
-    init
-  };
-})(this);
-
-
-this.addEventListener('load', function startApp() {
+this.addEventListener('load', () => {
   // Note that since the server forbids loading the content on an iframe this should not execute.
   // But it doesn't hurt either
   if (window.top !== window.self && !window.iframing_allowed) {
@@ -67,17 +14,16 @@ this.addEventListener('load', function startApp() {
       '/shared/js/utils.js',
       '/js/helpers/requests.js',
       '/js/min/roomController.min.js',
-      '/js/landingController.js'
     ]).then(() => {
-      RTCApp.init();
+      RoomController.init();
     });
   }
 
   // Allow only https on production
   if (
-    document.location.protocol === 'http:' &&
-    (document.location.hostname.includes('.tokbox.com') ||
-    document.location.hostname.includes('.vonage.com'))
+    document.location.protocol === 'http:'
+    && (document.location.hostname.includes('.tokbox.com')
+    || document.location.hostname.includes('.vonage.com'))
   ) {
     document.location.href = document.location.href.replace(new RegExp('^http:'), 'https:');
   }

@@ -1,21 +1,24 @@
 var sinonTest = require('sinon-test');
+
 var test = sinonTest(sinon);
 sinon.test = test;
-var assert = chai.assert;
-var expect = chai.expect;
+var { assert } = chai;
+var { expect } = chai;
 var should = chai.should();
 
 describe('PrecallController', () => {
   before(() => {
     window.document.body.innerHTML = window.__html__['test/unit/precallView_spec.html'];
-    window.LazyLoader = window.LazyLoader || { dependencyLoad() {
-      return new Promise((resolve) => {
-        resolve();
-      });
-    } };
-    sinon.stub(LazyLoader, 'dependencyLoad').callsFake(  resources => Promise.resolve());
-    sinon.stub(ChatView, 'init').callsFake(  () => Promise.resolve());
-    sinon.stub(Modal, 'show').callsFake( (selector, fcCb) => new Promise((resolve) => {
+    window.LazyLoader = window.LazyLoader || {
+      dependencyLoad() {
+        return new Promise((resolve) => {
+          resolve();
+        });
+      }
+    };
+    sinon.stub(LazyLoader, 'dependencyLoad').callsFake((resources) => Promise.resolve());
+    sinon.stub(ChatView, 'init').callsFake(() => Promise.resolve());
+    sinon.stub(Modal, 'show').callsFake((selector, fcCb) => new Promise((resolve) => {
       var modal = document.querySelector(selector);
       modal.classList.add('visible');
       modal.classList.add('show');

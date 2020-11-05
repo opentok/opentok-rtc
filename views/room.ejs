@@ -6,47 +6,64 @@
     <% if(iosAppId) { %>
       <meta name="apple-itunes-app" content="app-id=<%=iosAppId%>, app-argument=<%=iosURL%>">
     <% } %>
-    <title>Vonage Free Conferencing</title>
+    <title><%= appName %></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover'"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta
+      name="description"
+      content="Vonage offers flexible and scalable voice, messaging,
+      video and data capabilities across Unified Communications,
+      Contact Centers and Communications APIs.This is a Free Video conferencing web application.">
 
     <!--[if IE]><link rel="shortcut icon" href="/favicon.ico"><![endif]-->
     <link rel="icon" href="/favicon.png">
 
-    <link rel="stylesheet prefetch" href="/css/room.opentok.css">
+    <link rel="stylesheet prefetch" href="/css/room-critical.opentok.css">
+
+    <link rel="preload" href="/css/room.opentok.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/css/room.opentok.css"></noscript>
+
+    <link rel="preload" href="https://assets.tokbox.com/solutions/css/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://assets.tokbox.com/solutions/css/style.css"></noscript>
+
+    <link rel="preload" href="/css/annotation.opentok.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/css/annotation.opentok.css"></noscript>
+
     <% if (enableEmoji) { %>
         <script type=module>
           import 'https://unpkg.com/emoji-picker-element'
         </script>
     <% } %>
-    <script type="application/javascript">
-    if (!document.referrer)
-    {
-        var head  = document.getElementsByTagName('head')[0];
-        var link  = document.createElement('link');
-        link.rel  = 'stylesheet';
-        link.type = 'text/css';
-        link.href = '/css/landing.opentok.css';
-        head.appendChild(link);
-    }
-    </script>
+
+    <link rel="preconnect" href="https://code.jquery.com" >
+    <link rel="preconnect" href="https://hlg.tokbox.com">
+    <link rel="preconnect" href="https://in.hotjar.com">
+    <link rel="preconnect" href="https://www.google-analytics.com">
+    <link rel="preconnect" href="https://assets.tokbox.com">
+
+    <link rel="dns-prefetch" href="https://static.opentok.com">
+    <link rel="dns-prefetch" href="https://vars.hotjar.com">
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
+    <link rel="dns-prefetch" href="https://code.jquery.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
 
     <% if (useGoogleFonts) { %>
         <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
     <% } else { %>
         <link rel="preload" href="/fonts/open-sans-v15-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
         <link href="/css/fonts.css" rel="stylesheet">
     <% } %>
+    
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/<%=chromeExtensionId%>">
     <link rel="stylesheet" rel="preload" href="https://assets.tokbox.com/solutions/css/style.css">
-    <link rel="stylesheet" rel="prefetch" href="/css/annotation.opentok.css">
+    <% if (enableAnnotation && enableScreensharing) { %>
+      <link rel="stylesheet" rel="prefetch" href="/css/annotation.opentok.css">
+    <% } %>
     <link rel="stylesheet dns-prefetch" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/css/intlTelInput.css">
 
-    <link rel="preconnect" href="https://code.jquery.com">
-    <link rel="preconnect" href="https://hlg.tokbox.com">
-    <link rel="preconnect" href="https://in.hotjar.com">
-    <link rel="preconnect" href="https://www.google-analytics.com">
+    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/<%=chromeExtensionId%>">
+    <link rel="stylesheet prefetch" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/css/intlTelInput.css">
 
     <% if (adobeTrackingUrl) { %>
     <script src="<%=adobeTrackingUrl%>" async></script>
@@ -56,7 +73,7 @@
       window.precallApiKey='<%=precallApiKey%>';
       window.precallSessionId='<%=precallSessionId%>';
       window.precallToken='<%=precallToken%>';
-      window.showTos=<%=showTos%> && !sessionStorage.tosAccepted;
+      window.showTos=<%=showTos%>;
       window.enablePrecallTest=<%=enablePrecallTest%>;
       window.enterButtonLabel='<%=enterButtonLabel%>';
       window.enableRoomLocking=<%=enableRoomLocking%>;
@@ -65,12 +82,45 @@
       window.feedbackUrl = '<%=feedbackUrl%>';
       window.publisherResolution = '<%=publisherResolution%>';
       window.maxUsersPerRoom = <%=maxUsersPerRoom%>;
-      window.routedFromStartMeeting = <%=routedFromStartMeeting%>;
       window.userName = "<%=userName%>";
+      window.roomName = "<%=roomName%>";
+      window.autoGenerateRoomName = <%=autoGenerateRoomName%>;
       window.publishAudio = <%=publishAudio%>;
       window.publishVideo = <%=publishVideo%>;
-      var isMobile = function() { return typeof window.orientation !== 'undefined'; }
+      window.introText='<%=introText%>';
+      window.introFooterLinkText='<%=introFooterLinkText%>';
+      window.introFooterLinkUrl='<%=introFooterLinkUrl%>';
+      window.appName='<%=appName%>';
+      window.helpLinkText1='<%=helpLinkText1%>';
+      window.helpLinkUrl1='<%=helpLinkUrl1%>';
+      window.helpLinkText2='<%=helpLinkText2%>';
+      window.helpLinkUrl2='<%=helpLinkUrl2%>';
+      var isMobile = function() { return window.matchMedia("only screen and (max-width: 480px)").matches; }
 
+      const loadCss = (href) => {
+        var head  = document.getElementsByTagName('head')[0];
+        var link  = document.createElement('link');
+        link.rel  = 'stylesheet';
+        link.type = 'text/css';
+        link.href = href;
+        link.media = 'all';
+        head.appendChild(link);
+      };
+
+      // feature detection for preload
+      const supportsPreload = (function() {
+        try {
+          return document.createElement("link").relList.supports('preload');
+        } catch(e) {
+          return false;
+        }
+      }());
+
+      if (!supportsPreload) {
+        loadCss('/css/room.opentok.css');
+        loadCss('https://assets.tokbox.com/solutions/css/style.css');
+        loadCss('/css/annotation.opentok.css');
+      }
       var mobileSettings = function() {
 
         var ids = ['toggleSharing', 'videoSwitch',
@@ -95,11 +145,11 @@
     <script defer src="/js/components/modal.js"></script>
     <script defer src="/js/vendor/lazy_loader.js"></script>
     <script defer src="/js/rtcApp.js"></script>
-    <script src="<%= jqueryUrl %>/3.3.1/jquery.min.js"></script>
+    <script defer src="<%= jqueryUrl %>/3.3.1/jquery.min.js"></script>
 
     <!-- OneTrust Cookies Consent Notice start -->
-    <script src="https://cdn.cookielaw.org/consent/bede0017-0962-4a07-829e-a25b103d453c.js" type="text/javascript" charset="UTF-8"></script>
-    <script type="text/javascript">
+    <script defer src="https://cdn.cookielaw.org/consent/bede0017-0962-4a07-829e-a25b103d453c.js" type="text/javascript" charset="UTF-8"></script>
+    <script defer type="text/javascript">
     function OptanonWrapper() { }
     </script>
     <!-- OneTrust Cookies Consent Notice end -->
@@ -130,7 +180,7 @@
         <div class="room-info">
           <div class="name-wrapper">
             <i id="room-locked-state" data-icon="closedLock" title="This room is locked. No additional participants may join the room."></i>
-            <p class="room-name">Vonage Video Conferencing</p>
+            <p class="room-name"><%= appName %></p>
           </div>
           <div class="participants-wrapper">
             <i data-icon="participants"></i><span id="participantsStr"></span>

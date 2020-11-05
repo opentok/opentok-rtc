@@ -3,25 +3,25 @@
  messages from webpage to the background script
 */
 // eslint-disable-next-line no-undef
-var extensionID = chrome.runtime.id;
+const extensionID = chrome.runtime.id;
 
-var prefix = 'com.tokbox.screenSharing.' + extensionID;
+const prefix = `com.tokbox.screenSharing.${extensionID}`;
 
 // this port connects with background script
 // eslint-disable-next-line no-undef
-var port = chrome.runtime.connect();
+const port = chrome.runtime.connect();
 
-var method = event.data[prefix];
-var payload = event.data.payload;
+const method = event.data[prefix];
+const { payload } = event.data;
 
-var response = function (method1, payload1) {
-  var res = { payload: payload1, from: 'extension' };
+const response = function (method1, payload1) {
+  const res = { payload: payload1, from: 'extension' };
   res[prefix] = method1;
   return res;
 };
 
 // if background script sent a message
-port.onMessage.addListener(function (message) {
+port.onMessage.addListener((message) => {
   if (message && message.method === 'permissionDenied') {
     window.postMessage(response('permissionDenied', message.payload), '*');
   } else if (message && message.method === 'sourceId') {
@@ -31,8 +31,7 @@ port.onMessage.addListener(function (message) {
 
 // this event handler watches for messages sent from the webpage
 // it receives those messages and forwards to background script
-window.addEventListener('message', function (event) {
-
+window.addEventListener('message', (event) => {
   if (event.source !== window) {
     return undefined;
   }
@@ -56,7 +55,7 @@ window.addEventListener('message', function (event) {
   }
 
   if (method === 'getSourceId') {
-    return port.postMessage({ method: 'getSourceId', payload: payload });
+    return port.postMessage({ method: 'getSourceId', payload });
   }
   return undefined;
 });

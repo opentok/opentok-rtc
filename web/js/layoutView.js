@@ -1,4 +1,4 @@
-!(global => {
+!((global) => {
   const LayoutRenderer = function (container) {
     this.container = container.querySelector('.tc-list ul');
   };
@@ -7,7 +7,7 @@
     defaultOptions: {
       name: '',
       type: 'camera',
-      controlElems: {}
+      controlElems: {},
     },
 
     append(id, options) {
@@ -15,11 +15,11 @@
       Object.keys(this.defaultOptions).forEach(function (option) {
         options[option] = options[option] || this.defaultOptions[option];
       }, this);
-      const type = options.type;
+      const { type } = options;
       const item = HTMLElems.createElementAt(this.container, 'li', {
         'data-id': id,
         'data-streamType': type,
-        class: 'stream'
+        class: 'stream',
       }, null, type === 'publisher' ? null : this.container.firstChild);
       const controls = HTMLElems.createElementAt(item, 'div');
       controls.classList.add('controls');
@@ -44,7 +44,7 @@
       }
 
       HTMLElems.createElementAt(item, 'div', {
-        'data-id': id
+        'data-id': id,
       }).classList.add('dblclick_area');
     },
 
@@ -56,14 +56,14 @@
       const controls = HTMLElems.createElementAt(main, 'div');
       controls.classList.add('buttons');
 
-      Object.keys(controlElems).forEach(controlName => {
+      Object.keys(controlElems).forEach((controlName) => {
         const control = controlElems[controlName];
         const options = {
           'data-icon': control.dataIcon,
           'data-eventName': control.eventFiredName,
           'data-action': controlName,
           'data-streamId': id,
-          'data-streamType': type
+          'data-streamType': type,
         };
         const wrapper = HTMLElems.createElementAt(controls, 'div');
         // IE does not support adding multiple classes
@@ -81,7 +81,7 @@
 
     removeAll() {
       this.container.innerHTML = '';
-    }
+    },
   };
 
   let renderer = null;
@@ -101,6 +101,6 @@
 
     removeAll() {
       renderer.removeAll.apply(renderer);
-    }
+    },
   };
 })(this);

@@ -566,6 +566,34 @@ To configure this, edit options in the config/config.json file or set environmen
 
 ### Additional configuration options
 
+* `appName` (config.json) / `APP_NAME` (environment variable) -- The name of the application
+  displayed in the precall widget, in the top of the room page, and in the end (/thanks) page.
+  The default value is 'Vonage Video Conferencing'.
+
+* `introText` (config.json) / `INTRO_TEXT` (environment variable) -- The text displayed under
+  the application name in the precall widget. The default value is 'Welcome to Video Conferencing'.
+
+* `introFooterLinkText` (config.json) / `INTRO_FOOTER_LINK_TEXT` (environment variable) -- The text
+  for the optional link displayed under the intro text in the precall widget. If no value is
+  specified (or if it is set the an empty string), no link is displayed. The default value is ''.
+
+* `introFooterLinkUrl` (config.json) / `INTRO_FOOTER_LINK_URL` (environment variable) -- The URL
+  for the optional link displayed under the intro text in the precall widget. The default value is ''.
+
+* `helpLinkText1` (config.json) / `HELP_LINK_TEXT_1` (environment variable) -- The text
+  for the first help link displayed after "Need help?" at the top of the precall widget.
+  If you do not set this option, the "Need help" section is omitted.
+
+* `helpLinkUrl1` (config.json) / `HELP_LINK_URL_1` (environment variable) -- The URL for
+  the first help link the precall widget.
+
+* `helpLinkText2` (config.json) / `HELP_LINK_TEXT_2` (environment variable) -- The text
+  for the second help link displayed after "Need help?" at the top of the precall widget.
+  If you do not set this option, second help link is omitted.
+
+* `helpLinkUrl2` (config.json) / `HELP_LINK_URL_2` (environment variable) -- The URL for
+  the second help link the precall widget.
+
 * `showTos` (config.json) / `SHOW_TOS` (environment variable) -- Whether the app will display the terms of service
   dialog box and require the user to agree to the terms before joining a room. The default value is `false`.
 
@@ -616,6 +644,8 @@ To configure this, edit options in the config/config.json file or set environmen
 * `enableRoomLocking` (config.json) / `ENABLE_ROOM_LOCKING` (environment variable) -- Whether or not
   to include the Lock Meeting command to users in the options menu. This command allows users
   to prevent new participants from joining a meeting. The default value is `true`.
+
+* `autoGenerateRoomName` (config.json) / `AUTO_GENERATE_ROOM_NAME` (environment variable) -- Whether or not to auto generate the room name on behalf of the user. If this setting is turned on, we will use haikunator to generate room names for new rooms. If turned off, users will be prompted to enter a room/meeting name when they visit the landing page and won't be allowed to move forward until they do so.
 
 ## Customizing the UI
 
