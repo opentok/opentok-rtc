@@ -10,17 +10,28 @@ describe('Home', function () {
   before(()=> {
   });
 
-    it('Landing Page : creates room', () => {
-    page.open();
-    page.name.setValue(user);
-    page.goToRoom();
-    page.acceptTerms();
-    }, 1);
+//    it('Landing Page : terms and conditions visible', () => {
+//    page.open();
+//    page.name.setValue(user);
+//    page.pause(3000);
+//    page.goToRoom();
+//    page.acceptTerms();
+//    }, 1);
+//
+//    it('Landing Page : audio Switch visible and clickable', () => {
+//      page.open();
+//      page.name.setValue(user);
+//      page.audioSwitch.click();
+//    }, 1);
+//
+//    it('Landing Page : video Switch visible and clickable', () => {
+//      page.open();
+//      page.name.setValue(user);
+//      page.videoSwitch.click();
+//    }, 1);
 
-    it('Landing Page : audio Switch visible', () => {
-      page.open();
-      page.name.setValue(user);
-      page.audioSwitch.click();
-    }, 1);
+//        it('Landing Page : creates room', () => {
+//        page.createRoom(user);
+//        }, 1);
 
 });
