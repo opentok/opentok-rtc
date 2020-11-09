@@ -197,3 +197,5 @@ E.ADOBE_TRACKING_PRIMARY_CATEGORY = { envVar: 'ADOBE_TRACKING_PRIMARY_CATEGORY',
 E.ADOBE_TRACKING_SITE_IDENTIFIER = { envVar: 'ADOBE_TRACKING_SITE_IDENTIFIER', jsonPath: 'adobeTracking.siteIdentifier', defaultValue: '' };
 
 E.ADOBE_TRACKING_FUNCTION_DEPT = { envVar: 'ADOBE_TRACKING_FUNCTION_DEPT', jsonPath: 'adobeTracking.functionDept', defaultValue: '' };
+
+E.ONE_TRUST_COOKIE_CONSENT_URL = { envVar: 'ONE_TRUST_COOKIE_CONSENT_URL', jsonPath: 'oneTrustCookieConsentUrl', defaultValue: '' };
