@@ -630,7 +630,7 @@ To configure this, edit options in the config/config.json file or set environmen
   Route of the CDN that will be used to load JQuery scripts. The default value is
   'https://ajax.googleapis.com/ajax/libs/jquery/'.
 
-* `oneTrustCookieConsentUrl` (config.json) / `ONE_TRUST_COOKIE_CONSENT_URL` (environment variable) -- Route of the one trust cookie consent url. Leave blank or unset to turn the feature off.
+* `oneTrustCookieConsentUrl` (config.json) / `ONE_TRUST_COOKIE_CONSENT_URL` (environment variable) -- Route of the one trust cookie consent url. Leave blank or unset to turn the feature off. This setting is unset by default.
 
 * `enableMuteAll` (config.json) / `ENABLE_MUTE_ALL` (environment variable) -- Whether to show the Mute All
   control in the top menu of the room. (You can set this in the config file
