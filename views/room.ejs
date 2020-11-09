@@ -147,11 +147,13 @@
     <script defer src="/js/rtcApp.js"></script>
     <script defer src="<%= jqueryUrl %>/3.3.1/jquery.min.js"></script>
 
+    <% if (oneTrustCookieConsentUrl) { %>
     <!-- OneTrust Cookies Consent Notice start -->
-    <script defer src="https://cdn.cookielaw.org/consent/bede0017-0962-4a07-829e-a25b103d453c.js" type="text/javascript" charset="UTF-8"></script>
+    <script defer src="<%=oneTrustCookieConsentUrl%>" type="text/javascript" charset="UTF-8"></script>
     <script defer type="text/javascript">
     function OptanonWrapper() { }
     </script>
+    <% } %>
     <!-- OneTrust Cookies Consent Notice end -->
 
     <% if (enableFeedback && hotjarId && hotjarVersion ) { %>
