@@ -630,7 +630,8 @@ To configure this, edit options in the config/config.json file or set environmen
   Route of the CDN that will be used to load JQuery scripts. The default value is
   'https://ajax.googleapis.com/ajax/libs/jquery/'.
 
-* `oneTrustCookieConsentUrl` (config.json) / `ONE_TRUST_COOKIE_CONSENT_URL` (environment variable) -- Route of the one trust cookie consent url. Leave blank or unset to turn the feature off. This setting is unset by default.
+* `oneTrustCookieConsentUrl` (config.json) / `ONE_TRUST_COOKIE_CONSENT_URL` (environment variable) -- Route of the OneTrust cookie consent URL.
+   Leave blank or unset to turn the feature off. This setting is unset by default.
 
 * `enableMuteAll` (config.json) / `ENABLE_MUTE_ALL` (environment variable) -- Whether to show the Mute All
   control in the top menu of the room. (You can set this in the config file
@@ -647,7 +648,10 @@ To configure this, edit options in the config/config.json file or set environmen
   to include the Lock Meeting command to users in the options menu. This command allows users
   to prevent new participants from joining a meeting. The default value is `true`.
 
-* `autoGenerateRoomName` (config.json) / `AUTO_GENERATE_ROOM_NAME` (environment variable) -- Whether or not to auto generate the room name on behalf of the user. If this setting is turned on, we will use haikunator to generate room names for new rooms. If turned off, users will be prompted to enter a room/meeting name when they visit the landing page and won't be allowed to move forward until they do so.
+* `autoGenerateRoomName` (config.json) / `AUTO_GENERATE_ROOM_NAME` (environment variable) -- Whether or not to
+  auto-generate the room name on behalf of the user. If this setting is turned on, we will use haikunator to generate
+  room names for new rooms. If turned off, users will be prompted to enter a room/meeting name when they visit
+  the landing page and won't be allowed to move forward until they do so.
 
 ## Customizing the UI
 
