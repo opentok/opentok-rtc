@@ -1,25 +1,23 @@
-!(function (exports) {
-  'use strict';
-
-  var TIME_RESEND_STATUS = 60000;
+!((exports) => {
+  const TIME_RESEND_STATUS = 60000;
 
   // Persistent elements of the room
   // Each elements should be key : Object
   // where key is the name of a particular element to preserve
-  var _entries = {
+  let _entries = {
   };
 
-  var _myCreationTime;
-  var _connectedAfterMe = {};
-  var _connectedEarlierThanMe = 0;
-  var otHelper;
+  let _myCreationTime;
+  const _connectedAfterMe = {};
+  let _connectedEarlierThanMe = 0;
+  let otHelper;
 
   function sendStatusAck(aOTHelper) {
     (aOTHelper || otHelper).sendSignal('statusACK');
   }
 
   function cancelPendingSend(aConnectionId) {
-    var conn = _connectedAfterMe[aConnectionId];
+    const conn = _connectedAfterMe[aConnectionId];
     if (conn !== undefined) {
       delete _connectedAfterMe[aConnectionId];
       window.clearInterval(conn);
@@ -35,14 +33,14 @@
   }
 
   function proccessNewConnection(evt) {
-    var newUsrConnection = evt.connection;
-    var creationTime = newUsrConnection.creationTime;
-    var connectionId = newUsrConnection.connectionId;
+    const newUsrConnection = evt.connection;
+    const { creationTime } = newUsrConnection;
+    const { connectionId } = newUsrConnection;
 
     if (creationTime < _myCreationTime) {
       _connectedEarlierThanMe++;
     } else if (!otHelper.isMyself(newUsrConnection)) {
-      var send = function (aNewUsrConnection) {
+      const send = (aNewUsrConnection) => {
         if (iMustSend()) {
           sendStatus(aNewUsrConnection);
         }
@@ -50,14 +48,13 @@
 
       send(newUsrConnection);
 
-      var intervalResendStatus =
-        window.setInterval(send.bind(undefined, newUsrConnection),
-                           TIME_RESEND_STATUS);
+      const intervalResendStatus = window.setInterval(send.bind(undefined, newUsrConnection),
+        TIME_RESEND_STATUS);
       _connectedAfterMe[connectionId] = intervalResendStatus;
     }
   }
 
-  var _statusHandlers = {
+  const _statusHandlers = {
     'signal:status': function (evt) {
       _entries = JSON.parse(evt.data);
       sendStatusAck(this);
@@ -69,19 +66,18 @@
     'signal:statusACK': function (evt) {
       cancelPendingSend(evt.from.connectionId);
     },
-    connectionCreated: function (evt) {
+    connectionCreated(evt) {
       // Dispatched when an new client (including your own) has connected to the
       // session, and for every client in the session when you first connect
       // Session object also dispatches a sessionConnected evt when your local
       // client connects
       evt.connection.data && proccessNewConnection(evt);
     },
-    sessionConnected: function (evt) {
+    sessionConnected(evt) {
       _myCreationTime = evt.target.connection.creationTime;
       otHelper = this;
-      Request.saveConnection(_myCreationTime, otHelper.session.id);
     },
-    connectionDestroyed: function (evt) {
+    connectionDestroyed(evt) {
       // If connection destroyed belongs to someone older than me,
       // subtract one from connected early than me
       // no matters who, it only care the number of them,
@@ -91,12 +87,9 @@
       }
       cancelPendingSend(evt.connection.connectionId);
     },
-    sessionDisconnected: function (evt) {
-      Request.deleteConnection(_myCreationTime, otHelper.session.id)
-      .then(function () {
-        window.location = '/';
-      });
-    }
+    sessionDisconnected() {
+      window.location = '/thanks';
+    },
   };
 
   function addHandlers(aGlobalHandlers) {
@@ -119,9 +112,9 @@
       }
       _entries[key] = value;
     },
-    get: function (key) {
+    get(key) {
       return _entries[key];
     },
-    init: init
+    init,
   };
-}(this));
+})(this);

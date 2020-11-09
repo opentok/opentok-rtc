@@ -1,14 +1,12 @@
 /* global OT, FeedbackView */
 
-!(function (global) {
-  'use strict';
+!((global) => {
+  let otHelper;
 
-  var otHelper;
-
-  var eventHandlers = {
-    sendFeedback: function (evt) {
-      var report = evt.detail;
-      var loggedEvent = {
+  const eventHandlers = {
+    sendFeedback(evt) {
+      const report = evt.detail;
+      const loggedEvent = {
         action: 'SessionQuality',
         partnerId: otHelper.session.apiKey,
         sessionId: otHelper.session.id,
@@ -18,40 +16,38 @@
         videoScore: report.videoScore,
         description: report.description,
         clientSystemTime: new Date().getTime(),
-        source: document.location.href
+        source: document.location.href,
       };
-      var xhr = new XMLHttpRequest();
-      var url = window.feedbackUrl;
+      const xhr = new XMLHttpRequest();
+      const url = window.feedbackUrl;
       xhr.open('POST', url, true);
       xhr.send(JSON.stringify(loggedEvent));
     },
-    reportIssue: function () {
-      var loggedEvent = {
+    reportIssue() {
+      const loggedEvent = {
         action: 'ReportIssue',
         partnerId: otHelper.session.apiKey,
         sessionId: otHelper.session.id,
         connectionId: otHelper.session.connection.id,
-        publisherId: otHelper.publisherId
+        publisherId: otHelper.publisherId,
       };
-      OT.reportIssue(function (error, reportId) {
+      OT.reportIssue((error, reportId) => {
         if (!error) {
           loggedEvent.reportIssueId = reportId;
         }
       });
-    }
+    },
   };
 
-  var init = function (aOTHelper, aReportIssueLevel) {
-    return LazyLoader.load([
-      '/js/feedbackView.js'
-    ]).then(function () {
-      otHelper = aOTHelper;
-      Utils.addEventsHandlers('feedbackView:', eventHandlers, global);
-      FeedbackView.init(aReportIssueLevel);
-    });
-  };
+  const init = (aOTHelper, aReportIssueLevel) => LazyLoader.load([
+    '/js/min/feedbackView.min.js',
+  ]).then(() => {
+    otHelper = aOTHelper;
+    Utils.addEventsHandlers('feedbackView:', eventHandlers, global);
+    FeedbackView.init(aReportIssueLevel);
+  });
 
   global.FeedbackController = {
-    init: init
+    init,
   };
-}(this));
+})(this);

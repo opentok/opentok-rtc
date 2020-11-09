@@ -1,15 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="28" viewBox="0 0 18 28">
-    <defs>
-        <path id="a" d="M0 0h18v12H0z"/>
-    </defs>
-    <g fill="none" fill-rule="evenodd">
-        <rect width="10" height="19" x="4" fill="#FFF" rx="5"/>
-        <g transform="translate(0 10)">
-            <mask id="b" fill="#fff">
-                <use xlink:href="#a"/>
-            </mask>
-            <rect width="15" height="24" x="1.5" y="-12.5" stroke="#FFF" mask="url(#b)" rx="7.5"/>
-        </g>
-        <path stroke="#FFF" stroke-linecap="square" d="M9 24.333v-2.666M7 25h4"/>
-    </g>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0)">
+<path d="M11.9406 14.8109C15.1583 14.8109 17.7911 12.1781 17.7911 8.96037V6.03512C17.7911 2.81735 15.1583 0.184631 11.9406 0.184631C8.72281 0.184631 6.09009 2.81735 6.09009 6.03512V8.96037C6.09009 12.1781 8.72281 14.8109 11.9406 14.8109Z" fill="white"/>
+<path d="M23.4953 10.5692C23.6415 9.83788 23.0565 9.10657 22.3252 8.96031C21.5938 8.81404 20.7163 9.39909 20.7163 10.1304C19.985 14.5183 16.3284 17.736 11.9406 17.736C7.55269 17.736 3.89614 14.5183 3.31109 10.2767C3.16483 9.39909 2.43351 8.81404 1.55594 8.96031C0.824631 9.10657 0.239581 9.83788 0.385844 10.5692C1.11716 15.8346 5.35876 19.7836 10.4779 20.515V23.5865H13.4032V20.515C18.5223 19.9299 22.7639 15.8346 23.4953 10.5692Z" fill="white"/>
+</g>
+<defs>
+<clipPath id="clip0">
+<rect width="23.402" height="23.402" fill="white" transform="translate(0.239502 0.184631)"/>
+</clipPath>
+</defs>
 </svg>

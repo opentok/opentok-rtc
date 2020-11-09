@@ -1,8 +1,3 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="37" height="29" viewBox="0 0 37 29">
-    <g fill="none" fill-rule="evenodd">
-        <path stroke="#FFF" stroke-linecap="round" stroke-linejoin="round" d="M12 24h4M14 21.45V24"/>
-        <path fill="#FFF" d="M18.8 13h1.6c.883 0 1.6.604 1.6 1.35v6.3c0 .745-.717 1.35-1.6 1.35H7.6c-.885 0-1.6-.605-1.6-1.35v-6.3c0-.746.715-1.35 1.6-1.35h1.6M30.6 2h1.2A1.2 1.2 0 0 1 33 3.2v5.6a1.2 1.2 0 0 1-1.2 1.2h-9.6A1.2 1.2 0 0 1 21 8.8V3.2c0-.663.536-1.2 1.2-1.2h1.2"/>
-        <path stroke="#FFF" stroke-linecap="round" stroke-linejoin="round" d="M14 9.75V8.707c0-1.55 1.06-3.207 2.977-3.207H19"/>
-        <path stroke="#FFF" stroke-linecap="round" stroke-linejoin="round" d="M15.5 9L14 10l-1.5-1M18 4l1 1.5L18 7M25 11.5h4M27 10v1"/>
-    </g>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 0H22.5C23.4 0 24 0.6 24 1.5V16.5C24 17.4 23.4 18 22.5 18H1.5C0.6 18 0 17.4 0 16.5V1.5C0 0.6 0.6 0 1.5 0ZM15 9L9 4.5V13.5L15 9ZM6 21H18C18.9 21 19.5 21.6 19.5 22.5C19.5 23.4 18.9 24 18 24H6C5.1 24 4.5 23.4 4.5 22.5C4.5 21.6 5.1 21 6 21Z" fill="white"/>
 </svg>

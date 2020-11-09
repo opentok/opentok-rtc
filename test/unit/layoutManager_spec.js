@@ -1,5 +1,5 @@
-var assert = chai.assert;
-var expect = chai.expect;
+var { assert } = chai;
+var { expect } = chai;
 var should = chai.should();
 
 describe('LayoutManager', () => {
@@ -24,10 +24,10 @@ describe('LayoutManager', () => {
       return li;
     }
     sinon.stub(LayoutView, 'init');
-    sinon.stub(LayoutView, 'append', (id) => { return id === 'desktop' ? desktop : getLayoutElement(); }); // eslint-disable-line arrow-body-style
+    sinon.stub(LayoutView, 'append').callsFake((id) => { return id === 'desktop' ? desktop : getLayoutElement(); }); // eslint-disable-line arrow-body-style
     sinon.stub(LayoutView, 'remove');
     sinon.stub(ItemsHandler, 'init');
-    sinon.stub(LazyLoader, 'dependencyLoad', () => Promise.resolve());
+    sinon.stub(LazyLoader, 'dependencyLoad').callsFake(() => Promise.resolve());
   });
 
   it('should exist', () => {
@@ -81,8 +81,8 @@ describe('LayoutManager', () => {
   });
 
   describe('#remove', () => {
-    it('should set the grid layout with three remaining streams after leaving of ' +
-       'sharing the screen', () => {
+    it('should set the grid layout with three remaining streams after leaving of '
+       + 'sharing the screen', () => {
       LayoutManager.remove('desktop');
       checkLayout('grid');
     });

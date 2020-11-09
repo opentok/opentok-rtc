@@ -1,37 +1,36 @@
 /* global $ */
-!(function (global) {
-  var input;
+!((global) => {
+  let input;
 
-  var sendPhoneNumber = function () {
-    var phoneNumber = input.intlTelInput('getNumber');
+  const sendPhoneNumber = () => {
+    const phoneNumber = input.intlTelInput('getNumber');
     Utils.sendEvent('phoneNumberView:dialOut', phoneNumber);
   };
 
-  var eventHandlers = {
-    verifyDialOut: sendPhoneNumber
+  const eventHandlers = {
+    verifyDialOut: sendPhoneNumber,
   };
 
-  var addHandlers = function () {
+  const addHandlers = () => {
     Utils.addEventsHandlers('roomView:', eventHandlers, global);
   };
 
-  var init = function (jqueryUrl) {
+  const init = () => {
     LazyLoader.dependencyLoad([
-      jqueryUrl + '/1.11.1/jquery.min.js',
       'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/js/intlTelInput.js',
-      'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/js/utils.js'
-    ]).then(function () {
+      'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/js/utils.js',
+    ]).then(() => {
       input = $('#dialOutNumber');
       input.intlTelInput({
         utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/js/utils.js',
         initialCountry: 'US',
-        separateDialCode: true
+        separateDialCode: true,
       });
     });
     addHandlers();
   };
 
   global.PhoneNumberView = {
-    init: init
+    init,
   };
-}(this));
+})(this);

@@ -1,8 +1,18 @@
-@import 'flexbox.less';
+@import "flexbox.less";
 
-@import 'variables.less';
+@import "variables.less";
 
-@import 'animations.less';
+@import "animations.less";
+
+@viewport {
+  zoom: 1;
+  width: extend-to-zoom;
+}
+
+@-ms-viewport {
+  width: extend-to-zoom;
+  zoom: 1;
+}
 
 html {
   width: 100%;
@@ -10,6 +20,18 @@ html {
   color: @text;
   font-family: @baseFontFamily;
   font-weight: @baseFontWeight;
+  font-display: swap;
+  background-color: @nero;
+
+  @media @smartphonesLandscape{
+    overscroll-behavior: none;
+  }
+
+}
+
+body {
+  //disbale pull to refresh decoration chrome
+  overscroll-behavior-y: contain;
 }
 
 body.forbidden {
@@ -34,12 +56,17 @@ label {
   opacity: 0;
   transition: opacity @transitionTime;
 
+  &.visible {
+    z-index: 2000000;
+  }
+
   &.show {
     display: block;
     opacity: 1;
 
     .tc-dialog {
       transform: translateY(0);
+
     }
   }
 
@@ -47,14 +74,17 @@ label {
     transform: translateY(100%);
     transition: transform @transitionTime;
     padding: 40px;
-    text-align: center;
+    text-align: left;
+    font-family: @baseFontFamily;
+    font-style: normal;
+    margin-left: 55px;
 
-    // Fixed maximum width in the pop up containers of 280px + 80px of padding
-    max-width: 360px;
+    // Fixed maximum width in the pop up containers of 280px + 180px of padding
+    max-width: 470px;
 
     .close {
-      width: 20px;
-      height: 20px;
+      width: 12px;
+      height: 12px;
       position: absolute;
       top: 21px;
       right: 18.9px;
@@ -62,36 +92,43 @@ label {
     }
 
     header {
-      font-size: 16px;
-      color: #4f4f4f;
-    }
-
-    header, p {
-      margin: 0;
-      padding: 0;
+      font-weight: 500;
+      font-size: 23px;
+      line-height: 26px;
+      color: @lightGrey;
+      margin-bottom: 10px;
     }
 
     hr {
       border: 0;
       background: @blueText;
       height: 1px;
-      width: 60%;
+      width: 100%;
       margin-top: 15px;
       margin-bottom: 15px;
     }
 
-    p, .btn {
+    p,
+    .btn {
       font-size: 12px;
     }
 
     p {
-      color: #9b9b9b;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 21px;
+      color: @darkBlue;
+      margin-bottom: 10px;
+
     }
 
     .btn {
       height: 35px;
       line-height: 35px;
-      margin: 0 10px;
+      font-weight: 600;
+      font-size: 12px;
+      line-height: 16px;
+      color: @solidWhite;
     }
   }
 }
@@ -102,22 +139,22 @@ label {
 }
 
 .bold {
-  font-weight: 700;
+  font-weight: 600;
 }
 
-input, textarea {
+input,
+textarea {
   font-family: @baseFontFamily;
-
-  display: inline-block;
-
-  border: 1px solid #c5bbb4;
   resize: none;
-  margin: 5px;
-  padding: 12px 10px;
+  display: inline-block;
+  border: 1px solid @paleSlate;
   width: 270px;
   font-size: 16px;
+  @media @smartphonesPortrait {
+    font-size: 10px;
+    width: 200px;
+  }
 }
-
 .hidden {
   display: none !important;
 }
@@ -128,22 +165,31 @@ input, textarea {
     @media @smartphonesPortrait {
       font-size: 20px;
     }
-    color: @blueText;
-    padding-bottom: 10px;
+    color: @lightGrey;
+    padding-bottom: 1px;
+    text-align: left;
   }
 
   p {
-    font-family: "Open Sans", arial;
-    color: @text;
-    font-weight: 300;
-    font-size: 16px;
-
-    @media @smartphones {
-      font-size: 12px;
-    }
+    font-family: "Open Sans", arial; 
+    color: @darkBlue;
+    font-weight: normal;
+    font-size: 10px;
+    text-align: left;
+    line-height: 12px;
+      @media @smartphonesLandscape{
+          height: 50vh;
+          max-height: 120px;
+          overflow-y: auto;
+      }
+      @media @smartphonesPortrait{
+          height: 40vh;
+          max-height: 200px;
+          overflow-y: auto;
+      }
 
     a {
-      color: @blueText;
+      color: @purple;
       text-decoration: none;
       font-weight: 600;
     }
@@ -151,6 +197,38 @@ input, textarea {
 
   .btn {
     font-size: 14px;
-    margin: 0px;
+    text-align: left;
+    background: @darkBlue;
+    border-radius: 6px;
+    color: @solidWhite;
+  }
+
+  .close {
+    width: 12px;
+    height: 12px;
+  }
+
+  footer {
+    text-align: left;
+    margin-top: 40px;
+        @media @smartphonesLandscape{
+            margin-top: 20px;
+        }
+        @media @smartphonesPortrait{
+            margin-top: 20px;
+        }
+  }
+}
+
+// for handling safe areas
+
+@media @smartphonesLandscape {
+  @supports (padding: max(0px)) {
+    #top-banner {
+      padding-left: max(12px, env(safe-area-inset-left));
+    }
+    #top-banner .right-container {
+      padding-right: max(12px, env(safe-area-inset-right));
+    }
   }
 }

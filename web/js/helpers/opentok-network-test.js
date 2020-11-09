@@ -1,28 +1,26 @@
 /* OpenTok network test - see https://github.com/opentok/opentok-network-test */
 
-!function(global) {
-  'use strict';
-
+!(global => {
   function OTNetworkTest(options) {
 
-    var TEST_TIMEOUT_MS = 15000; // 15 seconds
+    const TEST_TIMEOUT_MS = 15000; // 15 seconds
 
-    var subscriberEl = document.createElement('div');
-    var publisherEl = document.createElement('div');
+    const subscriberEl = document.createElement('div');
+    const publisherEl = document.createElement('div');
 
-    var session;
-    var publisher = OT.initPublisher(publisherEl, options);
-    var subscriber;
-    var bandwidthCalculator;
-    var getStatsIntervalId;
-    var testTimeoutId;
-    var currentStats;
+    let session;
+    const publisher = OT.initPublisher(publisherEl, options);
+    let subscriber;
+    let bandwidthCalculator;
+    let getStatsIntervalId;
+    let testTimeoutId;
+    let currentStats;
 
-    var testStreamingCapability = function(subscriber, callback) {
-      performQualityTest({subscriber: subscriber, timeout: TEST_TIMEOUT_MS}, function(error, results) {
+    const testStreamingCapability = (subscriber, callback) => {
+      performQualityTest({subscriber, timeout: TEST_TIMEOUT_MS}, (error, results) => {
         // If we tried to set video constraints, but no video data was found
         if (!results.video) {
-          var audioSupported = results.audio.bitsPerSecond > 25000 &&
+          const audioSupported = results.audio.bitsPerSecond > 25000 &&
               results.audio.packetLossRatio < 0.05;
 
           if (audioSupported) {
@@ -45,7 +43,7 @@
           });
         }
 
-        var audioVideoSupported = results.video.bitsPerSecond > 250000 &&
+        const audioVideoSupported = results.video.bitsPerSecond > 250000 &&
           results.video.packetLossRatio < 0.03 &&
           results.audio.bitsPerSecond > 25000 &&
           results.audio.packetLossRatio < 0.05;
@@ -72,8 +70,8 @@
         // try audio only to see if it reduces the packet loss
         publisher.publishVideo(false);
 
-        performQualityTest({subscriber: subscriber, timeout: 5000}, function(error, results) {
-          var audioSupported = results.audio.bitsPerSecond > 25000 &&
+        performQualityTest({subscriber, timeout: 5000}, (error, results) => {
+          const audioSupported = results.audio.bitsPerSecond > 25000 &&
               results.audio.packetLossRatio < 0.05;
 
           if (audioSupported) {
@@ -96,13 +94,9 @@
       });
     };
 
-    this.startNetworkTest = function(callback) {
-      // You cannot use the network test in IE. IE cannot subscribe to its own stream.
-      if (Utils.isIE()) {
-        return;
-      }
+    this.startNetworkTest = callback => {
       publisher.publishVideo(true);
-      var callbacks = {
+      const callbacks = {
         onInitPublisher: function onInitPublisher(error) {
           if (error) {
             console.error('Could not acquire your camera and microphone.', error);
@@ -129,7 +123,7 @@
           );
         },
 
-        cleanup: function() {
+        cleanup() {
           session.disconnect();
         },
 
@@ -139,7 +133,7 @@
             return;
           }
 
-          testStreamingCapability(subscriber, function(error, result) {
+          testStreamingCapability(subscriber, (error, result) => {
             callback(error, result);
             callbacks.cleanup();
           });
@@ -156,7 +150,7 @@
       compositeOfCallbacks(
         callbacks,
         ['onInitPublisher', 'onConnect'],
-        function(error) {
+        error => {
           if (error) {
             return;
           }
@@ -168,7 +162,7 @@
       // This publisher uses the default resolution (640x480 pixels) and frame rate (30fps).
       // For other resoultions you may need to adjust the bandwidth conditions in
       // testStreamingCapability().
-      publisher.on('streamDestroyed', function(event) {
+      publisher.on('streamDestroyed', event => {
         event.preventDefault(); // Do not remove the preview publisher from the page.
       });
 
@@ -176,7 +170,7 @@
       session.connect(options.token, callbacks.onConnect);
     };
     
-    this.stopTest = function() {
+    this.stopTest = () => {
       bandwidthCalculator && bandwidthCalculator.stop();
       try {
         session.unpublish(publisher);
@@ -190,7 +184,7 @@
     // Helpers
 
     function pluck(arr, propertName) {
-      return arr.map(function(value) {
+      return arr.map(value => {
         return value[propertName];
       });
     }
@@ -200,7 +194,7 @@
         arr = pluck(arr, propertyName);
       }
 
-      return arr.reduce(function(previous, current) {
+      return arr.reduce((previous, current) => {
         return previous + current;
       }, 0);
     }
@@ -214,13 +208,13 @@
     }
 
     function calculatePerSecondStats(statsBuffer, seconds) {
-      var stats = {};
-      var activeMediaTypes = Object.keys(statsBuffer[0] || {})
-        .filter(function(key) {
+      const stats = {};
+      const activeMediaTypes = Object.keys(statsBuffer[0] || {})
+        .filter(key => {
           return key !== 'timestamp';
         });
 
-      activeMediaTypes.forEach(function(type) {
+      activeMediaTypes.forEach(type => {
         stats[type] = {
           packetsPerSecond: sum(pluck(statsBuffer, type), 'packetsReceived') / seconds,
           bitsPerSecond: (sum(pluck(statsBuffer, type), 'bytesReceived') * 8) / seconds,
@@ -236,35 +230,35 @@
     }
 
     function getSampleWindowSize(samples) {
-      var times = pluck(samples, 'timestamp');
+      const times = pluck(samples, 'timestamp');
       return (max(times) - min(times)) / 1000;
     }
 
     if (!Array.prototype.forEach) {
       Array.prototype.forEach = function(fn, scope) {
-        for (var i = 0, len = this.length; i < len; ++i) {
+        for (let i = 0, len = this.length; i < len; ++i) {
           fn.call(scope, this[i], i, this);
         }
       };
     }
 
     function compositeOfCallbacks(obj, fns, callback) {
-      var results = {};
-      var hasError = false;
+      const results = {};
+      let hasError = false;
 
-      var checkDone = function checkDone() {
+      const checkDone = function checkDone() {
         if (Object.keys(results).length === fns.length) {
           callback(hasError, results);
-          callback = function() {};
+          callback = () => {};
         }
       };
 
-      fns.forEach(function(key) {
-        var originalCallback = obj[key];
+      fns.forEach(key => {
+        const originalCallback = obj[key];
 
         obj[key] = function(error) {
           results[key] = {
-            error: error,
+            error,
             args: Array.prototype.slice.call(arguments, 1)
           };
 
@@ -285,25 +279,25 @@
       config.subscriber = config.subscriber || undefined;
 
       return {
-        start: function(reportFunction) {
-          var statsBuffer = [];
-          var last = {
+        start(reportFunction) {
+          let statsBuffer = [];
+          const last = {
             audio: {},
             video: {}
           };
 
-          getStatsIntervalId = window.setInterval(function() {
-            config.subscriber.getStats(function(error, stats) {
-              var activeMediaTypes = Object.keys(stats)
-              .filter(function(key) {
+          getStatsIntervalId = window.setInterval(() => {
+            config.subscriber.getStats((error, stats) => {
+              const activeMediaTypes = Object.keys(stats)
+              .filter(key => {
                 return key !== 'timestamp';
               });
-              var snapshot = {};
-              var nowMs = new Date().getTime();
-              var sampleWindowSize;
+              const snapshot = {};
+              const nowMs = new Date().getTime();
+              let sampleWindowSize;
 
-              activeMediaTypes.forEach(function(type) {
-                snapshot[type] = Object.keys(stats[type]).reduce(function(result, key) {
+              activeMediaTypes.forEach(type => {
+                snapshot[type] = Object.keys(stats[type]).reduce((result, key) => {
                   result[key] = stats[type][key] - (last[type][key] || 0);
                   last[type][key] = stats[type][key];
                   return result;
@@ -314,7 +308,7 @@
               snapshot.timestamp = stats.timestamp;
 
               statsBuffer.push(snapshot);
-              statsBuffer = statsBuffer.filter(function(value) {
+              statsBuffer = statsBuffer.filter(value => {
                 return nowMs - value.timestamp < config.windowSize;
               });
 
@@ -330,36 +324,35 @@
           }, config.pollingInterval);
         },
 
-        stop: function() {
+        stop() {
           window.clearInterval(getStatsIntervalId);
           window.clearTimeout(testTimeoutId);
         }
       };
     }
 
-    var performQualityTest = function(config, callback) {
-      var startMs = new Date().getTime();
+    var performQualityTest = (config, callback) => {
+      const startMs = new Date().getTime();
 
       bandwidthCalculator = bandwidthCalculatorObj({
         subscriber: config.subscriber
       });
 
-      var cleanupAndReport = function() {
+      const cleanupAndReport = () => {
         currentStats.elapsedTimeMs = new Date().getTime() - startMs;
 
         bandwidthCalculator.stop();
         callback(undefined, currentStats);
-        callback = function() {};
+        callback = () => {};
       };
 
       testTimeoutId = window.setTimeout(cleanupAndReport, config.timeout);
 
-      bandwidthCalculator.start(function(stats) {
+      bandwidthCalculator.start(stats => {
         currentStats = stats;
       });
     }
-  };
+  }
 
   global.OTNetworkTest = OTNetworkTest;
-
-}(this);
+})(this);

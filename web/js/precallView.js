@@ -1,163 +1,177 @@
-/* globals EJSTemplate, Modal, setTimeout, showTos */
-!(function (exports) {
-  'use strict';
+// eslint-disable-next-line no-unused-vars
+/* globals EJSTemplate, Modal, showTos, showUnavailable, enablePrecallTest, enterButtonLabel */
+!((exports) => {
+  const _precallTemplateSrc = '/templates/precall.ejs';
+  let _precallTemplate;
+  const _tosTemplateSrc = '/templates/tos.ejs';
+  const _unavailableTemplateSrc = '/templates/unavailable.ejs';
+  let _unavailableTemplate;
+  const _lockedTemplateSrc = '/templates/locked.ejs';
+  let _lockedTemplate;
+  let _tosTemplate;
+  let _model;
+  let testMeterInterval;
 
-  var _precallTemplateSrc = '/templates/precall.ejs';
-  var _precallTemplate;
-  var _tosTemplateSrc = '/templates/tos.ejs';
-  var _tosTemplate;
-  var _model;
-  var testMeterInterval;
+  const addHandlers = () => {
+    if (window.enablePrecallTest) {
+      const preCallTestResults = document.getElementById('pre-call-test-results');
 
-  var addHandlers = function () {
-    var preCallTestResults = document.getElementById('pre-call-test-results');
+      preCallTestResults.addEventListener('click', (e) => {
+        const elem = e.target;
+        switch (elem.id) {
+          case 'precall-close':
+            preCallTestResults.style.display = 'none';
+            break;
+          case 'retest':
+            preCallTestResults.style.display = 'none';
+            document.getElementById('connectivity-cancel').style.display = 'inline-block';
+            Utils.sendEvent('roomView:retest');
+            break;
+          default:
+            // No-op on default;
+        }
+      });
 
-    preCallTestResults.addEventListener('click', function (e) {
-      var elem = e.target;
-      switch (elem.id) {
-        case 'precall-close':
-          preCallTestResults.style.display = 'none';
-          break;
-        case 'retest':
-          preCallTestResults.style.display = 'none';
-          document.getElementById('connectivity-cancel').style.display = 'inline-block';
-          Utils.sendEvent('roomView:retest');
-          break;
-      }
+      const connectivityCancelElement = document.getElementById('connectivity-cancel');
+      connectivityCancelElement.addEventListener('click', (event) => {
+        event.preventDefault();
+        Utils.sendEvent('roomView:cancelTest');
+        connectivityCancelElement.style.display = 'none';
+        preCallTestResults.style.display = 'none';
+        hideConnectivityTest();
+      });
+    }
+
+    const userNameInputElement = document.getElementById('user-name-input');
+    userNameInputElement.addEventListener('keypress', function keypressHandler() {
+      document.querySelector('.user-name-input-container').classList.add('visited');
+      userNameInputElement.removeEventListener('keypress', keypressHandler);
     });
 
-    var connectivityCancelElement = document.getElementById('connectivity-cancel');
-    connectivityCancelElement.addEventListener('click', function (event) {
-      event.preventDefault();
-      Utils.sendEvent('roomView:cancelTest');
-      connectivityCancelElement.style.display = 'none';
-      preCallTestResults.style.display = 'none';
-      hideConnectivityTest();
-    });
-
-    var userNameInputElement = document.getElementById('user-name-input');
-    userNameInputElement.addEventListener('keyup', function keyupHandler() {
-      document.querySelector('#enter-name-prompt label').classList.add('visited');
-      userNameInputElement.removeEventListener('keyup', keyupHandler);
-    });
-
-    document.querySelector('.user-name-modal').addEventListener('click', function () {
+    document.querySelector('.user-name-input-container').addEventListener('click', () => {
       userNameInputElement.focus();
     });
 
-    var publishSettings = document.querySelector('.publish-settings');
+    if (!window.autoGenerateRoomName && !window.roomName) {
+      const roomNameInputElement = document.getElementById('room-name-input');
 
-    publishSettings.addEventListener('click', function (e) {
-      var initialVideoSwitch = document.querySelector('#initialVideoSwitch');
-      var initialAudioSwitch = document.querySelector('#initialAudioSwitch');
+      roomNameInputElement.addEventListener('keypress', function keypressHandler() {
+        document.querySelector('.room-name-input-container').classList.add('visited');
+        roomNameInputElement.removeEventListener('keypress', keypressHandler);
+      });
 
-      setTimeout(function () {
+      document.querySelector('.room-name-input-container').addEventListener('click', () => {
+        const errorMsg = document.querySelector('.error-room.error-text');
+        errorMsg.classList.remove('show');
+        document.querySelector('.room-name-input-container label').style.display = 'block';
+        roomNameInputElement.focus();
+      });
+    }
+
+    const publishSettings = document.querySelector('.publish-settings');
+
+    publishSettings.addEventListener('click', (e) => {
+      const initialVideoSwitch = document.querySelector('#initialVideoSwitch');
+      const initialAudioSwitch = document.querySelector('#initialAudioSwitch');
+
+      setTimeout(() => {
         // This must be done asynchronously to hide the virtual keyboard in iOS:
         document.activeElement.blur();
       }, 1);
 
       // pointer-events is not working on IE so we can receive as target a child
-      var elem = HTMLElems.getAncestorByTagName(e.target, 'a');
+      const elem = HTMLElems.getAncestorByTagName(e.target, 'a');
 
       if (!elem) {
         return;
       }
       switch (elem.id) {
-        case 'preToggleFacingMode':
+        case 'preToggleFacingMode': {
           Utils.sendEvent('roomView:toggleFacingMode');
           break;
-        case 'prePickMic':
-          var select = document.getElementById('select-devices');
+        }
+        case 'prePickMic': {
+          const select = document.getElementById('select-devices');
           select.style.display = 'inline-block';
           Modal.showConfirm({
             head: 'Set mic input',
             detail: 'Please identify the audio source in the following list:',
-            button: 'Set'
-          }, true).then(function (start) {
+            button: 'Set',
+          }, true).then((start) => {
             if (start) {
               Utils.sendEvent('roomView:setAudioSource', select.value);
             }
             select.style.display = 'none';
           });
           break;
-        case 'initialAudioSwitch':
+        }
+        case 'initialAudioSwitch': {
           if (!initialAudioSwitch.classList.contains('activated')) {
             setSwitchStatus(true, 'Audio', 'roomView:initialAudioSwitch');
           } else {
             setSwitchStatus(false, 'Audio', 'roomView:initialAudioSwitch');
           }
           break;
-        case 'initialVideoSwitch':
+        }
+        case 'initialVideoSwitch': {
           if (!initialVideoSwitch.classList.contains('activated')) {
             setSwitchStatus(true, 'Video', 'roomView:initialVideoSwitch');
           } else {
             setSwitchStatus(false, 'Video', 'roomView:initialVideoSwitch');
           }
           break;
+        }
+        default: {
+          // No-op on default;
+        }
       }
-    });
-
-    var videoPreviewElement = document.getElementById('video-preview');
-    var videoPreviewNameElement = document.getElementById('video-preview-name');
-    videoPreviewElement.addEventListener('mouseover', function () {
-      videoPreviewNameElement.style.opacity = 1;
-    });
-    videoPreviewElement.addEventListener('mouseout', function () {
-      videoPreviewNameElement.style.opacity = 0;
     });
   };
 
   function render(resolve) {
-    var templatePromises = [_precallTemplate.render()];
+    // eslint-disable-next-line max-len
+    const templatePromises = [_precallTemplate.render(), _unavailableTemplate.render(), _lockedTemplate.render()];
     if (showTos) {
       templatePromises.push(_tosTemplate.render());
     }
-    Promise.all(templatePromises).then(function (htmlStrings) {
-      htmlStrings.forEach(function (aHTML) {
-        document.body.innerHTML += aHTML;
+    Promise.all(templatePromises).then((htmlStrings) => {
+      htmlStrings.forEach((aHTML) => {
+        document.body.insertAdjacentHTML('afterbegin', aHTML);
       });
+
       addHandlers();
+      if (window.enablePrecallTest) {
+        document.getElementById('pre-call-test').style.display = 'flex';
+        document.getElementById('precall-test-meter').style.display = 'block';
+      }
       resolve();
     });
   }
 
-  var eventHandlers = {
+  const eventHandlers = {
     'PrecallController:endPrecall': function () {
       _model.addEventListener('value', render);
       render();
     },
     'PrecallController:audioOnly': function () {
       setSwitchStatus(false, 'Video', 'roomView:initialVideoSwitch');
-    }
+    },
   };
 
-  var setRoomName = function (roomName) {
-    document.querySelector('.user-name-modal button .room-name').textContent = 'Join ' + roomName;
-    document.getElementById('name-heading').textContent = roomName;
+  const setFocus = (elem) => {
+    const focusElement = document.getElementById(`${elem}-name-input`);
+    focusElement && focusElement.focus();
   };
 
-  var setUsername = function (username) {
-    document.getElementById('video-preview-name').textContent = username;
-    setTimeout(function () {
-      document.getElementById('video-preview-name').style.opacity = 0;
-    }, 2000);
-  };
-
-  var setFocus = function (username) {
-    var focusElement = username ? document.getElementById('enter') :
-      document.getElementById('user-name-input');
-    focusElement.focus();
-  };
-
-  var hideConnectivityTest = function () {
+  const hideConnectivityTest = () => {
     document.getElementById('pre-call-test').style.display = 'none';
     document.getElementById('precall-test-meter').style.display = 'none';
   };
 
-  var populateAudioDevicesDropdown = function (audioDevices, selectedDevId) {
-    var select = document.getElementById('select-devices');
-    audioDevices.forEach(function (device) {
-      var option = document.createElement('option');
+  const populateAudioDevicesDropdown = (audioDevices, selectedDevId) => {
+    const select = document.getElementById('select-devices');
+    audioDevices.forEach((device) => {
+      const option = document.createElement('option');
       option.text = device.label;
       option.value = device.deviceId;
       if (option.value === selectedDevId) option.selected = true;
@@ -165,66 +179,74 @@
     });
   };
 
-  var alreadyInitialized = false;
+  let alreadyInitialized = false;
 
-  var init = function () {
-    return new Promise(function (resolve) {
-      if (alreadyInitialized) {
-        return resolve();
-      }
+  const init = () => new Promise((resolve) => {
+    if (alreadyInitialized) {
+      return resolve();
+    }
 
-      Utils.addEventsHandlers('', eventHandlers);
-      _precallTemplate = new EJSTemplate({ url: _precallTemplateSrc });
-      if (showTos) {
-        _tosTemplate = new EJSTemplate({ url: _tosTemplateSrc });
-      }
-      alreadyInitialized = true;
-      return render(resolve);
-    });
-  };
+    Utils.addEventsHandlers('', eventHandlers);
+    _precallTemplate = new EJSTemplate({ url: _precallTemplateSrc });
+    if (showTos) {
+      _tosTemplate = new EJSTemplate({ url: _tosTemplateSrc });
+    }
+    _unavailableTemplate = new EJSTemplate({ url: _unavailableTemplateSrc });
+    _lockedTemplate = new EJSTemplate({ url: _lockedTemplateSrc });
+    alreadyInitialized = true;
+    return render(resolve);
+  });
 
-  var showModal = function () {
+  const showModal = () => {
     Utils.removeEventHandlers('modal:', { close: showModal });
     Modal.show('.user-name-modal');
   };
 
-  var showContract = function () {
-    var selector = '.tc-modal.contract';
-    var acceptElement = document.querySelector(selector + ' .accept');
-    return Modal.show(selector, null, true)
-      .then(function () {
-        return new Promise(function (resolve) {
-          acceptElement.addEventListener('click', function onClicked(evt) {
-            acceptElement.removeEventListener('click', onClicked);
-            evt.preventDefault();
-            sessionStorage.setItem('tosAccepted', true);
-            Modal.hide(selector);
-            resolve();
-          });
-
-          Utils.addEventsHandlers('modal:', { close: showModal });
-        });
-      });
+  const showUnavailableMessage = () => {
+    const selector = '.tc-modal.unavailable';
+    return Modal.show(selector, null, true);
   };
 
-  var hide = function () {
-    document.getElementById('video-preview').style.visibility = 'hidden';
+  const showLockedMessage = () => {
+    const selector = '.tc-modal.locked';
+    return Modal.show(selector, null, true);
+  };
+
+  const showContract = () => {
+    const selector = '.tc-modal.contract';
+    const acceptElement = document.querySelector(`${selector} .accept`);
+    return Modal.show(selector, null, true)
+      .then(() => new Promise((resolve) => {
+        acceptElement.addEventListener('click', function onClicked(evt) {
+          acceptElement.removeEventListener('click', onClicked);
+          evt.preventDefault();
+          sessionStorage.setItem('tosAccepted', true);
+          Modal.hide(selector);
+          resolve();
+        });
+
+        Utils.addEventsHandlers('modal:', { close: showModal });
+      }));
+  };
+
+  const hide = () => {
+    document.querySelector('.main').style.display = 'none';
     Utils.removeEventHandlers('modal:', { close: showModal });
   };
 
-  var setVolumeMeterLevel = function (level) {
-    document.getElementById('audio-meter-level').style.width = (level * 89) + 'px';
+  const setVolumeMeterLevel = (level) => {
+    document.getElementById('audio-meter-level').style.width = `${level * 89}px`;
   };
 
-  var startPrecallTestMeter = function () {
-    var TEST_DURATION_MAX = 200; // 20 seconds
-    var meterLevel = document.getElementById('precall-test-meter-level');
+  const startPrecallTestMeter = () => {
+    const TEST_DURATION_MAX = 200; // 20 seconds
+    const meterLevel = document.getElementById('precall-test-meter-level');
     setSwitchStatus(true, 'Video', 'roomView:initialVideoSwitch');
     document.querySelector('#test-status label').innerText = 'Testing audio / video quality…';
     meterLevel.style.width = 0;
     meterLevel.style['animation-play-state'] = 'running';
-    var preCallTestProgress = 0;
-    testMeterInterval = setInterval(function () {
+    let preCallTestProgress = 0;
+    testMeterInterval = setInterval(() => {
       preCallTestProgress++;
       setTestMeterLevel(preCallTestProgress / TEST_DURATION_MAX);
       if (preCallTestProgress === TEST_DURATION_MAX) {
@@ -233,13 +255,13 @@
     }, 100);
   };
 
-  var setTestMeterLevel = function (value) {
-    var width = value * document.getElementById('precall-test-meter').offsetWidth;
-    document.getElementById('precall-test-meter-level').style.width = width + 'px';
+  const setTestMeterLevel = (value) => {
+    const width = value * document.getElementById('precall-test-meter').offsetWidth;
+    document.getElementById('precall-test-meter-level').style.width = `${width}px`;
   };
 
-  var displayNetworkTestResults = function (results) {
-    var packetLossStr;
+  const displayNetworkTestResults = (results) => {
+    let packetLossStr;
 
     clearInterval(testMeterInterval);
     document.querySelector('#test-status label').innerText = 'Done.';
@@ -248,19 +270,17 @@
     document.getElementById('connectivity-cancel').style.display = 'none';
 
     document.getElementById('pre-call-test-results').style.display = 'block';
-    document.getElementById('audio-bitrate').innerText =
-      Math.round(results.audio.bitsPerSecond / 1000);
+    document.getElementById('audio-bitrate').innerText = Math.round(results.audio.bitsPerSecond / 1000);
     if (results.video) {
-      document.getElementById('video-bitrate').innerText =
-        Math.round(results.video.bitsPerSecond / 1000);
-      packetLossStr = isNaN(results.video.packetLossRatio) ? '' :
-        Math.round(100 * results.video.packetLossRatio) + '% packet loss';
+      document.getElementById('video-bitrate').innerText = Math.round(results.video.bitsPerSecond / 1000);
+      packetLossStr = isNaN(results.video.packetLossRatio) ? ''
+        : `${Math.round(100 * results.video.packetLossRatio)}% packet loss`;
       document.getElementById('precall-video-packet-loss').innerText = packetLossStr;
     } else {
       document.getElementById('video-bitrate').innerText = 0;
       document.getElementById('precall-video-packet-loss').innerText = 'No video.';
     }
-    var precallHeadingElement = document.getElementById('pre-call-heading');
+    const precallHeadingElement = document.getElementById('pre-call-heading');
     precallHeadingElement.classList = results.classification;
     switch (results.classification) {
       case 'precall-tick':
@@ -272,20 +292,22 @@
       case 'precall-error':
         precallHeadingElement.innerText = 'Poor Connectivity';
         break;
+      default:
+        // No-op on default;
     }
     document.getElementById('pre-call-description').innerText = results.text;
     document.getElementById('precall-icon').setAttribute('data-icon', results.classification);
-    packetLossStr = isNaN(results.audio.packetLossRatio) ? '' :
-      Math.round(100 * results.audio.packetLossRatio) + '% packet loss';
+    packetLossStr = isNaN(results.audio.packetLossRatio) ? ''
+      : `${Math.round(100 * results.audio.packetLossRatio)}% packet loss`;
     document.getElementById('precall-audio-packet-loss').innerText = packetLossStr;
   };
 
   function setSwitchStatus(status, switchName, evtName) {
-    var elementId = 'initial' + switchName + 'Switch';
-    var domElem = document.getElementById(elementId);
-    var labelElement = domElem.querySelector('label');
-    var oldStatus = domElem.classList.contains('activated');
-    var newStatus;
+    const elementId = `initial${switchName}Switch`;
+    const domElem = document.getElementById(elementId);
+    const labelElement = domElem.querySelector('label');
+    const oldStatus = domElem.classList.contains('activated');
+    let newStatus;
     if (status === undefined) {
       newStatus = domElem.classList.toggle('activated');
       labelElement.innerText = 'On';
@@ -303,16 +325,16 @@
   }
 
   exports.PrecallView = {
-    init: init,
-    hide: hide,
-    populateAudioDevicesDropdown: populateAudioDevicesDropdown,
-    setRoomName: setRoomName,
-    setUsername: setUsername,
-    setFocus: setFocus,
-    setVolumeMeterLevel: setVolumeMeterLevel,
-    showContract: showContract,
-    startPrecallTestMeter: startPrecallTestMeter,
-    displayNetworkTestResults: displayNetworkTestResults,
-    hideConnectivityTest: hideConnectivityTest
+    init,
+    hide,
+    populateAudioDevicesDropdown,
+    setFocus,
+    setVolumeMeterLevel,
+    showContract,
+    showUnavailableMessage,
+    showLockedMessage,
+    startPrecallTestMeter,
+    displayNetworkTestResults,
+    hideConnectivityTest,
   };
-}(this));
+})(this);

@@ -1,24 +1,22 @@
-!(function (exports) {
-  'use strict';
-
+!((exports) => {
   Element.prototype.data = function (name, value) {
     if (!name) {
       return null;
     }
 
-    var dashed = name.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+    const dashed = name.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 
     if (arguments.length === 2) {
       if (value === null || typeof value === 'undefined') {
-        return this.removeAttribute('data-' + dashed);
+        return this.removeAttribute(`data-${dashed}`);
       }
-      return this.setAttribute('data-' + dashed, value);
+      return this.setAttribute(`data-${dashed}`, value);
     }
-    return this.getAttribute('data-' + dashed);
+    return this.getAttribute(`data-${dashed}`);
   };
 
   function replaceText(aElem, aText) {
-    var newChild = document.createTextNode(aText);
+    const newChild = document.createTextNode(aText);
     if (aElem.hasChildNodes()) {
       aElem.replaceChild(newChild, aElem.firstChild);
     } else {
@@ -27,7 +25,7 @@
   }
 
   function addText(aElem, aText) {
-    var lines = aText.split(/\r?\n/);
+    const lines = aText.split(/\r?\n/);
 
     function addLine(line) {
       if (line.length > 0) {
@@ -36,20 +34,20 @@
     }
 
     addLine(lines[0]);
-    for (var i = 1; i < lines.length; i++) {
+    for (let i = 1; i < lines.length; i++) {
       aElem.appendChild(document.createElement('BR'));
       addLine(lines[i]);
     }
   }
 
   function createElement(aType, aAttrs, aOptionalText) {
-    var elem = document.createElement(aType);
+    const elem = document.createElement(aType);
 
     // Add all the requested attributes
     if (aAttrs) {
-      for (var i in aAttrs) { // eslint-disable-line no-restricted-syntax
+      for (const i in aAttrs) { // eslint-disable-line no-restricted-syntax
         if (i.startsWith('data-')) {
-          var dataElem = i.replace('data-', '');
+          const dataElem = i.replace('data-', '');
           elem.data(dataElem, aAttrs[i]);
         } else {
           elem.setAttribute(i, aAttrs[i]);
@@ -65,7 +63,7 @@
   }
 
   function createElementAt(aMainBody, aType, aAttrs, aOptionalText, aBefore) {
-    var elem = createElement(aType, aAttrs, aOptionalText);
+    const elem = createElement(aType, aAttrs, aOptionalText);
 
     if (!aBefore) {
       aMainBody.appendChild(elem);
@@ -77,7 +75,7 @@
   }
 
   function setEnabled(element, enabled) {
-    var classList = element.classList;
+    const { classList } = element;
     enabled ? classList.add('enabled') : classList.remove('enabled');
   }
 
@@ -96,60 +94,39 @@
   }
 
   function addHandlerArchive(selector) {
-    var list = document.querySelector(selector);
+    const list = document.querySelector(selector);
 
-    list.addEventListener('click', function (evt) {
-      switch (evt.type) {
-        case 'click':
-          var elemClicked = evt.target;
-          if (!(HTMLElems.isAction(elemClicked))) {
-            return;
-          }
-          Utils.sendEvent('archive', {
-            id: elemClicked.data('id'),
-            action: elemClicked.data('action'),
-            username: elemClicked.data('username'),
-            set status(value) {
-              elemClicked.parentNode.data('status', value);
-            },
-            get status() {
-              return elemClicked.parentNode.data('status');
-            }
-          });
-          break;
+    list.addEventListener('click', (evt) => {
+      if (evt.type === 'click') {
+        const elemClicked = evt.target;
+        if (!(HTMLElems.isAction(elemClicked))) {
+          return;
+        }
+        Utils.sendEvent('archive', {
+          id: elemClicked.data('id'),
+          action: elemClicked.data('action'),
+          username: elemClicked.data('username'),
+          set status(value) {
+            elemClicked.parentNode.data('status', value);
+          },
+          get status() {
+            return elemClicked.parentNode.data('status');
+          },
+        });
       }
     });
   }
 
-  var flush = (function flush() {
-    if (Utils.isIE()) {
-      // While many attributes, when changed, cause a reflow this doesn't appear to be the case with
-      // data-* attributes in Internet Explorer. Changing these will not immediately result in the
-      // element being redrawn - we have to trigger out reflow manually.
-      return function (elements) {
-        elements = Array.isArray(elements) ? elements : [elements];
-        elements.forEach(function (element) {
-          element = typeof element === 'string' ? document.querySelector(element) : element;
-          element && element.classList.toggle('flush-this-element-please');
-        });
-      };
-    }
-    return function () {
-
-    };
-  }());
-
   exports.HTMLElems = {
-    addText: addText,
-    replaceText: replaceText,
-    createElement: createElement,
-    createElementAt: createElementAt,
-    isAction: function (aElem) {
+    addText,
+    replaceText,
+    createElement,
+    createElementAt,
+    isAction(aElem) {
       return (aElem.data('action') !== null);
     },
-    setEnabled: setEnabled,
-    getAncestorByTagName: getAncestorByTagName,
-    addHandlerArchive: addHandlerArchive,
-    flush: flush
+    setEnabled,
+    getAncestorByTagName,
+    addHandlerArchive,
   };
-}(this));
+})(this);

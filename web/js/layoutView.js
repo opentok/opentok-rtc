@@ -1,7 +1,5 @@
-!(function (global) {
-  'use strict';
-
-  var LayoutRenderer = function (container) {
+!((global) => {
+  const LayoutRenderer = function (container) {
     this.container = container.querySelector('.tc-list ul');
   };
 
@@ -9,21 +7,21 @@
     defaultOptions: {
       name: '',
       type: 'camera',
-      controlElems: {}
+      controlElems: {},
     },
 
-    append: function (id, options) {
+    append(id, options) {
       options = options || {};
       Object.keys(this.defaultOptions).forEach(function (option) {
         options[option] = options[option] || this.defaultOptions[option];
       }, this);
-      var type = options.type;
-      var item = HTMLElems.createElementAt(this.container, 'li', {
+      const { type } = options;
+      const item = HTMLElems.createElementAt(this.container, 'li', {
         'data-id': id,
         'data-streamType': type,
-        class: 'stream'
+        class: 'stream',
       }, null, type === 'publisher' ? null : this.container.firstChild);
-      var controls = HTMLElems.createElementAt(item, 'div');
+      const controls = HTMLElems.createElementAt(item, 'div');
       controls.classList.add('controls');
       this.appendControlElems(id, type, controls, options.controlElems, 'i');
       this.appendAdditionalUI(id, item, type, options.name);
@@ -33,11 +31,11 @@
       return item;
     },
 
-    appendAdditionalUI: function (id, item, type, name) {
-      var userInfoElem = HTMLElems.createElementAt(item, 'div');
+    appendAdditionalUI(id, item, type, name) {
+      const userInfoElem = HTMLElems.createElementAt(item, 'div');
       userInfoElem.classList.add('user-info');
 
-      var nameElem = HTMLElems.createElementAt(userInfoElem, 'div');
+      const nameElem = HTMLElems.createElementAt(userInfoElem, 'div');
       nameElem.classList.add('name');
       nameElem.textContent = name;
 
@@ -46,30 +44,30 @@
       }
 
       HTMLElems.createElementAt(item, 'div', {
-        'data-id': id
+        'data-id': id,
       }).classList.add('dblclick_area');
     },
 
-    appendControlElems: function (id, type, main, controlElems) {
+    appendControlElems(id, type, main, controlElems) {
       if (!controlElems || !Object.keys(controlElems).length) {
         return;
       }
 
-      var controls = HTMLElems.createElementAt(main, 'div');
+      const controls = HTMLElems.createElementAt(main, 'div');
       controls.classList.add('buttons');
 
-      Object.keys(controlElems).forEach(function (controlName) {
-        var control = controlElems[controlName];
-        var options = {
+      Object.keys(controlElems).forEach((controlName) => {
+        const control = controlElems[controlName];
+        const options = {
           'data-icon': control.dataIcon,
           'data-eventName': control.eventFiredName,
           'data-action': controlName,
           'data-streamId': id,
-          'data-streamType': type
+          'data-streamType': type,
         };
-        var wrapper = HTMLElems.createElementAt(controls, 'div');
+        const wrapper = HTMLElems.createElementAt(controls, 'div');
         // IE does not support adding multiple classes
-        wrapper.classList.add(controlName + '-action');
+        wrapper.classList.add(`${controlName}-action`);
         if (control.enabled) {
           wrapper.classList.add('enabled');
         }
@@ -77,32 +75,32 @@
       });
     },
 
-    remove: function (item) {
+    remove(item) {
       return this.container.removeChild(item);
     },
 
-    removeAll: function () {
+    removeAll() {
       this.container.innerHTML = '';
-    }
+    },
   };
 
-  var renderer = null;
+  let renderer = null;
 
   global.LayoutView = {
-    init: function (container) {
+    init(container) {
       renderer = new LayoutRenderer(container);
     },
 
-    append: function () {
-      return renderer.append.apply(renderer, arguments);
+    append(...args) {
+      return renderer.append(...args);
     },
 
-    remove: function () {
-      return renderer.remove.apply(renderer, arguments);
+    remove(...args) {
+      return renderer.remove(...args);
     },
 
-    removeAll: function () {
+    removeAll() {
       renderer.removeAll.apply(renderer);
-    }
+    },
   };
-}(this));
+})(this);

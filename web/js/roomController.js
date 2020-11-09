@@ -1,54 +1,51 @@
-/* global Utils, Request, RoomStatus, RoomView, LayoutManager, LazyLoader, Modal,
+/* global Utils, RoomStatus, RoomView, LazyLoader, Modal,
 ChatController, GoogleAuth, LayoutMenuController, OTHelper, PrecallController,
-RecordingsController, ScreenShareController, FeedbackController, PhoneNumberController */
+RecordingsController, ScreenShareController, FeedbackController,
+PhoneNumberController, ResizeSensor, maxUsersPerRoom */
 
-!(function (exports) {
-  'use strict';
+!((exports) => {
+  const debug = new Utils.MultiLevelLogger('roomController.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
 
-  var debug =
-    new Utils.MultiLevelLogger('roomController.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
+  let otHelper;
+  let numUsrsInRoom = 0;
+  let _disabledAllVideos = false;
+  let enableAnnotations = true;
+  let enableHangoutScroll = false;
+  let enableArchiveManager = false;
+  let enableSip = false;
+  let requireGoogleAuth = false; // For SIP dial-out
+  let googleAuth = null;
 
-  var otHelper;
-  var numUsrsInRoom = 0;
-  var _disabledAllVideos = false;
-  var enableAnnotations = true;
-  var enableHangoutScroll = false;
-  var enableArchiveManager = false;
-  var enableSip = false;
-  var requireGoogleAuth = false; // For SIP dial-out
-  var googleAuth = null;
-
-  var setPublisherReady;
-  var publisherReady = new Promise(function (resolve) {
+  let setPublisherReady;
+  const publisherReady = new Promise((resolve) => {
     setPublisherReady = resolve;
   });
 
-  var STATUS_KEY = 'room';
-  var _sharedStatus = {
-    roomMuted: false
+  const STATUS_KEY = 'room';
+  let _sharedStatus = {
+    roomMuted: false,
   };
 
-  var userName = null;
-  var roomURI = null;
-  var resolutionAlgorithm = null;
-  var debugPreferredResolution = null;
+  let { userName } = window;
+  let roomURI = null;
+  let token = null;
 
-  var publisherOptions = {
+  const publisherOptions = {
     insertMode: 'append',
     width: '100%',
     height: '100%',
     showControls: true,
-    resolution: '1280x720',
+    resolution: window.publisherResolution,
     style: {
       audioLevelDisplayMode: 'auto',
       buttonDisplayMode: 'off',
       nameDisplayMode: 'off',
       videoDisabledDisplayMode: 'on',
-      showArchiveStatus: false
-    }
+      showArchiveStatus: false,
+    },
   };
 
-  var subscriberOptions = {
+  const subscriberOptions = {
     camera: {
       height: '100%',
       width: '100%',
@@ -59,8 +56,8 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
         buttonDisplayMode: 'off',
         nameDisplayMode: 'off',
         videoDisabledDisplayMode: 'auto',
-        showArchiveStatus: false
-      }
+        showArchiveStatus: false,
+      },
     },
     screen: {
       height: '100%',
@@ -71,8 +68,8 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
         audioLevelDisplayMode: 'off',
         buttonDisplayMode: 'off',
         nameDisplayMode: 'on',
-        videoDisabledDisplayMode: 'off'
-      }
+        videoDisabledDisplayMode: 'off',
+      },
     },
     noVideo: {
       height: '100%',
@@ -83,15 +80,17 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
         audioLevelDisplayMode: 'auto',
         buttonDisplayMode: 'off',
         nameDisplayMode: 'on',
-        videoDisabledDisplayMode: 'off'
-      }
-    }
+        videoDisabledDisplayMode: 'off',
+      },
+    },
   };
 
-  var SubscriberButtons = function (streamVideoType, phoneNumber) {
-    var isScreenSharing = streamVideoType === 'screen';
+  const isMobile = () => typeof window.orientation !== 'undefined';
 
-    var buttons = { };
+  const SubscriberButtons = (streamVideoType, phoneNumber) => {
+    const isScreenSharing = streamVideoType === 'screen';
+
+    const buttons = { };
 
     if (!phoneNumber) {
       buttons.video = {
@@ -100,7 +99,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
         eventName: 'click',
         context: 'otHelper',
         action: 'toggleSubscribersVideo',
-        enabled: true
+        enabled: true,
       };
     }
 
@@ -111,7 +110,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
         eventName: 'click',
         context: 'otHelper',
         action: 'toggleSubscribersAudio',
-        enabled: true
+        enabled: true,
       };
     }
     if (phoneNumber && (phoneNumber in dialedNumberTokens)) {
@@ -121,21 +120,21 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
         eventName: 'click',
         context: 'otHelper',
         action: 'hangup',
-        enabled: true
+        enabled: true,
       };
     }
 
     return buttons;
   };
 
-  var publisherButtons = {
+  const publisherButtons = {
     video: {
       eventFiredName: 'roomView:buttonClick',
       dataIcon: 'video',
       eventName: 'click',
       context: 'otHelper',
       action: 'togglePublisherVideo',
-      enabled: true
+      enabled: true,
     },
     audio: {
       eventFiredName: 'roomView:buttonClick',
@@ -143,188 +142,134 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       eventName: 'click',
       context: 'otHelper',
       action: 'togglePublisherAudio',
-      enabled: true
-    }
+      enabled: true,
+    },
   };
 
-  var subscriberStreams = { };
-  var dialedNumberTokens = {};
+  let subscriberStreams = { };
+  const dialedNumberTokens = { };
 
-  // We want to use media priorization on the subscriber streams. We're going to restrict the
-  // maximum width and height to the one that's actually displayed. To do that, we're going to
-  // observe changes on the elements that hold the subscribers.
-  // Note that mutationObserver only works on IE11+, but that the previous alternative doesn't
-  // work all that well either.
-  var processMutation = function (aMutation) {
-    var elem = aMutation.target;
-    if ((aMutation.attributeName !== 'style' && aMutation.attributeName !== 'class') ||
-        elem.data('streamType') !== 'camera') {
-      return;
-    }
-    var streamId = elem.data('id');
-    var subscriberPromise =
-      subscriberStreams[streamId] && subscriberStreams[streamId].subscriberPromise;
-
-    subscriberPromise.then(function (subscriber) {
-      if (debugPreferredResolution) {
-        // If the user requested debugging this, we're going to export all the information through
-        // window so he can examine the values.
-        window.subscriberElem = window.subscriberElem || {};
-        window.subscriberElem[streamId] = elem;
-        window.subscriber = window.subscriber || {};
-        window.subscriber[streamId] = subscriber;
-        window.dumpResolutionInfo = window.dumpResolutionInfo || function () {
-          Object.keys(window.subscriber)
-            .forEach(function (aSub) {
-              var sub = window.subscriber[aSub];
-              var stream = sub && sub.stream;
-              var vd = stream && stream.videoDimensions;
-              var streamPref = (stream && stream.getPreferredResolution()) ||
-                                 { width: 'NA', height: 'NA' };
-              stream && console.log( // eslint-disable-line no-console
-                'StreamId:', aSub, 'Real:', sub.videoWidth(), 'x', sub.videoHeight(),
-                'Stream.getPreferredResolution:', streamPref.width, 'x', streamPref.height,
-                'Stream.VDimension:', vd.width, 'x', vd.height
-              );
-            });
-        };
-      }
-
-      var parent = elem.parentNode;
-
-      var parentDimension = {
-        width: parent.clientWidth,
-        height: parent.clientHeight
-      };
-      var subsDimension = {
-        width: elem.clientWidth,
-        height: elem.clientHeight
-      };
-      otHelper.setPreferredResolution(subscriber, parentDimension, subsDimension, numUsrsInRoom - 1,
-                                      resolutionAlgorithm);
-    });
-  };
-  var _mutationObserver = exports.MutationObserver &&
-    new exports.MutationObserver(function (aMutations) {
-      aMutations.forEach(processMutation);
-    });
-
-  var sendVideoEvent = function (stream) {
+  const sendVideoEvent = (stream) => {
     if (!stream) {
       return;
     }
 
-    Utils.sendEvent('roomController:' + (stream.hasVideo ? 'videoEnabled' : 'videoDisabled'), {
-      id: stream.streamId
+    Utils.sendEvent(`roomController:${stream.hasVideo ? 'videoEnabled' : 'videoDisabled'}`, {
+      id: stream.streamId,
     });
   };
 
-  var sendArchivingOperation = function (operation) {
-    var data = {
-      userName: userName,
+  const sendArchivingOperation = (operation) => {
+    const data = {
+      userName,
       roomName: roomURI,
-      operation: operation
+      operation,
     };
 
     Request.sendArchivingOperation(data);
   };
 
-  var dialOut = function (phoneNumber) {
-    var alreadyInCall = Object.keys(subscriberStreams)
-    .some(function (streamId) {
-      if (subscriberStreams[streamId]) {
-        var stream = subscriberStreams[streamId].stream;
-        return (stream.isSip && stream.name === phoneNumber);
-      }
-      return false;
-    });
+  const dialOut = (phoneNumber) => {
+    const alreadyInCall = Object.keys(subscriberStreams)
+      .some((streamId) => {
+        if (subscriberStreams[streamId]) {
+          const { stream } = subscriberStreams[streamId];
+          return (stream.isSip && stream.name === phoneNumber);
+        }
+        return false;
+      });
 
     if (alreadyInCall) {
-      console.log('The number is already in this call: ' + phoneNumber); // eslint-disable-line no-console
+      console.log(`The number is already in this call: ${phoneNumber}`); // eslint-disable-line no-console
     } else {
-      var googleIdToken;
+      let googleIdToken;
       if (requireGoogleAuth) {
-        var user = googleAuth.currentUser.get();
+        const user = googleAuth.currentUser.get();
         googleIdToken = user.getAuthResponse().id_token;
       } else {
         googleIdToken = '';
       }
-      var data = {
-        phoneNumber: phoneNumber,
-        googleIdToken: googleIdToken
+      const data = {
+        phoneNumber,
+        googleIdToken,
       };
       Request.dialOut(roomURI, data);
       dialedNumberTokens[phoneNumber] = googleIdToken;
     }
   };
 
-  var hangup = function (streamId) {
+  const hangup = (streamId) => {
     if (!subscriberStreams[streamId]) {
       return;
     }
-    var stream = subscriberStreams[streamId].stream;
+    const { stream } = subscriberStreams[streamId];
     if (!stream.isSip) {
       return;
     }
-    var phoneNumber = stream.phoneNumber;
+    const { phoneNumber } = stream;
     if (!(phoneNumber in dialedNumberTokens)) {
       return;
     }
-    var token = dialedNumberTokens[phoneNumber];
+    const token = dialedNumberTokens[phoneNumber];
     Request.hangUp(phoneNumber, token);
     delete dialedNumberTokens[phoneNumber];
   };
 
-  var roomStatusHandlers = {
-    updatedRemotely: function () {
-      publisherReady.then(function () {
+  const roomStatusHandlers = {
+    updatedRemotely() {
+      publisherReady.then(() => {
         _sharedStatus = RoomStatus.get(STATUS_KEY);
-        var roomMuted = _sharedStatus.roomMuted;
+        const { roomMuted } = _sharedStatus;
         setAudioStatus(roomMuted);
         roomMuted && Utils.sendEvent('roomController:roomMuted', { isJoining: true });
       });
-    }
+    },
   };
 
-  var changeSubscriberStatus = function (name, status) {
+  const changeSubscriberStatus = (name, status) => {
     _disabledAllVideos = status;
 
-    Object.keys(subscriberStreams).forEach(function (aStreamId) {
-      if (subscriberStreams[aStreamId] &&
-          subscriberStreams[aStreamId].stream.videoType === 'camera') {
+    Object.keys(subscriberStreams).forEach((aStreamId) => {
+      if (subscriberStreams[aStreamId]
+          && subscriberStreams[aStreamId].stream.videoType === 'camera') {
         pushSubscriberButton(aStreamId, name, status);
       }
     });
   };
 
-  var pushSubscriberButton = function (streamId, name, status) {
+  const pushSubscriberButton = (streamId, name, status) => {
     viewEventHandlers.buttonClick({
       detail: {
-        streamId: streamId,
-        name: name,
+        streamId,
+        name,
         disableAll: true,
-        status: status
-      }
+        status,
+      },
     });
   };
 
   function sendSignalMuteAll(status, onlyChangeSwitch) {
-    otHelper.sendSignal('muteAll', { status: status, onlyChangeSwitch: onlyChangeSwitch });
+    otHelper.sendSignal('muteAll', { status, onlyChangeSwitch });
   }
 
-  var viewEventHandlers = {
-    endCall: function () {
+  function sendSignalLock(status) {
+    otHelper.sendSignal('roomLocked', { status });
+  }
+
+  const viewEventHandlers = {
+    endCall() {
       otHelper.disconnect();
+      window.location = '/thanks';
     },
-    startArchiving: function (evt) {
+    startArchiving(evt) {
       sendArchivingOperation((evt.detail && evt.detail.operation) || 'startComposite');
     },
-    stopArchiving: function () {
+    stopArchiving() {
       sendArchivingOperation('stop');
     },
-    streamVisibilityChange: function (evt) {
-      var getStatus = function (info) {
-        var status = null;
+    streamVisibilityChange(evt) {
+      const getStatus = (info) => {
+        let status = null;
 
         if (evt.detail.value === 'hidden') {
           info.prevEnabled = 'prevEnabled' in info ? info.prevEnabled : info.enabled;
@@ -337,23 +282,23 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
         return status;
       };
 
-      var streamId = evt.detail.id;
+      const streamId = evt.detail.id;
       if (streamId !== 'publisher') {
-        var stream = subscriberStreams[streamId];
+        const stream = subscriberStreams[streamId];
         stream && otHelper.toggleSubscribersVideo(stream.stream,
-                     getStatus(stream.buttons.video));
+          getStatus(stream.buttons.video));
       }
     },
-    buttonClick: function (evt) {
-      var streamId = evt.detail.streamId;
-      var streamType = evt.detail.streamType;
-      var name = evt.detail.name;
-      var disableAll = !!evt.detail.disableAll;
-      var switchStatus = evt.detail.status;
-      var buttonInfo = null;
-      var args = [];
-      var newStatus;
-      var isPublisher = streamId === 'publisher';
+    buttonClick(evt) {
+      const { streamId } = evt.detail;
+      const { streamType } = evt.detail;
+      const { name } = evt.detail;
+      const disableAll = !!evt.detail.disableAll;
+      const switchStatus = evt.detail.status;
+      let buttonInfo = null;
+      const args = [];
+      let newStatus;
+      const isPublisher = streamId === 'publisher';
 
       if (isPublisher) {
         buttonInfo = publisherButtons[name];
@@ -364,7 +309,7 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
           return;
         }
       } else {
-        var stream = subscriberStreams[streamId];
+        const stream = subscriberStreams[streamId];
         if (!stream) {
           debug.error('Got an event from an nonexistent stream');
           return;
@@ -393,8 +338,8 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       args.push(newStatus);
 
       if (!disableAll || (disableAll && (switchStatus !== newStatus))) {
-        var obj = exports[buttonInfo.context];
-        obj[buttonInfo.action].apply(obj, args);
+        const obj = exports[buttonInfo.context];
+        obj[buttonInfo.action](...args);
         // if stream button clicked and isn't a screen
         if (!disableAll && streamType !== 'screen') {
           // If type = 'audio'
@@ -403,10 +348,10 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
           //   only when button clicked is not the publisher's one (is a subscriber's video button)
           // it type = 'screen'
           //   don't do anything
-          var isMicrophone = name === 'audio' && isPublisher;
-          var isSubscribeToVideo = name === 'video' && !isPublisher;
+          const isMicrophone = name === 'audio' && isPublisher;
+          const isSubscribeToVideo = name === 'video' && !isPublisher;
           if (isMicrophone || isSubscribeToVideo) {
-            Utils.sendEvent('roomController:userChangeStatus', { status: newStatus, name: name });
+            Utils.sendEvent('roomController:userChangeStatus', { status: newStatus, name });
             if (isMicrophone) {
               sendSignalMuteAll(false, true);
               _sharedStatus.roomMuted = false;
@@ -415,20 +360,20 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
         }
       }
     },
-    videoSwitch: function (evt) {
+    videoSwitch(evt) {
       changeSubscriberStatus('video', evt.detail.status);
     },
-    muteAllSwitch: function (evt) {
-      var roomMuted = evt.detail.status;
+    muteAllSwitch(evt) {
+      const roomMuted = evt.detail.status;
       _sharedStatus.roomMuted = roomMuted;
       setAudioStatus(roomMuted);
       sendSignalMuteAll(roomMuted, false);
     },
-    dialOut: function (evt) {
+    dialOut(evt) {
       if (evt.detail) {
-        var phoneNumber = evt.detail.replace(/\D/g, '');
+        const phoneNumber = evt.detail.replace(/\D/g, '');
         if (requireGoogleAuth && (googleAuth.isSignedIn.get() !== true)) {
-          googleAuth.signIn().then(function () {
+          googleAuth.signIn().then(() => {
             document.body.data('google-signed-in', 'true');
             dialOut(phoneNumber);
           });
@@ -437,84 +382,99 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
         }
       }
     },
-    addToCall: function () {
-      showAddToCallModal();
+    addToCall() {
+      if (isMobile() && navigator.share) {
+        showMobileShareUrl();
+      } else {
+        showAddToCallModal();
+      }
     },
-    togglePublisherAudio: function (evt) {
-      var newStatus = evt.detail.hasAudio;
+    togglePublisherAudio(evt) {
+      const newStatus = evt.detail.hasAudio;
       if (!otHelper.isPublisherReady || otHelper.publisherHas('audio') !== newStatus) {
         otHelper.togglePublisherAudio(newStatus);
       }
     },
-    togglePublisherVideo: function (evt) {
-      var newStatus = evt.detail.hasVideo;
+    togglePublisherVideo(evt) {
+      const newStatus = evt.detail.hasVideo;
       if (!otHelper.isPublisherReady || otHelper.publisherHas('video') !== newStatus) {
         otHelper.togglePublisherVideo(newStatus);
       }
-    }
+    },
+    setRoomLockState(evt) {
+      const state = evt.detail;
+      const data = {
+        userName,
+        token,
+        state,
+        roomURI,
+      };
+
+      Request.sendLockingOperation(data).then(() => sendSignalLock(state));
+    },
   };
 
-  var setAudioStatus = function (switchStatus) {
+  const setAudioStatus = (switchStatus) => {
     otHelper.isPublisherReady && viewEventHandlers.buttonClick({
       detail: {
         streamId: 'publisher',
         name: 'audio',
         disableAll: true,
-        status: switchStatus
-      }
+        status: switchStatus,
+      },
     });
   };
 
-  var sendStatus = function (evt, control, enabled) {
-    var stream = evt.stream || evt.target.stream;
+  const sendStatus = (evt, control, enabled) => {
+    let stream = evt.stream || evt.target.stream;
     if (!stream) {
       return;
     }
 
-    var id = stream.streamId;
+    const id = stream.streamId;
     stream = subscriberStreams[id];
-    var buttonInfo = !stream ? publisherButtons[control] : stream.buttons[control];
+    const buttonInfo = !stream ? publisherButtons[control] : stream.buttons[control];
     buttonInfo.enabled = !!enabled;
 
-    Utils.sendEvent('roomController:' + control, {
-      id: id,
+    Utils.sendEvent(`roomController:${control}`, {
+      id,
       reason: evt.reason,
-      enabled: buttonInfo.enabled
+      enabled: buttonInfo.enabled,
     });
   };
 
-  var _subscriberHandlers = {
-    videoDisabled: function (evt) {
+  const _subscriberHandlers = {
+    videoDisabled(evt) {
       evt.reason === 'subscribeToVideo' && sendStatus(evt, 'video');
       sendVideoEvent(evt.target.stream);
     },
-    videoEnabled: function (evt) {
+    videoEnabled(evt) {
       evt.reason === 'subscribeToVideo' && sendStatus(evt, 'video', true);
       sendVideoEvent(evt.target.stream);
     },
-    disconnected: function (evt) {
+    disconnected(evt) {
       Utils.sendEvent('roomController:disconnected', {
-        id: evt.target.stream.streamId
+        id: evt.target.stream.streamId,
       });
     },
-    connected: function (evt) {
+    connected(evt) {
       Utils.sendEvent('roomController:connected', {
-        id: evt.target.stream.streamId
+        id: evt.target.stream.streamId,
       });
-    }
+    },
   };
 
-  var _allHandlers = {
-    connectionCreated: function () {
+  let _allHandlers = {
+    connectionCreated() {
       RoomView.participantsNumber = ++numUsrsInRoom;
     },
-    connectionDestroyed: function () {
+    connectionDestroyed() {
       RoomView.participantsNumber = --numUsrsInRoom;
     },
-    sessionConnected: function () {
+    sessionConnected() {
       Utils.sendEvent('roomController:sessionConnected');
     },
-    sessionDisconnected: function () {
+    sessionDisconnected() {
       // The client has disconnected from the session.
       // This event may be dispatched asynchronously in response to a successful
       // call to the disconnect() method of the Session object.
@@ -524,17 +484,17 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       Utils.sendEvent('roomController:sessionDisconnected');
       subscriberStreams = {};
     },
-    streamCreated: function (evt) {
-      publisherReady.then(function () {
+    streamCreated(evt) {
+      publisherReady.then(() => {
         // A new stream, published by another client, has been created on this
         // session. For streams published by your own client, the Publisher object
         // dispatches a streamCreated event. For a code example and more details,
         // see StreamEvent.
-        var stream = evt.stream;
+        const { stream } = evt;
         // SIP call streams have no video.
-        var streamVideoType = stream.videoType || 'noVideo';
+        const streamVideoType = stream.videoType || 'noVideo';
 
-        var connectionData;
+        let connectionData;
         try {
           connectionData = JSON.parse(stream.connection.data);
         } catch (error) {
@@ -546,60 +506,65 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
           stream.name = connectionData.name || '';
         }
 
-        var streamId = stream.streamId;
+        const { streamId } = stream;
         stream.phoneNumber = stream.isSip && stream.name;
         if (stream.isSip) {
           stream.name = 'Invited Participant';
         }
 
         subscriberStreams[streamId] = {
-          stream: stream,
-          buttons: new SubscriberButtons(streamVideoType, stream.phoneNumber)
+          stream,
+          buttons: SubscriberButtons(streamVideoType, stream.phoneNumber),
         };
 
-        var subOptions = subscriberOptions[streamVideoType];
-        var enterWithVideoDisabled = streamVideoType === 'camera' && _disabledAllVideos;
+        const subOptions = subscriberOptions[streamVideoType];
+        const enterWithVideoDisabled = streamVideoType === 'camera' && _disabledAllVideos;
 
         _sharedStatus = RoomStatus.get(STATUS_KEY);
 
-        var subsDOMElem = RoomView.createStreamView(streamId, {
+        const subsDOMElem = RoomView.createStreamView(streamId, {
           name: stream.name,
           type: stream.videoType,
-          controlElems: subscriberStreams[streamId].buttons
+          controlElems: subscriberStreams[streamId].buttons,
         });
 
         subOptions.subscribeToVideo = !enterWithVideoDisabled;
 
-        // We want to observe the container where the actual suscriber will live
-        var subsContainer = LayoutManager.getItemById(streamId);
-        subsContainer && _mutationObserver &&
-          _mutationObserver.observe(subsContainer, { attributes: true });
-        subscriberStreams[streamId].subscriberPromise =
-          otHelper.subscribe(evt.stream, subsDOMElem, subOptions, {}, enableAnnotations)
-          .then(function (subscriber) {
-            if (streamVideoType === 'screen') {
-              enableAnnotations && Utils.sendEvent('roomController:annotationStarted');
-              var subContainer = subscriber.element.parentElement;
-              Utils.sendEvent('layoutView:itemSelected', {
-                item: subContainer
-              });
-              return subscriber;
-            }
-
-            Object.keys(_subscriberHandlers).forEach(function (name) {
-              subscriber.on(name, _subscriberHandlers[name]);
+        subscriberStreams[streamId].subscriberPromise = otHelper.subscribe(
+          evt.stream, subsDOMElem, subOptions, {}, enableAnnotations,
+        ).then((subscriber) => {
+          if (streamVideoType === 'screen') {
+            enableAnnotations && Utils.sendEvent('roomController:annotationStarted');
+            const subContainer = subscriber.element.parentElement;
+            Utils.sendEvent('layoutView:itemSelected', {
+              item: subContainer,
             });
-            if (enterWithVideoDisabled) {
-              pushSubscriberButton(streamId, 'video', true);
-            }
-            sendVideoEvent(evt.stream);
             return subscriber;
-          }, function (error) {
-            debug.error('Error susbscribing new participant. ' + error.message);
+          }
+
+          Object.keys(_subscriberHandlers).forEach((name) => {
+            subscriber.on(name, _subscriberHandlers[name]);
           });
+          if (enterWithVideoDisabled) {
+            pushSubscriberButton(streamId, 'video', true);
+          }
+
+          new ResizeSensor(subsDOMElem, () => { // eslint-disable-line no-new
+            const subsDimension = {
+              width: subsDOMElem.clientWidth,
+              height: subsDOMElem.clientHeight,
+            };
+            otHelper.setPreferredResolution(subscriber, null, subsDimension, null, null);
+          });
+
+          sendVideoEvent(evt.stream);
+          return subscriber;
+        }, (error) => {
+          debug.error(`Error susbscribing new participant. ${error.message}`);
+        });
       });
     },
-    streamDestroyed: function (evt) {
+    streamDestroyed(evt) {
       // A stream from another client has stopped publishing to the session.
       // The default behavior is that all Subscriber objects that are subscribed
       // to the stream are unsubscribed and removed from the HTML DOM. Each
@@ -611,14 +576,14 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       // For streams published by your own client, the Publisher object
       // dispatches a streamDestroyed event.
       // For a code example and more details, see StreamEvent.
-      var stream = evt.stream;
+      const { stream } = evt;
       if (stream.videoType === 'screen') {
         Utils.sendEvent('roomController:annotationEnded');
       }
       RoomView.deleteStreamView(stream.streamId);
       subscriberStreams[stream.streamId] = null;
     },
-    streamPropertyChanged: function (evt) {
+    streamPropertyChanged(evt) {
       if (otHelper.publisherId !== evt.stream.id) {
         return;
       }
@@ -630,63 +595,96 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
         sendStatus(evt, 'audio', evt.newValue);
       }
     },
-    archiveStarted: function (evt) {
+    archiveStarted(evt) {
       // Dispatched when an archive recording of the session starts
       Utils.sendEvent('archiving', {
         status: 'started',
-        id: evt.id
+        id: evt.id,
       });
     },
-    archiveStopped: function () {
+    archiveStopped() {
       // Dispatched when an archive recording of the session stops
       Utils.sendEvent('archiving', { status: 'stopped' });
     },
+    'signal:roomLocked': function (evt) {
+      const roomState = JSON.parse(evt.data).status;
+      Utils.sendEvent('roomController:roomLocked', roomState);
+    },
     'signal:muteAll': function (evt) {
-      var statusData = JSON.parse(evt.data);
-      var muteAllSwitch = statusData.status;
-      var onlyChangeSwitch = statusData.onlyChangeSwitch;
+      const statusData = JSON.parse(evt.data);
+      const muteAllSwitch = statusData.status;
+      const { onlyChangeSwitch } = statusData;
       // onlyChangeSwitch is true when the iOS app sends a false muteAll signal.
       if (onlyChangeSwitch) {
         return;
       }
 
-      var setNewAudioStatus = function (isMuted) {
+      const setNewAudioStatus = ((isMuted) => {
         if (_sharedStatus.roomMuted !== isMuted) {
           return;
         }
         setAudioStatus(isMuted);
-      }.bind(undefined, muteAllSwitch);
+      }).bind(undefined, muteAllSwitch);
 
       if (!otHelper.isMyself(evt.from)) {
         _sharedStatus.roomMuted = muteAllSwitch;
-        if (muteAllSwitch) {
-          setAudioStatus(muteAllSwitch);
-          Utils.sendEvent('roomController:roomMuted', { isJoining: false });
-        } else {
-          RoomView.showConfirmChangeMicStatus(muteAllSwitch).then(setNewAudioStatus);
-        }
+        setAudioStatus(muteAllSwitch);
+        Utils.sendEvent('roomController:roomMuted', { isJoining: false });
+        RoomView.showConfirmChangeMicStatus(muteAllSwitch).then(setNewAudioStatus);
       }
     },
     'signal:archives': function (evt) {
       Utils.sendEvent('roomController:archiveUpdates', evt);
-    }
+    },
   };
 
-  function showAddToCallModal() {
-    var selector = '.add-to-call-modal';
-    return Modal.show(selector).then(function () {
-      return new Promise(function (resolve) {
-        var enterButton = document.querySelector(selector + ' button');
-        enterButton && enterButton.addEventListener('click', function onClicked(event) {
-          event.preventDefault();
-          enterButton.removeEventListener('click', onClicked);
-          return Modal.hide(selector)
-            .then(function () {
-              resolve(document.querySelector(selector + ' input').value.trim());
-            });
+  function showMobileShareUrl() {
+    navigator.share({
+      title: 'Invite Participant',
+      url: location.href,
+    })
+      .then(() => { console.log('Successful share'); })
+      .catch((error) => { console.log('Error sharing', error); });
+  }
+
+  function addClipBoardFeature(selector) {
+    const inviteLinkBtn = document.getElementById('copyInviteLinkBtn');
+    const inputElem = document.getElementById('current-url');
+    if (inputElem && inputElem.textContent) {
+      navigator.clipboard.writeText(inputElem.textContent.trim())
+        .then(() => {
+          if (inviteLinkBtn.innerText !== 'Copied!') {
+            const originalText = inviteLinkBtn.innerText;
+            inviteLinkBtn.innerText = 'Copied!';
+            setTimeout(() => {
+              Modal.hide(selector);
+              inviteLinkBtn.innerText = originalText;
+            }, 2000);
+          }
         });
+    }
+  }
+
+  function showAddToCallModal() {
+    const selector = '.add-to-call-modal';
+    return Modal.show(selector).then(() => new Promise((resolve) => {
+      const copyButton = document.getElementById('copyInviteLinkBtn');
+      const dialButton = document.getElementById('dialOutBtn');
+
+      copyButton && copyButton.addEventListener('click', function onClicked(event) {
+        event.preventDefault();
+        copyButton.removeEventListener('click', onClicked);
+        addClipBoardFeature(selector);
+        resolve();
       });
-    });
+
+      dialButton && dialButton.addEventListener('click', function onClicked(event) {
+        event.preventDefault();
+        dialButton.removeEventListener('click', onClicked);
+        Modal.hide(selector);
+        resolve();
+      });
+    }));
   }
 
   function getRoomParams() {
@@ -695,51 +693,45 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
     }
 
     // pathName should be /room/<roomURI>[?username=<userName>]
-    var pathName = document.location.pathname.split('/');
+    const pathName = document.location.pathname.split('/');
 
     if (!pathName || pathName.length < 2) {
       throw new Error('Invalid path');
     }
 
-    var roomName = '';
-    var roomURI = '';
-    var length = pathName.length;
+    let roomName = '';
+    let roomURI = '';
+    const { length } = pathName;
     if (length > 0) {
       roomURI = pathName[length - 1];
     }
     roomName = Utils.decodeStr(roomURI);
 
     // Recover user identifier
-    var params = Utils.parseSearch(document.location.search);
-    var usrId = params.getFirstValue('userName');
-    resolutionAlgorithm = params.getFirstValue('resolutionAlgorithm');
-    debugPreferredResolution = params.getFirstValue('debugPreferredResolution');
+    const params = Utils.parseSearch(document.location.search);
+    const usrId = window.userName || params.getFirstValue('userName');
     enableHangoutScroll = params.getFirstValue('enableHangoutScroll') !== undefined;
 
     return PrecallController.showCallSettingsPrompt(roomName, usrId, otHelper)
-    .then(function (info) {
-      info.roomURI = roomURI;
-      RoomView.showRoom();
-      RoomView.roomName = roomName;
-      RoomView.roomURI = roomURI;
-      publisherOptions.publishAudio = info.publisherOptions.publishAudio;
-      publisherOptions.publishVideo = info.publisherOptions.publishVideo;
-      publisherOptions.audioSource = info.publisherOptions.audioSource;
-      publisherOptions.videoSource = info.publisherOptions.videoSource;
-      return info;
-    });
+      .then((info) => {
+        RoomView.showRoom();
+        RoomView.roomURI = info.roomURI;
+        publisherOptions.publishAudio = info.publisherOptions.publishAudio;
+        publisherOptions.publishVideo = info.publisherOptions.publishVideo;
+        publisherOptions.audioSource = info.publisherOptions.audioSource;
+        publisherOptions.videoSource = info.publisherOptions.videoSource;
+        return info;
+      });
   }
 
   function getRoomInfo(aRoomParams) {
     return Request
       .getRoomInfo(aRoomParams)
-      .then(function (aRoomInfo) {
-        if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId &&
-              aRoomInfo.apiKey && aRoomInfo.username) ||
-              (aRoomInfo.enableArchiveManager &&
-              (!aRoomInfo.firebaseToken || !aRoomInfo.firebaseURL))) {
+      .then((aRoomInfo) => {
+        if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId
+              && aRoomInfo.apiKey && aRoomInfo.username)) {
           debug.error('Error getRoomParams [', aRoomInfo,
-                      '] without correct response');
+            '] without correct response');
           throw new Error('Error getting room parameters');
         }
         aRoomInfo.roomURI = aRoomParams.roomURI;
@@ -753,145 +745,158 @@ RecordingsController, ScreenShareController, FeedbackController, PhoneNumberCont
       });
   }
 
-  var modules = [
+  const modules = [
     '/js/components/htmlElems.js',
     '/js/helpers/resolutionAlgorithms.js',
-    '/js/helpers/opentok-network-test.js',
     '/js/itemsHandler.js',
     '/js/layoutView.js',
     '/js/layouts.js',
-    '/js/layoutManager.js',
+    '/js/min/layoutManager.min.js',
     '/js/roomView.js',
     '/js/roomStatus.js',
-    '/js/chatController.js',
-    '/js/recordingsController.js',
-    '/js/precallController.js',
+    '/js/min/chatController.min.js',
+    '/js/min/recordingsController.min.js',
+    '/js/min/precallController.min.js',
     '/js/layoutMenuController.js',
-    '/js/screenShareController.js',
-    '/js/feedbackController.js',
+    '/js/min/screenShareController.min.js',
+    '/js/min/feedbackController.min.js',
     '/js/googleAuth.js',
-    '/js/phoneNumberController.js'
+    '/js/min/phoneNumberController.min.js',
+    '/js/vendor/ResizeSensor.js',
   ];
 
-  var init = function () {
+  const init = () => {
     LazyLoader.load(modules)
-    .then(function () {
-      return PrecallController.init();
-    })
-    .then(function () {
-      return LazyLoader.load('/js/helpers/OTHelper.js');
-    })
-    .then(function () {
-      otHelper = new OTHelper({});
-      exports.otHelper = otHelper;
-    })
-    .then(getRoomParams)
-    .then(getRoomInfo)
-    .then(function (aParams) {
-      var loadAnnotations = Promise.resolve();
-      if (enableAnnotations) {
-        exports.OTKAnalytics = exports.OTKAnalytics ||
-          function () {
-            return {
-              addSessionInfo: function () {},
-              logEvent: function (a, b) {
-                console.log(a, b); // eslint-disable-line no-console
-              }
-            };
-          };
+      .then(() => {
+        Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
+        Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
+        Utils.addEventsHandlers('precallView:', {
+          submit() {
+          // Jeff to do: The room logic should go here, not in PrecallController.
+          },
+        });
 
-        loadAnnotations = LazyLoader.load([
-          aParams.jqueryUrl + '/3.3.1/jquery.min.js',
-          'https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js',
-          '/js/vendor/opentok-annotation.js'
-        ]);
-      }
-      return loadAnnotations.then(function () { return aParams; });
-    })
-  .then(function (aParams) {
-    Utils.addEventsHandlers('roomView:', viewEventHandlers, exports);
-    Utils.addEventsHandlers('roomStatus:', roomStatusHandlers, exports);
-    RoomView.init(enableHangoutScroll, enableArchiveManager, enableSip);
-    // Init this controller before connect to the session
-    // to start receiving signals about archives updates
-    RecordingsController.init(enableArchiveManager);
+        return PrecallController.init();
+      })
+      .then(() => LazyLoader.load('/js/helpers/OTHelper.js'))
+      .then(() => {
+        otHelper = new OTHelper({});
+        exports.otHelper = otHelper;
+      })
+      .then(getRoomParams)
+      .then(getRoomInfo)
+      .then((aParams) => {
+        let loadAnnotations = Promise.resolve();
+        if (enableAnnotations) {
+          exports.OTKAnalytics = exports.OTKAnalytics
+          || (() => ({
+            addSessionInfo() {},
+            logEvent(a, b) {
+              console.log(a, b); // eslint-disable-line no-console
+            },
+          }));
 
-    roomURI = aParams.roomURI;
-    userName = aParams.username ? aParams.username.substring(0, 1000) : '';
-
-    var sessionInfo = {
-      apiKey: aParams.apiKey,
-      sessionId: aParams.sessionId,
-      token: aParams.token
-    };
-
-    var connect = otHelper.connect.bind(otHelper, sessionInfo);
-
-    RoomView.participantsNumber = 0;
-
-    _allHandlers = RoomStatus.init(_allHandlers, { room: _sharedStatus });
-
-    if (enableSip && requireGoogleAuth) {
-      GoogleAuth.init(aParams.googleId, aParams.googleHostedDomain, function (aGoogleAuth) {
-        googleAuth = aGoogleAuth;
-        if (googleAuth.isSignedIn.get()) {
-          document.body.data('google-signed-in', 'true');
+          loadAnnotations = LazyLoader.load([
+            'https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js',
+            '/js/vendor/opentok-annotation.js',
+          ]);
         }
-      });
-    }
+        return loadAnnotations.then(() => aParams);
+      })
+      .then((aParams) => {
+        RoomView.init(enableHangoutScroll, enableArchiveManager, enableSip);
+        // Init this controller before connect to the session
+        // to start receiving signals about archives updates
+        RecordingsController.init(enableArchiveManager, aParams.archives);
 
-    ChatController
-        .init(userName, _allHandlers)
-        .then(connect)
-        .then(LayoutMenuController.init)
-        .then(function () {
-          var publisherElement = RoomView.createStreamView('publisher', {
-            name: userName,
-            type: 'publisher'
-          });
-          // If we have all audios disabled, we need to set the button status
-          // and don't publish audio
-          if (_sharedStatus.roomMuted) {
-            // Set visual status of button
-            sendStatus({
-              stream: {
-                streamId: 'Publisher'
-              },
-              reason: 'publishAudio'
-            }, 'audio', false);
-            // Don't publish audio
-            publisherOptions.publishAudio = false;
+        roomURI = aParams.roomURI;
+        userName = aParams.username ? aParams.username.substring(0, 1000) : '';
+        userName = Utils.htmlEscape(userName.substring(0, 25));
+        token = aParams.token;
+
+        const sessionInfo = {
+          apiKey: aParams.apiKey,
+          sessionId: aParams.sessionId,
+          token: aParams.token,
+        };
+
+        const connect = otHelper.connect.bind(otHelper, sessionInfo);
+
+        const waitForConnectionCount = () => new Promise((resolve) => {
+          if (!maxUsersPerRoom) {
+            return resolve();
           }
-          publisherOptions.name = userName;
-          // Remember previous device selection in IE:
-          if (Utils.isIE()) {
-            publisherOptions.usePreviousDeviceSelection = true;
-          }
-          return otHelper.publish(publisherElement, publisherOptions, {}).then(function () {
-            setPublisherReady();
-            RoomView.showPublisherButtons(publisherOptions);
-          }).catch(function (errInfo) {
-            if (errInfo.error.name === 'OT_CHROME_MICROPHONE_ACQUISITION_ERROR') {
-              Utils.sendEvent('roomController:chromePublisherError');
-              otHelper.disconnect();
+          return setTimeout(() => {
+            if (numUsrsInRoom > maxUsersPerRoom) {
+              Utils.sendEvent('roomController:meetingFullError');
+              return;
+            }
+            resolve();
+          }, 500);
+        });
+
+        RoomView.participantsNumber = 0;
+
+        _allHandlers = RoomStatus.init(_allHandlers, { room: _sharedStatus });
+
+        if (enableSip && requireGoogleAuth) {
+          GoogleAuth.init(aParams.googleId, aParams.googleHostedDomain, (aGoogleAuth) => {
+            googleAuth = aGoogleAuth;
+            if (googleAuth.isSignedIn.get()) {
+              document.body.data('google-signed-in', 'true');
             }
           });
-        })
-        .then(function () {
-          ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
-          FeedbackController.init(otHelper, aParams.reportIssueLevel);
-          PhoneNumberController.init(aParams.jqueryUrl);
-          Utils.sendEvent('roomController:controllersReady');
-        })
-        .catch(function (error) {
-          debug.error('Error Connecting to room. ' + error.message);
-        });
-  });
+        }
+
+        ChatController
+          .init(userName, _allHandlers)
+          .then(connect)
+          .then(LayoutMenuController.init)
+          .then(waitForConnectionCount)
+          .then(() => {
+            const publisherElement = RoomView.createStreamView('publisher', {
+              name: userName,
+              type: 'publisher',
+            });
+            // If we have all audios disabled, we need to set the button status
+            // and don't publish audio
+            if (_sharedStatus.roomMuted) {
+            // Set visual status of button
+              sendStatus({
+                stream: {
+                  streamId: 'Publisher',
+                },
+                reason: 'publishAudio',
+              }, 'audio', false);
+              // Don't publish audio
+              publisherOptions.publishAudio = false;
+            }
+            publisherOptions.name = userName;
+            return otHelper.publish(publisherElement, publisherOptions, {}).then(() => {
+              setPublisherReady();
+              RoomView.showPublisherButtons(publisherOptions);
+            }).catch((errInfo) => {
+              if (errInfo.error.name === 'OT_CHROME_MICROPHONE_ACQUISITION_ERROR') {
+                Utils.sendEvent('roomController:chromePublisherError');
+                otHelper.disconnect();
+              }
+            });
+          })
+          .then(() => {
+            ScreenShareController.init(userName, aParams.chromeExtId, otHelper, enableAnnotations);
+            FeedbackController.init(otHelper, aParams.reportIssueLevel);
+            PhoneNumberController.init();
+            Utils.sendEvent('roomController:controllersReady');
+          })
+          .catch((error) => {
+            debug.error(`Error Connecting to room. ${error.message}`);
+          });
+      });
   };
 
-  var RoomController = {
-    init: init
+  const RoomController = {
+    init,
   };
 
   exports.RoomController = RoomController;
-}(this));
+})(this);

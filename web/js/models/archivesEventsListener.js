@@ -1,36 +1,32 @@
-/* globals Firebase */
+!((exports) => {
+  let archives = null;
+  const listeners = {};
 
-!(function (exports) {
-  'use strict';
-
-  var archives = null;
-  var listeners = {};
-
-  var archiveHandler = {
-    archiveUpdates: function (evt) {
-      var handlers = listeners.value;
-      var archiveValues = Promise.resolve(evt.detail || {});
-      handlers && handlers.forEach(function (aHandler) {
+  const archiveHandler = {
+    archiveUpdates(evt) {
+      const handlers = listeners.value;
+      const archiveValues = Promise.resolve(evt.detail || {});
+      handlers && handlers.forEach((aHandler) => {
         archiveValues.then(aHandler.method.bind(aHandler.context));
       });
-    }
+    },
   };
 
   function init() {
-    var self = this;
-    return new Promise(function (resolve) {
+    const self = this;
+    return new Promise((resolve) => {
       Utils.addEventsHandlers('roomController:', archiveHandler, exports);
       resolve(self);
     });
   }
 
   function addEventListener(type, aHandler) {
-    var context;
+    let context;
     if (!(type in listeners)) {
       listeners[type] = [];
     }
 
-    var hd = aHandler;
+    let hd = aHandler;
     if (typeof hd === 'object') {
       context = hd;
       hd = hd.handleEvent;
@@ -39,7 +35,7 @@
     if (hd) {
       listeners[type].push({
         method: hd,
-        context: context
+        context,
       });
     }
   }
@@ -48,10 +44,10 @@
     if (!(type in listeners)) {
       return false;
     }
-    var handlers = listeners[type];
+    const handlers = listeners[type];
     if (handlers) {
-      for (var i = 0, l = handlers.length; i < l; i++) {
-        var thisHandler = aHandler;
+      for (let i = 0, l = handlers.length; i < l; i++) {
+        let thisHandler = aHandler;
         if (typeof thisHandler === 'object') {
           thisHandler = aHandler.handleEvent;
         }
@@ -64,14 +60,17 @@
     return false;
   }
 
-  var FirebaseModel = {
-    addEventListener: addEventListener,
-    removeEventListener: removeEventListener,
-    init: init,
+  const ArchivesEventsListener = {
+    addEventListener,
+    removeEventListener,
+    init,
+    set archives(existingArchives) {
+      archives = existingArchives;
+    },
     get archives() {
       return archives;
-    }
+    },
   };
 
-  exports.FirebaseModel = FirebaseModel;
-}(this));
+  exports.ArchivesEventsListener = ArchivesEventsListener;
+})(this);

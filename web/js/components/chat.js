@@ -1,20 +1,16 @@
 /* global Chat */
 
-!(function (global) {
-  'use strict';
+!((global) => {
+  const transEndEventName = ('WebkitTransition' in document.documentElement.style)
+    ? 'webkitTransitionEnd' : 'transitionend';
 
-  var transEndEventName =
-    ('WebkitTransition' in document.documentElement.style) ?
-     'webkitTransitionEnd' : 'transitionend';
-
-  var container = null,
-    chatShown = null,
+  let container = null; let chatShown = null; let
     chatHidden = null;
 
   function init() {
     container = document.querySelector('#chat');
     // Chat consumes 'click' events in order not to be closed automatically
-    container.addEventListener('click', function (e) {
+    container.addEventListener('click', (e) => {
       e.stopImmediatePropagation();
     });
   }
@@ -37,14 +33,14 @@
   }
 
   function show() {
-    chatShown = chatShown || new Promise(function (resolve) {
+    chatShown = chatShown || new Promise((resolve) => {
       container.addEventListener(transEndEventName, function onEnd() {
         container.removeEventListener(transEndEventName, onEnd);
         resolve();
       });
 
       setVisible(true);
-      setTimeout(function () {
+      setTimeout(() => {
         container.classList.add('show');
       }, 50); // Give the chance to paint the UI element before fading in
     });
@@ -57,11 +53,12 @@
       return Promise.resolve();
     }
 
-    chatHidden = chatHidden || new Promise(function (resolve) {
+    chatHidden = chatHidden || new Promise((resolve) => {
       container.addEventListener(transEndEventName, function onEnd() {
         container.removeEventListener(transEndEventName, onEnd);
         setVisible(false);
-        chatShown = chatHidden = null;
+        chatShown = null;
+        chatHidden = null;
         Utils.sendEvent('chat:hidden');
         resolve();
       });
@@ -74,14 +71,14 @@
   }
 
   global.Chat = {
-    init: init,
-    show: show,
-    hide: hide,
-    collapse: collapse,
-    expand: expand,
-    isCollapsed: isCollapsed,
+    init,
+    show,
+    hide,
+    collapse,
+    expand,
+    isCollapsed,
     get visible() {
       return container && container.classList.contains('visible');
-    }
+    },
   };
-}(this));
+})(this);

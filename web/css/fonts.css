@@ -3,6 +3,7 @@
   font-family: 'Open Sans';
   font-style: normal;
   font-weight: 400;
+  font-display: swap;
   src: url('../fonts/open-sans-v15-latin-regular.eot'); /* IE9 Compat Modes */
   src: local('Open Sans Regular'), local('OpenSans-Regular'),
        url('../fonts/open-sans-v15-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
