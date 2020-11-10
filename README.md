@@ -376,7 +376,6 @@ or set environment variables:
     "Archiving": {
         "enabled": true,
         "archiveAlways": true,
-        "archiveAlways": 10,
         "pollingInitialTimeout": 10000,
         "pollingTimeoutMultiplier": 1,
         "archiveManager": {
@@ -389,9 +388,11 @@ or set environment variables:
 **Environment variable example:**
 
 ```sh
-export GOOGLE_CLIENT_ID=yourClientId.apps.googleusercontent.com;
-export GOOGLE_HOSTED_DOMAIN=yourhosteddomain.com;
-export SIP_REQUIRE_GOOGLE_AUTH=true;
+export ENABLE_ARCHIVING=true;
+export ARCHIVE_ALWAYS=true;
+export ARCHIVE_TIMEOUT=10000;
+export TIMEOUT_MULTIPLIER=1;
+export ENABLE_ARCHIVE_MANAGER=true;
 ```
 
 ### Screen sharing
