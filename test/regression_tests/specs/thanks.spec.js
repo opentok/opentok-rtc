@@ -9,20 +9,30 @@ describe('Thanks Page', function () {
 
   before(()=> {
   });
+        it('Thankspage : load thanks page & check new Meeting Button', () => {
+         room.openThanksPage();
+         room.pause(3000);
+         room.startNewMeetingbutton.isExisting();
+        });
 
+        it('Thankspage : thanks page to pre call view of Room', () => {
+         room.openThanksPage();
+         room.pause(3000);
+         room.startNewMeetingbutton.isExisting();
+         room.startNewMeetingbutton.click();
+        });
 
-        it('Room : Leave Meeting', () => {
-        room.open();
-        room.name.setValue(user);
-        room.pause(3000);
-        room.audioSwitch.click();
-        room.goToRoom();
-        room.pause(1000);
-        room.acceptTerms();
-        room.pause(3000);
-        room.acceptCookies.click();
-        room.pause(4000);
-        room.leaveMeeting.click();
+      it('Thankspage : thanks page to  starting a Room', () => {
+         room.openThanksPage();
+         room.pause(3000);
+         room.startNewMeetingbutton.isExisting();
+         room.startNewMeetingbutton.click();
+           room.name.setValue(user);
+           room.pause(3000);
+           room.goToRoom();
+           room.pause(1000);
+           room.acceptTerms();
+           room.pause(3000);
         });
 
   });

@@ -12,6 +12,10 @@ class Page {
   open() {
     browser.url('/');
   }
+
+    openThanksPage() {
+      browser.url('/thanks');
+    }
   submit(form) {
     browser.submitForm(form);
   }
@@ -76,11 +80,24 @@ class Page {
     return $('.accept-cookies-button');
     }
 
+    get startNewMeetingbutton() {
+      return $('[data-wd=newMeetingBtn]')
+    }
+
+
+ showCallControls(){
+   browser.execute(()=> {
+   document.querySelector('.call-controls').classList.add("visible")
+   })
+ }
+
 
 
   goToRoom() {
     this.clickWhenExist('[data-wd=enterbutton]');
   }
+
+
 
   get inviteButton() {
 
