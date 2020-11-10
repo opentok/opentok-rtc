@@ -175,7 +175,6 @@ function ServerMethods(aLogLevel, aModules) {
       const maxSessionAgeMs = maxSessionAge * 24 * 60 * 60 * 1000;
       const chromeExtId = config.get(C.CHROME_EXTENSION_ID);
 
-      const isWebRTCVersion = config.get(C.DEFAULT_INDEX_PAGE) === 'opentokrtc';
       const showTos = config.get(C.SHOW_TOS);
       const meetingsRatePerMinute = config.get(C.MEETINGS_RATE_PER_MINUTE);
       const minMeetingNameLength = config.get(C.MIN_MEETING_NAME_LENGTH);
@@ -204,6 +203,7 @@ function ServerMethods(aLogLevel, aModules) {
       const helpLinkUrl1 = config.get(C.HELP_LINK_URL_1);
       const helpLinkText2 = config.get(C.HELP_LINK_TEXT_2);
       const helpLinkUrl2 = config.get(C.HELP_LINK_URL_2);
+      const oneTrustCookieConsentUrl = config.get(C.ONE_TRUST_COOKIE_CONSENT_URL);
 
       roomBlackList = config.get(C.BLACKLIST)
         ? config.get(C.BLACKLIST).split(',').map((word) => word.trim().toLowerCase()) : [];
@@ -231,7 +231,6 @@ function ServerMethods(aLogLevel, aModules) {
         archiveAlways,
         iosAppId,
         iosUrlPrefix,
-        isWebRTCVersion,
         enableArchiving,
         enableArchiveManager,
         enableMuteAll,
@@ -275,6 +274,7 @@ function ServerMethods(aLogLevel, aModules) {
         helpLinkUrl1,
         helpLinkText2,
         helpLinkUrl2,
+        oneTrustCookieConsentUrl,
       };
     });
   }
@@ -503,6 +503,7 @@ function ServerMethods(aLogLevel, aModules) {
             helpLinkUrl1: tbConfig.helpLinkUrl1,
             helpLinkText2: tbConfig.helpLinkText2,
             helpLinkUrl2: tbConfig.helpLinkUrl2,
+            oneTrustCookieConsentUrl: tbConfig.oneTrustCookieConsentUrl,
             // eslint-disable-next-line no-dupe-keys
             userName,
           }, (err, html) => {

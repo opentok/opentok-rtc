@@ -142,8 +142,6 @@ E.IOS_APP_ID = { envVar: 'IOS_APP_ID', jsonPath: 'IOSAppId' };
 
 E.IOS_URL_PREFIX = { envVar: 'IOS_URL_PREFIX', jsonPath: 'IOSUrlPrefix', defaultValue: '' };
 
-E.DEFAULT_INDEX_PAGE = { envVar: 'DEFAULT_INDEX_PAGE', jsonPath: 'defaultPageIndex', defaultValue: undefined };
-
 E.SHOW_TOS = {
   envVar: 'SHOW_TOS', jsonPath: 'showTos', defaultValue: false, parser: parseBool,
 };
@@ -199,3 +197,5 @@ E.ADOBE_TRACKING_PRIMARY_CATEGORY = { envVar: 'ADOBE_TRACKING_PRIMARY_CATEGORY',
 E.ADOBE_TRACKING_SITE_IDENTIFIER = { envVar: 'ADOBE_TRACKING_SITE_IDENTIFIER', jsonPath: 'adobeTracking.siteIdentifier', defaultValue: '' };
 
 E.ADOBE_TRACKING_FUNCTION_DEPT = { envVar: 'ADOBE_TRACKING_FUNCTION_DEPT', jsonPath: 'adobeTracking.functionDept', defaultValue: '' };
+
+E.ONE_TRUST_COOKIE_CONSENT_URL = { envVar: 'ONE_TRUST_COOKIE_CONSENT_URL', jsonPath: 'oneTrustCookieConsentUrl', defaultValue: '' };
