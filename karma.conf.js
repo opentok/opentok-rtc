@@ -13,6 +13,10 @@ module.exports = function (config) {
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
     frameworks: ['mocha', 'sinon', 'chai', 'browserify'],
 
+    browserify: {
+    debug: true,
+    },
+
     // list of files / patterns to load in the browser
     files: [
       { pattern: 'test/mocks/mock_othelper.js', include: true },
@@ -49,7 +53,7 @@ module.exports = function (config) {
     preprocessors: {
       '**/*.html': ['html2js'],
       'web/**/*.js': ['coverage'],
-      'test/unit/browserUtils_spec.js': ['browserify'],
+
       'test/unit/chatController_spec.js': ['browserify'],
       'test/unit/chatView_spec.js': ['browserify'],
       'test/unit/cronograph_spec.js': ['browserify'],
@@ -67,6 +71,7 @@ module.exports = function (config) {
       'test/unit/roomView_spec.js': ['browserify'],
       'test/unit/screenShareController_spec.js': ['browserify'],
       'test/unit/screenShareView_spec.js': ['browserify'],
+      'test/unit/browserUtils_spec.js': ['browserify'],
 
     },
 

@@ -1,7 +1,3 @@
-var sinonTest = require('sinon-test');
-
-var test = sinonTest(sinon);
-sinon.test = test;
 var { assert } = chai;
 var { expect } = chai;
 var should = chai.should();
@@ -10,7 +6,6 @@ describe('Utils', () => {
   it('should exist', () => {
     expect(Utils).to.exist;
   });
-
   describe('#isScreen', () => {
     it('should exist and be a function', () => {
       expect(Utils.isScreen).to.exist;

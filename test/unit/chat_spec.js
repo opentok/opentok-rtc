@@ -5,18 +5,18 @@ describe('Chat', () => {
     return document.getElementById('chat');
   }
 
-  before(() => {
+  beforeAll(() => {
     window.document.body.innerHTML = window.__html__['test/unit/chat_spec.html'];
   });
 
   it('should exist', () => {
-    expect(Chat).to.exist;
+    expect(Chat).toBeDefined();
   });
 
   describe('#init()', () => {
     it('should export a init function', () => {
-      expect(Chat.init).to.exist;
-      expect(Chat.init).to.be.a('function');
+      expect(Chat.init).toBeDefined();
+      expect(Chat.init).toBeInstanceOf(Function);
       Chat.init();
     });
   });
@@ -24,32 +24,32 @@ describe('Chat', () => {
   describe('#collapse()', () => {
     it('should collapse the chat', () => {
       Chat.collapse();
-      expect(getContainer().classList.contains('collapsed')).to.be.true;
+      expect(getContainer().classList.contains('collapsed')).toBe(true);
     });
   });
 
   describe('#expand()', () => {
     it('should expand the chat', () => {
       Chat.expand();
-      expect(getContainer().classList.contains('collapsed')).to.be.false;
+      expect(getContainer().classList.contains('collapsed')).toBe(false);
     });
   });
 
   describe('#isCollapsed()', () => {
     it('should return true when chat is collapsed otherwise false', () => {
       Chat.collapse();
-      expect(Chat.isCollapsed()).to.be.true;
+      expect(Chat.isCollapsed()).toBe(true);
       Chat.expand();
-      expect(Chat.isCollapsed()).to.be.false;
+      expect(Chat.isCollapsed()).toBe(false);
     });
   });
 
   describe('#visible', () => {
     it('should return true when chat is visible otherwise false', () => {
       getContainer().classList.add('visible');
-      expect(Chat.visible).to.be.true;
+      expect(Chat.visible).toBe(true);
       getContainer().classList.remove('visible');
-      expect(Chat.visible).to.be.false;
+      expect(Chat.visible).toBe(false);
     });
   });
 });
