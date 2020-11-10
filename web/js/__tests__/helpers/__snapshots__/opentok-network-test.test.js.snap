@@ -1,7 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`snapshot for opentok-network-test component 1`] = `
-Object {
-  "OTNetworkTest": [Function],
-}
-`;

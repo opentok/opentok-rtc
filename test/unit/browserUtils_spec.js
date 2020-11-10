@@ -260,23 +260,23 @@ describe('Utils', () => {
       });
     });
 
-    describe('#getFirstValue', () => {
-      it('should always return a getFirstValue method on the object\'\'', sinon.test(() => {
-        results.forEach((aResult) => {
-          expect(aResult.getFirstValue).to.exist;
-          expect(aResult.getFirstValue).to.be.a.function;
-        });
-      }));
-
-      results.forEach((result, index) => {
-        it('should return ' + useCases[index].getFirst.output + ' when called with '
-           + useCases[index].getFirst.input + 'on the use case #' + index, () => {
-          var useCase = useCases[index].getFirst;
-          expect(result.getFirstValue(useCase.input)).to.be.equal(useCase.output);
-        });
-      });
-    });
-  });
+//    describe('#getFirstValue', () => {
+//      it('should always return a getFirstValue method on the object\'\'', sinon.test(function(){
+//        results.forEach((aResult) => {
+//          expect(aResult.getFirstValue).to.exist;
+//          expect(aResult.getFirstValue).to.be.a.function;
+//        });
+//      }));
+//
+//      results.forEach((result, index) => {
+//        it('should return ' + useCases[index].getFirst.output + ' when called with '
+//           + useCases[index].getFirst.input + 'on the use case #' + index, () => {
+//          var useCase = useCases[index].getFirst;
+//          expect(result.getFirstValue(useCase.input)).to.be.equal(useCase.output);
+//        });
+//      });
+//    });
+//  });
 
   describe('#isChrome', () => {
     var realUserAgent = null,
