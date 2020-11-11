@@ -16,6 +16,7 @@
     let testTimeoutId;
     let currentStats;
     let testRunning;
+    let publishing;
 
     const testStreamingCapability = (subscriber, callback) => {
       performQualityTest({subscriber, timeout: TEST_TIMEOUT_MS}, (error, results) => {
@@ -113,8 +114,13 @@
             console.error('Could not publish video.', error);
             return;
           }
+          publishing = true;
+          if (!testRunning) {
+            session.unpublish(publisher);
+            return session.disconnect();
+          }
 
-          subscriber = session.subscribe(
+          return subscriber = session.subscribe(
             publisher.stream,
             subscriberEl,
             {
@@ -189,14 +195,15 @@
       }
       testRunning = false;
       bandwidthCalculator && bandwidthCalculator.stop();
-      try {
-        session.unpublish(publisher);
-        subscriber && session.unsubscribe(subscriber);
-        session.disconnect();
-      } catch(error) {
-        // Probably not connected yet.
+      if (publishing) {
+        try {
+          session.unpublish(publisher);
+          subscriber && session.unsubscribe(subscriber);
+          session.disconnect();
+        } catch(error) {
+          // Probably not connected yet.
+        }
       }
-      return publisher.destroy();
     }
 
     // Helpers
