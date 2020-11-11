@@ -12,6 +12,10 @@ class Page {
   open() {
     browser.url('/');
   }
+
+    openThanksPage() {
+      browser.url('/thanks');
+    }
   submit(form) {
     browser.submitForm(form);
   }
@@ -19,7 +23,7 @@ class Page {
     browser.$(elem).waitForDisplayed({ timeout: timeout });
   }
   waitForHidden(elem, timeout = this.defaultTimeout) {
-    browser.$(elem).waitForDisplayed({ timeout: 3000, reverse: true}); // third param makes it wait for NOT visible
+    browser.$(elem).waitForDisplayed({ timeout: timeout, reverse: true}); // third param makes it wait for NOT visible
   }
   click(elem) {
       browser.$(elem).click();
@@ -30,7 +34,7 @@ class Page {
     }, selector);
   }
   clickWhenExist(selector) {
-    this.wait(selector, 30000);
+    this.wait(selector, 40000);
     browser.$(selector).click();
   }
   getBrowserName() {
@@ -42,11 +46,62 @@ class Page {
   }
 
   get audioSwitch() {
-  return $('#initialVideoSwitch');
+  return $('#initialAudioSwitch');
   }
+
+    get videoSwitch() {
+    return $('#initialVideoSwitch');
+    }
+
+    get roomVideoSwitch() {
+      return $('#toggle-publisher-video');
+    }
+
+    get roomAudioSwitch() {
+      return $('#toggle-publisher-audio');
+    }
+
+    get roomScreenShareSwitch() {
+      return $('#toggle-publisher-audio');
+    }
+
+    get roomAnnotationswitch() {
+      return $('#toggle-publisher-audio');
+    }
+    get roomChatSwitch() {
+      return $('#toggle-publisher-audio');
+    }
+
+    get leaveMeeting() {
+    return $('#endCall');
+    }
+
+    get acceptCookies() {
+    return $('.accept-cookies-button');
+    }
+
+    get startNewMeetingbutton() {
+      return $('[data-wd=newMeetingBtn]')
+    }
+
+
+ showCallControls(){
+   browser.execute(()=> {
+   document.querySelector('.call-controls').classList.add("visible")
+   })
+ }
+
+
 
   goToRoom() {
     this.clickWhenExist('[data-wd=enterbutton]');
+  }
+
+
+
+  get inviteButton() {
+
+  return $('#addToCall')
   }
 
   pause(msec) {
@@ -55,6 +110,16 @@ class Page {
 
   acceptTerms(){
     this.clickWhenExist('[data-wd=tos]');
+  }
+
+  createRoom(user){
+      this.open();
+      this.name.setValue(user);
+      this.pause(3000);
+      this.goToRoom();
+      this.pause(1000);
+      this.acceptTerms();
+      this.pause(3000);
   }
 
 }

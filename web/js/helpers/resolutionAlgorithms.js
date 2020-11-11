@@ -52,7 +52,7 @@
     fitToSubscriberDimensions(aStreamDimension, aTotalDimension, aSubsDimension) {
       if (
         ((aSubsDimension.width <= 320) && (aSubsDimension.height <= 240)) ||
-        (publisherResolution === '320x240')
+        (window.publisherResolution === '320x240')
       ) {
         return {
           width: 320,
@@ -60,7 +60,7 @@
         };
       } else if (
         ((aSubsDimension.width <= 640) && (aSubsDimension.height <= 480)) ||
-        (publisherResolution === '640x480')
+        (window.publisherResolution === '640x480')
       ) {
         return {
           width: 640,

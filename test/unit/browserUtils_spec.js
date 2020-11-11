@@ -1,7 +1,3 @@
-var sinonTest = require('sinon-test');
-
-var test = sinonTest(sinon);
-sinon.test = test;
 var { assert } = chai;
 var { expect } = chai;
 var should = chai.should();
@@ -10,7 +6,6 @@ describe('Utils', () => {
   it('should exist', () => {
     expect(Utils).to.exist;
   });
-
   describe('#isScreen', () => {
     it('should exist and be a function', () => {
       expect(Utils.isScreen).to.exist;
@@ -260,23 +255,23 @@ describe('Utils', () => {
       });
     });
 
-    describe('#getFirstValue', () => {
-      it('should always return a getFirstValue method on the object\'\'', sinon.test(() => {
-        results.forEach((aResult) => {
-          expect(aResult.getFirstValue).to.exist;
-          expect(aResult.getFirstValue).to.be.a.function;
-        });
-      }));
-
-      results.forEach((result, index) => {
-        it('should return ' + useCases[index].getFirst.output + ' when called with '
-           + useCases[index].getFirst.input + 'on the use case #' + index, () => {
-          var useCase = useCases[index].getFirst;
-          expect(result.getFirstValue(useCase.input)).to.be.equal(useCase.output);
-        });
-      });
-    });
-  });
+//    describe('#getFirstValue', () => {
+//      it('should always return a getFirstValue method on the object\'\'', sinon.test(function(){
+//        results.forEach((aResult) => {
+//          expect(aResult.getFirstValue).to.exist;
+//          expect(aResult.getFirstValue).to.be.a.function;
+//        });
+//      }));
+//
+//      results.forEach((result, index) => {
+//        it('should return ' + useCases[index].getFirst.output + ' when called with '
+//           + useCases[index].getFirst.input + 'on the use case #' + index, () => {
+//          var useCase = useCases[index].getFirst;
+//          expect(result.getFirstValue(useCase.input)).to.be.equal(useCase.output);
+//        });
+//      });
+//    });
+//  });
 
   describe('#isChrome', () => {
     var realUserAgent = null,

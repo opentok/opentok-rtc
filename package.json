@@ -12,6 +12,7 @@
     "dev": "concurrently \"npm run start\" \"grunt clientDev\"",
     "postinstall": "bower install && grunt clientBuild",
     "test": "grunt test",
+    "jest": "jest",
     "regression-test": "wdio run wdio.conf.js",
     "karma-test": "karma start karma.conf.js",
     "lint": "./node_modules/.bin/eslint .",
@@ -60,6 +61,7 @@
     "helmet": "^4.1.1",
     "http2": "^3.3.7",
     "ioredis": "^4.17.3",
+    "jest-codemods": "^0.23.0",
     "lodash": "^4.17.20",
     "opentok": "^2.10.0",
     "qs": "^6.9.4",
@@ -76,7 +78,6 @@
     "@wdio/spec-reporter": "^6.6.8",
     "@wdio/sync": "^6.6.7",
     "browserify": "^17.0.0",
-    "grunt-critical": "^2.0.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chromedriver": "^86.0.0",
@@ -89,7 +90,9 @@
     "eslint-plugin-react": "^7.21.4",
     "firefox-profile": "^4.0.0",
     "geckodriver": "^1.20.0",
+    "grunt-critical": "^2.0.0",
     "istanbul": "^0.4.5",
+    "jest": "^26.6.1",
     "karma": "^5.2.3",
     "karma-browserify": "^7.0.0",
     "karma-chai": "^0.1.0",
@@ -104,6 +107,7 @@
     "sinon": "^9.2.0",
     "sinon-test": "^3.0.0",
     "supertest": "^5.0.0",
-    "wdio-chromedriver-service": "^6.0.4"
+    "wdio-chromedriver-service": "^6.0.4",
+    "wdio-image-comparison-service": "^1.14.0"
   }
 }

@@ -1,7 +1,9 @@
 var { assert } = chai;
 var { expect } = chai;
 var should = chai.should();
-
+var sinonTest = require('sinon-test');
+var test = sinonTest(sinon);
+sinon.test = test;
 describe('RecordingsView', () => {
   var model = {
     _listeners: {},

@@ -13,6 +13,10 @@ module.exports = function (config) {
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
     frameworks: ['mocha', 'sinon', 'chai', 'browserify'],
 
+    browserify: {
+    debug: true,
+    },
+
     // list of files / patterns to load in the browser
     files: [
       { pattern: 'test/mocks/mock_othelper.js', include: true },
@@ -49,7 +53,7 @@ module.exports = function (config) {
     preprocessors: {
       '**/*.html': ['html2js'],
       'web/**/*.js': ['coverage'],
-      'test/unit/browserUtils_spec.js': ['browserify'],
+
       'test/unit/chatController_spec.js': ['browserify'],
       'test/unit/chatView_spec.js': ['browserify'],
       'test/unit/cronograph_spec.js': ['browserify'],
@@ -60,6 +64,14 @@ module.exports = function (config) {
       'test/unit/layoutMenuView_spec.js': ['browserify'],
       'test/unit/layouts_spec.js': ['browserify'],
       'test/unit/precallController_spec.js': ['browserify'],
+      'test/unit/precallView_spec.js': ['browserify'],
+      'test/unit/recordingsController_spec.js': ['browserify'],
+      'test/unit/recordingsView_spec.js': ['browserify'],
+      'test/unit/roomStatus_spec.js': ['browserify'],
+      'test/unit/roomView_spec.js': ['browserify'],
+      'test/unit/screenShareController_spec.js': ['browserify'],
+      'test/unit/screenShareView_spec.js': ['browserify'],
+      'test/unit/browserUtils_spec.js': ['browserify'],
 
     },
 
@@ -96,7 +108,7 @@ module.exports = function (config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Firefox', 'Chrome'],
+    browsers: [ 'Chrome'],
 
     customLaunchers: {
       Chrome_travis_ci: {
