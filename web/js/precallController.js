@@ -68,7 +68,7 @@
           if (window.enablePrecallTest) PrecallView.hideConnectivityTest();
         }
 
-        document.querySelector('.user-name-modal #enter').disabled = false;
+        document.querySelector('.user-name-modal #start_enter').disabled = false;
         document.querySelector('.user-name-modal').addEventListener('keypress', (event) => {
           if (event.which === 13) {
             event.preventDefault();
