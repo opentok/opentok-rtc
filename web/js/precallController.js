@@ -181,7 +181,7 @@
                     // eslint-disable-next-line max-len
                     PrecallView.populateAudioDevicesDropdown(audioDevs, publisherOptions.audioSource);
                   });
-                  // You cannot use the network test in Safari because you cannot use two
+                  // You cannot use the network test in Safari on iOS because you cannot use two
                   // eslint-disable-next-line max-len
                   // publishers (the preview publisher and the network test publisher) simultaneously.
                   if (!Utils.isSafariIOS() && window.enablePrecallTest) {
