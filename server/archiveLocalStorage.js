@@ -43,7 +43,11 @@ class ArchiveLocalStorage {
     const stringSessionInfo = await redis.get(this.roomNameKey);
     const sessionInfo = JSON.parse(stringSessionInfo);
     if (!sessionInfo.archives) sessionInfo.archives = {};
-    sessionInfo.archives[aArchive.id] = aArchive;
+
+    sessionInfo.archives[aArchive.id] = Object.assign(
+      sessionInfo.archives[aArchive.id] || {}, aArchive
+    );
+
     await redis.set(this.roomNameKey, JSON.stringify(sessionInfo));
     this.sendBroadcastSignal(sessionInfo.archives);
   }
