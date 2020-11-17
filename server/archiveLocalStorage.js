@@ -45,7 +45,7 @@ class ArchiveLocalStorage {
     if (!sessionInfo.archives) sessionInfo.archives = {};
 
     sessionInfo.archives[aArchive.id] = Object.assign(
-      sessionInfo.archives[aArchive.id] || {}, aArchive
+      sessionInfo.archives[aArchive.id] || {}, aArchive,
     );
 
     await redis.set(this.roomNameKey, JSON.stringify(sessionInfo));
