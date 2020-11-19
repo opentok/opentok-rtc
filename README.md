@@ -665,12 +665,12 @@ For information on how to customize the OpenTokRTC UI, see [CUSTOMIZING-UI.md](C
 Ensure Redis server is running on localhost (run `redis-server` in the command line)
 and restart OpenTokRTC.
 
-**OpenTokRTC does not work on when served over HTTP.**
+**OpenTokRTC does not work when served over HTTP.**
 
 Browser security policies require HTTPS for WebRTC video communications. You will need to set up
 the app to be served over HTTPS. You can set up a
 [secure reverse-proxy](https://www.nginx.com/resources/admin-guide/nginx-https-upstreams/)
-to your OpenTokRTC port using nginx. For details, read
+to your OpenTokRTC port using Nginx. For details, read
 [this post](https://tokbox.com/blog/the-impact-of-googles-new-chrome-security-policy-on-webrtc/).
 
 **UI looks broken**
@@ -682,7 +682,7 @@ $ bower install
 $ npm run clientBuild
 ```
 
-We recommend that you run the application as a non-root user. However, if you are running the application as the `root` user, you will additionally need to tell `bower` to allow root user to install dependencies, else bower will refuse to work:
+We recommend that you run the application as a non-root user. However, if you are running the application as the `root` user, you will additionally need to tell `bower` to allow the root user to install dependencies, else bower will refuse to work:
 
 ```
 $ bower install --allow-root
