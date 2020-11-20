@@ -200,6 +200,6 @@ E.ADOBE_TRACKING_FUNCTION_DEPT = { envVar: 'ADOBE_TRACKING_FUNCTION_DEPT', jsonP
 
 E.ONE_TRUST_COOKIE_CONSENT_URL = { envVar: 'ONE_TRUST_COOKIE_CONSENT_URL', jsonPath: 'oneTrustCookieConsentUrl', defaultValue: '' };
 
-E.START_BUILDING_ICID = { envVar: 'START_BUILDING_ICID', jsonPath: 'startBuiliding', defaultValue: '' };
+E.START_BUILDING_ICID = { envVar: 'START_BUILDING_ICID', jsonPath: 'icid.startBuiliding', defaultValue: '' };
 
-E.CONTACT_US_ICID = { envVar: 'CONTACT_US_ICID', jsonPath: 'contactUs', defaultValue: '' };
+E.CONTACT_US_ICID = { envVar: 'CONTACT_US_ICID', jsonPath: 'icid.contactUs', defaultValue: '' };
