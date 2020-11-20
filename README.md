@@ -570,9 +570,9 @@ To configure this, edit options in the config/config.json file or set environmen
 
 You can set your own icid querystring values on the thanks page urls through this setting
 
-* `icid.startBuiliding` (config.json) / `START_BUILDING_ICID` (environment variable) -- icid for the how to make this app better and start building for free links. The default value is ''.
+* `icid.startBuiliding` (config.json) / `START_BUILDING_ICID` (environment variable) -- icid for the "how to make this app better" and "start building for free" links. The default value is ''.
 
-* `icid.contactUs` (config.json) / `CONTACT_US_ICID` (environment variable) -- icid for the contact us link. The default value is ''.
+* `icid.contactUs` (config.json) / `CONTACT_US_ICID` (environment variable) -- icid for the "contact us" link. The default value is ''.
 
 ### Additional configuration options
 
