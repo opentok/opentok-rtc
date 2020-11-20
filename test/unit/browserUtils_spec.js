@@ -1,6 +1,10 @@
 var { assert } = chai;
 var { expect } = chai;
 var should = chai.should();
+var sinonTest = require('sinon-test');
+
+var test = sinonTest(sinon);
+sinon.test = test;
 
 describe('Utils', () => {
   it('should exist', () => {
@@ -89,8 +93,8 @@ describe('Utils', () => {
       expect(Utils.generateSearchStr).to.be.a('function');
     });
 
-    it('should throw a TypeError on undefined', sinon.test(function () {
-      this.spy(Utils, 'generateSearchStr');
+    it('should throw a TypeError on undefined', sinon.test( () => {
+      sinon.test.spy(Utils, 'generateSearchStr');
       try {
         Utils.generateSearchStr(undefined);
       } catch (e) {}
@@ -138,7 +142,7 @@ describe('Utils', () => {
       expect(Utils.parseSearch).to.be.a('function');
     });
 
-    it('should throw a TypeError on undefined', sinon.test(function () {
+    it('should throw a TypeError on undefined', sinon.test( () => {
       this.spy(Utils, 'parseSearch');
       try {
         Utils.parseSearch(undefined);
@@ -255,23 +259,23 @@ describe('Utils', () => {
       });
     });
 
-//    describe('#getFirstValue', () => {
-//      it('should always return a getFirstValue method on the object\'\'', sinon.test(function(){
-//        results.forEach((aResult) => {
-//          expect(aResult.getFirstValue).to.exist;
-//          expect(aResult.getFirstValue).to.be.a.function;
-//        });
-//      }));
-//
-//      results.forEach((result, index) => {
-//        it('should return ' + useCases[index].getFirst.output + ' when called with '
-//           + useCases[index].getFirst.input + 'on the use case #' + index, () => {
-//          var useCase = useCases[index].getFirst;
-//          expect(result.getFirstValue(useCase.input)).to.be.equal(useCase.output);
-//        });
-//      });
-//    });
-//  });
+    describe('#getFirstValue', () => {
+      it('should always return a getFirstValue method on the object\'\'', sinon.test(() => {
+        results.forEach((aResult) => {
+          expect(aResult.getFirstValue).to.exist;
+          expect(aResult.getFirstValue).to.be.a.function;
+        });
+      }));
+
+      results.forEach((result, index) => {
+        it('should return ' + useCases[index].getFirst.output + ' when called with '
+           + useCases[index].getFirst.input + 'on the use case #' + index, () => {
+          var useCase = useCases[index].getFirst;
+          expect(result.getFirstValue(useCase.input)).to.be.equal(useCase.output);
+        });
+      });
+    });
+  });
 
   describe('#isChrome', () => {
     var realUserAgent = null,
