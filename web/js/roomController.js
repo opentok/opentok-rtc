@@ -67,7 +67,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
       style: {
         audioLevelDisplayMode: 'off',
         buttonDisplayMode: 'off',
-        nameDisplayMode: 'on',
+        nameDisplayMode: 'off',
         videoDisabledDisplayMode: 'off',
       },
     },
@@ -79,7 +79,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
       style: {
         audioLevelDisplayMode: 'auto',
         buttonDisplayMode: 'off',
-        nameDisplayMode: 'on',
+        nameDisplayMode: 'off',
         videoDisabledDisplayMode: 'off',
       },
     },
