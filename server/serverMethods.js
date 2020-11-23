@@ -214,6 +214,12 @@ function ServerMethods(aLogLevel, aModules) {
       const ATSiteIdentifier = config.get(C.ADOBE_TRACKING_SITE_IDENTIFIER);
       const ATFunctionDept = config.get(C.ADOBE_TRACKING_FUNCTION_DEPT);
 
+      const startBuilidingIcidQueryString = config.get(C.START_BUILDING_ICID)
+        ? `?icid=${config.get(C.START_BUILDING_ICID)}` : '';
+
+      const contactUsIcidQueryString = config.get(C.CONTACT_US_ICID)
+        ? `?icid=${config.get(C.CONTACT_US_ICID)}` : '';
+
       return {
         otInstance,
         precallOtInstance,
@@ -275,6 +281,8 @@ function ServerMethods(aLogLevel, aModules) {
         helpLinkText2,
         helpLinkUrl2,
         oneTrustCookieConsentUrl,
+        startBuilidingIcidQueryString,
+        contactUsIcidQueryString,
       };
     });
   }
@@ -330,6 +338,8 @@ function ServerMethods(aLogLevel, aModules) {
       userCountry: country,
       useGoogleFonts: aReq.tbConfig.useGoogleFonts,
       appName: aReq.tbConfig.appName,
+      startBuilidingIcidQueryString: aReq.tbConfig.startBuilidingIcidQueryString,
+      contactUsIcidQueryString: aReq.tbConfig.contactUsIcidQueryString,
     }, (err, html) => {
       if (err) {
         logger.error('getMeetingCompletion. error: ', err);

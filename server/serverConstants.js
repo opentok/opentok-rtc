@@ -199,3 +199,7 @@ E.ADOBE_TRACKING_SITE_IDENTIFIER = { envVar: 'ADOBE_TRACKING_SITE_IDENTIFIER', j
 E.ADOBE_TRACKING_FUNCTION_DEPT = { envVar: 'ADOBE_TRACKING_FUNCTION_DEPT', jsonPath: 'adobeTracking.functionDept', defaultValue: '' };
 
 E.ONE_TRUST_COOKIE_CONSENT_URL = { envVar: 'ONE_TRUST_COOKIE_CONSENT_URL', jsonPath: 'oneTrustCookieConsentUrl', defaultValue: '' };
+
+E.START_BUILDING_ICID = { envVar: 'START_BUILDING_ICID', jsonPath: 'icid.startBuiliding', defaultValue: '' };
+
+E.CONTACT_US_ICID = { envVar: 'CONTACT_US_ICID', jsonPath: 'icid.contactUs', defaultValue: '' };

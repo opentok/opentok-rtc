@@ -29,6 +29,7 @@ This repository contains a Node.js server and a web client application.
   - [Feedback](#feedback)
   - [Pre-call test](#pre-call-test)
   - [Adobe Analytics](#adobe-analytics)
+  - [Icid tracking](#icid-tracking)
   - [Additional configuration options](#additional-configuration-options)
 * [Customizing the UI](#customizing-the-ui)
 * [Troubleshooting](#troubleshooting)
@@ -564,6 +565,14 @@ To configure this, edit options in the config/config.json file or set environmen
 * `adobeTracking.functionDept` (config.json) / `ADOBE_TRACKING_FUNCTION_DEPT`
   (environment variable) -- The value that will be included in Adobe Analytics
   object field: `digitalData.page.pageInfo.functionDept`. The default value is ''.
+
+### Icid tracking
+
+You can set your own icid querystring values on the thanks page urls through this setting
+
+* `icid.startBuiliding` (config.json) / `START_BUILDING_ICID` (environment variable) -- icid for the "how to make this app better" and "start building for free" links. The default value is ''.
+
+* `icid.contactUs` (config.json) / `CONTACT_US_ICID` (environment variable) -- icid for the "contact us" link. The default value is ''.
 
 ### Additional configuration options
 
