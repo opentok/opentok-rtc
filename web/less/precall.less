@@ -411,8 +411,21 @@
   color: @charcoal1;
   font-size: 14px;
   padding: 35px;
-  left: calc(~"50% - 152px");
+  margin-right: 70px;
+  margin-top: 12px;
   z-index: 100;
+  margin-top: 12px;
+  @media @smartphonesPortrait {
+
+      left: calc(10%)!important;
+      top: calc(6%)!important;
+
+  }
+
+  @media @smartphonesLandscape{
+         left: calc(10%)!important;
+         top: calc(6%)!important;
+  }
 
   p {
     font-size: 14px;
