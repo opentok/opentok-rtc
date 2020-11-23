@@ -94,7 +94,7 @@ describe('Utils', () => {
     });
 
     it('should throw a TypeError on undefined', sinon.test( () => {
-      sinon.test.spy(Utils, 'generateSearchStr');
+      sinon.spy(Utils, 'generateSearchStr');
       try {
         Utils.generateSearchStr(undefined);
       } catch (e) {}
@@ -143,7 +143,7 @@ describe('Utils', () => {
     });
 
     it('should throw a TypeError on undefined', sinon.test( () => {
-      this.spy(Utils, 'parseSearch');
+      sinon.spy(Utils, 'parseSearch');
       try {
         Utils.parseSearch(undefined);
       } catch (e) {}
@@ -263,7 +263,7 @@ describe('Utils', () => {
       it('should always return a getFirstValue method on the object\'\'', sinon.test(() => {
         results.forEach((aResult) => {
           expect(aResult.getFirstValue).to.exist;
-          expect(aResult.getFirstValue).to.be.a.function;
+          expect(aResult.getFirstValue).to.be.an('function');
         });
       }));
 

@@ -3,6 +3,8 @@ var sinonTest = require('sinon-test');
 var test = sinonTest(sinon);
 sinon.test = test;
 var { expect } = chai;
+const sinonChai = require('sinon-chai')
+chai.use(sinonChai)
 
 describe('ChatController', () => {
   var expectedHandlers = ['signal:chat', 'connectionCreated', 'connectionDestroyed'];
@@ -27,6 +29,7 @@ describe('ChatController', () => {
     window.LazyLoader = window.LazyLoader || { dependencyLoad() {} };
     sinon.stub(LazyLoader, 'dependencyLoad').callsFake((resources) => Promise.resolve());
     sinon.stub(ChatView, 'init').callsFake(() => Promise.resolve());
+
     window.MockRoomStatus._install();
     window.MockOTHelper._install();
   });
@@ -54,21 +57,21 @@ describe('ChatController', () => {
           expect(aHandlers.length).to.be.equals(1);
           var chatHandlers = aHandlers[0];
           expectedHandlers.every((elem) => { // eslint-disable-line array-callback-return
-            expect(chatHandlers[elem]).to.be.defined;
+            expect(chatHandlers[elem]).to.not.be.undefined;
           });
-
           var spyArg = Utils.addHandlers.getCall(0).args[0];
           expect(Object.keys(spyArg).length).to.be
             .equal(Object.keys(handlerShouldHave).length);
           expect(Object.keys(spyArg)
             .every((action) => spyArg[action].name === handlerShouldHave[action].name)).to.be.true;
+            console.log(JSON.stringify(RoomStatus.set))
           expect(RoomStatus.set.calledWith(STATUS_KEY, [])).to.be.true;
           done();
-        });
+        }).catch(err => console.log(err))
     }
 
     it('should initialize properly the object and return the handlers set when called without '
-       + 'handlers', sinon.test(function (done) {
+       + 'handlers',(done) => {
       var expectedHandlers = {
         updatedRemotely: {
           name: 'roomStatus:updatedRemotely',
@@ -78,15 +81,15 @@ describe('ChatController', () => {
           name: 'chatView:outgoingMessage',
         },
       };
-
-      this.stub(RoomStatus, 'set');
-      this.stub(Utils, 'addHandlers');
-
+          sinon.stub(RoomStatus, 'set').callsFake(() => Promise.resolve());
+          sinon.stub(Utils, 'addHandlers').callsFake(() => {});
       verifyInit(done, expectedHandlers);
-    }));
+      RoomStatus.set.restore();
+      Utils.addHandlers.restore();
+    });
 
     it('should initialize properly the object and return the handlers set when called with '
-       + 'handlers', sinon.test(function (done) {
+       + 'handlers', sinon.test( (done) => {
       var expectedHandlers = {
         updatedRemotely: {
           name: 'changedRoomStatus:changedUpdatedRemotely',
@@ -105,9 +108,8 @@ describe('ChatController', () => {
           type: 'chatVisibility',
           name: 'roomView:chatVisibility',
         }];
-
-      this.stub(RoomStatus, 'set');
-      this.stub(Utils, 'addHandlers');
+          sinon.stub(RoomStatus, 'set').callsFake(() => Promise.resolve());
+          sinon.stub(Utils, 'addHandlers').callsFake(() => {});
 
       verifyInit(done, expectedHandlers, handlersName);
     }));
@@ -177,7 +179,7 @@ describe('ChatController', () => {
 
           OTHelper._myConnId = 'myConnId';
 
-          this.spy(window, 'dispatchEvent');
+          sinon.spy(window, 'dispatchEvent');
           chatHndls.connectionCreated(getSignalEvent(connData.userName, OTHelper._myConnId));
           expect(window.dispatchEvent.called).to.be.false;
         }));
@@ -231,8 +233,8 @@ describe('ChatController', () => {
       window.removeEventListener('chatController:incomingMessage', loadHistoryTest);
     });
 
-    it('should load chat history', sinon.test(function (done) {
-      this.stub(RoomStatus, 'get').callsFake((key) => sharedHistory);
+    it('should load chat history', sinon.test( (done) => {
+      sinon.stub(RoomStatus, 'get').callsFake((key) => sharedHistory);
 
       var handlers = [];
 
@@ -254,7 +256,7 @@ describe('ChatController', () => {
 
   describe('#outgoingMessage event', () => {
     it('should send the message using an OT signal', sinon.test(function (done) {
-      this.stub(OTHelper, 'sendSignal').callsFake((evt) => Promise.resolve());
+      sinon.stub(OTHelper, 'sendSignal').callsFake((evt) => Promise.resolve());
 
       var handlers = [];
       var resolver;
