@@ -29,7 +29,7 @@ This repository contains a Node.js server and a web client application.
   - [Feedback](#feedback)
   - [Pre-call test](#pre-call-test)
   - [Adobe Analytics](#adobe-analytics)
-  - [Icid tracking](#icid-tracking)
+  - [ICID tracking](#icid-tracking)
   - [Additional configuration options](#additional-configuration-options)
 * [Customizing the UI](#customizing-the-ui)
 * [Troubleshooting](#troubleshooting)
@@ -566,13 +566,15 @@ To configure this, edit options in the config/config.json file or set environmen
   (environment variable) -- The value that will be included in Adobe Analytics
   object field: `digitalData.page.pageInfo.functionDept`. The default value is ''.
 
-### Icid tracking
+### ICID tracking
 
-You can set your own icid querystring values on the thanks page urls through this setting
+You can set ICID query string values for the end (/thanks) page URLs with these settings:
 
-* `icid.startBuiliding` (config.json) / `START_BUILDING_ICID` (environment variable) -- icid for the "how to make this app better" and "start building for free" links. The default value is ''.
+* `icid.startBuiliding` (config.json) / `START_BUILDING_ICID` (environment variable) -- The ICID
+  for the "How to make this app better" and "Start building for free" links. The default value is ''.
 
-* `icid.contactUs` (config.json) / `CONTACT_US_ICID` (environment variable) -- icid for the "contact us" link. The default value is ''.
+* `icid.contactUs` (config.json) / `CONTACT_US_ICID` (environment variable) -- The ICID for
+  the "Contact us" link. The default value is ''.
 
 ### Additional configuration options
 
@@ -662,6 +664,9 @@ You can set your own icid querystring values on the thanks page urls through thi
   auto-generate the room name on behalf of the user. If this setting is turned on, we will use haikunator to generate
   room names for new rooms. If turned off, users will be prompted to enter a room/meeting name when they visit
   the landing page and won't be allowed to move forward until they do so. The default value is `true`.
+
+* `enableEmoji` (config.json) / `ENABLE_EMOJI` (environment variable) -- Whether or not to
+  enable emoji support in the text chat widget.
 
 ## Customizing the UI
 
