@@ -93,7 +93,7 @@ describe('Utils', () => {
       expect(Utils.generateSearchStr).to.be.a('function');
     });
 
-    it('should throw a TypeError on undefined', sinon.test( () => {
+    it('should throw a TypeError on undefined', sinon.test(() => {
       sinon.spy(Utils, 'generateSearchStr');
       try {
         Utils.generateSearchStr(undefined);
@@ -142,7 +142,7 @@ describe('Utils', () => {
       expect(Utils.parseSearch).to.be.a('function');
     });
 
-    it('should throw a TypeError on undefined', sinon.test( () => {
+    it('should throw a TypeError on undefined', sinon.test(() => {
       sinon.spy(Utils, 'parseSearch');
       try {
         Utils.parseSearch(undefined);

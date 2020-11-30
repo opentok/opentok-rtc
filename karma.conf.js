@@ -14,7 +14,7 @@ module.exports = function (config) {
     frameworks: ['mocha', 'sinon', 'chai', 'browserify'],
 
     browserify: {
-    debug: true,
+      debug: true,
     },
 
     // list of files / patterns to load in the browser
@@ -108,7 +108,7 @@ module.exports = function (config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: [ 'Chrome'],
+    browsers: ['Chrome'],
 
     customLaunchers: {
       Chrome_travis_ci: {

@@ -865,7 +865,7 @@ function ServerMethods(aLogLevel, aModules) {
 
   function getRoomNameFromHeaders(headers) {
     let { referer } = headers;
-    referer = (referer || "" );
+    referer = (referer || '');
     const lastIndex = referer.lastIndexOf('/');
     return referer.substr(lastIndex + 1, referer.length).split('?')[0];
   }
