@@ -1,33 +1,30 @@
-!(function (global) {
-  'use strict';
+!((global) => {
+  const transEndEventName = ('WebkitTransition' in document.documentElement.style)
+    ? 'webkitTransitionEnd' : 'transitionend';
 
-  var transEndEventName =
-    ('WebkitTransition' in document.documentElement.style) ?
-    'webkitTransitionEnd' : 'transitionend';
-
-  var closeHandlers = {};
-  var keyPressHandler;
-  var _queuedModals = [];
-  var _modalShown = false;
-  var preShowFocusElement;
+  const closeHandlers = {};
+  let keyPressHandler;
+  const _queuedModals = [];
+  let _modalShown = false;
+  let preShowFocusElement;
 
   function addCloseHandler(selector) {
-    var closeElement = document.querySelector(selector + ' .close');
+    const closeElement = document.querySelector(`${selector} .close`);
     if (!closeElement) {
       return;
     }
 
-    var handler = function () {
+    const handler = () => {
       Utils.sendEvent('modal:close');
       hide(selector);
     };
     closeHandlers[selector] = {
       target: closeElement,
-      handler: handler
+      handler,
     };
 
-    keyPressHandler = function (event) {
-      var keyCode = event.which || event.keyCode;
+    keyPressHandler = (event) => {
+      const keyCode = event.which || event.keyCode;
       if (keyCode === 27) { // escape key maps to keycode `27`
         handler();
       }
@@ -38,42 +35,47 @@
   }
 
   function removeCloseHandler(selector) {
-    var obj = closeHandlers[selector];
+    const obj = closeHandlers[selector];
     obj && obj.target.removeEventListener('click', obj.handler);
     document.body.removeEventListener('keyup', keyPressHandler);
   }
 
   function show(selector, preShowCb, allowMultiple) {
-    var screenFree;
+    let screenFree;
     preShowFocusElement = document.activeElement;
     preShowFocusElement && preShowFocusElement.blur();
     if (!_modalShown || allowMultiple) {
       screenFree = Promise.resolve();
     } else {
-      screenFree = new Promise(function (resolve) {
+      screenFree = new Promise((resolve) => {
         _queuedModals.push(resolve);
       });
     }
 
-    return screenFree.then(function () {
-      return new Promise(function (resolve) {
-        _modalShown = true;
-        preShowCb && preShowCb();
-        var modal = document.querySelector(selector);
-        modal.addEventListener(transEndEventName, function onTransitionend() {
-          modal.removeEventListener(transEndEventName, onTransitionend);
-          addCloseHandler(selector);
-          resolve();
-        });
-        modal.classList.add('visible');
-        modal.classList.add('show');
+    return screenFree.then(() => new Promise((resolve) => {
+      _modalShown = true;
+      preShowCb && preShowCb();
+      const modal = document.querySelector(selector);
+      modal.addEventListener(transEndEventName, function onTransitionend() {
+        modal.removeEventListener(transEndEventName, onTransitionend);
+        addCloseHandler(selector);
+        resolve();
       });
-    });
+      modal.classList.add('visible');
+      modal.classList.add('show');
+    }));
+  }
+
+  function flashMessage(selector) {
+    Modal.show(selector);
+    setTimeout(() => {
+      Modal.hide(selector);
+    }, 2000);
   }
 
   function hide(selector) {
-    return new Promise(function (resolve) {
-      var modal = document.querySelector(selector);
+    return new Promise((resolve) => {
+      const modal = document.querySelector(selector);
 
       modal.addEventListener(transEndEventName, function onTransitionend() {
         modal.removeEventListener(transEndEventName, onTransitionend);
@@ -83,43 +85,60 @@
       });
       removeCloseHandler(selector);
       modal.classList.remove('show');
-    }).then(function () {
+    }).then(() => {
       _modalShown = false;
-      var nextScreen = _queuedModals.shift();
+      const nextScreen = _queuedModals.shift();
       nextScreen && nextScreen();
     });
   }
 
   function showConfirm(txt, allowMultiple) {
-    var selector = '.switch-alert-modal';
-    var ui = document.querySelector(selector);
+    const selector = '.switch-alert-modal';
+    const ui = document.querySelector(selector);
     function loadModalText() {
       ui.querySelector(' header .msg').textContent = txt.head;
       ui.querySelector(' p.detail').innerHTML = txt.detail;
       ui.querySelector(' footer button.accept').textContent = txt.button;
+      const altButton = ui.querySelector(' footer button.alt-accept');
+
+      // Remove extra button if its there to avoid duplicates
+      if (altButton) {
+        altButton.parentNode.removeChild(altButton);
+      }
+      // Add extra button if we include text for it
+      if (txt.altButton) {
+        const footer = ui.querySelector('footer');
+        const newBtn = document.createElement('button');
+        newBtn.className = 'btn btn-black btn-padding alt-accept';
+        newBtn.textContent = txt.altButton;
+        footer.appendChild(newBtn);
+      }
     }
 
     return show(selector, loadModalText, allowMultiple)
-      .then(function () {
-        return new Promise(function (resolve) {
-          ui.addEventListener('click', function onClicked(evt) {
-            var classList = evt.target.classList;
-            var hasAccepted = classList.contains('accept');
-            if (evt.target.id !== 'switchAlerts' && !hasAccepted && !classList.contains('close')) {
-              return;
-            }
-            evt.stopImmediatePropagation();
-            evt.preventDefault();
-            ui.removeEventListener('click', onClicked);
-            hide(selector).then(function () { resolve(hasAccepted); });
+      .then(() => new Promise((resolve) => {
+        ui.addEventListener('click', function onClicked(evt) {
+          const { classList } = evt.target;
+          const hasAccepted = classList.contains('accept');
+          const altHasAccepted = classList.contains('alt-accept');
+          if (evt.target.id !== 'switchAlerts' && !hasAccepted && !altHasAccepted && !classList.contains('close')) {
+            return;
+          }
+          evt.stopImmediatePropagation();
+          evt.preventDefault();
+          ui.removeEventListener('click', onClicked);
+          hide(selector).then(() => {
+            if (altHasAccepted) return resolve({ altHasAccepted });
+            return resolve(hasAccepted);
           });
         });
-      });
+      }));
   }
 
   global.Modal = {
-    show: show,
-    hide: hide,
-    showConfirm: showConfirm
+    flashMessage,
+    show,
+    hide,
+    showConfirm,
   };
-}(this));
+})(this);

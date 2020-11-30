@@ -1,16 +1,10 @@
 /* global Modal */
 
-!(function (global) {
-  'use strict';
-
-  var showFeedback,
-    sendButton,
-    audioScoreSelect,
-    videoScoreSelect,
-    otherInfo,
+!((global) => {
+  let showFeedback; let sendButton; let audioScoreSelect; let videoScoreSelect; let otherInfo; let
     reportIssueScore;
 
-  var feedbackReportSelector = '.feedback-report';
+  const feedbackReportSelector = '.feedback-report';
 
   function showForm() {
     resetForm();
@@ -21,7 +15,7 @@
     return Modal.hide(feedbackReportSelector);
   }
 
-  var init = function (aReportIssueLevel) {
+  const init = (aReportIssueLevel) => {
     reportIssueScore = aReportIssueLevel;
     showFeedback = document.querySelector('#showFeedback');
     sendButton = document.querySelector('.feedback-report .send-feedback');
@@ -31,19 +25,19 @@
     addHandlers();
   };
 
-  var resetForm = function () {
+  const resetForm = () => {
     otherInfo.value = '';
   };
 
-  var addHandlers = function () {
-    sendButton.addEventListener('click', function (event) {
+  const addHandlers = () => {
+    sendButton.addEventListener('click', (event) => {
       event.preventDefault();
-      var audioScore = audioScoreSelect.options[audioScoreSelect.selectedIndex].value;
-      var videoScore = videoScoreSelect.options[videoScoreSelect.selectedIndex].value;
+      const audioScore = audioScoreSelect.options[audioScoreSelect.selectedIndex].value;
+      const videoScore = videoScoreSelect.options[videoScoreSelect.selectedIndex].value;
       Utils.sendEvent('feedbackView:sendFeedback', {
-        audioScore: audioScore,
-        videoScore: videoScore,
-        description: otherInfo.value
+        audioScore,
+        videoScore,
+        description: otherInfo.value,
       });
 
       if (audioScore <= reportIssueScore || videoScore <= reportIssueScore) {
@@ -53,13 +47,13 @@
       hideForm();
     });
 
-    showFeedback && showFeedback.addEventListener('click', function onShowFeedbackClicked(event) {
+    showFeedback && showFeedback.addEventListener('click', (event) => {
       event.preventDefault();
       showForm();
     });
   };
 
   global.FeedbackView = {
-    init: init
+    init,
   };
-}(this));
+})(this);

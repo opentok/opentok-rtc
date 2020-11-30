@@ -22,6 +22,30 @@
   100% {opacity: 1;}
 }
 
+@-webkit-keyframes fadeOutHide {
+  0% {opacity: 1;}
+  99% {opacity: 0;}
+  100% {visibility:hidden;}
+}
+
+@-moz-keyframes fadeOutHide {
+ 0% {opacity: 1;}
+ 99% {opacity: 0;}
+ 100% {visibility:hidden;}
+}
+
+@-o-keyframes fadeOutHide {
+ 0% {opacity: 1;}
+ 99% {opacity: 0;}
+ 100% {visibility:hidden;}
+}
+
+@keyframes fadeOutHide {
+ 0% {opacity: 1;}
+ 99% {opacity: 0;}
+ 100% {visibility:hidden;}
+}
+
 .animation(@animationName; @animationDurationTime: 1s; @animationDelayTime: 0s; @animationFillMode: both) {
   -webkit-animation-duration: @animationDurationTime;
   -moz-animation-duration: @animationDurationTime;

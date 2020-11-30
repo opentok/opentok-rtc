@@ -1,98 +1,113 @@
-/* global RoomView, Cronograph, FirebaseModel, RecordingsController, Modal,
-BubbleFactory, Clipboard, LayoutManager */
+/* global RoomView, Cronograph, ArchivesEventsListener, RecordingsController, Modal,
+BubbleFactory, LayoutManager */
 
-!(function (exports) {
-  'use strict';
-
+!((exports) => {
   // HTML elements for the view
-  var dock;
-  var handler;
-  var callControlsElem;
-  var feedbackButton;
-  var roomNameElem;
-  var togglePublisherVideoElem;
-  var togglePublisherAudioElem;
-  var startArchivingElem;
-  var stopArchivingElem;
-  var annotateBtnElem;
-  var manageRecordingsElem;
-  var messageButtonElem;
-  var participantsStrElem;
-  var recordingsNumberElem;
-  var videoSwitch;
-  var audioSwitch;
-  var topBannerElem;
-  var screenElem;
-  var unreadCountElem;
-  var enableArchiveManager;
-  var enableSip;
-  var hideCallControlsTimer;
-  var hideFeedbackButtonTimer;
-  var overCallControls = false;
-  var overFeedbackButton = false;
+  let dock;
+  let handler;
+  let callControlsElem;
+  let feedbackButton;
+  let togglePublisherVideoElem;
+  let togglePublisherAudioElem;
+  let startArchivingElem;
+  let stopArchivingElem;
+  let annotateBtnElem;
+  let manageRecordingsElem;
+  let messageButtonElem;
+  let participantsStrElem;
+  let recordingsNumberElem;
+  let videoSwitch;
+  let audioSwitch;
+  let topBannerElem;
+  let screenElem;
+  let unreadCountElem;
+  let enableArchiveManager;
+  let enableSip;
+  let hideCallControlsTimer;
+  let hideFeedbackButtonTimer;
+  let overCallControls = false;
+  let overFeedbackButton = false;
 
-  var _unreadMsg = 0;
-  var _chatHasBeenShown = false;
+  let _unreadMsg = 0;
+  let _chatHasBeenShown = false;
+  let chatVisible = false;
 
-  var MODAL_TXTS = {
+  const MODAL_TXTS = {
     mute: {
       head: 'Mute all participants, including yourself',
-      detail: 'Everyone will be notified and can click their <i data-icon="no_mic"></i> button' +
-              ' to unmute themselves.',
-      button: 'Mute all participants'
+      detail: 'Everyone will be notified and can click their <i data-icon="no_mic"></i> button'
+              + ' to unmute themselves.',
+      button: 'Mute all participants',
     },
     muteRemotely: {
       head: 'All participants microphones are being disabled in the call',
-      detail: 'If you want to keep talking, ' +
-              'you must manually enable your own microphone.',
-      button: 'I understand'
+      detail: 'If you want to keep talking, '
+              + 'you must manually enable your own microphone.',
+      button: 'I understand',
     },
     unmutedRemotely: {
       head: 'Your microphone is now enabled in the call',
-      detail: 'If you want to remain muted, ' +
-              'you must manually disable your own microphone.',
-      button: 'I understand'
+      detail: 'If you want to remain muted, '
+              + 'you must manually disable your own microphone.',
+      button: 'I understand',
     },
     join: {
       head: 'All participants are muted',
-      detail: 'You can unmute everyone by toggling the Mute all participants option. Or you can ' +
-              'unmute just yourself by clicking the microphone icon in the bottom menu.',
-      button: 'I understand'
+      detail: 'You can unmute everyone by toggling the Mute all participants option. Or you can '
+              + 'unmute just yourself by clicking the microphone icon in the bottom menu.',
+      button: 'I understand',
+    },
+    lock: {
+      head: 'Do you want to lock the meeting?',
+      detail: 'When a meeting room is locked, no one else will be allowed to join the meeting. '
+              + 'Current participants who leave the meeting will not be allowed back in.',
+      button: 'Lock Meeting',
     },
     endCall: {
-      head: 'Exit the Meeting',
-      detail: 'You are going to exit the OpenTok Meeting Room. The call will continue with the ' +
-              'remaining participants.',
-      button: 'End meeting'
+      head: 'Do you want to leave the meeting?',
+      detail: 'The meeting will continue with the remaining participants.',
+      button: 'Leave meeting',
+    },
+    endLockedCall: {
+      head: 'Do you want to unlock the meeting before leaving?',
+      detail: 'The meeting will continue with the remaining participants. When a meeting room is locked, no one else will be allowed to join or re-join the meeting.',
+      button: 'Unlock and Leave',
+      altButton: 'Leave Without Unlocking',
     },
     sessionDisconnected: {
       head: 'Session disconected',
-      detail: 'The connection to the OpenTok platform has been lost. Check your network ' +
-              'connectivity and press Reload to connect again.',
-      button: 'Reload'
+      detail: 'The connection to the OpenTok platform has been lost. Check your network '
+              + 'connectivity and press Reload to connect again.',
+      button: 'Reload',
     },
     chromePublisherError: {
       head: 'Internal Chrome Error',
-      detail: 'Failed to acquire microphone. This is a known Chrome bug. Please completely quit ' +
-              'and restart your browser.',
-      button: 'Reload'
-    }
+      detail: 'Failed to acquire microphone. This is a known Chrome bug. Please completely quit '
+              + 'and restart your browser.',
+      button: 'Reload',
+    },
+    meetingFullError: {
+      head: 'Meeting Full',
+      detail: `This meeting has reached the full capacity of ${window.maxUsersPerRoom} participants. Try&nbsp;joining later.`,
+      button: 'OK',
+    },
   };
 
-  var NOT_SHARING = {
+  const NOT_SHARING = {
     detail: {
-      isSharing: false
-    }
+      isSharing: false,
+    },
   };
 
   function setUnreadMessages(count) {
-    _unreadMsg = count;
-    // document.getElementById('unreadMsg').style.display = count === 0 ? 'none' : 'block';
-    unreadCountElem.textContent = count;
-    // HTMLElems.flush(unreadCountElem.parentElement);
+    if (!chatVisible) {
+      _unreadMsg = count;
+      unreadCountElem.textContent = (count === 0) ? '' : `(${count})`;
+    }
   }
 
   function setChatStatus(visible) {
+    chatVisible = visible;
     if (visible) {
       _chatHasBeenShown = true;
       setUnreadMessages(0);
@@ -106,64 +121,62 @@ BubbleFactory, Clipboard, LayoutManager */
       messageButtonElem.classList.remove('activated');
     }
     Utils.sendEvent('roomView:chatVisibility', visible);
-    HTMLElems.flush('#toggleChat');
   }
 
-  var chatViews = {
-    unreadMessage: function () {
-      setUnreadMessages(_unreadMsg + 1);
+  const chatViews = {
+    unreadMessage() {
       if (!_chatHasBeenShown) {
         setChatStatus(true);
       }
+      setUnreadMessages(_unreadMsg + 1);
     },
-    hidden: function () {
+    hidden() {
       Utils.sendEvent('roomView:screenChange');
     },
-    shown: function () {
+    shown() {
       Utils.sendEvent('roomView:screenChange');
-    }
+    },
   };
 
-  var chatEvents = {
-    hidden: function () {
+  const chatEvents = {
+    hidden() {
       document.body.data('chatStatus', 'hidden');
       messageButtonElem.classList.remove('activated');
       setUnreadMessages(0);
-      HTMLElems.flush('#toggleChat');
-    }
+    },
   };
 
-  var hangoutEvents = {
-    screenOnStage: function (event) {
-      var status = event.detail.status;
+  const hangoutEvents = {
+    screenOnStage(event) {
+      const { status } = event.detail;
       if (status === 'on') {
         dock.data('previouslyCollapsed', dock.classList.contains('collapsed'));
         dock.classList.add('collapsed');
       } else if (dock.data('previouslyCollapsed') !== null) {
-        dock.data('previouslyCollapsed') === 'true' ? dock.classList.add('collapsed') :
-          dock.classList.remove('collapsed');
+        dock.data('previouslyCollapsed') === 'true' ? dock.classList.add('collapsed')
+          : dock.classList.remove('collapsed');
         dock.data('previouslyCollapsed', null);
       }
     },
-    rearranged: function () {
+    rearranged() {
       Utils.sendEvent('roomView:screenChange');
-    }
+    },
   };
 
-  var screenShareCtrEvents = {
+  const screenShareCtrEvents = {
     changeScreenShareStatus: toggleScreenSharing,
     destroyed: toggleScreenSharing.bind(undefined, NOT_SHARING),
-    annotationStarted: function () {
+    annotationStarted() {
       Utils.setDisabled(annotateBtnElem, false);
     },
-    annotationEnded: function () {
+    annotationEnded() {
       document.body.data('annotationVisible', 'false');
       Utils.setDisabled(annotateBtnElem, true);
-    }
+    },
   };
 
-  var roomControllerEvents = {
-    userChangeStatus: function (evt) {
+  const roomControllerEvents = {
+    userChangeStatus(evt) {
       // If user changed the status we need to reset the switch
       if (evt.detail.name === 'video') {
         setSwitchStatus(false, false, videoSwitch, 'roomView:videoSwitch');
@@ -171,46 +184,73 @@ BubbleFactory, Clipboard, LayoutManager */
         setSwitchStatus(false, false, audioSwitch, 'roomView:muteAllSwitch');
       }
     },
-    roomMuted: function (evt) {
-      var isJoining = evt.detail.isJoining;
+    roomLocked(evt) {
+      const lockState = evt.detail;
+      RoomView.lockState = lockState;
+      const menuLockIcon = document.getElementById('lock-room-icon');
+      const menuLockText = document.getElementById('lock-msg');
+      const navBarStateIcon = document.getElementById('room-locked-state');
+
+      if (lockState === 'locked') {
+        menuLockText.innerHTML = 'Unlock Meeting';
+        menuLockIcon.setAttribute('data-icon', 'closedLock');
+        navBarStateIcon.style.display = 'block';
+      }
+      if (lockState === 'unlocked') {
+        menuLockText.innerHTML = 'Lock Meeting';
+        menuLockIcon.setAttribute('data-icon', 'openLock');
+        navBarStateIcon.style.display = 'none';
+
+        Modal.flashMessage('.room-unlocked-modal');
+      }
+    },
+    roomMuted(evt) {
+      const { isJoining } = evt.detail;
       setAudioSwitchRemotely(true);
       Modal.showConfirm(isJoining ? MODAL_TXTS.join : MODAL_TXTS.muteRemotely);
     },
-    sessionDisconnected: function () {
+    sessionDisconnected() {
       RoomView.participantsNumber = 0;
       LayoutManager.removeAll();
     },
-    controllersReady: function () {
-      var selectorStr = '#top-banner [disabled], .call-controls [disabled]'
+    controllersReady() {
+      const selectorStr = '#top-banner [disabled], .call-controls [disabled]'
         + ':not(#toggle-publisher-video):not(#toggle-publisher-audio)'
         + ':not(#annotate)';
-      var elements = document.querySelectorAll(selectorStr);
-      Array.prototype.forEach.call(elements, function (element) {
+      const elements = document.querySelectorAll(selectorStr);
+      Array.prototype.forEach.call(elements, (element) => {
         Utils.setDisabled(element, false);
       });
     },
-    annotationStarted: function () {
+    annotationStarted() {
       Utils.setDisabled(annotateBtnElem, false);
     },
-    annotationEnded: function () {
+    annotationEnded() {
       document.body.data('annotationVisible', 'false');
       Utils.setDisabled(annotateBtnElem, true);
     },
-    chromePublisherError: function () {
-      Modal.showConfirm(MODAL_TXTS.chromePublisherError).then(function () {
+    chromePublisherError() {
+      Modal.showConfirm(MODAL_TXTS.chromePublisherError).then(() => {
         document.location.reload();
       });
-    }
+    },
+    meetingFullError() {
+      Modal.showConfirm(MODAL_TXTS.meetingFullError).then(() => {
+        document.location.reload();
+      });
+    },
   };
 
   function setAudioSwitchRemotely(isMuted) {
-    setSwitchStatus(isMuted, false, audioSwitch, 'roomView:muteAllSwitch');
-    isMuted ?
-      setPublisherAudioSwitchStatus('muted') :
-      setPublisherAudioSwitchStatus('activated');
+    isMuted
+      ? setPublisherAudioSwitchStatus('muted')
+      : setPublisherAudioSwitchStatus('activated');
   }
 
   function showConfirmChangeMicStatus(isMuted) {
+    if (isMuted) {
+      setPublisherAudioSwitchStatus('muted');
+    }
     return Modal.showConfirm(isMuted ? MODAL_TXTS.muteRemotely : MODAL_TXTS.unmutedRemotely);
   }
 
@@ -219,7 +259,6 @@ BubbleFactory, Clipboard, LayoutManager */
     handler = dock;
     callControlsElem = document.querySelector('.call-controls');
     feedbackButton = document.querySelector('.feedbackButton');
-    roomNameElem = dock.querySelector('.room-name');
     participantsStrElem = document.getElementById('participantsStr');
     recordingsNumberElem = dock.querySelector('#recordings');
     videoSwitch = dock.querySelector('#videoSwitch');
@@ -255,19 +294,19 @@ BubbleFactory, Clipboard, LayoutManager */
     topBannerElem.style.visibility = 'visible';
     screenElem.style.visibility = 'visible';
     screenElem.addEventListener('mousemove', showControls);
-    callControlsElem.addEventListener('mouseover', function () {
+    callControlsElem.addEventListener('mouseover', () => {
       clearTimeout(hideCallControlsTimer);
       overCallControls = true;
     });
-    callControlsElem.addEventListener('mouseout', function () {
+    callControlsElem.addEventListener('mouseout', () => {
       overCallControls = false;
       hideCallControls();
     });
-    feedbackButton && feedbackButton.addEventListener('mouseover', function () {
+    feedbackButton && feedbackButton.addEventListener('mouseover', () => {
       clearTimeout(hideFeedbackButtonTimer);
       overFeedbackButton = true;
     });
-    feedbackButton && feedbackButton.addEventListener('mouseout', function () {
+    feedbackButton && feedbackButton.addEventListener('mouseout', () => {
       overFeedbackButton = false;
       hideFeedbackButton();
     });
@@ -305,7 +344,6 @@ BubbleFactory, Clipboard, LayoutManager */
     feedbackButton.classList.remove('visible');
   }
 
-
   function showPublisherButtons(publisherOptions) {
     Utils.setDisabled(togglePublisherVideoElem, false);
     Utils.setDisabled(togglePublisherAudioElem, false);
@@ -319,8 +357,8 @@ BubbleFactory, Clipboard, LayoutManager */
   }
 
   function setSwitchStatus(status, bubbleUp, domElem, evtName) {
-    var oldStatus = domElem.classList.contains('activated');
-    var newStatus;
+    const oldStatus = domElem.classList.contains('activated');
+    let newStatus;
     if (status === undefined) {
       newStatus = domElem.classList.toggle('activated');
     } else {
@@ -344,28 +382,30 @@ BubbleFactory, Clipboard, LayoutManager */
     }
   }
 
-  var cronograph = null;
+  let cronograph = null;
 
   function getCronograph() {
     if (cronograph) {
       return Promise.resolve(cronograph);
     }
     return LazyLoader.dependencyLoad([
-      '/js/components/cronograph.js'
-    ]).then(function () {
+      '/js/components/cronograph.js',
+    ]).then(() => {
       cronograph = Cronograph;
       return cronograph;
     });
   }
 
   function onStartArchiving(data) {
-    getCronograph().then(function (cronograph) { // eslint-disable-line consistent-return
-      var start = function (archive) {
-        var duration = 0;
+    getCronograph().then((cronograph) => { // eslint-disable-line consistent-return
+      const start = (archive) => {
+        let duration = 0;
         archive && (duration = Math.round((Date.now() - archive.createdAt) / 1000));
         cronograph.start(duration);
         startArchivingElem.style.display = 'none';
         stopArchivingElem.style.display = 'block';
+        stopArchivingElem.style.flex = 'auto';
+        stopArchivingElem.style.flexDirection = 'row';
         manageRecordingsElem.classList.add('recording');
       };
 
@@ -374,21 +414,21 @@ BubbleFactory, Clipboard, LayoutManager */
         return start(null);
       }
 
-      var onModel = function () { // eslint-disable-line consistent-return
-        var archives = FirebaseModel.archives;
-        var archiveId = data.id;
+      const onModel = () => { // eslint-disable-line consistent-return
+        const { archives } = ArchivesEventsListener;
+        const archiveId = data.id;
 
         if (archives) {
           return start(archives[archiveId]);
         }
 
-        FirebaseModel.addEventListener('value', function onValue(archives) {
-          FirebaseModel.removeEventListener('value', onValue);
+        ArchivesEventsListener.addEventListener('value', function onValue(archives) {
+          ArchivesEventsListener.removeEventListener('value', onValue);
           start(archives[archiveId]);
         });
       };
 
-      var model = RecordingsController.model;
+      const { model } = RecordingsController;
 
       if (model) {
         cronograph.init();
@@ -404,32 +444,33 @@ BubbleFactory, Clipboard, LayoutManager */
   }
 
   function onStopArchiving() {
-    getCronograph().then(function (cronograph) {
+    getCronograph().then((cronograph) => {
       stopArchivingElem.style.display = 'none';
-      startArchivingElem.style.display = 'inline-block';
+      startArchivingElem.style.display = 'inline-flex';
       manageRecordingsElem.classList.remove('recording');
       cronograph.stop();
     });
   }
 
-  var addHandlers = function () {
-    handler.addEventListener('click', function () {
+  const addHandlers = () => {
+    handler.addEventListener('click', () => {
       dock.classList.toggle('collapsed');
       dock.data('previouslyCollapsed', null);
     });
 
-    callControlsElem.addEventListener('click', function (e) {
-      var elem = e.target;
+    callControlsElem.addEventListener('click', (e) => {
+      let elem = e.target;
       elem = HTMLElems.getAncestorByTagName(elem, 'button');
       if (elem === null) {
         return;
       }
       switch (elem.id) {
-        case 'addToCall':
+        case 'addToCall': {
           Utils.sendEvent('roomView:addToCall');
           break;
-        case 'toggle-publisher-video':
-          var hasVideo;
+        }
+        case 'toggle-publisher-video': {
+          let hasVideo;
           if (elem.classList.contains('activated')) {
             elem.classList.remove('activated');
             elem.querySelector('i').data('icon', 'no_video');
@@ -439,10 +480,11 @@ BubbleFactory, Clipboard, LayoutManager */
             elem.querySelector('i').data('icon', 'video_icon');
             hasVideo = true;
           }
-          Utils.sendEvent('roomView:togglePublisherVideo', { hasVideo: hasVideo });
+          Utils.sendEvent('roomView:togglePublisherVideo', { hasVideo });
           break;
-        case 'toggle-publisher-audio':
-          var hasAudio;
+        }
+        case 'toggle-publisher-audio': {
+          let hasAudio;
           if (elem.classList.contains('activated')) {
             elem.classList.remove('activated');
             elem.querySelector('i').data('icon', 'mic-muted');
@@ -452,79 +494,138 @@ BubbleFactory, Clipboard, LayoutManager */
             elem.querySelector('i').data('icon', 'mic');
             hasAudio = true;
           }
-          Utils.sendEvent('roomView:togglePublisherAudio', { hasAudio: hasAudio });
+          Utils.sendEvent('roomView:togglePublisherAudio', { hasAudio });
           break;
-        case 'screen-share':
+        }
+        case 'screen-share': {
           Utils.sendEvent('roomView:shareScreen');
           break;
-        case 'annotate':
-          document.body.data('annotationVisible') === 'true' ?
-            document.body.data('annotationVisible', 'false') : document.body.data('annotationVisible', 'true');
+        }
+        case 'annotate': {
+          document.body.data('annotationVisible') === 'true'
+            ? document.body.data('annotationVisible', 'false') : document.body.data('annotationVisible', 'true');
           Utils.sendEvent('roomView:screenChange');
           break;
-        case 'message-btn':
+        }
+        case 'message-btn': {
           setChatStatus(!messageButtonElem.classList.contains('activated'));
           break;
-        case 'endCall':
-          Modal.showConfirm(MODAL_TXTS.endCall).then(function (endCall) {
-            if (endCall) {
-              RoomView.participantsNumber = 0;
-              Utils.sendEvent('roomView:endCall');
-            }
-          });
+        }
+        case 'endCall': {
+          if (RoomView.lockState === 'locked') {
+            Modal.showConfirm(MODAL_TXTS.endLockedCall).then((accept) => {
+              if (accept.altHasAccepted) {
+                RoomView.participantsNumber = 0;
+                Utils.sendEvent('roomView:endCall');
+              } else if (accept) {
+                Utils.sendEvent('roomView:setRoomLockState', 'unlocked');
+                setTimeout(() => {
+                  RoomView.participantsNumber = 0;
+                  Utils.sendEvent('roomView:endCall');
+                }, 3000);
+              }
+            });
+          } else {
+            Modal.showConfirm(MODAL_TXTS.endCall).then((accept) => {
+              if (accept) {
+                RoomView.participantsNumber = 0;
+                Utils.sendEvent('roomView:endCall');
+              }
+            });
+          }
           break;
+        }
+        default: {
+          // No-op on default;
+        }
       }
     });
 
-    var menu = document.getElementById('top-banner');
+    const optionIcons = document.getElementById('top-icons-container');
 
-    menu.addEventListener('click', function (e) {
-      var elem = e.target;
-      elem.blur();
+    optionIcons.addEventListener('click', () => {
+      BubbleFactory.get('chooseLayout').hide();
+    });
+
+    if (window.enableRoomLocking) {
+      const lockRoom = document.getElementById('lockRoomContainer');
+
+      lockRoom.addEventListener('click', () => {
+        const lockIcon = document.getElementById('lock-room-icon');
+        const lockState = lockIcon.getAttribute('data-icon');
+        if (lockState === 'openLock') {
+          Modal.showConfirm(MODAL_TXTS.lock).then((lock) => {
+            if (lock) {
+              Utils.sendEvent('roomView:setRoomLockState', 'locked');
+            }
+          });
+        }
+        if (lockState === 'closedLock') {
+          Utils.sendEvent('roomView:setRoomLockState', 'unlocked');
+        }
+      });
+    }
+
+    const switchMic = document.getElementById('pickMicContainer');
+
+    switchMic.addEventListener('click', () => {
+      const select = document.getElementById('select-devices');
+      select.style.display = 'inline-block';
+      Modal.showConfirm({
+        head: 'Set mic input',
+        detail: 'Please identify the audio source in the following list:',
+        button: 'Change',
+      }).then((start) => {
+        if (start) {
+          Utils.sendEvent('roomView:setAudioSource', select.value);
+        }
+        select.style.display = 'none';
+      });
+    });
+
+    const switchCam = document.getElementById('pickCamContainer');
+
+    switchCam.addEventListener('click', () => {
+      Utils.sendEvent('roomView:toggleFacingMode');
+    });
+
+    const muteAllparticipants = document.getElementById('muteAllContainer');
+    if (muteAllparticipants) {
+      muteAllparticipants.addEventListener('click', () => {
+        Utils.sendEvent('roomView:muteAllSwitch', { status: true });
+        setPublisherAudioSwitchStatus('muted');
+      });
+    }
+
+    const menu = document.getElementById('top-banner');
+
+    menu.addEventListener('click', (e) => {
+      const elem = HTMLElems.getAncestorByTagName(e.target, 'a') || e.target;
       // pointer-events is not working on IE so we can receive as target a child
-      elem = HTMLElems.getAncestorByTagName(elem, 'a');
+      elem.blur();
+
       if (!elem) {
         return;
       }
+
       switch (elem.id) {
-        case 'toggleFacingMode':
-          Utils.sendEvent('roomView:toggleFacingMode');
-          break;
-        case 'pickMic':
-          var select = document.getElementById('select-devices');
-          select.style.display = 'inline-block';
-          Modal.showConfirm({
-            head: 'Set mic input',
-            detail: 'Please identify the audio source in the following list:',
-            button: 'Change'
-          }).then(function (start) {
-            if (start) {
-              Utils.sendEvent('roomView:setAudioSource', select.value);
-            }
-            select.style.display = 'none';
-          });
-          break;
         case 'viewRecordings':
           BubbleFactory.get('viewRecordings').toggle();
           break;
+        case 'options-container':
         case 'chooseLayout':
           BubbleFactory.get('chooseLayout').toggle();
           break;
         case 'startArchiving':
         case 'stopArchiving':
-          Utils.sendEvent('roomView:' + elem.id);
+          Utils.sendEvent(`roomView:${elem.id}`);
           break;
         case 'startChat':
         case 'stopChat':
           setChatStatus(elem.id === 'startChat');
           break;
-        case 'endCall':
-          Modal.showConfirm(MODAL_TXTS.endCall).then(function (endCall) {
-            if (endCall) {
-              RoomView.participantsNumber = 0;
-              Utils.sendEvent('roomView:endCall');
-            }
-          });
+        case 'addToCall':
+          Utils.sendEvent('roomView:addToCall');
           break;
         case 'startSharingDesktop':
         case 'stopSharingDesktop':
@@ -539,7 +640,7 @@ BubbleFactory, Clipboard, LayoutManager */
           break;
         case 'audioSwitch':
           if (!audioSwitch.classList.contains('activated')) {
-            Modal.showConfirm(MODAL_TXTS.mute).then(function (shouldDisable) {
+            Modal.showConfirm(MODAL_TXTS.mute).then((shouldDisable) => {
               if (shouldDisable) {
                 setSwitchStatus(true, true, audioSwitch, 'roomView:muteAllSwitch');
                 togglePublisherAudioElem.classList.remove('activated');
@@ -549,28 +650,31 @@ BubbleFactory, Clipboard, LayoutManager */
             setSwitchStatus(false, true, audioSwitch, 'roomView:muteAllSwitch');
             togglePublisherAudioElem.classList.add('activated');
           }
+          break;
+        default:
+          // No-op on default;
       }
     });
 
     if (enableSip) {
-      var dialOutBtn = document.getElementById('dialOutBtn');
+      const dialOutBtn = document.getElementById('dialOutBtn');
       // Send event to get phonenumber from phoneNumberView
-      dialOutBtn.addEventListener('click', function (event) {
+      dialOutBtn.addEventListener('click', (event) => {
         event.preventDefault();
         Utils.sendEvent('roomView:verifyDialOut');
       });
 
       // Listen for PhoneNumberView event
       Utils.addEventsHandlers('phoneNumberView:', {
-        dialOut: function (evt) {
-          var phonenumber = evt.detail;
+        dialOut(evt) {
+          const phonenumber = evt.detail;
           Utils.sendEvent('roomView:dialOut', phonenumber);
-        }
+        },
       });
     }
 
-    exports.addEventListener('archiving', function (e) {
-      var detail = e.detail;
+    exports.addEventListener('archiving', (e) => {
+      const { detail } = e;
 
       switch (detail.status) {
         case 'started':
@@ -580,10 +684,11 @@ BubbleFactory, Clipboard, LayoutManager */
         case 'stopped':
           onStopArchiving();
           break;
+        default:
+          // No-op on default;
       }
 
       document.body.data('archiveStatus', e.detail.status);
-      HTMLElems.flush(['#toggleArchiving', '[data-stream-type=publisher] [data-icon="record"]']);
     });
 
     Utils.addEventsHandlers('screenShareController:', screenShareCtrEvents, exports);
@@ -594,48 +699,43 @@ BubbleFactory, Clipboard, LayoutManager */
   };
 
   function toggleScreenSharing(evt) {
-    var isSharing = evt.detail.isSharing;
+    const { isSharing } = evt.detail;
     document.body.data('desktopStatus', isSharing ? 'sharing' : 'notSharing');
-    HTMLElems.flush('#toggleSharing');
   }
 
-  var getURLtoShare = function () {
-    return window.location.origin + window.location.pathname;
+  const getURLtoShare = () => {
+    const textArea = document.getElementById('current-url');
+    const urlToShare = window.location.origin + window.location.pathname;
+    textArea.innerHTML = urlToShare;
   };
 
-  var addClipboardFeature = function () {
-    var input = document.getElementById('current-url');
-    input.addEventListener('click', function () {
-      input.select();
-    });
-    var urlToShare = getURLtoShare();
-    input.value = urlToShare;
-    var clipboard = new Clipboard(document.querySelector('#addToCall'), { // eslint-disable-line no-unused-vars
-      text: function () {
-        return urlToShare;
-      }
-    });
-  };
-
-  var init = function (enableHangoutScroll, aEnableArchiveManager, aEnableSip) {
+  const init = (enableHangoutScroll, aEnableArchiveManager, aEnableSip) => {
     enableArchiveManager = aEnableArchiveManager;
     initHTMLElements();
     dock.style.visibility = 'visible';
     enableSip = aEnableSip;
     addHandlers();
-    addClipboardFeature();
+    getURLtoShare();
     LayoutManager.init('.streams', enableHangoutScroll);
   };
 
   exports.RoomView = {
-    init: init,
-
-    set roomName(value) {
-      HTMLElems.addText(roomNameElem, value);
-    },
+    init,
 
     set participantsNumber(value) {
       HTMLElems.replaceText(participantsStrElem, value);
+      if (!window.enableRoomLocking) {
+        return;
+      }
+      if (value === 1 && RoomView.lockState !== 'locked') {
+        document.getElementById('lockRoomContainer').style.display = 'none';
+      } else {
+        document.getElementById('lockRoomContainer').style.removeProperty('display');
+      }
+      if (value === 1 && RoomView.lockState === 'locked') {
+        Utils.sendEvent('roomView:setRoomLockState', 'unlocked');
+        document.getElementById('lockRoomContainer').style.display = 'none';
+      }
     },
 
     set recordingsNumber(value) {
@@ -652,11 +752,11 @@ BubbleFactory, Clipboard, LayoutManager */
       }
     },
 
-    showRoom: showRoom,
-    showPublisherButtons: showPublisherButtons,
-    createStreamView: createStreamView,
-    deleteStreamView: deleteStreamView,
-    setAudioSwitchRemotely: setAudioSwitchRemotely,
-    showConfirmChangeMicStatus: showConfirmChangeMicStatus
+    showRoom,
+    showPublisherButtons,
+    createStreamView,
+    deleteStreamView,
+    setAudioSwitchRemotely,
+    showConfirmChangeMicStatus,
   };
-}(this));
+})(this);

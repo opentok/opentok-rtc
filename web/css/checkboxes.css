@@ -76,9 +76,8 @@ label.switch span {
   color: #95a4ab;
   text-align: left;
   -webkit-user-select: none;
-     -moz-user-select: none;
       -ms-user-select: none;
-          user-select: none;
+       user-select: none;
 }
 label.checkbox span:before,
 label.switch span:before {

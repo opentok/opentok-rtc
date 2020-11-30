@@ -1,16 +1,10 @@
-﻿// this background script is used to invoke desktopCapture API
+// this background script is used to invoke desktopCapture API
 // to capture screen-MediaStream.
 
-var session = ['screen', 'window'];
+const session = ['screen', 'window'];
 
-chrome.runtime.onConnect.addListener(function (port) {
-
-  port.onMessage.addListener(function(message) {
-    if(message && message.method == 'getSourceId') {
-      getSourceID(message.payload.requestId);
-    }
-  });
-
+// eslint-disable-next-line no-undef
+chrome.runtime.onConnect.addListener((port) => {
   function getSourceID(requestId) {
     // as related in https://code.google.com/p/chromium/issues/detail?id=413602
     // and https://code.google.com/p/chromium/issues/detail?id=425344 :
@@ -19,19 +13,27 @@ chrome.runtime.onConnect.addListener(function (port) {
     // the solution its to change the tab.url property to the same as of the
     // requesting iframe. Its works without iframe as well.
     // requires Chrome 40+
-    var tab = port.sender.tab;
+    const { tab } = port.sender;
     tab.url = port.sender.url;
-    chrome.desktopCapture.chooseDesktopMedia(session, tab, function(sourceId) {
+    // eslint-disable-next-line no-undef
+    chrome.desktopCapture.chooseDesktopMedia(session, tab, (sourceId) => {
       console.log('sourceId', sourceId);
       // "sourceId" will be empty if permission is denied
-      if(!sourceId || !sourceId.length) {
-        return port.postMessage({ method: 'permissionDenied', payload: { requestId: requestId }});
+      if (!sourceId || !sourceId.length) {
+        return port.postMessage({ method: 'permissionDenied', payload: { requestId } });
       }
       // "ok" button is clicked; share "sourceId" with the
       // content-script which will forward it to the webpage
-      return port.postMessage({ method: 'sourceId',
-                                payload: { requestId: requestId, sourceId: sourceId } });
+      return port.postMessage({
+        method: 'sourceId',
+        payload: { requestId, sourceId },
+      });
     });
   }
 
+  port.onMessage.addListener((message) => {
+    if (message && message.method === 'getSourceId') {
+      getSourceID(message.payload.requestId);
+    }
+  });
 });

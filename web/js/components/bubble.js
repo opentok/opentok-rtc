@@ -32,26 +32,23 @@
  *
  */
 
-!(function (global) {
-  'use strict';
+!((global) => {
+  const transEndEventName = ('WebkitTransition' in document.documentElement.style)
+    ? 'webkitTransitionEnd' : 'transitionend';
 
-  var transEndEventName =
-    ('WebkitTransition' in document.documentElement.style) ?
-      'webkitTransitionEnd' : 'transitionend';
+  const HORIZONTAL_OFFSET = 10;
+  const VERTICAL_OFFSET = 4;
 
-  var HORIZONTAL_OFFSET = 10;
-  var VERTICAL_OFFSET = 4;
-
-  var bubbles = {};
+  const bubbles = {};
 
   /*
    * Closes all bubbles clicking outside them
    */
-  var onBodyClicked = function (evt) {
+  const onBodyClicked = (evt) => {
     document.body.removeEventListener('click', onBodyClicked);
-    Object.keys(bubbles).forEach(function (id) {
-      var bubble = bubbles[id];
-      var target = evt.target;
+    Object.keys(bubbles).forEach((id) => {
+      const bubble = bubbles[id];
+      let { target } = evt;
       if (bubble.associatedWith !== target) {
         // pointer-events is not working on IE so we can receive as target a child of
         // "change layout" item in main menu
@@ -63,7 +60,7 @@
     });
   };
 
-  var addGlobalHandlers = function () {
+  const addGlobalHandlers = () => {
     document.body.addEventListener('click', onBodyClicked);
   };
 
@@ -72,96 +69,95 @@
    *
    * @param {String} Id of the element which is associated with the bubble
    */
-  var Bubble = function (id) {
-    this.container = document.querySelector('.bubble[for="' + id + '"]');
+  const Bubble = function (id) {
+    this.container = document.querySelector(`.bubble[for="${id}"]`);
     this.topArrow = this.container.querySelector('.top-arrow');
     this.associatedWith = document.getElementById(id);
     this._onHidden = this._onHidden.bind(this);
 
     // Bubbles consumes 'click' events in order not to be closed automatically
-    this.container.addEventListener('click', function (e) {
+    this.container.addEventListener('click', (e) => {
       e.stopImmediatePropagation();
     });
   };
 
   Bubble.prototype = {
-    show: function () {
-      var bubble = this;
+    show() {
+      const bubble = this;
 
-      this.bubbleShown =
-        this.bubbleShown || new Promise(function (resolve) {
-          var container = bubble.container;
+      this.bubbleShown = this.bubbleShown || new Promise((resolve) => {
+        const { container } = bubble;
 
-          container.removeEventListener(transEndEventName, bubble._onHidden);
-          container.addEventListener(transEndEventName, bubble._onShown);
-          container.addEventListener(transEndEventName, function onEnd() {
-            container.removeEventListener(transEndEventName, onEnd);
-            resolve();
-          });
-
-          bubble._takePlace();
-          bubble._visible = true;
-          setTimeout(function () {
-            container.classList.add('show');
-          }, 50); // Give the chance to paint the UI element before fading in
+        container.removeEventListener(transEndEventName, bubble._onHidden);
+        container.addEventListener(transEndEventName, bubble._onShown);
+        container.addEventListener(transEndEventName, function onEnd() {
+          container.removeEventListener(transEndEventName, onEnd);
+          resolve();
         });
+
+        bubble._takePlace();
+        bubble._visible = true;
+        setTimeout(() => {
+          container.classList.add('show');
+        }, 50); // Give the chance to paint the UI element before fading in
+      });
 
       return this.bubbleShown;
     },
 
-    hide: function () {
-      var bubble = this;
+    hide() {
+      const bubble = this;
 
-      this.bubbleHidden =
-        this.bubbleHidden || new Promise(function (resolve) {
-          var container = bubble.container;
+      this.bubbleHidden = this.bubbleHidden || new Promise((resolve) => {
+        const { container } = bubble;
 
-          container.removeEventListener(transEndEventName, bubble._onShown);
-          container.addEventListener(transEndEventName, bubble._onHidden);
-          container.addEventListener(transEndEventName, function onEnd() {
-            container.removeEventListener(transEndEventName, onEnd);
-            bubble.bubbleShown = bubble.bubbleHidden = null;
-            resolve();
-          });
-
-          setTimeout(function () {
-            container.classList.remove('show');
-          }, 50); // Give the chance to paint the UI element before fading out
+        container.removeEventListener(transEndEventName, bubble._onShown);
+        container.addEventListener(transEndEventName, bubble._onHidden);
+        container.addEventListener(transEndEventName, function onEnd() {
+          container.removeEventListener(transEndEventName, onEnd);
+          bubble.bubbleShown = null;
+          bubble.bubbleHidden = null;
+          resolve();
         });
+
+        setTimeout(() => {
+          container.classList.remove('show');
+        }, 50); // Give the chance to paint the UI element before fading out
+      });
 
       return this.bubbleHidden;
     },
 
-    toggle: function () {
-      var bubble = this;
+    toggle() {
+      const bubble = this;
       return (bubble.bubbleShown) ? bubble.hide() : bubble.show();
     },
 
-    _onShown: function () {
+    _onShown() {
       addGlobalHandlers();
     },
 
-    _onHidden: function (e) {
+    _onHidden(e) {
       e.target.removeEventListener(transEndEventName, this._onHidden);
       this._visible = false;
     },
 
     set _visible(value) {
-      var classList = this.container.classList;
+      const { classList } = this.container;
       value ? classList.add('visible') : classList.remove('visible');
     },
 
-    _takePlace: function () {
-      var rectObject = this.associatedWith.getBoundingClientRect();
-      var container = this.container;
+    _takePlace() {
+      const rectObject = this.associatedWith.getBoundingClientRect();
+      const { container } = this;
       if (this.topArrow) {
-        container.style.right = (window.innerWidth - rectObject.right - 20) + 'px';
-        container.style.top = rectObject.bottom + VERTICAL_OFFSET + 'px';
+        container.style.right = `${window.innerWidth - rectObject.right + 25}px`;
+        container.style.top = `${rectObject.bottom + VERTICAL_OFFSET}px`;
       } else {
-        container.style.left = rectObject.right + HORIZONTAL_OFFSET + 'px';
-        container.style.top = (rectObject.top - rectObject.height) + 'px';
+        container.style.left = `${rectObject.right + HORIZONTAL_OFFSET}px`;
+        container.style.top = `${rectObject.top - rectObject.height}px`;
       }
-    }
+    },
   };
 
   global.BubbleFactory = {
@@ -170,14 +166,15 @@
      *
      * @param {String} Id of the element which is associated with the bubble
      */
-    get: function (id) {
-      var instance = bubbles[id];
+    get(id) {
+      let instance = bubbles[id];
 
       if (!instance) {
-        instance = bubbles[id] = new Bubble(id);
+        instance = new Bubble(id);
+        bubbles[id] = new Bubble(id);
       }
 
       return instance;
-    }
+    },
   };
-}(this));
+})(this);

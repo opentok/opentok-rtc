@@ -3,20 +3,27 @@
   margin-top: 100px;
   right: 0;
   bottom: 0;
-  background-color: #e7e7e7;
+  background-color: @lightGrey3;
   z-index: 1000;
   font-size: 0;
 
   display: none;
   transition: width @transitionTime;
 
-  @media @smartphonesPortrait {
-    margin-left: -4px;
-    margin-top: 58px;
-  }
+    @media @smartphonesPortrait {
+        margin-left: -4px;
+        margin-top: 58px;
+    }
+
+    @media @smartphonesLandscape {
+        margin-top: 0px;
+    }
 
   &.show {
     width: 486px;
+    @media @smartphonesLandscape {
+         width: 100%;
+    }
     transition: width @transitionTime;
   }
 
@@ -30,12 +37,12 @@
     overflow: hidden;
 
     header {
-      height: 85px;
+      height: 55px;
       width: 100%;
       font-size: 16px;
       text-align: left;
-      background-color: #3f4f57;
-      color: #728a95;
+      background-color: @graphiteBlack;
+      color: @silver;
       position: relative;
       display: flex;
       flex-direction: row;
@@ -48,7 +55,7 @@
         justify-content: flex-start;
       }
 
-      [data-icon="message_blue"] {
+      [data-icon="message_silver"] {
         height: 27px;
         width: 32px;
         margin-left: 26px;
@@ -72,7 +79,7 @@
     #chatMsgs {
       overflow-y: auto;
       display: block;
-      height: calc(~"100% - 200px");
+      height: calc(~"100% - 150px");
       width: calc(~"100% + 15px");
       overflow: auto;
 
@@ -86,7 +93,7 @@
 
       li.event {
         align-self: center;
-        color: #a7a0a0;
+        color: @nobelGrey2;
 
         p {
           background: none;
@@ -98,7 +105,7 @@
         align-self: flex-end;
 
         & > p {
-          border-right: 2px solid #10A9DC;
+          border-right: 2px solid @purple;
           text-align: right;
           margin-left: 40px;
           margin-right: 0;
@@ -115,7 +122,7 @@
           background-color: transparent;
           padding: 10px 30px 10px 20px;
           border: 0;
-          color: #3f4f57;
+          color: @cement;
           width: fit-content;
 
           .time, .sender {
@@ -123,13 +130,13 @@
           }
 
           .sender {
-            color: #282828;
+            color: @nero2;
             padding-left: 10px;
           }
 
           & > p {
-            color: #151515;
-            background-color: #ffffff;
+            color: @nero;
+            background-color: @solidWhite;
             font-size: 16px;
             word-break: break-word;
             margin-right: 40px;
@@ -156,16 +163,16 @@
             padding: 12px 15px;
 
             &:link {
-              color: #1a99c3;
+              color: @pelorousBlue1;
             }
 
             &:hover,
             &:active {
-              color: #0d4c62;
+              color: @astronautBlue;
             }
 
             &:visited {
-              color: #76c2db;
+              color: @sprayBlue;
             }
           }
 
@@ -191,31 +198,47 @@
     footer {
       display: flex;
       overflow: hidden;
-      height: 115px;
+      height: 83px;
       font-size: 12px;
-      background-color: #fafafa;
+      background-color: @snowWhite1;
       text-align: center;
-
+      border-radius: 4px;
+      margin-top: 0px;
+      border-radius: 4px;
+      margin-left: 5px;
+      margin-right: 5px;
+      border: 2px @trafficGreen solid;
       .btn {
         position: absolute;
         right: 25px;
         bottom: 27px;
-        height: 60px;
-        width: 60px;
+        height: 40px;
+        width: 40px;
         border-radius: 50%;
-        background-color: #10a9dc;
-        background-size: 28px 28px;
+        background-color: @purple;
+        background-size: 36px 36px;
         line-height: 25px;
         margin: 0;
-        box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
+      }
+
+     .btn1 {
+        position: absolute;
+        right: 72px;
+        bottom: 27px;
+        height: 20px;
+        width: 20px;
+        border-radius: 50%;
+        background-color: @purple;
+        line-height: 25px;
+        margin: 0;
       }
 
       textarea {
         font-size: 16px;
         margin: 0px;
         width: 100%;
-        height: 80px;
-        padding: 30px 90px 30px 20px;
+        height: 70%;
+        padding: 20px 90px 10px 10px;
         border: none;
       }
 
@@ -224,14 +247,14 @@
       }
 
       textarea::placeholder {
-        color: #b8b6b6;
+        color: @pinkGrey;
       }
     }
   }
 
   .dialog-chat:invalid {
     .btn {
-      background-color: #c6c5c5;
+      background-color: @silver5;
       pointer-events: none;
     }
   }

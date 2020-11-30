@@ -36,7 +36,7 @@
       name: _logEventData.name
     };
 
-    _otkanalytics = new _OTKAnalytics(otkanalyticsData);
+    _otkanalytics =  _OTKAnalytics(otkanalyticsData);
 
     var sessionInfo = {
       sessionId: _session.id,
@@ -1586,11 +1586,14 @@
     this.createPanel = function (externalWindow) {
       if (_toolbar.parent) {
         var context = externalWindow ? externalWindow.document : document;
-        panel = context.createElement('div');
-        panel.setAttribute('id', 'OT_toolbar');
-        panel.setAttribute('class', 'OT_panel');
-        panel.style.width = '100%';
-        panel.style.height = '100%';
+        panel = context.getElementById('OT_toolbar');
+        if (!panel) {
+          panel = context.createElement('div');
+          panel.setAttribute('id', 'OT_toolbar');
+          panel.setAttribute('class', 'OT_panel');
+          panel.style.width = '100%';
+          panel.style.height = '100%';
+        }
         this.parent.appendChild(panel);
         this.parent.style.position = 'relative';
         this.parent.zIndex = 1000;
@@ -2073,7 +2076,7 @@
       name: _logEventData.name
     };
 
-    _otkanalytics = new OTKAnalytics(otkanalyticsData);
+    _otkanalytics = OTKAnalytics(otkanalyticsData);
 
     var sessionInfo = {
       sessionId: _session.id,
@@ -2121,7 +2124,11 @@
       '<div id="toolbar"></div>',
       '</div>'
     ].join('\n');
-    $('body').append(toolbar);
+
+    if (!$('#annotationToolbarContainer').length) {
+      $('body').append(toolbar);
+    }
+
     _log(_logEventData.actionUseToolbar, _logEventData.variationSuccess);
   };
 

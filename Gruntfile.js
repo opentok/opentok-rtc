@@ -1,57 +1,110 @@
-'use strict';
-
-module.exports = function(grunt) {
-
+module.exports = function (grunt) {
   // To-Do check what we need and add/remove as needed...
   [
     'grunt-autoprefixer',
     'grunt-contrib-clean',
     'grunt-contrib-less',
+    'grunt-terser',
+    'grunt-contrib-concat',
+    'grunt-critical',
     'grunt-contrib-watch',
     'grunt-mocha-test', // Server side test runner
     'grunt-bower-task',
     'grunt-gitinfo',
-    'grunt-karma' // Client side test runner.
+    'grunt-karma', // Client side test runner.
   ].forEach(grunt.loadNpmTasks);
 
   grunt.loadTasks('tasks');
 
-  // To create HTML test files from a template. To-Do: Dunno if this is even needed or not
-  var TEST_BASE_DIR = 'test/';
-
   grunt.initConfig({
+    terser: {
+      pages: {
+        options: {
+          compress: true,
+          safari10: true,
+          ecma: 2018,
+          sourceMap: {
+            includeSources: true,
+          },
+        },
+        files: [
+          {
+            expand: true,
+            src: '*.js',
+            dest: './web/js/min',
+            cwd: './web/js',
+            ext: '.min.js',
+          },
+        ],
+      },
+      prod_build: {
+        options: {
+          compress: true,
+          safari10: true,
+          ecma: 2016,
+        },
+        files: [
+          {
+            expand: true,
+            src: '*.js',
+            dest: './web/js/min',
+            cwd: './web/js',
+            ext: '.min.js',
+          },
+        ],
+      },
 
+    },
+    concat: {
+      dist: {
+        options: {
+          process(src, filepath) {
+            return `${src}\n //# sourceMappingURL= ${filepath.substring(filepath.lastIndexOf('/') + 1)}.map`;
+          },
+        },
+        files: {
+          './web/js/min/chatView.min.js': ['./web/js/min/chatView.min.js'],
+          './web/js/min/chatController.min.js': ['./web/js/min/chatController.min.js'],
+          './web/js/min/feedbackView.min.js': ['./web/js/min/feedbackView.min.js'],
+          './web/js/min/feedbackController.min.js': ['./web/js/min/feedbackController.min.js'],
+          './web/js/min/precallView.min.js': ['./web/js/min/precallView.min.js'],
+          './web/js/min/precallController.min.js': ['./web/js/min/precallController.min.js'],
+          './web/js/min/phoneNumberView.min.js': ['./web/js/min/phoneNumberView.min.js'],
+          './web/js/min/phoneNumberController.min.js': ['./web/js/min/phoneNumberController.min.js'],
+          './web/js/min/recordingsView.min.js': ['./web/js/min/recordingsView.min.js'],
+          './web/js/min/recordingsController.min.js': ['./web/js/min/recordingsController.min.js'],
+          './web/js/min/screenShareView.min.js': ['./web/js/min/screenShareView.min.js'],
+          './web/js/min/screenShareController.min.js': ['./web/js/min/screenShareController.min.js'],
+          './web/js/min/roomController.min.js': ['./web/js/min/roomController.min.js'],
+          './web/js/min/layoutManager.min.js': ['./web/js/min/layoutManager.min.js'],
+        },
+      },
+    },
     mochaTest: {
       unit: {
         options: {
           reporter: 'spec',
           captureFile: 'resultsUnit.txt',
           quiet: false,
-          clearRequireCache: true
+          clearRequireCache: true,
         },
-        src: ['test/server/**/*_spec.js', '!test/server/firebaseArchives_spec.js']
-      },
-      archives: {
-          options: {
-            reporter: 'spec',
-            captureFile: 'resultsUnit.txt',
-            quiet: false,
-            clearRequireCache: true
-          },
-          src: ['test/server/firebaseArchives_spec.js']
+        src: [
+          'test/server/**/*_spec.js',
+        ],
       },
       rest: {
         options: {
           reporter: 'spec',
           captureFile: 'resultsRest.txt',
           quiet: false,
-          clearRequireCache: true
+          clearRequireCache: true,
         },
-        src: ['test/api/**/*_spec.js']
-      }
+        src: ['test/api/**/*_spec.js'],
+      },
     },
 
-    bower: {// grunt.file.setBase('test');
+    bower: {
+      // grunt.file.setBase('test');
       install: {
         options: {
           targetDir: './lib',
@@ -60,81 +113,92 @@ module.exports = function(grunt) {
           verbose: false,
           cleanTargetDir: false,
           cleanBowerDir: true,
-          bowerOptions: {}
-        }
-      }
+          bowerOptions: {},
+        },
+      },
     },
 
     karma: {
       options: {
-        configFile: 'karma.conf.js'
+        configFile: 'karma.conf.js',
       },
       integration: {
-        singleRun: true
+        singleRun: true,
       },
-      dev: {
-      }
+      dev: {},
     },
 
-    clean: { // To-Do: Configure or remove this!
+    clean: {
+      // To-Do: Configure or remove this!
     },
 
-    'gitinfo': {
+    gitinfo: {
       options: {
-        cwd: '.'
-      }
+        cwd: '.',
+      },
     },
 
     less: {
       default: {
+        options: {
+          compress: true,
+          yuicompress: true,
+          optimization: 2,
+        },
         files: {
           'web/css/landing.opentok.css': 'web/less/landing.less',
           'web/css/room.opentok.css': 'web/less/room.less',
-          'web/css/min.opentok.css': 'web/less/min.less',
           'web/css/endMeeting.opentok.css': 'web/less/endMeeting.less',
           'web/css/annotation.opentok.css': 'web/less/annotation.less',
-          'web/css/hangoutScroll.css': 'web/less/hangoutScroll.less'
-        }
-      }
+          'web/css/hangoutScroll.css': 'web/less/hangoutScroll.less',
+        },
+      },
     },
-
+    critical: {
+      test: {
+        options: {
+          base: './',
+          css: ['web/css/landing.opentok.css'],
+          target: {
+            uncritical: 'web/css/room-uncritical.opentok.css',
+          },
+          minify: true,
+        },
+        src: 'views/room.ejs',
+        dest: 'web/css/room-critical.opentok.css',
+      },
+    },
     autoprefixer: {
       options: {
-        browsers: ['last 5 versions']
+        browsers: ['last 5 versions'],
       },
       dist: {
-        src: 'web/css/*.css'
-      }
+        src: 'web/css/*.css',
+      },
     },
 
     watch: {
       styles: {
-        files: [
-          './web/**/*.less'
-        ],
+        files: ['./web/**/*.less'],
         tasks: ['less', 'autoprefixer'],
         options: {
-          nospawn: false
-        }
+          nospawn: false,
+        },
       },
       server: {
         options: {
-          nospawn: false
+          nospawn: false,
         },
-        files: [
-          './server.js',
-          'server/**/*.js',
-          'test/server/**/*.js'
-        ],
-        tasks: ['serverTest']
-      }
+        files: ['./server.js', 'server/**/*.js', 'test/server/**/*.js'],
+        tasks: ['serverTest'],
+      },
     },
   });
 
   // On watch events, if the changed file is a test file then configure mochaTest to only
   // run the tests from that file. Otherwise run all the tests
-  var defaultTestSrc = grunt.config('mochaTest.unit.src');
-  grunt.event.on('watch', function(action, filepath) {
+  const defaultTestSrc = grunt.config('mochaTest.unit.src');
+  grunt.event.on('watch', (action, filepath) => {
     grunt.config('mochaTest.unit.src', defaultTestSrc);
     if (filepath.match('test/')) {
       grunt.config('mochaTest.unit.src', filepath);
@@ -143,54 +207,60 @@ module.exports = function(grunt) {
 
   grunt.registerTask('clientBuild', 'Build css files', [
     'less',
-    'autoprefixer'
+    'autoprefixer',
+    'terser:pages',
+    'concat',
+  ]);
+
+  grunt.registerTask('clientBuild-Prod', 'Build css files', [
+    'less',
+    'autoprefixer',
+    'terser:prod_build',
+    'critical',
   ]);
 
   grunt.registerTask('clientDev', 'Watch for changes on less files', [
     'clientBuild',
-    'watch'
+    'watch',
   ]);
 
-  grunt.registerTask('clientTest', 'Launch client unit tests in shell with Karma + PhantomJS', [
-    'karma:dev'
-  ]);
+  grunt.registerTask(
+    'clientTest',
+    'Launch client unit tests in shell with Karma + PhantomJS',
+    ['karma:dev'],
+  );
 
   grunt.registerTask('precommit', 'Run precommit tests', [
     'karma:integration',
     'mochaTest:unit',
-    'apiTest'
+    'apiTest',
   ]);
 
   grunt.registerTask('serverTest', 'Launch server unit tests', [
-    'mochaTest:unit'
+    'mochaTest:unit',
   ]);
 
-  grunt.registerTask('apiTest', 'Launch server unit tests', [
-    'mochaTest:rest'
-  ]);
+  grunt.registerTask('apiTest', 'Launch server unit tests', ['mochaTest:rest']);
 
   grunt.registerTask('archivesTest', 'Launch server unit tests', [
-    'mochaTest:archives'
+    'mochaTest:archives',
   ]);
 
-  grunt.registerTask('test', 'Launch server unit tests', function() {
+  grunt.registerTask('test', 'Launch server unit tests', () => {
     grunt.task.run(['configTests', 'serverTest']);
     if (grunt.option('enable-archives-test')) {
-        grunt.task.run(['archivesTest']);
+      grunt.task.run(['archivesTest']);
     }
-    grunt.task.run(['apiTest','clientTest']);
+    grunt.task.run(['apiTest', 'clientTest']);
   });
 
   grunt.registerTask('configTests', [
     'preBowerInstall',
     'bower:install',
-    'postBowerInstall'
+    'postBowerInstall',
   ]);
 
-  grunt.registerTask('initialConfig', [
-    'clientBuild',
-    'configTests'
-  ]);
+  grunt.registerTask('initialConfig', ['clientBuild', 'configTests']);
 
   grunt.registerTask('default', ['clientBuild']);
 };

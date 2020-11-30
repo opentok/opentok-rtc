@@ -1,5 +1,5 @@
-var assert = chai.assert;
-var expect = chai.expect;
+var { assert } = chai;
+var { expect } = chai;
 var should = chai.should();
 
 describe('RecordingsView', () => {
@@ -61,8 +61,7 @@ describe('RecordingsView', () => {
 
   before(() => {
     model._listeners = {};
-    window.document.body.innerHTML =
-      window.__html__['test/unit/recordingsView_spec.html'];
+    window.document.body.innerHTML = window.__html__['test/unit/recordingsView_spec.html'];
     bubble = document.querySelector('[for="viewRecordings"]');
     container = document.querySelector('.videos.tc-list ul');
   });
@@ -122,9 +121,9 @@ describe('RecordingsView', () => {
     it('should delete archives', sinon.test(function (done) {
       RecordingsView.init(model);
       model._fire(archives);
-      var id = archives.one.id;
+      var { id } = archives.one;
 
-      this.stub(window, 'dispatchEvent', (event) => {
+      this.stub(window, 'dispatchEvent').callsFake((event) => {
         expect(event.type).to.equal('archive');
         expect(event.detail.id).to.equal(id);
         expect(event.detail.action).to.equal('delete');

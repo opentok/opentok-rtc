@@ -1,5 +1,9 @@
-var assert = chai.assert;
-var expect = chai.expect;
+var sinonTest = require('sinon-test');
+
+var test = sinonTest(sinon);
+sinon.test = test;
+var { assert } = chai;
+var { expect } = chai;
 var should = chai.should();
 
 describe('Utils', () => {
@@ -116,10 +120,12 @@ describe('Utils', () => {
         output: '?key=value&key2&key3=value3',
       },
       {
-        input: { key: 'value',
+        input: {
+          key: 'value',
           key2: undefined,
           key3: ['value3', 'value4', 'value5'],
-          key4: undefined },
+          key4: undefined
+        },
         output: '?key=value&key2&key3=value3&key3=value4&key3=value5&key4',
       },
     ];
@@ -246,8 +252,8 @@ describe('Utils', () => {
     ];
 
     useCases.forEach((useCase) => {
-      it('should generate as params' + JSON.stringify(useCase.output) + ' for ' +
-         useCase.input, () => {
+      it('should generate as params' + JSON.stringify(useCase.output) + ' for '
+         + useCase.input, () => {
         var result = Utils.parseSearch(useCase.input);
         expect(result.params).to.be.deep.equal(useCase.output);
         results.push(result);
@@ -263,8 +269,8 @@ describe('Utils', () => {
       }));
 
       results.forEach((result, index) => {
-        it('should return ' + useCases[index].getFirst.output + ' when called with ' +
-           useCases[index].getFirst.input + 'on the use case #' + index, () => {
+        it('should return ' + useCases[index].getFirst.output + ' when called with '
+           + useCases[index].getFirst.input + 'on the use case #' + index, () => {
           var useCase = useCases[index].getFirst;
           expect(result.getFirstValue(useCase.input)).to.be.equal(useCase.output);
         });
@@ -320,56 +326,6 @@ describe('Utils', () => {
     it('should return false when browser is IE', () => {
       customUserAgent = 'msie';
       expect(Utils.isChrome()).to.be.false;
-    });
-  });
-
-  describe('#isIE', () => {
-    var realUserAgent = null,
-      realVendor = null,
-      customUserAgent = '',
-      customVendor = '';
-
-    before(() => {
-      realUserAgent = navigator.userAgent;
-      Object.defineProperty(window.navigator, 'userAgent', {
-        configurable: true,
-        get() {
-          return customUserAgent;
-        },
-      });
-
-      realVendor = navigator.vendor;
-      Object.defineProperty(window.navigator, 'vendor', {
-        configurable: true,
-        get() {
-          return customVendor;
-        },
-      });
-    });
-
-    after(() => {
-      realUserAgent = customUserAgent;
-      realVendor = customVendor;
-    });
-
-    it('should exist and be a function', () => {
-      expect(Utils.isIE).to.exist;
-      expect(Utils.isIE).to.be.a('function');
-    });
-
-    it('should return true when browser is IE', () => {
-      customUserAgent = 'msie';
-      expect(Utils.isIE()).to.be.true;
-    });
-
-    it('should return false when browser is firefox', () => {
-      customUserAgent = 'Mozilla/5.0';
-      expect(Utils.isIE()).to.be.false;
-    });
-
-    it('should return false when browser is chrome', () => {
-      customUserAgent = 'Chrome';
-      expect(Utils.isIE()).to.be.false;
     });
   });
 });

@@ -1,5 +1,9 @@
-var assert = chai.assert;
-var expect = chai.expect;
+var sinonTest = require('sinon-test');
+
+var test = sinonTest(sinon);
+sinon.test = test;
+var { assert } = chai;
+var { expect } = chai;
 var should = chai.should();
 
 describe('FeedbackController', () => {
@@ -26,7 +30,7 @@ describe('FeedbackController', () => {
         logEvent() {},
       },
     };
-    sinon.stub(LazyLoader, 'load', resources => Promise.resolve());
+    sinon.stub(LazyLoader, 'load').callsFake((resources) => Promise.resolve());
   });
 
   after(() => {

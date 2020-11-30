@@ -1,4 +1,4 @@
-var expect = chai.expect;
+var { expect } = chai;
 
 describe('TextProcessor', () => {
   it('should exist', () => {
@@ -6,14 +6,13 @@ describe('TextProcessor', () => {
   });
 
   describe('#parse', () => {
-    var URL = TextProcessor.TYPE.URL;
-    var TXT = TextProcessor.TYPE.TXT;
+    var { URL } = TextProcessor.TYPE;
+    var { TXT } = TextProcessor.TYPE;
 
     it('should exist and be a function', () => {
       expect(TextProcessor.parse).to.exist;
       expect(TextProcessor.parse).to.be.a('function');
     });
-
 
     var testCases = [{
       title: 'should process correctly text only lines',
@@ -76,8 +75,8 @@ describe('TextProcessor', () => {
         type: TXT,
       }],
     }, {
-      title: 'should process correctly lines that start with a valid URL and finish with text' +
-             ' (including contiguous white spaces',
+      title: 'should process correctly lines that start with a valid URL and finish with text'
+             + ' (including contiguous white spaces',
       data: [{
         value: 'http://www.url1.com',
         type: URL,
