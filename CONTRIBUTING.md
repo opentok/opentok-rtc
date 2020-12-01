@@ -15,8 +15,11 @@ If you are filing a bug, please specify the following:
 If you are contributing code to OpenTokRTC, please ensure the following:
 
 - Add test for any feature that you add or change. Tests go in the `./test` directory.
-- Run test locally and ensure they pass, so that you do not break any build. Run tests using: `$ grunt precommit`.
+- Run test locally and ensure they pass, so that you do not break any build. Run tests using: `$ npm run test`.
+- Run regression tests in your local using : `$ npm run regression-test`
+- Run Karma tests in your local using : `$ npm run karma-test`
 - Use the AirBnB JavaScript style guide.
+- Lint your code modifications before pushing the changes to repository.Use `$ npm run lint` command to lint the entire code base.
 
 ## Running appliction in development mode:
 

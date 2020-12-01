@@ -52,27 +52,7 @@ module.exports = function (config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       '**/*.html': ['html2js'],
-      'web/**/*.js': ['coverage'],
-
-      'test/unit/chatController_spec.js': ['browserify'],
-      'test/unit/chatView_spec.js': ['browserify'],
-      'test/unit/cronograph_spec.js': ['browserify'],
-      'test/unit/draggable_spec.js': ['browserify'],
-      'test/unit/feedbackController_spec.js': ['browserify'],
-      'test/unit/feedbackView_spec.js': ['browserify'],
-      'test/unit/itemsHandler_spec.js': ['browserify'],
-      'test/unit/layoutMenuView_spec.js': ['browserify'],
-      'test/unit/layouts_spec.js': ['browserify'],
-      'test/unit/precallController_spec.js': ['browserify'],
-      'test/unit/precallView_spec.js': ['browserify'],
-      'test/unit/recordingsController_spec.js': ['browserify'],
-      'test/unit/recordingsView_spec.js': ['browserify'],
-      'test/unit/roomStatus_spec.js': ['browserify'],
-      'test/unit/roomView_spec.js': ['browserify'],
-      'test/unit/screenShareController_spec.js': ['browserify'],
-      'test/unit/screenShareView_spec.js': ['browserify'],
-      'test/unit/browserUtils_spec.js': ['browserify'],
-
+      'web/**/*.js': ['coverage']
     },
 
     // test results reporter to use
@@ -108,7 +88,7 @@ module.exports = function (config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome'],
+    browsers: ['Firefox','Chrome'],
 
     customLaunchers: {
       Chrome_travis_ci: {

@@ -1,11 +1,7 @@
 var { assert } = chai;
 var { expect } = chai;
-var sinonTest = require('sinon-test');
-
-var test = sinonTest(sinon);
-sinon.test = test;
 var should = chai.should();
-
+var sandbox = sinon.createSandbox();
 describe('PrecallView', () => {
   before(() => {
     window.document.body.innerHTML = window.__html__['test/unit/precallView_spec.html'];
@@ -21,9 +17,10 @@ describe('PrecallView', () => {
       expect(PrecallView.init).to.be.a('function');
     });
 
-    it('should init the module', sinon.test(function () {
-      this.stub(LayoutManager, 'init');
+    it('should init the module', (() => {
+      sandbox.stub(LayoutManager, 'init');
       PrecallView.init();
+      sandbox.restore();
     }));
   });
 

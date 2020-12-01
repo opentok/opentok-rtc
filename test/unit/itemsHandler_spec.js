@@ -1,11 +1,7 @@
-var sinonTest = require('sinon-test');
-
-var test = sinonTest(sinon);
-sinon.test = test;
 var { assert } = chai;
 var { expect } = chai;
 var should = chai.should();
-
+var sandbox = sinon.createSandbox();
 describe('ItemsHandler', () => {
   var items = {};
 
@@ -45,6 +41,7 @@ describe('ItemsHandler', () => {
     });
 
     control.click();
+    ctx.restore();
   }
 
   function dblclick(elem) {
@@ -69,35 +66,36 @@ describe('ItemsHandler', () => {
 
   describe('#event handlers: click', () => {
     it('should send the correct event when video is selected in publisher',
-      sinon.test(function (done) {
-        clickButton(this, '#publisher i[data-icon="video"]', 'publisher', 'video', done);
+      ((done) => {
+        clickButton(sandbox, '#publisher i[data-icon="video"]', 'publisher', 'video', done);
       }));
 
     it('should send the correct event when audio is selected in publisher',
-      sinon.test(function (done) {
-        clickButton(this, '#publisher i[data-icon="mic"]', 'publisher', 'audio', done);
+      ((done) => {
+        clickButton(sandbox, '#publisher i[data-icon="mic"]', 'publisher', 'audio', done);
       }));
 
     it('should send the correct event when video is selected in subscribers',
-      sinon.test(function (done) {
-        clickButton(this, '#subscriber i[data-icon="video"]', 'subscriber', 'video', done);
+      ((done) => {
+        clickButton(sandbox, '#subscriber i[data-icon="video"]', 'subscriber', 'video', done);
       }));
 
     it('should send the correct event when audio is selected in subscribers',
-      sinon.test(function (done) {
-        clickButton(this, '#subscriber i[data-icon="audio"]', 'subscriber', 'audio', done);
+      ((done) => {
+        clickButton(sandbox, '#subscriber i[data-icon="audio"]', 'subscriber', 'audio', done);
       }));
   });
 
   describe('#event handlers: dblclick', () => {
-    it('should send the correct event when user clicks twice', sinon.test(function (done) {
-      this.stub(window, 'CustomEvent').callsFake((name, data) => {
+    it('should send the correct event when user clicks twice', ((done) => {
+      sandbox.stub(window, 'CustomEvent').callsFake((name, data) => {
         expect(name).to.equal('layoutView:itemSelected');
         expect(data.detail.item).to.equal(getContainer().querySelector('#subscriber'));
         done();
       });
 
       dblclick(getContainer().querySelector('#subscriber .dblclick_area'));
+      sandbox.restore();
     }));
   });
 

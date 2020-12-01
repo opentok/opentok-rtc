@@ -1,12 +1,7 @@
-var sinonTest = require('sinon-test');
-
-var test = sinonTest(sinon);
-sinon.test = test;
-
 var { assert } = chai;
 var { expect } = chai;
 var should = chai.should();
-
+var sandbox = sinon.createSandbox();
 describe('FeedbackView', () => {
   var showFeedback,
     sendButton,
@@ -44,17 +39,18 @@ describe('FeedbackView', () => {
   });
 
   describe('#feedback form', () => {
-    it('should be shown when button is clicked', sinon.test(function () {
-      this.spy(Modal, 'show');
+    it('should be shown when button is clicked', () => {
+      sandbox.spy(Modal, 'show');
       otherInfo.value = 'other info';
       showFeedback.click();
       expect(Modal.show.calledOnce).to.be.true;
       expect(otherInfo.value).to.equals('');
-    }));
+      sandbox.restore();
+    });
 
-    it('should send sendFeedback and reportIssue events when send button is submitted', sinon.test(function () {
-      this.spy(Modal, 'hide');
-      this.stub(Utils, 'sendEvent');
+    it('should send sendFeedback and reportIssue events when send button is submitted', () => {
+      sandbox.spy(Modal, 'hide');
+      sandbox.stub(Utils, 'sendEvent');
 
       otherInfo.value = 'further info';
       // Index starts at 0, scores start at 1 so setting index to reportLevel ensures
@@ -71,11 +67,12 @@ describe('FeedbackView', () => {
         description: otherInfo.value,
       });
       expect(Utils.sendEvent.getCall(1).args[0]).to.be.equal('feedbackView:reportIssue');
-    }));
+      sandbox.restore();
+    });
 
-    it('should send reportIssue event when send button is submitted and audio score is less than reportLevel', sinon.test(function () {
-      this.spy(Modal, 'hide');
-      this.stub(Utils, 'sendEvent');
+    it('should send reportIssue event when send button is submitted and audio score is less than reportLevel', () => {
+      sandbox.spy(Modal, 'hide');
+      sandbox.stub(Utils, 'sendEvent');
 
       otherInfo.value = 'further info';
       audioScore.selectedIndex = reportLevel - 1;
@@ -86,11 +83,12 @@ describe('FeedbackView', () => {
       expect(Utils.sendEvent.calledTwice).to.be.true;
       expect(Utils.sendEvent.getCall(0).args[0]).to.be.equal('feedbackView:sendFeedback');
       expect(Utils.sendEvent.getCall(1).args[0]).to.be.equal('feedbackView:reportIssue');
-    }));
+    });
 
-    it('should send reportIssue event when send button is submitted and video score is less than reportLevel', sinon.test(function () {
-      this.spy(Modal, 'hide');
-      this.stub(Utils, 'sendEvent');
+    it('should send reportIssue event when send button is submitted and video score is less than reportLevel', () => {
+      sandbox.restore();
+      sandbox.spy(Modal, 'hide');
+      sandbox.stub(Utils, 'sendEvent');
 
       otherInfo.value = 'further info';
       audioScore.selectedIndex = reportLevel;
@@ -101,6 +99,6 @@ describe('FeedbackView', () => {
       expect(Utils.sendEvent.calledTwice).to.be.true;
       expect(Utils.sendEvent.getCall(0).args[0]).to.be.equal('feedbackView:sendFeedback');
       expect(Utils.sendEvent.getCall(1).args[0]).to.be.equal('feedbackView:reportIssue');
-    }));
+    });
   });
 });

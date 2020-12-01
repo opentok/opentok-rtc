@@ -1,5 +1,5 @@
 var { expect } = chai;
-
+var sandbox = sinon.createSandbox();
 describe('ScreenShareView', () => {
   var shareErrors;
   var screenShareLink;
@@ -135,15 +135,16 @@ describe('ScreenShareView', () => {
     testMsgError(event, err.message, 'error-sharing', done);
   });
 
-  it('should close the stream window once it has been destroyed', sinon.test(function (done) {
+  it('should close the stream window once it has been destroyed', ((done) => {
     ScreenShareView.init();
 
-    this.stub(RoomView, 'deleteStreamView', (id) => {
+    sandbox.stub(RoomView, 'deleteStreamView', (id) => {
       expect(id).to.be.equal('desktop');
       done();
     });
 
     var event = new CustomEvent('screenShareController:destroyed');
     window.dispatchEvent(event);
+    sandbox.restore();
   }));
 });

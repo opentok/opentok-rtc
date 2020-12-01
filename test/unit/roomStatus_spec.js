@@ -1,8 +1,5 @@
 var { expect } = chai;
-var sinonTest = require('sinon-test');
-
-var test = sinonTest(sinon);
-sinon.test = test;
+var sandbox = sinon.createSandbox();
 
 describe('roomStatus', () => {
   var expectedHandlers = ['signal:status', 'signal:statusACK', 'connectionCreated',
@@ -37,7 +34,7 @@ describe('roomStatus', () => {
     });
 
     it('should initialize properly the object and return the handlers set',
-      sinon.test(() => {
+      (() => {
         var handlers = [];
 
         RoomStatus.init(handlers);
@@ -51,7 +48,7 @@ describe('roomStatus', () => {
   describe('#handlers', () => {
     describe('#signal:status', () => {
       it('should populate room\'s status, send ack, remove the listener and '
-         + 'send updatedRemotely event', sinon.test(function (done) {
+         + 'send updatedRemotely event', ((done) => {
         var status = {
           chat: [{
             sender: 'aSender1',
@@ -73,8 +70,8 @@ describe('roomStatus', () => {
           type: 'status',
         };
 
-        this.spy(otHelper, 'sendSignal');
-        this.spy(otHelper, 'removeListener');
+        sandbox.spy(otHelper, 'sendSignal');
+        sandbox.spy(otHelper, 'removeListener');
 
         // Testing that roomStatus:updatedRemotely was called we just put
         // a listener over it, if it wasn't executed correctly we'll have a
@@ -95,6 +92,7 @@ describe('roomStatus', () => {
         Object.keys(status).forEach((key) => {
           expect(RoomStatus.get(key)).to.be.deep.equal(status[key]);
         });
+        sandbox.restore();
       }));
     });
 
@@ -125,22 +123,23 @@ describe('roomStatus', () => {
       }
 
       it('should send status when a different user connects and I was the oldest connected one',
-        sinon.test(function () {
+        (function () {
           this.spy(OTHelper, 'sendSignal');
           var otherCreationTime = myCreationTime + 1;
           verifySend('otherConnId', 'otherUser', otherCreationTime);
         }));
 
       it('should send status when a different user with my same identifier connects and '
-         + ' I was the oldest connected', sinon.test(function () {
-        this.spy(OTHelper, 'sendSignal');
+         + ' I was the oldest connected', (() => {
+        sandbox.spy(OTHelper, 'sendSignal');
         var otherCreationTime = myCreationTime + 1;
         verifySend('otherConnId', 'mySelf', otherCreationTime);
+        sandbox.restore();
       }));
 
       it('should not send the status when a different user connects and I was not the oldest '
-         + 'connected one', sinon.test(function () {
-        this.spy(OTHelper, 'sendSignal');
+         + 'connected one', (() => {
+        sandbox.spy(OTHelper, 'sendSignal');
 
         var otherConnectedCreationTime = myCreationTime - 1;
         var newConnectedCreationTime = myCreationTime + 1;
@@ -153,17 +152,19 @@ describe('roomStatus', () => {
         'newUser');
 
         expect(OTHelper.sendSignal.callCount).to.be.equal(0);
+        sandbox.restore();
       }));
 
       it('should not send the history when I receive a connect event for myself',
-        sinon.test(function () {
-          this.spy(OTHelper, 'sendSignal');
+        (() => {
+          sandbox.spy(OTHelper, 'sendSignal');
 
           statusHndls.connectionCreated(getSignalEvent('myConnectionId',
             myCreationTime,
             'mySelf'));
 
           expect(OTHelper.sendSignal.callCount).to.be.equal(0);
+          sandbox.restore();
         }));
     });
   });

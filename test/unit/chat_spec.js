@@ -1,5 +1,5 @@
 var { expect } = chai;
-
+var sandbox = sinon.createSandbox();
 describe('ChatView', () => {
   var container = null;
   var chatContainer = null;
@@ -92,7 +92,7 @@ describe('ChatView', () => {
     });
 
     it('should set the chat\'s room name and init the Chat object when called without configured '
-       + 'handlers', sinon.test(function (done) {
+       + 'handlers', (done) => {
       var handlersShouldHave = {
         incomingMessage: {
           name: 'chatController:incomingMessage',
@@ -108,11 +108,12 @@ describe('ChatView', () => {
           couldBeChanged: true,
         },
       };
-      verifyInit(this, done, handlersShouldHave);
-    }));
+      verifyInit(sandbox, done, handlersShouldHave);
+      sandbox.restore();
+    });
 
     it('should set the chat\'s room name and init the Chat object when called with configured '
-       + 'handlers', sinon.test(function (done) {
+       + 'handlers', (done) => {
       var handlersShouldHave = {
         incomingMessage: {
           name: 'chatController:incomingMessage',
@@ -136,8 +137,9 @@ describe('ChatView', () => {
           type: 'chatVisibility',
           name: 'changedRoomView:changedChatVisibility',
         }];
-      verifyInit(this, done, handlersShouldHave, configuredHandlers);
-    }));
+      verifyInit(sandbox, done, handlersShouldHave, configuredHandlers);
+      sandbox.restore();
+    });
   });
 
   describe('#incomingMessage event', () => {
@@ -198,36 +200,38 @@ describe('ChatView', () => {
     });
 
     it('should add a new text line correctly when chat is visible and sender is yourself',
-      sinon.test(function () {
+      () => {
         var chatContent = getChatContainer().querySelector('ul');
         var lengthBefore = chatContent.children.length;
 
         Chat._isVisible = true;
-        this.spy(window, 'dispatchEvent');
+        sandbox.spy(window, 'dispatchEvent');
         data.senderId = 'myConnectionId';
         window.dispatchEvent(new CustomEvent('chatController:incomingMessage',
           { detail: { data } }));
 
         testVisualElems(chatContent, lengthBefore, true);
         expect(window.dispatchEvent.calledOnce).to.be.true;
-      }));
+        sandbox.restore();
+      });
 
     it('should add a new text line correctly when chat is visible and sender is other',
-      sinon.test(function () {
+      () => {
         var chatContent = getChatContainer().querySelector('ul');
         var lengthBefore = chatContent.children.length;
         data.senderId = 'other';
-
+        sandbox.restore();
         Chat._isVisible = true;
-        this.spy(window, 'dispatchEvent');
+        sandbox.spy(window, 'dispatchEvent');
         window.dispatchEvent(new CustomEvent('chatController:incomingMessage',
           { detail: { data } }));
 
         testVisualElems(chatContent, lengthBefore, false);
         expect(window.dispatchEvent.calledOnce).to.be.true;
-      }));
+        sandbox.restore();
+      });
 
-    it('should add a new text line correctly when chat is hidden', sinon.test((done) => {
+    it('should add a new text line correctly when chat is hidden', (done) => {
       var chatContent = getChatContainer().querySelector('ul');
       var lengthBefore = chatContent.children.length;
 
@@ -241,7 +245,7 @@ describe('ChatView', () => {
       Chat._isVisible = false;
       window.dispatchEvent(new CustomEvent('chatController:incomingMessage',
         { detail: { data } }));
-    }));
+    });
   });
 
   describe('#presenceEvent event', () => {
@@ -276,25 +280,27 @@ describe('ChatView', () => {
   });
 
   describe('#chatVisibility event', () => {
-    it('should hid chat when receives false', sinon.test(function () {
-      this.spy(Chat, 'show');
-      this.spy(Chat, 'hide');
+    it('should hid chat when receives false', () => {
+      sandbox.spy(Chat, 'show');
+      sandbox.spy(Chat, 'hide');
 
       window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: false }));
 
       expect(Chat.show.called).to.be.false;
       expect(Chat.hide.called).to.be.true;
-    }));
+      sandbox.restore();
+    });
 
-    it('should show when it receives true', sinon.test(function () {
-      this.spy(Chat, 'show');
-      this.spy(Chat, 'hide');
+    it('should show when it receives true', () => {
+      sandbox.spy(Chat, 'show');
+      sandbox.spy(Chat, 'hide');
 
       window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: true }));
 
       expect(Chat.show.called).to.be.true;
       expect(Chat.hide.called).to.be.false;
-    }));
+      sandbox.restore();
+    });
   });
 
   describe('#keypress', () => {
@@ -305,7 +311,7 @@ describe('ChatView', () => {
     });
 
     it('should send the text content when chat is visible, textArea has content and '
-       + 'return key is pressed', sinon.test((done) => {
+       + 'return key is pressed', (done) => {
       var textArea = getChatTextArea();
       textArea.value = 'It has text';
 
@@ -318,37 +324,38 @@ describe('ChatView', () => {
         done();
       });
       dispatchKeyEvent('\r');
-    }));
+    });
 
     it('should not do anything when chat is visible, textArea is empty and '
-       + 'return key is pressed', sinon.test(function () {
+       + 'return key is pressed', () => {
       window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: true }));
       var textArea = getChatTextArea();
       textArea.value = '';
 
-      this.spy(window, 'dispatchEvent');
+      sandbox.spy(window, 'dispatchEvent');
       dispatchKeyEvent('\r');
       expect(window.dispatchEvent.called).to.be.false;
-    }));
+      sandbox.restore();
+    });
 
     it('should not do anything when chat is visible and key pressed is not return key',
-      sinon.test(function () {
+      () => {
         window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: true }));
         var textArea = getChatTextArea();
         textArea.value = 'It has text';
-
-        this.spy(window, 'dispatchEvent');
+        sandbox.restore();
+        sandbox.spy(window, 'dispatchEvent');
         dispatchKeyEvent('a');
         expect(window.dispatchEvent.called).to.be.false;
-      }));
+      });
 
-    it('should not do anything when chat is hidden', sinon.test(function () {
+    it('should not do anything when chat is hidden', () => {
       window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: false }));
-
-      this.spy(window, 'dispatchEvent');
+      sandbox.restore();
+      sandbox.spy(window, 'dispatchEvent');
       dispatchKeyEvent('\r');
       expect(window.dispatchEvent.called).to.be.false;
-    }));
+    });
   });
 
   describe('#click on closeChatBtn', () => {
@@ -358,12 +365,12 @@ describe('ChatView', () => {
       closeChatBtn = getContainer().querySelector('#closeChat');
     });
 
-    it('should hide the chat when the chat is visible', sinon.test(function () {
+    it('should hide the chat when the chat is visible', () => {
       window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: true }));
-      this.spy(Chat, 'hide');
-      this.spy(Chat, 'show');
-      this.spy(Chat, 'expand');
-      this.spy(Chat, 'collapse');
+      sandbox.spy(Chat, 'hide');
+      sandbox.spy(Chat, 'show');
+      sandbox.spy(Chat, 'expand');
+      sandbox.spy(Chat, 'collapse');
 
       closeChatBtn.dispatchEvent(getMouseClickEvt());
 
@@ -371,14 +378,15 @@ describe('ChatView', () => {
       expect(Chat.hide.called).to.be.true;
       expect(Chat.expand.called).to.be.false;
       expect(Chat.collapse.called).to.be.false;
-    }));
+      sandbox.restore();
+    });
 
-    it('should not do anything when the chat is hidden', sinon.test(function () {
+    it('should not do anything when the chat is hidden', () => {
       window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: false }));
-      this.spy(Chat, 'hide');
-      this.spy(Chat, 'show');
-      this.spy(Chat, 'expand');
-      this.spy(Chat, 'collapse');
+      sandbox.spy(Chat, 'hide');
+      sandbox.spy(Chat, 'show');
+      sandbox.spy(Chat, 'expand');
+      sandbox.spy(Chat, 'collapse');
 
       closeChatBtn.dispatchEvent(getMouseClickEvt());
 
@@ -386,7 +394,8 @@ describe('ChatView', () => {
       expect(Chat.hide.called).to.be.false;
       expect(Chat.expand.called).to.be.false;
       expect(Chat.collapse.called).to.be.false;
-    }));
+      sandbox.restore();
+    });
   });
 
   describe('#click on toggleChatBtn', () => {
@@ -396,12 +405,12 @@ describe('ChatView', () => {
       toggleChatBtn = getContainer().querySelector('header');
     });
 
-    it('should expand when the chat is visible and collapsed', sinon.test(function () {
+    it('should expand when the chat is visible and collapsed', () => {
       window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: true }));
-      this.spy(Chat, 'expand');
-      this.spy(Chat, 'collapse');
-      this.spy(Chat, 'hide');
-      this.spy(Chat, 'show');
+      sandbox.spy(Chat, 'expand');
+      sandbox.spy(Chat, 'collapse');
+      sandbox.spy(Chat, 'hide');
+      sandbox.spy(Chat, 'show');
 
       Chat._isCollapsed = true;
 
@@ -411,15 +420,16 @@ describe('ChatView', () => {
       expect(Chat.collapse.called).to.be.false;
       expect(Chat.hide.called).to.be.false;
       expect(Chat.show.called).to.be.false;
-    }));
+      sandbox.restore();
+    });
 
-    it('should collapse when the chat is visible and not collapsed', sinon.test(function () {
+    it('should collapse when the chat is visible and not collapsed', () => {
       window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: true }));
 
-      this.spy(Chat, 'expand');
-      this.spy(Chat, 'collapse');
-      this.spy(Chat, 'hide');
-      this.spy(Chat, 'show');
+      sandbox.spy(Chat, 'expand');
+      sandbox.spy(Chat, 'collapse');
+      sandbox.spy(Chat, 'hide');
+      sandbox.spy(Chat, 'show');
 
       Chat._isCollapsed = false;
 
@@ -429,15 +439,16 @@ describe('ChatView', () => {
       expect(Chat.collapse.called).to.be.true;
       expect(Chat.hide.called).to.be.false;
       expect(Chat.show.called).to.be.false;
-    }));
+      sandbox.restore();
+    });
 
-    it('should not do anything when the chat is hidden', sinon.test(function () {
+    it('should not do anything when the chat is hidden', () => {
       window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: false }));
 
-      this.spy(Chat, 'expand');
-      this.spy(Chat, 'collapse');
-      this.spy(Chat, 'hide');
-      this.spy(Chat, 'show');
+      sandbox.spy(Chat, 'expand');
+      sandbox.spy(Chat, 'collapse');
+      sandbox.spy(Chat, 'hide');
+      sandbox.spy(Chat, 'show');
 
       Chat._isCollapsed = false;
 
@@ -447,7 +458,8 @@ describe('ChatView', () => {
       expect(Chat.collapse.called).to.be.false;
       expect(Chat.hide.called).to.be.false;
       expect(Chat.show.called).to.be.false;
-    }));
+      sandbox.restore();
+    });
   });
 
   describe('#click on sendMsgBtn', () => {
@@ -458,7 +470,7 @@ describe('ChatView', () => {
     });
 
     it('should send chatView:outgoingMessage when the chat is visible and textArea has content',
-      sinon.test((done) => {
+      (done) => {
         window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: true }));
 
         var textArea = getChatTextArea();
@@ -472,32 +484,34 @@ describe('ChatView', () => {
         });
 
         sendMsgBtn.dispatchEvent(getMouseClickEvt());
-      }));
+      });
 
     it('should not do anything when the chat is visible and textArea is empty',
-      sinon.test(function () {
+      () => {
         window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: true }));
 
         var textArea = getChatTextArea();
         textArea.value = '';
 
-        this.spy(window, 'dispatchEvent');
+        sandbox.spy(window, 'dispatchEvent');
 
         sendMsgBtn.dispatchEvent(getMouseClickEvt());
         expect(window.dispatchEvent.called).to.be.false;
-      }));
+        sandbox.restore();
+      });
 
-    it('should not do anything when the chat is hidden', sinon.test(function () {
+    it('should not do anything when the chat is hidden', () => {
       window.dispatchEvent(new CustomEvent('roomView:chatVisibility', { detail: false }));
 
       var textArea = getChatTextArea();
       textArea.value = 'It has text';
 
-      this.spy(window, 'dispatchEvent');
+      sandbox.spy(window, 'dispatchEvent');
 
       sendMsgBtn.dispatchEvent(getMouseClickEvt());
 
       expect(window.dispatchEvent.called).to.be.false;
-    }));
+      sandbox.restore();
+    });
   });
 });

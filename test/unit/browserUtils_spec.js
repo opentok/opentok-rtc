@@ -1,11 +1,7 @@
 var { assert } = chai;
 var { expect } = chai;
 var should = chai.should();
-var sinonTest = require('sinon-test');
-
-var test = sinonTest(sinon);
-sinon.test = test;
-
+var sandbox = sinon.createSandbox();
 describe('Utils', () => {
   it('should exist', () => {
     expect(Utils).to.exist;
@@ -93,13 +89,14 @@ describe('Utils', () => {
       expect(Utils.generateSearchStr).to.be.a('function');
     });
 
-    it('should throw a TypeError on undefined', sinon.test(() => {
-      sinon.spy(Utils, 'generateSearchStr');
+    it('should throw a TypeError on undefined', () => {
+      sandbox.spy(Utils, 'generateSearchStr');
       try {
         Utils.generateSearchStr(undefined);
       } catch (e) {}
       expect(Utils.generateSearchStr.threw('TypeError')).to.be.true;
-    }));
+      sandbox.restore();
+    });
 
     var useCases = [
       {
@@ -142,13 +139,14 @@ describe('Utils', () => {
       expect(Utils.parseSearch).to.be.a('function');
     });
 
-    it('should throw a TypeError on undefined', sinon.test(() => {
-      sinon.spy(Utils, 'parseSearch');
+    it('should throw a TypeError on undefined', () => {
+      sandbox.spy(Utils, 'parseSearch');
       try {
         Utils.parseSearch(undefined);
       } catch (e) {}
       expect(Utils.parseSearch.threw('TypeError')).to.be.true;
-    }));
+      sandbox.restore();
+    });
 
     var results = [];
 
@@ -260,12 +258,12 @@ describe('Utils', () => {
     });
 
     describe('#getFirstValue', () => {
-      it('should always return a getFirstValue method on the object\'\'', sinon.test(() => {
+      it('should always return a getFirstValue method on the object\'\'', () => {
         results.forEach((aResult) => {
           expect(aResult.getFirstValue).to.exist;
           expect(aResult.getFirstValue).to.be.an('function');
         });
-      }));
+      });
 
       results.forEach((result, index) => {
         it('should return ' + useCases[index].getFirst.output + ' when called with '

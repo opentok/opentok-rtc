@@ -1,10 +1,6 @@
 var { assert } = chai;
 var { expect } = chai;
 var should = chai.should();
-var sinonTest = require('sinon-test');
-
-var test = sinonTest(sinon);
-sinon.test = test;
 
 describe('RoomView', () => {
   before(() => {
@@ -21,10 +17,11 @@ describe('RoomView', () => {
       expect(RoomView.init).to.be.a('function');
     });
 
-    it('should init the module', sinon.test(function () {
-      this.stub(LayoutManager, 'init');
+    it('should init the module', (() => {
+      sandbox.stub(LayoutManager, 'init');
       RoomView.showRoom();
       RoomView.init();
+      sandbox.restore();
     }));
   });
 

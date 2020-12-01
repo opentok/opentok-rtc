@@ -1,8 +1,3 @@
-var sinonTest = require('sinon-test');
-
-var test = sinonTest(sinon);
-sinon.test = test;
-
 var { assert } = chai;
 var { expect } = chai;
 var should = chai.should();
@@ -28,18 +23,19 @@ describe('LayoutMenuView', () => {
   });
 
   describe('#event handlers: click', () => {
-    it('should set the correct layout when grid is selected', sinon.test(function (done) {
+    it('should set the correct layout when grid is selected', ((done) => {
       var myLayoutGrid = {};
 
-      this.stub(BubbleFactory, 'get').callsFake(() => ({ toggle() {} }));
+      sandbox.stub(BubbleFactory, 'get').callsFake(() => ({ toggle() {} }));
 
-      this.stub(window, 'CustomEvent').callsFake((name, data) => {
+      sandbox.stub(window, 'CustomEvent').callsFake((name, data) => {
         expect(name).to.be.equal('layoutMenuView:layout');
         expect(data.detail.type).to.be.equal('grid');
         done();
       });
 
       document.querySelector('[data-layout-type="grid"').click();
+      sandbox.restore();
     }));
   });
 

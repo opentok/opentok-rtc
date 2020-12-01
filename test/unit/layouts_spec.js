@@ -1,7 +1,3 @@
-var sinonTest = require('sinon-test');
-
-var test = sinonTest(sinon);
-sinon.test = test;
 var { assert } = chai;
 var { expect } = chai;
 var should = chai.should();
@@ -97,11 +93,11 @@ describe('Layouts', () => {
       });
     });
 
-    describe('#rearrange', sinon.test(() => {
+    describe('#rearrange', () => {
       it('should visit all items and set dimensions', () => {
         visitItems(Grid);
       });
-    }));
+    });
   });
 
   describe('Float', () => {
@@ -126,11 +122,11 @@ describe('Layouts', () => {
         expect(container.dataset.currentLayoutType).to.equal('float');
       });
 
-      it('should set the publisher as draggable', sinon.test(function (done) {
+      it('should set the publisher as draggable', (done) => {
         var container = getContainer();
         var publisher = document.createElement('myPublisher');
 
-        stubDraggable(this, () => (
+        stubDraggable(sandbox, () => (
           Promise.resolve({
             on(element) {
               expect(element).to.equal(publisher);
@@ -143,7 +139,7 @@ describe('Layouts', () => {
           publisher
         });
         expect(container.dataset.currentLayoutType).to.equal('float');
-      }));
+      });
     });
 
     describe('#features', () => {
@@ -157,16 +153,16 @@ describe('Layouts', () => {
       });
     });
 
-    describe('#rearrange', sinon.test(() => {
+    describe('#rearrange', () => {
       it('should visit all items and set dimensions', () => {
         visitItems(Float);
       });
-    }));
+    });
 
     describe('#destroy', () => {
-      it('should disable drag feature for the publisher', sinon.test(function (done) {
+      it('should disable drag feature for the publisher', ((done) => {
         var publisher = document.createElement('div');
-        stubDraggable(this, () => (
+        stubDraggable(sandbox, () => (
           Promise.resolve({
             on() {},
             off(element) {
@@ -206,11 +202,11 @@ describe('Layouts', () => {
       });
     });
 
-    describe('#rearrange', sinon.test(() => {
+    describe('#rearrange', () => {
       it('should visit all items and set dimensions', () => {
         visitItems(F2FHorizontal);
       });
-    }));
+    });
   });
 
   describe('F2FVertical', () => {
@@ -235,11 +231,11 @@ describe('Layouts', () => {
       });
     });
 
-    describe('#rearrange', sinon.test(() => {
+    describe('#rearrange', () => {
       it('should visit all items and set dimensions', () => {
         visitItems(F2FVertical);
       });
-    }));
+    });
   });
 
   describe('Hangouts', () => {
@@ -344,7 +340,7 @@ describe('Layouts', () => {
         });
       });
 
-      describe('#rearrange', sinon.test(() => {
+      describe('#rearrange', (() => {
         it('should visit all items and set dimensions', () => {
           visitItems(HangoutHorizontal);
         });
@@ -372,7 +368,7 @@ describe('Layouts', () => {
         });
       });
 
-      describe('#rearrange', sinon.test(() => {
+      describe('#rearrange', (() => {
         it('should visit all items and set dimensions', () => {
           visitItems(HangoutVertical);
         });

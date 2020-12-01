@@ -1,10 +1,7 @@
 var { assert } = chai;
 var { expect } = chai;
 var should = chai.should();
-var sinonTest = require('sinon-test');
-
-var test = sinonTest(sinon);
-sinon.test = test;
+var sandbox = sinon.createSandbox();
 describe('RecordingsView', () => {
   var model = {
     _listeners: {},
@@ -121,12 +118,12 @@ describe('RecordingsView', () => {
       }
     });
 
-    it('should delete archives', sinon.test(function (done) {
+    it('should delete archives', ((done) => {
       RecordingsView.init(model);
       model._fire(archives);
       var { id } = archives.one;
 
-      this.stub(window, 'dispatchEvent').callsFake((event) => {
+      sandbox.stub(window, 'dispatchEvent').callsFake((event) => {
         expect(event.type).to.equal('archive');
         expect(event.detail.id).to.equal(id);
         expect(event.detail.action).to.equal('delete');
@@ -136,6 +133,7 @@ describe('RecordingsView', () => {
 
       var item = container.querySelector('li > i[data-id="' + id + '"]');
       item.click();
+      sandbox.restore();
     }));
   });
 });

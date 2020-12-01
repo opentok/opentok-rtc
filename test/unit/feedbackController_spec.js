@@ -1,7 +1,3 @@
-var sinonTest = require('sinon-test');
-
-var test = sinonTest(sinon);
-sinon.test = test;
 var { assert } = chai;
 var { expect } = chai;
 var should = chai.should();
@@ -45,19 +41,20 @@ describe('FeedbackController', () => {
       expect(FeedbackController.init).to.be.a('function');
     });
 
-    it('should be initialized', sinon.test(function (done) {
-      this.stub(FeedbackView, 'init', () => {});
+    it('should be initialized', (done) => {
+      sandbox.stub(FeedbackView, 'init', () => {});
 
       FeedbackController.init(fakeOTHelper).then(() => {
         expect(FeedbackView.init.called).to.be.true;
         done();
       });
-    }));
+      sandbox.restore();
+    });
   });
 
   // Fix
   describe('#feedbackView:sendFeedback event', () => {
-    it('should send feedback event', sinon.test(function () {
+    it('should send feedback event', function () {
       var xhr = sinon.useFakeXMLHttpRequest();
       var requests = this.requests = [];
       var report = {
@@ -100,14 +97,14 @@ describe('FeedbackController', () => {
       expect(requestBodyObj.videoScore).to.equal(report.videoScore);
       expect(requestBodyObj.description).to.equal(report.description);
       xhr.restore();
-    }));
+    });
   });
 
   describe('#feedbackView:reportIssue event', () => {
-    it('should send reportIssue event', sinon.test(() => {
+    it('should send reportIssue event', () => {
       var reportIssueStub = sinon.stub(window.OT, 'reportIssue');
       window.dispatchEvent(new CustomEvent('feedbackView:reportIssue'));
       expect(reportIssueStub.calledOnce).to.be.true;
-    }));
+    });
   });
 });

@@ -1,12 +1,7 @@
-var sinonTest = require('sinon-test');
-
-var test = sinonTest(sinon);
-sinon.test = test;
-
 var { assert } = chai;
 var { expect } = chai;
 var should = chai.should();
-
+var sandbox = sinon.createSandbox();
 describe('Cronograph', () => {
   var startTime = '00:00';
 
@@ -39,7 +34,7 @@ describe('Cronograph', () => {
   });
 
   describe('#start', () => {
-    it('initializes the cronograph', sinon.test(() => {
+    it('initializes the cronograph', () => {
       var clock = sinon.useFakeTimers();
 
       Cronograph.start();
@@ -56,9 +51,10 @@ describe('Cronograph', () => {
       }
 
       clock.restore();
-    }));
+      sandbox.restore();
+    });
 
-    it('initializes the cronograph from 33 seconds', sinon.test(() => {
+    it('initializes the cronograph from 33 seconds', () => {
       var clock = sinon.useFakeTimers();
 
       Cronograph.init();
@@ -69,9 +65,9 @@ describe('Cronograph', () => {
       checkCounterUI('00:53');
 
       clock.restore();
-    }));
+    });
 
-    it('initializes the cronograph with negative seconds', sinon.test(() => {
+    it('initializes the cronograph with negative seconds', () => {
       var clock = sinon.useFakeTimers();
 
       Cronograph.init();
@@ -82,11 +78,11 @@ describe('Cronograph', () => {
       checkCounterUI('00:20');
 
       clock.restore();
-    }));
+    });
   });
 
   describe('#stop', () => {
-    it('freezes the cronograph', sinon.test(() => {
+    it('freezes the cronograph', () => {
       var exptectedTime = '00:20';
       var clock = sinon.useFakeTimers();
 
@@ -101,11 +97,11 @@ describe('Cronograph', () => {
       checkCounterUI(exptectedTime);
 
       clock.restore();
-    }));
+    });
   });
 
   describe('#reset', () => {
-    it('sets the counter to 00:00', sinon.test(() => {
+    it('sets the counter to 00:00', () => {
       var exptectedTime = '00:20';
       var clock = sinon.useFakeTimers();
 
@@ -118,6 +114,6 @@ describe('Cronograph', () => {
       checkCounterUI(startTime);
 
       clock.restore();
-    }));
+    });
   });
 });

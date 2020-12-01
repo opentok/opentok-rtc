@@ -1,10 +1,7 @@
 var { assert } = chai;
 var { expect } = chai;
 var should = chai.should();
-var sinonTest = require('sinon-test');
-
-var test = sinonTest(sinon);
-sinon.test = test;
+var sandbox = sinon.createSandbox();
 describe('RecordingsController', () => {
   before(() => {
     window.LazyLoader = window.LazyLoader || { dependencyLoad() {} };
@@ -22,13 +19,13 @@ describe('RecordingsController', () => {
     });
 
     it('should be initialized and listen for "archive" events',
-      sinon.test(function (done) {
-        this.stub(Modal, 'show').callsFake(() => {
+      ((done) => {
+        sandbox.stub(Modal, 'show').callsFake(() => {
           done();
           return Promise.resolve();
         });
 
-        this.stub(RecordingsView, 'init').callsFake(() => {
+        sandbox.stub(RecordingsView, 'init').callsFake(() => {
           Utils.sendEvent('archive', {
             id: 'id',
             action: 'delete',
@@ -36,6 +33,7 @@ describe('RecordingsController', () => {
         });
         var enableArchiveManager = true;
         RecordingsController.init(enableArchiveManager);
+        sandbox.restore();
       }));
   });
 });

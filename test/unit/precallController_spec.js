@@ -1,11 +1,7 @@
-var sinonTest = require('sinon-test');
-
-var test = sinonTest(sinon);
-sinon.test = test;
 var { assert } = chai;
 var { expect } = chai;
 var should = chai.should();
-
+var sandbox = sinon.createSandbox();
 describe('PrecallController', () => {
   before(() => {
     window.document.body.innerHTML = window.__html__['test/unit/precallView_spec.html'];
@@ -44,7 +40,7 @@ describe('PrecallController', () => {
       expect(PrecallController.init).to.be.a('function');
     });
 
-    it('should init the module', sinon.test(function () {
+    it('should init the module', (function () {
       this.stub(LayoutManager, 'init');
       PrecallController.init();
     }));
@@ -56,7 +52,7 @@ describe('PrecallController', () => {
       expect(PrecallController.showCallSettingsPrompt).to.be.a('function');
     });
 
-    it('should display the call settings', sinon.test((done) => {
+    it('should display the call settings', ((done) => {
       const callSettingsElem = document.querySelector('.user-name-modal');
       const otHelper = new window.MockOTHelper({});
       PrecallController.init();
@@ -67,8 +63,8 @@ describe('PrecallController', () => {
       });
     }));
 
-    it('should hide call settings on Enter keypress', sinon.test(function (done) {
-      this.stub(PrecallView, 'hide', () => {
+    it('should hide call settings on Enter keypress', ((done) => {
+      sandbox.stub(PrecallView, 'hide', () => {
         PrecallView.hide.restore();
         done();
       });
