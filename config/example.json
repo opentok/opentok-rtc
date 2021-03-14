@@ -8,8 +8,8 @@
    },
    "precallTest": {
        "enabled": true,
-       "apiKey": "46049502",
-       "apiSecret": "0f4a63f629cec64ebdc5552974fe2566d2eb2835"
+       "apiKey": "47158534",
+       "apiSecret": "5e6f4d355ab3aaecad8fcbc231c19ec1018fc9b8"
    },
    "Archiving":{
       "enabled":false,
@@ -42,13 +42,13 @@
   "minMeetingNameLength": 0,
   "enableMuteAll": true,
   "enableStopReceivingVideo": true,
-  "maxUsersPerRoom": 0,
+  "maxUsersPerRoom"100,
   "enableRoomLocking": true,
   "autoGenerateRoomName": true,
-  "appName": "Vonage Video Conferencing",
-  "introText": "Welcome to Video Conferencing.",
-  "introFooterLinkText": "",
-  "introFooterLinkUrl": "",
+  "appName": "Teleconsultas by Analooga",
+  "introText": "Bienvenido a tu Teleconsulta.",
+  "introFooterLinkText": "Intro Footoer link Text",
+  "introFooterLinkUrl": "googl.ecom",
   "helpLinkText1": "",
   "helpLinkUrl1": "",
   "helpLinkText2": "",
