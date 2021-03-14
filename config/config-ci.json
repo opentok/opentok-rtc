@@ -1,4 +1,16 @@
 {
+   "showTos": false,
+   "meetingsRatePerMinute": 30,
+   "OpenTok":{
+      "apiKey": "<key>",
+      "apiSecret": "<secret>",
+      "publisherResolution": "640x480"
+   },
+   "precallTest": {
+       "enabled": true,
+       "apiKey": "47158534",
+       "apiSecret": "5e6f4d355ab3aaecad8fcbc231c19ec1018fc9b8"
+   },
    "Archiving":{
       "enabled":false,
       "archiveManager":{
@@ -6,20 +18,49 @@
       }
    },
    "Feedback":{
-      "enabled":false
+     "url": "",
+     "reportIssueLevel": 0
    },
    "Screensharing":{
       "enabled":true,
-      "chromeExtensionId":"test",
+      "chromeExtensionId":null,
       "annotations":{
          "enabled":true
       }
    },
    "SIP": {
      "enabled": false,
-     "uri": "sip:test@sip.test.com",
-     "username": "test",
-     "password": "test",
-     "requireGoogleAuth": false
-   }
+     "username": "nexmoApiKey",
+     "password": "nexmoApiSecret"
+   },
+  "Google": {
+    "clientId": "yourClientId.apps.googleusercontent.com",
+    "hostedDomain": "yourhosteddomain.com"
+  },
+  "useGoogleFonts": true,
+  "jqueryUrl": "https://ajax.googleapis.com/ajax/libs/jquery",
+  "minMeetingNameLength": 0,
+  "enableMuteAll": true,
+  "enableStopReceivingVideo": true,
+  "maxUsersPerRoom"100,
+  "enableRoomLocking": true,
+  "autoGenerateRoomName": true,
+  "appName": "Teleconsultas by Analooga",
+  "introText": "Bienvenido a tu Teleconsulta.",
+  "introFooterLinkText": "Intro Footoer link Text",
+  "introFooterLinkUrl": "googl.ecom",
+  "helpLinkText1": "",
+  "helpLinkUrl1": "",
+  "helpLinkText2": "",
+  "helpLinkUrl2": "",
+  "adobeTracking": {
+    "url": "",
+    "primaryCategory": "",
+    "siteIdentifier": "",
+    "functionDept": ""
+  },
+  "icid": {
+    "startBuiliding": "",
+    "contactUs": ""
+  }
 }
