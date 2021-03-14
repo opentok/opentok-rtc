@@ -173,11 +173,11 @@
   <body class="forbidden">
 
     <div id="top-banner"><img src="https://app.teleconsultas.cl/static/logo-teleconsultas.png" />
-      <div class="icon-container">
+     <!--- <div class="icon-container">
         <a href="https://vonage.com" title="Vonage" target="_blank" rel="noopener">
           <i data-icon="vonage_logo"></i>
         </a>
-      </div>
+      </div>-->
       <div class="center-container">
         <div class="room-info">
           <div class="name-wrapper">
@@ -242,7 +242,7 @@
           <button id="toggle-publisher-video" class="selected" disabled>
             <i data-icon="no_video" data-event-name="roomView:buttonClick" data-action="video" data-stream-id="publisher" data-stream-type="publisher"></i>
           </button>
-          <p>Your Video</p>
+          <p>Tu video</p>
         </div>
         <div>
           <button id="toggle-publisher-audio" disabled>
@@ -261,7 +261,7 @@
           <button id="screen-share" disabled>
             <i data-icon="screenshare"></i>
           </button>
-          <p>Compartir pantalla</p>
+          <p>Share Screen</p>
         </div>
         <% if (enableAnnotation) { %>
         <div id="annotate-button-container">
@@ -294,7 +294,7 @@
 
           <div class="chat-title">
             <i data-icon="message_silver"></i>
-            <span>Messaging</span>
+            <span>Mensajes del Chat</span>
           </div>
           <i id="closeChat" data-icon="close_silver"></i>
         </header>
@@ -342,9 +342,9 @@
 
     <section for="viewRecordings" class="bubble" data-recordings="loading">
       <div class="bubble-content top-arrow">
-        <p class="title recordings">Your recordings</p>
-        <p class="title no-recordings">No recordings</p>
-        <p class="title loading">Loading archived recordings...</p>
+        <p class="title recordings">Tus grabaciones</p>
+        <p class="title no-recordings">No hay grabaciones</p>
+        <p class="title loading">Cargando archivdo de grabaciones...</p>
         <div class="tc-list videos">
           <ul></ul>
         </div>
@@ -358,14 +358,14 @@
             <div class="source-pick-container">
               <div id="lockRoomContainer" class="sourcePick icon-with-text">
                 <a id="lockRoom"><i id="lock-room-icon" data-icon="openLock"></i></a>
-                <span id="lock-msg">Lock Meeting</span>
+                <span id="lock-msg">Bloquear Teleconsulta</span>
               </div>
             </div>
           <% } %>
           <div class="source-pick-container">
             <div id="pickMicContainer" class="sourcePick icon-with-text">
               <a id="pickMic"><i data-icon="pmic"></i></a>
-              <span>Switch Microphone</span>
+              <span>Cambiar Microfono</span>
             </div>
           </div>
           <div class="source-pick-container">
