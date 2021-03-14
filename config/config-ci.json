@@ -2,8 +2,8 @@
    "showTos": false,
    "meetingsRatePerMinute": 30,
    "OpenTok":{
-      "apiKey": "<key>",
-      "apiSecret": "<secret>",
+      "apiKey": "47158534",
+      "apiSecret": "5e6f4d355ab3aaecad8fcbc231c19ec1018fc9b8",
       "publisherResolution": "640x480"
    },
    "precallTest": {
