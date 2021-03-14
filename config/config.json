@@ -12,9 +12,9 @@
        "apiSecret": "5e6f4d355ab3aaecad8fcbc231c19ec1018fc9b8"
    },
    "Archiving":{
-      "enabled":false,
+      "enabled":true,
       "archiveManager":{
-         "enabled":false
+         "enabled":true
       }
    },
    "Screensharing":{
