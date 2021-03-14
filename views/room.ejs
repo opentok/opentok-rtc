@@ -172,7 +172,7 @@
 
   <body class="forbidden">
 
-    <div id="top-banner">
+    <div id="top-banner"><img src="https://app.teleconsultas.cl/static/logo-teleconsultas.png" />
       <div class="icon-container">
         <a href="https://vonage.com" title="Vonage" target="_blank" rel="noopener">
           <i data-icon="vonage_logo"></i>
@@ -181,7 +181,7 @@
       <div class="center-container">
         <div class="room-info">
           <div class="name-wrapper">
-            <i id="room-locked-state" data-icon="closedLock" title="This room is locked. No additional participants may join the room."></i>
+            <i id="room-locked-state" data-icon="closedLock" title="Esta sala esta cerrada. No se permiten más participantes."></i>
             <p class="room-name"><%= appName %></p>
           </div>
           <div class="participants-wrapper">
@@ -193,7 +193,7 @@
         <% if (enableStopReceivingVideo) { %>
         <div class="videoSwitch">
           <a id="videoSwitch" disabled>
-            <span>Stop receiving video</span>
+            <span>Dejar de recibir video</span>
             <i data-icon="videoSwitch"></i>
           </a>
         </div>
@@ -202,11 +202,11 @@
         <div id="toggleArchiving" disabled>
           <a id="startArchiving" class="banner-dynamic-btn">
             <i data-icon="start_archive"></i>
-            <span>Record</span>
+            <span>Grabar</span>
           </a>
           <a id="stopArchiving" class="banner-dynamic-btn">
             <i data-icon="stop_archive"></i>
-            <span class="duration">Stop Recording</span>
+            <span class="duration">Para de grabar</span>
           </a>
         </div>
         <%      if(enableArchiveManager) { %>
@@ -236,7 +236,7 @@
           <button id="endCall" disabled>
             <i data-icon="end_call"></i>
           </button>
-          <p>Leave</p>
+          <p>Salir</p>
         </div>
         <div>
           <button id="toggle-publisher-video" class="selected" disabled>
@@ -248,7 +248,7 @@
           <button id="toggle-publisher-audio" disabled>
             <i data-icon="mic-muted"></i>
           </button>
-          <p>Your Mic</p>
+          <p>Tu micrófono</p>
         </div>
         <div id="addToCall-container">
           <button id="addToCall">
@@ -261,14 +261,14 @@
           <button id="screen-share" disabled>
             <i data-icon="screenshare"></i>
           </button>
-          <p>Share Screen</p>
+          <p>Compartir pantalla</p>
         </div>
         <% if (enableAnnotation) { %>
         <div id="annotate-button-container">
           <button id="annotate" disabled>
             <i data-icon="annotate"></i>
           </button>
-          <p>Annotate</p>
+          <p>Notas</p>
         </div>
         <% } } %>
         <div>
@@ -303,10 +303,10 @@
           </ul>
         </div>
         <footer>
-          <textarea id="msgText" placeholder="Type your message..." required></textarea>
-          <button id="sendTxt" type="submit" alt="Send Message" data-icon="send" class="btn btn-purple btn-padding btn-padding-small"></button>
+          <textarea id="msgText" placeholder="Escribe tu mensaje..." required></textarea>
+          <button id="sendTxt" type="submit" alt="Enviar" data-icon="send" class="btn btn-purple btn-padding btn-padding-small"></button>
           <% if (enableEmoji) { %>
-            <button id="addEmoji" alt="Add Emoji"  data-icon="emoji" class="btn1"></button>
+            <button id="addEmoji" alt="Agrega Emoji"  data-icon="emoji" class="btn1"></button>
           <% } %>
         </footer>
         <% if (enableEmoji) { %>
@@ -501,7 +501,7 @@
     <section class="tc-modal room-unlocked-modal">
       <form id="room-unlocked-alert" class="tc-dialog">
         <i data-icon="openLock"></i>
-        <span> Meeting unlocked </span>
+        <span> Teleconsulta abierta </span>
       </form>
     </section>
 
