@@ -17,10 +17,6 @@
          "enabled":false
       }
    },
-   "Feedback":{
-     "url": "",
-     "reportIssueLevel": 0
-   },
    "Screensharing":{
       "enabled":true,
       "chromeExtensionId":null,
@@ -28,15 +24,6 @@
          "enabled":true
       }
    },
-   "SIP": {
-     "enabled": false,
-     "username": "nexmoApiKey",
-     "password": "nexmoApiSecret"
-   },
-  "Google": {
-    "clientId": "yourClientId.apps.googleusercontent.com",
-    "hostedDomain": "yourhosteddomain.com"
-  },
   "useGoogleFonts": true,
   "jqueryUrl": "https://ajax.googleapis.com/ajax/libs/jquery",
   "minMeetingNameLength": 0,
@@ -44,11 +31,11 @@
   "enableStopReceivingVideo": true,
   "maxUsersPerRoom":100,
   "enableRoomLocking": true,
-  "autoGenerateRoomName": true,
+  "autoGenerateRoomName": false,
   "appName": "Teleconsultas by Analoga",
   "introText": "Bienvenido a tu Teleconsulta.",
-  "introFooterLinkText": "Intro Footoer link Text",
-  "introFooterLinkUrl": "googl.ecom",
+  "introFooterLinkText": "Intro Footeer link Text",
+  "introFooterLinkUrl": "Teleconsultas.cl",
   "helpLinkText1": "",
   "helpLinkUrl1": "",
   "helpLinkText2": "",
