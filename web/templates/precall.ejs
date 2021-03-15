@@ -1,8 +1,7 @@
 <div class="main">
   <div id="lefthand-container">
     <header>
-      <a href="http://www.vonage.com" target="_blank" rel="noopener">
-        <img src="/images/vonage-logo-no-text.svg" alt="Vonage logo">
+        <img src="https://app.teleconsultas.cl/static/logo-teleconsultas.png" alt="Teleconsultas logo">
       </a>
       <h2>
         <% if (appName === "Vonage Free Conferencing") { %>
@@ -46,30 +45,30 @@
       <div id="enter-room-name-prompt">
         <div class="room-name-input-container">
           <input id="room-name-input" class="block username" name="roomName" autocomplete="off" maxlength="46" value="<%=roomName%>">
-          <label>Room Name</label>
+          <label>Nombre de la sala</label>
           <p class="error-room error-text">
             <i data-icon="warning"></i>
-            Please enter a meeting name.
+            Debe ingresar un nombre para la sala.
           </p>
         </div>
       </div>
       <% } %>
       <div class="user-name-input-container">
         <input id="user-name-input" class="block username" name="userName" autocomplete="off" data-wd="username" maxlength="46">
-        <label>Your name (optional)</label>
+        <label>Su nombre</label>
       </div>
       <div class="publish-settings">
         <div id="video-settings">
           <div>
             <img alt="video source toggle" src="/images/icons/Vlt-icon-video-active-full.svg" />
-            <span>Camera</span>
+            <span>Camara</span>
           </div>
           <div class="right-settings">
             <div class="sourcePick switch-button" id="video-switch">
               <a id="preToggleFacingMode"> Switch </a>
             </div>
             <a id="initialVideoSwitch" class="activated">
-              <label>On</label>
+              <label>Encendida</label>
               <i data-icon="videoSwitch"></i>
             </a>
           </div>
@@ -77,7 +76,7 @@
         <div id="audio-settings">
           <div>
             <img alt="audio source toggle"src="/images/icons/Vlt-icon-microphone-full.svg" />
-            <span>Microphone</span>
+            <span>Micrófono</span>
             <div id=audio-meter-container>
               <div id="audio-meter">
                 <div id="audio-meter-level">
@@ -90,7 +89,7 @@
               <a id="prePickMic"> Switch </a>
             </div>
             <a id="initialAudioSwitch" class="activated">
-              <label>On</label>
+              <label>Encendido</label>
               <i data-icon="audioSwitch"></i>
             </a>
           </div>
@@ -124,14 +123,14 @@
   <div id="pre-call-test-results">
     <i data-icon="close-box" id="precall-close"></i>
     <i data-icon="precall-tick" id="precall-icon"></i>
-    <p id="pre-call-heading">Precall Test Results</p>
+    <p id="pre-call-heading">Resultados de prueba</p>
     <p id="pre-call-description">
-      You can expect a great experience on your video call!
+      Podras experimentar una buena experiencial!
     </p>
     <div id="results">
       <div id="precall-video-results" class="precall-media-results">
         <p class="media-heading">
-          VIDEO QUALITY
+          CALIDAD VIDEO
         </p>
         <p class="bitrate">
           <span id="video-bitrate"></span> Kbps
@@ -145,13 +144,13 @@
       </div>
       <div id="precall-audio-results" class="precall-media-results">
         <p class="media-heading">
-          AUDIO QUALITY
+          CALIDAD AUDIO
         </p>
         <p class="bitrate">
           <span id="audio-bitrate">40</span> Kbps
         </p>
         <p id="precall-audio-packet-loss">
-          0% packet loss
+          0% perdida de paquetes
         </p>
       </div>
     </div>
