@@ -4,7 +4,7 @@
    "OpenTok":{
       "apiKey": "47158534",
       "apiSecret": "5e6f4d355ab3aaecad8fcbc231c19ec1018fc9b8",
-      "publisherResolution": "640x480"
+      "publisherResolution": "1280x720"
    },
    "precallTest": {
        "enabled": true,
@@ -24,30 +24,21 @@
          "enabled":true
       }
    },
+   "enableEmoji": true,
   "useGoogleFonts": true,
   "jqueryUrl": "https://ajax.googleapis.com/ajax/libs/jquery",
-  "minMeetingNameLength": 0,
-  "enableMuteAll": true,
+  "minMeetingNameLength": 2,
+  "enableMuteAll": false,
   "enableStopReceivingVideo": true,
   "maxUsersPerRoom":100,
   "enableRoomLocking": true,
   "autoGenerateRoomName": false,
-  "appName": "Teleconsultas by Analoga",
+  "appName": "Teleconsultas",
   "introText": "Bienvenido a tu Teleconsulta.",
   "introFooterLinkText": "Intro Footeer link Text",
   "introFooterLinkUrl": "Teleconsultas.cl",
-  "helpLinkText1": "",
-  "helpLinkUrl1": "",
-  "helpLinkText2": "",
-  "helpLinkUrl2": "",
-  "adobeTracking": {
-    "url": "",
-    "primaryCategory": "",
-    "siteIdentifier": "",
-    "functionDept": ""
-  },
-  "icid": {
-    "startBuiliding": "",
-    "contactUs": ""
-  }
+  "helpLinkText1": "Help link tex1",
+  "helpLinkUrl1": "#",
+  "helpLinkText2": "Help link tex1",
+  "helpLinkUrl2": "#",
 }
