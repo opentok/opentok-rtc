@@ -117,7 +117,7 @@ For example, the following shell commands export these values for use by the app
 
 ```sh
 export TB_API_KEY=<key>
-export TB_API_KEY=<secret>
+export TB_SECRET=<secret>
 ```
 
 You can set other environment variables to enable and configure other options,
