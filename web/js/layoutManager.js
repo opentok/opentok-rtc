@@ -155,6 +155,10 @@ LayoutViewport, ItemsHandler */
     return Object.keys(items).length;
   }
 
+  function setCaption(text) {
+    return LayoutView.setCaption(text);
+  }
+
   function calculateCandidateLayout() {
     let candidateLayout = null;
 
@@ -196,5 +200,6 @@ LayoutViewport, ItemsHandler */
     remove,
     removeAll,
     getItemById,
+    setCaption,
   };
 })(this);

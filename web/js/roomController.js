@@ -267,6 +267,15 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     stopArchiving() {
       sendArchivingOperation('stop');
     },
+    toggleClosedCaptions() {
+      const data = {
+        userName,
+        token,
+        roomURI,
+      };
+
+      Request.startTranscription(data);
+    },
     streamVisibilityChange(evt) {
       const getStatus = (info) => {
         let status = null;
@@ -609,6 +618,10 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     'signal:roomLocked': function (evt) {
       const roomState = JSON.parse(evt.data).status;
       Utils.sendEvent('roomController:roomLocked', roomState);
+    },
+    'signal:transcription': function (evt) {
+      const { text } = evt;
+      LayoutManager.setCaption(text);
     },
     'signal:muteAll': function (evt) {
       const statusData = JSON.parse(evt.data);

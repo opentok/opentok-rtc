@@ -497,6 +497,10 @@ BubbleFactory, LayoutManager */
           Utils.sendEvent('roomView:togglePublisherAudio', { hasAudio });
           break;
         }
+        case 'toggle-closed-caption': {
+          Utils.sendEvent('roomView:toggleClosedCaptions');
+          break;
+        }
         case 'screen-share': {
           Utils.sendEvent('roomView:shareScreen');
           break;

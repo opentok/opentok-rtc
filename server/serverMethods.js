@@ -16,6 +16,8 @@ const _ = require('lodash');
 const qs = require('qs');
 const accepts = require('accepts');
 const geoip = require('geoip-lite');
+const LoremIpsum = require('lorem-ipsum').LoremIpsum;
+const axios = require('axios').default;
 const C = require('./serverConstants');
 const configLoader = require('./configLoader');
 const ArchiveLocalStorage = require('./archiveLocalStorage');
@@ -131,6 +133,7 @@ function ServerMethods(aLogLevel, aModules) {
       const templatingSecret = config.get(C.TEMPLATING_SECRET);
       const apiKey = config.get(C.OPENTOK_API_KEY);
       const apiSecret = config.get(C.OPENTOK_API_SECRET);
+      const speechToText = config.get(C.SPEECH_TO_TEXT);
       const precallApiKey = config.get(C.OPENTOK_PRECALL_API_KEY) || config.get(C.OPENTOK_API_KEY);
       const precallApiSecret = config.get(C.OPENTOK_PRECALL_API_SECRET)
         || config.get(C.OPENTOK_API_SECRET);
@@ -140,7 +143,7 @@ function ServerMethods(aLogLevel, aModules) {
       logger.log('apiSecret', apiSecret);
       const archivePollingTO = config.get(C.ARCHIVE_POLLING_INITIAL_TIMEOUT);
       const archivePollingTOMultiplier = config.get(C.ARCHIVE_POLLING_TIMEOUT_MULTIPLIER);
-      const otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret);
+      const otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret, 'https://anvil-tbdev-internal.opentok.com');
       const precallOtInstance = Utils.CachifiedObject(Opentok, precallApiKey, precallApiSecret);
 
       const allowIframing = config.get(C.ALLOW_IFRAMING);
@@ -223,6 +226,7 @@ function ServerMethods(aLogLevel, aModules) {
       return {
         otInstance,
         precallOtInstance,
+        speechToText,
         apiKey,
         apiSecret,
         precallApiKey,
@@ -615,6 +619,29 @@ function ServerMethods(aLogLevel, aModules) {
       _.merge(parsed, qs.parse(part));
     });
     return parsed;
+  }
+
+  async function startTranscription(aReq, aRes) {
+    const { tbConfig } = aReq;
+    const { apiKey, apiSecret, speechToText } = tbConfig;
+    const roomName = aReq.params.roomName.toLowerCase();
+    const room = await serverPersistence.getKey(redisRoomPrefix + roomName);
+    const roomObject = JSON.parse(room);
+
+    if (!room) return aRes.status(404).send(null);
+    axios.post(speechToText, {
+      sessionId: roomObject.sessionId,
+      projectId: apiKey,
+      projectSecret: apiSecret,
+    })
+      .then((response) => {
+        console.log(response);
+        aRes.send('OK');
+      })
+      .catch((error) => {
+        console.log(error);
+        aRes.status(404).send('FAILED');
+      });
   }
 
   async function lockRoom(aReq, aRes) {
@@ -1019,6 +1046,7 @@ function ServerMethods(aLogLevel, aModules) {
     featureEnabled,
     loadConfig,
     lockRoom,
+    startTranscription,
     getRoot,
     getRoom,
     getRoomInfo,
