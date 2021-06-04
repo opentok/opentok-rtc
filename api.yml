@@ -130,6 +130,35 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/ErrorInfo'
+    delete:
+      summary: Stops the transcription service
+      x-implemented-in: stopTranscription
+      produces:
+        - 'application/json,'
+      description: >-
+        Stops the transcriptions process.
+      parameters:
+        - name: roomName
+          in: path
+          description: Name of the room.
+          required: true
+          type: string
+        - name: token
+          in: body
+          description: Opentok token tied to the room.
+          required: true
+          type: string
+      tags:
+        - Rooms
+      responses:
+        '200':
+          description: Room data after successful operation
+          schema:
+            $ref: '#/definitions/RoomInfo'
+        '400':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/ErrorInfo'
   '/room/{roomName}/state':
     post:
       summary: Sets room state to locked or unlocked

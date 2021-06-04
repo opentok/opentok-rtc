@@ -86,6 +86,11 @@
       JSON.stringify(data), 'application/json');
   }
 
+  function stopTranscription(data) {
+    return sendXHR('DELETE', `${server}/room/${data.roomURI}/transcription`,
+      JSON.stringify(data), 'application/json');
+  }
+
   function sendArchivingOperation(data) {
     return sendXHR('POST', `${server}/room/${data.roomName}/archive`,
                     composeDate(data), 'application/x-www-form-urlencoded');
@@ -113,6 +118,7 @@
     sendArchivingOperation,
     sendLockingOperation,
     startTranscription,
+    stopTranscription,
     dialOut,
     hangUp,
     deleteArchive,

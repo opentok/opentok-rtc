@@ -267,14 +267,19 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     stopArchiving() {
       sendArchivingOperation('stop');
     },
-    toggleClosedCaptions() {
+    toggleClosedCaptions(evt) {
       const data = {
         userName,
         token,
         roomURI,
       };
+      const { ccStatus } = evt.detail;
 
-      Request.startTranscription(data);
+      if (ccStatus) {
+        Request.startTranscription(data);
+      } else {
+        Request.stopTranscription(data);
+      }
     },
     streamVisibilityChange(evt) {
       const getStatus = (info) => {

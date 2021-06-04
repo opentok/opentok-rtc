@@ -498,7 +498,15 @@ BubbleFactory, LayoutManager */
           break;
         }
         case 'toggle-closed-caption': {
-          Utils.sendEvent('roomView:toggleClosedCaptions');
+          const ccStatus = elem.querySelector('i').data('icon') === 'closed-captions';
+
+          if (ccStatus) {
+            elem.querySelector('i').data('icon', 'closed-captions-on');
+          } else {
+            elem.querySelector('i').data('icon', 'closed-captions');
+          }
+
+          Utils.sendEvent('roomView:toggleClosedCaptions', { ccStatus });
           break;
         }
         case 'screen-share': {
