@@ -16,7 +16,6 @@ const _ = require('lodash');
 const qs = require('qs');
 const accepts = require('accepts');
 const geoip = require('geoip-lite');
-const LoremIpsum = require('lorem-ipsum').LoremIpsum;
 const axios = require('axios').default;
 const C = require('./serverConstants');
 const configLoader = require('./configLoader');
@@ -143,7 +142,7 @@ function ServerMethods(aLogLevel, aModules) {
       logger.log('apiSecret', apiSecret);
       const archivePollingTO = config.get(C.ARCHIVE_POLLING_INITIAL_TIMEOUT);
       const archivePollingTOMultiplier = config.get(C.ARCHIVE_POLLING_TIMEOUT_MULTIPLIER);
-      const otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret, 'https://anvil-tbdev-internal.opentok.com');
+      const otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret);
       const precallOtInstance = Utils.CachifiedObject(Opentok, precallApiKey, precallApiSecret);
 
       const allowIframing = config.get(C.ALLOW_IFRAMING);
@@ -631,8 +630,8 @@ function ServerMethods(aLogLevel, aModules) {
     if (!room) return aRes.status(404).send(null);
     axios.post(speechToText, {
       sessionId: roomObject.sessionId,
-      projectId: apiKey,
-      projectSecret: apiSecret,
+      apiKey: apiKey,
+      secret: apiSecret,
     })
       .then((response) => {
         console.log(response);
