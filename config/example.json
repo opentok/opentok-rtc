@@ -11,6 +11,9 @@
        "apiKey": "46049502",
        "apiSecret": "0f4a63f629cec64ebdc5552974fe2566d2eb2835"
    },
+   "SpeechToText": {
+     "url": "http://127.0.0.1:5000/transcribe"
+   },
    "Archiving":{
       "enabled":false,
       "archiveManager":{
