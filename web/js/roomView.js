@@ -209,6 +209,15 @@ BubbleFactory, LayoutManager */
       setAudioSwitchRemotely(true);
       Modal.showConfirm(isJoining ? MODAL_TXTS.join : MODAL_TXTS.muteRemotely);
     },
+    toggleTranscription(evt) {
+      const elem = callControlsElem.querySelector('#toggle-closed-caption');
+
+      if (evt.detail.status) {
+        elem.querySelector('i').data('icon', 'closed-captions-on');
+      } else {
+        elem.querySelector('i').data('icon', 'closed-captions');
+      }
+    },
     sessionDisconnected() {
       RoomView.participantsNumber = 0;
       LayoutManager.removeAll();
