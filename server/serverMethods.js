@@ -643,6 +643,24 @@ function ServerMethods(aLogLevel, aModules) {
       });
   }
 
+  async function stopTranscription(aReq, aRes) {
+    const { tbConfig } = aReq;
+    const { speechToText } = tbConfig;
+    const roomName = aReq.params.roomName.toLowerCase();
+    const room = await serverPersistence.getKey(redisRoomPrefix + roomName);
+    const roomObject = JSON.parse(room);
+
+    axios.delete(`${speechToText}/${roomObject.sessionId}`)
+      .then((response) => {
+        console.log(response);
+        aRes.send('OK');
+      })
+      .catch((error) => {
+        console.log(error);
+        aRes.status(404).send('FAILED');
+      });
+  }
+
   async function lockRoom(aReq, aRes) {
     const roomName = aReq.params.roomName.toLowerCase();
     let room = await serverPersistence.getKey(redisRoomPrefix + roomName);
@@ -1046,6 +1064,7 @@ function ServerMethods(aLogLevel, aModules) {
     loadConfig,
     lockRoom,
     startTranscription,
+    stopTranscription,
     getRoot,
     getRoom,
     getRoomInfo,
