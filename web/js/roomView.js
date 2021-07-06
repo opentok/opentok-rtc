@@ -209,6 +209,15 @@ BubbleFactory, LayoutManager */
       setAudioSwitchRemotely(true);
       Modal.showConfirm(isJoining ? MODAL_TXTS.join : MODAL_TXTS.muteRemotely);
     },
+    toggleTranscription(evt) {
+      const elem = callControlsElem.querySelector('#toggle-closed-caption');
+
+      if (evt.detail.status) {
+        elem.querySelector('i').data('icon', 'closed-captions-on');
+      } else {
+        elem.querySelector('i').data('icon', 'closed-captions');
+      }
+    },
     sessionDisconnected() {
       RoomView.participantsNumber = 0;
       LayoutManager.removeAll();
@@ -495,6 +504,18 @@ BubbleFactory, LayoutManager */
             hasAudio = true;
           }
           Utils.sendEvent('roomView:togglePublisherAudio', { hasAudio });
+          break;
+        }
+        case 'toggle-closed-caption': {
+          const ccStatus = elem.querySelector('i').data('icon') === 'closed-captions';
+
+          if (ccStatus) {
+            elem.querySelector('i').data('icon', 'closed-captions-on');
+          } else {
+            elem.querySelector('i').data('icon', 'closed-captions');
+          }
+
+          Utils.sendEvent('roomView:toggleClosedCaptions', { ccStatus });
           break;
         }
         case 'screen-share': {

@@ -15,6 +15,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
   let enableSip = false;
   let requireGoogleAuth = false; // For SIP dial-out
   let googleAuth = null;
+  let latencyArr = [];
 
   let setPublisherReady;
   const publisherReady = new Promise((resolve) => {
@@ -24,6 +25,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
   const STATUS_KEY = 'room';
   let _sharedStatus = {
     roomMuted: false,
+    ccStatus: false,
   };
 
   let { userName } = window;
@@ -248,6 +250,10 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     });
   };
 
+  function sendSignalTranscription(status) {
+    otHelper.sendSignal('toggleTranscription', { status });
+  }
+
   function sendSignalMuteAll(status, onlyChangeSwitch) {
     otHelper.sendSignal('muteAll', { status, onlyChangeSwitch });
   }
@@ -266,6 +272,23 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     },
     stopArchiving() {
       sendArchivingOperation('stop');
+    },
+    toggleClosedCaptions(evt) {
+      const data = {
+        userName,
+        token,
+        roomURI,
+      };
+      const { ccStatus } = evt.detail;
+
+      if (ccStatus) {
+        Request.startTranscription(data);
+      } else {
+        Request.stopTranscription(data);
+      }
+
+      _sharedStatus.ccStatus = ccStatus;
+      sendSignalTranscription(ccStatus);
     },
     streamVisibilityChange(evt) {
       const getStatus = (info) => {
@@ -533,6 +556,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
         subscriberStreams[streamId].subscriberPromise = otHelper.subscribe(
           evt.stream, subsDOMElem, subOptions, {}, enableAnnotations,
         ).then((subscriber) => {
+          sendSignalTranscription(_sharedStatus.ccStatus);
           if (streamVideoType === 'screen') {
             enableAnnotations && Utils.sendEvent('roomController:annotationStarted');
             const subContainer = subscriber.element.parentElement;
@@ -610,6 +634,16 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
       const roomState = JSON.parse(evt.data).status;
       Utils.sendEvent('roomController:roomLocked', roomState);
     },
+    'signal:transcription': function (evt) {
+      const { text, userName, epoch } = evt;
+      if (epoch) {
+        const currentTime = Math.floor(Date.now() / 1000);
+        latencyArr.push(currentTime - epoch);
+        const average = (arr) => arr.reduce((acc, v) => acc + v) / arr.length;
+        console.log('Average signalling latency', average(latencyArr));
+      }
+      LayoutManager.setCaption(userName ? `${userName}: ${text}` : text);
+    },
     'signal:muteAll': function (evt) {
       const statusData = JSON.parse(evt.data);
       const muteAllSwitch = statusData.status;
@@ -631,6 +665,13 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
         setAudioStatus(muteAllSwitch);
         Utils.sendEvent('roomController:roomMuted', { isJoining: false });
         RoomView.showConfirmChangeMicStatus(muteAllSwitch).then(setNewAudioStatus);
+      }
+    },
+    'signal:toggleTranscription': function(evt) {
+      const { status } = JSON.parse(evt.data);
+      if (!otHelper.isMyself(evt.from)) {
+        _sharedStatus.ccStatus = status;
+        Utils.sendEvent('roomController:toggleTranscription', { status });
       }
     },
     'signal:archives': function (evt) {

@@ -297,6 +297,25 @@
       text-overflow: ellipsis;
     }
   }
+
+  .captions {
+    z-index: 1010;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 50px;
+    text-align: center;
+    .caption-text {
+      padding: 8px;
+      display: inline-block;
+      white-space: pre-wrap;
+      background: rgba(8, 8, 8, 0.75);
+      font-size: 20.8444px;
+      color: rgb(255, 255, 255);
+      fill: rgb(255, 255, 255);
+      font-family: "YouTube Noto", Roboto, "Arial Unicode Ms", Arial, Helvetica, Verdana, "PT Sans Caption", sans-serif;
+    }
+  }
 }
 
 [data-archive-status="started"]
