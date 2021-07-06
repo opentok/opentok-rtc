@@ -15,6 +15,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
   let enableSip = false;
   let requireGoogleAuth = false; // For SIP dial-out
   let googleAuth = null;
+  let latencyArr = [];
 
   let setPublisherReady;
   const publisherReady = new Promise((resolve) => {
@@ -634,8 +635,14 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
       Utils.sendEvent('roomController:roomLocked', roomState);
     },
     'signal:transcription': function (evt) {
-      const { text } = evt;
-      LayoutManager.setCaption(text);
+      const { text, userName, epoch } = evt;
+      if (epoch) {
+        const currentTime = Math.floor(Date.now() / 1000);
+        latencyArr.push(currentTime - epoch);
+        const average = (arr) => arr.reduce((acc, v) => acc + v) / arr.length;
+        console.log('Average signalling latency', average(latencyArr));
+      }
+      LayoutManager.setCaption(userName ? `${userName}: ${text}` : text);
     },
     'signal:muteAll': function (evt) {
       const statusData = JSON.parse(evt.data);
