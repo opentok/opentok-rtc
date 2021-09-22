@@ -755,6 +755,9 @@ function ServerMethods(aLogLevel, aModules) {
   function postRoomArchive(aReq, aRes) {
     const { tbConfig } = aReq;
     const { body } = aReq;
+
+    if (!aReq.tbConfig.enableArchiving) return aRes.status(403).send(new Error('Unauthorized'));
+
     if (!body || !body.userName || !body.operation) {
       logger.log('postRoomArchive => missing body parameter: ', aReq.body);
       aRes.status(400).send(new ErrorInfo(100, 'Missing required parameter'));
