@@ -54,6 +54,10 @@ function Opentok(aApiKey, aApiSecret) {
     setTimeout(aCallback.bind(undefined, undefined, list));
   });
 
+  sinon.stub(opentok, 'deleteArchive').callsFake((aArchiveId, aCallback) => {
+    setTimeout(aCallback.bind(aArchiveId));
+  });
+
   sinon.stub(opentok, 'createSession').callsFake((aOptions, aCallback) => {
     var sessionInfo = {
       sessionId: '1' + Math.random(),
@@ -64,7 +68,7 @@ function Opentok(aApiKey, aApiSecret) {
   sinon.stub(opentok, 'generateToken').callsFake((aOptions) => 'tokentoken');
 
   opentok._sinonRestore = function () {
-    ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'generateToken', 'createSession'].forEach((method) => {
+    ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'deleteArchive', 'generateToken', 'createSession'].forEach((method) => {
       opentok[method].restore();
     });
   };
