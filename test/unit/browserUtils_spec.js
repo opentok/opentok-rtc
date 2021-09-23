@@ -264,7 +264,7 @@ describe('Utils', () => {
       it('should always return a getFirstValue method on the object\'\'', sinon.test(() => {
         results.forEach((aResult) => {
           expect(aResult.getFirstValue).to.exist;
-          expect(aResult.getFirstValue).to.be.a.function;
+          expect(aResult.getFirstValue).to.be.a('function');
         });
       }));
 
