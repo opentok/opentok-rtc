@@ -67,6 +67,16 @@ describe('ChatController', () => {
         });
     }
 
+    before(() => {
+      sinon.stub(RoomStatus, 'set');
+      sinon.stub(Utils, 'addHandlers');
+    });
+
+    after(() => {
+      RoomStatus.set.restore();
+      Utils.addHandlers.restore();
+    });
+
     it('should initialize properly the object and return the handlers set when called without '
        + 'handlers', sinon.test(function (done) {
       var expectedHandlers = {
@@ -78,9 +88,6 @@ describe('ChatController', () => {
           name: 'chatView:outgoingMessage',
         },
       };
-
-      this.stub(RoomStatus, 'set');
-      this.stub(Utils, 'addHandlers');
 
       verifyInit(done, expectedHandlers);
     }));
@@ -105,9 +112,6 @@ describe('ChatController', () => {
           type: 'chatVisibility',
           name: 'roomView:chatVisibility',
         }];
-
-      this.stub(RoomStatus, 'set');
-      this.stub(Utils, 'addHandlers');
 
       verifyInit(done, expectedHandlers, handlersName);
     }));
