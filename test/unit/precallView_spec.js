@@ -1,6 +1,10 @@
+var sinonTest = require('sinon-test');
+
 var { assert } = chai;
 var { expect } = chai;
 var should = chai.should();
+var test = sinonTest(sinon);
+sinon.test = test;
 
 describe('PrecallView', () => {
   before(() => {

@@ -186,6 +186,7 @@ describe('OpenTokRTC server', () => {
   it('DELETE /archive/:archiveId', (done) => {
     request(app)
       .delete('/archive/12345')
+      .set('referer', 'https://example.com/room/unitTestRoom')
       .expect(405, done);
   });
 
