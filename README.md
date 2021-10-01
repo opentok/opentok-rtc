@@ -56,7 +56,7 @@ You will also need these an OpenTok API key and secret. You can obtain these by 
 First, install the dependencies for the server.
 
 If you use [nvm](https://github.com/nvm-sh/nvm), have it use the correct
-version of Node (v8):
+version of Node (v12):
 
 ```sh
 $ nvm use
@@ -117,7 +117,7 @@ For example, the following shell commands export these values for use by the app
 
 ```sh
 export TB_API_KEY=<key>
-export TB_API_KEY=<secret>
+export TB_API_SECRET=<secret>
 ```
 
 You can set other environment variables to enable and configure other options,
