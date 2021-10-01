@@ -203,6 +203,14 @@ describe('OpenTokRTC server', () => {
       .expect(404, done);
   });
 
+  process.env.ENABLE_ARCHIVING = false;
+  it('POST /room/:roomName/archive should not allow composite archiving if disabled', (done) => {
+    request(app)
+      .post('/room/unitTestRoom/archive')
+      .send('userName=xxxYYY&operation=startComposite')
+      .expect(403, done);
+  });
+
   it('GET /server/health should return 400 and expected values', (done) => {
     request(app)
       .get('/server/health')
