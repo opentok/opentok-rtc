@@ -297,7 +297,7 @@
             _publisher = OT.initPublisher(aDOMElement, aProperties);
             return resolve(_publisher);
           });
-          
+
         });
       });
     }
@@ -466,7 +466,7 @@
           devices = devices.filter(device => { return device.kind === kind || kind === 'all' });
           return resolve(devices);
         });
-      });  
+      });
     }
 
     function getVideoDeviceNotInUse(selectedDeviceId) {
@@ -485,13 +485,13 @@
       kind = kind.replace('Source', 'Input');
       const matchingDevice = devices.find(device => {
         return device.kind === kind;
-      });  
+      });
       return matchingDevice ? matchingDevice.deviceId : null;
     }
 
     function getFilteredSources(mediaDeviceIds) {
       return new Promise((resolve, reject) => {
-        getDevices().then(devices => {          
+        getDevices().then(devices => {
           for (const source in mediaDeviceIds) {
             const matchingDevice = devices.find(device => {
               return device.deviceId === mediaDeviceIds[source];
@@ -504,7 +504,7 @@
         return reject(e);
       });
     });
-   }  
+   }
 
     function subscribe(aStream, aTargetElement, aProperties, aHandlers, aEnableAnnotation) {
       const self = this;
@@ -674,4 +674,3 @@
 
   global.OTHelper = OTHelper;
 })(this);
-    
