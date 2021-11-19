@@ -1,24 +1,30 @@
-/* global Modal, FirebaseModel, RecordingsView */
+/* global Modal, ArchivesEventsListener, RecordingsView */
 
-!(exports => {
+!((exports) => {
   let model = null;
 
-  function init(enableArchiveManager) {
+  const addListeners = () => {
+    exports.addEventListener('archive', (evt) => {
+      const handler = handlers[evt.detail.action];
+      handler && handler(evt.detail);
+    });
+  };
+
+  function init(enableArchiveManager, existingArchives) {
     let dependenciesLoaded;
     if (enableArchiveManager) {
       dependenciesLoaded = LazyLoader.dependencyLoad([
-        '/js/models/firebase.js',
-        '/js/recordingsView.js'
-      ]).then(() => {
-        return FirebaseModel
-          .init();
-      });
+        '/js/models/archivesEventsListener.js',
+        '/js/min/recordingsView.min.js',
+      ]).then(() => ArchivesEventsListener
+        .init());
     } else {
       dependenciesLoaded = Promise.resolve();
     }
 
-    return dependenciesLoaded.then(aModel => {
+    return dependenciesLoaded.then((aModel) => {
       model = aModel;
+      model.archives = existingArchives;
       Utils.sendEvent('recordings-model-ready', null, exports);
       addListeners();
       aModel && RecordingsView.init(model);
@@ -44,37 +50,28 @@
       function loadModalText() {
         document.querySelector(`${selector} .username`).textContent = data.username;
       }
-      return Modal.show(selector, loadModalText).then(() => {
-        return new Promise(() => {
-          const ui = document.querySelector(selector);
-          ui.addEventListener('click', function onClicked(evt) { // eslint-disable-line consistent-return
-            const classList = evt.target.classList;
-            evt.stopImmediatePropagation();
-            evt.preventDefault();
+      return Modal.show(selector, loadModalText).then(() => new Promise(() => {
+        const ui = document.querySelector(selector);
+        ui.addEventListener('click', function onClicked(evt) { // eslint-disable-line consistent-return
+          const { classList } = evt.target;
+          evt.stopImmediatePropagation();
+          evt.preventDefault();
 
-            (classList.contains('delete-archive')) && onDeleteArchive(data);
+          (classList.contains('delete-archive')) && onDeleteArchive(data);
 
-            if (classList.contains('btn')) {
-              ui.removeEventListener('click', onClicked);
-              return Modal.hide(selector);
-            }
-          });
+          if (classList.contains('btn')) {
+            ui.removeEventListener('click', onClicked);
+            return Modal.hide(selector);
+          }
         });
-      });
-    }
-  };
-
-  var addListeners = () => {
-    exports.addEventListener('archive', evt => {
-      const handler = handlers[evt.detail.action];
-      handler && handler(evt.detail);
-    });
+      }));
+    },
   };
 
   exports.RecordingsController = {
     init,
     get model() {
       return model;
-    }
+    },
   };
 })(this);

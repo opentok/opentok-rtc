@@ -11,10 +11,6 @@
        "apiKey": "46049502",
        "apiSecret": "0f4a63f629cec64ebdc5552974fe2566d2eb2835"
    },
-   "Firebase":{
-      "dataUrl":"",
-      "authSecret":""
-   },
    "Archiving":{
       "enabled":false,
       "archiveManager":{
@@ -43,16 +39,28 @@
   },
   "useGoogleFonts": true,
   "jqueryUrl": "https://ajax.googleapis.com/ajax/libs/jquery",
-  "supportIE": true,
   "minMeetingNameLength": 0,
   "enableMuteAll": true,
   "enableStopReceivingVideo": true,
   "maxUsersPerRoom": 0,
   "enableRoomLocking": true,
+  "autoGenerateRoomName": true,
+  "appName": "Vonage Video Conferencing",
+  "introText": "Welcome to Video Conferencing.",
+  "introFooterLinkText": "",
+  "introFooterLinkUrl": "",
+  "helpLinkText1": "",
+  "helpLinkUrl1": "",
+  "helpLinkText2": "",
+  "helpLinkUrl2": "",
   "adobeTracking": {
     "url": "",
     "primaryCategory": "",
     "siteIdentifier": "",
     "functionDept": ""
+  },
+  "icid": {
+    "startBuiliding": "",
+    "contactUs": ""
   }
 }

@@ -10,11 +10,17 @@ describe('Home', function () {
   before(()=> {
   });
 
-  it('creates room', () => {
+    it('Landing Page : creates room', () => {
     page.open();
-    page.room.setValue(room);
     page.name.setValue(user);
     page.goToRoom();
-  }, 1);
+    page.acceptTerms();
+    }, 1);
+
+    it('Landing Page : audio Switch visible', () => {
+      page.open();
+      page.name.setValue(user);
+      page.audioSwitch.click();
+    }, 1);
 
 });

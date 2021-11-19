@@ -1,5 +1,5 @@
-var assert = chai.assert;
-var expect = chai.expect;
+var { assert } = chai;
+var { expect } = chai;
 var should = chai.should();
 
 describe('PreferredResolutionAlgorithmProvider', () => {
@@ -44,15 +44,15 @@ describe('PreferredResolutionAlgorithmProvider', () => {
     });
 
     it('should return the defaultAlgorithm when called with an algorithm that does not exist',
-       () => {
-         var algs = obUnderTest.algorithmNames;
-         var candidate = 'IHopeNoneCallAnAlgorithmThisWay!';
-         while (algs.indexOf(candidate) > 0) {
-           candidate += 'no, really';
-         }
-         var alg = obUnderTest.getAlg(candidate);
-         expect(alg.chosenAlgorithm).to.be.equal(obUnderTest.defaultAlgorithmName);
-       });
+      () => {
+        var algs = obUnderTest.algorithmNames;
+        var candidate = 'IHopeNoneCallAnAlgorithmThisWay!';
+        while (algs.indexOf(candidate) > 0) {
+          candidate += 'no, really';
+        }
+        var alg = obUnderTest.getAlg(candidate);
+        expect(alg.chosenAlgorithm).to.be.equal(obUnderTest.defaultAlgorithmName);
+      });
 
     it('should return the requested algorithm if it exists', () => {
       var algs = obUnderTest.algorithmNames;
@@ -66,7 +66,7 @@ describe('PreferredResolutionAlgorithmProvider', () => {
       algs.forEach((algName) => {
         var alg = obUnderTest.getAlg(algName);
         var result = alg.algorithm({ width: 640, height: 480 }, { width: 1200, height: 960 },
-                                   { width: 640, height: 480 }, 5);
+          { width: 640, height: 480 }, 5);
         expect(result.width).to.exist;
         expect(result.height).to.exist;
       });

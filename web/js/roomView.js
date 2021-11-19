@@ -1,7 +1,7 @@
-/* global RoomView, Cronograph, FirebaseModel, RecordingsController, Modal,
-BubbleFactory, LayoutManager, $, maxUsersPerRoom */
+/* global RoomView, Cronograph, ArchivesEventsListener, RecordingsController, Modal,
+BubbleFactory, LayoutManager */
 
-!(exports => {
+!((exports) => {
   // HTML elements for the view
   let dock;
   let handler;
@@ -35,68 +35,68 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
   const MODAL_TXTS = {
     mute: {
       head: 'Mute all participants, including yourself',
-      detail: 'Everyone will be notified and can click their <i data-icon="no_mic"></i> button' +
-              ' to unmute themselves.',
-      button: 'Mute all participants'
+      detail: 'Everyone will be notified and can click their <i data-icon="no_mic"></i> button'
+              + ' to unmute themselves.',
+      button: 'Mute all participants',
     },
     muteRemotely: {
       head: 'All participants microphones are being disabled in the call',
-      detail: 'If you want to keep talking, ' +
-              'you must manually enable your own microphone.',
-      button: 'I understand'
+      detail: 'If you want to keep talking, '
+              + 'you must manually enable your own microphone.',
+      button: 'I understand',
     },
     unmutedRemotely: {
       head: 'Your microphone is now enabled in the call',
-      detail: 'If you want to remain muted, ' +
-              'you must manually disable your own microphone.',
-      button: 'I understand'
+      detail: 'If you want to remain muted, '
+              + 'you must manually disable your own microphone.',
+      button: 'I understand',
     },
     join: {
       head: 'All participants are muted',
-      detail: 'You can unmute everyone by toggling the Mute all participants option. Or you can ' +
-              'unmute just yourself by clicking the microphone icon in the bottom menu.',
-      button: 'I understand'
+      detail: 'You can unmute everyone by toggling the Mute all participants option. Or you can '
+              + 'unmute just yourself by clicking the microphone icon in the bottom menu.',
+      button: 'I understand',
     },
     lock: {
       head: 'Do you want to lock the meeting?',
-      detail: 'When a meeting room is locked, no one else will be allowed to join the meeting. ' +
-              'Current participants who leave the meeting will not be allowed back in.',
-      button: 'Lock Meeting'
+      detail: 'When a meeting room is locked, no one else will be allowed to join the meeting. '
+              + 'Current participants who leave the meeting will not be allowed back in.',
+      button: 'Lock Meeting',
     },
     endCall: {
       head: 'Do you want to leave the meeting?',
       detail: 'The meeting will continue with the remaining participants.',
-      button: 'Leave meeting'
+      button: 'Leave meeting',
     },
     endLockedCall: {
       head: 'Do you want to unlock the meeting before leaving?',
       detail: 'The meeting will continue with the remaining participants. When a meeting room is locked, no one else will be allowed to join or re-join the meeting.',
       button: 'Unlock and Leave',
-      altButton: 'Leave Without Unlocking'
+      altButton: 'Leave Without Unlocking',
     },
     sessionDisconnected: {
       head: 'Session disconected',
-      detail: 'The connection to the OpenTok platform has been lost. Check your network ' +
-              'connectivity and press Reload to connect again.',
-      button: 'Reload'
+      detail: 'The connection to the OpenTok platform has been lost. Check your network '
+              + 'connectivity and press Reload to connect again.',
+      button: 'Reload',
     },
     chromePublisherError: {
       head: 'Internal Chrome Error',
-      detail: 'Failed to acquire microphone. This is a known Chrome bug. Please completely quit ' +
-              'and restart your browser.',
-      button: 'Reload'
+      detail: 'Failed to acquire microphone. This is a known Chrome bug. Please completely quit '
+              + 'and restart your browser.',
+      button: 'Reload',
     },
     meetingFullError: {
       head: 'Meeting Full',
-      detail: `This meeting has reached the full capacity of ${maxUsersPerRoom} participants. Try&nbsp;joining later.`,
-      button: 'OK'
-    }
+      detail: `This meeting has reached the full capacity of ${window.maxUsersPerRoom} participants. Try&nbsp;joining later.`,
+      button: 'OK',
+    },
   };
 
   const NOT_SHARING = {
     detail: {
-      isSharing: false
-    }
+      isSharing: false,
+    },
   };
 
   function setUnreadMessages(count) {
@@ -135,7 +135,7 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
     },
     shown() {
       Utils.sendEvent('roomView:screenChange');
-    }
+    },
   };
 
   const chatEvents = {
@@ -143,24 +143,24 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
       document.body.data('chatStatus', 'hidden');
       messageButtonElem.classList.remove('activated');
       setUnreadMessages(0);
-    }
+    },
   };
 
   const hangoutEvents = {
     screenOnStage(event) {
-      const status = event.detail.status;
+      const { status } = event.detail;
       if (status === 'on') {
         dock.data('previouslyCollapsed', dock.classList.contains('collapsed'));
         dock.classList.add('collapsed');
       } else if (dock.data('previouslyCollapsed') !== null) {
-        dock.data('previouslyCollapsed') === 'true' ? dock.classList.add('collapsed') :
-          dock.classList.remove('collapsed');
+        dock.data('previouslyCollapsed') === 'true' ? dock.classList.add('collapsed')
+          : dock.classList.remove('collapsed');
         dock.data('previouslyCollapsed', null);
       }
     },
     rearranged() {
       Utils.sendEvent('roomView:screenChange');
-    }
+    },
   };
 
   const screenShareCtrEvents = {
@@ -172,7 +172,7 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
     annotationEnded() {
       document.body.data('annotationVisible', 'false');
       Utils.setDisabled(annotateBtnElem, true);
-    }
+    },
   };
 
   const roomControllerEvents = {
@@ -205,7 +205,7 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
       }
     },
     roomMuted(evt) {
-      const isJoining = evt.detail.isJoining;
+      const { isJoining } = evt.detail;
       setAudioSwitchRemotely(true);
       Modal.showConfirm(isJoining ? MODAL_TXTS.join : MODAL_TXTS.muteRemotely);
     },
@@ -218,7 +218,7 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
         + ':not(#toggle-publisher-video):not(#toggle-publisher-audio)'
         + ':not(#annotate)';
       const elements = document.querySelectorAll(selectorStr);
-      Array.prototype.forEach.call(elements, element => {
+      Array.prototype.forEach.call(elements, (element) => {
         Utils.setDisabled(element, false);
       });
     },
@@ -238,17 +238,19 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
       Modal.showConfirm(MODAL_TXTS.meetingFullError).then(() => {
         document.location.reload();
       });
-    }
+    },
   };
 
   function setAudioSwitchRemotely(isMuted) {
-    setSwitchStatus(isMuted, false, audioSwitch, 'roomView:muteAllSwitch');
-    isMuted ?
-      setPublisherAudioSwitchStatus('muted') :
-      setPublisherAudioSwitchStatus('activated');
+    isMuted
+      ? setPublisherAudioSwitchStatus('muted')
+      : setPublisherAudioSwitchStatus('activated');
   }
 
   function showConfirmChangeMicStatus(isMuted) {
+    if (isMuted) {
+      setPublisherAudioSwitchStatus('muted');
+    }
     return Modal.showConfirm(isMuted ? MODAL_TXTS.muteRemotely : MODAL_TXTS.unmutedRemotely);
   }
 
@@ -342,7 +344,6 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
     feedbackButton.classList.remove('visible');
   }
 
-
   function showPublisherButtons(publisherOptions) {
     Utils.setDisabled(togglePublisherVideoElem, false);
     Utils.setDisabled(togglePublisherAudioElem, false);
@@ -388,7 +389,7 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
       return Promise.resolve(cronograph);
     }
     return LazyLoader.dependencyLoad([
-      '/js/components/cronograph.js'
+      '/js/components/cronograph.js',
     ]).then(() => {
       cronograph = Cronograph;
       return cronograph;
@@ -396,13 +397,15 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
   }
 
   function onStartArchiving(data) {
-    getCronograph().then(cronograph => { // eslint-disable-line consistent-return
-      const start = archive => {
+    getCronograph().then((cronograph) => { // eslint-disable-line consistent-return
+      const start = (archive) => {
         let duration = 0;
         archive && (duration = Math.round((Date.now() - archive.createdAt) / 1000));
         cronograph.start(duration);
         startArchivingElem.style.display = 'none';
         stopArchivingElem.style.display = 'block';
+        stopArchivingElem.style.flex = 'auto';
+        stopArchivingElem.style.flexDirection = 'row';
         manageRecordingsElem.classList.add('recording');
       };
 
@@ -412,20 +415,20 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
       }
 
       const onModel = () => { // eslint-disable-line consistent-return
-        const archives = FirebaseModel.archives;
+        const { archives } = ArchivesEventsListener;
         const archiveId = data.id;
 
         if (archives) {
           return start(archives[archiveId]);
         }
 
-        FirebaseModel.addEventListener('value', function onValue(archives) {
-          FirebaseModel.removeEventListener('value', onValue);
+        ArchivesEventsListener.addEventListener('value', function onValue(archives) {
+          ArchivesEventsListener.removeEventListener('value', onValue);
           start(archives[archiveId]);
         });
       };
 
-      const model = RecordingsController.model;
+      const { model } = RecordingsController;
 
       if (model) {
         cronograph.init();
@@ -441,9 +444,9 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
   }
 
   function onStopArchiving() {
-    getCronograph().then(cronograph => {
+    getCronograph().then((cronograph) => {
       stopArchivingElem.style.display = 'none';
-      startArchivingElem.style.display = 'inline-block';
+      startArchivingElem.style.display = 'inline-flex';
       manageRecordingsElem.classList.remove('recording');
       cronograph.stop();
     });
@@ -455,7 +458,7 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
       dock.data('previouslyCollapsed', null);
     });
 
-    callControlsElem.addEventListener('click', e => {
+    callControlsElem.addEventListener('click', (e) => {
       let elem = e.target;
       elem = HTMLElems.getAncestorByTagName(elem, 'button');
       if (elem === null) {
@@ -499,8 +502,8 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
           break;
         }
         case 'annotate': {
-          document.body.data('annotationVisible') === 'true' ?
-            document.body.data('annotationVisible', 'false') : document.body.data('annotationVisible', 'true');
+          document.body.data('annotationVisible') === 'true'
+            ? document.body.data('annotationVisible', 'false') : document.body.data('annotationVisible', 'true');
           Utils.sendEvent('roomView:screenChange');
           break;
         }
@@ -510,7 +513,7 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
         }
         case 'endCall': {
           if (RoomView.lockState === 'locked') {
-            Modal.showConfirm(MODAL_TXTS.endLockedCall).then(accept => {
+            Modal.showConfirm(MODAL_TXTS.endLockedCall).then((accept) => {
               if (accept.altHasAccepted) {
                 RoomView.participantsNumber = 0;
                 Utils.sendEvent('roomView:endCall');
@@ -523,7 +526,7 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
               }
             });
           } else {
-            Modal.showConfirm(MODAL_TXTS.endCall).then(accept => {
+            Modal.showConfirm(MODAL_TXTS.endCall).then((accept) => {
               if (accept) {
                 RoomView.participantsNumber = 0;
                 Utils.sendEvent('roomView:endCall');
@@ -531,6 +534,9 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
             });
           }
           break;
+        }
+        default: {
+          // No-op on default;
         }
       }
     });
@@ -548,7 +554,7 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
         const lockIcon = document.getElementById('lock-room-icon');
         const lockState = lockIcon.getAttribute('data-icon');
         if (lockState === 'openLock') {
-          Modal.showConfirm(MODAL_TXTS.lock).then(lock => {
+          Modal.showConfirm(MODAL_TXTS.lock).then((lock) => {
             if (lock) {
               Utils.sendEvent('roomView:setRoomLockState', 'locked');
             }
@@ -568,8 +574,8 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
       Modal.showConfirm({
         head: 'Set mic input',
         detail: 'Please identify the audio source in the following list:',
-        button: 'Change'
-      }).then(start => {
+        button: 'Change',
+      }).then((start) => {
         if (start) {
           Utils.sendEvent('roomView:setAudioSource', select.value);
         }
@@ -583,9 +589,17 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
       Utils.sendEvent('roomView:toggleFacingMode');
     });
 
+    const muteAllparticipants = document.getElementById('muteAllContainer');
+    if (muteAllparticipants) {
+      muteAllparticipants.addEventListener('click', () => {
+        Utils.sendEvent('roomView:muteAllSwitch', { status: true });
+        setPublisherAudioSwitchStatus('muted');
+      });
+    }
+
     const menu = document.getElementById('top-banner');
 
-    menu.addEventListener('click', e => {
+    menu.addEventListener('click', (e) => {
       const elem = HTMLElems.getAncestorByTagName(e.target, 'a') || e.target;
       // pointer-events is not working on IE so we can receive as target a child
       elem.blur();
@@ -626,7 +640,7 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
           break;
         case 'audioSwitch':
           if (!audioSwitch.classList.contains('activated')) {
-            Modal.showConfirm(MODAL_TXTS.mute).then(shouldDisable => {
+            Modal.showConfirm(MODAL_TXTS.mute).then((shouldDisable) => {
               if (shouldDisable) {
                 setSwitchStatus(true, true, audioSwitch, 'roomView:muteAllSwitch');
                 togglePublisherAudioElem.classList.remove('activated');
@@ -636,13 +650,16 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
             setSwitchStatus(false, true, audioSwitch, 'roomView:muteAllSwitch');
             togglePublisherAudioElem.classList.add('activated');
           }
+          break;
+        default:
+          // No-op on default;
       }
     });
 
     if (enableSip) {
       const dialOutBtn = document.getElementById('dialOutBtn');
       // Send event to get phonenumber from phoneNumberView
-      dialOutBtn.addEventListener('click', event => {
+      dialOutBtn.addEventListener('click', (event) => {
         event.preventDefault();
         Utils.sendEvent('roomView:verifyDialOut');
       });
@@ -652,12 +669,12 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
         dialOut(evt) {
           const phonenumber = evt.detail;
           Utils.sendEvent('roomView:dialOut', phonenumber);
-        }
+        },
       });
     }
 
-    exports.addEventListener('archiving', e => {
-      const detail = e.detail;
+    exports.addEventListener('archiving', (e) => {
+      const { detail } = e;
 
       switch (detail.status) {
         case 'started':
@@ -667,6 +684,8 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
         case 'stopped':
           onStopArchiving();
           break;
+        default:
+          // No-op on default;
       }
 
       document.body.data('archiveStatus', e.detail.status);
@@ -680,7 +699,7 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
   };
 
   function toggleScreenSharing(evt) {
-    const isSharing = evt.detail.isSharing;
+    const { isSharing } = evt.detail;
     document.body.data('desktopStatus', isSharing ? 'sharing' : 'notSharing');
   }
 
@@ -738,6 +757,6 @@ BubbleFactory, LayoutManager, $, maxUsersPerRoom */
     createStreamView,
     deleteStreamView,
     setAudioSwitchRemotely,
-    showConfirmChangeMicStatus
+    showConfirmChangeMicStatus,
   };
 })(this);

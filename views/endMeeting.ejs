@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Thanks for using Vonage Free Conferencing!</title>
+    <title>Thanks for using <%= appName %>!</title>
     <meta charset="UTF-8">
     <meta http-equiv="content-type" content="text/html;charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <link rel="stylesheet prefetch" href="/css/endMeeting.opentok.css" />
-    <link href="/css/fonts.css" rel="stylesheet">
+    <% if (useGoogleFonts) { %>
+        <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <% } else { %>
+        <link rel="preload" href="/fonts/open-sans-v15-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+        <link href="/css/fonts.css" rel="stylesheet">
+    <% } %>
   <% if (adobeTrackingUrl) { %>
     <script src="<%=adobeTrackingUrl%>" async></script>
   <% } %>
@@ -31,27 +37,27 @@
            <a href="https://vonage.com" title="Vonage" target="_blank" rel="noopener">
             <img id="logo" src="../images/vonage-logo-no-text.svg" alt="vonage transparent logo">
           </a>
-              <p>Thanks for using<br>Vonage Free Conferencing!</p>
+              <p>Thanks for using<br><%= appName %>!</p>
           </header>
         <div class="endMeeting-box-container">
           <div class="endMeeting-box">
             <h2>Built on the Vonage Video API</h2>
             <p>
-             Did you know that Vonage Free Conferencing is open source and built on the top of the Vonage Video API? 
+             Did you know that <%= appName %> is open source and built on the top of the Vonage Video API? 
             <a  href="https://github.com/opentok/opentok-rtc" target="_blank" rel="noopener">
              Check out the GitHub repo.
             </a> </br></br>
               Have a killer idea for how we can make this app even better?
-            <a  href="https://tokbox.com/account/user/signup?icid=startbuidlingforfree_freeconferencing_tokboxfreetrialsignup_btn" target="_blank" rel="noopener"> Sign up for a Vonage Video API account</a> and start hacking today!
+            <a  href="https://tokbox.com/account/user/signup<%= startBuilidingIcidQueryString %>" target="_blank" rel="noopener"> Sign up for a Vonage Video API account</a> and start hacking today!
             </p>
-            <a class="btn" style="text-decoration: none;" href= "https://tokbox.com/account/user/signup?icid=startbuidlingforfree_freeconferencing_tokboxfreetrialsignup_btn" target="_blank" rel="noopener">Start Building for Free</a>
+            <a class="btn" style="text-decoration: none;" href= "https://tokbox.com/account/user/signup<%= startBuilidingIcidQueryString %>" target="_blank" rel="noopener">Start Building for Free</a>
           </div>
           <div class="endMeeting-box">
             <h2>We’ve got you covered</h2>
             <p>
              Vonage can also help you with Unified Communications, like business phone and messaging systems, and Contact Centers with integration to Salesforce and other CRMs.
             </p>
-            <a class="btn" style="text-decoration: none;" href="https://www.vonage.com/communications-apis/contact-api/?icid=contactus_freeconferencing_comm-apis_btn" target="_blank" rel="noopener">Contact Us</a>
+            <a class="btn" style="text-decoration: none;" href="https://www.vonage.com/communications-apis/contact-api/<%= contactUsIcidQueryString %>" target="_blank" rel="noopener">Contact Us</a>
           </div>
           </div>
            <div class="back-to-top-wrapper">

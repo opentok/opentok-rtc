@@ -1,4 +1,4 @@
-!(exports => {
+!((exports) => {
   let container;
   let itemSelector;
   let scrollTimer;
@@ -30,22 +30,22 @@
           const itemWidth = item.offsetWidth;
           const itemOffsetTop = item.offsetTop;
           const itemOffsetLeft = item.offsetLeft;
-          if (((itemOffsetTop >= viewTop &&
-               itemOffsetTop <= viewTop + containerHeight) ||
-              (itemOffsetTop + itemHeight >= viewTop &&
-               itemOffsetTop + itemHeight <= viewTop + containerHeight)) &&
+          if (((itemOffsetTop >= viewTop
+               && itemOffsetTop <= viewTop + containerHeight)
+              || (itemOffsetTop + itemHeight >= viewTop
+               && itemOffsetTop + itemHeight <= viewTop + containerHeight))
 
-              ((itemOffsetLeft >= viewLeft &&
-               itemOffsetLeft <= viewLeft + containerWidth) ||
-              (itemOffsetLeft + itemWidth >= viewLeft &&
-               itemOffsetLeft + itemWidth <= viewLeft + containerWidth))) {
+              && ((itemOffsetLeft >= viewLeft
+               && itemOffsetLeft <= viewLeft + containerWidth)
+              || (itemOffsetLeft + itemWidth >= viewLeft
+               && itemOffsetLeft + itemWidth <= viewLeft + containerWidth))) {
             visibility = 'visible';
           }
         }
 
         Utils.sendEvent('roomView:streamVisibilityChange', {
           id: item.data('id'),
-          value: visibility
+          value: visibility,
         });
       }
     }
@@ -61,7 +61,7 @@
     itemDeleted: onVisitItems,
     resize: onVisitItems,
     layoutChanged: onVisitItems,
-    scroll: onVisitItems
+    scroll: onVisitItems,
   };
 
   function init(pContainer, pItemSelector) {
@@ -73,6 +73,6 @@
   }
 
   exports.LayoutViewport = {
-    init
+    init,
   };
 })(this);

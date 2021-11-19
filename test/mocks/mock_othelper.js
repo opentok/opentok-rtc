@@ -7,13 +7,13 @@
   var _MockOTHelper = {
     bindHandlers(aHandlers) {
       if (Array.isArray(aHandlers)) {
-        return aHandlers.map(handler => handler.bind(window.OTHelper));
+        return aHandlers.map((handler) => handler.bind(window.OTHelper));
       }
       return Object.keys(aHandlers)
-          .reduce((previous, elem, index, array) => {
-            previous[elem] = aHandlers[elem].bind(window.OTHelper);
-            return previous;
-          }, {});
+        .reduce((previous, elem, index, array) => {
+          previous[elem] = aHandlers[elem].bind(window.OTHelper);
+          return previous;
+        }, {});
     },
     error: {
       code: 1,

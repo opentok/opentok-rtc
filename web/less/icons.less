@@ -21,8 +21,8 @@
 [data-icon="close_gray_full"] {
   background-image: url("/images/icons/close_black.svg");
 }
-[data-icon="close_blue"] {
-  background-image: url("/images/icons/close_blue.svg");
+[data-icon="close_silver"] {
+  background-image: url("/images/icons/close_silver.svg");
 }
 
 [data-icon="close-box"] {
@@ -31,8 +31,8 @@
 
 [data-icon="connectivity-cancel"] {
   background-image: url("/images/icons/connectivity-cancel.svg");
-  height: 13px;
-  width: 13px;
+  height: 15px;
+  width: 15px;
 }
 
 [data-icon="precall-tick"] {
@@ -173,6 +173,7 @@
   background-image: url("/images/icons/warning.svg");
   width: 18px;
   height: 18px;
+  margin: 0 8px;
 }
 
 [data-icon="end_call"] {
@@ -218,14 +219,18 @@
   height: 22.47px;
 }
 
-[data-icon="message_blue"] {
-  background-image: url("/images/icons/message_blue.svg");
+[data-icon="message_silver"] {
+  background-image: url("/images/icons/message_silver.svg");
   width: 24px;
   height: 20px;
 }
 
 [data-icon="send"] {
-  background-image: url("/images/icons/send.svg");
+  background-image: url("/images/icons/send_button.svg");
+}
+
+[data-icon="emoji"] {
+  background-image: url("/images/icons/emoji.png");
 }
 
 /* Archives */
@@ -251,6 +256,10 @@
 [data-icon="delete"]:hover,
 [data-icon="delete"]:after {
   background-image: url("/images/icons/delete_hover.svg");
+}
+
+[data-icon="download"] {
+  background-image: url("/images/icons/download.svg");
 }
 
 /* Actions */
@@ -382,6 +391,28 @@
   }
 }
 
+[data-icon="start_archive"] {
+    background-image: url("/images/icons/Vlt-icon-rec-full.svg");
+    width: 22.49px;
+    height: 22.49px;
+    vertical-align: middle;
+      @media @smartphonesPortrait {
+        width: 18px;
+        height: 18px;
+      }
+}
+
+[data-icon="stop_archive"] {
+    background-image: url("/images/icons/Vlt-icon-stop-full.svg");
+    width: 22.49px;
+    height: 22.49px;
+    vertical-align: middle;
+      @media @smartphonesPortrait {
+        width: 18px;
+        height: 18px;
+      }
+}
+
 [data-icon="annotate"] {
   background-image: url("/images/icons/annotate.svg");
   width: 24px;
@@ -458,13 +489,29 @@
   background-image: url("/images/icons/end_hover.svg");
 }
 
-#videoSwitch,
-#audioSwitch {
-  [data-icon="videoSwitch"],
-  [data-icon="audioSwitch"] {
+#videoSwitch {
+  [data-icon="videoSwitch"] {
     background-image: url("/images/icons/switch_off_blue.svg");
     width: 51px;
     height: 30.4px;
+    vertical-align: text-bottom;
+  }
+}
+
+#audioSwitch {
+  [data-icon="audioSwitch"] {
+    background-image: url("/images/icons/mute-all-users.svg");
+    width: 51px;
+    height: 30.4px;
+    vertical-align: text-bottom;
+  }
+}
+
+#muteAllIconButton {
+  [data-icon="muteAllButton"] {
+    background-image: url("/images/icons/mute-all-users.svg");
+    width: 35px;
+    height: 25px;
     vertical-align: text-bottom;
   }
 }

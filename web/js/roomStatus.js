@@ -1,4 +1,4 @@
-!(exports => {
+!((exports) => {
   const TIME_RESEND_STATUS = 60000;
 
   // Persistent elements of the room
@@ -34,13 +34,13 @@
 
   function proccessNewConnection(evt) {
     const newUsrConnection = evt.connection;
-    const creationTime = newUsrConnection.creationTime;
-    const connectionId = newUsrConnection.connectionId;
+    const { creationTime } = newUsrConnection;
+    const { connectionId } = newUsrConnection;
 
     if (creationTime < _myCreationTime) {
       _connectedEarlierThanMe++;
     } else if (!otHelper.isMyself(newUsrConnection)) {
-      const send = aNewUsrConnection => {
+      const send = (aNewUsrConnection) => {
         if (iMustSend()) {
           sendStatus(aNewUsrConnection);
         }
@@ -48,9 +48,8 @@
 
       send(newUsrConnection);
 
-      const intervalResendStatus =
-        window.setInterval(send.bind(undefined, newUsrConnection),
-          TIME_RESEND_STATUS);
+      const intervalResendStatus = window.setInterval(send.bind(undefined, newUsrConnection),
+        TIME_RESEND_STATUS);
       _connectedAfterMe[connectionId] = intervalResendStatus;
     }
   }
@@ -77,7 +76,6 @@
     sessionConnected(evt) {
       _myCreationTime = evt.target.connection.creationTime;
       otHelper = this;
-      Request.saveConnection(_myCreationTime, otHelper.session.id);
     },
     connectionDestroyed(evt) {
       // If connection destroyed belongs to someone older than me,
@@ -90,11 +88,8 @@
       cancelPendingSend(evt.connection.connectionId);
     },
     sessionDisconnected() {
-      Request.deleteConnection(_myCreationTime, otHelper.session.id)
-        .then(() => {
-          window.location = '/';
-        });
-    }
+      window.location = '/thanks';
+    },
   };
 
   function addHandlers(aGlobalHandlers) {
@@ -120,6 +115,6 @@
     get(key) {
       return _entries[key];
     },
-    init
+    init,
   };
 })(this);

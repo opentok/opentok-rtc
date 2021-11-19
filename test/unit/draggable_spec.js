@@ -1,9 +1,14 @@
-var assert = chai.assert;
-var expect = chai.expect;
+var sinonTest = require('sinon-test');
+
+var test = sinonTest(sinon);
+sinon.test = test;
+
+var { assert } = chai;
+var { expect } = chai;
 var should = chai.should();
 
 describe('Draggable', () => {
-  var DRAG_TIMEOUT = Draggable.DRAG_TIMEOUT;
+  var { DRAG_TIMEOUT } = Draggable;
 
   var item = document.createElement('div');
 
@@ -32,7 +37,7 @@ describe('Draggable', () => {
 
     it('should not translate the element initially', () => {
       Draggable.on(item);
-      checkTranslation(0, 0);
+      expect(item.style.transform).to.be.oneOf(['translate(0px, 0px)', 'translate(0px)']);
     });
 
     it('should keep the previous position', () => {
@@ -43,7 +48,7 @@ describe('Draggable', () => {
 
     describe('#event dispatcher: DragDetector:dragstart', () => {
       var checkHoldstartEvent = function (ctx, x, y, done) {
-        ctx.stub(window, 'CustomEvent', (name, data) => {
+        ctx.stub(window, 'CustomEvent').callsFake((name, data) => {
           expect(name).to.equal('DragDetector:dragstart');
           expect(data.detail.pageX).to.equal(x);
           expect(data.detail.pageY).to.equal(y);
@@ -51,39 +56,39 @@ describe('Draggable', () => {
         });
       };
 
-      it('should send the event after holding the element during ' + DRAG_TIMEOUT +
-         'ms', sinon.test(function (done) {
-           var clock = sinon.useFakeTimers();
-           var x = 2;
-           var y = 2;
+      it('should send the event after holding the element during ' + DRAG_TIMEOUT
+         + 'ms', sinon.test(function (done) {
+        var clock = sinon.useFakeTimers();
+        var x = 2;
+        var y = 2;
 
-           checkHoldstartEvent(this, x, y, () => {
-             clock.restore();
-             done();
-           });
+        checkHoldstartEvent(this, x, y, () => {
+          clock.restore();
+          done();
+        });
 
-           Draggable.on(item);
-           sendMouseEvent('mousedown', { x, y });
-           clock.tick(DRAG_TIMEOUT);
-         }));
+        Draggable.on(item);
+        sendMouseEvent('mousedown', { x, y });
+        clock.tick(DRAG_TIMEOUT);
+      }));
 
-      it('should send the event if the cursor is moved more than ' + Draggable.CLICK_THRESHOLD +
-         'px', sinon.test(function (done) {
-           var clock = sinon.useFakeTimers();
-           var x = 2;
-           var y = 2;
+      it('should send the event if the cursor is moved more than ' + Draggable.CLICK_THRESHOLD
+         + 'px', sinon.test(function (done) {
+        var clock = sinon.useFakeTimers();
+        var x = 2;
+        var y = 2;
 
-           checkHoldstartEvent(this, x, y, () => {
-             clock.restore();
-             done();
-           });
+        checkHoldstartEvent(this, x, y, () => {
+          clock.restore();
+          done();
+        });
 
-           Draggable.on(item);
-           sendMouseEvent('mousedown', { x, y });
-           clock.tick(50);
-           sendMouseEvent('mousemove', { x: x + Draggable.CLICK_THRESHOLD + 1, y });
-           clock.tick(DRAG_TIMEOUT - 50);
-         }));
+        Draggable.on(item);
+        sendMouseEvent('mousedown', { x, y });
+        clock.tick(50);
+        sendMouseEvent('mousemove', { x: x + Draggable.CLICK_THRESHOLD + 1, y });
+        clock.tick(DRAG_TIMEOUT - 50);
+      }));
 
       it('should translate the element following mouse events', sinon.test(() => {
         var clock = sinon.useFakeTimers();
@@ -121,8 +126,7 @@ describe('Draggable', () => {
 
           sendMouseEvent('mouseup', { x, y }, window);
           expect(item.classList.contains('dragging')).to.be.false;
-        })
-      );
+        }));
     });
   });
 });
