@@ -9,6 +9,7 @@
     <title><%= appName %></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover'"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
+    
     <meta
       name="description"
       content="Vonage offers flexible and scalable voice, messaging,
@@ -65,6 +66,12 @@
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/<%=chromeExtensionId%>">
     <link rel="stylesheet prefetch" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.0/css/intlTelInput.css">
 
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js" crossorigin="anonymous"></script>
+
+    
     <% if (adobeTrackingUrl) { %>
     <script src="<%=adobeTrackingUrl%>" async></script>
     <% } %>
@@ -147,6 +154,95 @@
     <script defer src="/js/rtcApp.js"></script>
     <script defer src="<%= jqueryUrl %>/3.3.1/jquery.min.js"></script>
 
+    <script >
+
+const offScreenCanvases = {};
+function createOffScreenCanvas() {
+  if (typeof document !== 'undefined' ) {
+    return document.createElement('canvas');
+  } else if (typeof OffscreenCanvas !== 'undefined') {
+    return new OffscreenCanvas(0, 0);
+  } else {
+    throw new Error('Cannot create a canvas in this context');
+  }
+}
+
+function ensureOffscreenCanvasCreated(id) {
+  if (!offScreenCanvases[id]) {
+    offScreenCanvases[id] = createOffScreenCanvas();
+  }
+  return offScreenCanvases[id];
+}
+
+function drawWithCompositing(
+    ctx,
+    image,
+    compositeOperation) {
+  ctx.globalCompositeOperation = compositeOperation;
+  ctx.drawImage(image, 0, 0);
+}
+
+function drawAndBlurImageOnCanvas(
+    image, blurAmount, canvas) {
+  const {height, width} = image;
+  const ctx = canvas.getContext('2d');
+  canvas.width = width;
+  canvas.height = height;
+  ctx.clearRect(0, 0, width, height);
+  ctx.save();
+  (ctx).filter = `blur(${blurAmount}px)`;
+  ctx.drawImage(image, 0, 0, width, height);
+  ctx.restore();
+}
+
+function drawAndBlurImageOnOffScreenCanvas(
+    image, blurAmount,
+    offscreenCanvasName) {
+  const canvas = ensureOffscreenCanvasCreated(offscreenCanvasName);
+  drawAndBlurImageOnCanvas(image, blurAmount, canvas);
+  return canvas;
+}
+
+   function removebg() {
+    const videoElement = document.getElementsByClassName('OT_video-element')[0];
+    const canvasElement = document.getElementsByClassName('output_canvas')[0];
+    const canvasCtx = canvasElement.getContext('2d');
+
+    function onResults(results) {
+      const blurredImage = drawAndBlurImageOnOffScreenCanvas(
+        results.image, 20, 'blurred');
+        const blurredSegmentationMask = drawAndBlurImageOnOffScreenCanvas(
+        results.segmentationMask, 10, 'blurmask');  
+      canvasCtx.save();
+      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+      canvasCtx.drawImage(
+          results.image, 0, 0, canvasElement.width, canvasElement.height);
+          drawWithCompositing(canvasCtx, blurredSegmentationMask, 'destination-in');
+          drawWithCompositing(canvasCtx, blurredImage, 'destination-over');      
+      canvasCtx.restore();
+    }
+      
+    const selfieSegmentation = new SelfieSegmentation({locateFile: (file) => {
+      return `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`;
+    }});
+    selfieSegmentation.setOptions({
+      modelSelection: 1,
+      effect:'background'
+    });
+    selfieSegmentation.onResults(onResults);
+    
+    const camera = new Camera(videoElement, {
+      onFrame: async () => {
+        await selfieSegmentation.send({image: videoElement});
+      },
+      width: 1280,
+      height: 720
+    });
+    camera.start();
+}
+
+      </script>
+
     <% if (oneTrustCookieConsentUrl) { %>
     <!-- OneTrust Cookies Consent Notice start -->
     <script defer src="<%=oneTrustCookieConsentUrl%>" type="text/javascript" charset="UTF-8"></script>
@@ -228,7 +324,9 @@
     <section id="screen">
       <div class="streams">
         <div class="tc-list">
-          <ul></ul>
+          <ul>
+            <li class="stream"><canvas class="output_canvas" width="1280px" height="720px"></canvas></li>
+          </ul>
         </div>
       </div>
       <div class="call-controls" id="call-controls">
@@ -255,6 +353,12 @@
             <i data-icon="add"></i>
           </button>
           <p>Invite</p>
+        </div>
+        <div id="blurBg-container">
+          <button id="blurBg">
+            <i data-icon="blur_bg"></i>
+          </button>
+          <p>Blur BG</p>
         </div>
         <% if (enableScreensharing) { %>
         <div id="screen-share-container">
