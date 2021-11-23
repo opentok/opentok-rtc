@@ -46,7 +46,7 @@ describe('FeedbackController', () => {
     });
 
     it('should be initialized', sinon.test(function (done) {
-      this.stub(FeedbackView, 'init', () => {});
+      this.stub(FeedbackView, 'init').callsFake(() => {});
 
       FeedbackController.init(fakeOTHelper).then(() => {
         expect(FeedbackView.init.called).to.be.true;

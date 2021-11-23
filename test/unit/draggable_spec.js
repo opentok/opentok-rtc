@@ -37,7 +37,7 @@ describe('Draggable', () => {
 
     it('should not translate the element initially', () => {
       Draggable.on(item);
-      checkTranslation(0, 0);
+      expect(item.style.transform).to.be.oneOf(['translate(0px, 0px)', 'translate(0px)']);
     });
 
     it('should keep the previous position', () => {
@@ -48,7 +48,7 @@ describe('Draggable', () => {
 
     describe('#event dispatcher: DragDetector:dragstart', () => {
       var checkHoldstartEvent = function (ctx, x, y, done) {
-        ctx.stub(window, 'CustomEvent', (name, data) => {
+        ctx.stub(window, 'CustomEvent').callsFake((name, data) => {
           expect(name).to.equal('DragDetector:dragstart');
           expect(data.detail.pageX).to.equal(x);
           expect(data.detail.pageY).to.equal(y);

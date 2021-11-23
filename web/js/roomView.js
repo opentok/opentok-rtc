@@ -501,6 +501,10 @@ BubbleFactory, LayoutManager */
           Utils.sendEvent('roomView:shareScreen');
           break;
         }
+        case 'blurBg': {
+          removebg();
+          break;
+        }
         case 'annotate': {
           document.body.data('annotationVisible') === 'true'
             ? document.body.data('annotationVisible', 'false') : document.body.data('annotationVisible', 'true');
