@@ -186,8 +186,8 @@ function drawAndBlurImageOnCanvas(
     image, blurAmount, canvas) {
   const {height, width} = image;
   const ctx = canvas.getContext('2d');
-  canvas.width = width;
-  canvas.height = height;
+  canvas.width = 1280;
+  canvas.height = 720;
   ctx.clearRect(0, 0, width, height);
   ctx.save();
   (ctx).filter = `blur(${blurAmount}px)`;
