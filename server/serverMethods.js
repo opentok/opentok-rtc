@@ -557,6 +557,14 @@ function ServerMethods(aLogLevel, aModules) {
 
         this
           .createSession(sessionOptions, (error, session) => {
+            if (session) {
+              console.log('############# >>>> session ?', session);
+
+              setInterval(() => {
+                signalAiData(session, 'crapola.. ');
+              }, 3000);
+            }
+
             resolve({
               sessionId: session.sessionId,
               lastUsage: Date.now(),
@@ -1011,6 +1019,31 @@ function ServerMethods(aLogLevel, aModules) {
     aNext();
   }
 
+  /**
+   * @param {*} session sessionId
+   * @param {*} data currently, text,
+   * future - object containing AI daa to be parsed and showcased in frontend.
+   */
+  function signalAiData(session, data) {
+    session.ot.signal(
+      session.sessionId,
+      undefined,
+      {
+        data,
+        type: 'aiData',
+      },
+      (error) => {
+        if (error) {
+          console.log(`signal error (${
+            error.name
+          }): ${error.message}`);
+        } else {
+          console.log('signal sent.');
+        }
+      },
+    );
+  }
+
   return {
     logger,
     configReady,
@@ -1033,6 +1066,7 @@ function ServerMethods(aLogLevel, aModules) {
     getRoomRawInfo,
     setSecurityHeaders,
     getMeetingCompletion,
+    signalAiData,
   };
 }
 

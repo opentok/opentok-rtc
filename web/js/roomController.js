@@ -636,6 +636,9 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
     'signal:archives': function (evt) {
       Utils.sendEvent('roomController:archiveUpdates', evt);
     },
+    'signal:aiData': function (evt) {
+      console.log('############ aiData sent! evt ? ', evt);
+    },
   };
 
   function showMobileShareUrl() {
