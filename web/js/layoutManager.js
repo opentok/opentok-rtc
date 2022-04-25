@@ -155,6 +155,10 @@ LayoutViewport, ItemsHandler */
     return Object.keys(items).length;
   }
 
+  function setAttentionUI(text, streamElem) {
+    return LayoutView.setAttentionUI(text, streamElem);
+  }
+
   function calculateCandidateLayout() {
     let candidateLayout = null;
 
@@ -196,5 +200,6 @@ LayoutViewport, ItemsHandler */
     remove,
     removeAll,
     getItemById,
+    setAttentionUI,
   };
 })(this);

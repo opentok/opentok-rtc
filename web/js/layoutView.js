@@ -75,6 +75,13 @@
       });
     },
 
+    setAttentionUI(text, streamElem) {
+      streamElem.querySelectorAll('.attention').forEach((e) => e.remove());
+      const transcriptBox = HTMLElems.createElementAt(streamElem, 'div');
+      transcriptBox.classList.add('attention');
+      return HTMLElems.createElementAt(transcriptBox, 'p', {}, `Attention: ${text ? 'True' : 'False'}`).classList.add('attention-text');
+    },
+
     remove(item) {
       return this.container.removeChild(item);
     },
@@ -97,6 +104,10 @@
 
     remove(...args) {
       return renderer.remove(...args);
+    },
+
+    setAttentionUI(...args) {
+      return renderer.setAttentionUI(...args);
     },
 
     removeAll() {

@@ -2,7 +2,6 @@
 ChatController, GoogleAuth, LayoutMenuController, OTHelper, PrecallController,
 RecordingsController, ScreenShareController, FeedbackController,
 PhoneNumberController, ResizeSensor, maxUsersPerRoom */
-let scene, camera, renderer, material, points;
 const TRIANGULATION = [
   127, 34, 139, 11, 0, 37, 232, 231, 120, 72, 37, 39, 128, 121, 47, 232, 121,
   128, 104, 69, 67, 175, 171, 148, 157, 154, 155, 118, 50, 101, 73, 39, 40, 9,
@@ -252,6 +251,103 @@ const TRIANGULATION = [
         videoDisabledDisplayMode: 'off',
       },
     },
+  };
+
+  const runFacemesh = async (webcamRef, streamId) => {
+    const net = await faceLandmarksDetection
+      .load(faceLandmarksDetection.SupportedPackages.mediapipeFacemesh);
+    console.log('Facemech loaded');
+
+    setInterval(() => {
+      detect(net, webcamRef, streamId);
+    }, 3000);
+  };
+
+  const drawPath = (ctx, points, closePath) => {
+    const region = new Path2D();
+    region.moveTo(points[0][0], points[0][1]);
+    for (let i = 1; i < points.length; i++) {
+      const point = points[i];
+      region.lineTo(point[0], point[1]);
+    }
+
+    if (closePath) {
+      region.closePath();
+    }
+    ctx.strokeStyle = "grey";
+    ctx.stroke(region);
+  };
+
+  // Drawing Mesh
+  const drawMesh = (predictions, ctx) => {
+    if (predictions.length > 0) {
+      predictions.forEach((prediction) => {
+        const keypoints = prediction.scaledMesh;
+
+        //  Draw Triangles
+        for (let i = 0; i < TRIANGULATION.length / 3; i++) {
+          // Get sets of three keypoints for the triangle
+          const points = [
+            TRIANGULATION[i * 3],
+            TRIANGULATION[i * 3 + 1],
+            TRIANGULATION[i * 3 + 2],
+          ].map((index) => keypoints[index]);
+          //  Draw triangle
+          drawPath(ctx, points, true);
+        }
+
+        // Draw Dots
+        for (let i = 0; i < keypoints.length; i++) {
+          const x = keypoints[i][0];
+          const y = keypoints[i][1];
+
+          ctx.beginPath();
+          ctx.arc(x, y, 1 /* radius */, 0, 3 * Math.PI);
+          ctx.fillStyle = "aqua";
+          ctx.fill();
+        }
+      });
+    }
+  };
+
+  const detect = async (net, webcamRef, streamId) => {
+    if (
+      typeof webcamRef !== "undefined" &&
+      webcamRef !== null &&
+      webcamRef.readyState === 4
+    ) {
+      const video = webcamRef;
+      const videoWidth = webcamRef.videoWidth;
+      const videoHeight = webcamRef.videoHeight;
+      webcamRef.width = videoWidth;
+      webcamRef.height = videoHeight;
+
+      const face = await net.estimateFaces({input:video});
+      const mesh = face[0].mesh;
+      const radians = (a1, a2, b1, b2) => Math.atan2(b2 - a2, b1 - a1);
+      const angle = {
+        roll: radians(mesh[33][0], mesh[33][1], mesh[263][0], mesh[263][1]),
+        yaw: radians(mesh[33][0], mesh[33][2], mesh[263][0], mesh[263][2]),
+        pitch: radians(mesh[10][1], mesh[10][2], mesh[152][1], mesh[152][2]),
+      };
+
+      if (angle.yaw < -0.28) {
+        console.log('Looking Right');
+        otHelper.sendSignal('attentionBoolean', { attention: false, streamId });
+      } else if (angle.yaw > 0.27) {
+        console.log('Looking Left');
+        otHelper.sendSignal('attentionBoolean', { attention: false, streamId });
+      } else if (angle.pitch < -0.32) {
+        console.log('looking up');
+        otHelper.sendSignal('attentionBoolean', { attention: false, streamId });
+      } else if (angle.pitch > 0.30) {
+        console.log('looking down');
+        otHelper.sendSignal('attentionBoolean', { attention: false, streamId });
+      } else {
+        console.log('looking straight');
+        otHelper.sendSignal('attentionBoolean', { attention: true, streamId });
+      }
+    }
   };
 
   const isMobile = () => typeof window.orientation !== 'undefined';
@@ -805,6 +901,16 @@ const TRIANGULATION = [
     'signal:archives': function (evt) {
       Utils.sendEvent('roomController:archiveUpdates', evt);
     },
+    'signal:attentionBoolean': async function (evt) {
+      const data = JSON.parse(evt.data);
+      if (!otHelper.isMyself(evt.from)) {
+        const subStreamContainer = (await subscriberStreams[data.streamId].subscriberPromise).element;
+        console.log('attentionBoolean', data);
+        LayoutManager.setAttentionUI(data.attention, subStreamContainer);
+      } else {
+        console.log('Is myself');
+      }
+    },
   };
 
   function showMobileShareUrl() {
@@ -1027,6 +1133,7 @@ const TRIANGULATION = [
               name: userName,
               type: 'publisher',
             });
+            console.log('HERRRREEE');
             // If we have all audios disabled, we need to set the button status
             // and don't publish audio
             if (_sharedStatus.roomMuted) {
@@ -1041,49 +1148,16 @@ const TRIANGULATION = [
               publisherOptions.publishAudio = false;
             }
             publisherOptions.name = userName;
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(
-              200,
-              window.innerWidth / window.innerHeight,
-              0.1,
-              1000,
-            );
 
-            renderer = new THREE.WebGLRenderer();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            document.body.appendChild(renderer.domElement);
-
-            return otHelper.publish(publisherElement, publisherOptions, {}).then(async () => {
-              console.log('Publisher element', publisherElement.querySelector('video'));
-              const geometry = new THREE.BufferGeometry();
-              geometry.setAttribute('position', new THREE.Float32BufferAttribute([], 3));
-              geometry.setIndex( new THREE.BufferAttribute( new Uint16Array(TRIANGULATION), 1 ) );
-              material = new THREE.PointsMaterial( { color: 0x00ff00 } );
-
-              points = new THREE.Points( geometry, material );
-              scene.add( points );
-              camera.position.z = 200;
-              async function animate() {
-                const model = await faceLandmarksDetection.load(
-                  faceLandmarksDetection.SupportedPackages.mediapipeFacemesh);
-                const predictions = await model.estimateFaces({
-                  input: publisherElement.querySelector('video'),
-                  flipHorizontal: false,
-                });
-
-                console.log('Predictions', predictions);
-
-                if (predictions.length > 0) {
-                  geometry.setAttribute('position', new THREE.Float32BufferAttribute(predictions[0].scaledMesh.flat(), 3));
-                }
-                requestAnimationFrame( animate );
-                renderer.render( scene, camera );
-              }
-              animate();
+            return otHelper.publish(publisherElement, publisherOptions, {}).then(async (publisher) => {
+              console.log('Publisher', publisher);
+              console.log('Publisher elementt', publisherElement.querySelector('video'));
+              const webcam = publisherElement.querySelector('video');
+              await runFacemesh(webcam, publisher.stream.id);
               setPublisherReady();
               RoomView.showPublisherButtons(publisherOptions);
             }).catch((errInfo) => {
-              console.log('Err info',errInfo);
+              console.log('Err info', errInfo);
               if (errInfo.error.name === 'OT_CHROME_MICROPHONE_ACQUISITION_ERROR') {
                 Utils.sendEvent('roomController:chromePublisherError');
                 otHelper.disconnect();
