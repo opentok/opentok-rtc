@@ -543,6 +543,7 @@ const attentionMap = (score) => {
         leftEyeStart,
         boundingBox,
         transcribeText: $('#transcribe-result').val(),
+        userName: window.username,
       }));
       otHelper.sendSignal('attentionScore', { attention: score, streamId });
       // if (angle.yaw < -0.28) {
@@ -1255,6 +1256,7 @@ const attentionMap = (score) => {
         enableArchiveManager = aRoomInfo.enableArchiveManager;
         enableSip = aRoomInfo.enableSip;
         requireGoogleAuth = aRoomInfo.requireGoogleAuth;
+        window.username = aRoomInfo.username;
         return aRoomInfo;
       });
   }
