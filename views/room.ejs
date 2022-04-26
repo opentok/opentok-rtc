@@ -152,6 +152,8 @@
     <!-- Require face-landmarks-detection itself. -->
     <script src="https://unpkg.com/@tensorflow-models/face-landmarks-detection@0.0.2/dist/face-landmarks-detection.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script defer src="/js/vendor/clipboard.min.js"></script>
     <script defer src="/js/components/bubble.js"></script>
     <script defer src="/js/components/modal.js"></script>
@@ -190,6 +192,9 @@
           <i data-icon="vonage_logo"></i>
         </a>
       </div>
+      <div class="floating-container">
+        <canvas id="myChart"></canvas>
+      </div>  
       <div class="center-container">
         <div class="room-info">
           <div class="name-wrapper">
@@ -522,6 +527,9 @@
         <span> Meeting unlocked </span>
       </form>
     </section>
+
+    <div id="att-track" class="attention-tracker"></div>
+
 
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+/* eslint-disable new-cap */
 /* global Utils, RoomStatus, RoomView, LazyLoader, Modal,
 ChatController, GoogleAuth, LayoutMenuController, OTHelper, PrecallController,
 RecordingsController, ScreenShareController, FeedbackController,
@@ -171,6 +173,11 @@ const TRIANGULATION = [
   290, 460, 401, 376, 435, 309, 250, 392, 376, 411, 433, 453, 341, 464, 357,
   453, 465, 343, 357, 412, 437, 343, 399, 344, 360, 440, 420, 437, 456, 360,
   420, 363, 361, 401, 288, 265, 372, 353, 390, 339, 249, 339, 448, 255];
+
+const groupBy = (xs, key) => xs.reduce((rv, x) => {
+  (rv[x[key]] = rv[x[key]] || []).push(x);
+  return rv;
+}, {});
 const getColor = (value) => {
   const hue = (value * 120).toString(10);
   return ['hsl(', hue, ',100%,50%)'].join('');
@@ -300,9 +307,34 @@ const attentionMap = (score) => {
   ws.onopen = function (e) {
     console.log('Websocket opened');
   };
-
+  var myChart;
   ws.onmessage = function (event) {
-    console.log('Message', event.data);
+   const parsedData = (JSON.parse(event.data).dataPoints.map((x) => JSON.parse(x)));
+   const groupedValues = groupBy(parsedData.map((datum) => attentionMap(datum.score)), 'label'));
+   console.log(groupedValues)
+   const chartData =  Object.values(groupedValues).map(a => a.length);
+const chartLabels = Object.keys(groupedValues);
+    const data = {
+      labels: chartLabels,
+      datasets: [{
+        label: 'Attention Overview',
+        data: chartData,
+      }],
+    };
+
+    const config = {
+      type: 'doughnut',
+      data,
+      options: {},
+    };
+
+if(myChart) {
+  myChart.destroy()
+}
+     myChart = new Chart(
+      document.getElementById('myChart'),
+      config,
+    );
   };
 
   ws.onclose = function (event) {
@@ -406,7 +438,16 @@ const attentionMap = (score) => {
       webcamRef.height = videoHeight;
 
       const face = await net.estimateFaces({ input: video, predictIrises: true });
+
       const { mesh } = face[0];
+      const { annotations } = face[0];
+      const { boundingBox } = face[0];
+      const {
+        leftEyeIris, leftEyeUpper0,
+      } = annotations;
+      const leftIris = leftEyeIris[0];
+      const leftEyeStart = leftEyeUpper0[0];
+
       const radians = (a1, a2, b1, b2) => Math.atan2(b2 - a2, b1 - a1);
       const angle = {
         roll: radians(mesh[33][0], mesh[33][1], mesh[263][0], mesh[263][1]),
@@ -420,6 +461,9 @@ const attentionMap = (score) => {
         score,
         streamId,
         roomURI,
+        leftIris,
+        leftEyeStart,
+        boundingBox,
       }));
       otHelper.sendSignal('attentionScore', { attention: score, streamId });
       // if (angle.yaw < -0.28) {
@@ -481,6 +525,13 @@ const attentionMap = (score) => {
     }
 
     return buttons;
+  };
+
+  const getDistance = (x, y) => {
+    const y1 = x[0] - y[0];
+    const x1 = x[1] - y[1];
+
+    return Math.sqrt(x1 * x1 + y1 * y1);
   };
 
   const publisherButtons = {
