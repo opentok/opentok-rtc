@@ -233,6 +233,8 @@ const attentionMap = (score) => {
   let googleAuth = null;
   let streamId = null;
 
+  MicroModal.init();
+
   let setPublisherReady;
   const publisherReady = new Promise((resolve) => {
     setPublisherReady = resolve;
@@ -664,6 +666,9 @@ const attentionMap = (score) => {
   }
 
   const viewEventHandlers = {
+    openAttentionModal() {
+
+    },
     endCall() {
       otHelper.disconnect();
       window.location = '/thanks';

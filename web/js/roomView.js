@@ -612,6 +612,11 @@ BubbleFactory, LayoutManager */
       }
 
       switch (elem.id) {
+        case 'openAttention': {
+          MicroModal.show('modal-1');
+          Utils.sendEvent('roomView:openAttentionModal');
+          break
+        }
         case 'viewRecordings':
           BubbleFactory.get('viewRecordings').toggle();
           break;
