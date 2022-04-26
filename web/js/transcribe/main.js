@@ -34,7 +34,7 @@ if (!window.navigator.mediaDevices.getUserMedia) {
   toggleStartStop();
 }
 
-$('#start-button').click(() => {
+$('#startTranscribe').click(() => {
   $('#error').hide(); // hide any existing errors
   toggleStartStop(true); // disable start and enable stop button
 
@@ -138,20 +138,17 @@ let handleEventStreamMessage = function (messageJson) {
   if (results.length > 0) {
     if (results[0].Alternatives.length > 0) {
       let transcript = results[0].Alternatives[0].Transcript;
-      const time = results[0].StartTime;
 
       // fix encoding for accented characters
-      transcript = `${decodeURIComponent(escape(transcript))}`;
+      transcript = decodeURIComponent(escape(transcript));
 
+      $('#transcribe-result').empty();
       // update the textarea with the latest result
-      $('#transcribe-result').val(`${transcription + transcript}\n`);
+      $('#transcribe-result').val(`${transcript}\n`);
 
       // if this transcript segment is final, add it to the overall transcription
       if (!results[0].IsPartial) {
-        // scroll the textarea down
-        $('#transcribe-result').scrollTop($('#transcribe-result')[0].scrollHeight);
-
-        transcription += `${time}: ${transcript}\n`;
+        transcription = `${transcript}\n`;
       }
     }
   }
@@ -233,8 +230,8 @@ function createPresignedUrl() {
     '/stream-transcription-websocket',
     'transcribe',
     crypto.createHash('sha256').update('', 'utf8').digest('hex'), {
-      key: AMAZON_KEY,
-      secret: AMAZON_SECRET,
+      key: 'AKIA2QZG6OMMCO7F6Z62',
+      secret: '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',
       sessionToken: '',
       protocol: 'wss',
       expires: 15,

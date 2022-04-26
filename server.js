@@ -34,11 +34,12 @@ wss.on('connection', (ws) => {
         leftIris,
         leftEyeStart,
         boundingBox,
+        transcribeText,
       } = JSON.parse(data);
       const redisPrefix = `${roomURI}:${streamId}`;
       if (msg === 'SET-ATTENTION') {
         await redis.rpush(redisPrefix, JSON.stringify({
-          timestamp: Date.now(), score, leftIris, leftEyeStart, boundingBox,
+          timestamp: Date.now(), score, leftIris, leftEyeStart, boundingBox, transcribeText,
         }));
         await redis.expire(redisPrefix, 1800); // 30 minutes
       } else if (msg === 'GET-ATTENTION') {

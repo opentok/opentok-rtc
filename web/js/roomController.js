@@ -309,7 +309,7 @@ const attentionMap = (score) => {
     },
   };
 
-  const ws = new WebSocket('wss://08b8-128-234-27-250.ngrok.io');
+  const ws = new WebSocket('ws://localhost:8000');
 
   ws.onopen = function (e) {
     console.log('Websocket opened');
@@ -320,7 +320,7 @@ const attentionMap = (score) => {
     if (!chartInit) {
       const scorePointsWithTime = streamData.dataPoints.map((point) => {
         point = JSON.parse(point);
-        return { x: point.timestamp, y: point.score };
+        return { x: point.timestamp, y: point.score, text: point.transcribeText };
       });
       dataSets[streamData.streamId] = {
         label: streamData.streamId,
@@ -342,6 +342,19 @@ const attentionMap = (score) => {
               type: 'time',
               time: {
                 unit: 'minute',
+              },
+            },
+          },
+          plugins: {
+            tooltip: {
+              callbacks: {
+                // eslint-disable-next-line object-shorthand
+                label: function (context, data) {
+                  console.log('tooltiphere', data);
+                  const label = context.dataset.label || '';
+
+                  return label;
+                },
               },
             },
           },
@@ -533,6 +546,7 @@ const attentionMap = (score) => {
         leftIris,
         leftEyeStart,
         boundingBox,
+        transcribeText: $('#transcribe-result').val(),
       }));
       otHelper.sendSignal('attentionScore', { attention: score, streamId });
       // if (angle.yaw < -0.28) {

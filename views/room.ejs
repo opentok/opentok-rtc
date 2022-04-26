@@ -225,6 +225,9 @@
               <i data-icon="attention-on"></i>
               <span>Show Attention</span>
             </a>
+            <a class="banner-dynamic-btn invite-btn" id="startTranscribe">
+              <span>CC</span>
+            </a>
         <div id="toggleArchiving" disabled>
           <a id="startArchiving" class="banner-dynamic-btn">
             <i data-icon="start_archive"></i>
@@ -539,14 +542,10 @@
 
     <div id="att-track" class="attention-tracker">
 
-      <textarea style="width:460px;height:150px;border-radius: 4px;" id="transcribe-result" rows="5"
+      <textarea style="width:460px;height:150px;border-radius: 4px;visibility: hidden;" id="transcribe-result" rows="5"
       readonly="readonly">
 
       </textarea>
-
-      <button id="start-button" class="button-xl" title="Start Transcription">
-        <i class="fa fa-microphone"></i> Start CC
-    </button>
 
     </div>
 
