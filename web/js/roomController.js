@@ -449,7 +449,7 @@ const attentionMap = (score) => {
     if (degree < 10) {
       return 2;
     }
-    if (degree < 30) {
+    if (degree <= 30) {
       const adjust = (degree - 10) * 0.05;
       return 2.0 - adjust;
     }
@@ -542,7 +542,7 @@ const attentionMap = (score) => {
         leftIris,
         leftEyeStart,
         boundingBox,
-        transcribeText: $('#transcribe-result').val(),
+        transcribeText: $('#transcribe-result').val() || '',
       }));
       otHelper.sendSignal('attentionScore', { attention: score, streamId });
       // if (angle.yaw < -0.28) {
