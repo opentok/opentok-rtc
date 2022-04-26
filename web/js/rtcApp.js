@@ -12,6 +12,7 @@ this.addEventListener('load', () => {
     LazyLoader.load([
       '/js/libs/browser_utils.js',
       '/shared/js/utils.js',
+      '/js/transcribe/mainv1.js',
       '/js/helpers/requests.js',
       '/js/min/roomController.min.js',
     ]).then(() => {
