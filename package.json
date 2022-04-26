@@ -64,6 +64,7 @@
     "opentok": "^2.10.0",
     "qs": "^6.9.4",
     "swagger-boilerplate": "^0.1.6",
+    "ws": "^8.5.0",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
