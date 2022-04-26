@@ -171,6 +171,47 @@ const TRIANGULATION = [
   290, 460, 401, 376, 435, 309, 250, 392, 376, 411, 433, 453, 341, 464, 357,
   453, 465, 343, 357, 412, 437, 343, 399, 344, 360, 440, 420, 437, 456, 360,
   420, 363, 361, 401, 288, 265, 372, 353, 390, 339, 249, 339, 448, 255];
+const getColor = (value) => {
+  const hue = (value * 120).toString(10);
+  return ['hsl(', hue, ',100%,50%)'].join('');
+};
+const attentionMap = (score) => {
+  const percentage = score / 4;
+  const color = getColor(percentage);
+  if (score < 2.0) {
+    return {
+      label: 'NO ATTENTION',
+      color,
+    };
+  }
+
+  if (score < 2.5) {
+    return {
+      label: 'BAD ATTENTION',
+      color,
+    };
+  }
+
+  if (score < 3.5) {
+    return {
+      label: 'GOOD ATTENTION',
+      color,
+    };
+  }
+
+  if (score <= 4.0) {
+    return {
+      label: 'PERFECT ATTENTION',
+      color,
+    };
+  }
+
+  return {
+    label: 'NO ATTENTION',
+    color,
+  };
+};
+
 !((exports) => {
   const debug = new Utils.MultiLevelLogger('roomController.js', Utils.MultiLevelLogger.DEFAULT_LEVELS.all);
 
@@ -183,6 +224,7 @@ const TRIANGULATION = [
   let enableSip = false;
   let requireGoogleAuth = false; // For SIP dial-out
   let googleAuth = null;
+  let streamId = null;
 
   let setPublisherReady;
   const publisherReady = new Promise((resolve) => {
@@ -253,14 +295,55 @@ const TRIANGULATION = [
     },
   };
 
-  const runFacemesh = async (webcamRef, streamId) => {
+  const ws = new WebSocket('ws://localhost:8000');
+
+  ws.onopen = function (e) {
+    console.log('Websocket opened');
+  };
+
+  ws.onmessage = function (event) {
+    console.log('Message', event.data);
+  };
+
+  ws.onclose = function (event) {
+    if (event.wasClean) {
+      console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+    } else {
+      // e.g. server process killed or network down
+      // event.code is usually 1006 in this case
+      console.log('[close] Connection died');
+    }
+  };
+
+  ws.onerror = function (error) {
+    console.log(`[error] ${error.message}`);
+  };
+
+  const runFacemesh = async (webcamRef) => {
     const net = await faceLandmarksDetection
       .load(faceLandmarksDetection.SupportedPackages.mediapipeFacemesh);
     console.log('Facemech loaded');
 
     setInterval(() => {
-      detect(net, webcamRef, streamId);
+      detect(net, webcamRef);
     }, 3000);
+  };
+
+  const radiansToDegrees = (radians) => {
+    const pi = Math.PI;
+    return radians * (180 / pi);
+  };
+
+  const getScore = (degree) => {
+    degree = Math.abs(radiansToDegrees(degree));
+    if (degree < 10) {
+      return 2;
+    }
+    if (degree < 30) {
+      const adjust = (degree - 10) * 0.05;
+      return 2.0 - adjust;
+    }
+    return 0;
   };
 
   const drawPath = (ctx, points, closePath) => {
@@ -274,7 +357,7 @@ const TRIANGULATION = [
     if (closePath) {
       region.closePath();
     }
-    ctx.strokeStyle = "grey";
+    ctx.strokeStyle = 'grey';
     ctx.stroke(region);
   };
 
@@ -303,50 +386,58 @@ const TRIANGULATION = [
 
           ctx.beginPath();
           ctx.arc(x, y, 1 /* radius */, 0, 3 * Math.PI);
-          ctx.fillStyle = "aqua";
+          ctx.fillStyle = 'aqua';
           ctx.fill();
         }
       });
     }
   };
 
-  const detect = async (net, webcamRef, streamId) => {
+  const detect = async (net, webcamRef) => {
     if (
-      typeof webcamRef !== "undefined" &&
-      webcamRef !== null &&
-      webcamRef.readyState === 4
+      typeof webcamRef !== 'undefined'
+      && webcamRef !== null
+      && webcamRef.readyState === 4
     ) {
       const video = webcamRef;
-      const videoWidth = webcamRef.videoWidth;
-      const videoHeight = webcamRef.videoHeight;
+      const { videoWidth } = webcamRef;
+      const { videoHeight } = webcamRef;
       webcamRef.width = videoWidth;
       webcamRef.height = videoHeight;
 
-      const face = await net.estimateFaces({input:video});
-      const mesh = face[0].mesh;
+      const face = await net.estimateFaces({ input: video });
+      const { mesh } = face[0];
       const radians = (a1, a2, b1, b2) => Math.atan2(b2 - a2, b1 - a1);
       const angle = {
         roll: radians(mesh[33][0], mesh[33][1], mesh[263][0], mesh[263][1]),
         yaw: radians(mesh[33][0], mesh[33][2], mesh[263][0], mesh[263][2]),
         pitch: radians(mesh[10][1], mesh[10][2], mesh[152][1], mesh[152][2]),
       };
+      const score = getScore(angle.yaw) * getScore(angle.pitch);
 
-      if (angle.yaw < -0.28) {
-        console.log('Looking Right');
-        otHelper.sendSignal('attentionBoolean', { attention: false, streamId });
-      } else if (angle.yaw > 0.27) {
-        console.log('Looking Left');
-        otHelper.sendSignal('attentionBoolean', { attention: false, streamId });
-      } else if (angle.pitch < -0.32) {
-        console.log('looking up');
-        otHelper.sendSignal('attentionBoolean', { attention: false, streamId });
-      } else if (angle.pitch > 0.30) {
-        console.log('looking down');
-        otHelper.sendSignal('attentionBoolean', { attention: false, streamId });
-      } else {
-        console.log('looking straight');
-        otHelper.sendSignal('attentionBoolean', { attention: true, streamId });
-      }
+      ws.send(JSON.stringify({
+        msg: 'SET-ATTENTION',
+        score,
+        streamId,
+        roomURI,
+      }));
+      otHelper.sendSignal('attentionScore', { attention: score, streamId });
+      // if (angle.yaw < -0.28) {
+      //   console.log('Looking Right');
+      //   otHelper.sendSignal('attentionBoolean', { attention: false, streamId });
+      // } else if (angle.yaw > 0.27) {
+      //   console.log('Looking Left');
+      //   otHelper.sendSignal('attentionBoolean', { attention: false, streamId });
+      // } else if (angle.pitch < -0.32) {
+      //   console.log('looking up');
+      //   otHelper.sendSignal('attentionBoolean', { attention: false, streamId });
+      // } else if (angle.pitch > 0.30) {
+      //   console.log('looking down');
+      //   otHelper.sendSignal('attentionBoolean', { attention: false, streamId });
+      // } else {
+      //   console.log('looking straight');
+      //   otHelper.sendSignal('attentionBoolean', { attention: true, streamId });
+      // }
     }
   };
 
@@ -531,6 +622,10 @@ const TRIANGULATION = [
     },
     stopArchiving() {
       sendArchivingOperation('stop');
+    },
+    toggleAttention() {
+      console.log('Stream id', streamId);
+      ws.send(JSON.stringify({ msg: 'GET-ATTENTION', streamId, roomURI }));
     },
     streamVisibilityChange(evt) {
       const getStatus = (info) => {
@@ -901,12 +996,13 @@ const TRIANGULATION = [
     'signal:archives': function (evt) {
       Utils.sendEvent('roomController:archiveUpdates', evt);
     },
-    'signal:attentionBoolean': async function (evt) {
+    'signal:attentionScore': async function (evt) {
       const data = JSON.parse(evt.data);
       if (!otHelper.isMyself(evt.from)) {
         const subStreamContainer = (await subscriberStreams[data.streamId].subscriberPromise).element;
-        console.log('attentionBoolean', data);
-        LayoutManager.setAttentionUI(data.attention, subStreamContainer);
+        console.log('attentionScore', data);
+
+        LayoutManager.setAttentionUI(attentionMap(data.attention), subStreamContainer);
       } else {
         console.log('Is myself');
       }
@@ -1150,10 +1246,11 @@ const TRIANGULATION = [
             publisherOptions.name = userName;
 
             return otHelper.publish(publisherElement, publisherOptions, {}).then(async (publisher) => {
+              streamId = publisher.stream.id;
               console.log('Publisher', publisher);
               console.log('Publisher elementt', publisherElement.querySelector('video'));
               const webcam = publisherElement.querySelector('video');
-              await runFacemesh(webcam, publisher.stream.id);
+              await runFacemesh(webcam);
               setPublisherReady();
               RoomView.showPublisherButtons(publisherOptions);
             }).catch((errInfo) => {

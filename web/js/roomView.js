@@ -497,6 +497,9 @@ BubbleFactory, LayoutManager */
           Utils.sendEvent('roomView:togglePublisherAudio', { hasAudio });
           break;
         }
+        case 'toggle-attention':
+          Utils.sendEvent('roomView:toggleAttention', { attentionToggle: true });
+          break;
         case 'screen-share': {
           Utils.sendEvent('roomView:shareScreen');
           break;

@@ -75,11 +75,12 @@
       });
     },
 
-    setAttentionUI(text, streamElem) {
+    setAttentionUI(attnObj, streamElem) {
       streamElem.querySelectorAll('.attention').forEach((e) => e.remove());
+      streamElem.style.border = `5px solid ${attnObj.color}`;
       const transcriptBox = HTMLElems.createElementAt(streamElem, 'div');
       transcriptBox.classList.add('attention');
-      return HTMLElems.createElementAt(transcriptBox, 'p', {}, `Attention: ${text ? 'True' : 'False'}`).classList.add('attention-text');
+      return HTMLElems.createElementAt(transcriptBox, 'p', {}, attnObj.label).classList.add('attention-text');
     },
 
     remove(item) {

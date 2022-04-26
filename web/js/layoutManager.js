@@ -155,8 +155,8 @@ LayoutViewport, ItemsHandler */
     return Object.keys(items).length;
   }
 
-  function setAttentionUI(text, streamElem) {
-    return LayoutView.setAttentionUI(text, streamElem);
+  function setAttentionUI(attnObj, streamElem) {
+    return LayoutView.setAttentionUI(attnObj, streamElem);
   }
 
   function calculateCandidateLayout() {

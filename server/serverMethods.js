@@ -842,6 +842,13 @@ function ServerMethods(aLogLevel, aModules) {
       });
   }
 
+  function setAttentionDataPoint(aReq, aRes) {
+    const { tbConfig } = aReq;
+    const { body } = aReq;
+    console.log('Body', body, tbConfig);
+    return aRes.send({ key: 'Hello' });
+  }
+
   function getArchive(aReq, aRes) {
     const { archiveId } = aReq.params;
     const generatePreview = (aReq.query && aReq.query.generatePreview !== undefined);
@@ -1026,6 +1033,7 @@ function ServerMethods(aLogLevel, aModules) {
     postUpdateArchiveInfo,
     getArchive,
     deleteArchive,
+    setAttentionDataPoint,
     getRoomArchive,
     postRoomDial,
     postHangUp,
