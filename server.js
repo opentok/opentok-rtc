@@ -35,16 +35,20 @@ wss.on('connection', (ws) => {
         leftEyeStart,
         boundingBox,
         transcribeText,
+        userName,
       } = JSON.parse(data);
       const redisPrefix = `${roomURI}:${streamId}`;
       if (msg === 'SET-ATTENTION') {
         await redis.rpush(redisPrefix, JSON.stringify({
-          timestamp: Date.now(), score, leftIris, leftEyeStart, boundingBox, transcribeText,
+          // eslint-disable-next-line max-len
+          timestamp: Date.now(), score, leftIris, leftEyeStart, boundingBox, transcribeText, userName,
         }));
         await redis.expire(redisPrefix, 1800); // 30 minutes
       } else if (msg === 'GET-ATTENTION') {
         const attentionDataPoints = await redis.lrange(redisPrefix, 0, -1);
-        ws.send(JSON.stringify({ msg: 'SERVER-GET-ATTENTION', dataPoints: attentionDataPoints, streamId }));
+        ws.send(JSON.stringify({
+          msg: 'SERVER-GET-ATTENTION', dataPoints: attentionDataPoints, streamId, userName,
+        }));
       } else {
         console.log('Unknown websocket message');
       }

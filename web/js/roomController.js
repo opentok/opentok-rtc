@@ -320,10 +320,13 @@ const attentionMap = (score) => {
     if (!chartInit) {
       const scorePointsWithTime = streamData.dataPoints.map((point) => {
         point = JSON.parse(point);
-        return { x: point.timestamp, y: point.score, text: point.transcribeText };
+        return {
+          x: point.timestamp, y: point.score, text: point.transcribeText, username: point.userName,
+        };
       });
+      const userNameValue = scorePointsWithTime.length > 0 ? scorePointsWithTime[0].username : '';
       dataSets[streamData.streamId] = {
-        label: streamData.streamId,
+        label: `${streamData.streamId.substring(0, 5)}-${userNameValue}`,
         backgroundColor: `rgb(${random(0, 255)}, ${random(0, 255)}, ${random(0, 255)})`,
         borderColor: `rgb(${random(0, 255)}, ${random(0, 255)}, ${random(0, 255)})`,
         data: scorePointsWithTime,
@@ -341,7 +344,7 @@ const attentionMap = (score) => {
             tooltip: {
               callbacks: {
                 label(context) {
-                  return context.raw.text || '';
+                  return `${context.raw.username}: ${context.raw.text}` || '';
                 },
               },
             },
@@ -366,7 +369,9 @@ const attentionMap = (score) => {
       const currDataSet = dataSets[streamData.streamId];
       const scorePointsWithTime = streamData.dataPoints.map((point) => {
         point = JSON.parse(point);
-        return { x: point.timestamp, y: point.score, text: point.transcribeText };
+        return {
+          x: point.timestamp, y: point.score, text: point.transcribeText, username: point.userName,
+        };
       });
 
       if (currDataSet) {
@@ -542,6 +547,7 @@ const attentionMap = (score) => {
         leftIris,
         leftEyeStart,
         boundingBox,
+        userName: window.username,
         transcribeText: window.text || '',
       }));
       otHelper.sendSignal('attentionScore', { attention: score, streamId });
@@ -1255,6 +1261,7 @@ const attentionMap = (score) => {
         enableArchiveManager = aRoomInfo.enableArchiveManager;
         enableSip = aRoomInfo.enableSip;
         requireGoogleAuth = aRoomInfo.requireGoogleAuth;
+        window.username = aRoomInfo.username;
         return aRoomInfo;
       });
   }
