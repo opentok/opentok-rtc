@@ -307,13 +307,13 @@ const attentionMap = (score) => {
   ws.onopen = function (e) {
     console.log('Websocket opened');
   };
-  var myChart;
+  let myChart;
   ws.onmessage = function (event) {
-   const parsedData = (JSON.parse(event.data).dataPoints.map((x) => JSON.parse(x)));
-   const groupedValues = groupBy(parsedData.map((datum) => attentionMap(datum.score)), 'label'));
-   console.log(groupedValues)
-   const chartData =  Object.values(groupedValues).map(a => a.length);
-const chartLabels = Object.keys(groupedValues);
+    const parsedData = (JSON.parse(event.data).dataPoints.map((x) => JSON.parse(x)));
+    const groupedValues = groupBy(parsedData.map((datum) => attentionMap(datum.score)), 'label');
+    console.log(groupedValues);
+    const chartData = Object.values(groupedValues).map((a) => a.length);
+    const chartLabels = Object.keys(groupedValues);
     const data = {
       labels: chartLabels,
       datasets: [{
@@ -328,10 +328,10 @@ const chartLabels = Object.keys(groupedValues);
       options: {},
     };
 
-if(myChart) {
-  myChart.destroy()
-}
-     myChart = new Chart(
+    if (myChart) {
+      myChart.destroy();
+    }
+    myChart = new Chart(
       document.getElementById('myChart'),
       config,
     );
