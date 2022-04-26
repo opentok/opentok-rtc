@@ -337,24 +337,20 @@ const attentionMap = (score) => {
         type: 'line',
         data: chartData,
         options: {
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label(context) {
+                  return context.raw.text || '';
+                },
+              },
+            },
+          },
           scales: {
             x: {
               type: 'time',
               time: {
                 unit: 'minute',
-              },
-            },
-          },
-          plugins: {
-            tooltip: {
-              callbacks: {
-                // eslint-disable-next-line object-shorthand
-                label: function (context, data) {
-                  console.log('tooltiphere', data);
-                  const label = context.dataset.label || '';
-
-                  return label;
-                },
               },
             },
           },
@@ -370,7 +366,7 @@ const attentionMap = (score) => {
       const currDataSet = dataSets[streamData.streamId];
       const scorePointsWithTime = streamData.dataPoints.map((point) => {
         point = JSON.parse(point);
-        return { x: point.timestamp, y: point.score };
+        return { x: point.timestamp, y: point.score, text: point.transcribeText };
       });
 
       if (currDataSet) {
