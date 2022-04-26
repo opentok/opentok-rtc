@@ -43,7 +43,7 @@ wss.on('connection', (ws) => {
         await redis.expire(redisPrefix, 1800); // 30 minutes
       } else if (msg === 'GET-ATTENTION') {
         const attentionDataPoints = await redis.lrange(redisPrefix, 0, -1);
-        ws.send(JSON.stringify({ msg: 'SERVER-GET-ATTENTION', dataPoints: attentionDataPoints }));
+        ws.send(JSON.stringify({ msg: 'SERVER-GET-ATTENTION', dataPoints: attentionDataPoints, streamId }));
       } else {
         console.log('Unknown websocket message');
       }

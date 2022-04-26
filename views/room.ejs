@@ -161,6 +161,10 @@
     <script defer src="/js/rtcApp.js"></script>
     <script defer src="<%= jqueryUrl %>/3.3.1/jquery.min.js"></script>
     <script src="https://unpkg.com/micromodal/dist/micromodal.min.js"></script>
+<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment.min.js"></script>-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/moment@^2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1"></script>
     <% if (oneTrustCookieConsentUrl) { %>
     <!-- OneTrust Cookies Consent Notice start -->
     <script defer src="<%=oneTrustCookieConsentUrl%>" type="text/javascript" charset="UTF-8"></script>
@@ -193,9 +197,9 @@
           <i data-icon="vonage_logo"></i>
         </a>
       </div>
-      <div class="floating-container">
-        <canvas id="myChart"></canvas>
-      </div>  
+<!--      <div class="floating-container">-->
+<!--        <canvas id="myChart"></canvas>-->
+<!--      </div>  -->
       <div class="center-container">
         <div class="room-info">
           <div class="name-wrapper">
@@ -631,9 +635,9 @@
           <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
         </header>
         <main class="modal__content" id="modal-1-content">
-          <p>
-            Try hitting the <code>tab</code> key and notice how the focus stays within the modal itself. Also, <code>esc</code> to close modal.
-          </p>
+          <div>
+            <canvas id="myChart"></canvas>
+          </div>
         </main>
         <footer class="modal__footer">
           <button class="modal__btn modal__btn-primary">Continue</button>

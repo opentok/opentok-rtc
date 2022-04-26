@@ -173,7 +173,11 @@ const TRIANGULATION = [
   290, 460, 401, 376, 435, 309, 250, 392, 376, 411, 433, 453, 341, 464, 357,
   453, 465, 343, 357, 412, 437, 343, 399, 344, 360, 440, 420, 437, 456, 360,
   420, 363, 361, 401, 288, 265, 372, 353, 390, 339, 249, 339, 448, 255];
-
+let chartInit = false;
+const dataSets = {};
+let myChart;
+let chartData;
+let chartTimeoutHandler;
 const groupBy = (xs, key) => xs.reduce((rv, x) => {
   (rv[x[key]] = rv[x[key]] || []).push(x);
   return rv;
@@ -232,6 +236,7 @@ const attentionMap = (score) => {
   let requireGoogleAuth = false; // For SIP dial-out
   let googleAuth = null;
   let streamId = null;
+  const random = (min, max) => Math.floor(Math.random() * (max - min)) + min;
 
   MicroModal.init();
 
@@ -304,39 +309,101 @@ const attentionMap = (score) => {
     },
   };
 
-  const ws = new WebSocket('ws://localhost:8000');
+  const ws = new WebSocket('wss://08b8-128-234-27-250.ngrok.io');
 
   ws.onopen = function (e) {
     console.log('Websocket opened');
   };
-  let myChart;
   ws.onmessage = function (event) {
-    const parsedData = (JSON.parse(event.data).dataPoints.map((x) => JSON.parse(x)));
-    const groupedValues = groupBy(parsedData.map((datum) => attentionMap(datum.score)), 'label');
-    console.log(groupedValues);
-    const chartData = Object.values(groupedValues).map((a) => a.length);
-    const chartLabels = Object.keys(groupedValues);
-    const data = {
-      labels: chartLabels,
-      datasets: [{
-        label: 'Attention Overview',
+    console.log('GOT MESSAGE FROM SERVER', JSON.parse(event.data));
+    const streamData = JSON.parse(event.data);
+    if (!chartInit) {
+      const scorePointsWithTime = streamData.dataPoints.map((point) => {
+        point = JSON.parse(point);
+        return { x: point.timestamp, y: point.score };
+      });
+      dataSets[streamData.streamId] = {
+        label: streamData.streamId,
+        backgroundColor: `rgb(${random(0, 255)}, ${random(0, 255)}, ${random(0, 255)})`,
+        borderColor: `rgb(${random(0, 255)}, ${random(0, 255)}, ${random(0, 255)})`,
+        data: scorePointsWithTime,
+      };
+
+      chartData = {
+        datasets: [dataSets[streamData.streamId]],
+      };
+
+      const config = {
+        type: 'line',
         data: chartData,
-      }],
-    };
+        options: {
+          scales: {
+            x: {
+              type: 'time',
+              time: {
+                unit: 'minute',
+              },
+            },
+          },
+        },
+      };
 
-    const config = {
-      type: 'doughnut',
-      data,
-      options: {},
-    };
+      myChart = new Chart(
+        document.getElementById('myChart'),
+        config,
+      );
+      chartInit = true;
+    } else {
+      const currDataSet = dataSets[streamData.streamId];
+      const scorePointsWithTime = streamData.dataPoints.map((point) => {
+        point = JSON.parse(point);
+        return { x: point.timestamp, y: point.score };
+      });
 
-    if (myChart) {
-      myChart.destroy();
+      if (currDataSet) {
+        currDataSet.data = scorePointsWithTime;
+        myChart.data.datasets.forEach((dataset) => {
+          if (dataset.label === streamData.streamId) {
+            dataset.data = scorePointsWithTime;
+          }
+        });
+      } else {
+        dataSets[streamData.streamId] = {
+          label: streamData.streamId,
+          backgroundColor: `rgb(${random(0, 255)}, ${random(0, 255)}, ${random(0, 255)})`,
+          borderColor: `rgb(${random(0, 255)}, ${random(0, 255)}, ${random(0, 255)})`,
+          data: scorePointsWithTime,
+        };
+        myChart.data.datasets.push(dataSets[streamData.streamId]);
+      }
+      myChart.update();
     }
-    myChart = new Chart(
-      document.getElementById('myChart'),
-      config,
-    );
+    // const parsedData = (JSON.parse(event.data).dataPoints.map((x) => JSON.parse(x)));
+    // const groupedValues = groupBy(parsedData.map((datum) => attentionMap(datum.score)), 'label');
+    // console.log(groupedValues);
+    // const chartData = Object.values(groupedValues).map((a) => a.length);
+    // const chartLabels = Object.keys(groupedValues);
+    // const data = {
+    //   labels: chartLabels,
+    //   datasets: [{
+    //     label: 'Attention Overview',
+    //     data: chartData,
+    //   }],
+    // };
+    //
+    // const config = {
+    //   type: 'doughnut',
+    //   data,
+    //   options: {},
+    // };
+    //
+    // if (myChart) {
+    //   myChart.destroy();
+    // }
+    // myChart = new Chart(
+    //   document.getElementById('myChart'),
+    //   config,
+    // );
   };
 
   ws.onclose = function (event) {
@@ -667,7 +734,17 @@ const attentionMap = (score) => {
 
   const viewEventHandlers = {
     openAttentionModal() {
-
+      MicroModal.show('modal-1', {
+        onClose: () => {
+          clearInterval(chartTimeoutHandler);
+        },
+      });
+      const requestIds = [...Object.keys(subscriberStreams), streamId];
+      chartTimeoutHandler = setInterval(() => {
+        requestIds.forEach((streamId) => {
+          ws.send(JSON.stringify({ msg: 'GET-ATTENTION', streamId, roomURI }));
+        });
+      }, 3000);
     },
     endCall() {
       otHelper.disconnect();
