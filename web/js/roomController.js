@@ -542,7 +542,7 @@ const attentionMap = (score) => {
         leftIris,
         leftEyeStart,
         boundingBox,
-        transcribeText: $('#transcribe-result').val() || '',
+        transcribeText: window.text || '',
       }));
       otHelper.sendSignal('attentionScore', { attention: score, streamId });
       // if (angle.yaw < -0.28) {

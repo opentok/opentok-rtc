@@ -142,9 +142,10 @@ let handleEventStreamMessage = function (messageJson) {
       // fix encoding for accented characters
       transcript = decodeURIComponent(escape(transcript));
 
-      $('#transcribe-result').empty();
+      //$('#transcribe-result').empty();
       // update the textarea with the latest result
-      $('#transcribe-result').val(`${transcript}\n`);
+      window.text = transcript;
+      //$('#transcribe-result').val(`${transcript}\n`);
 
       // if this transcript segment is final, add it to the overall transcription
       if (!results[0].IsPartial) {
