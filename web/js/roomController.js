@@ -321,7 +321,7 @@ const attentionMap = (score) => {
 
   const runFacemesh = async (webcamRef) => {
     const net = await faceLandmarksDetection
-      .load(faceLandmarksDetection.SupportedPackages.mediapipeFacemesh);
+      .load(faceLandmarksDetection.SupportedPackages.mediapipeFacemesh, { maxFaces: 1 });
     console.log('Facemech loaded');
 
     setInterval(() => {
@@ -405,7 +405,7 @@ const attentionMap = (score) => {
       webcamRef.width = videoWidth;
       webcamRef.height = videoHeight;
 
-      const face = await net.estimateFaces({ input: video });
+      const face = await net.estimateFaces({ input: video, predictIrises: true });
       const { mesh } = face[0];
       const radians = (a1, a2, b1, b2) => Math.atan2(b2 - a2, b1 - a1);
       const angle = {

@@ -78,6 +78,8 @@
     setAttentionUI(attnObj, streamElem) {
       streamElem.querySelectorAll('.attention').forEach((e) => e.remove());
       streamElem.style.border = `5px solid ${attnObj.color}`;
+      streamElem.style.width = '99%';
+      streamElem.style.height = '99%';
       const transcriptBox = HTMLElems.createElementAt(streamElem, 'div');
       transcriptBox.classList.add('attention');
       return HTMLElems.createElementAt(transcriptBox, 'p', {}, attnObj.label).classList.add('attention-text');
