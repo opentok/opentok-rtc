@@ -75,6 +75,16 @@
       });
     },
 
+    setAttentionUI(attnObj, streamElem) {
+      streamElem.querySelectorAll('.attention').forEach((e) => e.remove());
+      streamElem.style.border = `5px solid ${attnObj.color}`;
+      streamElem.style.width = '99%';
+      streamElem.style.height = '99%';
+      const transcriptBox = HTMLElems.createElementAt(streamElem, 'div');
+      transcriptBox.classList.add('attention');
+      return HTMLElems.createElementAt(transcriptBox, 'p', {}, attnObj.label).classList.add('attention-text');
+    },
+
     remove(item) {
       return this.container.removeChild(item);
     },
@@ -97,6 +107,10 @@
 
     remove(...args) {
       return renderer.remove(...args);
+    },
+
+    setAttentionUI(...args) {
+      return renderer.setAttentionUI(...args);
     },
 
     removeAll() {

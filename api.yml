@@ -260,6 +260,41 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/ErrorInfo'
+  '/room/{roomName}/setAttentionScore':
+    post:
+      summary: Set attention data point for user
+      x-implemented-in: setAttentionDataPoint
+      produces:
+        - 'application/json,'
+      description: >-
+        Sets a datapoint for the attention at the given time of the user
+      tags:
+        - Rooms
+      parameters:
+        - name: roomName
+          in: path
+          description: Name of the room.
+          required: true
+          type: string
+        - name: attentionScore
+          in: body
+          description: Attention score.
+          required: true
+          type: string
+        - name: streamId
+          in: body
+          description: Stream ID.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Room data after successful operation
+          schema:
+            $ref: '#/definitions/RoomInfo'
+        '400':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/ErrorInfo'
   '/archive/{archiveId}':
     get:
       summary: Gets and returns a temporary archive URL.
@@ -415,7 +450,7 @@ paths:
         - Health
       responses:
         '200':
-          description: Passed health check  
+          description: Passed health check
           schema:
             $ref: '#/definitions/HealthInfo'
         '400':

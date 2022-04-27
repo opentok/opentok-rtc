@@ -1,11 +1,8 @@
-const { env } = process;
 const SwaggerBP = require('swagger-boilerplate');
 
 const { Utils } = SwaggerBP;
 const Logger = Utils.MultiLevelLogger;
-const Redis = require('ioredis');
-
-const redis = new Redis(env.REDIS_URL || env.REDISTOGO_URL || ''); // uses defaults unless given configuration object
+const redis = require('./redis');
 
 class ArchiveLocalStorage {
   constructor(otInstance, roomNameKey, sessionId, aLogLevel) {
