@@ -309,7 +309,7 @@ const attentionMap = (score) => {
     },
   };
 
-  const ws = new WebSocket('ws://localhost:8000');
+  const ws = new WebSocket('wss://b7ea-2001-16a2-e9db-e800-6062-439e-ff87-b694.ngrok.io');
 
   ws.onopen = function (e) {
     console.log('Websocket opened');
@@ -324,9 +324,8 @@ const attentionMap = (score) => {
           x: point.timestamp, y: point.score, text: point.transcribeText, username: point.userName,
         };
       });
-      const userNameValue = scorePointsWithTime.length > 0 ? scorePointsWithTime[0].username : '';
       dataSets[streamData.streamId] = {
-        label: `${streamData.streamId.substring(0, 5)}-${userNameValue}`,
+        label: streamData.streamId,
         backgroundColor: `rgb(${random(0, 255)}, ${random(0, 255)}, ${random(0, 255)})`,
         borderColor: `rgb(${random(0, 255)}, ${random(0, 255)}, ${random(0, 255)})`,
         data: scorePointsWithTime,
