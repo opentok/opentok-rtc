@@ -204,10 +204,9 @@ There are other Vonage Video API configuration settings (each of which are optio
   If the client system cannot support the resolution you requested, the stream will use
   the next largest setting supported.
 
-* **OpenTok.js URL** -- By default, the app uses the latest standard line version
-  of OpenTok.js. You can change the OpenTok.js source URL. For example you may
-  want to change this to the enterprise line version of OpenTok.js
-  (https://static.opentok.com/v2/js/opentok.min.js).
+* **OpenTok.js URL** -- By default, the app uses the default Vonage Video web client URL,
+  `https://unpkg.com/@vonage/video-client@2/dist/js/opentok.js`. Set this value
+  to change the source URL for the Vonage Video web client SDK.
 
   The config.json setting is `OpenTok.jsUrl`. The environment variable name is `TB_JS_URL`.
 
