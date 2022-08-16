@@ -10,6 +10,10 @@ OpenTokRTC is your private web-based video conferencing solution. It is based on
 the OpenTok SDKs and API. You can deploy the app on your servers to get your own
 video conferencing app running on WebRTC.
 
+**Important:** This version of the application is modified to work with Vonage applications
+(instead of OpenTok projects). Contact Vonage for more information on having video enabled
+for your Vonage application.
+
 This repository contains a Node.js server and a web client application.
 
 ## Table of Contents
@@ -95,13 +99,13 @@ $ cp config/example.json config/config.json
 ```
 
 Edit the config.json file with the following, and replace `<key>` and `<secret>` with
-your OpenTok API key and the corresponding API secret:
+your Vonage application ID and the corresponding private key:
 
 ```js
 {
-    "OpenTok": {
-        "apiKey": "<key>"
-        "apiSecret": "<secret>"
+    "Vonage": {
+        "applicationId": "c696-...-5e71",
+        "privateKey": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhk...\n-----END PRIVATE KEY-----\n",
     }
 }
 ```
@@ -111,7 +115,7 @@ which are described in the [Configuration options](#configuration-options) secti
 
 #### Setting environment variables
 
-You can set the `TB_API_KEY` and `TB_API_SECRET` to your OpenTok API key and secret.
+You can set the `TB_API_KEY` and `TB_API_SECRET` to your Vonage application ID and private key.
 For example, the following shell commands export these values for use by the app
 (replace `<key>` and `<secret>` with your OpenTok API key and the corresponding API secret):
 
@@ -178,13 +182,13 @@ Environment variable settings overwrite any value set with the config JSON file.
 The default config JSON file location is config/config.json. This path can be
 overwritten by setting the `DEFAULT_JSON_CONFIG_PATH` environment variable.
 
-### OpenTok configuration
+### Vonage Video API configuration
 
-The required configuration settings for the OpenTok API key and secret are
+The required configuration settings for the Vonage Video application and private key are
 described in the [basic configuration](#basic-configuration) section,
 earlier in this README.
 
-There are other OpenTok configuration settings (each of which are optional):
+There are other Vonage Video API configuration settings (each of which are optional):
 
 * **Publisher resolution** -- You can set the desired resolution of published video.
   The config.json setting is `OpenTok.publisherResolution`. The environment variable
@@ -227,8 +231,8 @@ The config.json setting is `mediaMode`. The environment variable name is `MEDIA_
 ```json
 {
     "OpenTok": {
-      "apiKey": "<key>",
-      "apiSecret": "<secret>",
+      "apiKey": "<application-id>",
+      "apiSecret": "<private-key>",
       "publisherResolution": "1280x720",
       "jsUrl": "https://static.opentok.com/v2/js/opentok.min.js",
       "maxSessionAge": 7
@@ -246,6 +250,8 @@ export TB_MAX_SESSION_AGE="7";
 ```
 
 ### Phone dial-out
+
+**Important:** The dial-out is not currently supported for Vonage applications.
 
 The app can dial out and add a phone-based end user to the OpenTok session, using the OpenTok
 [SIP API](https://tokbox.com/developer/rest/#sip_call). This app uses
@@ -515,8 +521,10 @@ export ENABLE_FEEDBACK=true;
 
 ### Pre-call test
 
+**Important:** The pre-call test is not currently supported for Vonage applications.
+
 Set the the `TB_PRECALL_API_KEY` and `TB_PRECALL_API_SECRET` environment variables
-to the the OpenTok API key and secret to use for the test session used by
+to the the Vonage application ID and private keys to use for the test session used by
 the precall-test. Or set these in the config.json file:
 
 **Config.json example:**
@@ -524,8 +532,8 @@ the precall-test. Or set these in the config.json file:
 ```json
 {
     "precallTest": {
-        "apiKey": "46049502",
-        "apiSecret": "0f4a63f629cec64ebdc5552974fe2566d2eb2835"
+        "apiKey": "<application-id>",
+        "apiSecret": "<private-key>",
     }
 }
 ```

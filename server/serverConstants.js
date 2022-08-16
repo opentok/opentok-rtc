@@ -31,6 +31,10 @@ E.OPENTOK_PRECALL_API_KEY = { envVar: 'TB_PRECALL_API_KEY', jsonPath: 'precallTe
 
 E.OPENTOK_PRECALL_API_SECRET = { envVar: 'TB_PRECALL_API_SECRET', jsonPath: 'precallTest.apiSecret' };
 
+E.VONAGE_APPLICATION_ID = { envVar: 'VONAGE_APPLICATION_ID', jsonPath: 'Vonage.applicationId', required: true };
+
+E.VONAGE_PRIVATE_KEY = { envVar: 'VONAGE_PRIVATE_KEY', jsonPath: 'Vonage.privateKey', required: true };
+
 E.OPENTOK_JS_URL = {
   envVar: 'TB_JS_URL', jsonPath: 'OpenTok.jsUrl', required: false, defaultValue: 'https://static.opentok.com/v2/js/opentok.min.js',
 };

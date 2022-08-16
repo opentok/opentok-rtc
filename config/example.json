@@ -2,9 +2,11 @@
    "showTos": false,
    "meetingsRatePerMinute": 30,
    "OpenTok":{
-      "apiKey": "<key>",
-      "apiSecret": "<secret>",
       "publisherResolution": "640x480"
+   },
+   "Vonage": {
+     "applicationId": "c696-...-5e71",
+     "privateKey": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhk...\n-----END PRIVATE KEY-----\n",
    },
    "precallTest": {
        "enabled": true,

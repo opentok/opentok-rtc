@@ -61,7 +61,7 @@
     "http2": "^3.3.7",
     "ioredis": "^4.17.3",
     "lodash": "^4.17.20",
-    "opentok": "^2.10.0",
+    "@vonage/video": "^0.7.0",
     "qs": "^6.9.4",
     "swagger-boilerplate": "^0.1.6",
     "yamljs": "^0.3.0"
