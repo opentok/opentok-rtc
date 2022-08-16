@@ -115,13 +115,14 @@ which are described in the [Configuration options](#configuration-options) secti
 
 #### Setting environment variables
 
-You can set the `TB_API_KEY` and `TB_API_SECRET` to your Vonage application ID and private key.
-For example, the following shell commands export these values for use by the app
-(replace `<key>` and `<secret>` with your OpenTok API key and the corresponding API secret):
+You can set the `VONAGE_APPLICATION_ID` and `VONAGE_PRIVATE_KEY` environment variables to
+your Vonage application ID and private key. For example, the following shell commands export
+these values for use by the app (replace `<application-id>` and `<private-key>` with your
+Vonage application ID and private key):
 
 ```sh
-export TB_API_KEY=<key>
-export TB_API_SECRET=<secret>
+export VONAGE_APPLICATION_ID=<application-id>
+export VONAGE_PRIVATE_KEY=<private-key>
 ```
 
 You can set other environment variables to enable and configure other options,
