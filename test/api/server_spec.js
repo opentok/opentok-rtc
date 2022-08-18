@@ -2,24 +2,24 @@ var chai = require('chai');
 var request = require('supertest');
 
 var { expect } = chai;
+var MockVonage = require('../mocks/mock_vonage.js');
 
 const TEST_LOG_LEVEL = 0;
 
 describe('OpenTokRTC server', () => {
   'use strict';
 
-  var app, MockOpentok;
+  var app;
 
   // Note that since everything is in api.yml, we could just parse
   // that and generate the test cases automatically. At the moment
   // it's more work than doing it manually though, so not worth it.
 
   before((done) => {
-    MockOpentok = require('../mocks/mock_opentok.js');
     process.env.TEMPLATING_SECRET = '123456';
 
     var mocks = {
-      Opentok: MockOpentok,
+      Vonage: MockVonage,
     };
 
     // Note that this actually executes on the level where the Grunt file is
@@ -44,15 +44,12 @@ describe('OpenTokRTC server', () => {
     });
   });
 
-  after(() => {
-    MockOpentok.restoreInstances();
-  });
-
   // Note that everything needed to test this is actually in api.json, but it's not
   // really worth it at this point to try to do this generic. So for now we'll just do
   // it manually.
   function checkForAttributes(aAttributes, aRes) {
     var aObject = aRes.body;
+    // console.log(888, aAttributes[i], aRes.body)
     for (var i = 0, l = aAttributes.length; i < l; i++) {
       if (!aObject[aAttributes[i]]) {
         throw new Error('Missing required attribute: ' + aAttributes[i]

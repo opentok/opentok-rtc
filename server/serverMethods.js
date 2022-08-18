@@ -803,7 +803,7 @@ function ServerMethods(aLogLevel, aModules) {
             // no-op
         }
         logger.log('postRoomArchive: Invoking archiveOp. SessionInfo', sessionInfo);
-        return archiveOp().then((aArchive) => {
+        return archiveOp.then((aArchive) => {
           sessionInfo.inProgressArchiveId = aArchive.status === 'started' ? aArchive.id : undefined;
           // Update the internal database
           serverPersistence.setKey(redisRoomPrefix + roomName, JSON.stringify(sessionInfo));
