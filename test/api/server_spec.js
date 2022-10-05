@@ -49,7 +49,6 @@ describe('OpenTokRTC server', () => {
   // it manually.
   function checkForAttributes(aAttributes, aRes) {
     var aObject = aRes.body;
-    // console.log(888, aAttributes[i], aRes.body)
     for (var i = 0, l = aAttributes.length; i < l; i++) {
       if (!aObject[aAttributes[i]]) {
         throw new Error('Missing required attribute: ' + aAttributes[i]
