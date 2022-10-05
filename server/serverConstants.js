@@ -27,10 +27,6 @@ E.OPENTOK_API_KEY = { envVar: 'TB_API_KEY', jsonPath: 'OpenTok.apiKey', required
 
 E.OPENTOK_API_SECRET = { envVar: 'TB_API_SECRET', jsonPath: 'OpenTok.apiSecret', required: true };
 
-E.OPENTOK_PRECALL_API_KEY = { envVar: 'TB_PRECALL_API_KEY', jsonPath: 'precallTest.apiKey' };
-
-E.OPENTOK_PRECALL_API_SECRET = { envVar: 'TB_PRECALL_API_SECRET', jsonPath: 'precallTest.apiSecret' };
-
 E.VONAGE_APPLICATION_ID = { envVar: 'VONAGE_APPLICATION_ID', jsonPath: 'Vonage.applicationId', required: true };
 
 E.VONAGE_PRIVATE_KEY = { envVar: 'VONAGE_PRIVATE_KEY', jsonPath: 'Vonage.privateKey', required: true };

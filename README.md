@@ -521,26 +521,6 @@ export ENABLE_FEEDBACK=true;
 
 ### Pre-call test
 
-**Important:** The pre-call test is not currently supported for Vonage applications.
-
-Set the the `TB_PRECALL_API_KEY` and `TB_PRECALL_API_SECRET` environment variables
-to the the Vonage application ID and private keys to use for the test session used by
-the precall-test. Or set these in the config.json file:
-
-**Config.json example:**
-
-```json
-{
-    "precallTest": {
-        "apiKey": "<application-id>",
-        "apiSecret": "<private-key>",
-    }
-}
-```
-
-These are optional. If you do not set these, the pre-call test will use the same
-API key and secret that is used for the main OpenTok session used in the room.
-
 You can disable the pre-call test by setting the `ENABLE_PRECALL_TEST`
 environment variable to `false`. Or you can disable it using the config file:
 

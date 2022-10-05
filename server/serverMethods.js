@@ -129,8 +129,6 @@ function ServerMethods(aLogLevel, aModules) {
       const templatingSecret = config.get(C.TEMPLATING_SECRET);
       const apiKey = config.get(C.VONAGE_APPLICATION_ID) || config.get(C.OPENTOK_API_KEY);
       const apiSecret = config.get(C.VONAGE_PRIVATE_KEY);
-      const precallApiKey = config.get(C.VONAGE_APPLICATION_ID);
-      const precallApiSecret = config.get(C.VONAGE_PRIVATE_KEY);
       const opentokJsUrl = config.get(C.OPENTOK_JS_URL);
       const useGoogleFonts = config.get(C.USE_GOOGLE_FONTS);
       const jqueryUrl = config.get(C.JQUERY_URL);
@@ -147,8 +145,8 @@ function ServerMethods(aLogLevel, aModules) {
       const precallVonageVideoInstance = Utils.CachifiedObject(
         Vonage.Video,
         {
-          applicationId: precallApiKey,
-          privateKey: precallApiSecret,
+          applicationId: apiKey,
+          privateKey: apiSecret,
         },
       );
 
@@ -226,8 +224,6 @@ function ServerMethods(aLogLevel, aModules) {
         precallVonageVideoInstance,
         apiKey,
         apiSecret,
-        precallApiKey,
-        precallApiSecret,
         archivePollingTO,
         archivePollingTOMultiplier,
         maxSessionAgeMs,
@@ -484,7 +480,6 @@ function ServerMethods(aLogLevel, aModules) {
             feedbackUrl: tbConfig.feedbackUrl,
             precallSessionId: testSession.sessionId,
             apiKey: tbConfig.apiKey,
-            precallApiKey: tbConfig.precallApiKey,
             precallToken: tbConfig.precallVonageVideoInstance.generateClientToken(
               testSession.sessionId,
               { role: 'publisher' },

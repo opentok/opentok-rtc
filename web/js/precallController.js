@@ -169,7 +169,7 @@
             otHelper.getVideoDeviceNotInUse(publisherOptions.videoSource)
               .then((videoSourceId) => {
                 previewOptions = {
-                  apiKey: window.precallApiKey,
+                  apiKey: window.apiKey,
                   resolution: '640x480',
                   sessionId: window.precallSessionId,
                   token: window.precallToken,
