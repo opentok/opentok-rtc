@@ -234,7 +234,7 @@ The config.json setting is `mediaMode`. The environment variable name is `MEDIA_
       "apiKey": "<application-id>",
       "apiSecret": "<private-key>",
       "publisherResolution": "1280x720",
-      "jsUrl": "https://static.opentok.com/v2/js/opentok.min.js",
+      "jsUrl": "https://unpkg.com/@vonage/video-client@2/dist/js/opentok.js",
       "maxSessionAge": 7
     },
     "mediaMode": "routed"
@@ -245,7 +245,7 @@ The config.json setting is `mediaMode`. The environment variable name is `MEDIA_
 
 ```sh
 export PUBLISHER_RESOLUTION="1280x720";
-export TB_JS_URL="https://static.opentok.com/v2/js/opentok.min.js";
+export TB_JS_URL="https://unpkg.com/@vonage/video-client@2/dist/js/opentok.js";
 export TB_MAX_SESSION_AGE="7";
 ```
 
