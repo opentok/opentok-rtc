@@ -156,7 +156,8 @@ function ServerMethods(aLogLevel, aModules) {
       const iosAppId = config.get(C.IOS_APP_ID);
       const iosUrlPrefix = config.get(C.IOS_URL_PREFIX);
 
-      const enableSip = config.get(C.SIP_ENABLED);
+      // SIP is currently not available for Vonage apps
+      const enableSip = false; // config.get(C.SIP_ENABLED);
       const sipUsername = config.get(C.SIP_USERNAME);
       const sipPassword = config.get(C.SIP_PASSWORD);
       const sipRequireGoogleAuth = config.get(C.SIP_REQUIRE_GOOGLE_AUTH);
