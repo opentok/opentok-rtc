@@ -30,7 +30,7 @@ var Video = function (applicationId, privateKey) {
   return {
     createSession: (aOptions) => {
       var sessionInfo = {
-        sessionId: '1' + Math.random(),
+        sessionId: 'mock-session-id',
       };
       return Promise.resolve(sessionInfo);
     },
@@ -43,6 +43,15 @@ var Video = function (applicationId, privateKey) {
       }
       return Promise.reject(new Error('test getArchive error'));
     },
+
+    searchArchives: (aArchiveId) => Promise.resolve([
+      {
+        archiveId: 'mock-archive-id-1',
+        sessionId: 'mock-session-id',
+        url: 'mock-url',
+        createdAt: 1,
+      },
+    ]),
 
     deleteArchive: (aArchiveId) => {
       var archive = _archives[aArchiveId];

@@ -172,7 +172,6 @@ describe('OpenTokRTC server', () => {
       .expect(200, done);
   });
 
-  // Temporary tests, TBD later
   it('GET /archive/:archiveId', (done) => {
     request(app)
       .get('/archive/12345')
@@ -182,6 +181,7 @@ describe('OpenTokRTC server', () => {
   it('DELETE /archive/:archiveId', (done) => {
     request(app)
       .delete('/archive/12345')
+      .set('referer', 'mockRoomName')
       .expect(405, done);
   });
 
@@ -192,10 +192,10 @@ describe('OpenTokRTC server', () => {
       .expect(200, done);
   });
 
-  it('GET /room/:roomName/archive should return 404 for not existing archive', (done) => {
+  it('GET /room/:roomName/archive should return 405 for not existing archive', (done) => {
     request(app)
-      .get('/room/' + Math.random() + '/archive')
-      .expect(404, done);
+      .get('/archive/' + Math.random())
+      .expect(405, done);
   });
 
   it('GET /server/health should return 400 and expected values', (done) => {
@@ -210,6 +210,7 @@ describe('OpenTokRTC server', () => {
         done();
       });
   });
+
   it('GET /thanks should return post meeting screen', (done) => {
     request(app)
       .get('/thanks')
