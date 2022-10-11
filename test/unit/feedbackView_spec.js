@@ -16,7 +16,7 @@ describe('FeedbackView', () => {
   var reportLevel = 3;
   var fakeOTHelper = {
     session: {
-      apiKey: '123456'
+      applicationId: '123456'
     }
   };
 

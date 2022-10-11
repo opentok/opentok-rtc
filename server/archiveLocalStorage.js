@@ -8,15 +8,15 @@ const Redis = require('ioredis');
 const redis = new Redis(env.REDIS_URL || env.REDISTOGO_URL || ''); // uses defaults unless given configuration object
 
 class ArchiveLocalStorage {
-  constructor(otInstance, roomNameKey, sessionId, aLogLevel) {
-    this.otInstance = otInstance;
+  constructor(vonageVideoInstance, roomNameKey, sessionId, aLogLevel) {
+    this.vonageVideoInstance = vonageVideoInstance;
     this.roomNameKey = roomNameKey;
     this.sessionId = sessionId;
     this.logger = new Logger('ArchiveLocalStorage', aLogLevel);
   }
 
   sendBroadcastSignal(archives) {
-    this.otInstance.signal(
+    this.vonageVideoInstance.sendSignal(
       this.sessionId,
       null,
       {

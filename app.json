@@ -14,12 +14,12 @@
     "postdeploy": "bower install && grunt clientBuild"
   },
   "env": {
-    "TB_API_KEY": {
-      "description": "OpenTok API key: Login to the Tokbox Dashboard (https://dashboard.tokbox.com/keys) to get this value.",
+    "VONAGE_APPLICATION_ID": {
+      "description": "Vonage application ID: Login to the Vonage Dashboard (https://dashboard.nexmo.com/) to get this value.",
       "required": true
     },
-    "TB_API_SECRET": {
-      "description": "OpenTok API secret: Login to the Tokbox Dashboard (https://dashboard.tokbox.com/keys) to get this value.",
+    "VONAGE_PRIVATE_KEY": {
+      "description": "Vonage private key: Login to the Vonage Dashboard (https://dashboard.nexmo.com/) to get this value.",
       "required": true
     }
   },

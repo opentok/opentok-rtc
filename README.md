@@ -52,8 +52,8 @@ You will need to install these dependencies on your machine:
 - [NodeJS v12](https://nodejs.org): This version of OpenTokRTC is tested with NodeJS v12 LTS.
 - [Redis](https://redis.io): A `redis` server running on `localhost`.
 
-You will also need these an OpenTok API key and secret. You can obtain these by signing up with
-[OpenTok/Vonage Video API](https://tokbox.com/account/user/signup).
+You will also need these an Vonage application ID and private key. You can obtain these by signing up with the
+[Vonage Video API](https://dashboard.nexmo.com/).
 
 ### Installing dependencies
 
@@ -78,8 +78,8 @@ Note: You will need to run these commands as a non-root user, else `bower` will 
 
 Once all the dependencies are in place, you will need to set some configuration options
 and install the application's dependencies. At a minimum, you need to set options for
-the OpenTok API key and secret to be used by the app. You can obtain these from
-your [OpenTok account](https://tokbox.com/account).
+the Vonage application ID and private key to be used by the app. You can obtain these from
+the [Vonage API dashboard](https://dashboard.nexmo.com/).
 
 Other features of the app are enabled and configured using more configuration options,
 described in this README.
@@ -231,8 +231,6 @@ The config.json setting is `mediaMode`. The environment variable name is `MEDIA_
 ```json
 {
     "OpenTok": {
-      "apiKey": "<application-id>",
-      "apiSecret": "<private-key>",
       "publisherResolution": "1280x720",
       "jsUrl": "https://unpkg.com/@vonage/video-client@2/dist/js/opentok.js",
       "maxSessionAge": 7
@@ -251,7 +249,7 @@ export TB_MAX_SESSION_AGE="7";
 
 ### Phone dial-out
 
-**Important:** The dial-out is not currently supported for Vonage applications.
+**Important:** The SIP dial-out feature is not currently supported for Vonage applications.
 
 The app can dial out and add a phone-based end user to the OpenTok session, using the OpenTok
 [SIP API](https://tokbox.com/developer/rest/#sip_call). This app uses
@@ -267,10 +265,10 @@ To enable this feature:
    * `SIP.enabled` (config.json) / `SIP_ENABLED` (environment variable) -- Set this to `true`.
 
    * `SIP.username` (config.json) / `SIP_USERNAME` (environment variable) -- Set this to
-     the apiKey for the Nexmo account you created.
+     the API key for the Nexmo account you created.
 
    * `SIP.password` (config.json) / `SIP_PASSWORD` (environment variable) -- Set this to
-     the apiSecret for the Nexmo account you created.
+     the API secret for the Nexmo account you created.
 
    * `SIP.requireGoogleAuth` (config.json) / `SIP_REQUIRE_GOOGLE_AUTH` (environment variable) -- See
      [Google Authentication for Phone dial-out](#google-authentication-for-phone-dial-out)

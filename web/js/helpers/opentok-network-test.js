@@ -185,7 +185,7 @@
         event.preventDefault(); // Do not remove the preview publisher from the page.
       });
 
-      session = OT.initSession(options.apiKey, options.sessionId);
+      session = OT.initSession(options.applicationId, options.sessionId);
       return session.connect(options.token, callbacks.onConnect);
     };
     

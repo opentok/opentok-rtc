@@ -23,10 +23,6 @@ E.REDIS_PHONE_PREFIX = 'otrtc_phone_';
 
 E.REDIS_ROOM_MATCHES = `${E.REDIS_ROOM_PREFIX}*`;
 
-E.OPENTOK_API_KEY = { envVar: 'TB_API_KEY', jsonPath: 'OpenTok.apiKey', required: true };
-
-E.OPENTOK_API_SECRET = { envVar: 'TB_API_SECRET', jsonPath: 'OpenTok.apiSecret', required: true };
-
 E.VONAGE_APPLICATION_ID = { envVar: 'VONAGE_APPLICATION_ID', jsonPath: 'Vonage.applicationId', required: true };
 
 E.VONAGE_PRIVATE_KEY = { envVar: 'VONAGE_PRIVATE_KEY', jsonPath: 'Vonage.privateKey', required: true };

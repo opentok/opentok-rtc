@@ -18,7 +18,8 @@ script:
   - ./node_modules/travis-github-lint-status/index.js
   - npm run test && bash <(curl -s https://codecov.io/bash)
 env:
-  - TB_API_SECRET=123 TB_API_KEY=123 SAUCE_USERNAME=opentok
+  - VONAGE_APPLICATION_ID=123 VONAGE_APPLICATION_ID=123 SAUCE_USERNAME=opentok
+  - VONAGE_PRIVATE_KEY=123 VONAGE_PRIVATE_KEY=123 SAUCE_USERNAME=opentok
 addons:
   firefox: "latest"
   jwt:

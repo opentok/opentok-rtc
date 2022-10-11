@@ -16,12 +16,12 @@ button:
 
 If you prefer to deploy to Heroku manually instead, follow the procedure described next.
 
-Heroku will prompt you to add your OpenTok API key and OpenTok API secret, which you can obtain at the [TokBox Dashboard](https://tokbox.com/account).
+Heroku will prompt you to add your Vonage application ID and private key, which you can obtain at the [Vonage dashboard](https://dashboard.nexmo.com/).
 
 You have to set the following environment variables on your Heroku instance:
 
-- `TB_API_KEY`: Your OpenTok API key.
-- `TB_API_SECRET`: Your OpenTok API secret.
+- `VONAGE_APPLICATION_ID`: Your Vonage application ID.
+- `VONAGE_PRIVATE_KEY`: Your Vonage application's private key.
 
 ## Manual Installation using Heroku CLI
 
@@ -33,10 +33,10 @@ First, create the app:
 $ heroku create
 ```
 
-Now you will have to set the following environment variables on your heroku instance. Replace `<key>` and `<secret>` with your OpenTok API key and the corresponding API secret:
+Now you will have to set the following environment variables on your heroku instance. Replace `<applicationId>` and `<key>` with your Vonage application ID and the corresponding private key:
 
 ```sh
-$ heroku config:set TB_API_KEY=<key> TB_API_SECRET=<secret>
+$ heroku config:set VONAGE_APPLICATION_ID=<applicationId> VONAGE_PRIVATE_KEY=<key>
 ```
 
 You will need to choose a redis addon. These two are currently supported,

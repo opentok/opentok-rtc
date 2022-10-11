@@ -101,12 +101,12 @@ function ServerMethods(aLogLevel, aModules) {
   // To try to balance not polling to often with trying to get a result fast, the polling time
   // increases exponentially (on the theory that if the archive is small it'll be copied fast
   // and if it's big we don't want to look too impatient).
-  function _launchArchivePolling(aOtInstance, aArchiveId, aTimeout, aTimeoutMultiplier) {
+  function _launchArchivePolling(aVonageVideoInstance, aArchiveId, aTimeout, aTimeoutMultiplier) {
     return new Promise((resolve) => {
       let timeout = aTimeout;
       const pollArchive = function _pollArchive() {
         logger.log('Poll [', aArchiveId, ']: polling...');
-        aOtInstance.getArchive(aArchiveId).then((aArchive) => {
+        aVonageVideoInstance.getArchive(aArchiveId).then((aArchive) => {
           if (aArchive.status === 'available' || aArchive.status === 'uploaded') {
             logger.log('Poll [', aArchiveId, ']: Resolving with', aArchive.status);
             resolve(aArchive);
@@ -127,8 +127,8 @@ function ServerMethods(aLogLevel, aModules) {
       // This will hold the configuration read from Redis
       const defaultTemplate = config.get(C.DEFAULT_TEMPLATE);
       const templatingSecret = config.get(C.TEMPLATING_SECRET);
-      const apiKey = config.get(C.VONAGE_APPLICATION_ID) || config.get(C.OPENTOK_API_KEY);
-      const apiSecret = config.get(C.VONAGE_PRIVATE_KEY);
+      const applicationId = config.get(C.VONAGE_APPLICATION_ID);
+      const privateKey = config.get(C.VONAGE_PRIVATE_KEY);
       const opentokJsUrl = config.get(C.OPENTOK_JS_URL);
       const useGoogleFonts = config.get(C.USE_GOOGLE_FONTS);
       const jqueryUrl = config.get(C.JQUERY_URL);
@@ -138,15 +138,15 @@ function ServerMethods(aLogLevel, aModules) {
       const vonageVideoInstance = Utils.CachifiedObject(
         Vonage.Video,
         {
-          applicationId: apiKey,
-          privateKey: apiSecret,
+          applicationId,
+          privateKey,
         },
       );
       const precallVonageVideoInstance = Utils.CachifiedObject(
         Vonage.Video,
         {
-          applicationId: apiKey,
-          privateKey: apiSecret,
+          applicationId,
+          privateKey,
         },
       );
 
@@ -223,8 +223,8 @@ function ServerMethods(aLogLevel, aModules) {
       return {
         vonageVideoInstance,
         precallVonageVideoInstance,
-        apiKey,
-        apiSecret,
+        applicationId,
+        privateKey,
         archivePollingTO,
         archivePollingTOMultiplier,
         maxSessionAgeMs,
@@ -480,7 +480,7 @@ function ServerMethods(aLogLevel, aModules) {
             enableRoomLocking: tbConfig.enableRoomLocking,
             feedbackUrl: tbConfig.feedbackUrl,
             precallSessionId: testSession.sessionId,
-            apiKey: tbConfig.apiKey,
+            applicationId: tbConfig.applicationId,
             precallToken: tbConfig.precallVonageVideoInstance.generateClientToken(
               testSession.sessionId,
               { role: 'publisher' },
@@ -634,7 +634,7 @@ function ServerMethods(aLogLevel, aModules) {
   // Returns:
   // RoomInfo {
   //   sessionId: string
-  //   apiKey: string
+  //   applicationId: string
   //   token: string
   //   username: string
   //   chromeExtId: string value || 'undefined'
@@ -667,7 +667,7 @@ function ServerMethods(aLogLevel, aModules) {
 
         // and finally, answer...
         const answer = {
-          apiKey: tbConfig.apiKey,
+          applicationId: tbConfig.applicationId,
           token: tbConfig.vonageVideoInstance
             .generateClientToken(usableSessionInfo.sessionId, {
               role: 'publisher',
