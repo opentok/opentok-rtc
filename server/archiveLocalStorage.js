@@ -17,8 +17,6 @@ class ArchiveLocalStorage {
 
   sendBroadcastSignal(archives) {
     this.vonageVideoInstance.sendSignal(
-      this.sessionId,
-      null,
       {
         type: 'archives',
         data: JSON.stringify({
@@ -30,13 +28,8 @@ class ArchiveLocalStorage {
           data: archives,
         }),
       },
-      (error) => {
-        if (error) {
-          return this.logger.log('Get archives error:', error);
-        }
-        return false;
-      },
-    );
+      this.sessionId,
+    ).catch((error) => this.logger.log('Get archives error:', error));
   }
 
   async updateArchive(aArchive) {
