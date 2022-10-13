@@ -893,9 +893,8 @@ function ServerMethods(aLogLevel, aModules) {
         roomArchiveStorage = new ArchiveLocalStorage(
           vonageVideoInstance, redisRoomPrefix + roomName, sessionId, aLogLevel,
         );
-        return archiveId;
+        vonageVideoInstance.deleteArchive(archiveId);
       })
-      .then(vonageVideoInstance.deleteArchive)
       .then(() => roomArchiveStorage.removeArchive(archiveId))
       .then(() => aRes.send({ id: archiveId, type }))
       .catch((e) => {
