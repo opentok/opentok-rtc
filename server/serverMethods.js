@@ -522,7 +522,7 @@ function ServerMethods(aLogLevel, aModules) {
               aRes.send(html);
             }
           });
-    }).catch((err) => console.log(33377, err));
+    });
   }
 
   // Given a sessionInfo (which might be empty or non usable) returns a promise than will fullfill
