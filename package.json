@@ -1,6 +1,6 @@
 {
   "name": "opentok-rtc",
-  "version": "4.2.0",
+  "version": "5.0.1",
   "description": "OpenTokRTC sample application to show off the OpenTok API and platform capabilities ",
   "main": "server.js",
   "engines": {
@@ -59,11 +59,11 @@
     "haikunator": "^2.1.2",
     "helmet": "^4.1.1",
     "http2": "^3.3.7",
-    "ioredis": "^4.17.3",
+    "ioredis": "^4.28.5",
     "lodash": "^4.17.20",
     "opentok": "^2.10.0",
     "qs": "^6.9.4",
-    "swagger-boilerplate": "^0.1.6",
+    "swagger-boilerplate": "^0.1.8",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
