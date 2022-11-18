@@ -5,7 +5,15 @@ const { Utils } = SwaggerBP;
 const Logger = Utils.MultiLevelLogger;
 const Redis = require('ioredis');
 
-const redis = new Redis(env.REDIS_URL || env.REDISTOGO_URL || ''); // uses defaults unless given configuration object
+const redisOptions = {};
+
+if ((env.REDIS_URL && String(env.REDIS_URL).includes('rediss'))
+   || (env.REDISTOGO_URL && String(env.REDISTOGO_URL).includes('rediss'))
+) {
+  redisOptions.tls = { rejectUnauthorized: false };
+}
+
+const redis = new Redis(env.REDIS_URL || env.REDISTOGO_URL || '', redisOptions); // uses defaults unless given configuration object
 
 class ArchiveLocalStorage {
   constructor(otInstance, roomNameKey, sessionId, aLogLevel) {
