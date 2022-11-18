@@ -63,7 +63,7 @@
     "lodash": "^4.17.20",
     "opentok": "^2.10.0",
     "qs": "^6.9.4",
-    "swagger-boilerplate": "github:jeffswartz/swagger-boilerplate#ioredis-tls-option",
+    "swagger-boilerplate": "^0.1.8",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
@@ -76,6 +76,7 @@
     "@wdio/spec-reporter": "^6.6.8",
     "@wdio/sync": "^6.6.7",
     "browserify": "^17.0.0",
+    "grunt-critical": "^2.0.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chromedriver": "^86.0.0",
@@ -88,7 +89,6 @@
     "eslint-plugin-react": "^7.21.4",
     "firefox-profile": "^4.0.0",
     "geckodriver": "^1.20.0",
-    "grunt-critical": "^2.0.0",
     "istanbul": "^0.4.5",
     "karma": "^5.2.3",
     "karma-browserify": "^7.0.0",
