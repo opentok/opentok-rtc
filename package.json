@@ -1,6 +1,6 @@
 {
   "name": "opentok-rtc",
-  "version": "5.0.1",
+  "version": "6.0.0",
   "description": "OpenTokRTC sample application to show off the OpenTok API and platform capabilities ",
   "main": "server.js",
   "engines": {
