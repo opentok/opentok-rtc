@@ -23,9 +23,13 @@ E.REDIS_PHONE_PREFIX = 'otrtc_phone_';
 
 E.REDIS_ROOM_MATCHES = `${E.REDIS_ROOM_PREFIX}*`;
 
-E.OPENTOK_API_KEY = { envVar: 'TB_API_KEY', jsonPath: 'OpenTok.apiKey', required: true };
+E.OPENTOK_API_KEY = { envVar: 'TB_API_KEY', jsonPath: 'OpenTok.apiKey', required: false };
 
-E.OPENTOK_API_SECRET = { envVar: 'TB_API_SECRET', jsonPath: 'OpenTok.apiSecret', required: true };
+E.OPENTOK_API_SECRET = { envVar: 'TB_API_SECRET', jsonPath: 'OpenTok.apiSecret', required: false };
+
+E.VIDEO_APP_ID = { envVar: 'V_APP_ID', jsonPath: 'Video.appID', required: true };
+
+E.VIDEO_PRIVATE_KEY_PATH = { envVar: 'V_API_PRIVATE_KEY', jsonPath: 'Video.privateKeyPath', required: true };
 
 E.OPENTOK_PRECALL_API_KEY = { envVar: 'TB_PRECALL_API_KEY', jsonPath: 'precallTest.apiKey' };
 

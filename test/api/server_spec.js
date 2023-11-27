@@ -8,18 +8,18 @@ const TEST_LOG_LEVEL = 0;
 describe('OpenTokRTC server', () => {
   'use strict';
 
-  var app, MockOpentok;
+  var app, MockVideo;
 
   // Note that since everything is in api.yml, we could just parse
   // that and generate the test cases automatically. At the moment
   // it's more work than doing it manually though, so not worth it.
 
   before((done) => {
-    MockOpentok = require('../mocks/mock_opentok.js');
+    MockVideo = require('../mocks/mock_video.js');
     process.env.TEMPLATING_SECRET = '123456';
 
     var mocks = {
-      Opentok: MockOpentok,
+      Video: MockVideo,
     };
 
     // Note that this actually executes on the level where the Grunt file is
@@ -45,7 +45,7 @@ describe('OpenTokRTC server', () => {
   });
 
   after(() => {
-    MockOpentok.restoreInstances();
+    MockVideo.restoreInstances();
   });
 
   // Note that everything needed to test this is actually in api.json, but it's not

@@ -41,7 +41,7 @@ function Opentok(aApiKey, aApiSecret) {
       if (_archives[aArchiveId]) {
         _archives[aArchiveId].status = 'stopped';
       }
-      aCallback(!_archives[aArchiveId], _archives[aArchiveId]);
+       _archives[aArchiveId];
     });
   });
 

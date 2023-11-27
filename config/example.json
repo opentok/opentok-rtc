@@ -6,6 +6,11 @@
       "apiSecret": "<secret>",
       "publisherResolution": "640x480"
    },
+   "Video":{
+    "appID": "<key>",
+    "privateKeyPath": "<path>",
+    "publisherResolution": "640x480"
+   },
    "precallTest": {
        "enabled": true,
        "apiKey": "46049502",

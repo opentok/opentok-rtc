@@ -21,6 +21,8 @@ const configLoader = require('./configLoader');
 const ArchiveLocalStorage = require('./archiveLocalStorage');
 const GoogleAuth = require('./googleAuthStrategies');
 const testHealth = require('./testHealth');
+// const { Video } = require('@vonage/video')
+const { Auth } = require('@vonage/auth')
 
 function htmlEscape(str) {
   return String(str)
@@ -74,9 +76,14 @@ function ServerMethods(aLogLevel, aModules) {
   const { Utils } = SwaggerBP;
 
   const Logger = Utils.MultiLevelLogger;
-  const { promisify } = Utils;
+  // const { promisify } = Utils;
 
-  const Opentok = aModules.Opentok || require('opentok'); // eslint-disable-line global-require
+  const Video = aModules.Video || require('@vonage/video').Video; // eslint-disable-line global-require
+  // if (aModules.Video) {
+  //   const Video = aModules.Video
+  // } else {
+  //   const { Video } = require('@vonage/video')
+  // }
 
   let roomBlackList;
 
@@ -93,8 +100,6 @@ function ServerMethods(aLogLevel, aModules) {
 
   let sipUri;
   let googleAuth;
-  // Opentok API instance, which will be configured only after tbConfigPromise
-  // is resolved
   let tbConfigPromise;
 
   // Initiates polling from the Opentok servers for changes on the status of an archive.
@@ -103,12 +108,12 @@ function ServerMethods(aLogLevel, aModules) {
   // To try to balance not polling to often with trying to get a result fast, the polling time
   // increases exponentially (on the theory that if the archive is small it'll be copied fast
   // and if it's big we don't want to look too impatient).
-  function _launchArchivePolling(aOtInstance, aArchiveId, aTimeout, aTimeoutMultiplier) {
+  function _launchArchivePolling(aVideoInstance, aArchiveId, aTimeout, aTimeoutMultiplier) {
     return new Promise((resolve) => {
       let timeout = aTimeout;
       const pollArchive = function _pollArchive() {
         logger.log('Poll [', aArchiveId, ']: polling...');
-        aOtInstance.getArchive_P(aArchiveId).then((aArchive) => {
+        aVideoInstance.getArchive(aArchiveId).then((aArchive) => {
           if (aArchive.status === 'available' || aArchive.status === 'uploaded') {
             logger.log('Poll [', aArchiveId, ']: Resolving with', aArchive.status);
             resolve(aArchive);
@@ -129,20 +134,21 @@ function ServerMethods(aLogLevel, aModules) {
       // This will hold the configuration read from Redis
       const defaultTemplate = config.get(C.DEFAULT_TEMPLATE);
       const templatingSecret = config.get(C.TEMPLATING_SECRET);
-      const apiKey = config.get(C.OPENTOK_API_KEY);
-      const apiSecret = config.get(C.OPENTOK_API_SECRET);
-      const precallApiKey = config.get(C.OPENTOK_PRECALL_API_KEY) || config.get(C.OPENTOK_API_KEY);
-      const precallApiSecret = config.get(C.OPENTOK_PRECALL_API_SECRET)
-        || config.get(C.OPENTOK_API_SECRET);
+      const apiKey = config.get(C.VIDEO_APP_ID);
+      const privateKeyPath = config.get(C.VIDEO_PRIVATE_KEY_PATH)
+      const precallApiKey = apiKey;
       const opentokJsUrl = config.get(C.OPENTOK_JS_URL);
       const useGoogleFonts = config.get(C.USE_GOOGLE_FONTS);
       const jqueryUrl = config.get(C.JQUERY_URL);
-      logger.log('apiSecret', apiSecret);
+      
       const archivePollingTO = config.get(C.ARCHIVE_POLLING_INITIAL_TIMEOUT);
       const archivePollingTOMultiplier = config.get(C.ARCHIVE_POLLING_TIMEOUT_MULTIPLIER);
-      const otInstance = Utils.CachifiedObject(Opentok, apiKey, apiSecret);
-      const precallOtInstance = Utils.CachifiedObject(Opentok, precallApiKey, precallApiSecret);
 
+      const credentials = new Auth({
+        applicationId: apiKey,
+        privateKey: privateKeyPath,
+      });
+      const videoInstance = Utils.CachifiedObject(Video, credentials, {})
       const allowIframing = config.get(C.ALLOW_IFRAMING);
       const archiveAlways = config.get(C.ARCHIVE_ALWAYS);
 
@@ -167,9 +173,9 @@ function ServerMethods(aLogLevel, aModules) {
       // overwritten the original methods but this way we make it explicit. That's also why we're
       // breaking camelCase here, to make it patent to the reader that those aren't standard
       // methods of the API.
-      ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'deleteArchive', 'dial',
-        'forceDisconnect']
-        .forEach((method) => otInstance[`${method}_P`] = promisify(otInstance[method])); // eslint-disable-line no-return-assign
+      // ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'deleteArchive', 'dial',
+      //   'forceDisconnect']
+      //   .forEach((method) => otInstance[`${method}_P`] = promisify(otInstance[method])); // eslint-disable-line no-return-assign
 
       const maxSessionAge = config.get(C.OPENTOK_MAX_SESSION_AGE);
       const maxSessionAgeMs = maxSessionAge * 24 * 60 * 60 * 1000;
@@ -221,12 +227,10 @@ function ServerMethods(aLogLevel, aModules) {
         ? `?icid=${config.get(C.CONTACT_US_ICID)}` : '';
 
       return {
-        otInstance,
-        precallOtInstance,
+        videoInstance,
         apiKey,
-        apiSecret,
         precallApiKey,
-        precallApiSecret,
+        // precallApiSecret,
         archivePollingTO,
         archivePollingTOMultiplier,
         maxSessionAgeMs,
@@ -360,7 +364,7 @@ function ServerMethods(aLogLevel, aModules) {
     }
     serverPersistence
       .getKey(redisRoomPrefix + roomName)
-      .then(_getUsableSessionInfo.bind(tbConfig.otInstance,
+      .then(_getUsableSessionInfo.bind(tbConfig.videoInstance,
         tbConfig.maxSessionAgeMs,
         tbConfig.archiveAlways,
         tbConfig.mediaMode))
@@ -368,7 +372,8 @@ function ServerMethods(aLogLevel, aModules) {
         serverPersistence.setKeyEx(Math.round(tbConfig.maxSessionAgeMs / 1000),
           redisRoomPrefix + roomName, JSON.stringify(usableSessionInfo));
         const { sessionId } = usableSessionInfo;
-        tbConfig.otInstance.listArchives_P({ offset: 0, count: 1000 })
+
+        tbConfig.videoInstance.searchArchives({ offset: 0, count: 1000 })
           .then((aArchives) => {
             const archive = aArchives
               .reduce((aLastArch, aCurrArch) => aCurrArch.sessionId === sessionId
@@ -449,82 +454,84 @@ function ServerMethods(aLogLevel, aModules) {
     const country = getUserCountry(aReq);
 
     // Create a session ID and token for the network test
-    tbConfig.precallOtInstance.createSession({ mediaMode: 'routed' }, (error, testSession) => {
-      // We really don't want to cache this
-      aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
-      aRes.set('Pragma', 'no-cache');
-      aRes.set('Expires', 0);
+    const testSession = await tbConfig.videoInstance.createSession({ mediaMode: 'routed' });
+    logger.log('sessionId:', testSession.sessionId);
 
-      aRes
-        .render(`${template || tbConfig.defaultTemplate}.ejs`,
-          {
-            autoGenerateRoomName: tbConfig.autoGenerateRoomName,
-            userName: htmlEscape(userName || C.DEFAULT_USER_NAME),
-            roomName: htmlEscape(aReq.params.roomName || ''),
-            publishVideo,
-            publishAudio,
-            chromeExtensionId: tbConfig.chromeExtId,
-            iosAppId: tbConfig.iosAppId,
-            // iosUrlPrefix should have something like:
-            // https://opentokdemo.tokbox.com/room/
-            // or whatever other thing that should be before the roomName
-            iosURL: `${tbConfig.iosUrlPrefix + htmlEscape(aReq.params.roomName)}?userName=${
-              userName || C.DEFAULT_USER_NAME}`,
-            enableArchiving: tbConfig.enableArchiving,
-            enableArchiveManager: tbConfig.enableArchiveManager,
-            enableMuteAll: tbConfig.enableMuteAll,
-            enableEmoji: tbConfig.enableEmoji,
-            enableStopReceivingVideo: tbConfig.enableStopReceivingVideo,
-            maxUsersPerRoom: tbConfig.maxUsersPerRoom,
-            enableScreensharing: tbConfig.enableScreensharing,
-            enableAnnotation: tbConfig.enableAnnotations,
-            enablePrecallTest: tbConfig.enablePrecallTest,
-            enableRoomLocking: tbConfig.enableRoomLocking,
-            feedbackUrl: tbConfig.feedbackUrl,
-            precallSessionId: testSession.sessionId,
-            apiKey: tbConfig.apiKey,
-            precallApiKey: tbConfig.precallApiKey,
-            precallToken: tbConfig.precallOtInstance.generateToken(testSession.sessionId, {
-              role: 'publisher',
-            }),
-            hasSip: tbConfig.enableSip,
-            showTos: tbConfig.showTos,
-            showUnavailable: !meetingAllowed,
-            publisherResolution: tbConfig.publisherResolution,
-            opentokJsUrl: tbConfig.opentokJsUrl,
-            authDomain: tbConfig.googleHostedDomain,
-            useGoogleFonts: tbConfig.useGoogleFonts,
-            jqueryUrl: tbConfig.jqueryUrl,
-            adobeTrackingUrl: aReq.tbConfig.adobeTrackingUrl,
-            ATPrimaryCategory: aReq.tbConfig.ATPrimaryCategory,
-            ATSiteIdentifier: aReq.tbConfig.ATSiteIdentifier,
-            ATFunctionDept: aReq.tbConfig.ATFunctionDept,
-            userLanguage: language,
-            userCountry: country,
-            hotjarId: tbConfig.hotjarId,
-            hotjarVersion: tbConfig.hotjarVersion,
-            enableFeedback: tbConfig.enableFeedback,
-            enterButtonLabel: 'Join Meeting',
-            introText: tbConfig.introText,
-            introFooterLinkText: tbConfig.introFooterLinkText,
-            introFooterLinkUrl: tbConfig.introFooterLinkUrl,
-            appName: tbConfig.appName,
-            helpLinkText1: tbConfig.helpLinkText1,
-            helpLinkUrl1: tbConfig.helpLinkUrl1,
-            helpLinkText2: tbConfig.helpLinkText2,
-            helpLinkUrl2: tbConfig.helpLinkUrl2,
-            oneTrustCookieConsentUrl: tbConfig.oneTrustCookieConsentUrl,
-            // eslint-disable-next-line no-dupe-keys
-            userName,
-          }, (err, html) => {
-            if (err) {
-              logger.log('getRoom. error:', err);
-              aRes.status(400).send(new ErrorInfo(400, 'Unknown template.'));
-            } else {
-              aRes.send(html);
-            }
-          });
-    });
+
+    aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    aRes.set('Pragma', 'no-cache');
+    aRes.set('Expires', 0);
+
+    aRes
+      .render(`${template || tbConfig.defaultTemplate}.ejs`,
+        {
+          autoGenerateRoomName: tbConfig.autoGenerateRoomName,
+          userName: htmlEscape(userName || C.DEFAULT_USER_NAME),
+          roomName: htmlEscape(aReq.params.roomName || ''),
+          publishVideo,
+          publishAudio,
+          chromeExtensionId: tbConfig.chromeExtId,
+          iosAppId: tbConfig.iosAppId,
+          // iosUrlPrefix should have something like:
+          // https://opentokdemo.tokbox.com/room/
+          // or whatever other thing that should be before the roomName
+          iosURL: `${tbConfig.iosUrlPrefix + htmlEscape(aReq.params.roomName)}?userName=${
+            userName || C.DEFAULT_USER_NAME}`,
+          enableArchiving: tbConfig.enableArchiving,
+          enableArchiveManager: tbConfig.enableArchiveManager,
+          enableMuteAll: tbConfig.enableMuteAll,
+          enableEmoji: tbConfig.enableEmoji,
+          enableStopReceivingVideo: tbConfig.enableStopReceivingVideo,
+          maxUsersPerRoom: tbConfig.maxUsersPerRoom,
+          enableScreensharing: tbConfig.enableScreensharing,
+          enableAnnotation: tbConfig.enableAnnotations,
+          enablePrecallTest: tbConfig.enablePrecallTest,
+          enableRoomLocking: tbConfig.enableRoomLocking,
+          feedbackUrl: tbConfig.feedbackUrl,
+          precallSessionId: testSession.sessionId,
+          apiKey: tbConfig.apiKey,
+          precallApiKey: tbConfig.precallApiKey,
+          precallToken: tbConfig.videoInstance.generateClientToken(testSession.sessionId, {
+            role: 'publisher',
+          }),
+          hasSip: tbConfig.enableSip,
+          showTos: tbConfig.showTos,
+          showUnavailable: !meetingAllowed,
+          publisherResolution: tbConfig.publisherResolution,
+          opentokJsUrl: tbConfig.opentokJsUrl,
+          authDomain: tbConfig.googleHostedDomain,
+          useGoogleFonts: tbConfig.useGoogleFonts,
+          jqueryUrl: tbConfig.jqueryUrl,
+          adobeTrackingUrl: aReq.tbConfig.adobeTrackingUrl,
+          ATPrimaryCategory: aReq.tbConfig.ATPrimaryCategory,
+          ATSiteIdentifier: aReq.tbConfig.ATSiteIdentifier,
+          ATFunctionDept: aReq.tbConfig.ATFunctionDept,
+          userLanguage: language,
+          userCountry: country,
+          hotjarId: tbConfig.hotjarId,
+          hotjarVersion: tbConfig.hotjarVersion,
+          enableFeedback: tbConfig.enableFeedback,
+          enterButtonLabel: 'Join Meeting',
+          introText: tbConfig.introText,
+          introFooterLinkText: tbConfig.introFooterLinkText,
+          introFooterLinkUrl: tbConfig.introFooterLinkUrl,
+          appName: tbConfig.appName,
+          helpLinkText1: tbConfig.helpLinkText1,
+          helpLinkUrl1: tbConfig.helpLinkUrl1,
+          helpLinkText2: tbConfig.helpLinkText2,
+          helpLinkUrl2: tbConfig.helpLinkUrl2,
+          oneTrustCookieConsentUrl: tbConfig.oneTrustCookieConsentUrl,
+          // eslint-disable-next-line no-dupe-keys
+          userName,
+        }, (err, html) => {
+              if (err) {
+                logger.log('getRoom. error:', err);
+                aRes.status(400).send(new ErrorInfo(400, 'Unknown template.'));
+              } else {
+                aRes.send(html);
+              }
+           }
+        );
   }
 
   // Given a sessionInfo (which might be empty or non usable) returns a promise than will fullfill
@@ -555,15 +562,15 @@ function ServerMethods(aLogLevel, aModules) {
           }
         });
 
-        this
-          .createSession(sessionOptions, (error, session) => {
-            resolve({
-              sessionId: session.sessionId,
-              lastUsage: Date.now(),
-              inProgressArchiveId: undefined,
-              isLocked: false,
-            });
-          });
+        this.createSession(sessionOptions)
+            .then( session => {
+              resolve({
+                sessionId: session.sessionId,
+                lastUsage: Date.now(),
+                inProgressArchiveId: undefined,
+                isLocked: false,
+              });
+            });   
       } else {
         // We only need to update the last usage data...
         aSessionInfo.lastUsage = Date.now();
@@ -662,7 +669,7 @@ function ServerMethods(aLogLevel, aModules) {
     // Note that we do not persist tokens.
     serverPersistence
       .getKey(redisRoomPrefix + roomName)
-      .then(_getUsableSessionInfo.bind(tbConfig.otInstance, tbConfig.maxSessionAgeMs,
+      .then(_getUsableSessionInfo.bind(tbConfig.videoInstance, tbConfig.maxSessionAgeMs,
         tbConfig.archiveAlways, tbConfig.mediaMode))
       .then((usableSessionInfo) => {
         // Update the database. We could do this on getUsable...
@@ -672,11 +679,11 @@ function ServerMethods(aLogLevel, aModules) {
         // and finally, answer...
         const answer = {
           apiKey: tbConfig.apiKey,
-          token: tbConfig.otInstance
-            .generateToken(usableSessionInfo.sessionId, {
-              role: 'publisher',
-              data: JSON.stringify({ userName }),
-            }),
+          token: tbConfig.videoInstance
+          .generateClientToken(usableSessionInfo.sessionId, {
+            role: 'publisher',
+            data: JSON.stringify({ userName }),
+          }),
           username: userName,
           autoGenerateRoomName: tbConfig.autoGenerateRoomName,
           chromeExtId: tbConfig.chromeExtId,
@@ -715,8 +722,8 @@ function ServerMethods(aLogLevel, aModules) {
       // be sure
       logger.log('_getUpdatedArchiveInfo: Getting update info for archive: ',
         aSessionInfo.inProgressArchiveId);
-      return aTbConfig.otInstance
-        .getArchive_P(aSessionInfo.inProgressArchiveId)
+      return aTbConfig.videoInstance
+        .getArchive(aSessionInfo.inProgressArchiveId)
         .then((aArchiveInfo) => {
           if (aArchiveInfo.status === 'started') {
             throw new ErrorInfo(102, 'Recording already in progress');
@@ -733,7 +740,7 @@ function ServerMethods(aLogLevel, aModules) {
           return aSessionInfo;
         });
     } if (aOperation.startsWith('stop') && !aSessionInfo.inProgressArchiveId) {
-      return aTbConfig.otInstance.listArchives_P({ offset: 0, count: 100 })
+      return aTbConfig.videoInstance.searchArchives({ offset: 0, count: 100 })
         .then((aArch) => aArch.filter((aArchive) => aArchive.sessionId === aSessionInfo.sessionId))
         .then((aArchives) => {
           const recordingInProgress = aArchives[0] && aArchives[0].status === 'started';
@@ -763,8 +770,7 @@ function ServerMethods(aLogLevel, aModules) {
     const roomName = aReq.params.roomName.toLowerCase();
     const { userName } = body;
     const { operation } = body;
-    const { otInstance } = tbConfig;
-
+    const { videoInstance } = tbConfig;
     if (isInBlacklist(roomName)) {
       logger.log('postRoomArchive error:', `Blacklist found '${roomName}'`);
       // eslint-disable-next-line consistent-return
@@ -792,12 +798,12 @@ function ServerMethods(aLogLevel, aModules) {
           case 'startComposite':
             logger.log('Binding archiveOp to startArchive with sessionId:', sessionInfo.sessionId);
             archiveOptions.resolution = '1280x720';
-            archiveOp = otInstance
-              .startArchive_P.bind(otInstance, sessionInfo.sessionId, archiveOptions);
+            archiveOp = videoInstance
+              .startArchive.bind(videoInstance, sessionInfo.sessionId, archiveOptions);
             break;
           case 'stop':
-            archiveOp = otInstance
-              .stopArchive_P.bind(otInstance, sessionInfo.inProgressArchiveId);
+            archiveOp = videoInstance
+              .stopArchive.bind(videoInstance, sessionInfo.inProgressArchiveId);
             break;
           default:
             // no-op
@@ -814,13 +820,13 @@ function ServerMethods(aLogLevel, aModules) {
           // or poll for the information. Since polling is less efficient, we do so only when
           // required by the configuration.
           const readyToUpdateDb = (operation === 'stop' && tbConfig.archivePollingTO
-             && _launchArchivePolling(otInstance, aArchive.id,
+             && _launchArchivePolling(videoInstance, aArchive.id,
                tbConfig.archivePollingTO,
                tbConfig.archivePollingTOMultiplier))
             || Promise.resolve(aArchive);
 
           const roomArchiveStorage = new ArchiveLocalStorage(
-            otInstance, redisRoomPrefix + roomName, aArchive.sessionId, aLogLevel,
+            videoInstance, redisRoomPrefix + roomName, aArchive.sessionId, aLogLevel,
           );
           readyToUpdateDb
             .then((aUpdatedArchive) => {
@@ -847,8 +853,8 @@ function ServerMethods(aLogLevel, aModules) {
     const generatePreview = (aReq.query && aReq.query.generatePreview !== undefined);
     logger.log('getAchive:', archiveId, generatePreview);
 
-    aReq.tbConfig.otInstance
-      .getArchive_P(archiveId)
+      aReq.tbConfig.videoInstance
+      .getArchive(archiveId)
       .then((aArchive) => {
         if (!generatePreview) {
           aRes.redirect(301, aArchive.url);
@@ -875,6 +881,7 @@ function ServerMethods(aLogLevel, aModules) {
 
   function getRoomNameFromHeaders(headers) {
     const { referer } = headers;
+    //TODO: this throw exception Cannot read properties of undefined
     const lastIndex = referer.lastIndexOf('/');
     return referer.substr(lastIndex + 1, referer.length).split('?')[0];
   }
@@ -883,23 +890,24 @@ function ServerMethods(aLogLevel, aModules) {
     const { archiveId } = aReq.params;
     logger.log('deleteArchive:', archiveId);
     const { tbConfig } = aReq;
-    const { otInstance } = tbConfig;
+    // const { otInstance } = tbConfig;
+    const { videoInstance } = tbConfig;
     let sessionId;
     let type;
+    //TODO: this throw exception
     const roomName = getRoomNameFromHeaders(aReq.headers);
     let roomArchiveStorage;
-
-    otInstance
-      .getArchive_P(archiveId) // This is only needed so we can get the sesionId
+    videoInstance
+      .getArchive(archiveId) // This is only needed so we can get the sesionId
       .then((aArchive) => {
         sessionId = aArchive.sessionId;
         type = aArchive.outputMode;
         roomArchiveStorage = new ArchiveLocalStorage(
-          otInstance, redisRoomPrefix + roomName, sessionId, aLogLevel,
+          videoInstance, redisRoomPrefix + roomName, sessionId, aLogLevel,
         );
         return archiveId;
       })
-      .then(otInstance.deleteArchive_P)
+      .then(videoInstance.deleteArchive)
       .then(() => roomArchiveStorage.removeArchive(archiveId))
       .then(() => aRes.send({ id: archiveId, type }))
       .catch((e) => {
@@ -932,7 +940,7 @@ function ServerMethods(aLogLevel, aModules) {
       .getKey(redisRoomPrefix + roomName, true)
       .then((sessionInfo) => {
         const { sessionId } = sessionInfo;
-        const token = tbConfig.otInstance.generateToken(sessionId, {
+        const token = tbConfig.videoInstance.generateClientToken(sessionId, {
           role: 'publisher',
           data: `{"sip":true, "role":"client", "name":"${phoneNumber}"}`,
         });
@@ -944,7 +952,7 @@ function ServerMethods(aLogLevel, aModules) {
           },
           secure: false,
         };
-        tbConfig.otInstance.dial_P(sessionId, token, sipUri, options)
+        tbConfig.videoInstance.intiateSIPCall(sessionId, token, sipUri, options)
           .then((sipCallData) => {
             const dialedNumberInfo = {};
             dialedNumberInfo.sessionId = sipCallData.sessionId;
@@ -976,7 +984,7 @@ function ServerMethods(aLogLevel, aModules) {
     if (!dialedNumberInfo || dialedNumberInfo.googleIdToken !== googleIdToken) {
       return aRes.status(400).send(new ErrorInfo(400, 'Unknown phone number.'));
     }
-    return tbConfig.otInstance.forceDisconnect_P(dialedNumberInfo.sessionId,
+    return tbConfig.videoInstance.disconnectClient(dialedNumberInfo.sessionId,
       dialedNumberInfo.connectionId).then(() => {
       serverPersistence.delKey(redisPhonePrefix + phoneNumber);
       return aRes.send({});

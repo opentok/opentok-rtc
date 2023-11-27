@@ -16,17 +16,15 @@ if ((env.REDIS_URL && String(env.REDIS_URL).includes('rediss'))
 const redis = new Redis(env.REDIS_URL || env.REDISTOGO_URL || '', redisOptions); // uses defaults unless given configuration object
 
 class ArchiveLocalStorage {
-  constructor(otInstance, roomNameKey, sessionId, aLogLevel) {
-    this.otInstance = otInstance;
+  constructor(videoInstance, roomNameKey, sessionId, aLogLevel) {
+    this.videoInstance = videoInstance;
     this.roomNameKey = roomNameKey;
     this.sessionId = sessionId;
     this.logger = new Logger('ArchiveLocalStorage', aLogLevel);
   }
 
   sendBroadcastSignal(archives) {
-    this.otInstance.signal(
-      this.sessionId,
-      null,
+    this.videoInstance.sendSignal(
       {
         type: 'archives',
         data: JSON.stringify({
@@ -38,12 +36,15 @@ class ArchiveLocalStorage {
           data: archives,
         }),
       },
+      this.sessionId,
+      null
+    ).then(
       (error) => {
         if (error) {
           return this.logger.log('Get archives error:', error);
         }
         return false;
-      },
+      }
     );
   }
 
