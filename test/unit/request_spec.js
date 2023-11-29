@@ -93,8 +93,9 @@ describe('Request', () => {
     });
 
     it('does not receive response when request fails', function (done) {
+      publisherResolution = {};
       Request.deleteArchive(id).catch((error) => {
-        expect(error).to.be.object;
+        expect(error).not.to.be.undefined;
         done();
       });
 

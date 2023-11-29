@@ -729,7 +729,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
       .getRoomInfo(aRoomParams)
       .then((aRoomInfo) => {
         if (!(aRoomInfo && aRoomInfo.token && aRoomInfo.sessionId
-              && aRoomInfo.apiKey && aRoomInfo.username)) {
+              && aRoomInfo.applicationId && aRoomInfo.username)) {
           debug.error('Error getRoomParams [', aRoomInfo,
             '] without correct response');
           throw new Error('Error getting room parameters');
@@ -815,7 +815,7 @@ PhoneNumberController, ResizeSensor, maxUsersPerRoom */
         token = aParams.token;
 
         const sessionInfo = {
-          apiKey: aParams.apiKey,
+          applicationId: aParams.applicationId,
           sessionId: aParams.sessionId,
           token: aParams.token,
         };

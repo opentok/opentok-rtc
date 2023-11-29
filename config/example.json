@@ -2,12 +2,10 @@
    "showTos": false,
    "meetingsRatePerMinute": 30,
    "OpenTok":{
-      "apiKey": "<key>",
-      "apiSecret": "<secret>",
       "publisherResolution": "640x480"
    },
    "Video":{
-    "appID": "<key>",
+    "applicationId": "<key>",
     "privateKeyPath": "<path>",
     "publisherResolution": "640x480"
    },

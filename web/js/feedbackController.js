@@ -8,7 +8,7 @@
       const report = evt.detail;
       const loggedEvent = {
         action: 'SessionQuality',
-        partnerId: otHelper.session.apiKey,
+        partnerId: otHelper.session.applicationId,
         sessionId: otHelper.session.id,
         connectionId: otHelper.session.connection.id,
         publisherId: otHelper.publisherId,
@@ -26,7 +26,7 @@
     reportIssue() {
       const loggedEvent = {
         action: 'ReportIssue',
-        partnerId: otHelper.session.apiKey,
+        partnerId: otHelper.session.applicationId,
         sessionId: otHelper.session.id,
         connectionId: otHelper.session.connection.id,
         publisherId: otHelper.publisherId,

@@ -1,5 +1,5 @@
 /* global Grid, Float, F2FHorizontal, F2FVertical, HangoutHorizontal, HangoutVertical, LayoutView,
-LayoutViewport, ItemsHandler */
+LayoutViewport, ItemsHandler, LazyLoader */
 
 !((global) => {
   let userLayout = null;

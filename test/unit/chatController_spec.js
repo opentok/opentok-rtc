@@ -38,6 +38,16 @@ describe('ChatController', () => {
     LazyLoader.dependencyLoad.restore();
   });
 
+  beforeEach(() => {
+    sinon.stub(RoomStatus, 'set');
+    sinon.stub(Utils, 'addHandlers');
+  });
+
+  afterEach(() => {
+    RoomStatus.set.restore();
+    Utils.addHandlers.restore();
+  });
+
   it('should exist', () => {
     expect(ChatController).to.exist;
   });
@@ -68,7 +78,7 @@ describe('ChatController', () => {
     }
 
     it('should initialize properly the object and return the handlers set when called without '
-       + 'handlers', sinon.test(function (done) {
+       + 'handlers', sinon.test((done) => {
       var expectedHandlers = {
         updatedRemotely: {
           name: 'roomStatus:updatedRemotely',
@@ -79,14 +89,11 @@ describe('ChatController', () => {
         },
       };
 
-      this.stub(RoomStatus, 'set');
-      this.stub(Utils, 'addHandlers');
-
       verifyInit(done, expectedHandlers);
     }));
 
     it('should initialize properly the object and return the handlers set when called with '
-       + 'handlers', sinon.test(function (done) {
+       + 'handlers', sinon.test((done) => {
       var expectedHandlers = {
         updatedRemotely: {
           name: 'changedRoomStatus:changedUpdatedRemotely',
@@ -105,9 +112,6 @@ describe('ChatController', () => {
           type: 'chatVisibility',
           name: 'roomView:chatVisibility',
         }];
-
-      this.stub(RoomStatus, 'set');
-      this.stub(Utils, 'addHandlers');
 
       verifyInit(done, expectedHandlers, handlersName);
     }));

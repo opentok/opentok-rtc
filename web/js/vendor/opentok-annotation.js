@@ -41,7 +41,7 @@
     var sessionInfo = {
       sessionId: _session.id,
       connectionId: _session.connection.connectionId,
-      partnerId: _session.apiKey
+      partnerId: _session.applicationId
     };
 
     _otkanalytics.addSessionInfo(sessionInfo);
@@ -2081,7 +2081,7 @@
     var sessionInfo = {
       sessionId: _session.id,
       connectionId: _session.connection.connectionId,
-      partnerId: _session.apiKey
+      partnerId: _session.applicationId
     };
 
     _otkanalytics.addSessionInfo(sessionInfo);

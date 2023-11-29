@@ -10,6 +10,10 @@ OpenTokRTC is your private web-based video conferencing solution. It is based on
 the OpenTok SDKs and API. You can deploy the app on your servers to get your own
 video conferencing app running on WebRTC.
 
+**Important:** This version of the application is modified to work with Vonage applications
+(instead of OpenTok projects). Contact Vonage for more information on having video enabled
+for your Vonage application.
+
 This repository contains a Node.js server and a web client application.
 
 ## Table of Contents
@@ -48,8 +52,8 @@ You will need to install these dependencies on your machine:
 - [NodeJS v12](https://nodejs.org): This version of OpenTokRTC is tested with NodeJS v12 LTS.
 - [Redis](https://redis.io): A `redis` server running on `localhost`.
 
-You will also need these an OpenTok API key and secret. You can obtain these by signing up with
-[OpenTok/Vonage Video API](https://tokbox.com/account/user/signup).
+You will also need these an Vonage application ID and private key. You can obtain these by signing up with the
+[Vonage Video API](https://dashboard.nexmo.com/).
 
 ### Installing dependencies
 
@@ -74,8 +78,8 @@ Note: You will need to run these commands as a non-root user, else `bower` will 
 
 Once all the dependencies are in place, you will need to set some configuration options
 and install the application's dependencies. At a minimum, you need to set options for
-the OpenTok API key and secret to be used by the app. You can obtain these from
-your [OpenTok account](https://tokbox.com/account).
+the Vonage application ID and private key to be used by the app. You can obtain these from
+the [Vonage API dashboard](https://dashboard.nexmo.com/).
 
 Other features of the app are enabled and configured using more configuration options,
 described in this README.
@@ -95,13 +99,13 @@ $ cp config/example.json config/config.json
 ```
 
 Edit the config.json file with the following, and replace `<key>` and `<secret>` with
-your OpenTok API key and the corresponding API secret:
+your Vonage application ID and the corresponding private key:
 
 ```js
 {
-    "OpenTok": {
-        "apiKey": "<key>"
-        "apiSecret": "<secret>"
+    "Vonage": {
+        "applicationId": "c696-...-5e71",
+        "privateKey": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhk...\n-----END PRIVATE KEY-----\n",
     }
 }
 ```
@@ -111,13 +115,14 @@ which are described in the [Configuration options](#configuration-options) secti
 
 #### Setting environment variables
 
-You can set the `TB_API_KEY` and `TB_API_SECRET` to your OpenTok API key and secret.
-For example, the following shell commands export these values for use by the app
-(replace `<key>` and `<secret>` with your OpenTok API key and the corresponding API secret):
+You can set the `VONAGE_APPLICATION_ID` and `VONAGE_PRIVATE_KEY` environment variables to
+your Vonage application ID and private key. For example, the following shell commands export
+these values for use by the app (replace `<application-id>` and `<private-key>` with your
+Vonage application ID and private key):
 
 ```sh
-export TB_API_KEY=<key>
-export TB_API_SECRET=<secret>
+export VONAGE_APPLICATION_ID=<application-id>
+export VONAGE_PRIVATE_KEY=<private-key>
 ```
 
 You can set other environment variables to enable and configure other options,
@@ -178,13 +183,13 @@ Environment variable settings overwrite any value set with the config JSON file.
 The default config JSON file location is config/config.json. This path can be
 overwritten by setting the `DEFAULT_JSON_CONFIG_PATH` environment variable.
 
-### OpenTok configuration
+### Vonage Video API configuration
 
-The required configuration settings for the OpenTok API key and secret are
+The required configuration settings for the Vonage Video application and private key are
 described in the [basic configuration](#basic-configuration) section,
 earlier in this README.
 
-There are other OpenTok configuration settings (each of which are optional):
+There are other Vonage Video API configuration settings (each of which are optional):
 
 * **Publisher resolution** -- You can set the desired resolution of published video.
   The config.json setting is `OpenTok.publisherResolution`. The environment variable
@@ -199,10 +204,9 @@ There are other OpenTok configuration settings (each of which are optional):
   If the client system cannot support the resolution you requested, the stream will use
   the next largest setting supported.
 
-* **OpenTok.js URL** -- By default, the app uses the latest standard line version
-  of OpenTok.js. You can change the OpenTok.js source URL. For example you may
-  want to change this to the enterprise line version of OpenTok.js
-  (https://static.opentok.com/v2/js/opentok.min.js).
+* **OpenTok.js URL** -- By default, the app uses the default Vonage Video web client URL,
+  `https://unpkg.com/@vonage/video-client@2/dist/js/opentok.js`. Set this value
+  to change the source URL for the Vonage Video web client SDK.
 
   The config.json setting is `OpenTok.jsUrl`. The environment variable name is `TB_JS_URL`.
 
@@ -227,10 +231,8 @@ The config.json setting is `mediaMode`. The environment variable name is `MEDIA_
 ```json
 {
     "OpenTok": {
-      "apiKey": "<key>",
-      "apiSecret": "<secret>",
       "publisherResolution": "1280x720",
-      "jsUrl": "https://static.opentok.com/v2/js/opentok.min.js",
+      "jsUrl": "https://unpkg.com/@vonage/video-client@2/dist/js/opentok.js",
       "maxSessionAge": 7
     },
     "mediaMode": "routed"
@@ -241,11 +243,13 @@ The config.json setting is `mediaMode`. The environment variable name is `MEDIA_
 
 ```sh
 export PUBLISHER_RESOLUTION="1280x720";
-export TB_JS_URL="https://static.opentok.com/v2/js/opentok.min.js";
+export TB_JS_URL="https://unpkg.com/@vonage/video-client@2/dist/js/opentok.js";
 export TB_MAX_SESSION_AGE="7";
 ```
 
 ### Phone dial-out
+
+**Important:** The SIP dial-out feature is not currently supported for Vonage applications.
 
 The app can dial out and add a phone-based end user to the OpenTok session, using the OpenTok
 [SIP API](https://tokbox.com/developer/rest/#sip_call). This app uses
@@ -261,10 +265,10 @@ To enable this feature:
    * `SIP.enabled` (config.json) / `SIP_ENABLED` (environment variable) -- Set this to `true`.
 
    * `SIP.username` (config.json) / `SIP_USERNAME` (environment variable) -- Set this to
-     the apiKey for the Nexmo account you created.
+     the API key for the Nexmo account you created.
 
    * `SIP.password` (config.json) / `SIP_PASSWORD` (environment variable) -- Set this to
-     the apiSecret for the Nexmo account you created.
+     the API secret for the Nexmo account you created.
 
    * `SIP.requireGoogleAuth` (config.json) / `SIP_REQUIRE_GOOGLE_AUTH` (environment variable) -- See
      [Google Authentication for Phone dial-out](#google-authentication-for-phone-dial-out)
@@ -514,24 +518,6 @@ export ENABLE_FEEDBACK=true;
 ```
 
 ### Pre-call test
-
-Set the the `TB_PRECALL_API_KEY` and `TB_PRECALL_API_SECRET` environment variables
-to the the OpenTok API key and secret to use for the test session used by
-the precall-test. Or set these in the config.json file:
-
-**Config.json example:**
-
-```json
-{
-    "precallTest": {
-        "apiKey": "46049502",
-        "apiSecret": "0f4a63f629cec64ebdc5552974fe2566d2eb2835"
-    }
-}
-```
-
-These are optional. If you do not set these, the pre-call test will use the same
-API key and secret that is used for the main OpenTok session used in the room.
 
 You can disable the pre-call test by setting the `ENABLE_PRECALL_TEST`
 environment variable to `false`. Or you can disable it using the config file:

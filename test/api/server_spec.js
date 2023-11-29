@@ -2,6 +2,7 @@ var chai = require('chai');
 var request = require('supertest');
 
 var { expect } = chai;
+var MockVonage = require('../mocks/mock_vonage.js');
 
 const TEST_LOG_LEVEL = 0;
 
@@ -63,7 +64,7 @@ describe('OpenTokRTC server', () => {
   }
 
   // Objects that can be returned:
-  const RoomInfo = ['sessionId', 'apiKey', 'token', 'username'];
+  const RoomInfo = ['sessionId', 'applicationId', 'token', 'username'];
   const ArchiveInfo = ['archiveId', 'archiveType'];
   const ArchiveURL = ['archiveId'];
   const ReturnError = ['code', 'message'];
@@ -176,7 +177,6 @@ describe('OpenTokRTC server', () => {
       .expect(200, done);
   });
 
-  // Temporary tests, TBD later
   it('GET /archive/:archiveId', (done) => {
     request(app)
       .get('/archive/12345')
@@ -186,6 +186,7 @@ describe('OpenTokRTC server', () => {
   it('DELETE /archive/:archiveId', (done) => {
     request(app)
       .delete('/archive/12345')
+      .set('referer', 'mockRoomName')
       .expect(405, done);
   });
 
@@ -196,10 +197,10 @@ describe('OpenTokRTC server', () => {
       .expect(200, done);
   });
 
-  it('GET /room/:roomName/archive should return 404 for not existing archive', (done) => {
+  it('GET /room/:roomName/archive should return 405 for not existing archive', (done) => {
     request(app)
-      .get('/room/' + Math.random() + '/archive')
-      .expect(404, done);
+      .get('/archive/' + Math.random())
+      .expect(405, done);
   });
 
   it('GET /server/health should return 400 and expected values', (done) => {
@@ -214,6 +215,7 @@ describe('OpenTokRTC server', () => {
         done();
       });
   });
+
   it('GET /thanks should return post meeting screen', (done) => {
     request(app)
       .get('/thanks')

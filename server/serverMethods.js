@@ -76,14 +76,8 @@ function ServerMethods(aLogLevel, aModules) {
   const { Utils } = SwaggerBP;
 
   const Logger = Utils.MultiLevelLogger;
-  // const { promisify } = Utils;
 
   const Video = aModules.Video || require('@vonage/video').Video; // eslint-disable-line global-require
-  // if (aModules.Video) {
-  //   const Video = aModules.Video
-  // } else {
-  //   const { Video } = require('@vonage/video')
-  // }
 
   let roomBlackList;
 
@@ -100,9 +94,11 @@ function ServerMethods(aLogLevel, aModules) {
 
   let sipUri;
   let googleAuth;
+  // @vonage/video API instance, which will be configured only after tbConfigPromise
+  // is resolved
   let tbConfigPromise;
 
-  // Initiates polling from the Opentok servers for changes on the status of an archive.
+  // Initiates polling from the Vonage Video servers for changes on the status of an archive.
   // This is a *very* specific polling since we expect the archive will have already been stopped
   // by the time this launches and we're just waiting for it to be available or uploaded.
   // To try to balance not polling to often with trying to get a result fast, the polling time
@@ -134,9 +130,9 @@ function ServerMethods(aLogLevel, aModules) {
       // This will hold the configuration read from Redis
       const defaultTemplate = config.get(C.DEFAULT_TEMPLATE);
       const templatingSecret = config.get(C.TEMPLATING_SECRET);
-      const apiKey = config.get(C.VIDEO_APP_ID);
-      const privateKeyPath = config.get(C.VIDEO_PRIVATE_KEY_PATH)
-      const precallApiKey = apiKey;
+      const applicationId = config.get(C.VONAGE_APPLICATION_ID);
+      const privateKeyPath = config.get(C.VONAGE_PRIVATE_KEY_PATH);
+      const precallApplicationId = applicationId;
       const opentokJsUrl = config.get(C.OPENTOK_JS_URL);
       const useGoogleFonts = config.get(C.USE_GOOGLE_FONTS);
       const jqueryUrl = config.get(C.JQUERY_URL);
@@ -155,7 +151,8 @@ function ServerMethods(aLogLevel, aModules) {
       const iosAppId = config.get(C.IOS_APP_ID);
       const iosUrlPrefix = config.get(C.IOS_URL_PREFIX);
 
-      const enableSip = config.get(C.SIP_ENABLED);
+      // SIP is currently not available for Vonage apps
+      const enableSip = false; // config.get(C.SIP_ENABLED);
       const sipUsername = config.get(C.SIP_USERNAME);
       const sipPassword = config.get(C.SIP_PASSWORD);
       const sipRequireGoogleAuth = config.get(C.SIP_REQUIRE_GOOGLE_AUTH);
@@ -168,14 +165,6 @@ function ServerMethods(aLogLevel, aModules) {
       } else {
         googleAuth = new GoogleAuth.DisabledGoogleAuthStategy();
       }
-      // This isn't strictly necessary... but since we're using promises all over the place, it
-      // makes sense. The _P are just a promisified version of the methods. We could have
-      // overwritten the original methods but this way we make it explicit. That's also why we're
-      // breaking camelCase here, to make it patent to the reader that those aren't standard
-      // methods of the API.
-      // ['startArchive', 'stopArchive', 'getArchive', 'listArchives', 'deleteArchive', 'dial',
-      //   'forceDisconnect']
-      //   .forEach((method) => otInstance[`${method}_P`] = promisify(otInstance[method])); // eslint-disable-line no-return-assign
 
       const maxSessionAge = config.get(C.OPENTOK_MAX_SESSION_AGE);
       const maxSessionAgeMs = maxSessionAge * 24 * 60 * 60 * 1000;
@@ -228,9 +217,8 @@ function ServerMethods(aLogLevel, aModules) {
 
       return {
         videoInstance,
-        apiKey,
-        precallApiKey,
-        // precallApiSecret,
+        applicationId,
+        precallApplicationId,
         archivePollingTO,
         archivePollingTOMultiplier,
         maxSessionAgeMs,
@@ -645,7 +633,7 @@ function ServerMethods(aLogLevel, aModules) {
   // Returns:
   // RoomInfo {
   //   sessionId: string
-  //   apiKey: string
+  //   applicationId: string
   //   token: string
   //   username: string
   //   chromeExtId: string value || 'undefined'
@@ -678,7 +666,7 @@ function ServerMethods(aLogLevel, aModules) {
 
         // and finally, answer...
         const answer = {
-          apiKey: tbConfig.apiKey,
+          applicationId: tbConfig.applicationId,
           token: tbConfig.videoInstance
           .generateClientToken(usableSessionInfo.sessionId, {
             role: 'publisher',
@@ -809,7 +797,7 @@ function ServerMethods(aLogLevel, aModules) {
             // no-op
         }
         logger.log('postRoomArchive: Invoking archiveOp. SessionInfo', sessionInfo);
-        return archiveOp().then((aArchive) => {
+        return archiveOp.then((aArchive) => {
           sessionInfo.inProgressArchiveId = aArchive.status === 'started' ? aArchive.id : undefined;
           // Update the internal database
           serverPersistence.setKey(redisRoomPrefix + roomName, JSON.stringify(sessionInfo));
@@ -890,7 +878,6 @@ function ServerMethods(aLogLevel, aModules) {
     const { archiveId } = aReq.params;
     logger.log('deleteArchive:', archiveId);
     const { tbConfig } = aReq;
-    // const { otInstance } = tbConfig;
     const { videoInstance } = tbConfig;
     let sessionId;
     let type;
@@ -905,7 +892,7 @@ function ServerMethods(aLogLevel, aModules) {
         roomArchiveStorage = new ArchiveLocalStorage(
           videoInstance, redisRoomPrefix + roomName, sessionId, aLogLevel,
         );
-        return archiveId;
+        vonageVideoInstance.deleteArchive(archiveId);
       })
       .then(videoInstance.deleteArchive)
       .then(() => roomArchiveStorage.removeArchive(archiveId))
