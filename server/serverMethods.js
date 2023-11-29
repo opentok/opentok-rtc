@@ -21,7 +21,6 @@ const configLoader = require('./configLoader');
 const ArchiveLocalStorage = require('./archiveLocalStorage');
 const GoogleAuth = require('./googleAuthStrategies');
 const testHealth = require('./testHealth');
-// const { Video } = require('@vonage/video')
 const { Auth } = require('@vonage/auth')
 
 function htmlEscape(str) {
@@ -141,7 +140,7 @@ function ServerMethods(aLogLevel, aModules) {
       const archivePollingTOMultiplier = config.get(C.ARCHIVE_POLLING_TIMEOUT_MULTIPLIER);
 
       const credentials = new Auth({
-        applicationId: apiKey,
+        applicationId: applicationId,
         privateKey: privateKeyPath,
       });
       const videoInstance = Utils.CachifiedObject(Video, credentials, {})
@@ -477,8 +476,8 @@ function ServerMethods(aLogLevel, aModules) {
           enableRoomLocking: tbConfig.enableRoomLocking,
           feedbackUrl: tbConfig.feedbackUrl,
           precallSessionId: testSession.sessionId,
-          apiKey: tbConfig.apiKey,
-          precallApiKey: tbConfig.precallApiKey,
+          applicationId: tbConfig.applicationId,
+          precallApplicationId: tbConfig.precallApplicationId,
           precallToken: tbConfig.videoInstance.generateClientToken(testSession.sessionId, {
             role: 'publisher',
           }),
@@ -797,7 +796,7 @@ function ServerMethods(aLogLevel, aModules) {
             // no-op
         }
         logger.log('postRoomArchive: Invoking archiveOp. SessionInfo', sessionInfo);
-        return archiveOp.then((aArchive) => {
+        return archiveOp().then((aArchive) => {
           sessionInfo.inProgressArchiveId = aArchive.status === 'started' ? aArchive.id : undefined;
           // Update the internal database
           serverPersistence.setKey(redisRoomPrefix + roomName, JSON.stringify(sessionInfo));

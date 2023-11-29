@@ -20,8 +20,7 @@ Heroku will prompt you to add your Vonage application ID and private key, which 
 
 You have to set the following environment variables on your Heroku instance:
 
-- `VONAGE_APPLICATION_ID`: Your Vonage application ID.
-- `VONAGE_PRIVATE_KEY`: Your Vonage application's private key.
+- `VONAGE_APPLICATION_PATH_`: Your Vonage application's private key path.
 
 ## Manual Installation using Heroku CLI
 

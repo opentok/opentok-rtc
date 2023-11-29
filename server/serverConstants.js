@@ -27,9 +27,9 @@ E.VONAGE_APPLICATION_ID = { envVar: 'VONAGE_APPLICATION_ID', jsonPath: 'Vonage.a
 
 E.VONAGE_PRIVATE_KEY_PATH = { envVar: 'VONAGE_PRIVATE_KEY', jsonPath: 'Vonage.privateKeyPath', required: true };
 
-E.OPENTOK_PRECALL_API_KEY = { envVar: 'TB_PRECALL_API_KEY', jsonPath: 'precallTest.apiKey' };
+// E.OPENTOK_PRECALL_API_KEY = { envVar: 'TB_PRECALL_API_KEY', jsonPath: 'precallTest.apiKey' };
 
-E.OPENTOK_PRECALL_API_SECRET = { envVar: 'TB_PRECALL_API_SECRET', jsonPath: 'precallTest.apiSecret' };
+// E.OPENTOK_PRECALL_API_SECRET = { envVar: 'TB_PRECALL_API_SECRET', jsonPath: 'precallTest.apiSecret' };
 
 E.OPENTOK_JS_URL = {
   envVar: 'TB_JS_URL', jsonPath: 'OpenTok.jsUrl', required: false, defaultValue: 'https://unpkg.com/@vonage/video-client@2/dist/js/opentok.js',

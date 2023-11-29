@@ -4,7 +4,7 @@
    "OpenTok":{
       "publisherResolution": "640x480"
    },
-   "Video":{
+   "Vonage":{
     "applicationId": "<key>",
     "privateKeyPath": "<path>",
     "publisherResolution": "640x480"
