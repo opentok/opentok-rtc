@@ -25,7 +25,7 @@ E.REDIS_ROOM_MATCHES = `${E.REDIS_ROOM_PREFIX}*`;
 
 E.VONAGE_APPLICATION_ID = { envVar: 'VONAGE_APPLICATION_ID', jsonPath: 'Vonage.applicationId', required: true };
 
-E.VONAGE_PRIVATE_KEY_PATH = { envVar: 'VONAGE_PRIVATE_KEY', jsonPath: 'Vonage.privateKeyPath', required: true };
+E.VONAGE_PRIVATE_KEY = { envVar: 'VONAGE_PRIVATE_KEY', jsonPath: 'Vonage.privateKey', required: true };
 
 E.OPENTOK_JS_URL = {
   envVar: 'TB_JS_URL', jsonPath: 'OpenTok.jsUrl', required: false, defaultValue: 'https://unpkg.com/@vonage/video-client@2/dist/js/opentok.js',

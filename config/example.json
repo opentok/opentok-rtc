@@ -6,7 +6,7 @@
    },
    "Vonage":{
     "applicationId": "<key>",
-    "privateKeyPath": "<path>",
+    "privateKey": "<path>",
     "publisherResolution": "640x480"
    },
    "precallTest": {

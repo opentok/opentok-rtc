@@ -130,7 +130,7 @@ function ServerMethods(aLogLevel, aModules) {
       const defaultTemplate = config.get(C.DEFAULT_TEMPLATE);
       const templatingSecret = config.get(C.TEMPLATING_SECRET);
       const applicationId = config.get(C.VONAGE_APPLICATION_ID);
-      const privateKeyPath = config.get(C.VONAGE_PRIVATE_KEY_PATH);
+      const privateKey = config.get(C.VONAGE_PRIVATE_KEY);
       const precallApplicationId = applicationId;
       const opentokJsUrl = config.get(C.OPENTOK_JS_URL);
       const useGoogleFonts = config.get(C.USE_GOOGLE_FONTS);
@@ -141,7 +141,7 @@ function ServerMethods(aLogLevel, aModules) {
 
       const credentials = new Auth({
         applicationId,
-        privateKey: privateKeyPath,
+        privateKey: privateKey,
       });
       const videoInstance = Utils.CachifiedObject(Video, credentials, {});
       const allowIframing = config.get(C.ALLOW_IFRAMING);
