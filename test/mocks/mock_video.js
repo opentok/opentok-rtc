@@ -30,53 +30,40 @@ function Video(credentials, options) {
 
   Video.instances.push(video);
 
-
   // We must mock/stub some of the Video methods before the app is created
   // because they might be renamed/rebinded...
-  sinon.stub(video, 'startArchive').callsFake((aSessionId, aArchiveOptions,) => {
-    console.log("fake startArchive");
-    //setTimeout(() => new FakeArchive(aSessionId, aArchiveOptions, 'started'));
-    return new Promise((reslove)=> {
+  sinon.stub(video, 'startArchive').callsFake((aSessionId, aArchiveOptions) => {
+    console.log('fake startArchive');
+    // setTimeout(() => new FakeArchive(aSessionId, aArchiveOptions, 'started'));
+    return new Promise((reslove) => {
       reslove(new FakeArchive(aSessionId, aArchiveOptions, 'started'));
     });
   });
 
-  sinon.stub(video, 'stopArchive').callsFake((aArchiveId) => {
-    return new Promise((resolve) => {
-        if (_archives[aArchiveId]) {
-          _archives[aArchiveId].status = 'stopped';
-        }
-        return resolve(_archives[aArchiveId]);
-    });
-  });
+  sinon.stub(video, 'stopArchive').callsFake((aArchiveId) => new Promise((resolve) => {
+    if (_archives[aArchiveId]) {
+      _archives[aArchiveId].status = 'stopped';
+    }
+    return resolve(_archives[aArchiveId]);
+  }));
 
-  sinon.stub(video, 'getArchive').callsFake((aArchiveId) => {
-    return new Promise((resolve) => {
-      return resolve(_archives[aArchiveId]);
-    });
-  });
- 
+  sinon.stub(video, 'getArchive').callsFake((aArchiveId) => new Promise((resolve) => resolve(_archives[aArchiveId])));
+
   sinon.stub(video, 'deleteArchive').callsFake((aArchiveId) => {
-    delete _archives[newArchive.id]
-    return new Promise((resolve) => {
-      return resolve();
-    });
+    delete _archives[newArchive.id];
+    return new Promise((resolve) => resolve());
   });
 
   sinon.stub(video, 'searchArchives').callsFake((aOptions) => {
     var list = Object.keys(_archives).map((key) => _archives[key]);
-    return new Promise((resolve) => {
-      return resolve(list);
-    });
+    return new Promise((resolve) => resolve(list));
   });
 
   sinon.stub(video, 'createSession').callsFake((aOptions) => {
     var sessionInfo = {
       sessionId: '1' + Math.random(),
     };
-    return new Promise((resolve) => {
-      return resolve(sessionInfo);
-    });
+    return new Promise((resolve) => resolve(sessionInfo));
   });
 
   sinon.stub(video, 'generateClientToken').callsFake((aOptions) => 'tokentoken');

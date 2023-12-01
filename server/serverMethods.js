@@ -16,12 +16,12 @@ const _ = require('lodash');
 const qs = require('qs');
 const accepts = require('accepts');
 const geoip = require('geoip-lite');
+const { Auth } = require('@vonage/auth');
 const C = require('./serverConstants');
 const configLoader = require('./configLoader');
 const ArchiveLocalStorage = require('./archiveLocalStorage');
 const GoogleAuth = require('./googleAuthStrategies');
 const testHealth = require('./testHealth');
-const { Auth } = require('@vonage/auth')
 
 function htmlEscape(str) {
   return String(str)
@@ -135,15 +135,15 @@ function ServerMethods(aLogLevel, aModules) {
       const opentokJsUrl = config.get(C.OPENTOK_JS_URL);
       const useGoogleFonts = config.get(C.USE_GOOGLE_FONTS);
       const jqueryUrl = config.get(C.JQUERY_URL);
-      
+
       const archivePollingTO = config.get(C.ARCHIVE_POLLING_INITIAL_TIMEOUT);
       const archivePollingTOMultiplier = config.get(C.ARCHIVE_POLLING_TIMEOUT_MULTIPLIER);
 
       const credentials = new Auth({
-        applicationId: applicationId,
+        applicationId,
         privateKey: privateKeyPath,
       });
-      const videoInstance = Utils.CachifiedObject(Video, credentials, {})
+      const videoInstance = Utils.CachifiedObject(Video, credentials, {});
       const allowIframing = config.get(C.ALLOW_IFRAMING);
       const archiveAlways = config.get(C.ARCHIVE_ALWAYS);
 
@@ -444,7 +444,6 @@ function ServerMethods(aLogLevel, aModules) {
     const testSession = await tbConfig.videoInstance.createSession({ mediaMode: 'routed' });
     logger.log('sessionId:', testSession.sessionId);
 
-
     aRes.set('Cache-Control', 'no-cache, no-store, must-revalidate');
     aRes.set('Pragma', 'no-cache');
     aRes.set('Expires', 0);
@@ -511,14 +510,13 @@ function ServerMethods(aLogLevel, aModules) {
           // eslint-disable-next-line no-dupe-keys
           userName,
         }, (err, html) => {
-              if (err) {
-                logger.log('getRoom. error:', err);
-                aRes.status(400).send(new ErrorInfo(400, 'Unknown template.'));
-              } else {
-                aRes.send(html);
-              }
-           }
-        );
+          if (err) {
+            logger.log('getRoom. error:', err);
+            aRes.status(400).send(new ErrorInfo(400, 'Unknown template.'));
+          } else {
+            aRes.send(html);
+          }
+        });
   }
 
   // Given a sessionInfo (which might be empty or non usable) returns a promise than will fullfill
@@ -550,14 +548,14 @@ function ServerMethods(aLogLevel, aModules) {
         });
 
         this.createSession(sessionOptions)
-            .then( session => {
-              resolve({
-                sessionId: session.sessionId,
-                lastUsage: Date.now(),
-                inProgressArchiveId: undefined,
-                isLocked: false,
-              });
-            });   
+          .then((session) => {
+            resolve({
+              sessionId: session.sessionId,
+              lastUsage: Date.now(),
+              inProgressArchiveId: undefined,
+              isLocked: false,
+            });
+          });
       } else {
         // We only need to update the last usage data...
         aSessionInfo.lastUsage = Date.now();
@@ -667,10 +665,10 @@ function ServerMethods(aLogLevel, aModules) {
         const answer = {
           applicationId: tbConfig.applicationId,
           token: tbConfig.videoInstance
-          .generateClientToken(usableSessionInfo.sessionId, {
-            role: 'publisher',
-            data: JSON.stringify({ userName }),
-          }),
+            .generateClientToken(usableSessionInfo.sessionId, {
+              role: 'publisher',
+              data: JSON.stringify({ userName }),
+            }),
           username: userName,
           autoGenerateRoomName: tbConfig.autoGenerateRoomName,
           chromeExtId: tbConfig.chromeExtId,
@@ -840,7 +838,7 @@ function ServerMethods(aLogLevel, aModules) {
     const generatePreview = (aReq.query && aReq.query.generatePreview !== undefined);
     logger.log('getAchive:', archiveId, generatePreview);
 
-      aReq.tbConfig.videoInstance
+    aReq.tbConfig.videoInstance
       .getArchive(archiveId)
       .then((aArchive) => {
         if (!generatePreview) {
@@ -868,7 +866,7 @@ function ServerMethods(aLogLevel, aModules) {
 
   function getRoomNameFromHeaders(headers) {
     const { referer } = headers;
-    //TODO: this throw exception Cannot read properties of undefined
+    // TODO: this throw exception Cannot read properties of undefined
     const lastIndex = referer.lastIndexOf('/');
     return referer.substr(lastIndex + 1, referer.length).split('?')[0];
   }
@@ -880,7 +878,7 @@ function ServerMethods(aLogLevel, aModules) {
     const { videoInstance } = tbConfig;
     let sessionId;
     let type;
-    //TODO: this throw exception
+    // TODO: this throw exception
     const roomName = getRoomNameFromHeaders(aReq.headers);
     let roomArchiveStorage;
     videoInstance

@@ -2,7 +2,6 @@ var chai = require('chai');
 var request = require('supertest');
 
 var { expect } = chai;
-var MockVonage = require('../mocks/mock_vonage.js');
 
 const TEST_LOG_LEVEL = 0;
 
@@ -16,7 +15,7 @@ describe('OpenTokRTC server', () => {
   // it's more work than doing it manually though, so not worth it.
 
   before((done) => {
-    MockVideo = require('../mocks/mock_video.js');
+    MockVideo = require('../mocks/mock_video');
     process.env.TEMPLATING_SECRET = '123456';
 
     var mocks = {

@@ -37,14 +37,14 @@ class ArchiveLocalStorage {
         }),
       },
       this.sessionId,
-      null
+      null,
     ).then(
       (error) => {
         if (error) {
           return this.logger.log('Get archives error:', error);
         }
         return false;
-      }
+      },
     );
   }
 
