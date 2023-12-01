@@ -60,6 +60,13 @@ module.exports = function (config) {
       'test/unit/layoutMenuView_spec.js': ['browserify'],
       'test/unit/layouts_spec.js': ['browserify'],
       'test/unit/precallController_spec.js': ['browserify'],
+      'test/unit/precallView_spec.js': ['browserify'],
+      'test/unit/recordingsController_spec.js': ['browserify'],
+      'test/unit/recordingsView_spec.js': ['browserify'],
+      'test/unit/roomStatus_spec.js': ['browserify'],
+      'test/unit/roomView_spec.js': ['browserify'],
+      'test/unit/screenShareController_spec.js': ['browserify'],
+      'test/unit/screenShareView_spec.js': ['browserify'],
 
     },
 

@@ -167,7 +167,7 @@ paths:
       produces:
         - 'application/json,'
       description: >-
-        Returns the information (sessionId, token, apiKey) that's required to
+        Returns the information (sessionId, token, application ID) that's required to
         connect to an opentok session. The sessionId returned is specific for
         the room, and the token MAY include information about the user that's
         connecting (identified as anonymous if the user didn't specify a name).
@@ -431,7 +431,7 @@ definitions:
     properties:
       sessionId:
         type: string
-      apiKey:
+      applicationId:
         type: string
       token:
         type: string
@@ -478,8 +478,8 @@ definitions:
       name:
         description: The name of the archive you supplied (this is optional)
         type: string
-      partnerId:
-        description: Your OpenTok API key.
+      applicationId:
+        description: Your Vonage application ID.
         type: string
       reason:
         description: >-

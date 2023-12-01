@@ -11,7 +11,7 @@ describe('FeedbackController', () => {
   var realOT = null;
   var fakeOTHelper = {
     session: {
-      apiKey: '123456',
+      applicationId: '123456',
       id: 'abcd1234',
       connection: {
         id: 'connectionIdID',
@@ -46,7 +46,7 @@ describe('FeedbackController', () => {
     });
 
     it('should be initialized', sinon.test(function (done) {
-      this.stub(FeedbackView, 'init', () => {});
+      this.stub(FeedbackView, 'init').callsFake(() => {});
 
       FeedbackController.init(fakeOTHelper).then(() => {
         expect(FeedbackView.init.called).to.be.true;
@@ -74,7 +74,7 @@ describe('FeedbackController', () => {
 
       var expectedRequestBody = {
         action: 'SessionQuality',
-        partnerId: fakeOTHelper.session.apiKey,
+        partnerId: fakeOTHelper.session.applicationId,
         sessionId: fakeOTHelper.session.id,
         connectionId: fakeOTHelper.session.connection.id,
         publisherId: fakeOTHelper.publisherId,
@@ -90,7 +90,7 @@ describe('FeedbackController', () => {
       expect(requests[0].method).to.equal('POST');
       var requestBodyObj = JSON.parse(requests[0].requestBody);
       expect(requestBodyObj.action).to.equal('SessionQuality');
-      expect(requestBodyObj.partnerId).to.equal(fakeOTHelper.session.apiKey);
+      expect(requestBodyObj.partnerId).to.equal(fakeOTHelper.session.applicationId);
       expect(requestBodyObj.sessionId).to.equal(fakeOTHelper.session.id);
       expect(requestBodyObj.connectionId).to.equal(fakeOTHelper.session.connection.id);
       expect(requestBodyObj.publisherId).to.equal(fakeOTHelper.publisherId);

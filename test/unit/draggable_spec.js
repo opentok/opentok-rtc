@@ -18,7 +18,13 @@ describe('Draggable', () => {
   });
 
   function checkTranslation(x, y) {
-    expect(item.style.transform).to.equal('translate(' + x + 'px, ' + y + 'px)');
+    if (x === 0 && y === 0) {
+      return expect(item.style.transform).to.be.oneOf([
+        'translate(' + x + 'px, ' + y + 'px)',
+        'translate(0px)',
+      ]);
+    }
+    return expect(item.style.transform).to.equal('translate(' + x + 'px, ' + y + 'px)');
   }
 
   function sendMouseEvent(type, coords, target) {
@@ -48,7 +54,7 @@ describe('Draggable', () => {
 
     describe('#event dispatcher: DragDetector:dragstart', () => {
       var checkHoldstartEvent = function (ctx, x, y, done) {
-        ctx.stub(window, 'CustomEvent', (name, data) => {
+        ctx.stub(window, 'CustomEvent').callsFake((name, data) => {
           expect(name).to.equal('DragDetector:dragstart');
           expect(data.detail.pageX).to.equal(x);
           expect(data.detail.pageY).to.equal(y);

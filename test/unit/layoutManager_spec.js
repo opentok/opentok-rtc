@@ -27,7 +27,14 @@ describe('LayoutManager', () => {
     sinon.stub(LayoutView, 'append').callsFake((id) => { return id === 'desktop' ? desktop : getLayoutElement(); }); // eslint-disable-line arrow-body-style
     sinon.stub(LayoutView, 'remove');
     sinon.stub(ItemsHandler, 'init');
-    sinon.stub(LazyLoader, 'dependencyLoad').callsFake(() => Promise.resolve());
+
+    window.LazyLoader = window.LazyLoader || {
+      dependencyLoad() {
+        return new Promise((resolve) => {
+          resolve();
+        });
+      }
+    };
   });
 
   it('should exist', () => {
@@ -39,7 +46,6 @@ describe('LayoutManager', () => {
     LayoutView.append.restore();
     LayoutView.remove.restore();
     ItemsHandler.init.restore();
-    LazyLoader.dependencyLoad.restore();
   });
 
   describe('#init', () => {
@@ -75,7 +81,7 @@ describe('LayoutManager', () => {
 
     it('should always return a reference to the element added', () => {
       addedElements.every((item) => { // eslint-disable-line array-callback-return
-        expect(item).to.be.defined;
+        expect(item).to.not.be.undefined;
       });
     });
   });

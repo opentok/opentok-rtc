@@ -23,16 +23,12 @@ E.REDIS_PHONE_PREFIX = 'otrtc_phone_';
 
 E.REDIS_ROOM_MATCHES = `${E.REDIS_ROOM_PREFIX}*`;
 
-E.OPENTOK_API_KEY = { envVar: 'TB_API_KEY', jsonPath: 'OpenTok.apiKey', required: true };
+E.VONAGE_APPLICATION_ID = { envVar: 'VONAGE_APPLICATION_ID', jsonPath: 'Vonage.applicationId', required: true };
 
-E.OPENTOK_API_SECRET = { envVar: 'TB_API_SECRET', jsonPath: 'OpenTok.apiSecret', required: true };
-
-E.OPENTOK_PRECALL_API_KEY = { envVar: 'TB_PRECALL_API_KEY', jsonPath: 'precallTest.apiKey' };
-
-E.OPENTOK_PRECALL_API_SECRET = { envVar: 'TB_PRECALL_API_SECRET', jsonPath: 'precallTest.apiSecret' };
+E.VONAGE_PRIVATE_KEY = { envVar: 'VONAGE_PRIVATE_KEY', jsonPath: 'Vonage.privateKey', required: true };
 
 E.OPENTOK_JS_URL = {
-  envVar: 'TB_JS_URL', jsonPath: 'OpenTok.jsUrl', required: false, defaultValue: 'https://static.opentok.com/v2/js/opentok.min.js',
+  envVar: 'TB_JS_URL', jsonPath: 'OpenTok.jsUrl', required: false, defaultValue: 'https://unpkg.com/@vonage/video-client@2/dist/js/opentok.js',
 };
 
 // Sessions should not live forever. So we'll store the last time a session was used and if when

@@ -221,7 +221,7 @@
     aReceiver.on(_interceptedHandlers);
   }
 
-  // aSessionInfo must have sessionId, apiKey, token
+  // aSessionInfo must have sessionId, applicationId, token
   function OTHelper() {
     let _session;
     let _publisher;
@@ -241,7 +241,7 @@
     // or an array of objects
     function connect(sessionInfo, aHandlers) {
       const self = this;
-      const apiKey = sessionInfo.apiKey;
+      const applicationId = sessionInfo.applicationId;
       const sessionId = sessionInfo.sessionId;
       const token = sessionInfo.token;
       if (!Array.isArray(aHandlers)) {
@@ -249,14 +249,14 @@
       }
       return otLoaded.then(() => {
         return new Promise((resolve, reject) => {
-          if (!(apiKey && sessionId && token)) {
+          if (!(applicationId && sessionId && token)) {
             return reject({
               message: 'Invalid parameters received. ' +
-                'ApiKey, sessionId and Token are mandatory'
+                'applicationId, sessionId and token are mandatory'
             });
           }
           disconnect();
-          _session = OT.initSession(apiKey, sessionId);
+          _session = OT.initSession(applicationId, sessionId);
           _session.off();
 
           aHandlers && _setHandlers(self, self.session, aHandlers);

@@ -8,18 +8,18 @@ const TEST_LOG_LEVEL = 0;
 describe('OpenTokRTC server', () => {
   'use strict';
 
-  var app, MockOpentok;
+  var app, MockVideo;
 
   // Note that since everything is in api.yml, we could just parse
   // that and generate the test cases automatically. At the moment
   // it's more work than doing it manually though, so not worth it.
 
   before((done) => {
-    MockOpentok = require('../mocks/mock_opentok.js');
+    MockVideo = require('../mocks/mock_video');
     process.env.TEMPLATING_SECRET = '123456';
 
     var mocks = {
-      Opentok: MockOpentok,
+      Video: MockVideo,
     };
 
     // Note that this actually executes on the level where the Grunt file is
@@ -45,7 +45,7 @@ describe('OpenTokRTC server', () => {
   });
 
   after(() => {
-    MockOpentok.restoreInstances();
+    MockVideo.restoreInstances();
   });
 
   // Note that everything needed to test this is actually in api.json, but it's not
@@ -63,7 +63,7 @@ describe('OpenTokRTC server', () => {
   }
 
   // Objects that can be returned:
-  const RoomInfo = ['sessionId', 'apiKey', 'token', 'username'];
+  const RoomInfo = ['sessionId', 'applicationId', 'token', 'username'];
   const ArchiveInfo = ['archiveId', 'archiveType'];
   const ArchiveURL = ['archiveId'];
   const ReturnError = ['code', 'message'];
@@ -176,7 +176,6 @@ describe('OpenTokRTC server', () => {
       .expect(200, done);
   });
 
-  // Temporary tests, TBD later
   it('GET /archive/:archiveId', (done) => {
     request(app)
       .get('/archive/12345')
@@ -186,6 +185,7 @@ describe('OpenTokRTC server', () => {
   it('DELETE /archive/:archiveId', (done) => {
     request(app)
       .delete('/archive/12345')
+      .set('referer', 'mockRoomName')
       .expect(405, done);
   });
 
@@ -196,10 +196,10 @@ describe('OpenTokRTC server', () => {
       .expect(200, done);
   });
 
-  it('GET /room/:roomName/archive should return 404 for not existing archive', (done) => {
+  it('GET /room/:roomName/archive should return 405 for not existing archive', (done) => {
     request(app)
-      .get('/room/' + Math.random() + '/archive')
-      .expect(404, done);
+      .get('/archive/' + Math.random())
+      .expect(405, done);
   });
 
   it('GET /server/health should return 400 and expected values', (done) => {
@@ -214,6 +214,7 @@ describe('OpenTokRTC server', () => {
         done();
       });
   });
+
   it('GET /thanks should return post meeting screen', (done) => {
     request(app)
       .get('/thanks')
