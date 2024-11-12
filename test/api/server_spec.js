@@ -73,6 +73,7 @@ describe('OpenTokRTC server', () => {
       .get('/room/unitTestRoom/info')
       .set('Accept', 'application/json')
       .expect('Content-Type', new RegExp('application/json'))
+      .expect('Content-Security-Policy', "default-src 'self' 'unsafe-inline';frame-src *;script-src 'unsafe-inline' 'unsafe-eval' 'self' cdnjs.cloudflare.com assets.tokbox.com www.google-analytics.com https://unpkg.com/@vonage/video-client@2/dist/js/opentok.js www.googletagmanager.com assets.adobedtm.com;style-src 'self' 'unsafe-inline' cdnjs.cloudflare.com assets.tokbox.com;connect-src *;img-src * data:")
       .expect(checkForAttributes.bind(undefined, RoomInfo))
       .expect(200, done);
   });
