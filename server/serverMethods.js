@@ -58,18 +58,6 @@ function getUserCountry(req) {
 
   return _.get(geo, 'country', '').toLowerCase();
 }
-const cspDirectives = [
-  "'unsafe-inline'",
-  "'unsafe-eval'",
-  "'self'",
-  'data:',
-  'cdnjs.cloudflare.com',
-  'assets.tokbox.com',
-  'www.google-analytics.com',
-  'https://unpkg.com/@vonage/video-client@2/dist/js/opentok.js',
-  'www.googletagmanager.com',
-  'assets.adobedtm.com',
-];
 
 const securityHeaders = helmet({
   referrerPolicy: { policy: 'no-referrer-when-downgrade' },
@@ -77,11 +65,21 @@ const securityHeaders = helmet({
     useDefaults: true,
     directives: {
       defaultSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: cspDirectives,
-      // scriptSrcElem: cspDirectives,
+      frameSrc: ['*'],
+      scriptSrc: [
+        "'unsafe-inline'",
+        "'unsafe-eval'",
+        "'self'",
+        'cdnjs.cloudflare.com',
+        'assets.tokbox.com',
+        'www.google-analytics.com',
+        'https://unpkg.com/@vonage/video-client@2/dist/js/opentok.js',
+        'www.googletagmanager.com',
+        'assets.adobedtm.com',
+      ],
       styleSrc: ["'self'", "'unsafe-inline'", 'cdnjs.cloudflare.com', 'assets.tokbox.com'],
       connectSrc: ['*'],
-      imgSrc: ["'self'", "'unsafe-inline'", 'data:'],
+      imgSrc: ['*', 'data:'],
     },
   },
   frameGuard: false, // configured by tbConfig.allowIframing
