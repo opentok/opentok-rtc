@@ -64,7 +64,7 @@ const securityHeaders = helmet({
   contentSecurityPolicy: {
     useDefaults: true,
     directives: {
-      defaultSrc: ["'self'", "'unsafe-inline'"],
+      defaultSrc: ["'self'"],
       frameSrc: ['*'],
       scriptSrc: [
         "'unsafe-inline'",
@@ -73,11 +73,12 @@ const securityHeaders = helmet({
         'cdnjs.cloudflare.com',
         'assets.tokbox.com',
         'www.google-analytics.com',
-        'https://unpkg.com/@vonage/video-client@2/dist/js/opentok.js',
+        'https://unpkg.com/@vonage/client-sdk-video@2/dist/js/opentok.js',
+        'static.opentok.com',
         'www.googletagmanager.com',
         'assets.adobedtm.com',
       ],
-      styleSrc: ["'self'", "'unsafe-inline'", 'cdnjs.cloudflare.com', 'assets.tokbox.com'],
+      styleSrc: ["'self'", "'unsafe-inline'", 'cdnjs.cloudflare.com', 'assets.tokbox.com', 'static.opentok.com'],
       connectSrc: ['*'],
       imgSrc: ['*', 'data:'],
     },
