@@ -78,7 +78,7 @@ describe('ChatController', () => {
     });
 
     it('should initialize properly the object and return the handlers set when called without '
-       + 'handlers', sinon.test(function (done) {
+       + 'handlers', sinon.test((done) => {
       var expectedHandlers = {
         updatedRemotely: {
           name: 'roomStatus:updatedRemotely',
@@ -93,7 +93,7 @@ describe('ChatController', () => {
     }));
 
     it('should initialize properly the object and return the handlers set when called with '
-       + 'handlers', sinon.test(function (done) {
+       + 'handlers', sinon.test((done) => {
       var expectedHandlers = {
         updatedRemotely: {
           name: 'changedRoomStatus:changedUpdatedRemotely',

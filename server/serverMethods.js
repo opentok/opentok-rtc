@@ -61,7 +61,34 @@ function getUserCountry(req) {
 
 const securityHeaders = helmet({
   referrerPolicy: { policy: 'no-referrer-when-downgrade' },
-  contentSecurityPolicy: false,
+  contentSecurityPolicy: {
+    useDefaults: true,
+    directives: {
+      defaultSrc: ["'self'"],
+      frameSrc: ['*'],
+      scriptSrc: [
+        "'unsafe-inline'",
+        "'unsafe-eval'",
+        "'self'",
+        'cdnjs.cloudflare.com',
+        'assets.tokbox.com',
+        'www.google-analytics.com',
+        'https://unpkg.com/@vonage/',
+        'static.opentok.com',
+        'www.googletagmanager.com',
+        'assets.adobedtm.com',
+      ],
+      styleSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        'cdnjs.cloudflare.com',
+        'assets.tokbox.com',
+        'static.opentok.com',
+      ],
+      connectSrc: ['*'],
+      imgSrc: ['*', 'data:'],
+    },
+  },
   frameGuard: false, // configured by tbConfig.allowIframing
 });
 
