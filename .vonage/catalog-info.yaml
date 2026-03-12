@@ -16,7 +16,7 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: video-opentok-rtc
-  description: Video React Ref App Component
+  description: OpenTokRTC is your private web-based video conferencing solution.
   annotations:
     github.com/project-slug: opentok/opentok-rtc # GH repo
 spec:
