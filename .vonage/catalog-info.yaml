@@ -1,0 +1,26 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: video-opentok-rtc # SERVICE NAME field
+  title: Video Opentok RTC # Title (human-friendly library name) field
+  description: OpenTokRTC is your private web-based video conferencing solution.
+  annotations:
+    vonage.com/jira-id: VPF # video general projects
+spec:
+  type: library
+  owner: group:orgdata/vdk # helm "owner" orgdata squad id or general orgdata/vid
+  domain: video-api # Product this library belongs to
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: video-opentok-rtc
+  description: OpenTokRTC is your private web-based video conferencing solution.
+  annotations:
+    github.com/project-slug: opentok/opentok-rtc # GH repo
+spec:
+  type: library
+  owner: group:orgdata/vdk
+  system: video-opentok-rtc
+  lifecycle: production
