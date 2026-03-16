@@ -4,7 +4,7 @@ kind: System
 metadata:
   name: video-opentok-rtc # SERVICE NAME field
   title: Video Opentok RTC # Title (human-friendly library name) field
-  description: OpenTokRTC is your private web-based video conferencing solution.
+  description: OpentokRTC is an open-source, web-based video conferencing solution built on the OpenTok API. It serves as a private video conferencing application that can be deployed on customers servers
   annotations:
     vonage.com/jira-id: VPF # video general projects
 spec:
@@ -16,7 +16,7 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: video-opentok-rtc
-  description: OpenTokRTC is your private web-based video conferencing solution.
+  description: OpentokRTC is an open-source, web-based video conferencing solution built on the OpenTok API. It serves as a private video conferencing application that can be deployed on customers servers
   annotations:
     github.com/project-slug: opentok/opentok-rtc # GH repo
 spec:
