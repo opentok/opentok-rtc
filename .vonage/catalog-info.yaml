@@ -24,3 +24,5 @@ spec:
   owner: group:orgdata/vdk
   system: video-opentok-rtc
   lifecycle: production
+  dependsOn:
+    - resource:default/video-js-sdk
