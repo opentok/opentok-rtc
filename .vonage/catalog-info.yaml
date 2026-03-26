@@ -25,4 +25,4 @@ spec:
   system: video-opentok-rtc
   lifecycle: production
   dependsOn:
-    - resource:default/video-js-sdk
+    - component:default/video-js-sdk
