@@ -75,6 +75,14 @@
       });
     },
 
+    setCaption(text) {
+      const streamContainer = this.container;
+      streamContainer.querySelectorAll('.captions').forEach((e) => e.remove());
+      const transcriptBox = HTMLElems.createElementAt(streamContainer, 'div');
+      transcriptBox.classList.add('captions');
+      return HTMLElems.createElementAt(transcriptBox, 'p', {}, text).classList.add('caption-text');
+    },
+
     remove(item) {
       return this.container.removeChild(item);
     },
@@ -93,6 +101,10 @@
 
     append(...args) {
       return renderer.append(...args);
+    },
+
+    setCaption(...args) {
+      return renderer.setCaption(...args);
     },
 
     remove(...args) {

@@ -16,6 +16,7 @@ const _ = require('lodash');
 const qs = require('qs');
 const accepts = require('accepts');
 const geoip = require('geoip-lite');
+const axios = require('axios').default;
 const C = require('./serverConstants');
 const configLoader = require('./configLoader');
 const ArchiveLocalStorage = require('./archiveLocalStorage');
@@ -131,6 +132,7 @@ function ServerMethods(aLogLevel, aModules) {
       const templatingSecret = config.get(C.TEMPLATING_SECRET);
       const apiKey = config.get(C.OPENTOK_API_KEY);
       const apiSecret = config.get(C.OPENTOK_API_SECRET);
+      const speechToText = config.get(C.SPEECH_TO_TEXT);
       const precallApiKey = config.get(C.OPENTOK_PRECALL_API_KEY) || config.get(C.OPENTOK_API_KEY);
       const precallApiSecret = config.get(C.OPENTOK_PRECALL_API_SECRET)
         || config.get(C.OPENTOK_API_SECRET);
@@ -223,6 +225,7 @@ function ServerMethods(aLogLevel, aModules) {
       return {
         otInstance,
         precallOtInstance,
+        speechToText,
         apiKey,
         apiSecret,
         precallApiKey,
@@ -615,6 +618,47 @@ function ServerMethods(aLogLevel, aModules) {
       _.merge(parsed, qs.parse(part));
     });
     return parsed;
+  }
+
+  async function startTranscription(aReq, aRes) {
+    const { tbConfig } = aReq;
+    const { apiKey, apiSecret, speechToText } = tbConfig;
+    const roomName = aReq.params.roomName.toLowerCase();
+    const room = await serverPersistence.getKey(redisRoomPrefix + roomName);
+    const roomObject = JSON.parse(room);
+
+    if (!room) return aRes.status(404).send(null);
+    axios.post(speechToText, {
+      sessionId: roomObject.sessionId,
+      apiKey: apiKey,
+      secret: apiSecret,
+    })
+      .then((response) => {
+        console.log(response);
+        aRes.send('OK');
+      })
+      .catch((error) => {
+        console.log(error);
+        aRes.status(404).send('FAILED');
+      });
+  }
+
+  async function stopTranscription(aReq, aRes) {
+    const { tbConfig } = aReq;
+    const { speechToText } = tbConfig;
+    const roomName = aReq.params.roomName.toLowerCase();
+    const room = await serverPersistence.getKey(redisRoomPrefix + roomName);
+    const roomObject = JSON.parse(room);
+
+    axios.delete(`${speechToText}/${roomObject.sessionId}`)
+      .then((response) => {
+        console.log(response);
+        aRes.send('OK');
+      })
+      .catch((error) => {
+        console.log(error);
+        aRes.status(404).send('FAILED');
+      });
   }
 
   async function lockRoom(aReq, aRes) {
@@ -1019,6 +1063,8 @@ function ServerMethods(aLogLevel, aModules) {
     featureEnabled,
     loadConfig,
     lockRoom,
+    startTranscription,
+    stopTranscription,
     getRoot,
     getRoom,
     getRoomInfo,
