@@ -7,6 +7,7 @@ metadata:
   description: OpentokRTC is an open-source, web-based video conferencing solution built on the OpenTok API. It serves as a private video conferencing application that can be deployed on customers servers
   annotations:
     vonage.com/jira-id: VPF # video general projects
+    business-criticality: Tier-4
 spec:
   type: library
   owner: group:orgdata/vdk # helm "owner" orgdata squad id or general orgdata/vid
