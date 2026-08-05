@@ -4,22 +4,22 @@
     {
       "name": "git-ai-pre-write",
       "trigger": "PreToolUse",
-      "description": "Before kiro writes a file: flush pending dirty content as human-attributed and stash the path for the matching PostToolUse (vonage-git-ai)",
-      "matcher": "fs_write|str_replace",
+      "description": "Before kiro writes a file: flush pending content as human-attributed and stash the path (vg-ai attribution)",
+      "matcher": "fs_write|str_replace|fs_append|edit_code|semantic_rename|smart_relocate",
       "action": {
         "type": "command",
-        "command": "~/.vonage-git-ai/hooks/kiro-cli-hook.sh",
+        "command": "vg-ai attribution checkpoint",
         "timeout": 10
       }
     },
     {
       "name": "git-ai-post-write",
       "trigger": "PostToolUse",
-      "description": "After kiro writes a file: send a git-ai agent-v1 checkpoint marking the new content as AI-authored by kiro (vonage-git-ai)",
-      "matcher": "fs_write|str_replace",
+      "description": "After kiro writes a file: record AI authorship via git-ai checkpoint (vg-ai attribution)",
+      "matcher": "fs_write|str_replace|fs_append|edit_code|semantic_rename|smart_relocate",
       "action": {
         "type": "command",
-        "command": "~/.vonage-git-ai/hooks/kiro-cli-hook.sh",
+        "command": "vg-ai attribution checkpoint",
         "timeout": 10
       }
     }
