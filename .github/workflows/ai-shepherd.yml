@@ -1,0 +1,82 @@
+name: AI Label Shepherd
+
+on:
+  workflow_call:
+  pull_request:
+    types: [labeled, unlabeled, opened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  nudge-ai-label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Nudge a single AI-contribution label
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+
+            const validLabels = ['ai-generated', 'ai-assisted', 'ai-touched', 'no-ai'];
+            const prLabels = pr.labels.map(l => l.name);
+            const hits = prLabels.filter(name => validLabels.includes(name));
+            const commentMarker = '<!-- ai-shepherd-check -->';
+
+            const failureMessage = `${commentMarker}
+            ⚠️ This PR needs **exactly one** of the following AI-contribution labels:
+
+            | Label | When to use |
+            |-------|-------------|
+            | \`ai-generated\` | More than 90 % of the code originates from AI tools (Copilot, Kiro, ChatGPT, etc.) regardless of delivery method (generation, copy-paste, dictation). |
+            | \`ai-assisted\` | Between 20 % and 90 % of the code was produced with AI help, but meaningful human contribution is present. |
+            | \`ai-touched\` | AI was used lightly (under 20 %) — e.g. autocomplete suggestions, minor refactors, or doc generation. |
+            | \`no-ai\` | No AI assistance was involved at all. |
+
+            > **Tip:** Even if you manually type a line whose logic was suggested by AI, that still counts as AI contribution.
+            > Use your own knowledge and creativity first — AI is a powerful tool, not a substitute for engineering judgment. Avoid slot-machine-driven development.
+
+            **Matched AI labels:** ${hits.length ? hits.map(l => `\`${l}\``).join(', ') : '_none_'}
+            **All current labels:** ${prLabels.length ? prLabels.map(l => `\`${l}\``).join(', ') : '_none_'}`;
+
+            const successMessage = `${commentMarker}
+            ✅ AI-contribution label verified: \`${hits[0]}\``;
+
+            const { owner, repo } = context.repo;
+            const issue_number = pr.number;
+
+            // Find any previous bot comment from this check
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner,
+              repo,
+              issue_number,
+              per_page: 100,
+            });
+
+            const previous = comments.find(c =>
+              c.user?.type === 'Bot' && c.body?.includes(commentMarker)
+            );
+
+            if (hits.length !== 1) {
+              const body = failureMessage;
+              if (previous) {
+                await github.rest.issues.updateComment({ owner, repo, comment_id: previous.id, body });
+              } else {
+                await github.rest.issues.createComment({ owner, repo, issue_number, body });
+              }
+
+              const reason = hits.length === 0
+                ? `No AI-contribution label found. Add exactly one of: ${validLabels.join(', ')}.`
+                : `Multiple AI-contribution labels detected (${hits.join(', ')}). Keep only one.`;
+              core.setFailed(reason);
+              return;
+            }
+
+            // Update existing comment to success or leave no comment
+            if (previous) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: previous.id, body: successMessage });
+            }
+
+            core.info(`AI-contribution label OK: ${hits[0]}`);
