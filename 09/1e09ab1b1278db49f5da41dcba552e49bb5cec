@@ -1,0 +1,19 @@
+.github/workflows/delete-closed-pr.yml
+  s_c2cec532c375f3::t_6ae2885d20370f 5-8,12-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "091e09ab1b1278db49f5da41dcba552e49bb5cec",
+  "prompts": {},
+  "sessions": {
+    "s_c2cec532c375f3": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_a1fe319c-cea8-468f-91eb-8f27528d0097",
+        "model": "auto"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}
