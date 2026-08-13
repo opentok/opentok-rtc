@@ -2,10 +2,15 @@ name: delete branch on close pr
 on: 
   pull_request:
     types: [closed]
-  
+
+permissions:
+  contents: read
+
 jobs:
   delete-branch:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: delete branch
         uses: SvanBoxel/delete-merged-branch@main
