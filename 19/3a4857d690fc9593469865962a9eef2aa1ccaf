@@ -1,0 +1,14 @@
+package-lock.json
+  h_5ddc9d372ac6a1 357-361,8499-8501,8503,8517-8519,8521,8525-8527,14632-14634,14636
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "193a4857d690fc9593469865962a9eef2aa1ccaf",
+  "prompts": {},
+  "humans": {
+    "h_5ddc9d372ac6a1": {
+      "author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}
