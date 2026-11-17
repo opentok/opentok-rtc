@@ -1,0 +1,19 @@
+package.json
+  s_d8710216095f73::t_d3308cda66f667 40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "e401799cf60082bdeba63609d892e1ecbe3d2685",
+  "prompts": {},
+  "sessions": {
+    "s_d8710216095f73": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_8798cdb8-73d7-4011-bdcf-02e718433368",
+        "model": "auto"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}
