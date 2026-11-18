@@ -61,7 +61,7 @@
     "http2": "^3.3.7",
     "ioredis": "^4.28.5",
     "lodash": "^4.17.20",
-    "opentok": "^2.10.0",
+    "opentok": "^2.16.0",
     "qs": "^6.9.4",
     "swagger-boilerplate": "^0.1.8",
     "yamljs": "^0.3.0"
