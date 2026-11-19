@@ -1,0 +1,53 @@
+test/unit/chatController_spec.js
+  s_9730e25a118b6b::t_c3311c52933840 56-57
+  s_9730e25a118b6b::t_21463e1c58deac 60
+  s_9730e25a118b6b::t_87e1b6a3212630 67
+test/bower.json
+  s_9730e25a118b6b::t_b8de9682b600a8 23
+package.json
+  s_9730e25a118b6b::t_241c56bd5a15ed 52
+test/unit/layoutMenuView_spec.js
+  s_9730e25a118b6b::t_463d6a98243d85 36,41
+test/api/server_spec.js
+  s_9730e25a118b6b::t_17f35a70c6158b 76
+test/unit/layoutManager_spec.js
+  s_9730e25a118b6b::t_6cbd4a516ecce5 77-78
+test/unit/itemsHandler_spec.js
+  s_9730e25a118b6b::t_49e9ee6ba0b00c 11
+  s_667e95a89b07a6::t_9114043677eb7d 46
+  s_f0b28b98b1c5de::t_531dcfc935df4f 100
+test/unit/draggable_spec.js
+  s_9730e25a118b6b::t_2450134564d08c 51,57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "624c3124c04680c6972a9e69b375e17a91f60807",
+  "prompts": {},
+  "sessions": {
+    "s_667e95a89b07a6": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1795110846917905000",
+        "model": "unknown"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    },
+    "s_9730e25a118b6b": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_ea1d0195-561b-4d0e-85d1-3b7a6f8f38bb",
+        "model": "auto"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    },
+    "s_f0b28b98b1c5de": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1795110849319107000",
+        "model": "unknown"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}
