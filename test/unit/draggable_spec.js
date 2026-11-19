@@ -48,11 +48,13 @@ describe('Draggable', () => {
 
     describe('#event dispatcher: DragDetector:dragstart', () => {
       var checkHoldstartEvent = function (ctx, x, y, done) {
+        var RealCustomEvent = window.CustomEvent;
         ctx.stub(window, 'CustomEvent').callsFake((name, data) => {
           expect(name).to.equal('DragDetector:dragstart');
           expect(data.detail.pageX).to.equal(x);
           expect(data.detail.pageY).to.equal(y);
           done();
+          return new RealCustomEvent(name, data);
         });
       };
 

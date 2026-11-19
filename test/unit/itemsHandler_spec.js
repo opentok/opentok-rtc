@@ -8,6 +8,7 @@ var should = chai.should();
 
 describe('ItemsHandler', () => {
   var items = {};
+  var RealCustomEvent = window.CustomEvent;
 
   function getContainer() {
     return document.getElementById('myContainer');
@@ -42,6 +43,7 @@ describe('ItemsHandler', () => {
       expect(data.detail.streamId).to.equal(id);
       expect(data.detail.name).to.equal(type);
       cb();
+      return new RealCustomEvent(name, data);
     });
 
     control.click();
@@ -95,6 +97,7 @@ describe('ItemsHandler', () => {
         expect(name).to.equal('layoutView:itemSelected');
         expect(data.detail.item).to.equal(getContainer().querySelector('#subscriber'));
         done();
+        return new RealCustomEvent(name, data);
       });
 
       dblclick(getContainer().querySelector('#subscriber .dblclick_area'));
