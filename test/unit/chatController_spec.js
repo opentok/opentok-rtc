@@ -53,18 +53,18 @@ describe('ChatController', () => {
         .then((aHandlers) => {
           expect(aHandlers.length).to.be.equals(1);
           var chatHandlers = aHandlers[0];
-          expectedHandlers.every((elem) => { // eslint-disable-line array-callback-return
-            expect(chatHandlers[elem]).to.be.defined;
+          expectedHandlers.forEach((elem) => {
+            expect(chatHandlers[elem]).to.exist;
           });
 
-          var spyArg = Utils.addHandlers.getCall(0).args[0];
+          var spyArg = Utils.addHandlers.lastCall.args[0];
           expect(Object.keys(spyArg).length).to.be
             .equal(Object.keys(handlerShouldHave).length);
           expect(Object.keys(spyArg)
             .every((action) => spyArg[action].name === handlerShouldHave[action].name)).to.be.true;
           expect(RoomStatus.set.calledWith(STATUS_KEY, [])).to.be.true;
           done();
-        });
+        }).catch(done);
     }
 
     before(() => {

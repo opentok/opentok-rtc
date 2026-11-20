@@ -33,10 +33,12 @@ describe('LayoutMenuView', () => {
 
       this.stub(BubbleFactory, 'get').callsFake(() => ({ toggle() {} }));
 
+      var RealCustomEvent = window.CustomEvent;
       this.stub(window, 'CustomEvent').callsFake((name, data) => {
         expect(name).to.be.equal('layoutMenuView:layout');
         expect(data.detail.type).to.be.equal('grid');
         done();
+        return new RealCustomEvent(name, data);
       });
 
       document.querySelector('[data-layout-type="grid"').click();

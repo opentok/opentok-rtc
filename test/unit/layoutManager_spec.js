@@ -74,8 +74,8 @@ describe('LayoutManager', () => {
     });
 
     it('should always return a reference to the element added', () => {
-      addedElements.every((item) => { // eslint-disable-line array-callback-return
-        expect(item).to.be.defined;
+      addedElements.forEach((item) => {
+        expect(item).to.exist;
       });
     });
   });
